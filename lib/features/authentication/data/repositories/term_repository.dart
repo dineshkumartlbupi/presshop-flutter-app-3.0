@@ -11,6 +11,24 @@ class TermsRepository {
   Future<TermsResponse> fetchTerms(String type) async {
     try {
       debugPrint("Fetching terms with type: $type");
+      if (type == 'legal') {
+        final response = await apiClient.get(ApiConstantsNew.misc.signupLegal);
+        debugPrint("Terms API Response (Legal): ${response.data}");
+
+        if (response.statusCode == 200) {
+          final statusData = response.data['status'];
+          final cmsItem = CmsItem.fromJson(statusData);
+          return TermsResponse(
+            data: TermsData(
+              privacyPolicy: CmsItem(id: '', description: ''),
+              termAndCond: cmsItem,
+            ),
+          );
+        } else {
+          throw Exception("Failed to load terms: ${response.statusCode}");
+        }
+      }
+
       final response = await apiClient.get(
         ApiConstantsNew.misc.cms,
         queryParameters: {

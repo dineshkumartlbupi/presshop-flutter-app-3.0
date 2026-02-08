@@ -2,12 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:shimmer/shimmer.dart';
 
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+
 import 'package:geocoding/geocoding.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
@@ -19,8 +18,10 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/api/api_client.dart';
+import 'package:presshop/core/widgets/common/avatar_bottom_sheet.dart';
+
 import 'package:presshop/core/di/injection_container.dart';
-import 'package:presshop/features/authentication/presentation/pages/SignUpScreen.dart';
+
 import 'package:presshop/features/profile/constants/profile_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
@@ -59,7 +60,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   TextEditingController cityNameController = TextEditingController();
   TextEditingController countryNameController = TextEditingController();
 
-  List<AvatarsData> avatarList = [];
+  List<AvatarData> avatarList = [];
   MyProfileData? myProfileData;
   // Completer<String?>? _studentBeansCompleter;
 
@@ -409,26 +410,18 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   child: CachedNetworkImage(
                     imageUrl:
                         myProfileData != null ? myProfileData!.avatarImage : "",
-                    fadeInDuration: Duration.zero,
-                    fadeOutDuration: Duration.zero,
-                    imageBuilder: (context, imageProvider) {
-                      _loadedUrls.add(myProfileData!.avatarImage);
-                      return Image(
-                        image: imageProvider,
-                        fit: BoxFit.cover,
-                      );
-                    },
-                    placeholder: (context, url) => _loadedUrls.contains(url)
-                        ? const SizedBox.shrink()
-                        : Shimmer.fromColors(
-                            baseColor: Colors.grey[300]!,
-                            highlightColor: Colors.grey[100]!,
-                            child: Container(
-                              color: Colors.white,
-                              width: size.width * AppDimensions.numD37,
-                              height: size.width * AppDimensions.numD35,
-                            ),
-                          ),
+                    placeholder: (context, url) => Center(
+                      child: Padding(
+                        padding:
+                            EdgeInsets.all(size.width * AppDimensions.numD04),
+                        child: Image.asset(
+                          "${commonImagePath}rabbitLogo.png",
+                          fit: BoxFit.contain,
+                          width: size.width * AppDimensions.numD35,
+                          height: size.width * AppDimensions.numD35,
+                        ),
+                      ),
+                    ),
                     errorWidget: (context, url, error) => Padding(
                       padding:
                           EdgeInsets.all(size.width * AppDimensions.numD04),
@@ -705,153 +698,14 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   /// Avatar Images
   void avatarBottomSheet(Size size) {
-    showModalBottomSheet(
+    AvatarBottomSheet.show(
       context: context,
-      isScrollControlled: true,
-      builder: (context) {
-        return StatefulBuilder(builder: (context, avatarState) {
-          return Container(
-            height: size.height * 0.6,
-            padding: EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding:
-                      EdgeInsets.only(left: size.width * AppDimensions.numD04),
-                  child: Row(
-                    children: [
-                      Text(
-                        AppStrings.chooseAvatarText,
-                        style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD04,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        onPressed: () {
-                          context.pop();
-                        },
-                        icon: Icon(
-                          Icons.close,
-                          color: Colors.black,
-                          size: size.width * AppDimensions.numD06,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Scrollable Avatar List
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: avatarList.isEmpty
-                          ? StaggeredGrid.count(
-                              crossAxisCount: 6,
-                              mainAxisSpacing: 3.0,
-                              crossAxisSpacing: 4.0,
-                              axisDirection: AxisDirection.down,
-                              children: List.generate(18, (index) {
-                                return Shimmer.fromColors(
-                                  baseColor: Colors.grey[300]!,
-                                  highlightColor: Colors.grey[100]!,
-                                  child: Container(
-                                    width: size.width * AppDimensions.numD20,
-                                    height: size.width * AppDimensions.numD20,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                  ),
-                                );
-                              }),
-                            )
-                          : StaggeredGrid.count(
-                              crossAxisCount: 6,
-                              mainAxisSpacing: 3.0,
-                              crossAxisSpacing: 4.0,
-                              axisDirection: AxisDirection.down,
-                              children: avatarList.map<Widget>((item) {
-                                return InkWell(
-                                  onTap: () {
-                                    int pos = avatarList.indexWhere(
-                                        (element) => element.selected);
-                                    if (pos >= 0) {
-                                      avatarList[pos].selected = false;
-                                    }
-                                    myProfileData!.avatarImage = item.avatar;
-                                    myProfileData!.avatarId = item.id;
-                                    item.selected = true;
-                                    avatarState(() {});
-                                    setState(() {});
-                                    context.pop();
-                                  },
-                                  child: Stack(
-                                    children: [
-                                      CachedNetworkImage(
-                                        imageUrl: item.avatar,
-                                        fit: BoxFit.cover,
-                                        fadeInDuration: Duration.zero,
-                                        fadeOutDuration: Duration.zero,
-                                        imageBuilder: (context, imageProvider) {
-                                          _loadedUrls.add(item.avatar);
-                                          return Image(
-                                            image: imageProvider,
-                                            fit: BoxFit.cover,
-                                          );
-                                        },
-                                        placeholder: (context, url) =>
-                                            _loadedUrls.contains(url)
-                                                ? const SizedBox.shrink()
-                                                : Shimmer.fromColors(
-                                                    baseColor:
-                                                        Colors.grey[300]!,
-                                                    highlightColor:
-                                                        Colors.grey[100]!,
-                                                    child: Container(
-                                                      color: Colors.white,
-                                                      width: size.width *
-                                                          AppDimensions.numD20,
-                                                      height: size.width *
-                                                          AppDimensions.numD20,
-                                                    ),
-                                                  ),
-                                        errorWidget: (context, url, error) =>
-                                            Image.asset(
-                                          "${commonImagePath}rabbitLogo.png",
-                                          fit: BoxFit.contain,
-                                          width:
-                                              size.width * AppDimensions.numD20,
-                                          height:
-                                              size.width * AppDimensions.numD20,
-                                        ),
-                                      ),
-                                      if (item.selected)
-                                        Align(
-                                          alignment: Alignment.topRight,
-                                          child: Icon(
-                                            Icons.check,
-                                            color: Colors.black,
-                                            size: size.width *
-                                                AppDimensions.numD06,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
+      size: size,
+      avatarList: avatarList,
+      onAvatarSelected: (avatar) {
+        myProfileData!.avatarImage = avatar.avatar;
+        myProfileData!.avatarId = avatar.id;
+        setState(() {});
       },
     );
   }
@@ -1588,19 +1442,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         var map = response.data;
         if (map is String) map = jsonDecode(map);
         var list = map["data"] as List;
-        avatarList = list.map((e) => AvatarsData.fromJson(e)).toList();
+        avatarList = list.map((e) => AvatarData.fromJson(e)).toList();
         debugPrint("AvatarList: ${avatarList.length}");
-
-        if (mounted) {
-          for (var avatar in avatarList) {
-            if (avatar.avatar.isNotEmpty) {
-              precacheImage(
-                CachedNetworkImageProvider(avatar.avatar),
-                context,
-              );
-            }
-          }
-        }
         setState(() {});
       }
     } catch (e) {

@@ -124,6 +124,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             if (refreshToken != null) {
               userMap['refreshToken'] = refreshToken;
             }
+
+            if (userMap['isSocialRegister'] == false) {
+              throw const UserNotRegisteredFailure(
+                  message: "Social registration required");
+            }
             return UserModel.fromJson(userMap);
           } else {
             throw ServerFailure(message: "User data is null");
@@ -433,6 +438,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           await apiClient.post(ApiConstantsNew.auth.socialLogin, data: params);
       final data = response.data;
       if (data['code'] == 200 && data['token'] != null) {
+        final userMap = data['data'] ?? data['user'];
+        if (userMap != null && userMap['isSocialRegister'] == false) {
+          return false;
+        }
         return true;
       }
       return false;

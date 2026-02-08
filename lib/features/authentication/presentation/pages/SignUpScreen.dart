@@ -1,20 +1,19 @@
 import 'dart:async';
-import 'dart:core';
 import 'dart:io';
 
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:presshop/features/authentication/constants/auth_constants.dart';
 import '../bloc/signup_bloc.dart';
 import '../bloc/signup_event.dart';
 import '../bloc/signup_state.dart';
@@ -24,11 +23,12 @@ import '../bloc/auth_state.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/router/router_constants.dart';
-import 'package:go_router/go_router.dart';
+
+import 'package:presshop/core/widgets/common/avatar_bottom_sheet.dart';
+import 'package:presshop/features/authentication/presentation/widgets/password_requirements_list.dart';
+import 'package:presshop/features/authentication/presentation/widgets/avatar_selection_box.dart';
 
 // ignore: must_be_immutable
 class SignUpScreen extends StatefulWidget {
@@ -49,8 +49,7 @@ class SignUpScreen extends StatefulWidget {
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen>
-    with SingleTickerProviderStateMixin, AnalyticsPageMixin {
+class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
   // Analytics Mixin Requirements
   @override
   String get pageName => PageNames.signup;
@@ -92,7 +91,6 @@ class _SignUpScreenState extends State<SignUpScreen>
   var formKey = GlobalKey<FormState>();
   var scrollController = ScrollController();
 
-  late AnimationController controller;
   Timer? debounce;
   final ImagePicker _picker = ImagePicker();
   final RegExp _restrictPattern = RegExp(
@@ -157,7 +155,7 @@ class _SignUpScreenState extends State<SignUpScreen>
   String userNameApiError = "";
   String phoneApiError = "";
 
-  List<AvatarsData> avatarList = [];
+  List<AvatarData> avatarList = [];
 
   late GoogleSignInAccount _userObj;
   String socialEmail = "";
@@ -167,12 +165,9 @@ class _SignUpScreenState extends State<SignUpScreen>
   String socialType = "";
   final ValueNotifier<bool> _avatarsNotifier = ValueNotifier(false);
   late SignUpBloc _signUpBloc;
-  static final Set<String> _loadedUrls = {};
 
   @override
   void initState() {
-    controller = AnimationController(
-        duration: const Duration(milliseconds: 700), vsync: this);
     super.initState();
 
     if (widget.socialLogin) {
@@ -183,7 +178,7 @@ class _SignUpScreenState extends State<SignUpScreen>
       phoneController.text = widget.phoneNumber;
     }
 
-    // WidgetsBinding.instance.addPostFrameCallback((_) => getAvatarsApi());
+    WidgetsBinding.instance.addPostFrameCallback((_) => getAvatarsApi());
     setPasswordListener();
   }
 
@@ -192,7 +187,6 @@ class _SignUpScreenState extends State<SignUpScreen>
     _emailDebounce?.cancel();
     _phoneDebounce?.cancel();
     _userDebounce?.cancel();
-    controller.dispose();
     _avatarsNotifier.dispose();
     super.dispose();
   }
@@ -201,15 +195,6 @@ class _SignUpScreenState extends State<SignUpScreen>
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     _signUpBloc = context.read<SignUpBloc>();
-
-    // final Animation<double> offsetAnimation = Tween(begin: 0.0, end: 24.0)
-    //     .chain(CurveTween(curve: Curves.elasticIn))
-    //     .animate(controller)
-    //   ..addStatusListener((status) {
-    //     if (status == AnimationStatus.completed) {
-    //       controller.reverse();
-    //     }
-    //   });
 
     return BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -258,17 +243,8 @@ class _SignUpScreenState extends State<SignUpScreen>
             } else if (state is AvatarsLoaded) {
               avatarList = state.avatars
                   .map((e) =>
-                      AvatarsData.fromJson({'_id': e.id, 'avatar': e.avatar}))
+                      AvatarData.fromJson({'_id': e.id, 'avatar': e.avatar}))
                   .toList();
-
-              for (var avatar in avatarList) {
-                if (avatar.avatar.isNotEmpty) {
-                  precacheImage(
-                    CachedNetworkImageProvider(avatar.avatar),
-                    context,
-                  );
-                }
-              }
 
               _avatarsNotifier.value = !_avatarsNotifier.value;
             } else if (state is UserNameCheckResult) {
@@ -340,167 +316,20 @@ class _SignUpScreenState extends State<SignUpScreen>
                                 SizedBox(
                                   height: size.width * AppDimensions.numD04,
                                 ),
-                                selectedAvatar.isEmpty
-                                    ? Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          InkWell(
-                                            onTap: () {
-                                              avatarBottomSheet(size);
-                                            },
-                                            child: Container(
-                                              height: size.width *
-                                                  AppDimensions.numD30,
-                                              width: size.width *
-                                                  AppDimensions.numD35,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  border: Border.all(
-                                                      color: AppColorTheme
-                                                          .colorTextFieldBorder),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          size.width *
-                                                              AppDimensions
-                                                                  .numD04)),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Image.asset(
-                                                    "${iconsPath}ic_user.png",
-                                                    width: size.width *
-                                                        AppDimensions.numD11,
-                                                  ),
-                                                  SizedBox(
-                                                    height: size.width *
-                                                        AppDimensions.numD01,
-                                                  ),
-                                                  Text(
-                                                    AppStrings
-                                                        .chooseYourAvatarText,
-                                                    style: commonTextStyle(
-                                                        size: size,
-                                                        fontSize: size.width *
-                                                            AppDimensions
-                                                                .numD03,
-                                                        color: AppColorTheme
-                                                            .colorHint,
-                                                        fontWeight:
-                                                            FontWeight.normal),
-                                                    textAlign: TextAlign.center,
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Stack(
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width *
-                                                          AppDimensions.numD04),
-                                              child: CachedNetworkImage(
-                                                imageUrl: selectedAvatar,
-                                                height: size.width *
-                                                    AppDimensions.numD30,
-                                                width: size.width *
-                                                    AppDimensions.numD35,
-                                                fit: BoxFit.cover,
-                                                fadeInDuration: Duration.zero,
-                                                fadeOutDuration: Duration.zero,
-                                                imageBuilder:
-                                                    (context, imageProvider) {
-                                                  _loadedUrls
-                                                      .add(selectedAvatar);
-                                                  return Image(
-                                                    image: imageProvider,
-                                                    fit: BoxFit.cover,
-                                                  );
-                                                },
-                                                placeholder: (context, url) =>
-                                                    _loadedUrls.contains(url)
-                                                        ? const SizedBox
-                                                            .shrink()
-                                                        : Shimmer.fromColors(
-                                                            baseColor: Colors
-                                                                .grey[300]!,
-                                                            highlightColor:
-                                                                Colors
-                                                                    .grey[100]!,
-                                                            child: Container(
-                                                              color:
-                                                                  Colors.white,
-                                                              height: size
-                                                                      .width *
-                                                                  AppDimensions
-                                                                      .numD30,
-                                                              width: size
-                                                                      .width *
-                                                                  AppDimensions
-                                                                      .numD35,
-                                                            ),
-                                                          ),
-                                                errorWidget:
-                                                    (context, url, error) =>
-                                                        Image.asset(
-                                                  "${commonImagePath}rabbitLogo.png",
-                                                  fit: BoxFit.contain,
-                                                  width: size.width *
-                                                      AppDimensions.numD35,
-                                                  height: size.width *
-                                                      AppDimensions.numD30,
-                                                ),
-                                              ),
-                                            ),
-                                            Positioned(
-                                              right: 0,
-                                              top: 0,
-                                              child: InkWell(
-                                                onTap: () {
-                                                  selectedAvatar = "";
-                                                  if (selectedAvatar
-                                                      .isNotEmpty) {
-                                                    int pos = avatarList
-                                                        .indexWhere((element) =>
-                                                            element.avatar ==
-                                                            selectedAvatar);
-
-                                                    if (pos >= 0) {
-                                                      avatarList[pos].selected =
-                                                          false;
-                                                    }
-                                                  }
-                                                  showAvatarError = true;
-
-                                                  setState(() {});
-                                                },
-                                                child: Container(
-                                                  padding: EdgeInsets.all(
-                                                      size.width *
-                                                          AppDimensions.numD01),
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                          color: Colors.white,
-                                                          shape:
-                                                              BoxShape.circle),
-                                                  child: Icon(Icons.cancel,
-                                                      color: Colors.black,
-                                                      size: size.width *
-                                                          AppDimensions
-                                                              .numD035),
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
+                                AvatarSelectionBox(
+                                  size: size,
+                                  selectedAvatar: selectedAvatar,
+                                  onTap: () => avatarBottomSheet(size),
+                                  onClear: () {
+                                    selectedAvatar = "";
+                                    selectedAvatarId = "";
+                                    showAvatarError = true;
+                                    for (var element in avatarList) {
+                                      element.selected = false;
+                                    }
+                                    setState(() {});
+                                  },
+                                ),
                                 selectedAvatar.isEmpty
                                     ? Align(
                                         alignment: Alignment.topLeft,
@@ -815,52 +644,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                                         textInputFormatters: null,
                                         prefixIcon:
                                             const Icon(Icons.lock_outline),
-                                        onChanged: (text) {
-                                          if (text.toString().length < 8) {
-                                            showMincase = false;
-                                            setState(() {});
-                                          } else {
-                                            showMincase = true;
-                                            setState(() {});
-                                          }
-
-                                          if (!RegExp(r'[A-Z]')
-                                              .hasMatch(text.toString())) {
-                                            showUppercase = false;
-                                            setState(() {});
-                                          } else {
-                                            showUppercase = true;
-                                            setState(() {});
-                                          }
-
-                                          if (!RegExp(r'[a-z]')
-                                              .hasMatch(text.toString())) {
-                                            showLowercase = false;
-                                            setState(() {});
-                                          } else {
-                                            showLowercase = true;
-                                            setState(() {});
-                                          }
-
-                                          if (!RegExp(r'[0-9]')
-                                              .hasMatch(text.toString())) {
-                                            showNumber = false;
-                                            setState(() {});
-                                          } else {
-                                            showNumber = true;
-                                            setState(() {});
-                                          }
-
-                                          if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]')
-                                              .hasMatch(text.toString())) {
-                                            showSpecialcase = false;
-                                            setState(() {});
-                                          } else {
-                                            showSpecialcase = true;
-                                            setState(() {});
-                                          }
-                                          return null;
-                                        },
                                         prefixIconHeight:
                                             size.width * AppDimensions.numD08,
                                         suffixIconIconHeight:
@@ -935,169 +718,13 @@ class _SignUpScreenState extends State<SignUpScreen>
                                       )
                                     : const SizedBox.shrink(),
                                 !widget.socialLogin
-                                    ? Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            height: size.width * 0.03,
-                                          ),
-                                          Text(
-                                            "Minimum password requirement",
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: size.width * 0.045,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                          SizedBox(
-                                            height: size.width * 0.02,
-                                          ),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Image.asset(
-                                                    !showLowercase
-                                                        ? "${iconsPath}cross.png"
-                                                        : "${iconsPath}check.png",
-                                                    width: 15,
-                                                    height: 15,
-                                                  ),
-                                                  Text(
-                                                    "Contains at least 01 lowercase character",
-                                                    style: TextStyle(
-                                                        color: !showLowercase
-                                                            ? Colors.red
-                                                            : Colors.green,
-                                                        fontSize:
-                                                            size.width * 0.03,
-                                                        fontWeight:
-                                                            FontWeight.w500),
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: size.width * 0.01,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Image.asset(
-                                                    !showSpecialcase
-                                                        ? "${iconsPath}cross.png"
-                                                        : "${iconsPath}check.png",
-                                                    width: 15,
-                                                    height: 15,
-                                                  ),
-                                                  Text(
-                                                    "Contains at least 01 special character",
-                                                    style: TextStyle(
-                                                        color: !showSpecialcase
-                                                            ? Colors.red
-                                                            : Colors.green,
-                                                        fontSize:
-                                                            size.width * 0.03,
-                                                        fontWeight:
-                                                            FontWeight.w500),
-                                                  )
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: size.width * 0.01,
-                                          ),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Image.asset(
-                                                    !showUppercase
-                                                        ? "${iconsPath}cross.png"
-                                                        : "${iconsPath}check.png",
-                                                    width: 15,
-                                                    height: 15,
-                                                  ),
-                                                  Text(
-                                                    "Contains at least 01 uppercase character",
-                                                    style: TextStyle(
-                                                        color: !showUppercase
-                                                            ? Colors.red
-                                                            : Colors.green,
-                                                        fontSize:
-                                                            size.width * 0.03,
-                                                        fontWeight:
-                                                            FontWeight.w500),
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: size.width * 0.01,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Image.asset(
-                                                    !showMincase
-                                                        ? "${iconsPath}cross.png"
-                                                        : "${iconsPath}check.png",
-                                                    width: 15,
-                                                    height: 15,
-                                                  ),
-                                                  Text(
-                                                    "Must be at least 08 characters",
-                                                    style: TextStyle(
-                                                        color: !showMincase
-                                                            ? Colors.red
-                                                            : Colors.green,
-                                                        fontSize:
-                                                            size.width * 0.03,
-                                                        fontWeight:
-                                                            FontWeight.w500),
-                                                  )
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: size.width * 0.01,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Image.asset(
-                                                !showNumber
-                                                    ? "${iconsPath}cross.png"
-                                                    : "${iconsPath}check.png",
-                                                width: 15,
-                                                height: 15,
-                                              ),
-                                              Text(
-                                                "Contains at least 01 number",
-                                                style: TextStyle(
-                                                    color: !showNumber
-                                                        ? Colors.red
-                                                        : Colors.green,
-                                                    fontSize: size.width * 0.03,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                              )
-                                            ],
-                                          ),
-                                        ],
+                                    ? PasswordRequirementsList(
+                                        showLowercase: showLowercase,
+                                        showUppercase: showUppercase,
+                                        showNumber: showNumber,
+                                        showSpecial: showSpecialcase,
+                                        showMinLength: showMincase,
+                                        size: size,
                                       )
                                     : const SizedBox.shrink(),
                                 SizedBox(
@@ -1205,9 +832,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                     rememberMe = false;
 
                                     context.pushNamed(AppRoutes.termCheckName,
-                                        pathParameters: {
-                                          'type': "legal"
-                                        }).then((value) {
+                                        extra: {'type': "legal"}).then((value) {
                                       if (value != null) {
                                         debugPrint("value::::$value");
                                         termConditionsChecked = value as bool;
@@ -1524,23 +1149,44 @@ class _SignUpScreenState extends State<SignUpScreen>
 
   void setPasswordListener() {
     passwordController.addListener(() {
-      var m = passwordExpression.hasMatch(passwordController.text.trim());
+      final text = passwordController.text;
 
-      debugPrint("EmailExpression: $m");
+      // Update strength indicators
+      bool minLength = text.length >= 8;
+      bool hasUppercase = RegExp(r'[A-Z]').hasMatch(text);
+      bool hasLowercase = RegExp(r'[a-z]').hasMatch(text);
+      bool hasNumber = RegExp(r'[0-9]').hasMatch(text);
+      bool hasSpecial = RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(text);
 
-      if (passwordController.text.isNotEmpty &&
-          passwordController.text.length >= 8 &&
-          !passwordExpression.hasMatch(passwordController.text.trim())) {
-        passwordStrengthValue = AppStrings.weakText;
-      } else if (passwordController.text.isNotEmpty &&
-          passwordController.text.length >= 8 &&
-          passwordExpression.hasMatch(passwordController.text.trim())) {
-        passwordStrengthValue = AppStrings.strongText;
+      String strength = "";
+      // Utilizing the existing passwordExpression checking
+      if (text.isNotEmpty &&
+          minLength &&
+          !passwordExpression.hasMatch(text.trim())) {
+        strength = AppStrings.weakText;
+      } else if (text.isNotEmpty &&
+          minLength &&
+          passwordExpression.hasMatch(text.trim())) {
+        strength = AppStrings.strongText;
       } else {
-        passwordStrengthValue = "";
+        strength = "";
       }
 
-      setState(() {});
+      if (showMincase != minLength ||
+          showUppercase != hasUppercase ||
+          showLowercase != hasLowercase ||
+          showNumber != hasNumber ||
+          showSpecialcase != hasSpecial ||
+          passwordStrengthValue != strength) {
+        setState(() {
+          showMincase = minLength;
+          showUppercase = hasUppercase;
+          showLowercase = hasLowercase;
+          showNumber = hasNumber;
+          showSpecialcase = hasSpecial;
+          passwordStrengthValue = strength;
+        });
+      }
     });
   }
 
@@ -1645,168 +1291,18 @@ class _SignUpScreenState extends State<SignUpScreen>
   }
 
   void avatarBottomSheet(Size size) {
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) {
-          return ValueListenableBuilder<bool>(
-              valueListenable: _avatarsNotifier,
-              builder: (context, value, child) {
-                return StatefulBuilder(builder: (context, avatarState) {
-                  return Container(
-                    height: size.height * 0.6,
-                    padding: EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: size.width * AppDimensions.numD04),
-                          child: Row(
-                            children: [
-                              Text(
-                                AppStrings.chooseAvatarText,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * AppDimensions.numD05,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                              const Spacer(),
-                              IconButton(
-                                  splashRadius:
-                                      size.width * AppDimensions.numD06,
-                                  onPressed: () {
-                                    context.pop();
-                                  },
-                                  icon: Icon(
-                                    Icons.close,
-                                    color: Colors.black,
-                                    size: size.width * AppDimensions.numD06,
-                                  ))
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                            child: SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: avatarList.isEmpty
-                                ? Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: StaggeredGrid.count(
-                                      crossAxisCount: 6,
-                                      mainAxisSpacing: 3.0,
-                                      crossAxisSpacing: 4.0,
-                                      axisDirection: AxisDirection.down,
-                                      children: List.generate(18, (index) {
-                                        return Shimmer.fromColors(
-                                          baseColor: Colors.grey[300]!,
-                                          highlightColor: Colors.grey[100]!,
-                                          child: Container(
-                                            width: size.width *
-                                                AppDimensions.numD20,
-                                            height: size.width *
-                                                AppDimensions.numD20,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
-                                            ),
-                                          ),
-                                        );
-                                      }),
-                                    ),
-                                  )
-                                : StaggeredGrid.count(
-                                    crossAxisCount: 6,
-                                    mainAxisSpacing: 3.0,
-                                    crossAxisSpacing: 4.0,
-                                    axisDirection: AxisDirection.down,
-                                    children: avatarList.map<Widget>((item) {
-                                      return InkWell(
-                                        onTap: () {
-                                          int pos = avatarList.indexWhere(
-                                              (element) => element.selected);
-
-                                          if (pos >= 0) {
-                                            avatarList[pos].selected = false;
-                                          }
-                                          selectedAvatar = item.avatar;
-                                          selectedAvatarId = item.id;
-                                          item.selected = true;
-                                          showAvatarError = false;
-                                          avatarState(() {});
-                                          setState(() {});
-                                          context.pop();
-                                        },
-                                        child: Stack(
-                                          children: [
-                                            CachedNetworkImage(
-                                              imageUrl: item.avatar,
-                                              fit: BoxFit.cover,
-                                              fadeInDuration: Duration.zero,
-                                              fadeOutDuration: Duration.zero,
-                                              imageBuilder:
-                                                  (context, imageProvider) {
-                                                _loadedUrls.add(item.avatar);
-                                                return Image(
-                                                  image: imageProvider,
-                                                  fit: BoxFit.cover,
-                                                );
-                                              },
-                                              placeholder: (context, url) =>
-                                                  _loadedUrls.contains(url)
-                                                      ? const SizedBox.shrink()
-                                                      : Shimmer.fromColors(
-                                                          baseColor:
-                                                              Colors.grey[300]!,
-                                                          highlightColor:
-                                                              Colors.grey[100]!,
-                                                          child: Container(
-                                                            color: Colors.white,
-                                                            width: size.width *
-                                                                AppDimensions
-                                                                    .numD20,
-                                                            height: size.width *
-                                                                AppDimensions
-                                                                    .numD20,
-                                                          ),
-                                                        ),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      Image.asset(
-                                                "${commonImagePath}rabbitLogo.png",
-                                                fit: BoxFit.contain,
-                                                width: size.width *
-                                                    AppDimensions.numD20,
-                                                height: size.width *
-                                                    AppDimensions.numD20,
-                                              ),
-                                            ),
-                                            if (item.selected)
-                                              Align(
-                                                alignment: Alignment.topRight,
-                                                child: Icon(
-                                                  Icons.check,
-                                                  color: Colors.black,
-                                                  size: size.width *
-                                                      AppDimensions.numD06,
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                          ),
-                        ))
-                      ],
-                    ),
-                  );
-                });
-              });
-        });
+    AvatarBottomSheet.show(
+      context: context,
+      size: size,
+      avatarList: avatarList,
+      onAvatarSelected: (avatar) {
+        selectedAvatar = avatar.avatar;
+        selectedAvatarId = avatar.id;
+        showAvatarError = false;
+        setState(() {});
+      },
+      notifier: _avatarsNotifier,
+    );
   }
 
   void selectedDate1(BuildContext context) async {
@@ -1917,78 +1413,11 @@ class _SignUpScreenState extends State<SignUpScreen>
     );
   }
 
-  // String? checkSignupPhoneValidator(String? value) {
-  //   if (value!.isEmpty) {
-  //     return AppStrings.requiredText;
-  //   } else if (value.length < 10) {
-  //     return AppStrings.phoneErrorText;
-  //   } else if (phoneAlreadyExists) {
-  //     return AppStrings.phoneExistsErrorText;
-  //   }
-  //   return null;
-  // }
-
-  // Add this map at the top of your state class
-  static final Map<String, int> phoneNumberMaxLengthByCountry = {
-    // Format: '+CountryCode': maxDigits
-    '+1': 10, // USA, Canada
-    '+44': 10, // UK
-    '+91': 10, // India
-    '+33': 9, // France
-    '+49': 11, // Germany
-    '+39': 10, // Italy
-    '+34': 9, // Spain
-    '+81': 11, // Japan
-    '+86': 11, // China
-    '+61': 9, // Australia
-    '+55': 11, // Brazil
-    '+52': 10, // Mexico
-    '+7': 10, // Russia
-    '+27': 9, // South Africa
-    '+82': 10, // South Korea
-    '+90': 10, // Turkey
-    '+234': 10, // Nigeria
-    '+20': 10, // Egypt
-    '+92': 10, // Pakistan
-    '+880': 10, // Bangladesh
-    '+62': 12, // Indonesia
-    '+63': 10, // Philippines
-    '+84': 10, // Vietnam
-    '+66': 9, // Thailand
-    // Add more countries as needed
-  };
-
   int _getMaxPhoneLength() {
-    return phoneNumberMaxLengthByCountry[selectedCountryCodePicker] ?? 15;
+    return AuthConstants
+            .phoneNumberMaxLengthByCountry[selectedCountryCodePicker] ??
+        15;
   }
-
-  static final Map<String, Map<String, int>> phoneNumberLengthByCountryCode = {
-    '+1': {'min': 10, 'max': 10}, // USA, Canada
-    '+44': {'min': 10, 'max': 10}, // UK
-    '+91': {'min': 10, 'max': 10}, // India
-    '+33': {'min': 9, 'max': 9}, // France
-    '+49': {'min': 10, 'max': 11}, // Germany
-    '+39': {'min': 9, 'max': 10}, // Italy
-    '+34': {'min': 9, 'max': 9}, // Spain
-    '+81': {'min': 10, 'max': 11}, // Japan
-    '+86': {'min': 11, 'max': 11}, // China
-    '+61': {'min': 9, 'max': 9}, // Australia
-    '+55': {'min': 10, 'max': 11}, // Brazil
-    '+52': {'min': 10, 'max': 10}, // Mexico
-    '+7': {'min': 10, 'max': 10}, // Russia, Kazakhstan
-    '+27': {'min': 9, 'max': 9}, // South Africa
-    '+82': {'min': 9, 'max': 10}, // South Korea
-    '+90': {'min': 10, 'max': 10}, // Turkey
-    '+234': {'min': 10, 'max': 10}, // Nigeria
-    '+20': {'min': 10, 'max': 10}, // Egypt
-    '+92': {'min': 10, 'max': 10}, // Pakistan
-    '+880': {'min': 10, 'max': 10}, // Bangladesh
-    '+62': {'min': 9, 'max': 12}, // Indonesia
-    '+63': {'min': 10, 'max': 10}, // Philippines
-    '+84': {'min': 9, 'max': 10}, // Vietnam
-    '+66': {'min': 9, 'max': 9}, // Thailand
-    // Add more if needed
-  };
 
   String? checkSignupPhoneValidator(String? value) {
     if (value == null || value.isEmpty) {
@@ -1997,13 +1426,11 @@ class _SignUpScreenState extends State<SignUpScreen>
 
     String digitsOnly = value.trim().replaceAll(RegExp(r'\D+'), '');
 
-    // Default fallback
     int minLength = 7;
     int maxLength = 15;
 
-    // Try to get country-specific length
     final countryData =
-        phoneNumberLengthByCountryCode[selectedCountryCodePicker];
+        AuthConstants.phoneNumberLengthByCountryCode[selectedCountryCodePicker];
     if (countryData != null) {
       minLength = countryData['min']!;
       maxLength = countryData['max']!;
@@ -2087,14 +1514,4 @@ class _SignUpScreenState extends State<SignUpScreen>
 
     _signUpBloc.add(SignUpSubmitted(data: params));
   }
-}
-
-class AvatarsData {
-  AvatarsData.fromJson(json) {
-    id = json["_id"] ?? "";
-    avatar = json["avatar"] ?? "";
-  }
-  String id = "";
-  String avatar = "";
-  bool selected = false;
 }

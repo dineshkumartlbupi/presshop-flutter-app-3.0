@@ -453,8 +453,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     child: BlocBuilder<AuthBloc, AuthState>(
                       builder: (context, state) {
                         if (state is AuthLoading) {
-                          return const Center(
-                              child: CircularProgressIndicator());
+                          return SizedBox.shrink();
                         }
                         return commonElevatedButton(
                             AppStrings.submitText,

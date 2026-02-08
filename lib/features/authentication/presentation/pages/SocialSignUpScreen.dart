@@ -2,12 +2,13 @@ import 'dart:async';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+
 // import 'package:image_picker/image_picker.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
+import 'package:presshop/features/authentication/constants/auth_constants.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
@@ -19,6 +20,7 @@ import 'package:presshop/features/authentication/presentation/bloc/signup_event.
 import 'package:presshop/features/authentication/presentation/bloc/signup_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/authentication/domain/entities/user.dart';
+import 'package:presshop/core/widgets/common/avatar_bottom_sheet.dart';
 
 // ignore: must_be_immutable
 class SocialSignUp extends StatefulWidget {
@@ -93,7 +95,7 @@ class _SocialSignUpState extends State<SocialSignUp>
       isSelectCheck = true;
   bool validUserName = false;
 
-  List<AvatarsData> avatarList = [];
+  List<AvatarData> avatarList = [];
 
   // final bool _isLoggedIn = false;
   String socialEmail = "";
@@ -150,8 +152,9 @@ class _SocialSignUpState extends State<SocialSignUp>
             if (state.avatars.isNotEmpty) {}
             avatarList = state.avatars
                 .map((e) =>
-                    AvatarsData.fromJson({'_id': e.id, 'avatar': e.avatar}))
+                    AvatarData.fromJson({'_id': e.id, 'avatar': e.avatar}))
                 .toList();
+
             _avatarsNotifier.value = !_avatarsNotifier.value;
           } else if (state is UserNameCheckResult) {
             userNameAlreadyExists = !state.isAvailable;
@@ -414,8 +417,10 @@ class _SocialSignUpState extends State<SocialSignUp>
                                 textInputFormatters: [
                                   FilteringTextInputFormatter.allow(
                                       RegExp("[0-9]")),
-                                  LengthLimitingTextInputFormatter(
-                                      _getMaxPhoneLength()),
+                                  LengthLimitingTextInputFormatter(AuthConstants
+                                              .phoneNumberMaxLengthByCountry[
+                                          selectedCountryCodePicker] ??
+                                      15),
                                 ],
                                 prefixIcon: InkWell(
                                   onTap: () {
@@ -531,9 +536,8 @@ class _SocialSignUpState extends State<SocialSignUp>
                                       .requestFocus(FocusNode());
                                   rememberMe = false;
 
-                                  context
-                                      .pushNamed(AppRoutes.termCheckName)
-                                      .then((value) {
+                                  context.pushNamed(AppRoutes.termCheckName,
+                                      extra: {'type': "legal"}).then((value) {
                                     if (value != null && value is bool) {
                                       debugPrint("value::::$value");
                                       termConditionsChecked = value;
@@ -821,134 +825,18 @@ class _SocialSignUpState extends State<SocialSignUp>
   }
 
   void avatarBottomSheet(Size size) {
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) {
-          return ValueListenableBuilder<bool>(
-              valueListenable: _avatarsNotifier,
-              builder: (context, value, child) {
-                return StatefulBuilder(builder: (context, avatarState) {
-                  return Container(
-                    height: size.height * 0.6,
-                    padding: EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: size.width * AppDimensions.numD04),
-                          child: Row(
-                            children: [
-                              Text(
-                                AppStrings.chooseAvatarText,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * AppDimensions.numD05,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                              const Spacer(),
-                              IconButton(
-                                  splashRadius:
-                                      size.width * AppDimensions.numD06,
-                                  onPressed: () {
-                                    context.pop();
-                                  },
-                                  icon: Icon(
-                                    Icons.close,
-                                    color: Colors.black,
-                                    size: size.width * AppDimensions.numD06,
-                                  ))
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                            child: SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: avatarList.isEmpty
-                                ? const Center(
-                                    child: CircularProgressIndicator(
-                                      color: Colors.black,
-                                    ),
-                                  )
-                                : StaggeredGrid.count(
-                                    crossAxisCount: 6,
-                                    mainAxisSpacing: 3.0,
-                                    crossAxisSpacing: 4.0,
-                                    axisDirection: AxisDirection.down,
-                                    children: avatarList.map<Widget>((item) {
-                                      return InkWell(
-                                        onTap: () {
-                                          int pos = avatarList.indexWhere(
-                                              (element) => element.selected);
-
-                                          if (pos >= 0) {
-                                            avatarList[pos].selected = false;
-                                          }
-                                          selectedAvatar = item.avatar;
-                                          selectedAvatarId = item.id;
-                                          item.selected = true;
-                                          showAvatarError = false;
-                                          avatarState(() {});
-                                          setState(() {});
-                                          context.pop();
-                                        },
-                                        child: Stack(
-                                          children: [
-                                            Image.network(
-                                              item.avatar,
-                                              errorBuilder: (context, exception,
-                                                  stackTrace) {
-                                                return Image.asset(
-                                                  "${commonImagePath}rabbitLogo.png",
-                                                  fit: BoxFit.contain,
-                                                  width: size.width *
-                                                      AppDimensions.numD20,
-                                                  height: size.width *
-                                                      AppDimensions.numD20,
-                                                );
-                                              },
-                                              loadingBuilder: (context, child,
-                                                  loadingProgress) {
-                                                if (loadingProgress == null) {
-                                                  return child;
-                                                }
-                                                return SizedBox(
-                                                  width: 20,
-                                                  height: 20,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    color: Colors.black,
-                                                    strokeWidth: 2,
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                            if (item.selected)
-                                              Align(
-                                                alignment: Alignment.topRight,
-                                                child: Icon(
-                                                  Icons.check,
-                                                  color: Colors.black,
-                                                  size: size.width *
-                                                      AppDimensions.numD06,
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                          ),
-                        ))
-                      ],
-                    ),
-                  );
-                });
-              });
-        });
+    AvatarBottomSheet.show(
+      context: context,
+      size: size,
+      avatarList: avatarList,
+      onAvatarSelected: (avatar) {
+        selectedAvatar = avatar.avatar;
+        selectedAvatarId = avatar.id;
+        showAvatarError = false;
+        setState(() {});
+      },
+      notifier: _avatarsNotifier,
+    );
   }
 
   // String? checkSignupPhoneValidator(String? value) {
@@ -975,7 +863,7 @@ class _SocialSignUpState extends State<SocialSignUp>
 
     // Try to get country-specific length
     final countryData =
-        phoneNumberLengthByCountryCode[selectedCountryCodePicker];
+        AuthConstants.phoneNumberLengthByCountryCode[selectedCountryCodePicker];
     if (countryData != null) {
       minLength = countryData['min']!;
       maxLength = countryData['max']!;
@@ -1020,68 +908,6 @@ class _SocialSignUpState extends State<SocialSignUp>
   void getAvatarsApi() {
     context.read<SignUpBloc>().add(FetchAvatarsEvent());
   }
-
-  // Add this map at the top of your state class
-  static final Map<String, int> phoneNumberMaxLengthByCountry = {
-    // Format: '+CountryCode': maxDigits
-    '+1': 10, // USA, Canada
-    '+44': 10, // UK
-    '+91': 10, // India
-    '+33': 9, // France
-    '+49': 11, // Germany
-    '+39': 10, // Italy
-    '+34': 9, // Spain
-    '+81': 11, // Japan
-    '+86': 11, // China
-    '+61': 9, // Australia
-    '+55': 11, // Brazil
-    '+52': 10, // Mexico
-    '+7': 10, // Russia
-    '+27': 9, // South Africa
-    '+82': 10, // South Korea
-    '+90': 10, // Turkey
-    '+234': 10, // Nigeria
-    '+20': 10, // Egypt
-    '+92': 10, // Pakistan
-    '+880': 10, // Bangladesh
-    '+62': 12, // Indonesia
-    '+63': 10, // Philippines
-    '+84': 10, // Vietnam
-    '+66': 9, // Thailand
-    // Add more countries as needed
-  };
-
-  int _getMaxPhoneLength() {
-    return phoneNumberMaxLengthByCountry[selectedCountryCodePicker] ?? 15;
-  }
-
-  static final Map<String, Map<String, int>> phoneNumberLengthByCountryCode = {
-    '+1': {'min': 10, 'max': 10}, // USA, Canada
-    '+44': {'min': 10, 'max': 10}, // UK
-    '+91': {'min': 10, 'max': 10}, // India
-    '+33': {'min': 9, 'max': 9}, // France
-    '+49': {'min': 10, 'max': 11}, // Germany
-    '+39': {'min': 9, 'max': 10}, // Italy
-    '+34': {'min': 9, 'max': 9}, // Spain
-    '+81': {'min': 10, 'max': 11}, // Japan
-    '+86': {'min': 11, 'max': 11}, // China
-    '+61': {'min': 9, 'max': 9}, // Australia
-    '+55': {'min': 10, 'max': 11}, // Brazil
-    '+52': {'min': 10, 'max': 10}, // Mexico
-    '+7': {'min': 10, 'max': 10}, // Russia, Kazakhstan
-    '+27': {'min': 9, 'max': 9}, // South Africa
-    '+82': {'min': 9, 'max': 10}, // South Korea
-    '+90': {'min': 10, 'max': 10}, // Turkey
-    '+234': {'min': 10, 'max': 10}, // Nigeria
-    '+20': {'min': 10, 'max': 10}, // Egypt
-    '+92': {'min': 10, 'max': 10}, // Pakistan
-    '+880': {'min': 10, 'max': 10}, // Bangladesh
-    '+62': {'min': 9, 'max': 12}, // Indonesia
-    '+63': {'min': 10, 'max': 10}, // Philippines
-    '+84': {'min': 9, 'max': 10}, // Vietnam
-    '+66': {'min': 9, 'max': 9}, // Thailand
-    // Add more if needed
-  };
 
   void _handleLoginSuccess(User user) {
     if (user.token != null) {
@@ -1157,14 +983,4 @@ class _SocialSignUpState extends State<SocialSignUp>
   @override
   // TODO: implement pageName
   String get pageName => throw UnimplementedError();
-}
-
-class AvatarsData {
-  AvatarsData.fromJson(json) {
-    id = json["_id"] ?? "";
-    avatar = json["avatar"] ?? "";
-  }
-  String id = "";
-  String avatar = "";
-  bool selected = false;
 }

@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -277,18 +276,16 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                             width: size.width *
                                                 AppDimensions.numD70,
                                             fit: BoxFit.cover,
-                                            fadeInDuration: Duration.zero,
-                                            fadeOutDuration: Duration.zero,
                                             placeholder: (context, url) =>
-                                                Shimmer.fromColors(
-                                              baseColor: Colors.grey[300]!,
-                                              highlightColor: Colors.grey[100]!,
-                                              child: Container(
-                                                height: size.width *
-                                                    AppDimensions.numD60,
-                                                width: size.width *
-                                                    AppDimensions.numD70,
-                                                color: Colors.white,
+                                                Container(
+                                              height: size.width *
+                                                  AppDimensions.numD60,
+                                              width: size.width *
+                                                  AppDimensions.numD70,
+                                              alignment: Alignment.center,
+                                              child:
+                                                  const CircularProgressIndicator(
+                                                strokeWidth: 2,
                                               ),
                                             ),
                                             errorWidget:
