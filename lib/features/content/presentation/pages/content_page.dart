@@ -332,8 +332,7 @@ class _MyContentViewState extends State<MyContentView>
                       itemBuilder: (context, index) {
                         final item = currentList[index];
                         return ContentItemWidget(
-                          key: ValueKey(
-                              item.id), // Add key for better widget recycling
+                          key: ValueKey(item.id),
                           item: item,
                           size: size,
                           onTap: () => _onItemTap(item),
