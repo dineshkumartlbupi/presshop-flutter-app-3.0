@@ -6,7 +6,6 @@ import 'package:presshop/features/menu/domain/services/menu_service.dart';
 import 'package:presshop/main.dart';
 
 class MenuServiceImpl implements MenuService {
-
   MenuServiceImpl({required this.googleSignIn});
   final GoogleSignIn googleSignIn;
 

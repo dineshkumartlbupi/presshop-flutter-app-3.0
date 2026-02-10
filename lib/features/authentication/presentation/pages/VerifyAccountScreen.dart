@@ -112,56 +112,58 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
           }
         },
         builder: (context, state) {
-          return Scaffold(
-            appBar: CommonAppBar(
-              elevation: 0,
-              hideLeading: false,
-              title: Text(
-                "",
-                style: commonBigTitleTextStyle(size, Colors.black),
-              ),
-              centerTitle: false,
-              titleSpacing: 0,
-              size: size,
-              showActions: false,
-              leadingFxn: () {
-                context.pop();
-              },
-              actionWidget: null,
-            ),
-            bottomNavigationBar: Container(
-              margin: EdgeInsets.symmetric(
-                  horizontal: size.width * AppDimensions.numD04,
-                  vertical: size.width * AppDimensions.numD08),
-              width: size.width,
-              height: size.width * AppDimensions.numD13,
-              child: commonElevatedButton(
-                  AppStrings.nextText,
-                  size,
-                  commonTextStyle(
-                      size: size,
-                      fontSize: size.width * AppDimensions.numD035,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700),
-                  commonButtonStyle(size, AppColorTheme.colorThemePink), () {
-                // Submit OTP
-                final otp = _otpPinFieldMobileController
-                        .currentState?.controller.text ??
-                    "";
-                if (otp.length < 4) {
-                  showSnackBar("Error", "Please enter valid OTP", Colors.red);
-                  return;
-                }
-                context.read<VerificationBloc>().add(VerifyOtpSubmitted(
-                      phone: widget.countryCode + widget.mobileNumberValue,
-                      email: widget.emailAddressValue,
-                      otp: otp,
-                    ));
-              }),
-            ),
-            body: Stack(
-              children: [
-                SafeArea(
+          return Stack(
+            children: [
+              Scaffold(
+                appBar: CommonAppBar(
+                  elevation: 0,
+                  hideLeading: false,
+                  title: Text(
+                    "",
+                    style: commonBigTitleTextStyle(size, Colors.black),
+                  ),
+                  centerTitle: false,
+                  titleSpacing: 0,
+                  size: size,
+                  showActions: false,
+                  leadingFxn: () {
+                    context.pop();
+                  },
+                  actionWidget: null,
+                ),
+                bottomNavigationBar: Container(
+                  margin: EdgeInsets.symmetric(
+                      horizontal: size.width * AppDimensions.numD04,
+                      vertical: size.width * AppDimensions.numD08),
+                  width: size.width,
+                  height: size.width * AppDimensions.numD13,
+                  child: commonElevatedButton(
+                      AppStrings.nextText,
+                      size,
+                      commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD035,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700),
+                      commonButtonStyle(size, AppColorTheme.colorThemePink),
+                      () {
+                    // Submit OTP
+                    final otp = _otpPinFieldMobileController
+                            .currentState?.controller.text ??
+                        "";
+                    if (otp.length < 4) {
+                      showSnackBar(
+                          "Error", "Please enter valid OTP", Colors.red);
+                      return;
+                    }
+                    context.read<VerificationBloc>().add(VerifyOtpSubmitted(
+                          phone: widget.countryCode + widget.mobileNumberValue,
+                          email: widget.emailAddressValue,
+                          otp: otp,
+                        ));
+                  }),
+                ),
+                body: SafeArea(
                   child: Form(
                     child: ListView(
                       padding: EdgeInsets.symmetric(
@@ -301,17 +303,15 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                     ),
                   ),
                 ),
-                // if (state is VerificationLoading)
-                //   Positioned.fill(
-                //     child: Container(
-                //       color: Colors.black26,
-                //       child: const Center(
-                //         child: CircularProgressIndicator(),
-                //       ),
-                //     ),
-                //   ),
-              ],
-            ),
+              ),
+              if (state is VerificationLoading)
+                Positioned.fill(
+                  child: Container(
+                    color: Colors.black26,
+                    child: Center(child: showAnimatedLoader(size)),
+                  ),
+                ),
+            ],
           );
         },
       ),

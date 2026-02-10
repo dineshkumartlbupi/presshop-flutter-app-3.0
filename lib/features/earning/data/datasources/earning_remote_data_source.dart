@@ -51,7 +51,17 @@ class EarningRemoteDataSourceImpl implements EarningRemoteDataSource {
         queryParameters: params,
       );
 
-      final List<dynamic> dataList = response.data;
+      final dynamic responseData = response.data;
+      final List<dynamic> dataList;
+
+      if (responseData is Map) {
+        dataList = (responseData['data'] as List?) ?? [];
+      } else if (responseData is List) {
+        dataList = responseData;
+      } else {
+        dataList = [];
+      }
+
       return dataList.map((e) => CommissionData.fromJson(e)).toList();
     } catch (e) {
       throw ApiErrorHandler.handle(e);

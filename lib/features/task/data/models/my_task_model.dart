@@ -12,6 +12,7 @@ class PendingTask extends TaskPending {
           title: (json["title"] ?? "").toString(),
           body: (json["body"] ?? "").toString(),
           broadCastId: (json["broadCast_id"] ?? "").toString(),
+          isAvailableForAccept: json["is_available_for_accept"] ?? false,
           taskDetail: TaskDetailModel.fromJson(json["task"] ?? {}),
         );
 }

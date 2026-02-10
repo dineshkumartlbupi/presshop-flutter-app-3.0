@@ -264,252 +264,259 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
             }
           },
           builder: (context, state) {
-            return Scaffold(
-              appBar: CommonAppBar(
-                elevation: 0,
-                hideLeading: false,
-                title: const Text(""),
-                centerTitle: false,
-                titleSpacing: 0,
-                size: size,
-                showActions: false,
-                actionWidget: null,
-                leadingFxn: () {
-                  context.pop();
-                },
-                leadingLeftSPace: size.width * AppDimensions.numD04,
-              ),
-              body: SafeArea(
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: size.width * AppDimensions.numD08),
-                    child: Form(
-                      key: formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            AppStrings.signUpText,
-                            style: commonBigTitleTextStyle(size, Colors.black),
-                          ),
-                          SizedBox(
-                            height: size.width * AppDimensions.numD01,
-                          ),
-                          Text(
-                            AppStrings.signUpSubTitleText,
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: size.width * AppDimensions.numD035,
-                                fontFamily: 'AirbnbCereal'),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              right: size.width * AppDimensions.numD01,
-                              top: size.width * AppDimensions.numD04,
-                              bottom: size.width * AppDimensions.numD04,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD04,
+            return Stack(
+              children: [
+                Scaffold(
+                  appBar: CommonAppBar(
+                    elevation: 0,
+                    hideLeading: false,
+                    title: const Text(""),
+                    centerTitle: false,
+                    titleSpacing: 0,
+                    size: size,
+                    showActions: false,
+                    actionWidget: null,
+                    leadingFxn: () {
+                      context.pop();
+                    },
+                    leadingLeftSPace: size.width * AppDimensions.numD04,
+                  ),
+                  body: SafeArea(
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * AppDimensions.numD08),
+                        child: Form(
+                          key: formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                AppStrings.signUpText,
+                                style:
+                                    commonBigTitleTextStyle(size, Colors.black),
+                              ),
+                              SizedBox(
+                                height: size.width * AppDimensions.numD01,
+                              ),
+                              Text(
+                                AppStrings.signUpSubTitleText,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
+                                    fontFamily: 'AirbnbCereal'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  right: size.width * AppDimensions.numD01,
+                                  top: size.width * AppDimensions.numD04,
+                                  bottom: size.width * AppDimensions.numD04,
                                 ),
-                                AvatarSelectionBox(
-                                  size: size,
-                                  selectedAvatar: selectedAvatar,
-                                  onTap: () => avatarBottomSheet(size),
-                                  onClear: () {
-                                    selectedAvatar = "";
-                                    selectedAvatarId = "";
-                                    showAvatarError = true;
-                                    for (var element in avatarList) {
-                                      element.selected = false;
-                                    }
-                                    setState(() {});
-                                  },
-                                ),
-                                selectedAvatar.isEmpty
-                                    ? Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: size.width *
-                                                  AppDimensions.numD01),
-                                          child: Text(
-                                            AppStrings.requiredText,
-                                            style: commonTextStyle(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD04,
+                                    ),
+                                    AvatarSelectionBox(
+                                      size: size,
+                                      selectedAvatar: selectedAvatar,
+                                      onTap: () => avatarBottomSheet(size),
+                                      onClear: () {
+                                        selectedAvatar = "";
+                                        selectedAvatarId = "";
+                                        showAvatarError = true;
+                                        for (var element in avatarList) {
+                                          element.selected = false;
+                                        }
+                                        setState(() {});
+                                      },
+                                    ),
+                                    selectedAvatar.isEmpty
+                                        ? Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: size.width *
+                                                      AppDimensions.numD01),
+                                              child: Text(
+                                                AppStrings.requiredText,
+                                                style: commonTextStyle(
+                                                    size: size,
+                                                    fontSize: size.width *
+                                                        AppDimensions.numD03,
+                                                    color: Colors.red.shade700,
+                                                    fontWeight:
+                                                        FontWeight.normal),
+                                              ),
+                                            ),
+                                          )
+                                        : Container(),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD02,
+                                    ),
+                                    Text(
+                                      AppStrings.chooseAvatarNoteText,
+                                      style: TextStyle(
+                                        color: AppColorTheme.colorHint,
+                                        fontSize:
+                                            size.width * AppDimensions.numD025,
+                                      ),
+                                      textAlign: TextAlign.justify,
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD06,
+                                    ),
+                                    CommonTextField(
+                                      controller: firstNameController,
+                                      size: size,
+                                      borderColor:
+                                          AppColorTheme.colorTextFieldBorder,
+                                      maxLines: 1,
+                                      enableValidations: true,
+                                      hintText: AppStrings.firstNameHintText,
+                                      textInputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp("[a-z A-Z]"))
+                                      ],
+                                      prefixIcon: const Icon(
+                                          Icons.person_outline_sharp),
+                                      prefixIconHeight:
+                                          size.width * AppDimensions.numD06,
+                                      suffixIconIconHeight: 0,
+                                      suffixIcon: null,
+                                      hidePassword: false,
+                                      keyboardType: TextInputType.text,
+                                      validator: checkRequiredValidator,
+                                      filled: false,
+                                      filledColor: Colors.transparent,
+                                      autofocus: false,
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD06,
+                                    ),
+                                    CommonTextField(
+                                      size: size,
+                                      maxLines: 1,
+                                      borderColor:
+                                          AppColorTheme.colorTextFieldBorder,
+                                      controller: lastNameController,
+                                      hintText: AppStrings.lastNameHintText,
+                                      textInputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp("[a-z A-Z]"))
+                                      ],
+                                      prefixIcon: const Icon(
+                                          Icons.person_outline_sharp),
+                                      prefixIconHeight:
+                                          size.width * AppDimensions.numD06,
+                                      suffixIconIconHeight: 0,
+                                      suffixIcon: null,
+                                      // Capitalize first letter
+                                      hidePassword: false,
+                                      keyboardType: TextInputType.name,
+                                      validator: checkRequiredValidator,
+                                      enableValidations: true,
+                                      filled: false,
+                                      filledColor: Colors.transparent,
+                                      autofocus: false,
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD06,
+                                    ),
+                                    CommonTextField(
+                                      size: size,
+                                      maxLines: 1,
+                                      borderColor:
+                                          AppColorTheme.colorTextFieldBorder,
+                                      controller: userNameController,
+                                      hintText: AppStrings.userNameHintText,
+                                      errorMaxLines: 2,
+                                      textInputFormatters: [
+                                        FilteringTextInputFormatter.deny(
+                                            RegExp(r'[ \\]')),
+                                      ],
+                                      suffixIcon: getUsernameSuffixIcon(),
+                                      prefixIcon: const Icon(
+                                          Icons.person_outline_sharp),
+                                      prefixIconHeight:
+                                          size.width * AppDimensions.numD06,
+                                      suffixIconIconHeight:
+                                          size.width * AppDimensions.numD085,
+                                      hidePassword: false,
+                                      keyboardType: TextInputType.text,
+                                      enableValidations: true,
+                                      validator: userNameValidator,
+                                      filled: false,
+                                      filledColor: Colors.transparent,
+                                      autofocus: false,
+                                      onChanged: _onUserNameChanged,
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD01,
+                                    ),
+                                    Text(
+                                      AppStrings.userNameNoteText,
+                                      style: TextStyle(
+                                          color: AppColorTheme.colorHint,
+                                          fontSize: size.width *
+                                              AppDimensions.numD025),
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD04,
+                                    ),
+                                    CommonTextField(
+                                      size: size,
+                                      maxLines: 1,
+                                      borderColor:
+                                          AppColorTheme.colorTextFieldBorder,
+                                      controller: phoneController,
+                                      hintText: AppStrings.phoneHintText,
+                                      textInputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp("[0-9]")),
+                                        LengthLimitingTextInputFormatter(
+                                            _getMaxPhoneLength()),
+                                      ],
+                                      prefixIcon: InkWell(
+                                        onTap: () {
+                                          openCountryCodePicker();
+                                        },
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Icon(Icons.call_outlined),
+                                            SizedBox(
+                                                width: size.width *
+                                                    AppDimensions.numD01),
+                                            Text(
+                                              selectedCountryCodePicker,
+                                              style: commonTextStyle(
                                                 size: size,
                                                 fontSize: size.width *
-                                                    AppDimensions.numD03,
-                                                color: Colors.red.shade700,
-                                                fontWeight: FontWeight.normal),
-                                          ),
+                                                    AppDimensions.numD035,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                            Icon(
+                                              Icons.keyboard_arrow_down_rounded,
+                                              size: size.width *
+                                                  AppDimensions.numD07,
+                                            )
+                                          ],
                                         ),
-                                      )
-                                    : Container(),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD02,
-                                ),
-                                Text(
-                                  AppStrings.chooseAvatarNoteText,
-                                  style: TextStyle(
-                                    color: AppColorTheme.colorHint,
-                                    fontSize:
-                                        size.width * AppDimensions.numD025,
-                                  ),
-                                  textAlign: TextAlign.justify,
-                                ),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD06,
-                                ),
-                                CommonTextField(
-                                  controller: firstNameController,
-                                  size: size,
-                                  borderColor:
-                                      AppColorTheme.colorTextFieldBorder,
-                                  maxLines: 1,
-                                  enableValidations: true,
-                                  hintText: AppStrings.firstNameHintText,
-                                  textInputFormatters: [
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp("[a-z A-Z]"))
-                                  ],
-                                  prefixIcon:
-                                      const Icon(Icons.person_outline_sharp),
-                                  prefixIconHeight:
-                                      size.width * AppDimensions.numD06,
-                                  suffixIconIconHeight: 0,
-                                  suffixIcon: null,
-                                  hidePassword: false,
-                                  keyboardType: TextInputType.text,
-                                  validator: checkRequiredValidator,
-                                  filled: false,
-                                  filledColor: Colors.transparent,
-                                  autofocus: false,
-                                ),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD06,
-                                ),
-                                CommonTextField(
-                                  size: size,
-                                  maxLines: 1,
-                                  borderColor:
-                                      AppColorTheme.colorTextFieldBorder,
-                                  controller: lastNameController,
-                                  hintText: AppStrings.lastNameHintText,
-                                  textInputFormatters: [
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp("[a-z A-Z]"))
-                                  ],
-                                  prefixIcon:
-                                      const Icon(Icons.person_outline_sharp),
-                                  prefixIconHeight:
-                                      size.width * AppDimensions.numD06,
-                                  suffixIconIconHeight: 0,
-                                  suffixIcon: null,
-                                  // Capitalize first letter
-                                  hidePassword: false,
-                                  keyboardType: TextInputType.name,
-                                  validator: checkRequiredValidator,
-                                  enableValidations: true,
-                                  filled: false,
-                                  filledColor: Colors.transparent,
-                                  autofocus: false,
-                                ),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD06,
-                                ),
-                                CommonTextField(
-                                  size: size,
-                                  maxLines: 1,
-                                  borderColor:
-                                      AppColorTheme.colorTextFieldBorder,
-                                  controller: userNameController,
-                                  hintText: AppStrings.userNameHintText,
-                                  errorMaxLines: 2,
-                                  textInputFormatters: [
-                                    FilteringTextInputFormatter.deny(
-                                        RegExp(r'[ \\]')),
-                                  ],
-                                  suffixIcon: getUsernameSuffixIcon(),
-                                  prefixIcon:
-                                      const Icon(Icons.person_outline_sharp),
-                                  prefixIconHeight:
-                                      size.width * AppDimensions.numD06,
-                                  suffixIconIconHeight:
-                                      size.width * AppDimensions.numD085,
-                                  hidePassword: false,
-                                  keyboardType: TextInputType.text,
-                                  enableValidations: true,
-                                  validator: userNameValidator,
-                                  filled: false,
-                                  filledColor: Colors.transparent,
-                                  autofocus: false,
-                                  onChanged: _onUserNameChanged,
-                                ),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD01,
-                                ),
-                                Text(
-                                  AppStrings.userNameNoteText,
-                                  style: TextStyle(
-                                      color: AppColorTheme.colorHint,
-                                      fontSize:
-                                          size.width * AppDimensions.numD025),
-                                ),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD04,
-                                ),
-                                CommonTextField(
-                                  size: size,
-                                  maxLines: 1,
-                                  borderColor:
-                                      AppColorTheme.colorTextFieldBorder,
-                                  controller: phoneController,
-                                  hintText: AppStrings.phoneHintText,
-                                  textInputFormatters: [
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp("[0-9]")),
-                                    LengthLimitingTextInputFormatter(
-                                        _getMaxPhoneLength()),
-                                  ],
-                                  prefixIcon: InkWell(
-                                    onTap: () {
-                                      openCountryCodePicker();
-                                    },
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(Icons.call_outlined),
-                                        SizedBox(
-                                            width: size.width *
-                                                AppDimensions.numD01),
-                                        Text(
-                                          selectedCountryCodePicker,
-                                          style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width *
-                                                AppDimensions.numD035,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.normal,
-                                          ),
-                                        ),
-                                        Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          size:
-                                              size.width * AppDimensions.numD07,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  prefixIconHeight:
-                                      size.width * AppDimensions.numD06,
-                                  suffixIconIconHeight:
-                                      size.width * AppDimensions.numD085,
-                                  suffixIcon:
-                                      phoneController.text.trim().length >= 7
+                                      ),
+                                      prefixIconHeight:
+                                          size.width * AppDimensions.numD06,
+                                      suffixIconIconHeight:
+                                          size.width * AppDimensions.numD085,
+                                      suffixIcon: phoneController.text
+                                                  .trim()
+                                                  .length >=
+                                              7
                                           ? phoneAlreadyExists
                                               ? const Icon(
                                                   Icons.highlight_remove,
@@ -517,463 +524,497 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                               : const Icon(Icons.check_circle,
                                                   color: Colors.green)
                                           : null,
-                                  hidePassword: false,
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                    decimal: false,
-                                    signed: true,
-                                  ),
-                                  validator: checkSignupPhoneValidator,
-                                  enableValidations: true,
-                                  filled: false,
-                                  filledColor: Colors.transparent,
-                                  autofocus: false,
+                                      hidePassword: false,
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                        decimal: false,
+                                        signed: true,
+                                      ),
+                                      validator: checkSignupPhoneValidator,
+                                      enableValidations: true,
+                                      filled: false,
+                                      filledColor: Colors.transparent,
+                                      autofocus: false,
 
-                                  ///  DEBOUNCED HERE
-                                  onChanged: (val) {
-                                    _onPhoneChanged(val);
-                                    return null;
-                                  },
-                                ),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD06,
-                                ),
-                                CommonTextField(
-                                  size: size,
-                                  maxLines: 1,
-                                  borderColor:
-                                      AppColorTheme.colorTextFieldBorder,
-                                  controller: emailController,
-                                  hintText: AppStrings.emailHintText,
-                                  textInputFormatters: null,
-                                  prefixIcon: const Icon(Icons.email_outlined),
-                                  prefixIconHeight:
-                                      size.width * AppDimensions.numD06,
-                                  suffixIconIconHeight: 0,
-                                  suffixIcon: null,
-                                  hidePassword: false,
-                                  keyboardType: TextInputType.emailAddress,
-                                  validator: checkSignupEmailValidator,
-                                  enableValidations: true,
-                                  filled: false,
-                                  filledColor: Colors.transparent,
-                                  autofocus: false,
-                                  onChanged: (val) {
-                                    if (val == null || val.trim().isEmpty) {
-                                      emailAlreadyExists = false;
-                                      setState(() {});
-                                      return null;
-                                    }
+                                      ///  DEBOUNCED HERE
+                                      onChanged: (val) {
+                                        _onPhoneChanged(val);
+                                        return null;
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD06,
+                                    ),
+                                    CommonTextField(
+                                      size: size,
+                                      maxLines: 1,
+                                      borderColor:
+                                          AppColorTheme.colorTextFieldBorder,
+                                      controller: emailController,
+                                      hintText: AppStrings.emailHintText,
+                                      textInputFormatters: null,
+                                      prefixIcon:
+                                          const Icon(Icons.email_outlined),
+                                      prefixIconHeight:
+                                          size.width * AppDimensions.numD06,
+                                      suffixIconIconHeight: 0,
+                                      suffixIcon: null,
+                                      hidePassword: false,
+                                      keyboardType: TextInputType.emailAddress,
+                                      validator: checkSignupEmailValidator,
+                                      enableValidations: true,
+                                      filled: false,
+                                      filledColor: Colors.transparent,
+                                      autofocus: false,
+                                      onChanged: (val) {
+                                        if (val == null || val.trim().isEmpty) {
+                                          emailAlreadyExists = false;
+                                          setState(() {});
+                                          return null;
+                                        }
 
-                                    // cancel previous timer
-                                    _emailDebounce?.cancel();
+                                        // cancel previous timer
+                                        _emailDebounce?.cancel();
 
-                                    _emailDebounce = Timer(
-                                        const Duration(milliseconds: 500), () {
-                                      final email = val.trim();
+                                        _emailDebounce = Timer(
+                                            const Duration(milliseconds: 500),
+                                            () {
+                                          final email = val.trim();
 
-                                      // call API only if email is valid
-                                      if (emailExpression.hasMatch(email)) {
-                                        checkEmailApi();
-                                      }
-                                    });
+                                          // call API only if email is valid
+                                          if (emailExpression.hasMatch(email)) {
+                                            checkEmailApi();
+                                          }
+                                        });
 
-                                    return null;
-                                  },
-                                ),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD06,
-                                ),
-                                CommonTextField(
-                                  size: size,
-                                  maxLines: 1,
-                                  borderColor:
-                                      AppColorTheme.colorTextFieldBorder,
-                                  controller: referralCodeController,
-                                  hintText: AppStrings.referralCodeHintText,
-                                  errorMaxLines: 2,
-                                  textInputFormatters: [
-                                    FilteringTextInputFormatter.deny(
-                                        RegExp(r'[ \\]')),
-                                  ],
-                                  suffixIcon: getReferralCodeSuffixIcon(),
-                                  prefixIcon:
-                                      const Icon(Icons.campaign_outlined),
-                                  prefixIconHeight:
-                                      size.width * AppDimensions.numD06,
-                                  suffixIconIconHeight:
-                                      size.width * AppDimensions.numD085,
-                                  hidePassword: false,
-                                  keyboardType: TextInputType.text,
-                                  enableValidations: false,
-                                  validator: null,
-                                  filled: false,
-                                  filledColor: Colors.transparent,
-                                  autofocus: false,
-                                  onChanged: (v) {
-                                    if (v!.trim().length >= 5) {
-                                      verifyReferredCode();
-                                    } else if (v.trim().isEmpty) {
-                                      isRefferalCodeValid = false;
-                                      setState(() {});
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD01,
-                                ),
-                                Text(
-                                  AppStrings.referralcodeNoteText,
-                                  style: TextStyle(
-                                      color: AppColorTheme.colorHint,
-                                      fontSize:
-                                          size.width * AppDimensions.numD025),
-                                ),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD04,
-                                ),
-                                !widget.socialLogin
-                                    ? CommonTextField(
-                                        size: size,
-                                        maxLines: 1,
-                                        borderColor:
-                                            AppColorTheme.colorTextFieldBorder,
-                                        controller: passwordController,
-                                        hintText: AppStrings.enterPasswordHint,
-                                        textInputFormatters: null,
-                                        prefixIcon:
-                                            const Icon(Icons.lock_outline),
-                                        prefixIconHeight:
-                                            size.width * AppDimensions.numD08,
-                                        suffixIconIconHeight:
-                                            size.width * AppDimensions.numD06,
-                                        suffixIcon: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            InkWell(
+                                        return null;
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD06,
+                                    ),
+                                    CommonTextField(
+                                      size: size,
+                                      maxLines: 1,
+                                      borderColor:
+                                          AppColorTheme.colorTextFieldBorder,
+                                      controller: referralCodeController,
+                                      hintText: AppStrings.referralCodeHintText,
+                                      errorMaxLines: 2,
+                                      textInputFormatters: [
+                                        FilteringTextInputFormatter.deny(
+                                            RegExp(r'[ \\]')),
+                                      ],
+                                      suffixIcon: getReferralCodeSuffixIcon(),
+                                      prefixIcon:
+                                          const Icon(Icons.campaign_outlined),
+                                      prefixIconHeight:
+                                          size.width * AppDimensions.numD06,
+                                      suffixIconIconHeight:
+                                          size.width * AppDimensions.numD085,
+                                      hidePassword: false,
+                                      keyboardType: TextInputType.text,
+                                      enableValidations: false,
+                                      validator: null,
+                                      filled: false,
+                                      filledColor: Colors.transparent,
+                                      autofocus: false,
+                                      onChanged: (v) {
+                                        if (v!.trim().length >= 5) {
+                                          verifyReferredCode();
+                                        } else if (v.trim().isEmpty) {
+                                          isRefferalCodeValid = false;
+                                          setState(() {});
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD01,
+                                    ),
+                                    Text(
+                                      AppStrings.referralcodeNoteText,
+                                      style: TextStyle(
+                                          color: AppColorTheme.colorHint,
+                                          fontSize: size.width *
+                                              AppDimensions.numD025),
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD04,
+                                    ),
+                                    !widget.socialLogin
+                                        ? CommonTextField(
+                                            size: size,
+                                            maxLines: 1,
+                                            borderColor: AppColorTheme
+                                                .colorTextFieldBorder,
+                                            controller: passwordController,
+                                            hintText:
+                                                AppStrings.enterPasswordHint,
+                                            textInputFormatters: null,
+                                            prefixIcon:
+                                                const Icon(Icons.lock_outline),
+                                            prefixIconHeight: size.width *
+                                                AppDimensions.numD08,
+                                            suffixIconIconHeight: size.width *
+                                                AppDimensions.numD06,
+                                            suffixIcon: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                InkWell(
+                                                  onTap: () {
+                                                    hidePassword =
+                                                        !hidePassword;
+                                                    setState(() {});
+                                                  },
+                                                  child: ImageIcon(
+                                                    !hidePassword
+                                                        ? const AssetImage(
+                                                            "${iconsPath}ic_show_eye.png",
+                                                          )
+                                                        : const AssetImage(
+                                                            "${iconsPath}ic_block_eye.png",
+                                                          ),
+                                                    color: !hidePassword
+                                                        ? AppColorTheme
+                                                            .colorTextFieldIcon
+                                                        : AppColorTheme
+                                                            .colorHint,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: passwordStrengthValue
+                                                              .isNotEmpty &&
+                                                          passwordStrengthValue ==
+                                                              AppStrings
+                                                                  .strongText
+                                                      ? size.width *
+                                                          AppDimensions.numD02
+                                                      : 0,
+                                                ),
+                                                passwordStrengthValue
+                                                            .isNotEmpty &&
+                                                        passwordStrengthValue ==
+                                                            AppStrings
+                                                                .strongText
+                                                    ? const ImageIcon(
+                                                        AssetImage(
+                                                          "${iconsPath}checked.png",
+                                                        ),
+                                                        color: Colors.green,
+                                                      )
+                                                    : Container(),
+                                              ],
+                                            ),
+                                            hidePassword: hidePassword,
+                                            keyboardType: TextInputType.text,
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.trim().isEmpty) {
+                                                return 'Required';
+                                              } else if (!showNumber) {
+                                                return '';
+                                              } else if (!showSpecialcase) {
+                                                return '';
+                                              } else if (!showLowercase) {
+                                                return '';
+                                              } else if (!showUppercase) {
+                                                return '';
+                                              } else if (!showMincase) {
+                                                return '';
+                                              }
+
+                                              return null; // Password is valid
+                                            },
+                                            enableValidations: true,
+                                            filled: false,
+                                            filledColor: Colors.transparent,
+                                            autofocus: false,
+                                          )
+                                        : const SizedBox.shrink(),
+                                    !widget.socialLogin
+                                        ? PasswordRequirementsList(
+                                            showLowercase: showLowercase,
+                                            showUppercase: showUppercase,
+                                            showNumber: showNumber,
+                                            showSpecial: showSpecialcase,
+                                            showMinLength: showMincase,
+                                            size: size,
+                                          )
+                                        : const SizedBox.shrink(),
+                                    SizedBox(
+                                      height: !widget.socialLogin
+                                          ? passwordStrengthValue.isNotEmpty
+                                              ? size.width *
+                                                  AppDimensions.numD02
+                                              : 0
+                                          : 0,
+                                    ),
+                                    passwordStrengthValue.trim().isNotEmpty &&
+                                            !widget.socialLogin
+                                        ? Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                AppStrings.passwordStrengthText,
+                                                style: TextStyle(
+                                                    color:
+                                                        AppColorTheme.colorHint,
+                                                    fontSize: size.width *
+                                                        AppDimensions.numD03),
+                                              ),
+                                              Text(
+                                                passwordStrengthValue,
+                                                style: TextStyle(
+                                                    color: AppColorTheme
+                                                        .colorThemePink,
+                                                    fontSize: size.width *
+                                                        AppDimensions.numD03),
+                                              ),
+                                            ],
+                                          )
+                                        : Container(),
+                                    SizedBox(
+                                      height: !widget.socialLogin
+                                          ? size.width * AppDimensions.numD04
+                                          : 0,
+                                    ),
+                                    !widget.socialLogin
+                                        ? CommonTextField(
+                                            size: size,
+                                            maxLines: 1,
+                                            borderColor: AppColorTheme
+                                                .colorTextFieldBorder,
+                                            controller:
+                                                confirmPasswordController,
+                                            hintText:
+                                                AppStrings.confirmPwdHintText,
+                                            textInputFormatters: null,
+                                            prefixIcon:
+                                                const Icon(Icons.lock_outline),
+                                            prefixIconHeight: size.width *
+                                                AppDimensions.numD08,
+                                            suffixIconIconHeight: size.width *
+                                                AppDimensions.numD08,
+                                            suffixIcon: InkWell(
                                               onTap: () {
-                                                hidePassword = !hidePassword;
+                                                hideConfirmPassword =
+                                                    !hideConfirmPassword;
                                                 setState(() {});
                                               },
                                               child: ImageIcon(
-                                                !hidePassword
+                                                !hideConfirmPassword
                                                     ? const AssetImage(
                                                         "${iconsPath}ic_show_eye.png",
                                                       )
                                                     : const AssetImage(
                                                         "${iconsPath}ic_block_eye.png",
                                                       ),
-                                                color: !hidePassword
+                                                color: !hideConfirmPassword
                                                     ? AppColorTheme
                                                         .colorTextFieldIcon
                                                     : AppColorTheme.colorHint,
                                               ),
                                             ),
-                                            SizedBox(
-                                              width: passwordStrengthValue
-                                                          .isNotEmpty &&
-                                                      passwordStrengthValue ==
-                                                          AppStrings.strongText
-                                                  ? size.width *
-                                                      AppDimensions.numD02
-                                                  : 0,
-                                            ),
-                                            passwordStrengthValue.isNotEmpty &&
-                                                    passwordStrengthValue ==
-                                                        AppStrings.strongText
-                                                ? const ImageIcon(
-                                                    AssetImage(
-                                                      "${iconsPath}checked.png",
-                                                    ),
-                                                    color: Colors.green,
-                                                  )
-                                                : Container(),
-                                          ],
-                                        ),
-                                        hidePassword: hidePassword,
-                                        keyboardType: TextInputType.text,
-                                        validator: (value) {
-                                          if (value == null ||
-                                              value.trim().isEmpty) {
-                                            return 'Required';
-                                          } else if (!showNumber) {
-                                            return '';
-                                          } else if (!showSpecialcase) {
-                                            return '';
-                                          } else if (!showLowercase) {
-                                            return '';
-                                          } else if (!showUppercase) {
-                                            return '';
-                                          } else if (!showMincase) {
-                                            return '';
-                                          }
-
-                                          return null; // Password is valid
-                                        },
-                                        enableValidations: true,
-                                        filled: false,
-                                        filledColor: Colors.transparent,
-                                        autofocus: false,
-                                      )
-                                    : const SizedBox.shrink(),
-                                !widget.socialLogin
-                                    ? PasswordRequirementsList(
-                                        showLowercase: showLowercase,
-                                        showUppercase: showUppercase,
-                                        showNumber: showNumber,
-                                        showSpecial: showSpecialcase,
-                                        showMinLength: showMincase,
-                                        size: size,
-                                      )
-                                    : const SizedBox.shrink(),
-                                SizedBox(
-                                  height: !widget.socialLogin
-                                      ? passwordStrengthValue.isNotEmpty
-                                          ? size.width * AppDimensions.numD02
-                                          : 0
-                                      : 0,
-                                ),
-                                passwordStrengthValue.trim().isNotEmpty &&
-                                        !widget.socialLogin
-                                    ? Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            AppStrings.passwordStrengthText,
-                                            style: TextStyle(
-                                                color: AppColorTheme.colorHint,
-                                                fontSize: size.width *
-                                                    AppDimensions.numD03),
-                                          ),
-                                          Text(
-                                            passwordStrengthValue,
-                                            style: TextStyle(
-                                                color: AppColorTheme
-                                                    .colorThemePink,
-                                                fontSize: size.width *
-                                                    AppDimensions.numD03),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                                SizedBox(
-                                  height: !widget.socialLogin
-                                      ? size.width * AppDimensions.numD04
-                                      : 0,
-                                ),
-                                !widget.socialLogin
-                                    ? CommonTextField(
-                                        size: size,
-                                        maxLines: 1,
-                                        borderColor:
-                                            AppColorTheme.colorTextFieldBorder,
-                                        controller: confirmPasswordController,
-                                        hintText: AppStrings.confirmPwdHintText,
-                                        textInputFormatters: null,
-                                        prefixIcon:
-                                            const Icon(Icons.lock_outline),
-                                        prefixIconHeight:
-                                            size.width * AppDimensions.numD08,
-                                        suffixIconIconHeight:
-                                            size.width * AppDimensions.numD08,
-                                        suffixIcon: InkWell(
-                                          onTap: () {
-                                            hideConfirmPassword =
-                                                !hideConfirmPassword;
-                                            setState(() {});
-                                          },
-                                          child: ImageIcon(
-                                            !hideConfirmPassword
-                                                ? const AssetImage(
-                                                    "${iconsPath}ic_show_eye.png",
-                                                  )
-                                                : const AssetImage(
-                                                    "${iconsPath}ic_block_eye.png",
-                                                  ),
-                                            color: !hideConfirmPassword
-                                                ? AppColorTheme
-                                                    .colorTextFieldIcon
-                                                : AppColorTheme.colorHint,
-                                          ),
-                                        ),
-                                        hidePassword: hideConfirmPassword,
-                                        keyboardType: TextInputType.text,
-                                        validator: (value) {
-                                          if (value!.isEmpty) {
-                                            return AppStrings.requiredText;
-                                          }
-                                          /*else if (value.length < 8) {
+                                            hidePassword: hideConfirmPassword,
+                                            keyboardType: TextInputType.text,
+                                            validator: (value) {
+                                              if (value!.isEmpty) {
+                                                return AppStrings.requiredText;
+                                              }
+                                              /*else if (value.length < 8) {
                                     return AppStrings.passwordErrorText;
                                   } */
-                                          else if (passwordController.text !=
-                                              value) {
-                                            return AppStrings
-                                                .confirmPasswordErrorText;
-                                          }
-                                          return null;
-                                        },
-                                        enableValidations: true,
-                                        filled: false,
-                                        filledColor: Colors.transparent,
-                                        autofocus: false,
-                                      )
-                                    : Container(),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD04,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    FocusScope.of(context)
-                                        .requestFocus(FocusNode());
-                                    rememberMe = false;
-
-                                    context.pushNamed(AppRoutes.termCheckName,
-                                        extra: {'type': "legal"}).then((value) {
-                                      if (value != null) {
-                                        debugPrint("value::::$value");
-                                        termConditionsChecked = value as bool;
-                                        setState(() {});
-                                        //  termConditionsChecked = !termConditionsChecked;
-                                      }
-                                    });
-                                  },
-                                  child: Row(
-                                    children: [
-                                      termConditionsChecked
-                                          ? Container(
-                                              margin: EdgeInsets.only(
-                                                  top: size.width *
-                                                      AppDimensions.numD008),
-                                              child: Image.asset(
-                                                "${iconsPath}ic_checkbox_filled.png",
-                                                height: size.width *
-                                                    AppDimensions.numD06,
-                                              ),
-                                            )
-                                          : Container(
-                                              margin: EdgeInsets.only(
-                                                  top: size.width *
-                                                      AppDimensions.numD008),
-                                              child: Image.asset(
-                                                  "${iconsPath}ic_checkbox_empty.png",
-                                                  height: size.width *
-                                                      AppDimensions.numD06),
-                                            ),
-                                      SizedBox(
-                                        width:
-                                            size.width * AppDimensions.numD02,
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          "Accept our T&Cs and Privacy Policy",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontFamily: "AirbnbCereal",
-                                              fontSize: size.width *
-                                                  AppDimensions.numD035),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD06,
-                                ),
-                                Container(
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal:
-                                          size.width * AppDimensions.numD04),
-                                  width: size.width,
-                                  height: size.width * AppDimensions.numD13,
-                                  child: commonElevatedButton(
-                                      AppStrings.nextText,
-                                      size,
-                                      commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width *
-                                              AppDimensions.numD035,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w700),
-                                      commonButtonStyle(
-                                          size, AppColorTheme.colorThemePink),
-                                      () {
-                                    if (formKey.currentState!.validate()) {
-                                      if (!isSelectCheck) {
-                                        showSnackBar(
-                                            "Error",
-                                            AppStrings.enableNotificationText,
-                                            Colors.red);
-                                      } else if (!termConditionsChecked) {
-                                        showSnackBar(
-                                            "Privacy Policy",
-                                            "Please accept our T&Cs and Privacy Policy",
-                                            Colors.red);
-                                      } else if (selectedAvatar.isEmpty) {
-                                        showSnackBar(
-                                            "Avatar",
-                                            "Please select an Avatar",
-                                            Colors.red);
-                                      } else {
-                                        sendOtpApi();
-                                      }
-                                    }
-                                    setState(() {});
-                                  }),
-                                ),
-                                !widget.socialLogin
-                                    ? Align(
-                                        alignment: Alignment.center,
-                                        child: TextButton(
-                                            onPressed: () {
-                                              context.pop();
+                                              else if (passwordController
+                                                      .text !=
+                                                  value) {
+                                                return AppStrings
+                                                    .confirmPasswordErrorText;
+                                              }
+                                              return null;
                                             },
-                                            child: RichText(
-                                              text: TextSpan(children: [
-                                                TextSpan(
-                                                    text: AppStrings
-                                                        .alreadyHaveAccountText,
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontFamily:
-                                                            "AirbnbCereal",
-                                                        fontSize: size.width *
-                                                            AppDimensions
-                                                                .numD035)),
-                                                WidgetSpan(
-                                                    alignment:
-                                                        PlaceholderAlignment
-                                                            .middle,
-                                                    child: SizedBox(
-                                                      width: size.width * 0.005,
-                                                    )),
-                                                TextSpan(
-                                                    text: AppStrings.signInText,
-                                                    style: TextStyle(
-                                                        color: AppColorTheme
-                                                            .colorThemePink,
-                                                        fontFamily:
-                                                            "AirbnbCereal",
-                                                        fontSize: size.width *
-                                                            AppDimensions
-                                                                .numD035,
-                                                        fontWeight:
-                                                            FontWeight.w700)),
-                                              ]),
-                                            )))
-                                    : Container(),
-                              ],
-                            ),
-                          )
-                        ],
+                                            enableValidations: true,
+                                            filled: false,
+                                            filledColor: Colors.transparent,
+                                            autofocus: false,
+                                          )
+                                        : Container(),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD04,
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        FocusScope.of(context)
+                                            .requestFocus(FocusNode());
+                                        rememberMe = false;
+
+                                        context.pushNamed(
+                                            AppRoutes.termCheckName,
+                                            extra: {
+                                              'type': "legal"
+                                            }).then((value) {
+                                          if (value != null) {
+                                            debugPrint("value::::$value");
+                                            termConditionsChecked =
+                                                value as bool;
+                                            setState(() {});
+                                            //  termConditionsChecked = !termConditionsChecked;
+                                          }
+                                        });
+                                      },
+                                      child: Row(
+                                        children: [
+                                          termConditionsChecked
+                                              ? Container(
+                                                  margin: EdgeInsets.only(
+                                                      top: size.width *
+                                                          AppDimensions
+                                                              .numD008),
+                                                  child: Image.asset(
+                                                    "${iconsPath}ic_checkbox_filled.png",
+                                                    height: size.width *
+                                                        AppDimensions.numD06,
+                                                  ),
+                                                )
+                                              : Container(
+                                                  margin: EdgeInsets.only(
+                                                      top: size.width *
+                                                          AppDimensions
+                                                              .numD008),
+                                                  child: Image.asset(
+                                                      "${iconsPath}ic_checkbox_empty.png",
+                                                      height: size.width *
+                                                          AppDimensions.numD06),
+                                                ),
+                                          SizedBox(
+                                            width: size.width *
+                                                AppDimensions.numD02,
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              "Accept our T&Cs and Privacy Policy",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontFamily: "AirbnbCereal",
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD035),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD06,
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: size.width *
+                                              AppDimensions.numD04),
+                                      width: size.width,
+                                      height: size.width * AppDimensions.numD13,
+                                      child: commonElevatedButton(
+                                          AppStrings.nextText,
+                                          size,
+                                          commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD035,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w700),
+                                          commonButtonStyle(size,
+                                              AppColorTheme.colorThemePink),
+                                          () {
+                                        if (formKey.currentState!.validate()) {
+                                          if (!isSelectCheck) {
+                                            showSnackBar(
+                                                "Error",
+                                                AppStrings
+                                                    .enableNotificationText,
+                                                Colors.red);
+                                          } else if (!termConditionsChecked) {
+                                            showSnackBar(
+                                                "Privacy Policy",
+                                                "Please accept our T&Cs and Privacy Policy",
+                                                Colors.red);
+                                          } else if (selectedAvatar.isEmpty) {
+                                            showSnackBar(
+                                                "Avatar",
+                                                "Please select an Avatar",
+                                                Colors.red);
+                                          } else {
+                                            sendOtpApi();
+                                          }
+                                        }
+                                        setState(() {});
+                                      }),
+                                    ),
+                                    !widget.socialLogin
+                                        ? Align(
+                                            alignment: Alignment.center,
+                                            child: TextButton(
+                                                onPressed: () {
+                                                  context.pop();
+                                                },
+                                                child: RichText(
+                                                  text: TextSpan(children: [
+                                                    TextSpan(
+                                                        text: AppStrings
+                                                            .alreadyHaveAccountText,
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontFamily:
+                                                                "AirbnbCereal",
+                                                            fontSize: size
+                                                                    .width *
+                                                                AppDimensions
+                                                                    .numD035)),
+                                                    WidgetSpan(
+                                                        alignment:
+                                                            PlaceholderAlignment
+                                                                .middle,
+                                                        child: SizedBox(
+                                                          width: size.width *
+                                                              0.005,
+                                                        )),
+                                                    TextSpan(
+                                                        text: AppStrings
+                                                            .signInText,
+                                                        style: TextStyle(
+                                                            color: AppColorTheme
+                                                                .colorThemePink,
+                                                            fontFamily:
+                                                                "AirbnbCereal",
+                                                            fontSize: size
+                                                                    .width *
+                                                                AppDimensions
+                                                                    .numD035,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w700)),
+                                                  ]),
+                                                )))
+                                        : Container(),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+                if (state is SignUpLoading)
+                  Positioned.fill(
+                    child: Container(
+                      color: Colors.black.withOpacity(0.5),
+                      child: showAnimatedLoader(size),
+                    ),
+                  ),
+              ],
             );
           },
         ));

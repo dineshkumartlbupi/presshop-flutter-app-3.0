@@ -44,25 +44,22 @@ class EarningRepositoryImpl implements EarningRepository {
       try {
         final remoteData = await remoteDataSource.getTransactions(params);
 
-        final dataList = remoteData['data'] as List? ?? [];
-        final totalEarning =
-            double.tryParse(remoteData['totalEarning']?.toString() ?? "")
-                    ?.toString() ??
-                "0.0";
+        final dataListResponse = remoteData['data'];
+        final List dataList;
 
+        if (dataListResponse is Map) {
+          dataList = (dataListResponse['data'] as List?) ?? [];
+        } else if (dataListResponse is List) {
+          dataList = dataListResponse;
+        } else {
+          dataList = [];
+        }
         final transactions = dataList.map((e) {
           final model = EarningTransactionDetail.fromJson(e);
 
           String uploadContent = "";
-          // Logic to find videoUrl if present, otherwise just empty or one of media items
-          // Model doesn't expose it directly but MyEarningScreen expects it.
-          // Using contentImage (watermark/thumbnail) as placeholder won't play video.
-          // But since I don't see 'uploadContent' in model, maybe it's dynamically populated in legacy
-          // or I assume model.contentDataList has it.
-          if (model.contentDataList.isNotEmpty) {
-            // checking dynamic property
-            // uploadContent = model.contentDataList.first['media'] ?? ""; // unsafe on typed list
-          }
+
+          if (model.contentDataList.isNotEmpty) {}
 
           return EarningTransaction(
             id: model.id,
@@ -92,6 +89,24 @@ class EarningRepositoryImpl implements EarningRepository {
             contentId: model.contentId, // Added
           );
         }).toList();
+
+        double totalVal = double.tryParse(remoteData['totalEarning']
+                    ?.toString() ??
+                remoteData['total_earnings']?.toString() ??
+                (remoteData['data'] is Map
+                    ? (remoteData['data']['total_earnings']?.toString() ??
+                        remoteData['data']['total_earnings_sum']?.toString())
+                    : null) ??
+                "") ??
+            0.0;
+
+        if (totalVal == 0.0 && transactions.isNotEmpty) {
+          for (var t in transactions) {
+            totalVal += double.tryParse(t.amount) ?? 0.0;
+          }
+        }
+
+        final totalEarning = totalVal.toString();
 
         return Right(TransactionsResult(
             transactions: transactions, totalEarning: totalEarning));

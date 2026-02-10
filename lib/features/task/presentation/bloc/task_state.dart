@@ -60,6 +60,7 @@ class TaskState extends Equatable {
     bool clearTaskDetail = false,
     bool clearErrorMessage = false,
     bool clearSuccessMessage = false,
+    bool clearRoomId = false,
   }) {
     return TaskState(
       taskDetail: clearTaskDetail ? null : (taskDetail ?? this.taskDetail),
@@ -68,7 +69,7 @@ class TaskState extends Equatable {
       chatList: chatList ?? this.chatList,
       transactions: transactions ?? this.transactions,
       uploadResponse: uploadResponse ?? this.uploadResponse,
-      roomId: roomId ?? this.roomId,
+      roomId: clearRoomId ? null : (roomId ?? this.roomId),
       hopperAcceptedCount: hopperAcceptedCount ?? this.hopperAcceptedCount,
       allTasksStatus: allTasksStatus ?? this.allTasksStatus,
       localTasksStatus: localTasksStatus ?? this.localTasksStatus,

@@ -120,6 +120,8 @@ class TaskDetailModel extends TaskDetail {
     super.maximumPriceRange = "",
     super.currency = "",
     super.currencySymbol = "",
+    super.hopperInfo = const [],
+    super.hopperTaskAmount = "0",
   });
 
   factory TaskDetailModel.fromJson(Map<String, dynamic> json,
@@ -245,6 +247,10 @@ class TaskDetailModel extends TaskDetail {
           ? json["currency_symbol"].toString()
           : getCurrencySymbol(json["currency"]?.toString()),
       roomId: roomId,
+      hopperInfo: json["hopperInfo"] != null
+          ? (json["hopperInfo"] as List).toList()
+          : [],
+      hopperTaskAmount: (json["hopperTaskAmount"] ?? "0").toString(),
     );
   }
 
@@ -289,6 +295,8 @@ class TaskDetailModel extends TaskDetail {
       maximumPriceRange: entity.maximumPriceRange,
       currency: entity.currency,
       currencySymbol: entity.currencySymbol,
+      hopperInfo: entity.hopperInfo,
+      hopperTaskAmount: entity.hopperTaskAmount,
     );
   }
 }

@@ -36,6 +36,8 @@ class TaskAssignedDetailEntity extends Equatable {
   final String interviewPrice;
   final String currency;
   final String currencySymbol;
+  final List<HopperInfoEntity> hopperInfo;
+  final String hopperTaskAmount;
 
   const TaskAssignedDetailEntity({
     required this.id,
@@ -59,6 +61,8 @@ class TaskAssignedDetailEntity extends Equatable {
     this.interviewPrice = "0",
     this.currency = "",
     this.currencySymbol = "",
+    this.hopperInfo = const [],
+    this.hopperTaskAmount = "0",
   });
 
   @override
@@ -84,7 +88,25 @@ class TaskAssignedDetailEntity extends Equatable {
         interviewPrice,
         currency,
         currencySymbol,
+        hopperInfo,
+        hopperTaskAmount,
       ];
+}
+
+class HopperInfoEntity extends Equatable {
+  const HopperInfoEntity({
+    required this.id,
+    required this.type,
+    required this.count,
+    required this.hours,
+  });
+  final String id;
+  final String type;
+  final String count;
+  final String hours;
+
+  @override
+  List<Object?> get props => [id, type, count, hours];
 }
 
 class MediaHouseEntity extends Equatable {

@@ -21,6 +21,7 @@ class AllTaskModel extends TaskAll {
     super.interviewPrice = "0",
     super.currency = "",
     super.currencySymbol = "",
+    super.isAvailableForAccept = false,
   });
 
   factory AllTaskModel.fromJson(Map<String, dynamic> json) {
@@ -35,6 +36,7 @@ class AllTaskModel extends TaskAll {
       description: (json['task_description'] ?? "").toString(),
       location: (json['location'] ?? "").toString(),
       status: (json['status'] ?? "").toString(),
+      isAvailableForAccept: json['is_available_for_accept'] ?? false,
       mediaHouseDetails: (json['mediahouse_id'] is Map<String, dynamic>)
           ? MediaHouseDetails.fromJson(json['mediahouse_id'])
           : null,

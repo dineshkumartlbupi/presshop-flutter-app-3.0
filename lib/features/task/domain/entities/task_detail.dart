@@ -42,6 +42,8 @@ class TaskDetail extends Equatable {
     this.maximumPriceRange = "",
     this.currency = "",
     this.currencySymbol = "",
+    this.hopperInfo = const [],
+    this.hopperTaskAmount = "0",
   });
   final String id;
   final bool isNeedPhoto;
@@ -82,6 +84,8 @@ class TaskDetail extends Equatable {
   final String maximumPriceRange;
   final String currency;
   final String currencySymbol;
+  final List<dynamic> hopperInfo;
+  final String hopperTaskAmount;
 
   TaskDetail copyWith({
     String? id,
@@ -121,6 +125,8 @@ class TaskDetail extends Equatable {
     String? roomId,
     String? minimumPriceRange,
     String? maximumPriceRange,
+    List<dynamic>? hopperInfo,
+    String? hopperTaskAmount,
   }) {
     return TaskDetail(
       id: id ?? this.id,
@@ -159,6 +165,8 @@ class TaskDetail extends Equatable {
       roomId: roomId ?? this.roomId,
       minimumPriceRange: minimumPriceRange ?? this.minimumPriceRange,
       maximumPriceRange: maximumPriceRange ?? this.maximumPriceRange,
+      hopperInfo: hopperInfo ?? this.hopperInfo,
+      hopperTaskAmount: hopperTaskAmount ?? this.hopperTaskAmount,
     );
   }
 
@@ -183,5 +191,7 @@ class TaskDetail extends Equatable {
         roomId,
         minimumPriceRange,
         maximumPriceRange,
+        hopperInfo,
+        hopperTaskAmount,
       ];
 }

@@ -134,7 +134,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
             builder: (context, state) {
               if (state.categories.isEmpty &&
                   state.status == FAQStatus.loading) {
-                return const SizedBox.shrink();
+                return showAnimatedLoader(size);
               }
 
               return SmartRefresher(
@@ -412,7 +412,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                               },
                               itemCount: state.items.length)
                           : state.status == FAQStatus.loading
-                              ? const SizedBox.shrink()
+                              ? showLoader()
                               : errorMessageWidget(widget.priceTipsSelected
                                   ? "No Price Tips Found"
                                   : "No FAQ found"),

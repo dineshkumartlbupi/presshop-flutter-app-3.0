@@ -196,6 +196,20 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
             possibleList = nested["resposne"];
           } else if (nested["chat"] is List) {
             possibleList = nested["chat"];
+          } else if (nested["resposne"] != null &&
+              nested["resposne"] is Map &&
+              nested["resposne"]["chat"] is List) {
+            // Flatten grouped response: [{ publication: [...] }]
+            final List groupedList = nested["resposne"]["chat"];
+            List flattened = [];
+            for (var group in groupedList) {
+              if (group["publication"] is List) {
+                flattened.addAll(group["publication"]);
+              } else {
+                flattened.add(group);
+              }
+            }
+            possibleList = flattened;
           }
         }
 
@@ -203,25 +217,14 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           debugPrint(
               "🚀 getTaskChat Found List Length: ${possibleList.length}");
           for (var v in possibleList) {
+            // Map types for UI consistency
+            if (v["message_type"] == "initialoffer" ||
+                v["message_type"] == "Mediahouse_initial_offer") {
+              v["message_type"] = "Offered";
+            }
             chatList.add(ManageTaskChatModel.fromJson(v));
           }
           return chatList;
-        }
-
-        Map<String, dynamic>? dataObj;
-        if (rawData["data"] is Map) {
-          dataObj = rawData["data"];
-        } else if (rawData is Map<String, dynamic>) {
-          dataObj = rawData;
-        }
-
-        if (dataObj != null && dataObj["chat"] is List) {
-          final list = dataObj["chat"] as List;
-          debugPrint(
-              "🚀 getTaskChat Found 'chat' key List Length: ${list.length}");
-          for (var v in list) {
-            chatList.add(ManageTaskChatModel.fromJson(v));
-          }
         }
 
         return chatList;

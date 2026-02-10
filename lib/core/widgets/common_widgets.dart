@@ -9,6 +9,56 @@ export 'package:presshop/core/core_export.dart';
 
 Size globalSize = MediaQuery.of(navigatorKey.currentContext!).size;
 
+// Reusable widget for Price Image and Button
+Widget priceImageWithButton(Size size, String amount, String hour) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Center(
+        child: Image.asset(
+          "assets/illustrations/priceimage2.png",
+          width: size.width * AppDimensions.numD60,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return Center(
+              child: Text(
+                "Error loading image: $error",
+                style: const TextStyle(color: Colors.red),
+              ),
+            );
+          },
+        ),
+      ),
+      SizedBox(height: size.width * AppDimensions.numD02),
+      Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text:
+                  "$currencySymbol${formatDouble(double.tryParse(amount) ?? 0.0)} ",
+              style: commonTextStyle(
+                  size: size,
+                  fontSize: size.width * AppDimensions.numD08,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700),
+            ),
+            TextSpan(
+              text: "for $hour hours",
+              style: commonTextStyle(
+                  size: size,
+                  fontSize: size.width * AppDimensions.numD04,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+        textAlign: TextAlign.center,
+      ),
+      SizedBox(height: size.width * AppDimensions.numD02),
+    ],
+  );
+}
+
 Widget errorMessageWidget(String message) {
   return Center(
     child: Container(
@@ -42,7 +92,7 @@ Widget commonRefresherFooter(BuildContext context, LoadStatus? mode) {
   } else if (mode == LoadStatus.canLoading) {
     body = const Text("release to load more");
   } else {
-    body = const Text("No more Data");
+    body = const Text("");
   }
   return SizedBox(
     height: 55.0,
@@ -59,7 +109,8 @@ Widget showLoader({bool isForLocation = false}) {
     children: [
       Center(
         child: Lottie.asset("assets/lottieFiles/loader_new.json",
-            height: size.width * AppDimensions.numD28, width: size.width * AppDimensions.numD28),
+            height: size.width * AppDimensions.numD28,
+            width: size.width * AppDimensions.numD28),
       ),
       if (isForLocation) ...[
         SizedBox(height: size.width * AppDimensions.numD005),
@@ -83,7 +134,8 @@ Widget showLoader({bool isForLocation = false}) {
 Widget showAnimatedLoader(Size size) {
   return Center(
       child: Lottie.asset("assets/lottieFiles/loader_new.json",
-          height: size.width * AppDimensions.numD25, width: size.width * AppDimensions.numD25));
+          height: size.width * AppDimensions.numD25,
+          width: size.width * AppDimensions.numD25));
 }
 
 /// Calender
@@ -96,8 +148,8 @@ Future<String?> commonDatePicker({String? date}) async {
     builder: (context, child) {
       return Theme(
         data: ThemeData.light().copyWith(
-            colorScheme:
-                const ColorScheme.light().copyWith(primary: AppColorTheme.colorThemePink)),
+            colorScheme: const ColorScheme.light()
+                .copyWith(primary: AppColorTheme.colorThemePink)),
         child: child!,
       );
     },
@@ -116,7 +168,8 @@ Future<String?> commonDatePicker({String? date}) async {
 /// FilterIcon
 Container commonFilterIcon(Size size) {
   return Container(
-      padding: EdgeInsets.all(size.width * (isIpad ? AppDimensions.numD008 : AppDimensions.numD043)),
+      padding: EdgeInsets.all(size.width *
+          (isIpad ? AppDimensions.numD008 : AppDimensions.numD043)),
       child: Image.asset(
         "assets/icons/newfilter.png",
         fit: BoxFit.fill,
@@ -135,7 +188,8 @@ Widget getMediaCountCard(String mediaType, int count, Size size) {
     padding: EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD01),
     decoration: BoxDecoration(
         color: AppColorTheme.colorLightGreen.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD021)),
+        borderRadius:
+            BorderRadius.circular(size.width * AppDimensions.numD021)),
     child: Padding(
       padding: EdgeInsets.symmetric(
         horizontal: size.width * 0.005,

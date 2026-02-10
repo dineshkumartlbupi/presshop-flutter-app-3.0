@@ -18,6 +18,9 @@ import 'package:presshop/core/router/router_constants.dart';
 
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:presshop/features/map/domain/usecases/search_places.dart';
+import 'package:presshop/features/map/domain/usecases/get_place_details.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage(
@@ -41,6 +44,70 @@ class _NewsPageState extends State<NewsPage>
 
   @override
   String get pageName => PageNames.newsPage;
+
+  String selectedAlertType = 'Alert';
+  String selectedDistance = '2 miles';
+  String selectedCategory = 'Category';
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+  List<Map<String, dynamic>> _predictions = [];
+
+  void _onSearchChanged(String value) async {
+    if (value.isEmpty) {
+      setState(() {
+        _predictions = [];
+      });
+      return;
+    }
+
+    final result = await sl<SearchPlaces>()(value);
+    result.fold(
+      (failure) => null,
+      (predictions) {
+        setState(() {
+          _predictions = predictions;
+        });
+      },
+    );
+  }
+
+  void _selectPrediction(Map<String, dynamic> prediction) async {
+    final placeId = prediction['place_id'];
+    final result = await sl<GetPlaceDetails>()(placeId);
+
+    result.fold(
+      (failure) => null,
+      (latLng) {
+        setState(() {
+          _predictions = [];
+          _searchController.text = prediction['description'];
+          _searchFocusNode.unfocus();
+        });
+
+        // Fetch news for the new location
+        context.read<NewsBloc>().add(GetAggregatedNewsEvent(
+              lat: latLng.latitude,
+              lng: latLng.longitude,
+              km: _convertDistanceToKm(selectedDistance),
+              category:
+                  selectedCategory == 'Category' ? 'all' : selectedCategory,
+              alertType:
+                  selectedAlertType == 'Alert' ? null : selectedAlertType,
+            ));
+      },
+    );
+  }
+
+  void _applyFilters() {
+    double km = _convertDistanceToKm(selectedDistance);
+    context.read<NewsBloc>().add(GetAggregatedNewsEvent(
+          lat: widget.latitude ?? 0.0,
+          lng: widget.longitude ?? 0.0,
+          km: km,
+          category: selectedCategory == 'Category' ? 'all' : selectedCategory,
+          alertType: selectedAlertType == 'Alert' ? null : selectedAlertType,
+        ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,10 +145,7 @@ class _NewsPageState extends State<NewsPage>
             appBar: NewHomeAppBar(
               size: size,
               hideLeading: widget.hideLeading,
-              showFilter: true,
-              onFilterTap: () {
-                _showFilterBottomSheet(context, size);
-              },
+              showFilter: false,
             ),
             body: Stack(
               children: [
@@ -115,8 +179,12 @@ class _NewsPageState extends State<NewsPage>
                           ),
                         )
                       : ListView.separated(
-                          padding:
-                              EdgeInsets.all(size.width * AppDimensions.numD04),
+                          padding: EdgeInsets.only(
+                            top: 130, // Adjusted for SearchAndFilterBar
+                            left: size.width * AppDimensions.numD04,
+                            right: size.width * AppDimensions.numD04,
+                            bottom: size.width * AppDimensions.numD04,
+                          ),
                           itemCount: newsList.length,
                           separatorBuilder: (context, index) => SizedBox(
                               height: size.width * AppDimensions.numD06),
@@ -126,13 +194,86 @@ class _NewsPageState extends State<NewsPage>
                           },
                         ),
                 ),
-                // if (state.isLoading && newsList.isEmpty)
-                //   Container(
-                //     color: Colors.transparent,
-                //     child: const Center(
-                //       child: CircularProgressIndicator(),
-                //     ),
-                //   ),
+                Positioned(
+                  top: 10,
+                  left: 0,
+                  right: 0,
+                  child: SearchAndFilterBar(
+                    searchController: _searchController,
+                    searchFocusNode: _searchFocusNode,
+                    selectedAlertType: selectedAlertType,
+                    selectedDistance: selectedDistance,
+                    selectedCategory: selectedCategory,
+                    onChange: _onSearchChanged,
+                    onAlertTypeChanged: (val) {
+                      if (val != null) {
+                        setState(() => selectedAlertType = val);
+                        _applyFilters();
+                      }
+                    },
+                    onDistanceChanged: (val) {
+                      if (val != null) {
+                        setState(() => selectedDistance = val);
+                        _applyFilters();
+                      }
+                    },
+                    onCategoryChanged: (val) {
+                      if (val != null) {
+                        setState(() => selectedCategory = val);
+                        _applyFilters();
+                      }
+                    },
+                    showNavigationIcon: false,
+                  ),
+                ),
+                if (_predictions.isNotEmpty)
+                  Positioned(
+                    top: 60, // Below the search text field
+                    left: 12,
+                    right:
+                        60, // Adjusted to avoid overlapping with navigation icon
+                    child: Container(
+                      constraints: BoxConstraints(
+                        maxHeight: size.height * 0.4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        itemCount: _predictions.length,
+                        separatorBuilder: (context, index) =>
+                            const Divider(height: 1),
+                        itemBuilder: (context, index) {
+                          final p = _predictions[index];
+                          return ListTile(
+                            dense: true,
+                            title: Text(
+                              p['description'],
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                            onTap: () => _selectPrediction(p),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                if (state.isLoading && newsList.isEmpty)
+                  Container(
+                    color: Colors.transparent,
+                    child: Center(
+                      child: showAnimatedLoader(size),
+                    ),
+                  ),
               ],
             ),
           );
@@ -574,23 +715,97 @@ class _FilterBottomSheetContent extends StatefulWidget {
 }
 
 class _FilterBottomSheetContentState extends State<_FilterBottomSheetContent> {
-  late String tempAlertType;
-  late String tempDistance;
-  late String tempCategory;
+  late String selectedAlertType;
+  late String selectedDistance;
+  late String selectedCategory;
   final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+  List<Map<String, dynamic>> _predictions = [];
+
+  void _onSearchChanged(String value) async {
+    if (value.isEmpty) {
+      setState(() {
+        _predictions = [];
+      });
+      return;
+    }
+
+    final result = await sl<SearchPlaces>()(value);
+    result.fold(
+      (failure) => null,
+      (predictions) {
+        setState(() {
+          _predictions = predictions;
+        });
+      },
+    );
+  }
+
+  void _selectPrediction(Map<String, dynamic> prediction) async {
+    final placeId = prediction['place_id'];
+    final result = await sl<GetPlaceDetails>()(placeId);
+
+    result.fold(
+      (failure) => null,
+      (latLng) {
+        setState(() {
+          _predictions = [];
+          _searchController.text = prediction['description'];
+          _searchFocusNode.unfocus();
+        });
+
+        // Fetch news for the new location
+        context.read<NewsBloc>().add(GetAggregatedNewsEvent(
+              lat: latLng.latitude,
+              lng: latLng.longitude,
+              km: _convertDistanceToKm(selectedDistance),
+              category:
+                  selectedCategory == 'Category' ? 'all' : selectedCategory,
+              alertType:
+                  selectedAlertType == 'Alert' ? null : selectedAlertType,
+            ));
+      },
+    );
+  }
 
   @override
   void initState() {
     super.initState();
-    tempAlertType = widget.initialAlertType;
-    tempDistance = widget.initialDistance;
-    tempCategory = widget.initialCategory;
+    selectedAlertType = widget.initialAlertType;
+    selectedDistance = widget.initialDistance;
+    selectedCategory = widget.initialCategory;
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
+  }
+
+  double _convertDistanceToKm(String distance) {
+    switch (distance) {
+      case '1 mile':
+        return 1.60934;
+      case '2 miles':
+        return 3.21869;
+      case '5 miles':
+        return 8.04672;
+      case '10 miles':
+        return 16.0934;
+      case '15 miles':
+        return 24.1402;
+      case '20 miles':
+        return 32.1869;
+      case '25 miles':
+        return 40.2336;
+      case '30 miles':
+        return 48.2803;
+      case '50 miles':
+        return 80.4672;
+      default:
+        return 50.0;
+    }
   }
 
   @override
@@ -641,10 +856,11 @@ class _FilterBottomSheetContentState extends State<_FilterBottomSheetContent> {
               TextButton(
                 onPressed: () {
                   setState(() {
-                    tempAlertType = 'Alert';
-                    tempDistance = '2 miles';
-                    tempCategory = 'Category';
+                    selectedAlertType = 'Alert';
+                    selectedDistance = '2 miles';
+                    selectedCategory = 'Category';
                     _searchController.clear();
+                    _predictions = [];
                   });
                 },
                 child: Text(
@@ -660,21 +876,75 @@ class _FilterBottomSheetContentState extends State<_FilterBottomSheetContent> {
           SizedBox(height: widget.size.width * AppDimensions.numD05),
 
           // Search And Filters
-          SearchAndFilterBar(
-            searchController: _searchController,
-            selectedAlertType: tempAlertType,
-            selectedDistance: tempDistance,
-            selectedCategory: tempCategory,
-            onAlertTypeChanged: (val) {
-              if (val != null) setState(() => tempAlertType = val);
-            },
-            onDistanceChanged: (val) {
-              if (val != null) setState(() => tempDistance = val);
-            },
-            onCategoryChanged: (val) {
-              if (val != null) setState(() => tempCategory = val);
-            },
-            onPressedOnNavigation: () {},
+          Stack(
+            children: [
+              SearchAndFilterBar(
+                searchController: _searchController,
+                searchFocusNode: _searchFocusNode,
+                selectedAlertType: selectedAlertType,
+                selectedDistance: selectedDistance,
+                selectedCategory: selectedCategory,
+                onChange: _onSearchChanged,
+                onAlertTypeChanged: (val) {
+                  if (val != null) {
+                    setState(() => selectedAlertType = val);
+                  }
+                },
+                onDistanceChanged: (val) {
+                  if (val != null) {
+                    setState(() => selectedDistance = val);
+                  }
+                },
+                onCategoryChanged: (val) {
+                  if (val != null) {
+                    setState(() => selectedCategory = val);
+                  }
+                },
+                onPressedOnNavigation: () {},
+                showNavigationIcon: false,
+              ),
+              if (_predictions.isNotEmpty)
+                Positioned(
+                  top: 60, // Below the search text field
+                  left: 12,
+                  right:
+                      60, // Adjusted to avoid overlapping with navigation icon
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxHeight: widget.size.height * 0.4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      itemCount: _predictions.length,
+                      separatorBuilder: (context, index) =>
+                          const Divider(height: 1),
+                      itemBuilder: (context, index) {
+                        final p = _predictions[index];
+                        return ListTile(
+                          dense: true,
+                          title: Text(
+                            p['description'],
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          onTap: () => _selectPrediction(p),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+            ],
           ),
 
           SizedBox(height: widget.size.width * AppDimensions.numD08),
@@ -698,7 +968,8 @@ class _FilterBottomSheetContentState extends State<_FilterBottomSheetContent> {
                     fontWeight: FontWeight.w700),
                 commonButtonStyle(widget.size, AppColorTheme.colorThemePink),
                 () {
-              widget.onApply(tempAlertType, tempDistance, tempCategory);
+              widget.onApply(
+                  selectedAlertType, selectedDistance, selectedCategory);
             }),
           ),
           SizedBox(height: widget.size.width * AppDimensions.numD02),

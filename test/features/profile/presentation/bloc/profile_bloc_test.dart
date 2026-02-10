@@ -135,6 +135,7 @@ void main() {
     createdAt: tDate,
     updatedAt: tDate,
     lastLogin: tDate,
+    avatar: '',
   );
 
   group('ProfileBloc', () {

@@ -23,8 +23,8 @@ import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
 
 // ignore: must_be_immutable
-class TaskDetailNewScreen extends StatefulWidget {
-  TaskDetailNewScreen(
+class TaskDetailScreen extends StatefulWidget {
+  TaskDetailScreen(
       {super.key,
       required this.taskStatus,
       required this.taskId,
@@ -34,10 +34,10 @@ class TaskDetailNewScreen extends StatefulWidget {
   String totalEarning = "";
 
   @override
-  State<TaskDetailNewScreen> createState() => _TaskDetailNewScreenState();
+  State<TaskDetailScreen> createState() => _TaskDetailScreenState();
 }
 
-class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
+class _TaskDetailScreenState extends State<TaskDetailScreen> {
   TaskAssignedEntity? taskDetail;
   String roomId = "";
   bool isExtraTime = false;
@@ -176,7 +176,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                             widget.totalEarning == "0" &&
                                     widget.taskStatus == "accepted"
                                 ? "TASK ACCEPTED"
-                                : "COMPLETED",
+                                // : "COMPLETED",
+                                : "LIVE TASK",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD036,
@@ -677,7 +678,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 14),
-                      child: Row(
+                      /* child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Column(
@@ -810,7 +811,13 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                             ],
                           )
                         ],
-                      ),
+                      ), */
+                      child: priceImageWithButton(
+                          size,
+                          taskDetail!.task.hopperTaskAmount,
+                          taskDetail!.task.hopperInfo.isNotEmpty
+                              ? taskDetail!.task.hopperInfo.first.hours
+                              : "0"),
                     ),
                     SizedBox(
                       height: size.width * AppDimensions.numD025,

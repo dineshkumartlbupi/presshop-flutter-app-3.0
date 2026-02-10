@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 
 class SearchAndFilterBar extends StatelessWidget {
-
   const SearchAndFilterBar({
     super.key,
     this.onPressedOnNavigation,
@@ -15,6 +14,7 @@ class SearchAndFilterBar extends StatelessWidget {
     this.onAlertTypeChanged,
     this.onDistanceChanged,
     this.onCategoryChanged,
+    this.showNavigationIcon = true,
   });
   final VoidCallback? onPressedOnNavigation;
   final Function(String)? onChange;
@@ -26,6 +26,7 @@ class SearchAndFilterBar extends StatelessWidget {
   final Function(String?)? onAlertTypeChanged;
   final Function(String?)? onDistanceChanged;
   final Function(String?)? onCategoryChanged;
+  final bool showNavigationIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -87,28 +88,29 @@ class SearchAndFilterBar extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 5,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    LucideIcons.corner_up_right,
-                    color: Colors.white,
+              if (showNavigationIcon)
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  onPressed: onPressedOnNavigation,
+                  child: IconButton(
+                    icon: const Icon(
+                      LucideIcons.corner_up_right,
+                      color: Colors.white,
+                    ),
+                    onPressed: onPressedOnNavigation,
+                  ),
                 ),
-              ),
             ],
           ),
         ),
@@ -182,7 +184,6 @@ class SearchAndFilterBar extends StatelessWidget {
 }
 
 class _FilterDropdown extends StatelessWidget {
-
   const _FilterDropdown({
     required this.items,
     required this.selected,

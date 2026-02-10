@@ -41,8 +41,9 @@ class ManageTaskChatModel {
     senderType = (json["sender_type"] ?? "").toString();
     amount = numberFormatting((json["amount"] ?? "")).toString();
     hopperPrice = numberFormatting((json["hopper_price"] ?? "")).toString();
-    payableHopperPrice =
-        numberFormatting((json["payable_to_hopper"] ?? "")).toString();
+    payableHopperPrice = numberFormatting(
+      (json["payable_to_hopper"] ?? ""),
+    ).toString();
     requestStatus = (json["request_status"] ?? "").toString();
     finalCounterAmount = (json["finaloffer_price"] ?? "").toString();
     initialOfferAmount = (json["initial_offer_price"] ?? "").toString();
@@ -52,9 +53,11 @@ class ManageTaskChatModel {
     // Map<String, dynamic> mediaMap = json["media"] ?? {};
     rating = double.parse(numberFormatting((json["rating"] ?? "")).toString());
     priceController = TextEditingController(
-        text: (json["finaloffer_price"] ?? "").toString());
-    ratingReviewController =
-        TextEditingController(text: (json["review"] ?? "").toString());
+      text: (json["finaloffer_price"] ?? "").toString(),
+    );
+    ratingReviewController = TextEditingController(
+      text: (json["review"] ?? "").toString(),
+    );
     paidStatus = json['paid_status'] ?? false;
     isRatingGiven = json["review"] != null;
     mediaList = mediaListTem;
@@ -93,8 +96,8 @@ class ManageTaskChatModel {
       mediaHouseId = (receiverData["_id"] ?? "").toString();
       mediaHouseName = json["message_type"] == "PaymentIntent"
           ? json["user_info"] != null
-              ? json["user_info"]["company_name"]
-              : ""
+                ? json["user_info"]["company_name"]
+                : ""
           : (receiverData["company_name"] ?? "").toString();
       mediaHouseImage = (receiverData["profile_image"] ?? "").toString();
     } else {
@@ -103,6 +106,10 @@ class ManageTaskChatModel {
       mediaHouseImage = "";
     }
     transactionId = json["transaction_id"] ?? "";
+    message = (json["message"] ?? "").toString();
+    if (json["options"] != null) {
+      options = List<String>.from(json["options"]);
+    }
   }
   String id = "";
   bool paidStatus = false;
@@ -128,6 +135,8 @@ class ManageTaskChatModel {
   String roomId = "";
   bool isRatingGiven = false;
   String transactionId = "";
+  String message = "";
+  List<String> options = [];
   TextEditingController priceController = TextEditingController();
   TextEditingController ratingReviewController = TextEditingController();
 
@@ -180,11 +189,13 @@ class ManageTaskChatModel {
       'videoCount': videoCount,
       'audioCount': audioCount,
       'mediaList': mediaList
-          .map((m) => {
-                'type': m.type,
-                'media': m.imageVideoUrl,
-                'thumbnail': m.thumbnail,
-              })
+          .map(
+            (m) => {
+              'type': m.type,
+              'media': m.imageVideoUrl,
+              'thumbnail': m.thumbnail,
+            },
+          )
           .toList(),
     };
   }
@@ -205,11 +216,13 @@ class ManageTaskChatModel {
     if (json['mediaList'] != null) {
       var data = json['mediaList'] as List;
       mediaList = data
-          .map((e) => TaskVideoModel(
-                type: e['type'] ?? '',
-                imageVideoUrl: e['media'] ?? '',
-                thumbnail: e['thumbnail'] ?? '',
-              ))
+          .map(
+            (e) => TaskVideoModel(
+              type: e['type'] ?? '',
+              imageVideoUrl: e['media'] ?? '',
+              thumbnail: e['thumbnail'] ?? '',
+            ),
+          )
           .toList();
       if (mediaList.isNotEmpty) {
         media = mediaList.first;

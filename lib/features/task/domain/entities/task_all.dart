@@ -72,6 +72,7 @@ class TaskAll extends Equatable {
     this.interviewPrice = "0",
     this.currency = "",
     this.currencySymbol = "",
+    this.isAvailableForAccept = false,
   });
   final String id;
   final String userId;
@@ -92,6 +93,7 @@ class TaskAll extends Equatable {
   final String interviewPrice;
   final String currency;
   final String currencySymbol;
+  final bool isAvailableForAccept;
 
   @override
   List<Object?> get props => [
@@ -114,5 +116,6 @@ class TaskAll extends Equatable {
         interviewPrice,
         currency,
         currencySymbol,
+        isAvailableForAccept,
       ];
 }

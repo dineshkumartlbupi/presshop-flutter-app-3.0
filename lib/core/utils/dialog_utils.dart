@@ -396,7 +396,7 @@ void broadcastDialog({
                           ),
                         ),
 
-                        Row(
+                        /* Row(
                           children: [
                             Expanded(
                               child: Column(
@@ -558,6 +558,13 @@ void broadcastDialog({
                               ),
                             )
                           ],
+                        ), */
+                        priceImageWithButton(
+                          size,
+                          taskDetail.task.hopperTaskAmount,
+                          taskDetail.task.hopperInfo.isNotEmpty
+                              ? taskDetail.task.hopperInfo.first.hours
+                              : "0",
                         ),
 
                         SizedBox(

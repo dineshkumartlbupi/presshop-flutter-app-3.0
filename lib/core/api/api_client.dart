@@ -4,12 +4,11 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-// import 'package:presshop/core/api/pretty_dio_logger.dart';
+import 'package:presshop/core/api/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
-import 'package:presshop/core/widgets/global_loader.dart';
 import 'package:presshop/core/utils/app_logger.dart';
 
 class ApiClient {
@@ -29,7 +28,7 @@ class ApiClient {
 
     /// Pretty logger (DEBUG ONLY)
     if (kDebugMode) {
-      // _dio.interceptors.add(PrettyDioLogger());
+      _dio.interceptors.add(PrettyDioLogger());
     }
   }
   final Dio _dio;
@@ -40,46 +39,6 @@ class ApiClient {
 
   Future<void> _onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    // Default to true if not specified
-    bool showLoader = options.extra['show_loader'] ?? true;
-    final path = options.uri.path;
-
-    // Hardcoded exclusions (can be overridden by show_loader: true in extra)
-    final hardcodedExclusions = [
-      'getUserProfile',
-      'getAvatars',
-      'checkIfUserNameExist',
-      'checkIfEmailExist',
-      'checkIfPhoneExist',
-      'updatelocation',
-      'add/fcm/token',
-      'getLatestVersion',
-      'adminlist',
-      'check/version',
-      'create/room',
-      'studentBeansActivation',
-      'studentBeansActivation',
-      'assignedTaskDetail',
-      'getAggregatedNews',
-      'getAllTask',
-      'getAllContent',
-      'getMyContent',
-      'getAlertIncidents',
-      'search-news',
-    ];
-
-    bool isExcluded = hardcodedExclusions.any((p) => path.contains(p));
-
-    if (isExcluded && options.extra['show_loader'] == null) {
-      showLoader = false;
-    }
-
-    if (showLoader) {
-      debugPrint("🔄 SHOWING LOADER FOR: ${options.uri.path}");
-      // GlobalLoader.show();
-    } else {
-      debugPrint("⏭️  SKIPPING LOADER FOR: ${options.uri.path}");
-    }
     // Prioritize SharedPreferences for speed and stability
     String? token = _sharedPreferences.getString(tokenKey);
     if (token == null || token.isEmpty) {
@@ -113,7 +72,6 @@ class ApiClient {
     Response response,
     ResponseInterceptorHandler handler,
   ) async {
-    GlobalLoader.hide();
     handler.next(response);
   }
 
@@ -121,7 +79,6 @@ class ApiClient {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
-    GlobalLoader.hide();
     /*
     if (ApiErrorHandler.isUnauthenticated(err)) {
       /// Avoid infinite loops if the refresh token call itself fails

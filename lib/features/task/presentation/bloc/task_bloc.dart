@@ -76,7 +76,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     emit(state.copyWith(
         actionStatus: TaskStatus.loading,
         clearErrorMessage: true,
-        clearSuccessMessage: true));
+        clearSuccessMessage: true,
+        clearRoomId: true));
     final result = await acceptRejectTask(AcceptRejectParams(
       taskId: event.taskId,
       mediaHouseId: event.mediaHouseId,
@@ -154,6 +155,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Future<void> _onGetRoomId(
       GetRoomIdEvent event, Emitter<TaskState> emit) async {
+    // Set status to loading to prevent re-triggering of success listeners
+    emit(state.copyWith(actionStatus: TaskStatus.loading));
+
     final result = await getRoomId(GetRoomIdParams(
       receiverId: event.receiverId,
       taskId: event.taskId,
@@ -162,8 +166,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     ));
 
     result.fold(
-      (failure) => emit(state.copyWith(errorMessage: failure.message)),
-      (roomId) => emit(state.copyWith(roomId: roomId)),
+      (failure) => emit(state.copyWith(
+          errorMessage: failure.message, actionStatus: TaskStatus.failure)),
+      (roomId) => emit(state.copyWith(
+        roomId: roomId,
+        actionStatus: TaskStatus.initial, // Reset to initial after success
+      )),
     );
   }
 

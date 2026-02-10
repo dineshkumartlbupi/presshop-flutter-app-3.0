@@ -116,7 +116,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
         // Only react if user has actually submitted an action on this screen
         if (_hasSubmittedAction &&
             state.actionStatus == TaskStatus.success &&
-            _isAccepted) {
+            _isAccepted &&
+            (state.roomId == null || state.roomId!.isEmpty)) {
           context.read<TaskBloc>().add(GetRoomIdEvent(
                 receiverId: taskDetail!.mediaHouseId,
                 taskId: widget.taskId,
@@ -143,6 +144,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
         if (_hasSubmittedAction &&
             state.roomId != null &&
             state.roomId!.isNotEmpty) {
+          debugPrint(
+              "🚀 Navigating to dashboard (accepted) with roomId: ${state.roomId}");
           context.goNamed(
             AppRoutes.dashboardName,
             extra: {
@@ -187,6 +190,15 @@ class _BroadCastScreenState extends State<BroadCastScreen>
             interviewPrice: assignedEntity.task.interviewPrice,
             currency: assignedEntity.task.currency,
             currencySymbol: assignedEntity.task.currencySymbol,
+            hopperInfo: assignedEntity.task.hopperInfo
+                .map((e) => {
+                      "id": e.id,
+                      "type": e.type,
+                      "count": e.count,
+                      "hours": e.hours
+                    })
+                .toList(),
+            hopperTaskAmount: assignedEntity.task.hopperTaskAmount,
           );
           if (taskDetail != null) {
             _updateGoogleMap(
@@ -212,7 +224,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
       },
       builder: (context, state) {
         return Scaffold(
-          body: taskDetail == null ? SizedBox() : _body(size),
+          body: taskDetail == null ? SizedBox() : _body(size, state),
         );
       },
     );
@@ -250,7 +262,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
     );
   }
 
-  Widget _body(Size size) {
+  Widget _body(Size size, TaskState state) {
     return Stack(
       children: [
         ListView(
@@ -625,16 +637,19 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                 fontSize: size.width * AppDimensions.numD04,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700),
-                            commonButtonStyle(size, Colors.black), () {
-                          _isAccepted = false;
-                          if (player.state == PlayerState.playing) {
-                            player.stop();
-                          }
-                          _hasSubmittedAction = true;
-                          callAcceptRejectApi();
-                          debugPrint("rejected:::::::");
-                          setState(() {});
-                        }),
+                            commonButtonStyle(size, Colors.black),
+                            state.actionStatus == TaskStatus.loading
+                                ? () {}
+                                : () {
+                                    _isAccepted = false;
+                                    if (player.state == PlayerState.playing) {
+                                      player.stop();
+                                    }
+                                    _hasSubmittedAction = true;
+                                    callAcceptRejectApi();
+                                    debugPrint("rejected:::::::");
+                                    setState(() {});
+                                  }),
                       )),
                       SizedBox(
                         width: size.width * AppDimensions.numD03,
@@ -651,18 +666,21 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700),
                             commonButtonStyle(
-                                size, AppColorTheme.colorThemePink), () {
-                          _isAccepted = true;
-                          //isDirection = true;
-                          if (player.state == PlayerState.playing) {
-                            player.stop();
-                          }
-                          _hasSubmittedAction = true;
-                          callAcceptRejectApi();
+                                size, AppColorTheme.colorThemePink),
+                            state.actionStatus == TaskStatus.loading
+                                ? () {}
+                                : () {
+                                    _isAccepted = true;
+                                    //isDirection = true;
+                                    if (player.state == PlayerState.playing) {
+                                      player.stop();
+                                    }
+                                    _hasSubmittedAction = true;
+                                    callAcceptRejectApi();
 
-                          debugPrint("accepted====>");
-                          setState(() {});
-                        }),
+                                    debugPrint("accepted====>");
+                                    setState(() {});
+                                  }),
                       ))
                     ],
                   ),
@@ -735,7 +753,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
         ),
 
         /// Price Offer
-        Row(
+        /* Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
@@ -808,7 +826,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                   ),
                   Container(
                     padding: EdgeInsets.symmetric(
-                        horizontal: size.width * AppDimensions.numD04,
+                        horizontal: size.width * AppDimensions.numD06,
                         vertical: size.width * AppDimensions.numD025),
                     decoration: BoxDecoration(
                         color: AppColorTheme.colorThemePink,
@@ -871,7 +889,13 @@ class _BroadCastScreenState extends State<BroadCastScreen>
               ),
             )
           ],
-        ),
+        ), */
+        priceImageWithButton(
+            size,
+            taskDetail!.hopperTaskAmount,
+            taskDetail!.hopperInfo.isNotEmpty
+                ? (taskDetail!.hopperInfo.first as Map)['hours']
+                : "0"),
 
         SizedBox(
           height: size.width * AppDimensions.numD03,

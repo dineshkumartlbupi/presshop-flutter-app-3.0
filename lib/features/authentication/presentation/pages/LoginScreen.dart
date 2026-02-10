@@ -496,13 +496,12 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                   ),
                 ),
                 if (state is AuthLoading)
-                  // Container(
-                  //   color: Colors.black.withOpacity(0.5),
-                  //   child: const Center(
-                  //     child: CircularProgressIndicator(),
-                  //   ),
-                  // )
-                  const SizedBox.shrink()
+                  Positioned.fill(
+                    child: Container(
+                      color: Colors.black.withOpacity(0.5),
+                      child: showAnimatedLoader(size),
+                    ),
+                  )
               ],
             ),
           );

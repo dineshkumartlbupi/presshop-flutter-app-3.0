@@ -4,7 +4,7 @@ import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
-import 'package:presshop/main.dart'; // For currencySymbol
+import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
@@ -639,27 +639,31 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
                                     // Animated blinking/highlight effect
                                     // Blinking "Available" badge with infinite animation
-                                    Container(
-                                      alignment: Alignment.center,
-                                      height: size.width * AppDimensions.numD08,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: size.width *
-                                              AppDimensions.numD025,
-                                          vertical: size.width *
-                                              AppDimensions.numD01),
-                                      decoration: BoxDecoration(
-                                          color: AppColorTheme.colorThemePink,
-                                          borderRadius: BorderRadius.circular(
-                                              size.width *
-                                                  AppDimensions.numD015)),
-                                      child: Text(
-                                        "Available",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width *
+                                    FadeTransition(
+                                      opacity: _blinkingController,
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        height:
+                                            size.width * AppDimensions.numD08,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: size.width *
                                                 AppDimensions.numD025,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600),
+                                            vertical: size.width *
+                                                AppDimensions.numD01),
+                                        decoration: BoxDecoration(
+                                            color: AppColorTheme.colorThemePink,
+                                            borderRadius: BorderRadius.circular(
+                                                size.width *
+                                                    AppDimensions.numD015)),
+                                        child: Text(
+                                          "Available",
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD025,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600),
+                                        ),
                                       ),
                                     )
                                   ],
@@ -834,7 +838,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         item.totalAmount == "0" &&
                                                 item.status == "accepted"
                                             ? item.status.toUpperCase()
-                                            : "RECEIVEDdsfds",
+                                            : "RECEIVED",
                                         style: commonTextStyle(
                                             size: size,
                                             fontSize: size.width *
@@ -989,24 +993,35 @@ class MyTaskScreenState extends State<MyTaskScreen>
                     var item = allTaskList[index];
                     return InkWell(
                       onTap: () {
-                        context.pushNamed(AppRoutes.taskDetailNewName, extra: {
-                          'taskStatus': item.status,
-                          'taskId': item.id,
-                          'totalEarning': "0",
-                        }).then((value) {
-                          if (context.mounted) {
-                            context.read<TaskBloc>().add(FetchAllTasksEvent(
-                                offset: 0,
-                                filterParams: {},
-                                showLoader: false));
-                          }
-                        });
-
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) =>
-                        //             const TaskDetailNewScreen()));
+                        if (item.isAvailableForAccept &&
+                            item.status != "rejected" &&
+                            item.status != "accepted") {
+                          context.pushNamed(AppRoutes.broadcastName, extra: {
+                            'taskId': item.id,
+                            'mediaHouseId': item.mediaHouseDetails?.id ?? "",
+                          }).then((value) {
+                            if (context.mounted) {
+                              context.read<TaskBloc>().add(FetchAllTasksEvent(
+                                  offset: 0,
+                                  filterParams: {},
+                                  showLoader: false));
+                            }
+                          });
+                        } else {
+                          context
+                              .pushNamed(AppRoutes.taskDetailNewName, extra: {
+                            'taskStatus': item.status,
+                            'taskId': item.id,
+                            'totalEarning': "0",
+                          }).then((value) {
+                            if (context.mounted) {
+                              context.read<TaskBloc>().add(FetchAllTasksEvent(
+                                  offset: 0,
+                                  filterParams: {},
+                                  showLoader: false));
+                            }
+                          });
+                        }
                       },
                       child: Container(
                         padding: EdgeInsets.only(
@@ -1145,18 +1160,18 @@ class MyTaskScreenState extends State<MyTaskScreen>
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                    // item.totalAmount == "0" &&
-                                    item.status == "accepted"
-                                        ? item.status.toUpperCase()
-                                        : "",
+                                    item.isAvailableForAccept &&
+                                            item.status == "accepted"
+                                        ? "ACCEPTED"
+                                        : item.isAvailableForAccept &&
+                                                item.status == "pending"
+                                            ? "TAP TO ACCEPT"
+                                            : "",
                                     style: commonTextStyle(
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD025,
-                                        color: item.status == "accepted" ||
-                                                item.status == "completed"
-                                            ? AppColorTheme.colorThemePink
-                                            : Colors.black,
+                                        color: AppColorTheme.colorThemePink,
                                         fontWeight: FontWeight.normal)),
 
                                 //////////////
@@ -1171,52 +1186,58 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                 AppDimensions.numD01),
                                         alignment: Alignment.center,
                                         decoration: BoxDecoration(
-                                            color: item.status == "accepted"
-                                                // && item.totalAmount == "0"
-                                                ? Colors.black
-                                                : AppColorTheme.colorLightGrey,
+                                            color: Colors.black,
                                             borderRadius: BorderRadius.circular(
                                                 size.width *
                                                     AppDimensions.numD015)),
                                         child: Text(
-                                          item.status == "accepted"
-                                              //  &&   item.totalAmount == "0"
-                                              ? "Live"
-                                              : "Amount",
-                                          // : "$currencySymbol${item.totalAmount}",
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width *
-                                                  AppDimensions.numD025,
-                                              color: item.status == "accepted"
-                                                  // && item.totalAmount == "0"
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      )
-                                    : Container(
-                                        alignment: Alignment.center,
-                                        height:
-                                            size.width * AppDimensions.numD06,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: size.width *
-                                                AppDimensions.numD025,
-                                            vertical: size.width *
-                                                AppDimensions.numD003),
-                                        decoration: BoxDecoration(
-                                            color: AppColorTheme.colorThemePink,
-                                            borderRadius: BorderRadius.circular(
-                                                size.width *
-                                                    AppDimensions.numD015)),
-                                        child: Text(
-                                          "Available",
+                                          "Live",
                                           style: commonTextStyle(
                                               size: size,
                                               fontSize: size.width *
                                                   AppDimensions.numD025,
                                               color: Colors.white,
                                               fontWeight: FontWeight.w600),
+                                        ),
+                                      )
+                                    : FadeTransition(
+                                        opacity: (item.isAvailableForAccept &&
+                                                item.status != "rejected")
+                                            ? _blinkingController
+                                            : const AlwaysStoppedAnimation(1.0),
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          height:
+                                              size.width * AppDimensions.numD06,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: size.width *
+                                                  AppDimensions.numD025,
+                                              vertical: size.width *
+                                                  AppDimensions.numD003),
+                                          decoration: BoxDecoration(
+                                              color: item.isAvailableForAccept
+                                                  ? item.status == "rejected"
+                                                      ? Colors.black
+                                                      : AppColorTheme
+                                                          .colorThemePink
+                                                  : Colors.black,
+                                              borderRadius:
+                                                  BorderRadius.circular(size
+                                                          .width *
+                                                      AppDimensions.numD015)),
+                                          child: Text(
+                                            item.isAvailableForAccept
+                                                ? item.status == "rejected"
+                                                    ? "Live"
+                                                    : "Available"
+                                                : "Live",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD025,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600),
+                                          ),
                                         ),
                                       )
                               ],

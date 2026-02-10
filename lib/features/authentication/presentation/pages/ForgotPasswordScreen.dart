@@ -107,132 +107,152 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             actionWidget: null,
           ),
           body: SafeArea(
-            child: Builder(builder: (context) {
-              return Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: size.width * AppDimensions.numD25,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * AppDimensions.numD06),
-                      child: Text(
-                        AppStrings.forgotPasswordText.toTitleCase(),
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'AirbnbCereal',
-                            fontSize: size.width * AppDimensions.numD07),
-                      ),
-                    ),
-                    SizedBox(
-                      height: size.width * AppDimensions.numD02,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * AppDimensions.numD06),
-                      child: Text(AppStrings.forgotPasswordSubHeading,
-                          style: TextStyle(
-                              fontFamily: 'AirbnbCereal',
-                              color: Colors.black,
-                              fontSize: size.width * AppDimensions.numD035)),
-                    ),
-                    SizedBox(
-                      height: size.width * AppDimensions.numD08,
-                    ),
-
-                    /// Email Controller
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * AppDimensions.numD06),
-                      child: CommonTextField(
-                        size: size,
-                        maxLines: 1,
-                        borderColor: AppColorTheme.colorTextFieldBorder,
-                        controller: emailAddressController,
-                        hintText: AppStrings.emailAddressHintText,
-                        textInputFormatters: null,
-                        prefixIcon: ImageIcon(
-                          AssetImage(
-                            "${iconsPath}ic_email.png",
-                          ),
-                          size: size.width * AppDimensions.numD045,
+            child: Stack(
+              children: [
+                Builder(builder: (context) {
+                  return Form(
+                    key: formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: size.width * AppDimensions.numD25,
                         ),
-                        prefixIconHeight: size.width * AppDimensions.numD045,
-                        suffixIconIconHeight: 0,
-                        suffixIcon: null,
-                        hidePassword: false,
-                        keyboardType: TextInputType.emailAddress,
-                        validator: checkEmailValidator,
-                        enableValidations: true,
-                        filled: false,
-                        filledColor: Colors.transparent,
-                        autofocus: false,
-                      ),
-                    ),
-                    const Spacer(),
-
-                    /// Submit Button
-                    Container(
-                      width: size.width,
-                      height: size.width *
-                          (isIpad ? AppDimensions.numD1 : AppDimensions.numD14),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * AppDimensions.numD08),
-                      child: BlocBuilder<AuthBloc, AuthState>(
-                        builder: (context, state) {
-                          if (state is AuthLoading) {
-                            return SizedBox.shrink();
-                          }
-                          return commonElevatedButton(
-                              AppStrings.submitText,
-                              size,
-                              commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700),
-                              commonButtonStyle(
-                                  size, AppColorTheme.colorThemePink), () {
-                            if (formKey.currentState!.validate()) {
-                              context.read<AuthBloc>().add(
-                                  ForgotPasswordRequested(
-                                      emailAddressController.text.trim()));
-                            }
-                          });
-                        },
-                      ),
-                    ),
-                    isIpad
-                        ? SizedBox(
-                            height: size.height * AppDimensions.numD02,
-                          )
-                        : const SizedBox.shrink(),
-                    Align(
-                        alignment: Alignment.center,
-                        child: TextButton(
-                          onPressed: () {
-                            context.pop();
-                          },
-                          child: Text(AppStrings.signInText,
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD06),
+                          child: Text(
+                            AppStrings.forgotPasswordText.toTitleCase(),
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'AirbnbCereal',
+                                fontSize: size.width * AppDimensions.numD07),
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.width * AppDimensions.numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD06),
+                          child: Text(AppStrings.forgotPasswordSubHeading,
                               style: TextStyle(
-                                  color: AppColorTheme.colorThemePink,
-                                  fontSize: size.width * AppDimensions.numD035,
                                   fontFamily: 'AirbnbCereal',
-                                  fontWeight: FontWeight.w700)),
-                        )),
-                    isIpad
-                        ? SizedBox(
-                            height: size.height * AppDimensions.numD04,
-                          )
-                        : const SizedBox.shrink(),
-                  ],
+                                  color: Colors.black,
+                                  fontSize:
+                                      size.width * AppDimensions.numD035)),
+                        ),
+                        SizedBox(
+                          height: size.width * AppDimensions.numD08,
+                        ),
+
+                        /// Email Controller
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD06),
+                          child: CommonTextField(
+                            size: size,
+                            maxLines: 1,
+                            borderColor: AppColorTheme.colorTextFieldBorder,
+                            controller: emailAddressController,
+                            hintText: AppStrings.emailAddressHintText,
+                            textInputFormatters: null,
+                            prefixIcon: ImageIcon(
+                              AssetImage(
+                                "${iconsPath}ic_email.png",
+                              ),
+                              size: size.width * AppDimensions.numD045,
+                            ),
+                            prefixIconHeight:
+                                size.width * AppDimensions.numD045,
+                            suffixIconIconHeight: 0,
+                            suffixIcon: null,
+                            hidePassword: false,
+                            keyboardType: TextInputType.emailAddress,
+                            validator: checkEmailValidator,
+                            enableValidations: true,
+                            filled: false,
+                            filledColor: Colors.transparent,
+                            autofocus: false,
+                          ),
+                        ),
+                        const Spacer(),
+
+                        /// Submit Button
+                        Container(
+                          width: size.width,
+                          height: size.width *
+                              (isIpad
+                                  ? AppDimensions.numD1
+                                  : AppDimensions.numD14),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD08),
+                          child: BlocBuilder<AuthBloc, AuthState>(
+                            builder: (context, state) {
+                              return commonElevatedButton(
+                                  AppStrings.submitText,
+                                  size,
+                                  commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700),
+                                  commonButtonStyle(
+                                      size, AppColorTheme.colorThemePink), () {
+                                if (formKey.currentState!.validate()) {
+                                  context.read<AuthBloc>().add(
+                                      ForgotPasswordRequested(
+                                          emailAddressController.text.trim()));
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                        isIpad
+                            ? SizedBox(
+                                height: size.height * AppDimensions.numD02,
+                              )
+                            : const SizedBox.shrink(),
+                        Align(
+                            alignment: Alignment.center,
+                            child: TextButton(
+                              onPressed: () {
+                                context.pop();
+                              },
+                              child: Text(AppStrings.signInText,
+                                  style: TextStyle(
+                                      color: AppColorTheme.colorThemePink,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      fontFamily: 'AirbnbCereal',
+                                      fontWeight: FontWeight.w700)),
+                            )),
+                        isIpad
+                            ? SizedBox(
+                                height: size.height * AppDimensions.numD04,
+                              )
+                            : const SizedBox.shrink(),
+                      ],
+                    ),
+                  );
+                }),
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    if (state is AuthLoading) {
+                      return Positioned.fill(
+                        child: Container(
+                          color: Colors.black.withOpacity(0.5),
+                          child: showAnimatedLoader(size),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
                 ),
-              );
-            }),
+              ],
+            ),
           ),
         ),
       ),
@@ -418,9 +438,6 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                       (isIpad ? AppDimensions.numD1 : AppDimensions.numD14),
                   child: BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
-                      if (state is AuthLoading) {
-                        return SizedBox.shrink();
-                      }
                       return commonElevatedButton(
                         "Verify OTP",
                         size,
@@ -509,6 +526,23 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                 SizedBox(height: size.width * AppDimensions.numD06),
               ],
             ),
+          ),
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if (state is AuthLoading) {
+                return Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.5),
+                      borderRadius:
+                          const BorderRadius.vertical(top: Radius.circular(25)),
+                    ),
+                    child: showAnimatedLoader(size),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
           ),
         ],
       ),

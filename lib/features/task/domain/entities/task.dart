@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'task_detail.dart';
 
 abstract class Task extends Equatable {
-
   const Task({required this.status, required this.totalAmount});
   final String status;
   final String totalAmount;
@@ -12,7 +11,6 @@ abstract class Task extends Equatable {
 }
 
 class TaskPending extends Task {
-
   const TaskPending({
     required super.status,
     required super.totalAmount,
@@ -20,18 +18,26 @@ class TaskPending extends Task {
     required this.title,
     required this.body,
     required this.broadCastId,
+    this.isAvailableForAccept = false,
   });
   final TaskDetail? taskDetail;
   final String title;
   final String body;
   final String broadCastId;
+  final bool isAvailableForAccept;
 
   @override
-  List<Object?> get props => [...super.props, taskDetail, title, body, broadCastId];
+  List<Object?> get props => [
+        ...super.props,
+        taskDetail,
+        title,
+        body,
+        broadCastId,
+        isAvailableForAccept
+      ];
 }
 
 class TaskMy extends Task {
-
   const TaskMy({
     required super.status,
     required super.totalAmount,

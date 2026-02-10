@@ -1,0 +1,5 @@
+Analyzing broadCastChatTaskScreen.dart...                       
+
+   info • The file name 'broadCastChatTaskScreen.dart' isn't a lower_case_with_underscores identifier • lib/features/task/presentation/pages/broadcast_chat/broadCastChatTaskScreen.dart:1:1 • file_names
+   info • The prefix 'IO' isn't a lower_case_with_underscores identifier • lib/features/task/presentation/pages/broadcast_chat/broadCastChatTaskScreen.dart:26:60 • library_prefixes
+

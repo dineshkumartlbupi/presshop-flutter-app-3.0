@@ -74,243 +74,242 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
             );
           }
         },
-        builder: (context, state) {
-          return Scaffold(
-            floatingActionButton: AnimatedSize(
-              duration: Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 80.0),
-                child: InkWell(
-                  onTap: () {
-                    _scrollDown();
-                    setState(() {
-                      isSelectUpArrow = !isSelectUpArrow;
-                    });
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(40),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    padding:
-                        EdgeInsets.only(top: 6, bottom: 6, left: 15, right: 5),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AnimatedSwitcher(
-                          duration: Duration(milliseconds: 300),
-                          transitionBuilder: (child, animation) {
-                            return FadeTransition(
-                                opacity: animation, child: child);
-                          },
-                          child: Text(
-                            'Scroll ${!isSelectUpArrow ? "Down" : "Up"}',
-                            key: ValueKey<bool>(isSelectUpArrow),
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: const Color(0xFF4F4F4F),
-                              fontSize: size.width * AppDimensions.numD04,
+        builder: (context, state) => Stack(
+          children: [
+            Scaffold(
+              floatingActionButton: AnimatedSize(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 80.0),
+                  child: InkWell(
+                    onTap: () {
+                      _scrollDown();
+                      setState(() {
+                        isSelectUpArrow = !isSelectUpArrow;
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(40),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            blurRadius: 5,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.only(
+                          top: 6, bottom: 6, left: 15, right: 5),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            transitionBuilder: (child, animation) {
+                              return FadeTransition(
+                                  opacity: animation, child: child);
+                            },
+                            child: Text(
+                              'Scroll ${!isSelectUpArrow ? "Down" : "Up"}',
+                              key: ValueKey<bool>(isSelectUpArrow),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF4F4F4F),
+                                fontSize: size.width * AppDimensions.numD04,
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(width: 10),
-                        AnimatedRotation(
-                          turns: isSelectUpArrow ? 0.5 : 0,
-                          duration: Duration(milliseconds: 300),
-                          child: Container(
-                            width: 46,
-                            height: 46,
-                            decoration: BoxDecoration(
-                              color: Colors.redAccent,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.keyboard_arrow_down_sharp,
-                              color: Colors.white,
-                              size: size.width * AppDimensions.numD085,
+                          const SizedBox(width: 10),
+                          AnimatedRotation(
+                            turns: isSelectUpArrow ? 0.5 : 0,
+                            duration: const Duration(milliseconds: 300),
+                            child: Container(
+                              width: 46,
+                              height: 46,
+                              decoration: const BoxDecoration(
+                                color: Colors.redAccent,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.keyboard_arrow_down_sharp,
+                                color: Colors.white,
+                                size: size.width * AppDimensions.numD085,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            appBar: CommonAppBar(
-              elevation: 0,
-              hideLeading: false,
-              title: Text(
-                  widget.type == "privacy_policy"
-                      ? AppStrings.privacyPolicyText
-                      : "${AppStrings.legalText} ${AppStrings.tcText}",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize:
-                          size.width * AppDimensions.appBarHeadingFontSize)),
-              centerTitle: false,
-              titleSpacing: 0,
-              size: size,
-              showActions: true,
-              leadingFxn: () {
-                context.pop();
-              },
-              actionWidget: [
-                InkWell(
-                  onTap: () {
-                    context.goNamed(AppRoutes.dashboardName,
-                        extra: {'initialPosition': 2});
-                  },
-                  child: Image.asset(
-                    "${commonImagePath}rabbitLogo.png",
-                    height: size.width * AppDimensions.numD07,
-                    width: size.width * AppDimensions.numD07,
+              appBar: CommonAppBar(
+                elevation: 0,
+                hideLeading: false,
+                title: Text(
+                    widget.type == "privacy_policy"
+                        ? AppStrings.privacyPolicyText
+                        : "${AppStrings.legalText} ${AppStrings.tcText}",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize:
+                            size.width * AppDimensions.appBarHeadingFontSize)),
+                centerTitle: false,
+                titleSpacing: 0,
+                size: size,
+                showActions: true,
+                leadingFxn: () {
+                  context.pop();
+                },
+                actionWidget: [
+                  InkWell(
+                    onTap: () {
+                      context.goNamed(AppRoutes.dashboardName,
+                          extra: {'initialPosition': 2});
+                    },
+                    child: Image.asset(
+                      "${commonImagePath}rabbitLogo.png",
+                      height: size.width * AppDimensions.numD07,
+                      width: size.width * AppDimensions.numD07,
+                    ),
                   ),
-                ),
-                SizedBox(
-                  width: size.width * AppDimensions.numD02,
-                ),
-              ],
-            ),
-            body: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: size.width * AppDimensions.numD02,
-                ),
-                htmlDataList.isNotEmpty
-                    ? Flexible(
-                        child: SingleChildScrollView(
-                        controller: scrollController,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            !rememberMe
-                                ? Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal:
-                                            size.width * AppDimensions.numD04),
-                                    child: Text(
-                                      "PLEASE READ THESE LICENCE TERMS CAREFULLY. BY CLICKING ON THE ${"ACCEPT"} BUTTON BELOW YOU AGREE TO THESE TERMS WHICH WILL BIND YOU. IF YOU DO NOT AGREE TO THESE TERMS, CLICK ON THE REJECT BUTTON BELOW.",
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: size.width *
-                                              AppDimensions.numD035,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  )
-                                : Container(),
-                            /*   SizedBox(
-                              height: size.width * AppDimensions.numD06,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * AppDimensions.numD06),
-                              child: Text(
-                                "Updated on : $updatedDate",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * AppDimensions.numD035,
-                                    color: AppColorTheme.colorHint,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ),*/
-                            ListView.separated(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        size.width * AppDimensions.numD02),
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  return Html(
-                                    data: htmlDataList[index],
-                                    style: {
-                                      "span": Style(
-                                        color: AppColorTheme.colorTextFieldIcon,
-                                        fontSize: FontSize(
-                                            size.width * AppDimensions.numD01),
-                                      ),
-                                      "h1": Style(
-                                          color: AppColorTheme.colorGreyNew,
-                                          fontSize: FontSize(size.width *
-                                              AppDimensions.numD02),
-                                          padding: HtmlPaddings.symmetric(
-                                              vertical: size.width *
-                                                  AppDimensions.numD01)),
-                                      "h2": Style(
-                                          color: Colors.black,
-                                          fontSize: FontSize(size.width *
-                                              AppDimensions.numD04),
-                                          padding: HtmlPaddings.symmetric(
-                                              vertical: size.width *
-                                                  AppDimensions.numD01)),
-                                      "h3": Style(
-                                          color: Colors.black,
-                                          fontSize: FontSize(size.width *
-                                              AppDimensions.numD035),
-                                          padding: HtmlPaddings.symmetric(
-                                              vertical: size.width *
-                                                  AppDimensions.numD01)),
-                                      "h4": Style(
-                                          color: Colors.black,
-                                          fontSize: FontSize(size.width *
-                                              AppDimensions.numD035),
-                                          padding: HtmlPaddings.symmetric(
-                                              vertical: size.width *
-                                                  AppDimensions.numD01)),
-                                      "td": Style(
-                                          color: AppColorTheme.colorGreyNew,
-                                          fontSize: FontSize(size.width *
-                                              AppDimensions.numD02),
-                                          padding: HtmlPaddings.symmetric(
-                                              vertical: size.width *
-                                                  AppDimensions.numD01)),
-                                      "th": Style(
-                                          color: AppColorTheme.colorGreyNew,
-                                          fontSize: FontSize(size.width *
-                                              AppDimensions.numD02),
-                                          fontWeight: FontWeight.w600,
-                                          padding: HtmlPaddings.zero),
-                                      "div": Style(
-                                        backgroundColor:
-                                            AppColorTheme.colorLightGrey,
+                  SizedBox(
+                    width: size.width * AppDimensions.numD02,
+                  ),
+                ],
+              ),
+              body: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: size.width * AppDimensions.numD02,
+                  ),
+                  htmlDataList.isNotEmpty
+                      ? Flexible(
+                          child: SingleChildScrollView(
+                            controller: scrollController,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                !rememberMe
+                                    ? Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: size.width *
+                                                AppDimensions.numD04),
+                                        child: Text(
+                                          "PLEASE READ THESE LICENCE TERMS CAREFULLY. BY CLICKING ON THE ${"ACCEPT"} BUTTON BELOW YOU AGREE TO THESE TERMS WHICH WILL BIND YOU. IF YOU DO NOT AGREE TO THESE TERMS, CLICK ON THE REJECT BUTTON BELOW.",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD035,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       )
-                                    },
-                                  );
-                                },
-                                separatorBuilder: (context, index) {
-                                  return const SizedBox(
-                                    height: 0,
-                                  );
-                                },
-                                itemCount: htmlDataList.length),
-                            !rememberMe ? checkBoxWidget(size) : Container(),
-                            !rememberMe
-                                ? Padding(
+                                    : Container(),
+                                ListView.separated(
                                     padding: EdgeInsets.symmetric(
                                         horizontal:
-                                            size.width * AppDimensions.numD06),
-                                    child: buttonWidget(size),
-                                  )
-                                : Container(),
-                          ],
-                        ),
-                      ))
-                    : Container()
-              ],
+                                            size.width * AppDimensions.numD02),
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      return Html(
+                                        data: htmlDataList[index],
+                                        style: {
+                                          "span": Style(
+                                            color: AppColorTheme
+                                                .colorTextFieldIcon,
+                                            fontSize: FontSize(size.width *
+                                                AppDimensions.numD01),
+                                          ),
+                                          "h1": Style(
+                                              color: AppColorTheme.colorGreyNew,
+                                              fontSize: FontSize(size.width *
+                                                  AppDimensions.numD02),
+                                              padding: HtmlPaddings.symmetric(
+                                                  vertical: size.width *
+                                                      AppDimensions.numD01)),
+                                          "h2": Style(
+                                              color: Colors.black,
+                                              fontSize: FontSize(size.width *
+                                                  AppDimensions.numD04),
+                                              padding: HtmlPaddings.symmetric(
+                                                  vertical: size.width *
+                                                      AppDimensions.numD01)),
+                                          "h3": Style(
+                                              color: Colors.black,
+                                              fontSize: FontSize(size.width *
+                                                  AppDimensions.numD035),
+                                              padding: HtmlPaddings.symmetric(
+                                                  vertical: size.width *
+                                                      AppDimensions.numD01)),
+                                          "h4": Style(
+                                              color: Colors.black,
+                                              fontSize: FontSize(size.width *
+                                                  AppDimensions.numD035),
+                                              padding: HtmlPaddings.symmetric(
+                                                  vertical: size.width *
+                                                      AppDimensions.numD01)),
+                                          "td": Style(
+                                              color: AppColorTheme.colorGreyNew,
+                                              fontSize: FontSize(size.width *
+                                                  AppDimensions.numD02),
+                                              padding: HtmlPaddings.symmetric(
+                                                  vertical: size.width *
+                                                      AppDimensions.numD01)),
+                                          "th": Style(
+                                              color: AppColorTheme.colorGreyNew,
+                                              fontSize: FontSize(size.width *
+                                                  AppDimensions.numD02),
+                                              fontWeight: FontWeight.w600,
+                                              padding: HtmlPaddings.zero),
+                                          "div": Style(
+                                            backgroundColor:
+                                                AppColorTheme.colorLightGrey,
+                                          )
+                                        },
+                                      );
+                                    },
+                                    separatorBuilder: (context, index) {
+                                      return const SizedBox(
+                                        height: 0,
+                                      );
+                                    },
+                                    itemCount: htmlDataList.length),
+                                !rememberMe
+                                    ? checkBoxWidget(size)
+                                    : Container(),
+                                !rememberMe
+                                    ? Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: size.width *
+                                                AppDimensions.numD06),
+                                        child: buttonWidget(size),
+                                      )
+                                    : Container(),
+                              ],
+                            ),
+                          ),
+                        )
+                      : Container()
+                ],
+              ),
             ),
-          );
-        },
+            if (state is TermsLoading)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.white,
+                  child: showAnimatedLoader(size),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

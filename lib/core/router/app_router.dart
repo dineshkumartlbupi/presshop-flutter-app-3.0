@@ -35,8 +35,8 @@ import 'package:presshop/features/authentication/presentation/pages/TermCheckScr
 import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
 import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
 import 'package:presshop/features/task/presentation/pages/task_screen.dart';
-import 'package:presshop/features/task/presentation/pages/manage_task_screen.dart';
-import 'package:presshop/features/task/presentation/pages/detail_new/task_details_new_screen.dart';
+import 'package:presshop/features/content/presentation/pages/manage_content_chat_screen.dart';
+import 'package:presshop/features/task/presentation/pages/detail_new/task_details_screen.dart';
 import 'package:presshop/features/task/presentation/pages/broadcast/BroardcastScreen.dart';
 import 'package:presshop/features/task/presentation/pages/broadcast_chat/broadCastChatTaskScreen.dart';
 import 'package:presshop/features/news/presentation/pages/news_page.dart';
@@ -249,7 +249,7 @@ class AppRouter {
         name: AppRoutes.manageTaskName,
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>;
-          return ManageTaskScreen(
+          return ManageContentChatScreen(
             roomId: extra['roomId'],
             type: extra['type'],
             mediaHouseDetail: extra['mediaHouseDetail'],
@@ -266,7 +266,7 @@ class AppRouter {
         name: AppRoutes.taskDetailNewName,
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>;
-          return TaskDetailNewScreen(
+          return TaskDetailScreen(
             taskStatus: extra['taskStatus'],
             taskId: extra['taskId'],
             totalEarning: extra['totalEarning'],
