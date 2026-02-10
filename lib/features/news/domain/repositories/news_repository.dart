@@ -17,5 +17,5 @@ abstract class NewsRepository {
   Future<Either<Failure, News>> getNewsDetail(String id);
 
   Future<Either<Failure, List<Comment>>> getComments(String contentId,
-      {int limit = 15});
+      {int limit = 15, int offset = 0});
 }

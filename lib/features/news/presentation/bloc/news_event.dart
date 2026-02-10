@@ -9,7 +9,6 @@ abstract class NewsEvent extends Equatable {
 }
 
 class GetAggregatedNewsEvent extends NewsEvent {
-
   const GetAggregatedNewsEvent({
     required this.lat,
     required this.lng,
@@ -32,7 +31,6 @@ class GetAggregatedNewsEvent extends NewsEvent {
 }
 
 class GetNewsDetailEvent extends NewsEvent {
-
   const GetNewsDetailEvent({required this.id});
   final String id;
 
@@ -41,17 +39,17 @@ class GetNewsDetailEvent extends NewsEvent {
 }
 
 class GetCommentsEvent extends NewsEvent {
-
-  const GetCommentsEvent({required this.contentId, this.limit = 15});
+  const GetCommentsEvent(
+      {required this.contentId, this.limit = 15, this.offset = 0});
   final String contentId;
   final int limit;
+  final int offset;
 
   @override
-  List<Object> get props => [contentId, limit];
+  List<Object> get props => [contentId, limit, offset];
 }
 
 class AddCommentLocalEvent extends NewsEvent {
-
   const AddCommentLocalEvent({required this.comment, this.parentId});
   final Comment comment;
   final String? parentId;
@@ -61,7 +59,6 @@ class AddCommentLocalEvent extends NewsEvent {
 }
 
 class UpdateLikeLocalEvent extends NewsEvent {
-
   const UpdateLikeLocalEvent({required this.commentId, required this.count});
   final String commentId;
   final int count;
@@ -71,7 +68,6 @@ class UpdateLikeLocalEvent extends NewsEvent {
 }
 
 class ToggleLikeStatusEvent extends NewsEvent {
-
   const ToggleLikeStatusEvent({required this.commentId, required this.isLiked});
   final String commentId;
   final bool isLiked;
@@ -100,10 +96,18 @@ class OnNewsLikeUpdatedEvent extends NewsEvent {
 }
 
 class UpdateShareCountEvent extends NewsEvent {
-
   const UpdateShareCountEvent({required this.count});
   final int count;
 
   @override
   List<Object> get props => [count];
+}
+
+class ToggleCommentLikeEvent extends NewsEvent {
+  const ToggleCommentLikeEvent(
+      {required this.contentId, required this.commentId});
+  final String contentId;
+  final String commentId;
+  @override
+  List<Object> get props => [contentId, commentId];
 }

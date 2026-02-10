@@ -131,12 +131,16 @@ class SocketService {
     required String text,
     required String userId,
     String? parentId,
+    String? rootParentId,
+    String? replyToName,
   }) {
     final data = {
       'id': contentId,
       'text': text,
       'parent_id': parentId,
+      'root_parent_id': rootParentId,
       'user_id': userId,
+      'reply_to_user_name': replyToName != null ? '@$replyToName' : null,
     };
     debugPrint("Socket: Emitting add:aggregated:comment: $data");
     socket.emit('add:aggregated:comment', data);

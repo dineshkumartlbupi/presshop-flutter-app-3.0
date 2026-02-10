@@ -3092,18 +3092,25 @@ class _ConversationScreenState extends State<ConversationScreen>
             );
           }
 
-          var userDocument = snapshot.data!.data();
-          debugPrint("online userid ==> ${userDocument!["roomId"].toString()}");
-          debugPrint(
-              "online roomId ==> ${sharedPreferences!.getString(adminRoomIdKey).toString()}");
-          if (userDocument["isOnline"] == true &&
-              userDocument['roomId'] ==
-                  sharedPreferences!.getString(adminRoomIdKey).toString()) {
-            isOnline = true;
-            seeMsg();
+          var userDocument = snapshot.data?.data();
+
+          if (userDocument != null) {
+            debugPrint(
+                "online userid ==> ${userDocument["roomId"]?.toString() ?? ''}");
+            debugPrint(
+                "online roomId ==> ${sharedPreferences!.getString(adminRoomIdKey).toString()}");
+            if (userDocument["isOnline"] == true &&
+                userDocument['roomId'] ==
+                    sharedPreferences!.getString(adminRoomIdKey).toString()) {
+              isOnline = true;
+              seeMsg();
+            } else {
+              isOnline = false;
+            }
           } else {
             isOnline = false;
           }
+
           debugPrint("userDocument : $userDocument");
           debugPrint("isOnline : $isOnline");
           return Text(

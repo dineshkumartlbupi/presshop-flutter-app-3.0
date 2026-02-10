@@ -7,6 +7,7 @@ import 'package:presshop/core/constants/app_dimensions_new.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/features/map/data/services/socket_service.dart';
 import 'package:presshop/features/news/domain/entities/comment.dart';
+import 'package:presshop/features/news/data/models/comment_model.dart';
 import 'package:presshop/features/news/domain/entities/news.dart';
 import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
 import 'package:presshop/features/news/presentation/bloc/news_event.dart';
@@ -50,6 +51,13 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
   bool _isExpanded = false;
   bool _hasScrolledToComments = false;
 
+  String? _replyingTo;
+  String? _replyingToName;
+  String? _rootParentId;
+  final TextEditingController _replyController = TextEditingController();
+  final Map<String, GlobalKey> _inputKeys = {};
+  final Map<String, GlobalKey> _commentKeys = {};
+
   late final NewsBloc _newsBloc;
   late final SocketService _socketService;
   String _userId = "";
@@ -91,39 +99,15 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
     _socketService.onCommentNew = (data) {
       if (data != null && data['content_id'] == widget.newsId) {
         try {
-          // Assuming CommentModel.fromJson can handle the data
-          // We need to import CommentModel or just map it manually if needed
-          // But here we need a Comment entity.
-          // I'll assume the data matches the structure required to create a Comment
-          // Since I can't import CommentModel easily without circular deps or just import it
-          // I'll assume data is sufficient.
-          // Actually, I should import CommentModel to parse it properly.
-          // But for now, I'll rely on the BLoC to handle it if I pass the data?
-          // No, BLoC expects Comment entity.
-          // I'll parse it manually here or import CommentModel.
-          // I'll skip CommentModel import and map manually for safety.
-
-          final newComment = Comment(
-            id: data['_id'] ?? '',
-            contentId: data['content_id'] ?? '',
-            userId: data['user_id'] is Map
-                ? data['user_id']['_id']
-                : (data['user_id'] ?? ''),
-            comment: data['comment'] ?? '',
-            createdAt: data['createdAt'] ?? DateTime.now().toIso8601String(),
-            userImage: data['user_id'] is Map
-                ? data['user_id']['profile_image']
-                : null,
-            userName:
-                data['user_id'] is Map ? data['user_id']['full_name'] : null,
-            likesCount: data['likes_count'] ?? 0,
-            isLiked: data['is_liked'] ?? false,
-            replies: [], // New comment has no replies initially
-          );
+          final newComment = CommentModel.fromJson(data);
+          final parentId = data['parent_id'] ??
+              data['parentId'] ??
+              data['root_parent_id'] ??
+              data['root_comment_id'];
 
           _newsBloc.add(AddCommentLocalEvent(
             comment: newComment,
-            parentId: data['parent_id'],
+            parentId: parentId?.toString(),
           ));
         } catch (e) {
           debugPrint("Error parsing new comment: $e");
@@ -159,6 +143,20 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
     _commentController.clear();
   }
 
+  void _addReply(String parentId, String text,
+      {String? rootParentId, String? replyToName}) {
+    if (_userId.isEmpty) return;
+    _socketService.addComment(
+      contentId: widget.newsId,
+      text: text,
+      userId: _userId,
+      parentId: parentId,
+      rootParentId: rootParentId,
+      replyToName: replyToName,
+    );
+    _replyController.clear();
+  }
+
   void _scrollToComments() {
     if (_commentsKey.currentContext != null) {
       Scrollable.ensureVisible(
@@ -172,6 +170,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
   @override
   void dispose() {
     _commentController.dispose();
+    _replyController.dispose();
     _scrollController.dispose();
     // _socketService.dispose(); // Do not dispose singleton socket service
     super.dispose();
@@ -547,18 +546,8 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                                           size.width * AppDimensions.numD04),
                               onTap: () {
                                 if (_userId.isEmpty) return;
-                                // Toggle like logic
-                                // Assuming NewsBloc has an event for this
-                                // _newsBloc.add(ToggleLikeEvent(newsId: widget.newsId));
-                                // Since I don't see ToggleLikeEvent in NewsBloc, I might need to implement it
-                                // or use MapBloc as before.
-                                // But I should use NewsBloc.
-                                // I'll leave it as TODO or use MapBloc if available.
-                                // Actually NewsBloc has ToggleLikeStatusEvent but it takes commentId.
-                                // I need to toggle news like.
-                                // I'll assume MapBloc handles it for now as per legacy code,
-                                // but I don't want to mix blocs if possible.
-                                // I'll just comment it out or add a TODO.
+                                _newsBloc.add(ToggleNewsLikeEvent(
+                                    contentId: widget.newsId));
                               },
                             ),
                             const SizedBox(width: 8),
@@ -647,6 +636,24 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                       ),
                     ),
                     const SizedBox(height: 20),
+                    if (state.hasMoreComments && state.comments.isNotEmpty)
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            _newsBloc.add(GetCommentsEvent(
+                              contentId: widget.newsId,
+                              offset: state.comments.length,
+                            ));
+                          },
+                          child: const Text(
+                            "Load More",
+                            style: TextStyle(
+                              color: Color(0xFFEF4444),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -699,6 +706,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
       children: [
         // Parent Comment
         IntrinsicHeight(
+          key: _commentKeys[commentData.id] ??= GlobalKey(),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -760,7 +768,10 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                       children: [
                         GestureDetector(
                           onTap: () {
-                            // Like logic
+                            _newsBloc.add(ToggleCommentLikeEvent(
+                              contentId: widget.newsId,
+                              commentId: commentData.id,
+                            ));
                           },
                           child: Row(
                             children: [
@@ -785,7 +796,11 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                         const SizedBox(width: 16),
                         GestureDetector(
                           onTap: () {
-                            // Reply logic
+                            setState(() {
+                              _replyingTo = commentData.id;
+                              _replyingToName = commentData.userName;
+                              _rootParentId = commentData.id;
+                            });
                           },
                           child: const Text(
                             "Reply",
@@ -798,6 +813,29 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                       ],
                     ),
                     const SizedBox(height: 16),
+                    if (_replyingTo == commentData.id)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: CommentInputWidget(
+                          key: _inputKeys[commentData.id] ??= GlobalKey(),
+                          controller: _replyController,
+                          autofocus: true,
+                          hintText: "Reply to ${commentData.userName}...",
+                          onSend: () {
+                            if (_replyController.text.trim().isNotEmpty) {
+                              _addReply(
+                                  commentData.id, _replyController.text.trim(),
+                                  rootParentId: _rootParentId,
+                                  replyToName: _replyingToName);
+                              setState(() {
+                                _replyingTo = null;
+                                _replyingToName = null;
+                                _rootParentId = null;
+                              });
+                            }
+                          },
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -825,6 +863,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
     required String replies,
   }) {
     return Padding(
+      key: _commentKeys[id] ??= GlobalKey(),
       padding: const EdgeInsets.only(bottom: 20.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -874,7 +913,10 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                   children: [
                     GestureDetector(
                       onTap: () {
-                        // Like logic
+                        _newsBloc.add(ToggleCommentLikeEvent(
+                          contentId: widget.newsId,
+                          commentId: id,
+                        ));
                       },
                       child: Row(
                         children: [
@@ -895,7 +937,11 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                     const SizedBox(width: 16),
                     GestureDetector(
                       onTap: () {
-                        // Reply logic
+                        setState(() {
+                          _replyingTo = id;
+                          _replyingToName = name;
+                          _rootParentId = id;
+                        });
                       },
                       child: const Text(
                         "Reply",
@@ -907,6 +953,28 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                     ),
                   ],
                 ),
+                if (_replyingTo == id)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: CommentInputWidget(
+                      key: _inputKeys[id] ??= GlobalKey(),
+                      controller: _replyController,
+                      autofocus: true,
+                      hintText: "Reply to $name...",
+                      onSend: () {
+                        if (_replyController.text.trim().isNotEmpty) {
+                          _addReply(id, _replyController.text.trim(),
+                              rootParentId: _rootParentId,
+                              replyToName: _replyingToName);
+                          setState(() {
+                            _replyingTo = null;
+                            _replyingToName = null;
+                            _rootParentId = null;
+                          });
+                        }
+                      },
+                    ),
+                  ),
               ],
             ),
           ),
@@ -926,6 +994,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
     required int likesCount,
   }) {
     return Padding(
+      key: _commentKeys[id] ??= GlobalKey(),
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -975,7 +1044,10 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                   children: [
                     GestureDetector(
                       onTap: () {
-                        // Like logic
+                        _newsBloc.add(ToggleCommentLikeEvent(
+                          contentId: widget.newsId,
+                          commentId: id,
+                        ));
                       },
                       child: Row(
                         children: [

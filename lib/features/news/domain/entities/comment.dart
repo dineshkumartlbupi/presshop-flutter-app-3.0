@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class Comment extends Equatable {
-
   const Comment({
     required this.id,
     required this.contentId,
@@ -13,6 +12,8 @@ class Comment extends Equatable {
     this.replies = const [],
     this.likesCount = 0,
     this.isLiked = false,
+    this.rootParentId,
+    this.replyToName,
   });
   final String id;
   final String contentId;
@@ -25,6 +26,8 @@ class Comment extends Equatable {
   final List<Comment> replies;
   final int likesCount;
   final bool isLiked;
+  final String? rootParentId;
+  final String? replyToName;
 
   Comment copyWith({
     String? id,
@@ -37,6 +40,8 @@ class Comment extends Equatable {
     List<Comment>? replies,
     int? likesCount,
     bool? isLiked,
+    String? rootParentId,
+    String? replyToName,
   }) {
     return Comment(
       id: id ?? this.id,
@@ -49,6 +54,8 @@ class Comment extends Equatable {
       replies: replies ?? this.replies,
       likesCount: likesCount ?? this.likesCount,
       isLiked: isLiked ?? this.isLiked,
+      rootParentId: rootParentId ?? this.rootParentId,
+      replyToName: replyToName ?? this.replyToName,
     );
   }
 
@@ -64,5 +71,7 @@ class Comment extends Equatable {
         replies,
         likesCount,
         isLiked,
+        rootParentId,
+        replyToName,
       ];
 }

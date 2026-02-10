@@ -7,7 +7,6 @@ import 'package:presshop/features/news/domain/entities/news.dart';
 import 'package:presshop/features/news/domain/repositories/news_repository.dart';
 
 class NewsRepositoryImpl implements NewsRepository {
-
   NewsRepositoryImpl({required this.remoteDataSource});
   final NewsRemoteDataSource remoteDataSource;
 
@@ -55,10 +54,10 @@ class NewsRepositoryImpl implements NewsRepository {
 
   @override
   Future<Either<Failure, List<Comment>>> getComments(String contentId,
-      {int limit = 15}) async {
+      {int limit = 15, int offset = 0}) async {
     try {
-      final result =
-          await remoteDataSource.getComments(contentId, limit: limit);
+      final result = await remoteDataSource.getComments(contentId,
+          limit: limit, offset: offset);
       return Right(result);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));

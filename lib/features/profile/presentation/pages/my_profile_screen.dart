@@ -313,88 +313,94 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           ),
         ],
       ),
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: SafeArea(
-          child: SingleChildScrollView(
-            controller: scrollController,
-            child: Form(
-              key: formKey,
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: size.width * AppDimensions.numD06),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (isLoading)
-                      const LinearProgressIndicator(
-                        backgroundColor: AppColorTheme.colorLightGrey,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            AppColorTheme.colorThemePink),
-                      ),
-                    topProfileWidget(),
-                    SizedBox(
-                      height: size.width * AppDimensions.numD06,
+      body: Stack(
+        children: [
+          GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: SafeArea(
+              child: SingleChildScrollView(
+                controller: scrollController,
+                child: Form(
+                  key: formKey,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * AppDimensions.numD06),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        topProfileWidget(),
+                        SizedBox(
+                          height: size.width * AppDimensions.numD06,
+                        ),
+                        _buildUserNameField(),
+                        SizedBox(height: size.width * AppDimensions.numD06),
+                        _buildFirstNameField(),
+                        SizedBox(height: size.width * AppDimensions.numD06),
+                        _buildLastNameField(),
+                        SizedBox(height: size.width * AppDimensions.numD06),
+                        _buildPhoneField(),
+                        SizedBox(height: size.width * AppDimensions.numD06),
+                        _buildEmailField(),
+                        SizedBox(height: size.width * AppDimensions.numD06),
+                        _buildAddressSection(),
+                        SizedBox(height: size.width * AppDimensions.numD06),
+                        _buildCityCountryFields(),
+                        SizedBox(height: size.width * AppDimensions.numD09),
+                        SizedBox(
+                          width: double.infinity,
+                          height: size.width * AppDimensions.numD14,
+                          child: commonElevatedButton(
+                              widget.editProfileScreen
+                                  ? AppStrings.saveText.toTitleCase()
+                                  : AppStrings.editProfileText.toTitleCase(),
+                              size,
+                              commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * AppDimensions.numD035,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700),
+                              commonButtonStyle(
+                                  size, AppColorTheme.colorThemePink), () {
+                            if (!widget.editProfileScreen) {
+                              widget.editProfileScreen =
+                                  !widget.editProfileScreen;
+                              scrollController.animateTo(
+                                  scrollController.position.minScrollExtent,
+                                  duration: const Duration(milliseconds: 500),
+                                  curve: Curves.easeInOut);
+                              userNameAutoFocus = true;
+                            } else {
+                              scrollController.animateTo(
+                                  scrollController.position.minScrollExtent,
+                                  duration: const Duration(milliseconds: 500),
+                                  curve: Curves.easeInOut);
+                              if (formKey.currentState!.validate()) {
+                                editProfileApi();
+                              }
+                            }
+                            setState(() {});
+                          }),
+                        ),
+                        SizedBox(
+                          height: size.width * AppDimensions.numD04,
+                        ),
+                      ],
                     ),
-                    _buildUserNameField(),
-                    SizedBox(height: size.width * AppDimensions.numD06),
-                    _buildFirstNameField(),
-                    SizedBox(height: size.width * AppDimensions.numD06),
-                    _buildLastNameField(),
-                    SizedBox(height: size.width * AppDimensions.numD06),
-                    _buildPhoneField(),
-                    SizedBox(height: size.width * AppDimensions.numD06),
-                    _buildEmailField(),
-                    SizedBox(height: size.width * AppDimensions.numD06),
-                    _buildAddressSection(),
-                    SizedBox(height: size.width * AppDimensions.numD06),
-                    _buildCityCountryFields(),
-                    SizedBox(height: size.width * AppDimensions.numD09),
-                    SizedBox(
-                      width: double.infinity,
-                      height: size.width * AppDimensions.numD14,
-                      child: commonElevatedButton(
-                          widget.editProfileScreen
-                              ? AppStrings.saveText.toTitleCase()
-                              : AppStrings.editProfileText.toTitleCase(),
-                          size,
-                          commonTextStyle(
-                              size: size,
-                              fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, AppColorTheme.colorThemePink),
-                          () {
-                        if (!widget.editProfileScreen) {
-                          widget.editProfileScreen = !widget.editProfileScreen;
-                          scrollController.animateTo(
-                              scrollController.position.minScrollExtent,
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeInOut);
-                          userNameAutoFocus = true;
-                        } else {
-                          scrollController.animateTo(
-                              scrollController.position.minScrollExtent,
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeInOut);
-                          if (formKey.currentState!.validate()) {
-                            editProfileApi();
-                          }
-                        }
-                        setState(() {});
-                      }),
-                    ),
-                    SizedBox(
-                      height: size.width * AppDimensions.numD04,
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+          if (isLoading)
+            Container(
+              color: Colors.white.withOpacity(0.5),
+              child: Center(
+                child: showAnimatedLoader(size),
+              ),
+            ),
+        ],
       ),
     );
     // );
@@ -1520,6 +1526,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   }
 
   Future<void> getAvatarsApi() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       final response = await sl<ApiClient>()
           .get(ApiConstantsNew.profile.getAvatars, showLoader: false);
@@ -1532,7 +1541,13 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         setState(() {});
       }
     } catch (e) {
-      debugPrint("$e");
+      debugPrint("Error fetching avatars: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -1650,6 +1665,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   }
 
   Future<void> editProfileApi() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       Map<String, String> params = {
         firstNameKey: firstNameController.text.trim(),
@@ -1700,6 +1718,12 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       }
     } catch (e) {
       debugPrint("$e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 

@@ -3,7 +3,6 @@ import 'package:presshop/features/news/domain/entities/comment.dart';
 import 'package:presshop/features/news/domain/entities/news.dart';
 
 class NewsState extends Equatable {
-
   const NewsState({
     this.newsList = const [],
     this.selectedNews,
@@ -11,6 +10,7 @@ class NewsState extends Equatable {
     this.isLoading = false,
     this.isProcessing = false,
     this.errorMessage,
+    this.hasMoreComments = true,
   });
   final List<News> newsList;
   final News? selectedNews;
@@ -18,6 +18,7 @@ class NewsState extends Equatable {
   final bool isLoading;
   final bool isProcessing;
   final String? errorMessage;
+  final bool hasMoreComments;
 
   NewsState copyWith({
     List<News>? newsList,
@@ -26,6 +27,7 @@ class NewsState extends Equatable {
     bool? isLoading,
     bool? isProcessing,
     String? errorMessage,
+    bool? hasMoreComments,
   }) {
     return NewsState(
       newsList: newsList ?? this.newsList,
@@ -34,6 +36,7 @@ class NewsState extends Equatable {
       isLoading: isLoading ?? this.isLoading,
       isProcessing: isProcessing ?? this.isProcessing,
       errorMessage: errorMessage ?? this.errorMessage,
+      hasMoreComments: hasMoreComments ?? this.hasMoreComments,
     );
   }
 
@@ -45,5 +48,6 @@ class NewsState extends Equatable {
         isLoading,
         isProcessing,
         errorMessage,
+        hasMoreComments,
       ];
 }

@@ -17,8 +17,8 @@ class Config {
   const Config();
   static const int env = 1;
   String get baseUrl =>
-      // "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/";
-      "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
+      "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/";
+  // "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
   // "http://localhost:8100/api/";
 
   String get socketUrl =>

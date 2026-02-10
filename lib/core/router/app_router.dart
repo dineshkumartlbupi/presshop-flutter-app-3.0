@@ -234,6 +234,17 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: AppRoutes.conversationPath,
+        name: AppRoutes.conversationName,
+        builder: (context, state) {
+          final args = state.extra as Map<String, dynamic>?;
+          return ConversationScreen(
+            hideLeading: args?['hideLeading'] ?? false,
+            message: args?['message'] ?? "",
+          );
+        },
+      ),
+      GoRoute(
         path: AppRoutes.myTasksPath,
         name: AppRoutes.myTasksName,
         builder: (context, state) {

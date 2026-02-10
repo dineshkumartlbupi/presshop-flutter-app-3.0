@@ -12,7 +12,6 @@ import 'package:presshop/features/news/domain/entities/news.dart';
 import 'package:presshop/core/error/failures.dart';
 
 class NewsBloc extends Bloc<NewsEvent, NewsState> {
-
   NewsBloc({
     required this.getAggregatedNews,
     required this.getNewsDetail,
@@ -30,6 +29,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     on<UpdateShareCountEvent>(_onUpdateShareCount);
     on<ToggleNewsLikeEvent>(_onToggleNewsLike);
     on<OnNewsLikeUpdatedEvent>(_onNewsLikeUpdated);
+    on<ToggleCommentLikeEvent>(_onToggleCommentLike);
 
     _initSocketListener();
   }
@@ -107,12 +107,26 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     final result = await getComments(GetCommentsParams(
       contentId: event.contentId,
       limit: event.limit,
+      offset: event.offset,
     ));
 
     result.fold(
       (failure) =>
           emit(state.copyWith(errorMessage: "Failed to fetch comments")),
-      (comments) => emit(state.copyWith(comments: comments)),
+      (comments) {
+        final hasMore = comments.length == event.limit;
+        if (event.offset > 0) {
+          emit(state.copyWith(
+            comments: [...state.comments, ...comments],
+            hasMoreComments: hasMore,
+          ));
+        } else {
+          emit(state.copyWith(
+            comments: comments,
+            hasMoreComments: hasMore,
+          ));
+        }
+      },
     );
   }
 
@@ -140,8 +154,55 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     UpdateLikeLocalEvent event,
     Emitter<NewsState> emit,
   ) {
-    // Placeholder as Comment entity doesn't have copyWith easily accessible here
-    emit(state);
+    final updatedComments = _updateCommentInList(
+      state.comments,
+      event.commentId,
+      (comment) => comment.copyWith(likesCount: event.count),
+    );
+    emit(state.copyWith(comments: updatedComments));
+  }
+
+  List<Comment> _updateCommentInList(
+    List<Comment> comments,
+    String commentId,
+    Comment Function(Comment) updateFn,
+  ) {
+    return comments.map((comment) {
+      if (comment.id == commentId) {
+        return updateFn(comment);
+      } else if (comment.replies.isNotEmpty) {
+        return comment.copyWith(
+          replies: _updateCommentInList(comment.replies, commentId, updateFn),
+        );
+      }
+      return comment;
+    }).toList();
+  }
+
+  void _onToggleCommentLike(
+    ToggleCommentLikeEvent event,
+    Emitter<NewsState> emit,
+  ) {
+    final userId = sharedPreferences.getString(hopperIdKey) ?? '';
+    if (userId.isNotEmpty) {
+      socketService.likeComment(
+        contentId: event.contentId,
+        commentId: event.commentId,
+        userId: userId,
+      );
+
+      // Optimistic update
+      final updatedComments = _updateCommentInList(
+        state.comments,
+        event.commentId,
+        (comment) {
+          final isLiked = !comment.isLiked;
+          final count = comment.likesCount + (isLiked ? 1 : -1);
+          return comment.copyWith(isLiked: isLiked, likesCount: count);
+        },
+      );
+      emit(state.copyWith(comments: updatedComments));
+    }
   }
 
   void _onToggleLikeStatus(

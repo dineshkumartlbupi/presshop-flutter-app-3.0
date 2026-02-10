@@ -19,7 +19,8 @@ abstract class NewsRemoteDataSource {
 
   Future<NewsModel> getNewsDetail(String id);
 
-  Future<List<CommentModel>> getComments(String contentId, {int limit = 15});
+  Future<List<CommentModel>> getComments(String contentId,
+      {int limit = 15, int offset = 0});
 }
 
 class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
@@ -126,10 +127,11 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
 
   @override
   Future<List<CommentModel>> getComments(String contentId,
-      {int limit = 15}) async {
+      {int limit = 15, int offset = 0}) async {
     final body = {
       "content_id": contentId,
       "limit": limit,
+      "offset": offset,
     };
 
     try {
