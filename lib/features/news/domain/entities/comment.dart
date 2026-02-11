@@ -12,6 +12,7 @@ class Comment extends Equatable {
     this.replies = const [],
     this.likesCount = 0,
     this.isLiked = false,
+    this.parentId,
     this.rootParentId,
     this.replyToName,
   });
@@ -26,6 +27,7 @@ class Comment extends Equatable {
   final List<Comment> replies;
   final int likesCount;
   final bool isLiked;
+  final String? parentId;
   final String? rootParentId;
   final String? replyToName;
 
@@ -40,6 +42,7 @@ class Comment extends Equatable {
     List<Comment>? replies,
     int? likesCount,
     bool? isLiked,
+    String? parentId,
     String? rootParentId,
     String? replyToName,
   }) {
@@ -54,6 +57,7 @@ class Comment extends Equatable {
       replies: replies ?? this.replies,
       likesCount: likesCount ?? this.likesCount,
       isLiked: isLiked ?? this.isLiked,
+      parentId: parentId ?? this.parentId,
       rootParentId: rootParentId ?? this.rootParentId,
       replyToName: replyToName ?? this.replyToName,
     );
@@ -71,6 +75,7 @@ class Comment extends Equatable {
         replies,
         likesCount,
         isLiked,
+        parentId,
         rootParentId,
         replyToName,
       ];

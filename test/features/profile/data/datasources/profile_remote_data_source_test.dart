@@ -125,7 +125,8 @@ void main() {
         'data': tUserProfileModel.toJson(),
       };
 
-      when(() => mockPrefs.getString(hopperIdKey)).thenReturn(tUserId);
+      when(() => mockPrefs.getString(SharedPreferencesKeys.hopperIdKey))
+          .thenReturn(tUserId);
       when(() => mockApiClient.post(
             any(),
             data: any(named: 'data'),

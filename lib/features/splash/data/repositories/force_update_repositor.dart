@@ -71,15 +71,16 @@ class ForceUpdateRepository {
     final headers = <String, String>{};
 
     const storage = FlutterSecureStorage();
-    String? token = await storage.read(key: tokenKey);
-    String? deviceId = sharedPreferences!.getString(deviceIdKey);
+    String? token = await storage.read(key: SharedPreferencesKeys.tokenKey);
+    String? deviceId =
+        sharedPreferences!.getString(SharedPreferencesKeys.deviceIdKey);
 
     if (token != null) {
-      headers[headerKey] = token;
+      headers[SharedPreferencesKeys.headerKey] = token;
     }
-    headers[headerDeviceTypeKey] =
+    headers[SharedPreferencesKeys.headerDeviceTypeKey] =
         "mobile-flutter-${Platform.isIOS ? "ios" : "android"}";
-    headers[headerDeviceIdKey] = deviceId ?? "";
+    headers[SharedPreferencesKeys.headerDeviceIdKey] = deviceId ?? "";
 
     return headers;
   }
@@ -90,20 +91,24 @@ class ForceUpdateRepository {
   static Future<bool> _refreshToken() async {
     try {
       const storage = FlutterSecureStorage();
-      String? refresh = await storage.read(key: refreshtokenKey);
-      String? accessToken = await storage.read(key: tokenKey);
-      String? deviceId = sharedPreferences!.getString(deviceIdKey);
+      String? refresh =
+          await storage.read(key: SharedPreferencesKeys.refreshtokenKey);
+      String? accessToken =
+          await storage.read(key: SharedPreferencesKeys.tokenKey);
+      String? deviceId =
+          sharedPreferences!.getString(SharedPreferencesKeys.deviceIdKey);
 
       if (refresh == null) return false;
 
       final response = await _dio.post(
         ApiConstantsNew.auth.refreshToken,
         options: Options(headers: {
-          refreshHeaderKey: refresh,
-          accessHeaderKey: refresh.isEmpty ? (accessToken ?? "") : "",
-          headerDeviceTypeKey:
+          SharedPreferencesKeys.refreshHeaderKey: refresh,
+          SharedPreferencesKeys.accessHeaderKey:
+              refresh.isEmpty ? (accessToken ?? "") : "",
+          SharedPreferencesKeys.headerDeviceTypeKey:
               "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
-          headerDeviceIdKey: deviceId ?? "",
+          SharedPreferencesKeys.headerDeviceIdKey: deviceId ?? "",
         }),
       );
 
@@ -112,14 +117,17 @@ class ForceUpdateRepository {
           response.data["data"]["token"] != null) {
         // SAVE NEW TOKENS
         await storage.write(
-            key: tokenKey, value: response.data["data"]["token"]);
+            key: SharedPreferencesKeys.tokenKey,
+            value: response.data["data"]["token"]);
         await storage.write(
-            key: refreshtokenKey, value: response.data["data"]["refreshToken"]);
+            key: SharedPreferencesKeys.refreshtokenKey,
+            value: response.data["data"]["refreshToken"]);
 
         // Also update shared prefs for consistency if needed by other parts
-        sharedPreferences!.setString(tokenKey, response.data["data"]["token"]);
-        sharedPreferences!
-            .setString(refreshtokenKey, response.data["data"]["refreshToken"]);
+        sharedPreferences!.setString(
+            SharedPreferencesKeys.tokenKey, response.data["data"]["token"]);
+        sharedPreferences!.setString(SharedPreferencesKeys.refreshtokenKey,
+            response.data["data"]["refreshToken"]);
 
         return true;
       }

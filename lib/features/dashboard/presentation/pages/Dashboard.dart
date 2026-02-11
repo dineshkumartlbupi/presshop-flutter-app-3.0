@@ -28,6 +28,8 @@ import 'package:presshop/features/notification/presentation/pages/MyNotification
 import 'package:presshop/features/map/presentation/pages/map_page.dart';
 import 'package:presshop/features/news/presentation/pages/news_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
+import 'package:presshop/features/news/presentation/bloc/news_event.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_state.dart';
@@ -115,7 +117,9 @@ class DashboardState extends State<Dashboard>
   @override
   Map<String, Object>? get pageParameters => {
         'initial_position': widget.initialPosition.toString(),
-        'user_id': sharedPreferences?.getString(hopperIdKey) ?? 'unknown',
+        'user_id':
+            sharedPreferences?.getString(SharedPreferencesKeys.hopperIdKey) ??
+                'unknown',
         'current_tab': currentIndex.toString(),
       };
 
@@ -166,8 +170,20 @@ class DashboardState extends State<Dashboard>
       getFcmToken();
       fireBaseMessaging();
     }
-    if (sharedPreferences!.getString(adminRoomIdKey) == null) {
-      // callGetActiveAdmin();
+    debugPrint(":::: Dashboard initState :::::");
+    debugPrint(
+        "adminRoomIdKey in Prefs: ${sharedPreferences!.getString(SharedPreferencesKeys.adminRoomIdKey)}");
+    if (sharedPreferences!.getString(SharedPreferencesKeys.adminRoomIdKey) ==
+            null ||
+        sharedPreferences!
+            .getString(SharedPreferencesKeys.adminRoomIdKey)!
+            .isEmpty ||
+        sharedPreferences!.getString(SharedPreferencesKeys.adminIdKey) ==
+            null ||
+        sharedPreferences!
+            .getString(SharedPreferencesKeys.adminIdKey)!
+            .isEmpty) {
+      debugPrint(":::: Fetching Active Admins (Missing Room or ID) :::::");
       _dashboardBloc.add(FetchActiveAdmins());
     }
 
@@ -220,10 +236,18 @@ class DashboardState extends State<Dashboard>
         picAgain: false,
         previousScreen: ScreenNameEnum.dashboardScreen,
       ),
-      NewsPage(
-        hideLeading: true,
-        latitude: latitude,
-        longitude: longitude,
+      BlocProvider(
+        create: (context) => sl<NewsBloc>()
+          ..add(GetAggregatedNewsEvent(
+            lat: latitude,
+            lng: longitude,
+            km: 50,
+          )),
+        child: NewsPage(
+          hideLeading: true,
+          latitude: latitude,
+          longitude: longitude,
+        ),
       ),
       MapPage(hideLeading: true)
     ];
@@ -235,16 +259,17 @@ class DashboardState extends State<Dashboard>
 
   void _checkUpdateAndShowPopup() async {
     final String? savedSourceDataType =
-        sharedPreferences?.getString(sourceDataTypeKey);
+        sharedPreferences?.getString(SharedPreferencesKeys.sourceDataTypeKey);
     // final String? savedSourceDataUrl =
     //     sharedPreferences?.getString(sourceDataUrlKey);
-    savedSourceDataHeading = sharedPreferences?.getString(sourceDataHeadingKey);
-    savedSourceDataDescription =
-        sharedPreferences?.getString(sourceDataDescriptionKey);
+    savedSourceDataHeading = sharedPreferences
+        ?.getString(SharedPreferencesKeys.sourceDataHeadingKey);
+    savedSourceDataDescription = sharedPreferences
+        ?.getString(SharedPreferencesKeys.sourceDataDescriptionKey);
     final bool? savedSourceDataIsOpened =
-        sharedPreferences?.getBool(sourceDataIsOpenedKey);
+        sharedPreferences?.getBool(SharedPreferencesKeys.sourceDataIsOpenedKey);
     final bool? savedSourceDataIsClickKey =
-        sharedPreferences?.getBool(sourceDataIsClickKey);
+        sharedPreferences?.getBool(SharedPreferencesKeys.sourceDataIsClickKey);
 
     debugPrint('savedSourceDataTypeghgg: $savedSourceDataType');
     debugPrint('savedSourceDataHeading: $savedSourceDataHeading');
@@ -518,15 +543,24 @@ class DashboardState extends State<Dashboard>
                           ))
                       .toList();
 
+                  debugPrint(":::: DashboardActiveAdminsLoaded :::::");
+                  debugPrint("Admins Count: ${adminList.length}");
                   if (adminList.isNotEmpty) {
+                    debugPrint(
+                        "First Admin: ${adminList.first.id}, Room: ${adminList.first.roomId}");
                     sharedPreferences?.setString(
-                        'adminIdKey', adminList.first.id);
+                        SharedPreferencesKeys.adminIdKey, adminList.first.id);
                     sharedPreferences?.setString(
-                        'adminRoomIdKey', adminList.first.roomId);
+                        SharedPreferencesKeys.adminRoomIdKey,
+                        adminList.first.roomId);
                     sharedPreferences?.setString(
-                        'adminImageKey', adminList.first.profilePic);
+                        SharedPreferencesKeys.adminImageKey,
+                        adminList.first.profilePic);
                     sharedPreferences?.setString(
-                        'adminNameKey', adminList.first.name);
+                        SharedPreferencesKeys.adminNameKey,
+                        adminList.first.name);
+                  } else {
+                    debugPrint(":::: Admin List is EMPTY! :::::");
                   }
                 });
               } else if (state is DashboardRoomIdLoaded) {
@@ -541,7 +575,8 @@ class DashboardState extends State<Dashboard>
                 }
 
                 if (roomId.isNotEmpty) {
-                  sharedPreferences!.setString(adminRoomIdKey, roomId);
+                  sharedPreferences!
+                      .setString(SharedPreferencesKeys.adminRoomIdKey, roomId);
                   debugPrint("✅ Room Id Saved: $roomId");
                 } else {
                   debugPrint("❌ Room Id NOT found in response");
@@ -550,8 +585,8 @@ class DashboardState extends State<Dashboard>
                 var map = state.versionData;
                 if (map["code"] == 200) {
                   var versionData = map["data"];
-                  sharedPreferences!.setInt(
-                      videoLimitKey, (versionData['video_limit'] ?? 2) * 60);
+                  sharedPreferences!.setInt(SharedPreferencesKeys.videoLimitKey,
+                      (versionData['video_limit'] ?? 2) * 60);
                   bool shouldUpdate = Platform.isAndroid
                       ? (versionData['aOSshouldForceUpdate'] ?? false)
                       : (versionData['iOSshouldForceUpdate'] ?? false);
@@ -615,7 +650,8 @@ class DashboardState extends State<Dashboard>
               } else if (state is DashboardMyProfileLoaded) {
                 var user = state.user;
                 if (user.avatar != null && user.avatar!.isNotEmpty) {
-                  sharedPreferences!.setString(avatarKey, user.avatar!);
+                  sharedPreferences!
+                      .setString(SharedPreferencesKeys.avatarKey, user.avatar!);
                 }
                 setState(() {});
               } else if (state is DashboardTabChanged) {
@@ -837,8 +873,10 @@ class DashboardState extends State<Dashboard>
     var dis = calculateDistance(
             double.parse(taskDetail["lat"].toString()),
             double.parse(taskDetail["long"]),
-            double.parse(sharedPreferences!.getString(latitudeKey)!),
-            double.parse(sharedPreferences!.getString(longitudeKey)!)) *
+            double.parse(sharedPreferences!
+                .getString(SharedPreferencesKeys.latitudeKey)!),
+            double.parse(sharedPreferences!
+                .getString(SharedPreferencesKeys.longitudeKey)!)) *
         0.621371;
     debugPrint("DistanceNew: $dis");
   }
@@ -913,13 +951,18 @@ class DashboardState extends State<Dashboard>
             debugPrint("Address: $fullAddress");
 
             // Save in shared preferences
-            sharedPreferences!.setDouble(currentLat, latitude);
-            sharedPreferences!.setDouble(currentLon, longitude);
-            sharedPreferences!.setString(currentAddress, fullAddress);
-            sharedPreferences!.setString(currentCountry, place.country ?? "");
             sharedPreferences!
-                .setString(currentState, place.administrativeArea ?? "");
-            sharedPreferences!.setString(currentCity, place.locality ?? "");
+                .setDouble(SharedPreferencesKeys.currentLat, latitude);
+            sharedPreferences!
+                .setDouble(SharedPreferencesKeys.currentLon, longitude);
+            sharedPreferences!
+                .setString(SharedPreferencesKeys.currentAddress, fullAddress);
+            sharedPreferences!.setString(
+                SharedPreferencesKeys.currentCountry, place.country ?? "");
+            sharedPreferences!.setString(SharedPreferencesKeys.currentState,
+                place.administrativeArea ?? "");
+            sharedPreferences!.setString(
+                SharedPreferencesKeys.currentCity, place.locality ?? "");
 
             isGetLatLong = false;
             callUpdateCurrentData1();
@@ -979,8 +1022,10 @@ class DashboardState extends State<Dashboard>
       final uri = Uri.parse(url);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
-        sharedPreferences!.setBool(sourceDataIsClickKey, true);
-        sharedPreferences!.setBool(sourceDataIsOpenedKey, true);
+        sharedPreferences!
+            .setBool(SharedPreferencesKeys.sourceDataIsClickKey, true);
+        sharedPreferences!
+            .setBool(SharedPreferencesKeys.sourceDataIsOpenedKey, true);
         _dashboardBloc.add(DashboardMarkStudentBeansVisitedEvent());
       } else {
         debugPrint("Could not launch URL: $url");
@@ -1009,7 +1054,9 @@ class DashboardState extends State<Dashboard>
 
   void callUpdateCurrentData1() {
     Map<String, String> params = {
-      "hopper_id": sharedPreferences!.getString(hopperIdKey).toString(),
+      "hopper_id": sharedPreferences!
+          .getString(SharedPreferencesKeys.hopperIdKey)
+          .toString(),
       "longitude": longitude.toString(),
       "latitude": latitude.toString()
     };

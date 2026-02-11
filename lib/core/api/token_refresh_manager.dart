@@ -31,7 +31,8 @@ class TokenRefreshManager {
     }
 
     const storage = FlutterSecureStorage();
-    String? refreshTokenValue = await storage.read(key: refreshtokenKey);
+    String? refreshTokenValue =
+        await storage.read(key: SharedPreferencesKeys.refreshtokenKey);
 
     if (refreshTokenValue == null || refreshTokenValue.isEmpty) {
       debugPrint(
@@ -46,8 +47,10 @@ class TokenRefreshManager {
     }
 
     try {
-      final token = await storage.read(key: tokenKey) ?? "";
-      final deviceID = sharedPreferences!.getString(deviceIdKey) ?? "";
+      final token =
+          await storage.read(key: SharedPreferencesKeys.tokenKey) ?? "";
+      final deviceID =
+          sharedPreferences!.getString(SharedPreferencesKeys.deviceIdKey) ?? "";
 
       final uri = Uri.parse(
           ApiConstantsNew.config.baseUrl + ApiConstantsNew.auth.refreshToken);
@@ -58,11 +61,11 @@ class TokenRefreshManager {
 
       final request = http.Request("GET", uri);
       request.headers.addAll({
-        refreshHeaderKey: refreshTokenValue,
-        accessHeaderKey: tokenforAccess,
-        headerDeviceTypeKey:
+        SharedPreferencesKeys.refreshHeaderKey: refreshTokenValue,
+        SharedPreferencesKeys.accessHeaderKey: tokenforAccess,
+        SharedPreferencesKeys.headerDeviceTypeKey:
             "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
-        headerDeviceIdKey: deviceID,
+        SharedPreferencesKeys.headerDeviceIdKey: deviceID,
       });
 
       final streamedResponse = await request.send();
@@ -96,16 +99,21 @@ class TokenRefreshManager {
               map["data"] != null &&
               map["data"]["access_token"] != null &&
               map["data"]["refresh_token"] != null) {
-            await storage.delete(key: tokenKey);
-            await storage.delete(key: refreshtokenKey);
+            await storage.delete(key: SharedPreferencesKeys.tokenKey);
+            await storage.delete(key: SharedPreferencesKeys.refreshtokenKey);
             final newAccessToken = map["data"]["access_token"];
             final newRefreshToken = map["data"]["refresh_token"];
 
-            await storage.write(key: tokenKey, value: newAccessToken);
-            await storage.write(key: refreshtokenKey, value: newRefreshToken);
+            await storage.write(
+                key: SharedPreferencesKeys.tokenKey, value: newAccessToken);
+            await storage.write(
+                key: SharedPreferencesKeys.refreshtokenKey,
+                value: newRefreshToken);
 
-            sharedPreferences!.setString(tokenKey, newAccessToken);
-            sharedPreferences!.setString(refreshtokenKey, newRefreshToken);
+            sharedPreferences!
+                .setString(SharedPreferencesKeys.tokenKey, newAccessToken);
+            sharedPreferences!.setString(
+                SharedPreferencesKeys.refreshtokenKey, newRefreshToken);
 
             debugPrint("Token refreshed successfully");
             // _retryCount = 0;
@@ -197,11 +205,11 @@ class TokenRefreshManager {
   void _logoutUser() async {
     debugPrint("🧹 Logging out user (Selective Wipe)...");
     const storage = FlutterSecureStorage();
-    await storage.delete(key: tokenKey);
-    await storage.delete(key: refreshtokenKey);
-    await sharedPreferences?.remove(tokenKey);
-    await sharedPreferences?.remove(refreshtokenKey);
-    await sharedPreferences?.remove(rememberKey);
+    await storage.delete(key: SharedPreferencesKeys.tokenKey);
+    await storage.delete(key: SharedPreferencesKeys.refreshtokenKey);
+    await sharedPreferences?.remove(SharedPreferencesKeys.tokenKey);
+    await sharedPreferences?.remove(SharedPreferencesKeys.refreshtokenKey);
+    await sharedPreferences?.remove(SharedPreferencesKeys.rememberKey);
 
     if (navigatorKey.currentContext != null) {
       GoRouter.of(navigatorKey.currentContext!).goNamed(AppRoutes.loginName);

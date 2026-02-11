@@ -105,14 +105,20 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
           debugPrint("address=====> $address");
 
           // Save in SharedPreferences
-          sharedPreferences!.setDouble(currentLat, latitude);
-          sharedPreferences!.setDouble(currentLon, longitude);
-          sharedPreferences!.setString(currentAddress, address);
-          sharedPreferences!.setString(currentCountry, place.country ?? '');
           sharedPreferences!
-              .setString(currentState, place.administrativeArea ?? '');
-          sharedPreferences!.setString(currentCity, place.locality ?? '');
-          sharedPreferences!.setString(contryCode, place.isoCountryCode ?? '');
+              .setDouble(SharedPreferencesKeys.currentLat, latitude);
+          sharedPreferences!
+              .setDouble(SharedPreferencesKeys.currentLon, longitude);
+          sharedPreferences!
+              .setString(SharedPreferencesKeys.currentAddress, address);
+          sharedPreferences!.setString(
+              SharedPreferencesKeys.currentCountry, place.country ?? '');
+          sharedPreferences!.setString(SharedPreferencesKeys.currentState,
+              place.administrativeArea ?? '');
+          sharedPreferences!.setString(
+              SharedPreferencesKeys.currentCity, place.locality ?? '');
+          sharedPreferences!.setString(
+              SharedPreferencesKeys.contryCode, place.isoCountryCode ?? '');
 
           // Update UI and local variables
           setState(() {

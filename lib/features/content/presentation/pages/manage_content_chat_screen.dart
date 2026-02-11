@@ -80,7 +80,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
 
   late IO.Socket socket;
 
-  final String _senderId = sharedPreferences!.getString(hopperIdKey) ?? "";
+  final String _senderId =
+      sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
   TextEditingController ratingReviewController1 = TextEditingController();
   List<ManageTaskChatModel> chatList = [];
   List<int> indexList = [];
@@ -4430,7 +4431,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
           SizedBox(
             width: size.width * AppDimensions.numD02,
           ),
-          (sharedPreferences!.getString(avatarKey) ?? "").isNotEmpty
+          (sharedPreferences!.getString(SharedPreferencesKeys.avatarKey) ?? "")
+                  .isNotEmpty
               ? Container(
                   padding: EdgeInsets.all(
                     size.width * AppDimensions.numD01,
@@ -4441,7 +4443,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   child: ClipOval(
                       clipBehavior: Clip.antiAlias,
                       child: Image.network(
-                        sharedPreferences!.getString(avatarKey) ?? "",
+                        sharedPreferences!
+                                .getString(SharedPreferencesKeys.avatarKey) ??
+                            "",
                         fit: BoxFit.cover,
                         height: size.width * AppDimensions.numD09,
                         width: size.width * AppDimensions.numD09,
@@ -4534,7 +4538,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
           SizedBox(
             width: size.width * AppDimensions.numD02,
           ),
-          (sharedPreferences!.getString(avatarKey) ?? "").isNotEmpty
+          (sharedPreferences!.getString(SharedPreferencesKeys.avatarKey) ?? "")
+                  .isNotEmpty
               ? Container(
                   padding: EdgeInsets.all(
                     size.width * AppDimensions.numD01,
@@ -4545,7 +4550,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   child: ClipOval(
                       clipBehavior: Clip.antiAlias,
                       child: Image.network(
-                        sharedPreferences!.getString(avatarKey) ?? "",
+                        sharedPreferences!
+                                .getString(SharedPreferencesKeys.avatarKey) ??
+                            "",
                         fit: BoxFit.cover,
                         height: size.width * AppDimensions.numD09,
                         width: size.width * AppDimensions.numD09,
@@ -4575,7 +4582,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       onTap: () {
-        debugPrint("imageTap:::::::${sharedPreferences!.getString(avatarKey)}");
+        debugPrint(
+            "imageTap:::::::${sharedPreferences!.getString(SharedPreferencesKeys.avatarKey)}");
         context.pushNamed(
           AppRoutes.fullVideoViewName,
           extra: {
@@ -4652,7 +4660,10 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
               SizedBox(
                 width: size.width * AppDimensions.numD02,
               ),
-              sharedPreferences!.getString(avatarKey).toString().isNotEmpty
+              sharedPreferences!
+                      .getString(SharedPreferencesKeys.avatarKey)
+                      .toString()
+                      .isNotEmpty
                   ? Container(
                       padding: EdgeInsets.all(
                         size.width * AppDimensions.numD01,
@@ -4664,7 +4675,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           clipBehavior: Clip.antiAlias,
                           child: Image.network(
                               sharedPreferences!
-                                  .getString(avatarKey)
+                                  .getString(SharedPreferencesKeys.avatarKey)
                                   .toString(),
                               height: size.width * AppDimensions.numD09,
                               width: size.width * AppDimensions.numD09,

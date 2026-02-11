@@ -5,8 +5,13 @@ import 'package:presshop/core/api/api_constant.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketService {
-  late IO.Socket socket;
+  IO.Socket? _socket;
   final String _socketUrl = ApiConstantsNew.config.socketUrl;
+
+  IO.Socket get socket => _socket!;
+
+  bool get isInitialized => _socket != null;
+
   Function(dynamic)? onIncidentNew;
   Function(dynamic)? onIncidentUpdated;
   Function(dynamic)? onIncidentCreated;
@@ -15,10 +20,19 @@ class SocketService {
   Function(dynamic)? onNewsShare;
   Function(dynamic)? onNewsLike;
   void initSocket({required String userId, required String joinAs}) {
+    if (_socket != null) {
+      debugPrint(":::: Socket already initialized :::::");
+      if (!_socket!.connected) {
+        debugPrint(":::: Socket not connected, connecting... :::::");
+        _socket!.connect();
+      }
+      return;
+    }
+
     debugPrint(":::: Inside Socket Func :::::");
     debugPrint("socketUrl:::::$_socketUrl");
 
-    socket = IO.io(
+    _socket = IO.io(
       _socketUrl,
       IO.OptionBuilder()
           .setTransports(['websocket'])
@@ -118,10 +132,18 @@ class SocketService {
     debugPrint("Emit Socket Alert : $data");
     print("Emit Socket Alert : $data");
 
+    if (!isInitialized) {
+      debugPrint("Socket: Cannot emit alert, socket not initialized");
+      return;
+    }
     socket.emit("incident:create", data);
   }
 
   void joinContent(String contentId) {
+    if (!isInitialized) {
+      debugPrint("Socket: Cannot join content room, socket not initialized");
+      return;
+    }
     debugPrint("Socket: Joining content room: $contentId");
     socket.emit("join:content", contentId);
   }
@@ -142,6 +164,10 @@ class SocketService {
       'user_id': userId,
       'reply_to_user_name': replyToName != null ? '@$replyToName' : null,
     };
+    if (!isInitialized) {
+      debugPrint("Socket: Cannot add comment, socket not initialized");
+      return;
+    }
     debugPrint("Socket: Emitting add:aggregated:comment: $data");
     socket.emit('add:aggregated:comment', data);
   }
@@ -156,29 +182,51 @@ class SocketService {
       "commentId": commentId,
       "userId": userId,
     };
+    if (!isInitialized) {
+      debugPrint("Socket: Cannot like comment, socket not initialized");
+      return;
+    }
     debugPrint("Socket: Emitting add:aggregated:comment:like: $data");
     socket.emit("add:aggregated:comment:like", data);
   }
 
   void likeNews({required String userId, required String contentId}) {
+    if (!isInitialized) {
+      debugPrint("Socket: Cannot like news, socket not initialized");
+      return;
+    }
     final data = {"user_id": userId, "contentId": contentId};
     debugPrint("Socket: Emitting add:aggregated:news:like: $data");
     socket.emit("add:aggregated:news:like", data);
   }
 
   void viewNews({required String contentId}) {
+    if (!isInitialized) {
+      debugPrint("Socket: Cannot view news, socket not initialized");
+      return;
+    }
     final data = {"contentId": contentId};
     debugPrint("Socket: Emitting add:aggregated:news:view: $data");
     socket.emit("add:aggregated:news:view", data);
   }
 
-  void shareNews({required String contentId}) {
-    final data = {"contentId": contentId};
+  void shareNews({required String contentId, String? userId}) {
+    if (!isInitialized) {
+      debugPrint("Socket: Cannot share news, socket not initialized");
+      return;
+    }
+    final data = {
+      "contentId": contentId,
+      if (userId != null) "user_id": userId,
+    };
     debugPrint("Socket: Emitting add:aggregated:news:share: $data");
     socket.emit("add:aggregated:news:share", data);
   }
 
   void dispose() {
-    socket.dispose();
+    if (_socket != null) {
+      _socket!.dispose();
+      _socket = null;
+    }
   }
 }

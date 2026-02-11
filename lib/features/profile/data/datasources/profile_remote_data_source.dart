@@ -17,7 +17,6 @@ abstract class ProfileRemoteDataSource {
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
-
   ProfileRemoteDataSourceImpl(this.apiClient);
   final ApiClient apiClient;
 
@@ -56,7 +55,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         data.remove('_imagePath');
       }
 
-      String userId = apiClient.sharedPreferences.getString(hopperIdKey) ?? "";
+      String userId = apiClient.sharedPreferences
+              .getString(SharedPreferencesKeys.hopperIdKey) ??
+          "";
       Options options = Options(headers: {"x-user-id": userId});
       Response response;
 
@@ -96,7 +97,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         "profile_image": await MultipartFile.fromFile(imagePath),
       });
 
-      String userId = apiClient.sharedPreferences.getString(hopperIdKey) ?? "";
+      String userId = apiClient.sharedPreferences
+              .getString(SharedPreferencesKeys.hopperIdKey) ??
+          "";
       Options options = Options(headers: {"x-user-id": userId});
 
       final response = await apiClient.multipartPost(

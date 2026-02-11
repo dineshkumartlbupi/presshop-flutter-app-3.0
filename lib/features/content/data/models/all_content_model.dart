@@ -68,12 +68,14 @@ class ContentItemModel extends ContentItem {
 
   factory ContentItemModel.fromJson(Map<String, dynamic> json) {
     return ContentItemModel(
-      id: json['id'] ?? json['_id'] ?? '',
-      description: json['description'] ?? '',
+      id: (json['id'] ?? json['_id'] ?? '').toString(),
+      description: json['description'] ?? json['heading'] ?? '',
       location: json['location'] ?? '',
       latitude: json['latitude']?.toString() ?? '',
       longitude: json['longitude']?.toString() ?? '',
-      categoryId: json['category_id'] ?? '',
+      categoryId: json['category_id']?.toString() ??
+          json['category_ids']?.toString() ??
+          '',
       hopperId: json['hopper_id'] ?? '',
       askPrice: json['ask_price']?.toString() ?? '0',
       isDraft: json['is_draft'] == "true" || json['is_draft'] == true,
@@ -97,8 +99,8 @@ class ContentItemModel extends ContentItem {
       contentViewCount: json['content_view_count_by_marketplace_for_app'] ?? 0,
       isFavourite: json['is_favourite'] == true,
       isLiked: json['is_liked'] == true,
-      categoryData: json['categoryData'] != null
-          ? CategoryDataModel.fromJson(json['categoryData'])
+      categoryData: (json['categoryData'] ?? json['category']) != null
+          ? CategoryDataModel.fromJson(json['categoryData'] ?? json['category'])
           : const CategoryDataModel(id: '', name: '', percentage: '', type: ''),
       purchasedMediahouseCount: json['purchased_mediahouse'] != null
           ? (json['purchased_mediahouse'] as List).length

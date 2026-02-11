@@ -12,7 +12,6 @@ class UsernameAlreadyExistsFailure extends Failure {
   const UsernameAlreadyExistsFailure({required super.message});
 }
 
-// General Failures
 class ServerFailure extends Failure {
   const ServerFailure({required super.message});
 }

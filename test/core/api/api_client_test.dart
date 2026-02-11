@@ -70,8 +70,10 @@ void main() {
       // arrange
       ApiClient(mockDio, mockPrefs, mockSecureStorage);
       const tToken = 'test_token';
-      when(() => mockPrefs.getString(tokenKey)).thenReturn(tToken);
-      when(() => mockPrefs.getString(deviceIdKey)).thenReturn('device123');
+      when(() => mockPrefs.getString(SharedPreferencesKeys.tokenKey))
+          .thenReturn(tToken);
+      when(() => mockPrefs.getString(SharedPreferencesKeys.deviceIdKey))
+          .thenReturn('device123');
 
       final options = RequestOptions(path: '/test');
       final completer = Completer<void>();
@@ -84,9 +86,12 @@ void main() {
       await completer.future;
 
       // assert
-      expect(options.headers[headerKey], 'Bearer $tToken');
-      expect(options.headers[headerDeviceIdKey], 'device123');
-      expect(options.headers[headerDeviceTypeKey], contains('mobile-flutter-'));
+      expect(
+          options.headers[SharedPreferencesKeys.headerKey], 'Bearer $tToken');
+      expect(options.headers[SharedPreferencesKeys.headerDeviceIdKey],
+          'device123');
+      expect(options.headers[SharedPreferencesKeys.headerDeviceTypeKey],
+          contains('mobile-flutter-'));
     });
 
     test(
@@ -95,12 +100,14 @@ void main() {
       // arrange
       ApiClient(mockDio, mockPrefs, mockSecureStorage);
       const tToken = 'secure_token';
-      when(() => mockPrefs.getString(tokenKey)).thenReturn(null);
-      when(() => mockSecureStorage.read(key: tokenKey))
+      when(() => mockPrefs.getString(SharedPreferencesKeys.tokenKey))
+          .thenReturn(null);
+      when(() => mockSecureStorage.read(key: SharedPreferencesKeys.tokenKey))
           .thenAnswer((_) async => tToken);
-      when(() => mockPrefs.setString(tokenKey, tToken))
+      when(() => mockPrefs.setString(SharedPreferencesKeys.tokenKey, tToken))
           .thenAnswer((_) async => true);
-      when(() => mockPrefs.getString(deviceIdKey)).thenReturn('device123');
+      when(() => mockPrefs.getString(SharedPreferencesKeys.deviceIdKey))
+          .thenReturn('device123');
 
       final options = RequestOptions(path: '/test');
       final completer = Completer<void>();
@@ -112,8 +119,10 @@ void main() {
       await completer.future;
 
       // assert
-      verify(() => mockPrefs.setString(tokenKey, tToken)).called(1);
-      expect(options.headers[headerKey], 'Bearer $tToken');
+      verify(() => mockPrefs.setString(SharedPreferencesKeys.tokenKey, tToken))
+          .called(1);
+      expect(
+          options.headers[SharedPreferencesKeys.headerKey], 'Bearer $tToken');
     });
 
     test('should log error to AppLogger and track analytics on error',

@@ -8,6 +8,7 @@ import 'package:presshop/features/news/domain/usecases/get_news_detail.dart';
 import 'package:presshop/features/news/presentation/bloc/news_event.dart';
 import 'package:presshop/features/news/presentation/bloc/news_state.dart';
 import 'package:presshop/features/news/domain/entities/comment.dart';
+import 'package:presshop/features/news/data/models/comment_model.dart';
 import 'package:presshop/features/news/domain/entities/news.dart';
 import 'package:presshop/core/error/failures.dart';
 
@@ -30,9 +31,26 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     on<ToggleNewsLikeEvent>(_onToggleNewsLike);
     on<OnNewsLikeUpdatedEvent>(_onNewsLikeUpdated);
     on<ToggleCommentLikeEvent>(_onToggleCommentLike);
+    on<OnCommentLikeUpdatedEvent>(_onCommentLikeUpdated);
+    on<PostCommentEvent>(_onPostComment);
+    on<OnCommentNewEvent>(_onCommentNew);
+    on<ShareNewsEvent>(_onShareNews);
+    on<OnNewsShareUpdatedEvent>(_onNewsShareUpdated);
+    on<ViewNewsEvent>(_onViewNews);
 
     _initSocketListener();
   }
+
+  void _ensureSocketInitialized() {
+    if (!socketService.isInitialized) {
+      final userId =
+          sharedPreferences.getString(SharedPreferencesKeys.hopperIdKey) ?? '';
+      if (userId.isNotEmpty) {
+        socketService.initSocket(userId: userId, joinAs: "hopper");
+      }
+    }
+  }
+
   final GetAggregatedNews getAggregatedNews;
   final GetNewsDetail getNewsDetail;
   final GetComments getComments;
@@ -40,9 +58,140 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
   final SharedPreferences sharedPreferences;
 
   void _initSocketListener() {
+    _ensureSocketInitialized();
     socketService.onNewsLike = (data) {
       add(OnNewsLikeUpdatedEvent(likeData: data));
     };
+    socketService.onCommentLike = (data) {
+      add(OnCommentLikeUpdatedEvent(likeData: data));
+    };
+    socketService.onCommentNew = (data) {
+      add(OnCommentNewEvent(commentData: data));
+    };
+    socketService.onNewsShare = (data) {
+      add(OnNewsShareUpdatedEvent(shareData: data));
+    };
+  }
+
+  void _onCommentLikeUpdated(
+    OnCommentLikeUpdatedEvent event,
+    Emitter<NewsState> emit,
+  ) {
+    final data = event.likeData;
+    if (data is Map<String, dynamic>) {
+      final commentId = data['commentId'];
+      final likesCount = data['total_likes'] != null
+          ? int.tryParse(data['total_likes'].toString())
+          : null;
+      final isLiked = data['is_liked'] as bool?;
+
+      if (commentId == null) return;
+
+      final updatedComments = _updateCommentInList(
+        state.comments,
+        commentId,
+        (comment) => comment.copyWith(
+          likesCount: likesCount ?? comment.likesCount,
+          isLiked: isLiked ?? comment.isLiked,
+        ),
+      );
+      emit(state.copyWith(comments: updatedComments));
+    }
+  }
+
+  void _onPostComment(
+    PostCommentEvent event,
+    Emitter<NewsState> emit,
+  ) {
+    final userId =
+        sharedPreferences.getString(SharedPreferencesKeys.hopperIdKey) ?? '';
+    if (userId.isEmpty) return;
+
+    _ensureSocketInitialized();
+
+    socketService.addComment(
+      contentId: event.contentId,
+      text: event.text,
+      userId: userId,
+      parentId: event.parentId,
+      rootParentId: event.rootParentId,
+      replyToName: event.replyToName,
+    );
+  }
+
+  void _onCommentNew(
+    OnCommentNewEvent event,
+    Emitter<NewsState> emit,
+  ) {
+    final data = event.commentData;
+    if (data is Map<String, dynamic>) {
+      try {
+        final comment = CommentModel.fromJson(data);
+        add(AddCommentLocalEvent(comment: comment, parentId: comment.parentId));
+
+        // Update comment count for the news item
+        if (state.selectedNews != null &&
+            state.selectedNews!.id == comment.contentId) {
+          final updatedNews = state.selectedNews!.copyWith(
+            commentsCount: (state.selectedNews!.commentsCount ?? 0) + 1,
+          );
+          emit(state.copyWith(selectedNews: updatedNews));
+        }
+      } catch (e) {
+        // Log error but don't crash
+        print('Error parsing comment from socket: $e');
+      }
+    }
+  }
+
+  void _onShareNews(
+    ShareNewsEvent event,
+    Emitter<NewsState> emit,
+  ) {
+    final userId =
+        sharedPreferences.getString(SharedPreferencesKeys.hopperIdKey);
+
+    _ensureSocketInitialized();
+    socketService.shareNews(contentId: event.contentId, userId: userId);
+  }
+
+  void _onNewsShareUpdated(
+    OnNewsShareUpdatedEvent event,
+    Emitter<NewsState> emit,
+  ) {
+    final data = event.shareData;
+    if (data is Map<String, dynamic>) {
+      final contentId = data['contentId'] ?? data['_id'];
+      final sharesCount = data['total_shares'] != null
+          ? int.tryParse(data['total_shares'].toString())
+          : null;
+
+      if (contentId == null) return;
+
+      final updatedList = state.newsList.map((news) {
+        if (news.id == contentId) {
+          return news.copyWith(sharesCount: sharesCount ?? news.sharesCount);
+        }
+        return news;
+      }).toList();
+
+      News? updatedSelectedNews = state.selectedNews;
+      if (updatedSelectedNews != null && updatedSelectedNews.id == contentId) {
+        updatedSelectedNews = updatedSelectedNews.copyWith(
+            sharesCount: sharesCount ?? updatedSelectedNews.sharesCount);
+      }
+
+      emit(state.copyWith(
+          newsList: updatedList, selectedNews: updatedSelectedNews));
+    }
+  }
+
+  void _onViewNews(
+    ViewNewsEvent event,
+    Emitter<NewsState> emit,
+  ) {
+    _ensureSocketInitialized();
+    socketService.viewNews(contentId: event.contentId);
   }
 
   Future<void> _onGetAggregatedNews(
@@ -54,8 +203,10 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
 
     // Fallback to shared preferences if location is not provided
     if (lat == 0.0 && lng == 0.0) {
-      lat = sharedPreferences.getDouble(currentLat) ?? 0.0;
-      lng = sharedPreferences.getDouble(currentLon) ?? 0.0;
+      lat =
+          sharedPreferences.getDouble(SharedPreferencesKeys.currentLat) ?? 0.0;
+      lng =
+          sharedPreferences.getDouble(SharedPreferencesKeys.currentLon) ?? 0.0;
     }
 
     emit(state.copyWith(isLoading: true, isProcessing: false));
@@ -135,9 +286,12 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     Emitter<NewsState> emit,
   ) {
     final updatedComments = List<Comment>.from(state.comments);
-    if (event.parentId != null) {
+    final targetParentId = event.comment.rootParentId ?? event.parentId;
+
+    if (targetParentId != null) {
       final parentIndex =
-          updatedComments.indexWhere((c) => c.id == event.parentId);
+          updatedComments.indexWhere((c) => c.id == targetParentId);
+
       if (parentIndex != -1) {
         final parent = updatedComments[parentIndex];
         final updatedReplies = List<Comment>.from(parent.replies)
@@ -183,8 +337,10 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     ToggleCommentLikeEvent event,
     Emitter<NewsState> emit,
   ) {
-    final userId = sharedPreferences.getString(hopperIdKey) ?? '';
+    final userId =
+        sharedPreferences.getString(SharedPreferencesKeys.hopperIdKey) ?? '';
     if (userId.isNotEmpty) {
+      _ensureSocketInitialized();
       socketService.likeComment(
         contentId: event.contentId,
         commentId: event.commentId,
@@ -240,8 +396,10 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     ToggleNewsLikeEvent event,
     Emitter<NewsState> emit,
   ) {
-    final userId = sharedPreferences.getString(hopperIdKey) ?? '';
+    final userId =
+        sharedPreferences.getString(SharedPreferencesKeys.hopperIdKey) ?? '';
     if (userId.isNotEmpty) {
+      _ensureSocketInitialized();
       socketService.likeNews(userId: userId, contentId: event.contentId);
 
       final updatedList = state.newsList.map((news) {

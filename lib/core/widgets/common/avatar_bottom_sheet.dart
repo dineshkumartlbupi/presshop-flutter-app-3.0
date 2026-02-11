@@ -4,19 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:presshop/core/core_export.dart';
 
-/// A reusable avatar selection bottom sheet widget
-///
-/// This widget displays a grid of avatar images for the user to select from.
-/// It includes shimmer loading effects and handles avatar selection state.
 class AvatarBottomSheet {
-  /// Shows the avatar selection bottom sheet
-  ///
-  /// Parameters:
-  /// - [context]: BuildContext for showing the modal
-  /// - [size]: Screen size for responsive layout
-  /// - [avatarList]: List of available avatars
-  /// - [onAvatarSelected]: Callback when an avatar is selected
-  /// - [notifier]: Optional ValueNotifier to trigger rebuilds
   static void show({
     required BuildContext context,
     required Size size,
@@ -37,7 +25,6 @@ class AvatarBottomSheet {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header with title and close button
                     Padding(
                       padding: EdgeInsets.only(
                         left: size.width * AppDimensions.numD04,
@@ -165,7 +152,6 @@ class AvatarBottomSheet {
           );
         }
 
-        // If notifier is provided, wrap with ValueListenableBuilder
         if (notifier != null) {
           return ValueListenableBuilder<bool>(
             valueListenable: notifier,
@@ -179,7 +165,6 @@ class AvatarBottomSheet {
   }
 }
 
-/// Avatar data model
 class AvatarData {
   String id;
   String avatar;
@@ -193,8 +178,8 @@ class AvatarData {
 
   factory AvatarData.fromJson(Map<String, dynamic> json) {
     return AvatarData(
-      id: json["_id"] ?? "",
-      avatar: json["avatar"] ?? "",
+      id: (json["_id"] ?? json["id"] ?? "").toString(),
+      avatar: (json["avatar"] ?? "").toString(),
       selected: false,
     );
   }

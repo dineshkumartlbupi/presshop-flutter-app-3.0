@@ -1531,26 +1531,33 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
 
   void sendOtpApi() {
     Map<String, dynamic> params = {};
-    params[firstNameKey] = firstNameController.text.trim();
-    params[lastNameKey] = lastNameController.text.trim();
-    params[emailKey] = emailController.text.trim();
+    params[SharedPreferencesKeys.firstNameKey] =
+        firstNameController.text.trim();
+    params[SharedPreferencesKeys.lastNameKey] = lastNameController.text.trim();
+    params[SharedPreferencesKeys.emailKey] = emailController.text.trim();
     if (isRefferalCodeValid) {
-      params[referredCodeKey] = referralCodeController.text.trim();
+      params[SharedPreferencesKeys.referredCodeKey] =
+          referralCodeController.text.trim();
     }
-    params[countryCodeKey] = selectedCountryCodePicker;
-    params[phoneKey] = phoneController.text.trim();
-    params[addressKey] = addressController.text.trim();
-    params[postCodeKey] = postalCodeController.text.trim();
-    params[latitudeKey] = latitude;
-    params[longitudeKey] = longitude;
-    params[isTermAcceptedKey] = termConditionsChecked.toString();
-    params[dobKey] = selectedDates.toString();
-    params[receiveTaskNotificationKey] = isSelectCheck.toString();
-    params[roleKey] = "Hopper";
-    params[avatarIdKey] = selectedAvatarId;
-    params[userNameKey] = userNameController.text.trim().toLowerCase();
-    params[countryKey] = countryNameController.text.trim();
-    params[cityKey] = cityNameController.text.trim();
+    params[SharedPreferencesKeys.countryCodeKey] = selectedCountryCodePicker;
+    params[SharedPreferencesKeys.phoneKey] = phoneController.text.trim();
+    params[SharedPreferencesKeys.addressKey] = addressController.text.trim();
+    params[SharedPreferencesKeys.postCodeKey] =
+        postalCodeController.text.trim();
+    params[SharedPreferencesKeys.latitudeKey] = latitude;
+    params[SharedPreferencesKeys.longitudeKey] = longitude;
+    params[SharedPreferencesKeys.isTermAcceptedKey] =
+        termConditionsChecked.toString();
+    params[SharedPreferencesKeys.dobKey] = selectedDates.toString();
+    params[SharedPreferencesKeys.receiveTaskNotificationKey] =
+        isSelectCheck.toString();
+    params[SharedPreferencesKeys.roleKey] = "Hopper";
+    params[SharedPreferencesKeys.avatarIdKey] = selectedAvatarId;
+    params[SharedPreferencesKeys.userNameKey] =
+        userNameController.text.trim().toLowerCase();
+    params[SharedPreferencesKeys.countryKey] =
+        countryNameController.text.trim();
+    params[SharedPreferencesKeys.cityKey] = cityNameController.text.trim();
     params["password"] = passwordController.text.trim();
 
     _signUpBloc.add(SignUpSubmitted(data: params));

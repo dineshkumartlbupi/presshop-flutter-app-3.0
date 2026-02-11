@@ -152,7 +152,7 @@ class TutorialsRemoteDataSourceImpl implements TutorialsRemoteDataSource {
   Future<void> addViewCount(String tutorialId) async {
     try {
       // According to TutorialsScreen.dart:
-      // "user_id": sharedPreferences!.getString(hopperIdKey)
+      // "user_id": sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey)
       // We will assume the API client handles auth token, but user_id was passed in body.
       // However, ApiClient usually handles headers. `sharedPreferences` usage implies manual passing.
       // We might need to pass userId if the API specifically requires it in body.
@@ -168,7 +168,7 @@ class TutorialsRemoteDataSourceImpl implements TutorialsRemoteDataSource {
 
       /* 
       Code in Screen:
-      "user_id": sharedPreferences!.getString(hopperIdKey).toString() ?? ''
+      "user_id": sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey).toString() ?? ''
       */
 
       // I will rely on the fact that usually modern APIs use token. If this legacy API needs body, I'll add it later.

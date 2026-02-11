@@ -8,8 +8,8 @@ class AvatarModel extends Avatar {
 
   factory AvatarModel.fromJson(Map<String, dynamic> json) {
     return AvatarModel(
-      id: json['_id'] ?? '',
-      avatar: json['avatar'] ?? '',
+      id: (json['_id'] ?? json['id'] ?? '').toString(),
+      avatar: (json['avatar'] ?? '').toString(),
     );
   }
 

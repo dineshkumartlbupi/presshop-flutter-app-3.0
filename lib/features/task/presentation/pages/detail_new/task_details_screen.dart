@@ -124,7 +124,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 taskDetail!.task.addressLocation.coordinates[1]));
 
             SharedPreferences.getInstance().then((input) {
-              input.getString(hopperIdKey) ?? "";
+              input.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
               // acceptedBy is not in new model, assuming false or skipping check
               isOwner = false;
               if (mounted) {

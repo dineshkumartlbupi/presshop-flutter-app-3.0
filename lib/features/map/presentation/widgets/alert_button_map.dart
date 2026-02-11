@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:presshop/core/constants/app_dimensions_new.dart';
+import 'package:presshop/core/constants/app_dimensions.dart';
 
 class AlertButtonMap extends StatelessWidget {
   const AlertButtonMap({super.key});
@@ -12,7 +12,8 @@ class AlertButtonMap extends StatelessWidget {
       padding: EdgeInsets.only(right: size.width * AppDimensions.numD04),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(size.width * AppDimensions.numD53)),
+        borderRadius: BorderRadius.all(
+            Radius.circular(size.width * AppDimensions.numD53)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -33,7 +34,8 @@ class AlertButtonMap extends StatelessWidget {
             padding: EdgeInsets.all(size.width * AppDimensions.numD024),
             decoration: BoxDecoration(
               color: Color(0xffEC4E54),
-              borderRadius: BorderRadius.circular(size.width * AppDimensions.numD26),
+              borderRadius:
+                  BorderRadius.circular(size.width * AppDimensions.numD26),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),

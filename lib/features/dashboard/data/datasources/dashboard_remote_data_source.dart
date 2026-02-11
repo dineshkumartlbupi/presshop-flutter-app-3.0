@@ -22,7 +22,6 @@ abstract class DashboardRemoteDataSource {
 }
 
 class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
-
   DashboardRemoteDataSourceImpl({required this.apiClient});
   final ApiClient apiClient;
 
@@ -33,6 +32,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
           showLoader: false);
       if (response.statusCode == 200) {
         final data = response.data;
+        debugPrint(":::: Raw Admin List Response: $data");
         if (data is String) {
           final decoded = jsonDecode(data);
           return (decoded['data'] as List)
@@ -206,8 +206,10 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   @override
   Future<void> markStudentBeansVisited() async {
     try {
-      await apiClient.sharedPreferences.setBool(sourceDataIsClickKey, true);
-      await apiClient.sharedPreferences.setBool(sourceDataIsOpenedKey, true);
+      await apiClient.sharedPreferences
+          .setBool(SharedPreferencesKeys.sourceDataIsClickKey, true);
+      await apiClient.sharedPreferences
+          .setBool(SharedPreferencesKeys.sourceDataIsOpenedKey, true);
     } catch (e) {
       // Should we handle?
     }

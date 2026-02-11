@@ -1,0 +1,19 @@
+Analyzing ChatScreen.dart...
+
+  error - ChatScreen.dart:1285:44 - The method 'get' isn't defined for the type 'Map'. Try correcting the name to the name of an existing method, or defining a method named 'get'. - undefined_method
+  error - ChatScreen.dart:1383:77 - The method 'get' isn't defined for the type 'Map'. Try correcting the name to the name of an existing method, or defining a method named 'get'. - undefined_method
+  error - ChatScreen.dart:1478:44 - The method 'get' isn't defined for the type 'Map'. Try correcting the name to the name of an existing method, or defining a method named 'get'. - undefined_method
+  error - ChatScreen.dart:1563:77 - The method 'get' isn't defined for the type 'Map'. Try correcting the name to the name of an existing method, or defining a method named 'get'. - undefined_method
+   info - ChatScreen.dart:1:1 - The file name 'ChatScreen.dart' isn't a lower_case_with_underscores identifier. Try changing the name to follow the lower_case_with_underscores style. - file_names
+   info - ChatScreen.dart:21:8 - The imported package 'sqflite' isn't a dependency of the importing package. Try adding a dependency for 'sqflite' in the 'pubspec.yaml' file. - depend_on_referenced_packages
+   info - ChatScreen.dart:31:8 - The import of 'package:presshop/core/utils/shared_preferences.dart' is unnecessary because all of the used elements are also provided by the import of 'package:presshop/core/widgets/common_widgets.dart'. Try removing the import directive. - unnecessary_import
+   info - ChatScreen.dart:50:3 - Invalid use of a private type in a public API. Try making the private type public, or making the API that uses the private type also be private. - library_private_types_in_public_api
+   info - ChatScreen.dart:2133:18 - Missing an 'await' for the 'Future' computed by this expression. Try adding an 'await' or wrapping the expression with 'unawaited'. - unawaited_futures
+   info - ChatScreen.dart:2136:18 - Missing an 'await' for the 'Future' computed by this expression. Try adding an 'await' or wrapping the expression with 'unawaited'. - unawaited_futures
+   info - ChatScreen.dart:2868:7 - Missing an 'await' for the 'Future' computed by this expression. Try adding an 'await' or wrapping the expression with 'unawaited'. - unawaited_futures
+   info - ChatScreen.dart:2987:7 - Don't use 'BuildContext's across async gaps. Try rewriting the code to not use the 'BuildContext', or guard the use with a 'mounted' check. - use_build_context_synchronously
+   info - ChatScreen.dart:2987:15 - Missing an 'await' for the 'Future' computed by this expression. Try adding an 'await' or wrapping the expression with 'unawaited'. - unawaited_futures
+   info - ChatScreen.dart:3032:28 - Missing an 'await' for the 'Future' computed by this expression. Try adding an 'await' or wrapping the expression with 'unawaited'. - unawaited_futures
+   info - ChatScreen.dart:3034:9 - Missing an 'await' for the 'Future' computed by this expression. Try adding an 'await' or wrapping the expression with 'unawaited'. - unawaited_futures
+
+15 issues found.

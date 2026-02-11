@@ -58,9 +58,6 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
         showLoader: showLoader,
       );
 
-      // Truncated by PrettyDioLogger, no need for redundant prints here
-      // debugPrint("DEBUG: getMyContent response: ${response.data}");
-
       if (response.statusCode == 200) {
         var data = response.data;
         // debugPrint("DEBUG: getMyContent data: $data");
@@ -339,7 +336,12 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
         var data = response.data;
         debugPrint("🔍 DEBUG: Raw Content Detail Response: $data");
 
-        // Handle nested structure from logs
+        // Handle success: true structure (user's provided response)
+        if (data['success'] == true && data['data'] != null) {
+          return ContentItemModel.fromJson(data['data']);
+        }
+
+        // Handle nested structure from logs (legacy/alternative)
         if (data['data'] != null && data['data'] is Map) {
           final innerData = data['data'];
           if (innerData['code'] == 200) {
@@ -349,11 +351,21 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
           }
         }
 
-        // Fallback
+        // Fallback or legacy variants
         if (data['code'] == 200) {
           return ContentItemModel.fromJson(
               data['contentDetail'] ?? data['content'] ?? data['data']);
         }
+
+        // If none of the above matches but success is true, try to find content anyway
+        if (data['success'] == true) {
+          var contentData =
+              data['data'] ?? data['contentDetail'] ?? data['content'];
+          if (contentData != null) {
+            return ContentItemModel.fromJson(contentData);
+          }
+        }
+
         throw ServerFailure(
             message: data['message'] ?? 'Failed to load content');
       }

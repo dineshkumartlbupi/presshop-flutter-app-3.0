@@ -50,9 +50,11 @@ class ContactUsScreenState extends State<ContactUsScreen> {
 
   void initialData() {
     nameController.text =
-        "${sharedPreferences!.get(firstNameKey).toString()} ${sharedPreferences!.get(lastNameKey).toString()}";
-    phoneNumberController.text = sharedPreferences!.get(phoneKey).toString();
-    emailAddressController.text = sharedPreferences!.get(emailKey).toString();
+        "${sharedPreferences!.getString(SharedPreferencesKeys.firstNameKey).toString()} ${sharedPreferences!.getString(SharedPreferencesKeys.lastNameKey).toString()}";
+    phoneNumberController.text =
+        sharedPreferences!.getString(SharedPreferencesKeys.phoneKey).toString();
+    emailAddressController.text =
+        sharedPreferences!.getString(SharedPreferencesKeys.emailKey).toString();
   }
 
   @override

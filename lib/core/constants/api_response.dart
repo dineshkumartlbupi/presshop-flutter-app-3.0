@@ -1,5 +1,4 @@
 class ApiResponse<T> {
-
   ApiResponse({
     required this.success,
     required this.message,

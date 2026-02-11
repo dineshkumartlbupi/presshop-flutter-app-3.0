@@ -88,7 +88,6 @@ class LocalNotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  /// QUICK TEST NOTIFICATION — tap any button to see it
   Future<void> showTestNotification() async {
     await flutterLocalNotificationsPlugin.show(
       999,

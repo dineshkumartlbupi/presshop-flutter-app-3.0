@@ -1,0 +1,15 @@
+Analyzing ChatScreen.dart...
+
+   info - ChatScreen.dart:1:1 - The file name 'ChatScreen.dart' isn't a lower_case_with_underscores identifier. Try changing the name to follow the lower_case_with_underscores style. - file_names
+   info - ChatScreen.dart:21:8 - The imported package 'sqflite' isn't a dependency of the importing package. Try adding a dependency for 'sqflite' in the 'pubspec.yaml' file. - depend_on_referenced_packages
+   info - ChatScreen.dart:31:8 - The import of 'package:presshop/core/utils/shared_preferences.dart' is unnecessary because all of the used elements are also provided by the import of 'package:presshop/core/widgets/common_widgets.dart'. Try removing the import directive. - unnecessary_import
+   info - ChatScreen.dart:50:3 - Invalid use of a private type in a public API. Try making the private type public, or making the API that uses the private type also be private. - library_private_types_in_public_api
+   info - ChatScreen.dart:2132:18 - Missing an 'await' for the 'Future' computed by this expression. Try adding an 'await' or wrapping the expression with 'unawaited'. - unawaited_futures
+   info - ChatScreen.dart:2135:18 - Missing an 'await' for the 'Future' computed by this expression. Try adding an 'await' or wrapping the expression with 'unawaited'. - unawaited_futures
+   info - ChatScreen.dart:2867:7 - Missing an 'await' for the 'Future' computed by this expression. Try adding an 'await' or wrapping the expression with 'unawaited'. - unawaited_futures
+   info - ChatScreen.dart:2986:7 - Don't use 'BuildContext's across async gaps. Try rewriting the code to not use the 'BuildContext', or guard the use with a 'mounted' check. - use_build_context_synchronously
+   info - ChatScreen.dart:2986:15 - Missing an 'await' for the 'Future' computed by this expression. Try adding an 'await' or wrapping the expression with 'unawaited'. - unawaited_futures
+   info - ChatScreen.dart:3031:28 - Missing an 'await' for the 'Future' computed by this expression. Try adding an 'await' or wrapping the expression with 'unawaited'. - unawaited_futures
+   info - ChatScreen.dart:3033:9 - Missing an 'await' for the 'Future' computed by this expression. Try adding an 'await' or wrapping the expression with 'unawaited'. - unawaited_futures
+
+11 issues found.

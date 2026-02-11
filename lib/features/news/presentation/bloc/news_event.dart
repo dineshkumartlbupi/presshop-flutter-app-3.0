@@ -111,3 +111,62 @@ class ToggleCommentLikeEvent extends NewsEvent {
   @override
   List<Object> get props => [contentId, commentId];
 }
+
+class PostCommentEvent extends NewsEvent {
+  const PostCommentEvent({
+    required this.contentId,
+    required this.text,
+    this.parentId,
+    this.rootParentId,
+    this.replyToName,
+  });
+  final String contentId;
+  final String text;
+  final String? parentId;
+  final String? rootParentId;
+  final String? replyToName;
+
+  @override
+  List<Object?> get props =>
+      [contentId, text, parentId, rootParentId, replyToName];
+}
+
+class ShareNewsEvent extends NewsEvent {
+  const ShareNewsEvent({required this.contentId});
+  final String contentId;
+
+  @override
+  List<Object> get props => [contentId];
+}
+
+class ViewNewsEvent extends NewsEvent {
+  const ViewNewsEvent({required this.contentId});
+  final String contentId;
+
+  @override
+  List<Object> get props => [contentId];
+}
+
+class OnCommentNewEvent extends NewsEvent {
+  const OnCommentNewEvent({required this.commentData});
+  final dynamic commentData;
+
+  @override
+  List<Object> get props => [commentData];
+}
+
+class OnNewsShareUpdatedEvent extends NewsEvent {
+  const OnNewsShareUpdatedEvent({required this.shareData});
+  final dynamic shareData;
+
+  @override
+  List<Object> get props => [shareData];
+}
+
+class OnCommentLikeUpdatedEvent extends NewsEvent {
+  const OnCommentLikeUpdatedEvent({required this.likeData});
+  final dynamic likeData;
+
+  @override
+  List<Object> get props => [likeData];
+}

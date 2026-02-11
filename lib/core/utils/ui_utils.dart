@@ -7,7 +7,7 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/theme/app_colors.dart';
 import 'package:intl/intl.dart';
-import 'package:presshop/core/constants/app_dimensions_new.dart';
+import 'package:presshop/core/constants/app_dimensions.dart';
 
 /// Share
 Future<void> shareLink(

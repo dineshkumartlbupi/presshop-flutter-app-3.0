@@ -74,7 +74,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   void _initSocket() {
-    final userId = sharedPreferences.getString(hopperIdKey) ?? '';
+    final userId =
+        sharedPreferences.getString(SharedPreferencesKeys.hopperIdKey) ?? '';
     if (userId.isNotEmpty) {
       socketService.initSocket(userId: userId, joinAs: "hopper");
     }
@@ -204,7 +205,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             lat: location.latitude, lng: location.longitude, km: 10));
 
         // Create avatar marker in background (non-blocking for camera)
-        final profileImage = sharedPreferences.getString(profileImageKey) ?? '';
+        final profileImage = sharedPreferences
+                .getString(SharedPreferencesKeys.profileImageKey) ??
+            '';
         BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
 
         // Reduce avatar size for better performance (100x100 instead of 150x150)
@@ -522,7 +525,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     AddAlertMarkerEvent event,
     Emitter<MapState> emit,
   ) async {
-    final userId = sharedPreferences.getString(hopperIdKey) ?? '';
+    final userId =
+        sharedPreferences.getString(SharedPreferencesKeys.hopperIdKey) ?? '';
     if (userId.isEmpty) {
       debugPrint("Cannot emit alert: userId is empty");
       return;

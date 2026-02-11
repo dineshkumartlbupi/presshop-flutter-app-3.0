@@ -40,12 +40,19 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   @override
   void initState() {
     super.initState();
-    String firstName = sharedPreferences!.getString(firstNameKey) ?? "Hopper";
-    String lastName = sharedPreferences!.getString(lastNameKey) ?? "";
+    String firstName =
+        sharedPreferences!.getString(SharedPreferencesKeys.firstNameKey) ??
+            "Hopper";
+    String lastName =
+        sharedPreferences!.getString(SharedPreferencesKeys.lastNameKey) ?? "";
     fullName = firstName + (lastName.isNotEmpty ? " $lastName" : "");
-    userName = sharedPreferences!.getString(userNameKey) ?? "Hopper";
+    userName =
+        sharedPreferences!.getString(SharedPreferencesKeys.userNameKey) ??
+            "Hopper";
     // Setup initial image from prefs if available
-    String sessionAvatar = sharedPreferences!.getString(profileImageKey) ?? "";
+    String sessionAvatar =
+        sharedPreferences!.getString(SharedPreferencesKeys.profileImageKey) ??
+            "";
     if (sessionAvatar.isNotEmpty) {
       userImage = sessionAvatar;
     }
@@ -619,7 +626,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
         } else {
           userImage = fixS3Url("${profile.profileImage}");
         }
-        sharedPreferences!.setString(profileImageKey, userImage);
+        sharedPreferences!
+            .setString(SharedPreferencesKeys.profileImageKey, userImage);
       }
     });
   }
@@ -631,7 +639,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
       } else {
         userImage = fixS3Url("$imageUrl");
       }
-      sharedPreferences!.setString(profileImageKey, userImage);
+      sharedPreferences!
+          .setString(SharedPreferencesKeys.profileImageKey, userImage);
     });
     showSnackBar("Success", "Profile image updated successfully", Colors.green);
   }

@@ -16,14 +16,23 @@ class TermsRepository {
         debugPrint("Terms API Response (Legal): ${response.data}");
 
         if (response.statusCode == 200) {
-          final statusData = response.data['status'];
-          final cmsItem = CmsItem.fromJson(statusData);
-          return TermsResponse(
-            data: TermsData(
-              privacyPolicy: CmsItem(id: '', description: ''),
-              termAndCond: cmsItem,
-            ),
-          );
+          final legalData = response.data['data'];
+          if (legalData != null) {
+            final cmsItem = CmsItem.fromJson(legalData);
+            return TermsResponse(
+              data: TermsData(
+                privacyPolicy: CmsItem(id: '', description: ''),
+                termAndCond: cmsItem,
+              ),
+            );
+          } else {
+            return TermsResponse(
+              data: TermsData(
+                privacyPolicy: CmsItem(id: '', description: ''),
+                termAndCond: CmsItem(id: '', description: ''),
+              ),
+            );
+          }
         } else {
           throw Exception("Failed to load terms: ${response.statusCode}");
         }
@@ -49,7 +58,6 @@ class TermsRepository {
       if (e.response?.data is Map<String, dynamic>) {
         errorMessage = e.response?.data['message'] ?? errorMessage;
       } else if (e.message != null && e.message!.isNotEmpty) {
-        // Use the custom message set by ApiClient for 502/404
         errorMessage = e.message!;
       }
       throw Exception(errorMessage);

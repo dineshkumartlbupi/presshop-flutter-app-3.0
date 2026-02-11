@@ -42,7 +42,12 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
           final data = response.data['categories'] as List;
           return data.map((e) => CategoryModel.fromJson(e)).toList();
         } else if (response.data['data'] != null) {
-          final data = response.data['data'] as List;
+          final dynamic responseData = response.data;
+          List data = [];
+          if (responseData is Map) {
+            data =
+                (responseData['status'] ?? responseData['data'] ?? []) as List;
+          }
           return data.map((e) => CategoryModel.fromJson(e)).toList();
         }
       }
@@ -104,7 +109,11 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
       if (response.data is! Map<String, dynamic>) {
         throw ServerException(response.data.toString());
       }
-      final data = response.data['status'] as List;
+      final dynamic responseData = response.data;
+      List data = [];
+      if (responseData is Map) {
+        data = (responseData['status'] ?? responseData['data'] ?? []) as List;
+      }
       return data.map((e) => TutorialModel.fromJson(e)).toList();
     } catch (e) {
       throw ApiErrorHandler.handle(e);

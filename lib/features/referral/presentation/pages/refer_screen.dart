@@ -34,14 +34,16 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
     super.initState();
 
     // Print referral code when entering this page
-    var refCode = sharedPreferences!.getString(referralCode) ?? "";
+    var refCode =
+        sharedPreferences!.getString(SharedPreferencesKeys.referralCode) ?? "";
     print("Referral Code on ReferScreen: $refCode");
   }
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    var refrralCode = sharedPreferences!.getString(referralCode) ?? "";
+    var refrralCode =
+        sharedPreferences!.getString(SharedPreferencesKeys.referralCode) ?? "";
     print("this this this tis");
     return Scaffold(
       appBar: CommonAppBar(
@@ -222,7 +224,8 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                       children: [
                         Expanded(
                             child: Text(
-                                sharedPreferences!.getString(referralCode) ??
+                                sharedPreferences!.getString(
+                                        SharedPreferencesKeys.referralCode) ??
                                     "",
                                 overflow:
                                     TextOverflow.ellipsis, // Valid for Text
@@ -275,7 +278,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                     commonButtonStyle(size, AppColorTheme.colorThemePink),
                     () {
                       var shareText =
-                          '${sharedPreferences!.getString(firstNameKey)!.toTitleCase()} ${referInviteText} ${sharedPreferences!.getString(referralCode)}';
+                          '${sharedPreferences!.getString(SharedPreferencesKeys.firstNameKey)!.toTitleCase()} ${referInviteText} ${sharedPreferences!.getString(SharedPreferencesKeys.referralCode)}';
                       Share.share(shareText);
                     },
                   ),
@@ -295,7 +298,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                         children: [
                           TextSpan(
                             text:
-                                "${sharedPreferences!.getString(totalHopperArmy)} ",
+                                "${sharedPreferences!.getString(SharedPreferencesKeys.totalHopperArmy)} ",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,

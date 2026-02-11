@@ -45,7 +45,8 @@ class HopperAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    String avatarUrl = sharedPreferences?.getString(avatarKey) ?? "";
+    String avatarUrl =
+        sharedPreferences?.getString(SharedPreferencesKeys.avatarKey) ?? "";
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,

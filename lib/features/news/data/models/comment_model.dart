@@ -12,6 +12,7 @@ class CommentModel extends Comment {
     super.replies,
     super.likesCount,
     super.isLiked,
+    super.parentId,
     super.rootParentId,
     super.replyToName,
   });
@@ -46,6 +47,7 @@ class CommentModel extends Comment {
           : [],
       likesCount: json['likes_count'] ?? 0,
       isLiked: json['is_liked'] ?? false,
+      parentId: (json['parent_id'] ?? json['parentId'])?.toString(),
       rootParentId:
           (json['root_parent_id'] ?? json['root_comment_id'])?.toString(),
       replyToName: json['reply_to_user_name'] ??

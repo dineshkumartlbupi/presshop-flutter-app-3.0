@@ -53,7 +53,8 @@ class BroadCastChatTaskScreen extends StatefulWidget {
 class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   List<ManageTaskChatModel> chatList = [];
   late IO.Socket socket;
-  final String _senderId = sharedPreferences!.getString(hopperIdKey) ?? "";
+  final String _senderId =
+      sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
   TextEditingController ratingReviewController1 = TextEditingController();
   List<String> intList = [
     "User experience",
@@ -771,7 +772,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
             try {
               await controller.initialize();
               if (controller.value.duration.inSeconds >
-                  (sharedPreferences!.getInt(videoLimitKey) ?? 120)) {
+                  (sharedPreferences!
+                          .getInt(SharedPreferencesKeys.videoLimitKey) ??
+                      120)) {
                 showToast(
                   "Videos can be up to 2 minutes long — keep it quick, punchy, and straight to the point🎥",
                 );

@@ -97,6 +97,7 @@ import 'package:presshop/features/task/domain/usecases/get_hopper_accepted_count
 import 'package:presshop/features/task/domain/usecases/get_task_transaction_details.dart';
 import 'package:presshop/features/task/domain/usecases/get_content_transaction_details.dart';
 
+import 'package:presshop/features/chat/data/datasources/chat_local_data_source.dart';
 import 'package:presshop/features/authentication/domain/usecases/login_user.dart';
 import 'package:presshop/features/authentication/domain/usecases/social_login_user.dart';
 import 'package:presshop/features/authentication/domain/usecases/register_user.dart';
@@ -125,9 +126,6 @@ import 'package:presshop/features/authentication/domain/usecases/reset_password.
 
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 // ... existing imports ...
-
-
-
 
 // Import
 // Import
@@ -226,6 +224,7 @@ import 'package:presshop/features/publish/domain/repositories/tutorials_reposito
 import 'package:presshop/features/publish/data/repositories/tutorials_repository_impl.dart';
 import 'package:presshop/features/publish/data/datasources/tutorials_remote_datasource.dart';
 
+import 'package:presshop/features/chat/data/services/chat_socket_service.dart';
 import 'package:presshop/core/services/location_service.dart';
 
 final sl = GetIt.instance; // sl = Service Locator
@@ -277,16 +276,11 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton<DashboardRepository>(
-    () => DashboardRepositoryImpl(
-      remoteDataSource: sl(),
-      networkInfo: sl(),
-    ),
+    () => DashboardRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
 
   sl.registerLazySingleton<NotificationRepository>(
-    () => NotificationRepositoryImpl(
-      remoteDataSource: sl(),
-    ),
+    () => NotificationRepositoryImpl(remoteDataSource: sl()),
   );
 
   //! Use Cases - Register third (before BLoCs)
@@ -326,97 +320,119 @@ Future<void> init() async {
 
   //! Features - Authentication
   // Blocs - Register last
-  sl.registerFactory(() => AuthBloc(
-        loginUser: sl(),
-        socialLoginUser: sl(),
-        forgotPassword: sl(),
-        verifyForgotPasswordOtp: sl(),
-        resetPassword: sl(),
-      ));
-  sl.registerFactory(() => SignUpBloc(
-        registerUser: sl(),
-        sendOtp: sl(),
-        checkUserName: sl(),
-        checkEmail: sl(),
-        checkPhone: sl(),
-        getAvatars: sl(),
-        verifyReferralCode: sl(),
-        socialExists: sl(),
-        socialRegisterUser: sl(),
-      ));
+  sl.registerFactory(
+    () => AuthBloc(
+      loginUser: sl(),
+      socialLoginUser: sl(),
+      forgotPassword: sl(),
+      verifyForgotPasswordOtp: sl(),
+      resetPassword: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => SignUpBloc(
+      registerUser: sl(),
+      sendOtp: sl(),
+      checkUserName: sl(),
+      checkEmail: sl(),
+      checkPhone: sl(),
+      getAvatars: sl(),
+      verifyReferralCode: sl(),
+      socialExists: sl(),
+      socialRegisterUser: sl(),
+    ),
+  );
 
-  sl.registerFactory(() => SplashBloc(
-        checkAuthStatus: sl(),
-        getProfile: sl(),
-        checkAppVersion: sl(),
-        checkOnboardingStatus: sl(),
-      ));
+  sl.registerFactory(
+    () => SplashBloc(
+      checkAuthStatus: sl(),
+      getProfile: sl(),
+      checkAppVersion: sl(),
+      checkOnboardingStatus: sl(),
+    ),
+  );
   sl.registerFactory(() => OnboardingBloc(setOnboardingSeen: sl()));
-  sl.registerFactory(() => PublicationBloc(
-        getPublicationEarningStats: sl(),
-        getMediaHouses: sl(),
-        getPublicationTransactions: sl(),
-      ));
-  sl.registerFactory(() => PublishBloc(
-        getContentCategories: sl(),
-        getCharities: sl(),
-        getShareExclusivePrice: sl(),
-        submitContent: sl(),
-      ));
-  sl.registerFactory(() => TutorialsBloc(
-        getTutorialCategories: sl(),
-        getTutorialVideos: sl(),
-        addTutorialViewCount: sl(),
-      ));
-  sl.registerFactory(() => VerificationBloc(
-        verifyOtp: sl(),
-        registerUser: sl(),
-        socialRegisterUser: sl(),
-        sendOtp: sl(),
-      ));
+  sl.registerFactory(
+    () => PublicationBloc(
+      getPublicationEarningStats: sl(),
+      getMediaHouses: sl(),
+      getPublicationTransactions: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => PublishBloc(
+      getContentCategories: sl(),
+      getCharities: sl(),
+      getShareExclusivePrice: sl(),
+      submitContent: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => TutorialsBloc(
+      getTutorialCategories: sl(),
+      getTutorialVideos: sl(),
+      addTutorialViewCount: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => VerificationBloc(
+      verifyOtp: sl(),
+      registerUser: sl(),
+      socialRegisterUser: sl(),
+      sendOtp: sl(),
+    ),
+  );
 
-  sl.registerFactory(() => DashboardBloc(
-        getActiveAdmins: sl(),
-        updateLocation: sl(),
-        addDevice: sl(),
-        getDashboardTaskDetail: sl(),
-        getRoomId: sl(),
-        checkAppVersion: sl(),
-        activateStudentBeans: sl(),
-        checkStudentBeans: sl(),
-        markStudentBeansVisited: sl(),
-        getProfile: sl(),
-      ));
+  sl.registerFactory(
+    () => DashboardBloc(
+      getActiveAdmins: sl(),
+      updateLocation: sl(),
+      addDevice: sl(),
+      getDashboardTaskDetail: sl(),
+      getRoomId: sl(),
+      checkAppVersion: sl(),
+      activateStudentBeans: sl(),
+      checkStudentBeans: sl(),
+      markStudentBeansVisited: sl(),
+      getProfile: sl(),
+    ),
+  );
 
-  sl.registerFactory(() => ProfileBloc(
-        getProfileData: sl(),
-        updateProfileData: sl(),
-        uploadProfileImage: sl(),
-        changePassword: sl(),
-        checkUserName: sl(),
-        getAvatars: sl(),
-        checkEmail: sl(),
-        checkPhone: sl(),
-      ));
+  sl.registerFactory(
+    () => ProfileBloc(
+      getProfileData: sl(),
+      updateProfileData: sl(),
+      uploadProfileImage: sl(),
+      changePassword: sl(),
+      checkUserName: sl(),
+      getAvatars: sl(),
+      checkEmail: sl(),
+      checkPhone: sl(),
+    ),
+  );
 
-  sl.registerLazySingleton(() => ContentBloc(
-        getMyContent: sl(),
-        publishContent: sl(),
-        saveDraft: sl(),
-        uploadMedia: sl(),
-        deleteContent: sl(),
-        searchHashtags: sl(),
-        getTrendingHashtags: sl(),
-        getContentDetail: sl(),
-        getMediaHouseOffers: sl(),
-        getContentTransactions: sl(),
-      ));
+  sl.registerLazySingleton(
+    () => ContentBloc(
+      getMyContent: sl(),
+      publishContent: sl(),
+      saveDraft: sl(),
+      uploadMedia: sl(),
+      deleteContent: sl(),
+      searchHashtags: sl(),
+      getTrendingHashtags: sl(),
+      getContentDetail: sl(),
+      getMediaHouseOffers: sl(),
+      getContentTransactions: sl(),
+    ),
+  );
 
-  sl.registerFactory(() => AccountSettingsBloc(
-        deleteAccount: sl(),
-        changePassword: sl(),
-        getAdminContactInfo: sl(),
-      ));
+  sl.registerFactory(
+    () => AccountSettingsBloc(
+      deleteAccount: sl(),
+      changePassword: sl(),
+      getAdminContactInfo: sl(),
+    ),
+  );
   // Verification
   sl.registerFactory(
     () => UploadDocumentsBloc(
@@ -426,94 +442,97 @@ Future<void> init() async {
       deleteDocument: sl(),
     ),
   );
-  sl.registerFactory(() => FAQBloc(
-        getFAQs: sl(),
-        getPriceTips: sl(),
-        getFAQCategories: sl(),
-      ));
-  sl.registerFactory(() => RatingBloc(
-        getReviews: sl(),
-        getMediaHouses: sl(),
-      ));
+  sl.registerFactory(
+    () => FAQBloc(getFAQs: sl(), getPriceTips: sl(), getFAQCategories: sl()),
+  );
+  sl.registerFactory(() => RatingBloc(getReviews: sl(), getMediaHouses: sl()));
 
-  sl.registerFactory(() => LeaderboardBloc(
-        getLeaderboardData: sl(),
-      ));
+  sl.registerFactory(() => LeaderboardBloc(getLeaderboardData: sl()));
 
-  sl.registerFactory(() => BankBloc(
-        getBanks: sl(),
-        deleteBank: sl(),
-        setDefaultBank: sl(),
-        getStripeOnboardingUrl: sl(),
-      ));
+  sl.registerFactory(
+    () => BankBloc(
+      getBanks: sl(),
+      deleteBank: sl(),
+      setDefaultBank: sl(),
+      getStripeOnboardingUrl: sl(),
+    ),
+  );
 
   sl.registerFactory(() => ChatbotBloc(apiClient: sl()));
-  sl.registerFactory(() => TaskBloc(
-        getAllTasks: sl(),
-        getLocalTasks: sl(),
-        getTaskDetail: sl(),
-        acceptRejectTask: sl(),
-        getTaskChat: sl(),
-        uploadTaskMedia: sl(),
-        getRoomId: sl(),
-        getHopperAcceptedCount: sl(),
-        getTaskTransactionDetails: sl(),
-        getContentTransactionDetails: sl(),
-      ));
-  sl.registerFactory(() => NotificationBloc(
-        getNotifications: sl(),
-        markNotificationsAsRead: sl(),
-        clearAllNotifications: sl(),
-        checkStudentBeans: sl(),
-        activateStudentBeans: sl(),
-        markStudentBeansVisited: sl(),
-      ));
-  sl.registerFactory(() => EarningBloc(
-        getEarningProfile: sl(),
-        getTransactions: sl(),
-        getCommissions: sl(),
-      ));
+  sl.registerFactory(
+    () => TaskBloc(
+      getAllTasks: sl(),
+      getLocalTasks: sl(),
+      getTaskDetail: sl(),
+      acceptRejectTask: sl(),
+      getTaskChat: sl(),
+      uploadTaskMedia: sl(),
+      getRoomId: sl(),
+      getHopperAcceptedCount: sl(),
+      getTaskTransactionDetails: sl(),
+      getContentTransactionDetails: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => NotificationBloc(
+      getNotifications: sl(),
+      markNotificationsAsRead: sl(),
+      clearAllNotifications: sl(),
+      checkStudentBeans: sl(),
+      activateStudentBeans: sl(),
+      markStudentBeansVisited: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => EarningBloc(
+      getEarningProfile: sl(),
+      getTransactions: sl(),
+      getCommissions: sl(),
+    ),
+  );
   sl.registerFactory(() => AlertBloc(apiClient: sl()));
   sl.registerFactory(() => CameraBloc(sl()));
-  sl.registerFactory(() => ChatBloc());
-  sl.registerFactory(() => FeedBloc(
-        getFeeds: sl(),
-        toggleFeedInteraction: sl(),
-      ));
-  sl.registerFactory(() => NewsBloc(
-        getAggregatedNews: sl(),
-        getNewsDetail: sl(),
-        getComments: sl(),
-        socketService: sl(),
-        sharedPreferences: sl(),
-      ));
+  sl.registerFactory(
+    () => ChatBloc(chatSocketService: sl(), localDataSource: sl()),
+  );
+  sl.registerFactory(
+    () => FeedBloc(getFeeds: sl(), toggleFeedInteraction: sl()),
+  );
+  sl.registerFactory(
+    () => NewsBloc(
+      getAggregatedNews: sl(),
+      getNewsDetail: sl(),
+      getComments: sl(),
+      socketService: sl(),
+      sharedPreferences: sl(),
+    ),
+  );
 
-  sl.registerFactory(() => MapBloc(
-        getCurrentLocation: sl(),
-        getRoute: sl(),
-        repository: sl(),
-        socketService: sl(),
-        newsRepository: sl(),
-        markerService: sl(),
-        sharedPreferences: sl(),
-      ));
+  sl.registerFactory(
+    () => MapBloc(
+      getCurrentLocation: sl(),
+      getRoute: sl(),
+      repository: sl(),
+      socketService: sl(),
+      newsRepository: sl(),
+      markerService: sl(),
+      sharedPreferences: sl(),
+    ),
+  );
   // Menu
-  sl.registerFactory(() => MenuBloc(
-        getNotifications: sl(),
-        removeDevice: sl(),
-        logoutUser: sl(),
-        menuService: sl(),
-        authLocalDataSource: sl(),
-      ));
+  sl.registerFactory(
+    () => MenuBloc(
+      getNotifications: sl(),
+      removeDevice: sl(),
+      logoutUser: sl(),
+      menuService: sl(),
+      authLocalDataSource: sl(),
+    ),
+  );
   sl.registerLazySingleton<MenuService>(
-      () => MenuServiceImpl(googleSignIn: sl()));
+    () => MenuServiceImpl(googleSignIn: sl()),
+  );
 
-  // Use cases
-  // LoginUser, SocialLoginUser, RegisterUser, SendOtp, VerifyOtp, SocialRegisterUser,
-  // LogoutUser, SetOnboardingSeen, ForgotPassword, VerifyForgotPasswordOtp, ResetPassword,
-  // CheckAuthStatus, GetProfile, CheckOnboardingStatus, CheckAppVersion already registered at the top
-
-  // Dashboard Use Cases
   sl.registerLazySingleton(() => GetActiveAdmins(sl()));
   sl.registerLazySingleton(() => UpdateLocation(sl()));
   sl.registerLazySingleton(() => AddDevice(sl()));
@@ -524,7 +543,6 @@ Future<void> init() async {
   sl.registerLazySingleton(() => CheckStudentBeans(sl()));
   sl.registerLazySingleton(() => MarkStudentBeansVisited(sl()));
   sl.registerLazySingleton(() => CheckAppVersion(sl()));
-  // CheckUserName, CheckEmail, CheckPhone, GetAvatars, VerifyReferralCode, SocialExists already registered at the top
   sl.registerLazySingleton(() => GetProfileData(sl()));
   sl.registerLazySingleton(() => UpdateProfileData(sl()));
   sl.registerLazySingleton(() => UploadProfileImage(sl()));
@@ -542,7 +560,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetMediaHouseOffers(sl()));
   sl.registerLazySingleton(() => GetContentTransactions(sl()));
 
-  // Account Settings Use Cases
+  // Account Settings Use Cases ==========================================>
   sl.registerLazySingleton(() => DeleteAccount(sl()));
   sl.registerLazySingleton(() => GetAdminContactInfo(sl()));
   sl.registerLazySingleton(() => GetFAQs(sl()));
@@ -550,56 +568,51 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetFAQCategories(sl()));
   sl.registerLazySingleton(() => GetReviews(sl()));
   sl.registerLazySingleton(() => rating_media.GetMediaHouses(sl()));
-  // Leaderboard Use Cases
+  // Leaderboard Use Cases ================================================>
   sl.registerLazySingleton(() => GetLeaderboardData(sl()));
 
-  // Bank Use Cases
+  // Bank Use Cases ================================================>
   sl.registerLazySingleton(() => GetBanks(sl()));
   sl.registerLazySingleton(() => DeleteBank(sl()));
   sl.registerLazySingleton(() => SetDefaultBank(sl()));
   sl.registerLazySingleton(() => GetStripeOnboardingUrl(sl()));
 
-  // Earning Use Cases
+  // Earning Use Cases ================================================>
   sl.registerLazySingleton(() => GetEarningProfile(sl()));
   sl.registerLazySingleton(() => GetTransactions(sl()));
   sl.registerLazySingleton(() => GetCommissions(sl()));
 
-  // Feed Use Cases
+  // Feed Use Cases ================================================>
   sl.registerLazySingleton(() => GetFeeds(sl()));
   sl.registerLazySingleton(() => ToggleFeedInteraction(sl()));
 
-  // Notification Use Cases
+  // Notification Use Cases ================================================>
   sl.registerLazySingleton(() => GetNotifications(sl()));
   sl.registerLazySingleton(() => MarkNotificationsAsRead(sl()));
   sl.registerLazySingleton(() => ClearAllNotifications(sl()));
 
-  // Verification Use Cases
+  // Verification Use Cases ================================================>
   sl.registerLazySingleton(() => GetDocumentInstructions(sl()));
   sl.registerLazySingleton(() => GetUploadedDocuments(sl()));
   sl.registerLazySingleton(() => UploadDocument(sl()));
   sl.registerLazySingleton(() => DeleteDocument(sl()));
 
-  // Verification Repository
+  // Verification Repository ================================================>
   sl.registerLazySingleton<VerificationRepository>(
-    () => VerificationRepositoryImpl(
-      remoteDataSource: sl(),
-      networkInfo: sl(),
-    ),
+    () => VerificationRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
 
-  // Verification Data Sources
+  // Verification Data Sources ================================================>
   sl.registerLazySingleton<VerificationRemoteDataSource>(
-    () => VerificationRemoteDataSourceImpl(
-      apiClient: sl(),
-    ),
+    () => VerificationRemoteDataSourceImpl(apiClient: sl()),
   );
 
-  // Publication Use Cases
+  // Publication Use Cases ================================================>
   sl.registerLazySingleton(() => GetPublicationEarningStats(sl()));
   sl.registerLazySingleton(() => GetMediaHouses(sl()));
   sl.registerLazySingleton(() => GetPublicationTransactions(sl()));
 
-  // Publish Use Cases
+  // Publish Use Cases ================================================>
   sl.registerLazySingleton(() => GetContentCategories(sl()));
   sl.registerLazySingleton(() => GetCharities(sl()));
   sl.registerLazySingleton(() => GetShareExclusivePrice(sl()));
@@ -616,14 +629,12 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SearchPlaces(sl()));
   sl.registerLazySingleton(() => GetPlaceDetails(sl()));
 
-  // News Use Cases
+  // News Use Cases ================================================>
   sl.registerLazySingleton(() => GetAggregatedNews(sl()));
   sl.registerLazySingleton(() => GetNewsDetail(sl()));
   sl.registerLazySingleton(() => GetComments(sl()));
 
-  // Repository
-  // AuthRepository and DashboardRepository already registered at the top
-
+  // Profile Repository ================================================>
   sl.registerLazySingleton<ProfileRepository>(
     () => ProfileRepositoryImpl(
       remoteDataSource: sl(),
@@ -633,10 +644,7 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton<ContentRepository>(
-    () => ContentRepositoryImpl(
-      remoteDataSource: sl(),
-      networkInfo: sl(),
-    ),
+    () => ContentRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
 
   sl.registerLazySingleton<AccountSettingsRepository>(
@@ -647,57 +655,34 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton<RatingRepository>(
-    () => RatingRepositoryImpl(
-      remoteDataSource: sl(),
-      networkInfo: sl(),
-    ),
+    () => RatingRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
 
   sl.registerLazySingleton<LeaderboardRepository>(
-    () => LeaderboardRepositoryImpl(
-      remoteDataSource: sl(),
-    ),
+    () => LeaderboardRepositoryImpl(remoteDataSource: sl()),
   );
 
   sl.registerLazySingleton<BankRepository>(
-    () => BankRepositoryImpl(
-      remoteDataSource: sl(),
-      networkInfo: sl(),
-    ),
+    () => BankRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
 
   sl.registerLazySingleton<EarningRepository>(
-    () => EarningRepositoryImpl(
-      remoteDataSource: sl(),
-      networkInfo: sl(),
-    ),
+    () => EarningRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
 
   sl.registerLazySingleton<FeedRepository>(
-    () => FeedRepositoryImpl(
-      remoteDataSource: sl(),
-      networkInfo: sl(),
-    ),
+    () => FeedRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
 
   sl.registerLazySingleton<PublicationRepository>(
-    () => PublicationRepositoryImpl(
-      remoteDataSource: sl(),
-      networkInfo: sl(),
-    ),
+    () => PublicationRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
 
   sl.registerLazySingleton<PublishRepository>(
-    () => PublishRepositoryImpl(
-      remoteDataSource: sl(),
-      networkInfo: sl(),
-    ),
+    () => PublishRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
   sl.registerLazySingleton<TutorialsRepository>(
-    () => TutorialsRepositoryImpl(
-      remoteDataSource: sl(),
-      networkInfo: sl(),
-    ),
+    () => TutorialsRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
   sl.registerLazySingleton<MapRepository>(
     () => MapRepositoryImpl(remoteDataSource: sl()),
@@ -707,8 +692,7 @@ Future<void> init() async {
     () => NewsRepositoryImpl(remoteDataSource: sl()),
   );
 
-  // Data sources
-  // AuthRemoteDataSource, AuthLocalDataSource, and DashboardRemoteDataSource already registered at the top
+  // Data sources ================================================>
 
   sl.registerLazySingleton<ProfileRemoteDataSource>(
     () => ProfileRemoteDataSourceImpl(sl()),
@@ -741,8 +725,6 @@ Future<void> init() async {
   sl.registerLazySingleton<FeedRemoteDataSource>(
     () => FeedRemoteDataSourceImpl(apiClient: sl()),
   );
-
-  // Task Feature
   sl.registerLazySingleton<TaskRemoteDataSource>(
     () => TaskRemoteDataSourceImpl(apiClient: sl()),
   );
@@ -784,5 +766,6 @@ Future<void> init() async {
 
   sl.registerLazySingleton(() => MarkerService());
   sl.registerLazySingleton(() => SocketService());
-  // AuthLocalDataSource already registered at the top
+  sl.registerLazySingleton(() => ChatSocketService());
+  sl.registerLazySingleton(() => ChatLocalDataSource());
 }

@@ -2,14 +2,13 @@ import 'dart:io';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
-import 'package:presshop/core/constants/app_dimensions_new.dart';
+import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 /// Service for handling force update functionality
 class ForceUpdateService {
-  /// Open app store for update
   static Future<void> openStore() async {
     FirebaseCrashlytics.instance.log("User clicked Update Now");
     FirebaseAnalytics.instance.logEvent(name: "user_update_now_click");

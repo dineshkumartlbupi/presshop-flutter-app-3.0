@@ -20,11 +20,12 @@ class Config {
       "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/";
   // "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
   // "http://localhost:8100/api/";
-
   String get socketUrl =>
       "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev";
   String get socketUrl2 =>
       "wss://lelia-anthracitic-ecclesiologically.ngrok-free.dev";
+  // String get socketUrl => "https://funnellike-subangular-sulema.ngrok-free.dev";
+  // String get socketUrl2 => "wss://funnellike-subangular-sulema.ngrok-free.dev";
 
   String get googleMapURL =>
       "https://maps.googleapis.com/maps/api/place/autocomplete/json";
@@ -114,7 +115,7 @@ class Content {
   final String uploadMedia = "hopper/uploadmedia";
   final String uploadMultipleImages = "hopper/uploadMultipleImg";
   final String addContent = "hopper/addContent";
-  final String myContent = "hopper/getContentList";
+  final String myContent = "hopper/getHopperContentList";
   final String allContent = "hopper/getAllContent";
   final String draftContent = "hopper/getDraftContentList";
   final String contentDetail = "hopper/getContentById/";
@@ -164,9 +165,10 @@ class Payments {
 class Chat {
   const Chat();
   final String chatList = "hopper/getAllchat";
+  final String roomHistory = "hopper/get-room-chat";
   final String notificationList = "hopper/getNotification";
   final String notificationRead = "hopper/updatenotification";
-  final String sendPushNotification = "hopper/sendPustNotificationByHopper";
+  final String sendPushNotification = "hopper/sendPushNotificationByHopper";
   final String clearNotification = "hopper/updateNotificationforClearAll";
   final String broadcastRoomList = "hopper/get/broadcast/room";
   final String broadcastRoomDetail = "hopper/get/broadcast/group/chat";

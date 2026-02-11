@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:presshop/core/constants/app_assets.dart';
-import 'package:presshop/core/constants/app_dimensions_new.dart';
+import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:presshop/core/utils/ui_utils.dart';
 import 'package:presshop/main.dart';
 

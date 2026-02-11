@@ -83,16 +83,16 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    bool isUserOutSideOfUnitedKingdom =
-        widget.publishData?.country != "United Kingdom" ||
-            sharedPreferences!.getString(contryCode) != "GB";
+    bool isUserOutSideOfUnitedKingdom = widget.publishData?.country !=
+            "United Kingdom" ||
+        sharedPreferences!.getString(SharedPreferencesKeys.contryCode) != "GB";
 
     print(
         "from content submitted isUserOutSideOfUnitedKingdom screen ==>>> $isUserOutSideOfUnitedKingdom");
     print("from content submitted screen ==>>> ${widget.isBeta}");
     print("from content submitted screen ==>>> ${widget.publishData?.country}");
     print(
-        "from content submitted screen ==>>> ${sharedPreferences!.getString(contryCode)}");
+        "from content submitted screen ==>>> ${sharedPreferences!.getString(SharedPreferencesKeys.contryCode)}");
 
     return WillPopScope(
       onWillPop: () async {

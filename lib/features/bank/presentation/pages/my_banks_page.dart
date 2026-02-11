@@ -256,7 +256,7 @@ class _MyBanksViewState extends State<MyBanksView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Hi ${sharedPreferences!.getString(userNameKey) ?? ''}",
+              "Hi ${sharedPreferences!.getString(SharedPreferencesKeys.userNameKey) ?? ''}",
               style: TextStyle(
                 color: Colors.black,
                 fontSize: size.width * AppDimensions.numD05,
@@ -517,7 +517,7 @@ class _MyBanksViewState extends State<MyBanksView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Hi ${sharedPreferences!.getString(userNameKey) ?? ''}",
+              "Hi ${sharedPreferences!.getString(SharedPreferencesKeys.userNameKey) ?? ''}",
               style: TextStyle(
                 color: Colors.black,
                 fontSize: size.width * AppDimensions.numD06,

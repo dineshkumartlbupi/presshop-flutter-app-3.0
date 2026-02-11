@@ -523,7 +523,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
       deviceId = iosInfo.identifierForVendor!;
       debugPrint('deviceId::::::: $deviceId');
     }
-    sharedPreferences?.setString(deviceIdKey, deviceId);
+    sharedPreferences?.setString(SharedPreferencesKeys.deviceIdKey, deviceId);
   }
 
   Future<void> googleLogin(BuildContext context) async {

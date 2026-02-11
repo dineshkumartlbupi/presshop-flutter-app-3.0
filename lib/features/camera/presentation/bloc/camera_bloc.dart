@@ -388,10 +388,17 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         latitude: _latitude.toString(),
         longitude: _longitude.toString(),
         dateTime: DateFormat("HH:mm, dd MMM yyyy").format(DateTime.now()),
-        location: sharedPreferences?.getString(currentAddress) ?? "",
-        country: sharedPreferences?.getString(currentCountry) ?? "",
-        city: sharedPreferences?.getString(currentCity) ?? "",
-        state: sharedPreferences?.getString(currentState) ?? "",
+        location: sharedPreferences
+                ?.getString(SharedPreferencesKeys.currentAddress) ??
+            "",
+        country: sharedPreferences
+                ?.getString(SharedPreferencesKeys.currentCountry) ??
+            "",
+        city: sharedPreferences?.getString(SharedPreferencesKeys.currentCity) ??
+            "",
+        state:
+            sharedPreferences?.getString(SharedPreferencesKeys.currentState) ??
+                "",
       );
 
       List<CameraData> newList = List.from(state.capturedMedia)..add(data);
@@ -544,10 +551,17 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         latitude: _latitude.toString(),
         longitude: _longitude.toString(),
         dateTime: DateFormat("HH:mm, dd MMM yyyy").format(DateTime.now()),
-        location: sharedPreferences?.getString(currentAddress) ?? "",
-        country: sharedPreferences?.getString(currentCountry) ?? "",
-        city: sharedPreferences?.getString(currentCity) ?? "",
-        state: sharedPreferences?.getString(currentState) ?? "",
+        location: sharedPreferences
+                ?.getString(SharedPreferencesKeys.currentAddress) ??
+            "",
+        country: sharedPreferences
+                ?.getString(SharedPreferencesKeys.currentCountry) ??
+            "",
+        city: sharedPreferences?.getString(SharedPreferencesKeys.currentCity) ??
+            "",
+        state:
+            sharedPreferences?.getString(SharedPreferencesKeys.currentState) ??
+                "",
       );
 
       List<CameraData> newList = List.from(state.capturedMedia)..add(data);
@@ -605,10 +619,17 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         latitude: _latitude.toString(),
         longitude: _longitude.toString(),
         dateTime: DateFormat("HH:mm, dd MMM yyyy").format(DateTime.now()),
-        location: sharedPreferences?.getString(currentAddress) ?? "",
-        country: sharedPreferences?.getString(currentCountry) ?? "",
-        city: sharedPreferences?.getString(currentCity) ?? "",
-        state: sharedPreferences?.getString(currentState) ?? "",
+        location: sharedPreferences
+                ?.getString(SharedPreferencesKeys.currentAddress) ??
+            "",
+        country: sharedPreferences
+                ?.getString(SharedPreferencesKeys.currentCountry) ??
+            "",
+        city: sharedPreferences?.getString(SharedPreferencesKeys.currentCity) ??
+            "",
+        state:
+            sharedPreferences?.getString(SharedPreferencesKeys.currentState) ??
+                "",
       );
 
       List<CameraData> newList = List.from(state.capturedMedia)..add(data);
@@ -641,10 +662,18 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
             latitude: _latitude.toString(),
             longitude: _longitude.toString(),
             dateTime: DateFormat("HH:mm, dd MMM yyyy").format(DateTime.now()),
-            location: sharedPreferences?.getString(currentAddress) ?? "",
-            country: sharedPreferences?.getString(currentCountry) ?? "",
-            city: sharedPreferences?.getString(currentCity) ?? "",
-            state: sharedPreferences?.getString(currentState) ?? "",
+            location: sharedPreferences
+                    ?.getString(SharedPreferencesKeys.currentAddress) ??
+                "",
+            country: sharedPreferences
+                    ?.getString(SharedPreferencesKeys.currentCountry) ??
+                "",
+            city: sharedPreferences
+                    ?.getString(SharedPreferencesKeys.currentCity) ??
+                "",
+            state: sharedPreferences
+                    ?.getString(SharedPreferencesKeys.currentState) ??
+                "",
           ));
         }
         List<CameraData> newList = List.from(state.capturedMedia)
@@ -683,10 +712,17 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         latitude: _latitude.toString(),
         longitude: _longitude.toString(),
         dateTime: DateFormat("HH:mm, dd MMM yyyy").format(DateTime.now()),
-        location: sharedPreferences?.getString(currentAddress) ?? "",
-        country: sharedPreferences?.getString(currentCountry) ?? "",
-        city: sharedPreferences?.getString(currentCity) ?? "",
-        state: sharedPreferences?.getString(currentState) ?? "",
+        location: sharedPreferences
+                ?.getString(SharedPreferencesKeys.currentAddress) ??
+            "",
+        country: sharedPreferences
+                ?.getString(SharedPreferencesKeys.currentCountry) ??
+            "",
+        city: sharedPreferences?.getString(SharedPreferencesKeys.currentCity) ??
+            "",
+        state:
+            sharedPreferences?.getString(SharedPreferencesKeys.currentState) ??
+                "",
       );
 
       List<CameraData> newList = List.from(state.capturedMedia)..add(data);

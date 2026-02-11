@@ -149,7 +149,9 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                               try {
                                 await controller.initialize();
                                 if (controller.value.duration.inSeconds >
-                                    (sharedPreferences?.getInt(videoLimitKey) ??
+                                    (sharedPreferences?.getInt(
+                                            SharedPreferencesKeys
+                                                .videoLimitKey) ??
                                         120)) {
                                   showToast(
                                       "Videos can be up to 2 minutes long — keep it quick, punchy, and straight to the point🎥");
@@ -255,27 +257,28 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                               path: imgPath,
                               mimeType: "video",
                               videoImagePath: thumbnail ?? "",
-                              latitude:
-                                  (sharedPreferences?.getDouble(currentLat) ??
-                                          0)
-                                      .toString(),
-                              longitude:
-                                  (sharedPreferences?.getDouble(currentLon) ??
-                                          0)
-                                      .toString(),
+                              latitude: (sharedPreferences?.getDouble(
+                                          SharedPreferencesKeys.currentLat) ??
+                                      0)
+                                  .toString(),
+                              longitude: (sharedPreferences?.getDouble(
+                                          SharedPreferencesKeys.currentLon) ??
+                                      0)
+                                  .toString(),
                               dateTime: DateFormat("HH:mm, dd MMM yyyy")
                                   .format(DateTime.now()),
-                              location: sharedPreferences
-                                      ?.getString(currentAddress) ??
+                              location: sharedPreferences?.getString(
+                                      SharedPreferencesKeys.currentAddress) ??
                                   "",
-                              country: sharedPreferences
-                                      ?.getString(currentCountry) ??
+                              country: sharedPreferences?.getString(
+                                      SharedPreferencesKeys.currentCountry) ??
                                   "",
-                              city: sharedPreferences?.getString(currentCity) ??
+                              city: sharedPreferences?.getString(
+                                      SharedPreferencesKeys.currentCity) ??
                                   "",
-                              state:
-                                  sharedPreferences?.getString(currentState) ??
-                                      "",
+                              state: sharedPreferences?.getString(
+                                      SharedPreferencesKeys.currentState) ??
+                                  "",
                             ));
                             setState(() {
                               isSelectedImageProcessing = true;
@@ -287,10 +290,12 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                             final latLong = await exif.getLatLong();
 
                             final latitude = latLong?.latitude ??
-                                sharedPreferences?.getDouble(currentLat) ??
+                                sharedPreferences?.getDouble(
+                                    SharedPreferencesKeys.currentLat) ??
                                 0.0;
                             final longitude = latLong?.longitude ??
-                                sharedPreferences?.getDouble(currentLon) ??
+                                sharedPreferences?.getDouble(
+                                    SharedPreferencesKeys.currentLon) ??
                                 0.0;
 
                             // 🔹 Use geocoding to get address info

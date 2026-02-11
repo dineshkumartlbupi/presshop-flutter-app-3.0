@@ -623,25 +623,32 @@ class _SocialSignUpState extends State<SocialSignUp>
                                           Colors.red);
                                     } else {
                                       Map<String, dynamic> params = {};
-                                      params[emailKey] =
+                                      params[SharedPreferencesKeys.emailKey] =
                                           widget.email.trim().toLowerCase();
-                                      params[isTermAcceptedKey] =
+                                      params[SharedPreferencesKeys
+                                              .isTermAcceptedKey] =
                                           termConditionsChecked.toString();
-                                      params[firstNameKey] = widget.name;
-                                      params[receiveTaskNotificationKey] =
+                                      params[SharedPreferencesKeys
+                                          .firstNameKey] = widget.name;
+                                      params[SharedPreferencesKeys
+                                              .receiveTaskNotificationKey] =
                                           isSelectCheck.toString();
-                                      params[phoneKey] =
+                                      params[SharedPreferencesKeys.phoneKey] =
                                           phoneController.text.trim();
-                                      params[roleKey] = "Hopper";
-                                      params[avatarIdKey] = selectedAvatarId;
+                                      params[SharedPreferencesKeys.roleKey] =
+                                          "Hopper";
+                                      params[SharedPreferencesKeys
+                                          .avatarIdKey] = selectedAvatarId;
                                       if (isRefferalCodeValid) {
-                                        params[referredCodeKey] =
+                                        params[SharedPreferencesKeys
+                                                .referredCodeKey] =
                                             referralCodeController.text.trim();
                                       }
-                                      params[userNameKey] = userNameController
-                                          .text
-                                          .trim()
-                                          .toLowerCase();
+                                      params[SharedPreferencesKeys
+                                              .userNameKey] =
+                                          userNameController.text
+                                              .trim()
+                                              .toLowerCase();
                                       params["social_id"] = widget.socialId;
                                       params["social_type"] =
                                           widget.socialType.toLowerCase();
@@ -911,66 +918,86 @@ class _SocialSignUpState extends State<SocialSignUp>
 
   void _handleLoginSuccess(User user) {
     if (user.token != null) {
-      sharedPreferences!.setString(tokenKey, user.token!);
+      sharedPreferences!.setString(SharedPreferencesKeys.tokenKey, user.token!);
     }
     if (user.refreshToken != null) {
-      sharedPreferences!.setString(refreshtokenKey, user.refreshToken!);
+      sharedPreferences!
+          .setString(SharedPreferencesKeys.refreshtokenKey, user.refreshToken!);
     }
-    sharedPreferences!.setString(hopperIdKey, user.id);
-    sharedPreferences!.setString(firstNameKey, user.firstName);
-    sharedPreferences!.setString(lastNameKey, user.lastName);
-    sharedPreferences!.setString(emailKey, user.email);
+    sharedPreferences!.setString(SharedPreferencesKeys.hopperIdKey, user.id);
+    sharedPreferences!
+        .setString(SharedPreferencesKeys.firstNameKey, user.firstName);
+    sharedPreferences!
+        .setString(SharedPreferencesKeys.lastNameKey, user.lastName);
+    sharedPreferences!.setString(SharedPreferencesKeys.emailKey, user.email);
 
     if (user.userName != null) {
-      sharedPreferences!.setString(userNameKey, user.userName!);
+      sharedPreferences!
+          .setString(SharedPreferencesKeys.userNameKey, user.userName!);
     }
-    if (user.phone != null) sharedPreferences!.setString(phoneKey, user.phone!);
+    if (user.phone != null)
+      sharedPreferences!.setString(SharedPreferencesKeys.phoneKey, user.phone!);
     if (user.countryCode != null) {
-      sharedPreferences!.setString(countryCodeKey, user.countryCode!);
+      sharedPreferences!
+          .setString(SharedPreferencesKeys.countryCodeKey, user.countryCode!);
     }
     if (user.address != null) {
-      sharedPreferences!.setString(addressKey, user.address!);
+      sharedPreferences!
+          .setString(SharedPreferencesKeys.addressKey, user.address!);
     }
     if (user.latitude != null) {
-      sharedPreferences!.setString(latitudeKey, user.latitude!);
+      sharedPreferences!
+          .setString(SharedPreferencesKeys.latitudeKey, user.latitude!);
     }
     if (user.longitude != null) {
-      sharedPreferences!.setString(longitudeKey, user.longitude!);
+      sharedPreferences!
+          .setString(SharedPreferencesKeys.longitudeKey, user.longitude!);
     }
     if (user.avatarId != null) {
-      sharedPreferences!.setString(avatarIdKey, user.avatarId!);
+      sharedPreferences!
+          .setString(SharedPreferencesKeys.avatarIdKey, user.avatarId!);
     }
     if (user.receiveTaskNotification != null) {
-      sharedPreferences!
-          .setBool(receiveTaskNotificationKey, user.receiveTaskNotification!);
+      sharedPreferences!.setBool(
+          SharedPreferencesKeys.receiveTaskNotificationKey,
+          user.receiveTaskNotification!);
     }
     if (user.isTermAccepted != null) {
-      sharedPreferences!.setBool(isTermAcceptedKey, user.isTermAccepted!);
+      sharedPreferences!.setBool(
+          SharedPreferencesKeys.isTermAcceptedKey, user.isTermAccepted!);
     }
     if (user.profileImage != null) {
-      sharedPreferences!.setString(profileImageKey, user.profileImage!);
+      sharedPreferences!
+          .setString(SharedPreferencesKeys.profileImageKey, user.profileImage!);
     }
     if (user.referralCode != null) {
-      sharedPreferences!.setString(referralCode, user.referralCode!);
+      sharedPreferences!
+          .setString(SharedPreferencesKeys.referralCode, user.referralCode!);
     }
     if (user.currencySymbol != null) {
-      sharedPreferences!.setString(currencySymbolKey, user.currencySymbol!);
+      sharedPreferences!.setString(
+          SharedPreferencesKeys.currencySymbolKey, user.currencySymbol!);
     }
     if (user.totalHopperArmy != null) {
-      sharedPreferences!.setString(totalHopperArmy, user.totalHopperArmy!);
+      sharedPreferences!.setString(
+          SharedPreferencesKeys.totalHopperArmy, user.totalHopperArmy!);
     }
 
     if (user.source != null) {
       var src = user.source!;
+      sharedPreferences!.setBool(SharedPreferencesKeys.sourceDataIsOpenedKey,
+          src["is_opened"] ?? false);
+      sharedPreferences!.setString(
+          SharedPreferencesKeys.sourceDataTypeKey, src["type"] ?? "");
       sharedPreferences!
-          .setBool(sourceDataIsOpenedKey, src["is_opened"] ?? false);
-      sharedPreferences!.setString(sourceDataTypeKey, src["type"] ?? "");
-      sharedPreferences!.setString(sourceDataUrlKey, src["url"] ?? "");
-      sharedPreferences!.setString(sourceDataHeadingKey, src["heading"] ?? "");
-      sharedPreferences!
-          .setString(sourceDataDescriptionKey, src["description"] ?? "");
-      sharedPreferences!
-          .setBool(sourceDataIsClickKey, src["is_clicked"] ?? false);
+          .setString(SharedPreferencesKeys.sourceDataUrlKey, src["url"] ?? "");
+      sharedPreferences!.setString(
+          SharedPreferencesKeys.sourceDataHeadingKey, src["heading"] ?? "");
+      sharedPreferences!.setString(
+          SharedPreferencesKeys.sourceDataDescriptionKey,
+          src["description"] ?? "");
+      sharedPreferences!.setBool(SharedPreferencesKeys.sourceDataIsClickKey,
+          src["is_clicked"] ?? false);
     }
 
     context.goNamed(AppRoutes.welcomeName, extra: {

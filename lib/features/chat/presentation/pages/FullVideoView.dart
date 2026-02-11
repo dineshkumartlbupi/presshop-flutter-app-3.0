@@ -40,7 +40,6 @@ class _MediaViewScreenState extends State<MediaViewScreen>
 
   FlickManager? flickManager;
   VideoPlayerController? _videoPlayerController;
-  // Use a FutureBuilder key to track the initialization of the video
   Future<void>? _initializeVideoPlayerFuture;
 
   late Size size;
@@ -130,32 +129,26 @@ class _MediaViewScreenState extends State<MediaViewScreen>
   }
 
   Widget videoWidget() {
-    // This is the correct logic for fixing the zoomed video
     return FutureBuilder(
       future: _initializeVideoPlayerFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          // Video is initialized, now we can get its aspect ratio
           final videoController = _videoPlayerController!;
           final double videoAspectRatio = videoController.value.aspectRatio;
 
-          // Wrap the FlickVideoPlayer in AspectRatio to respect the video's dimensions
           return Center(
-            // Center the video within the screen
             child: AspectRatio(
               aspectRatio: videoAspectRatio,
               child: FlickVideoPlayer(
                 flickManager: flickManager!,
                 flickVideoWithControlsFullscreen: const FlickVideoWithControls(
                   willVideoPlayerControllerChange: false,
-                  // Flick Landscape controls usually use BoxFit.fit which is good.
                   controls: FlickLandscapeControls(),
                 ),
               ),
             ),
           );
         } else {
-          // While the video is loading, show a circular progress indicator
           return const Center(
             child: CircularProgressIndicator(),
           );
@@ -210,7 +203,6 @@ class _MediaViewScreenState extends State<MediaViewScreen>
     try {
       await dio.download(widget.mediaFile, filepath);
     } catch (e) {
-      // Assuming 'taskMediaUrl' is correctly defined elsewhere
       await dio.download(widget.mediaFile, filepath);
     }
 
@@ -257,8 +249,6 @@ class _MediaViewScreenState extends State<MediaViewScreen>
               Expanded(
                 flex: 4,
                 child: SizedBox(
-                    // padding: EdgeInsets.all(size.width * AppDimensions.numD04),
-                    // decoration: const BoxDecoration(color: AppColorTheme.colorThemePink, shape: BoxShape.circle),
                     child: Image.asset("assets/commonImages/audio_logo.png")),
               ),
               Expanded(

@@ -1,4 +1,3 @@
-/// Publication List
 class PublicationDataModel {
   PublicationDataModel.fromJson(Map<String, dynamic> json) {
     id = json["_id"] ?? "";

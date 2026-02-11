@@ -68,10 +68,12 @@ DATA   : ${_prettyJson(err.response?.data)}
   /// Mask sensitive headers
   Map<String, dynamic> _maskHeaders(Map<String, dynamic> headers) {
     final masked = Map<String, dynamic>.from(headers);
-    if (masked.containsKey(headerKey)) {
-      debugPrint("Token coming in headers: ${masked[headerKey]}");
-      masked[headerKey] = "****TOKEN****";
-      debugPrint("Token masked final: ${masked[headerKey]}");
+    if (masked.containsKey(SharedPreferencesKeys.headerKey)) {
+      debugPrint(
+          "Token coming in headers: ${masked[SharedPreferencesKeys.headerKey]}");
+      masked[SharedPreferencesKeys.headerKey] = "****TOKEN****";
+      debugPrint(
+          "Token masked final: ${masked[SharedPreferencesKeys.headerKey]}");
     }
     return masked;
   }

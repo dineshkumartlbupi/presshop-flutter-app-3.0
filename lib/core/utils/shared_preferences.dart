@@ -1,78 +1,80 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 /*----SharedPreference Common Keys-----*/
-const headerKey = "Authorization";
-const refreshHeaderKey = "x-refresh-token";
-const accessHeaderKey = "x-access-token";
 
-const headerDeviceTypeKey = "X-Device-Type";
-const headerDeviceIdKey = "X-Device-ID";
-const deviceIdKey = "device_id";
-const tokenKey = "token";
-const refreshtokenKey = "refreshToken";
-const hopperIdKey = "_id";
-const profileImageKey = "profile_image";
-const rememberKey = "remember";
-const pinKey = "pinKey";
-const lockTypeKey = "lock_type";
-const lockSetKey = "lock_set";
+class SharedPreferencesKeys {
+  static const headerKey = "Authorization";
+  static const refreshHeaderKey = "x-refresh-token";
+  static const accessHeaderKey = "x-access-token";
 
-const postCodeKey = "post_code";
-const firstNameKey = "first_name";
-const referralCode = "referral_code";
-const currencySymbolKey = "preferred_currency_sign";
-const totalHopperArmy = "totalHopperArmy";
-const videoLimitKey = "videoLimit";
+  static const headerDeviceTypeKey = "X-Device-Type";
+  static const headerDeviceIdKey = "X-Device-ID";
+  static const deviceIdKey = "device_id";
+  static const tokenKey = "token";
+  static const refreshtokenKey = "refreshToken";
+  static const hopperIdKey = "_id";
+  static const profileImageKey = "profile_image";
+  static const rememberKey = "remember";
+  static const pinKey = "pinKey";
+  static const lockTypeKey = "lock_type";
+  static const lockSetKey = "lock_set";
 
-const lastNameKey = "last_name";
-const userNameKey = "user_name";
-const emailKey = "email";
-const referredCodeKey = "referredCode";
-const phoneKey = "phone";
-const dobKey = "dob";
-const countryCodeKey = "country_code";
-const roleKey = "role";
-const addressKey = "address";
-const passwordKey = "password";
-const latitudeKey = "latitude";
-const longitudeKey = "longitude";
-const countryKey = "country";
-const cityKey = "city";
-const apartmentKey = "appartment";
+  static const postCodeKey = "post_code";
+  static const firstNameKey = "first_name";
+  static const referralCode = "referral_code";
+  static const currencySymbolKey = "preferred_currency_sign";
+  static const totalHopperArmy = "totalHopperArmy";
+  static const videoLimitKey = "videoLimit";
 
-const avatarKey = "avatar";
-const avatarIdKey = "avatar_id";
-const isTermAcceptedKey = "is_terms_accepted";
-const receiveTaskNotificationKey = "receive_task_notification";
-const skipDocumentsKey = "skip_doc";
-const file1Key = "file1";
-const file2Key = "file2";
-const file3Key = "file3";
-const file1NameKey = "file1NameKey";
-const file2NameKey = "file2NameKey";
-const file3NameKey = "file3NameKey";
-const totalIncomeKey = "totalEarnings";
+  static const lastNameKey = "last_name";
+  static const userNameKey = "user_name";
+  static const emailKey = "email";
+  static const referredCodeKey = "referredCode";
+  static const phoneKey = "phone";
+  static const dobKey = "dob";
+  static const countryCodeKey = "country_code";
+  static const roleKey = "role";
+  static const addressKey = "address";
+  static const passwordKey = "password";
+  static const latitudeKey = "latitude";
+  static const longitudeKey = "longitude";
+  static const countryKey = "country";
+  static const cityKey = "city";
+  static const apartmentKey = "appartment";
 
-const adminIdKey = "adminIdKey";
-const adminRoomIdKey = "adminRoomIdKey";
-const adminImageKey = "adminImageKey";
-const adminNameKey = "adminNameKey";
+  static const avatarKey = "avatar";
+  static const avatarIdKey = "avatar_id";
+  static const isTermAcceptedKey = "is_terms_accepted";
+  static const receiveTaskNotificationKey = "receive_task_notification";
+  static const skipDocumentsKey = "skip_doc";
+  static const file1Key = "file1";
+  static const file2Key = "file2";
+  static const file3Key = "file3";
+  static const file1NameKey = "file1NameKey";
+  static const file2NameKey = "file2NameKey";
+  static const file3NameKey = "file3NameKey";
+  static const totalIncomeKey = "totalEarnings";
 
-const currentLat = "currentLat";
-const currentLon = "currentLong";
-const currentAddress = "currentAddress";
-const currentState = "currentLState";
-const currentCountry = "currentCountry";
-const currentCity = "currentCity";
-const contryCode = "contryCode";
+  static const adminIdKey = "adminIdKey";
+  static const adminRoomIdKey = "adminRoomIdKey";
+  static const adminImageKey = "adminImageKey";
+  static const adminNameKey = "adminNameKey";
 
-const sourceDataIsOpenedKey = "sourceDataIsOpened";
-const sourceDataTypeKey = "sourceDataType";
-const sourceDataUrlKey = "sourceDataUrl";
-const sourceDataHeadingKey = "sourceDataHeading";
-const sourceDataDescriptionKey = "sourceDataDescription";
-const sourceDataIsClickKey = "isClick";
+  static const currentLat = "currentLat";
+  static const currentLon = "currentLong";
+  static const currentAddress = "currentAddress";
+  static const currentState = "currentLState";
+  static const currentCountry = "currentCountry";
+  static const currentCity = "currentCity";
+  static const contryCode = "contryCode";
 
+  static const sourceDataIsOpenedKey = "sourceDataIsOpened";
+  static const sourceDataTypeKey = "sourceDataType";
+  static const sourceDataUrlKey = "sourceDataUrl";
+  static const sourceDataHeadingKey = "sourceDataHeading";
+  static const sourceDataDescriptionKey = "sourceDataDescription";
+  static const sourceDataIsClickKey = "isClick";
+}
 /*------------------------------------*/
 
 Future<SharedPreferences> getSharedPreferences() async {

@@ -1,648 +1,310 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:presshop/core/di/injection_container.dart';
-import 'package:presshop/main.dart';
-import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
+// import 'package:flutter/material.dart';
+// import 'package:intl/intl.dart';
+// import 'package:presshop/core/di/injection_container.dart';
+// import 'package:presshop/main.dart';
+// import 'package:presshop/core/widgets/common_widgets.dart';
+// import 'package:presshop/core/analytics/analytics_constants.dart';
+// import 'package:presshop/core/analytics/analytics_mixin.dart';
+// import 'package:presshop/core/core_export.dart';
+// import 'package:presshop/core/api/api_client.dart';
+// import 'package:presshop/core/widgets/common_app_bar.dart';
+// import 'package:presshop/core/utils/shared_preferences.dart';
+// import 'package:presshop/features/chat/presentation/bloc/chat_bloc.dart';
+// import 'package:presshop/features/chat/presentation/bloc/chat_event.dart';
+// import 'package:presshop/features/chat/presentation/bloc/chat_state.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:go_router/go_router.dart';
+// import 'package:presshop/core/router/router_constants.dart';
 
-import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
+// // ignore: must_be_immutable
+// class ChatListingScreen extends StatefulWidget {
+//   ChatListingScreen({super.key, required this.hideLeading});
+//   bool hideLeading = false;
 
-const int getAdminListReq = 1;
+//   @override
+//   State<ChatListingScreen> createState() => _ChatListingScreenState();
+// }
 
-// ignore: must_be_immutable
-class ChatListingScreen extends StatefulWidget {
-  ChatListingScreen({super.key, required this.hideLeading});
-  bool hideLeading = false;
+// class _ChatListingScreenState extends State<ChatListingScreen>
+//     with AnalyticsPageMixin {
+//   late Size size;
+//   final TextEditingController _searchController = TextEditingController();
+//   String userId = "";
+//   final ApiClient _apiClient = sl<ApiClient>();
+//   List<AdminDetailModel> adminList = [];
+//   List<AdminDetailModel> searchResult = [];
 
-  @override
-  State<ChatListingScreen> createState() => _ChatListingScreenState();
-}
+//   @override
+//   void initState() {
+//     super.initState();
+//     userId = sharedPreferences!.getString(hopperIdKey) ?? "";
+//     context.read<ChatBloc>().add(LoadChatListEvent());
+//     callGetActiveAdmin();
+//   }
 
-class _ChatListingScreenState extends State<ChatListingScreen>
-    with AnalyticsPageMixin {
-  late Size size;
+//   @override
+//   Widget build(BuildContext context) {
+//     size = MediaQuery.of(context).size;
+//     return Scaffold(
+//       appBar: CommonAppBar(
+//         elevation: 0,
+//         hideLeading: widget.hideLeading,
+//         title: Padding(
+//           padding: EdgeInsets.only(
+//               left: widget.hideLeading ? size.width * AppDimensions.numD04 : 0),
+//           child: Text(
+//             AppStrings.chatText,
+//             style: TextStyle(
+//                 color: Colors.black,
+//                 fontWeight: FontWeight.bold,
+//                 fontSize: size.width * AppDimensions.appBarHeadingFontSize),
+//           ),
+//         ),
+//         centerTitle: false,
+//         titleSpacing: 0,
+//         size: size,
+//         showActions: true,
+//         leadingFxn: () => context.pop(),
+//         actionWidget: [
+//           InkWell(
+//             onTap: () => context.goNamed(AppRoutes.dashboardName,
+//                 extra: {'initialPosition': 2}),
+//             child: Image.asset(
+//               "${commonImagePath}rabbitLogo.png",
+//               height: size.width * AppDimensions.numD07,
+//               width: size.width * AppDimensions.numD07,
+//             ),
+//           ),
+//           SizedBox(width: size.width * AppDimensions.numD04)
+//         ],
+//       ),
+//       body: BlocBuilder<ChatBloc, ChatState>(
+//         builder: (context, state) {
+//           return Padding(
+//             padding: EdgeInsets.symmetric(
+//               horizontal: size.width * AppDimensions.numD05,
+//               vertical: size.width * AppDimensions.numD03,
+//             ),
+//             child: ListView(
+//               children: [
+//                 searchWidget(),
+//                 Padding(
+//                   padding:
+//                       EdgeInsets.only(top: size.width * AppDimensions.numD05),
+//                   child: Text(
+//                     AppStrings.chatWithPRESSHOPText.toUpperCase(),
+//                     style: commonTextStyle(
+//                         size: size,
+//                         fontSize: size.width * AppDimensions.numD035,
+//                         color: Colors.black,
+//                         fontWeight: FontWeight.w500),
+//                   ),
+//                 ),
+//                 SizedBox(height: size.width * AppDimensions.numD03),
+//                 if (state.status == ChatStatus.loading)
+//                   const Center(child: CircularProgressIndicator())
+//                 else if (state.chatList.isEmpty)
+//                   noChatWidget()
+//                 else
+//                   allChatListWidget(state.chatList),
 
-  final TextEditingController _searchController = TextEditingController();
-  List<String> roomNumberID = [];
-  List<AdminDetailModel> adminList = [];
-  List<AdminDetailModel> searchResult = [];
-  List<String> adminIDList = [];
-  String userId = "";
-  String userName = "";
-  String userProfileImage = "";
-  bool isOnline = false;
+//                 // Active Admin List
+//                 Padding(
+//                   padding: EdgeInsets.only(
+//                       top: size.width * AppDimensions.numD05,
+//                       bottom: size.width * AppDimensions.numD03),
+//                   child: Text(
+//                     "ACTIVE ADMINS",
+//                     style: commonTextStyle(
+//                         size: size,
+//                         fontSize: size.width * AppDimensions.numD035,
+//                         color: Colors.black,
+//                         fontWeight: FontWeight.w500),
+//                   ),
+//                 ),
+//                 activeAdminListWidget(),
+//               ],
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
 
-  final ApiClient _apiClient = sl<ApiClient>();
+//   Widget searchWidget() {
+//     return TextFormField(
+//       controller: _searchController,
+//       decoration: InputDecoration(
+//         fillColor: AppColorTheme.colorLightGrey,
+//         isDense: true,
+//         filled: true,
+//         hintText: AppStrings.searchHintText,
+//         border: OutlineInputBorder(
+//             borderRadius: BorderRadius.circular(size.width * 0.03),
+//             borderSide: BorderSide.none),
+//         suffixIcon: Padding(
+//           padding: EdgeInsets.all(size.width * 0.02),
+//           child: Image.asset("${iconsPath}ic_search.png", color: Colors.black),
+//         ),
+//       ),
+//       onChanged: (value) {
+//         setState(() {
+//           searchResult = adminList
+//               .where((element) =>
+//                   element.name.toLowerCase().contains(value.toLowerCase()))
+//               .toList();
+//         });
+//       },
+//     );
+//   }
 
-  @override
-  void initState() {
-    super.initState();
+//   Widget allChatListWidget(List<Map<String, dynamic>> chatList) {
+//     final filteredList = _searchController.text.isEmpty
+//         ? chatList
+//         : chatList.where((chat) {
+//             final name = (chat['receiver_id'] == userId
+//                     ? chat['sender_name']
+//                     : chat['receiver_name'])
+//                 .toString()
+//                 .toLowerCase();
+//             return name.contains(_searchController.text.toLowerCase());
+//           }).toList();
 
-    WidgetsBinding.instance
-        .addPostFrameCallback((timeStamp) => callGetActiveAdmin());
-    getPreferenceData();
-  }
+//     return ListView.separated(
+//       physics: const NeverScrollableScrollPhysics(),
+//       shrinkWrap: true,
+//       itemCount: filteredList.length,
+//       separatorBuilder: (_, __) =>
+//           SizedBox(height: size.width * AppDimensions.numD03),
+//       itemBuilder: (context, index) {
+//         final chat = filteredList[index];
+//         final isMeSender = chat['sender_id'].toString() == userId;
+//         final displayName =
+//             isMeSender ? chat['receiver_name'] : chat['sender_name'];
+//         final displayImage =
+//             isMeSender ? chat['receiver_image'] : chat['sender_image'];
+//         final lastMessage = chat['message'] ?? "";
+//         final lastTime = chat['createdAt'] != null
+//             ? DateFormat("hh:mm a").format(DateTime.parse(chat['createdAt']))
+//             : "";
 
-  void getPreferenceData() {
-    userName = sharedPreferences!.getString(userNameKey).toString();
-    userProfileImage = sharedPreferences!.getString(avatarKey).toString();
-    userId = sharedPreferences!.getString(hopperIdKey) ?? "";
-    debugPrint("userName:::$userName");
-    debugPrint("userId:::$userId");
-    getOnlineUsersList();
-    adminIDList = [];
-    if (mounted) {
-      setState(() {});
-    }
-  }
+//         return InkWell(
+//           onTap: () {
+//             context.pushNamed(AppRoutes.conversationName, extra: {
+//               'roomId': chat['room_id'],
+//               'receiverId':
+//                   isMeSender ? chat['receiver_id'] : chat['sender_id'],
+//               'receiverName': displayName,
+//               'receiverImage': displayImage,
+//             });
+//           },
+//           child: Row(
+//             children: [
+//               CircleAvatar(
+//                 radius: size.width * AppDimensions.numD08,
+//                 backgroundImage: NetworkImage(displayImage),
+//                 onBackgroundImageError: (_, __) {},
+//                 child: displayImage.isEmpty
+//                     ? Image.asset("${commonImagePath}rabbitLogo.png")
+//                     : null,
+//               ),
+//               SizedBox(width: size.width * AppDimensions.numD03),
+//               Expanded(
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Row(
+//                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                       children: [
+//                         Text(displayName ?? "Unknown",
+//                             style:
+//                                 const TextStyle(fontWeight: FontWeight.bold)),
+//                         Text(lastTime, style: const TextStyle(fontSize: 12)),
+//                       ],
+//                     ),
+//                     Text(lastMessage,
+//                         maxLines: 1, overflow: TextOverflow.ellipsis),
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//         );
+//       },
+//     );
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: widget.hideLeading,
-        title: Padding(
-          padding: EdgeInsets.only(
-              left: widget.hideLeading ? size.width * AppDimensions.numD04 : 0),
-          child: Text(
-            AppStrings.chatText,
-            style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-          ),
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
-        size: size,
-        showActions: true,
-        leadingFxn: () {
-          context.pop();
-        },
-        actionWidget: [
-          InkWell(
-            onTap: () {
-              context.goNamed(
-                AppRoutes.dashboardName,
-                extra: {'initialPosition': 2},
-              );
-            },
-            child: Image.asset(
-              "${commonImagePath}rabbitLogo.png",
-              height: size.width * AppDimensions.numD07,
-              width: size.width * AppDimensions.numD07,
-            ),
-          ),
-          SizedBox(
-            width: size.width * AppDimensions.numD04,
-          )
-        ],
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: size.width * AppDimensions.numD05,
-          vertical: size.width * AppDimensions.numD03,
-        ),
-        child: ListView(
-          children: [
-            searchWidget(),
-            Padding(
-              padding: EdgeInsets.only(top: size.width * AppDimensions.numD05),
-              child: Text(
-                AppStrings.chatWithPRESSHOPText.toUpperCase(),
-                style: commonTextStyle(
-                    size: size,
-                    fontSize: size.width * AppDimensions.numD035,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500),
-              ),
-            ),
-            SizedBox(
-              height: size.width * AppDimensions.numD03,
-            ),
-            allChatList(context, size),
-            chatListingWidget(AppStrings.presshopText),
-          ],
-        ),
-      ),
-    );
-  }
+//   Widget activeAdminListWidget() {
+//     final list = _searchController.text.isEmpty ? adminList : searchResult;
+//     return ListView.separated(
+//       physics: const NeverScrollableScrollPhysics(),
+//       shrinkWrap: true,
+//       itemCount: list.length,
+//       separatorBuilder: (_, __) =>
+//           SizedBox(height: size.width * AppDimensions.numD03),
+//       itemBuilder: (context, index) {
+//         final admin = list[index];
+//         return InkWell(
+//           onTap: () {
+//             // Logic to create room or find existing room then navigate
+//             _apiClient.post(ApiConstantsNew.chat.createRoom, data: {
+//               'receiver_id': admin.id,
+//               'receiver_name': admin.name,
+//               'receiver_image': admin.profilePic,
+//             }).then((response) {
+//               if (response.statusCode == 200 || response.statusCode == 201) {
+//                 final roomId = response.data['response']['room_id'];
+//                 context.pushNamed(AppRoutes.conversationName, extra: {
+//                   'roomId': roomId,
+//                   'receiverId': admin.id,
+//                   'receiverName': admin.name,
+//                   'receiverImage': admin.profilePic,
+//                 });
+//               }
+//             });
+//           },
+//           child: Row(
+//             children: [
+//               CircleAvatar(
+//                 radius: size.width * AppDimensions.numD08,
+//                 backgroundImage: NetworkImage(admin.profilePic),
+//                 child: admin.profilePic.isEmpty
+//                     ? Image.asset("${commonImagePath}rabbitLogo.png")
+//                     : null,
+//               ),
+//               SizedBox(width: size.width * AppDimensions.numD03),
+//               Text(admin.name.toCapitalized(),
+//                   style: const TextStyle(fontWeight: FontWeight.bold)),
+//             ],
+//           ),
+//         );
+//       },
+//     );
+//   }
 
-  Widget searchWidget() {
-    return TextFormField(
-      controller: _searchController,
-      cursorColor: AppColorTheme.colorTextFieldIcon,
-      onChanged: (value) {
-        searchResult = adminList
-            .where((element) =>
-                element.name.toLowerCase().contains(value.toLowerCase()))
-            .toList();
+//   Widget noChatWidget() {
+//     return Column(
+//       children: [
+//         SizedBox(height: size.width * AppDimensions.numD10),
+//         Image.asset("${commonImagePath}rabbitLogo.png", height: 100),
+//         const Text("No active chats",
+//             style: TextStyle(fontWeight: FontWeight.bold)),
+//       ],
+//     );
+//   }
 
-        debugPrint("searchResult :: ${searchResult.length}");
-        setState(() {});
-      },
-      decoration: InputDecoration(
-        fillColor: AppColorTheme.colorLightGrey,
-        isDense: true,
-        filled: true,
-        hintText: AppStrings.searchHintText,
-        hintStyle: TextStyle(
-            color: AppColorTheme.colorHint,
-            fontSize: size.width * AppDimensions.numD04),
-        disabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(size.width * 0.03),
-            borderSide: const BorderSide(
-                width: 0, color: AppColorTheme.colorLightGrey)),
-        focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(size.width * 0.03),
-            borderSide: const BorderSide(
-                width: 0, color: AppColorTheme.colorLightGrey)),
-        enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(size.width * 0.03),
-            borderSide: const BorderSide(
-                width: 0, color: AppColorTheme.colorLightGrey)),
-        errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(size.width * 0.03),
-            borderSide: const BorderSide(
-                width: 0, color: AppColorTheme.colorLightGrey)),
-        focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(size.width * 0.03),
-            borderSide: const BorderSide(
-                width: 0, color: AppColorTheme.colorLightGrey)),
-        suffixIcon: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: size.width * AppDimensions.numD02),
-          child: Image.asset(
-            "${iconsPath}ic_search.png",
-            color: Colors.black,
-          ),
-        ),
-        suffixIconConstraints:
-            BoxConstraints(maxHeight: size.width * AppDimensions.numD06),
-      ),
-      textAlignVertical: TextAlignVertical.center,
-    );
-  }
+//   Future<void> callGetActiveAdmin() async {
+//     try {
+//       final response = await _apiClient.get(ApiConstantsNew.misc.adminList);
+//       var dataModel = response.data["data"] as List;
+//       setState(() {
+//         adminList = dataModel.map((e) => AdminDetailModel.fromJson(e)).toList();
+//       });
+//     } catch (e) {
+//       debugPrint("Error fetching admins: $e");
+//     }
+//   }
 
-  Widget chatListingWidget(String type) {
-    return ListView.separated(
-      padding: EdgeInsets.zero,
-      itemCount: _searchController.text.isNotEmpty
-          ? searchResult.length
-          : adminList.length,
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        var item = _searchController.text.isNotEmpty
-            ? searchResult[index]
-            : adminList[index];
-
-        return InkWell(
-          onTap: () {
-            debugPrint("converstatio screen ======> ");
-          },
-          child: Row(
-            children: [
-              Stack(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(
-                      size.width * AppDimensions.numD01,
-                    ),
-                    height: size.width * AppDimensions.numD16,
-                    width: size.width * AppDimensions.numD16,
-                    decoration: BoxDecoration(
-                        color: Colors.grey.shade200, shape: BoxShape.circle),
-                    child: ClipOval(
-                      clipBehavior: Clip.antiAlias,
-                      child: Image.network(
-                        item.profilePic,
-                        errorBuilder: (context, exception, stackTrace) {
-                          return Image.asset(
-                            "${commonImagePath}rabbitLogo.png",
-                          );
-                        },
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 5,
-                    right: 0,
-                    child: Container(
-                        padding: EdgeInsets.all(size.width * 0.005),
-                        decoration: const BoxDecoration(
-                            color: Colors.white, shape: BoxShape.circle),
-                        child: Icon(
-                          Icons.circle,
-                          color: Colors.grey,
-                          size: size.width * AppDimensions.numD03,
-                        )),
-                  )
-                ],
-              ),
-              SizedBox(
-                width: size.width * AppDimensions.numD02,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    /// User Name
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            item.name.toCapitalized(),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontSize: size.width * AppDimensions.numD038,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                        SizedBox(
-                          width: size.width * AppDimensions.numD15,
-                          child: Text(
-                            item.lastMessageTime,
-                            style: TextStyle(
-                                fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    /// Last Type Chat
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            item.lastMessage,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: size.width * AppDimensions.numD032,
-                              color: Colors.black,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
-        );
-      },
-      separatorBuilder: (context, index) {
-        return SizedBox(
-          height: size.width * AppDimensions.numD05,
-        );
-      },
-    );
-  }
-
-  Widget allChatList(BuildContext context, var size) {
-    var size = MediaQuery.of(context).size;
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection("Chat2")
-          .orderBy('date', descending: true)
-          .snapshots(),
-      builder: (context, snapShot) {
-        if (snapShot.hasError) {
-          return const Center(child: Text("Something Wrong"));
-        }
-        if (snapShot.connectionState == ConnectionState.waiting) {
-          return Center(child: Container());
-        }
-        return snapShot.data!.docs.isNotEmpty
-            ? ListView(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                children: (_searchController.text.isNotEmpty
-                        ? snapShot.data!.docs.where((element) => element
-                                    .get('receiverId') !=
-                                userId.toString()
-                            ? element
-                                .get("receiverName")
-                                .toString()
-                                .toLowerCase()
-                                .contains(_searchController.text.toLowerCase())
-                            : element
-                                .get("senderName")
-                                .toString()
-                                .toLowerCase()
-                                .contains(_searchController.text.toLowerCase()))
-                        : snapShot.data!.docs)
-                    .map((document) {
-                  debugPrint("document :::${snapShot.data!.docs.length}");
-
-                  if (document.get('senderId').toString() ==
-                          userId.toString() ||
-                      document.get('receiverId').toString() ==
-                          userId.toString()) {
-                    debugPrint("roomId ${document.get('roomId')}");
-                    if (document.get('receiverId') != userId) {
-                      debugPrint(
-                          "receiverId ____________ ${document.get('receiverId')}");
-                      if (adminIDList.contains(document.get('receiverId'))) {
-                        debugPrint(
-                            "containerList=====> ${document.get('receiverId')}");
-                      } else {
-                        debugPrint(
-                            "NotcontainerList=====> ${document.get('receiverId')}");
-                        adminIDList.add(document.get('receiverId'));
-                        debugPrint("adminIDList=====> ${adminIDList.length}");
-                      }
-                    }
-
-                    return Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: size.width * AppDimensions.numD02),
-                      child: InkWell(
-                          onTap: () {},
-                          child: Row(
-                            children: [
-                              Stack(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(
-                                      size.width * AppDimensions.numD01,
-                                    ),
-                                    height: size.width * AppDimensions.numD16,
-                                    width: size.width * AppDimensions.numD16,
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey.shade200,
-                                        shape: BoxShape.circle),
-                                    child: ClipOval(
-                                      clipBehavior: Clip.antiAlias,
-                                      child: Image.network(
-                                        document.get('receiverId') !=
-                                                userId.toString()
-                                            ? document.get('receiverImage')
-                                            : document.get('senderImage'),
-                                        errorBuilder:
-                                            (context, exception, stackTrace) {
-                                          return Image.asset(
-                                            "${commonImagePath}rabbitLogo.png",
-                                            height: size.width *
-                                                AppDimensions.numD12,
-                                            width: size.width *
-                                                AppDimensions.numD12,
-                                            fit: BoxFit.contain,
-                                          );
-                                        },
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    bottom: 5,
-                                    right: 0,
-                                    child: checkOnlineOffline(context, size,
-                                        document.get('receiverId')),
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                width: size.width * AppDimensions.numD02,
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    /// User Name
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                            child: Text(
-                                          document.get('receiverId') !=
-                                                  userId.toString()
-                                              ? document.get('receiverName')
-                                              : document.get('senderName'),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                              fontSize: size.width *
-                                                  AppDimensions.numD038,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600),
-                                        )),
-                                        SizedBox(
-                                            width: size.width *
-                                                AppDimensions.numD15,
-                                            child: Text(
-                                                DateFormat("hh:mm a").format(
-                                                    DateTime.parse(
-                                                        document.get('date'))),
-                                                style: TextStyle(
-                                                    fontSize: size.width *
-                                                        AppDimensions.numD03,
-                                                    color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.w400))),
-                                      ],
-                                    ),
-
-                                    /// Last Type Chat
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                              document.get('messageType') ==
-                                                      "text"
-                                                  ? document.get('message')
-                                                  : document.get('messageType'),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                  fontSize: size.width *
-                                                      AppDimensions.numD032,
-                                                  color: Colors.black,
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                        ),
-                                        document.get('receiverId') ==
-                                                userId.toString()
-                                            ? Container(
-                                                margin: EdgeInsets.only(
-                                                  right: size.width *
-                                                      AppDimensions.numD03,
-                                                  left: size.width *
-                                                      AppDimensions.numD03,
-                                                ),
-                                                alignment: Alignment.center,
-                                                height: size.width *
-                                                    AppDimensions.numD055,
-                                                width: size.width *
-                                                    AppDimensions.numD055,
-                                                decoration: const BoxDecoration(
-                                                    color: AppColorTheme
-                                                        .colorOnlineGreen,
-                                                    shape: BoxShape.circle),
-                                                child: Text(
-                                                  document.get('unReadCount') ==
-                                                          "0"
-                                                      ? 0
-                                                      : document
-                                                          .get('unReadCount'),
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize: size.width *
-                                                          AppDimensions.numD025,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                                ))
-                                            : Container()
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          )),
-                    );
-                  } else {
-                    return Container();
-                  }
-                }).toList(),
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                      height: MediaQuery.of(context).size.height / 3,
-                      width: MediaQuery.of(context).size.height / 3,
-                      child: Image.asset(
-                        "${commonImagePath}rabbitLogo.png",
-                        color: Colors.white,
-                      )),
-                  SizedBox(
-                    height: size.width * AppDimensions.numD03,
-                  ),
-                  Text(
-                    "No chat",
-                    style: TextStyle(
-                        fontSize: size.width * AppDimensions.numD055,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              );
-      },
-    );
-  }
-
-  void getOnlineUsersList() {
-    FirebaseFirestore.instance
-        .collection('OnlineOffline')
-        .get()
-        .then((onlineUserList) {
-      debugPrint("getOnlineUsersList :::${onlineUserList.size}");
-      for (int i = 0; i < onlineUserList.docs.length; i++) {
-        if (onlineUserList.docs[i].id != sharedPreferences?.getString(userId) &&
-            onlineUserList.docs[i].get('isOnline')) {
-          // var onlineMap = {
-          //   "senderImage": onlineUserList.docs[i].get('senderImage') ?? "",
-          //   "userName": onlineUserList.docs[i].get('userName') ?? "",
-          //   "isOnline": onlineUserList.docs[i].get('isOnline') ?? false
-          // };
-        }
-      }
-    });
-
-    if (mounted) setState(() {});
-  }
-
-  Widget checkOnlineOffline(BuildContext context, var size, String receiverId) {
-    debugPrint("receiverId checkOnlineOffline: $receiverId");
-    return StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('OnlineOffline')
-            .doc(receiverId)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Text(
-              "",
-              style: TextStyle(
-                  fontSize: size.width * AppDimensions.numD03,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w300),
-            );
-          }
-
-          var userDocument = snapshot.data!.data();
-
-          if (userDocument != null) {
-            if (userDocument["isOnline"] == true) {
-              isOnline = true;
-            } else {
-              isOnline = false;
-            }
-          } else {
-            isOnline = false;
-          }
-          debugPrint("userDocument : $userDocument");
-          debugPrint("isOnline : $isOnline");
-          return Container(
-            margin: EdgeInsets.only(left: size.width * AppDimensions.numD028),
-            decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 1.7),
-                borderRadius:
-                    BorderRadius.circular(size.width * AppDimensions.numD028)),
-            child: CircleAvatar(
-              radius: size.width * AppDimensions.numD014,
-              backgroundColor: userDocument == null
-                  ? Colors.grey
-                  : userDocument["isOnline"]
-                      ? Colors.green
-                      : Colors.grey,
-            ),
-          );
-        });
-  }
-
-  Future<void> callGetActiveAdmin() async {
-    try {
-      final response = await _apiClient.get(ApiConstantsNew.misc.adminList);
-
-      debugPrint("getAdminListReq Success: ${response.data}");
-      var dataModel = response.data["data"] as List;
-
-      adminList = dataModel.map((e) => AdminDetailModel.fromJson(e)).toList();
-
-      for (var id in adminIDList) {
-        adminList.removeWhere((element) => element.id == id);
-      }
-      debugPrint("adminListLengthResponse=========> ${adminList.length}");
-      if (mounted) setState(() {});
-    } catch (e) {
-      debugPrint("getAdminListReq Error: $e");
-    }
-  }
-
-  @override
-  // TODO: implement pageName
-  String get pageName => PageNames.chatListing;
-}
+//   @override
+//   String get pageName => PageNames.chatListing;
+// }

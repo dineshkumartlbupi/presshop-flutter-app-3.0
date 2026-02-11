@@ -19,7 +19,11 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
         ApiConstantsNew.misc.generalMgmt,
         queryParameters: {'type': 'doc'},
       );
-      final data = response.data['status'] as List;
+      final dynamic responseData = response.data;
+      List data = [];
+      if (responseData is Map) {
+        data = (responseData['status'] ?? responseData['data'] ?? []) as List;
+      }
       return data.map((e) => DocumentInstructionModel.fromJson(e)).toList();
     } catch (e) {
       throw ApiErrorHandler.handle(e);
@@ -29,8 +33,9 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
   @override
   Future<List<DocumentDataModel>> getUploadedDocuments() async {
     try {
-      final String hopperId =
-          apiClient.sharedPreferences.getString(hopperIdKey) ?? '';
+      final String hopperId = apiClient.sharedPreferences
+              .getString(SharedPreferencesKeys.hopperIdKey) ??
+          '';
       final response = await apiClient.get(
         ApiConstantsNew.profile.getUploadedDocs,
         queryParameters: {'hopper_id': hopperId},
@@ -53,8 +58,9 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
           await MultipartFile.fromFile(file.path),
         ));
       }
-      final String hopperId =
-          apiClient.sharedPreferences.getString(hopperIdKey) ?? '';
+      final String hopperId = apiClient.sharedPreferences
+              .getString(SharedPreferencesKeys.hopperIdKey) ??
+          '';
       await apiClient.multipartPost(
         ApiConstantsNew.profile.uploadDocNew,
         formData: formData,
@@ -68,8 +74,9 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
   @override
   Future<void> deleteDocument(String documentId) async {
     try {
-      final String hopperId =
-          apiClient.sharedPreferences.getString(hopperIdKey) ?? '';
+      final String hopperId = apiClient.sharedPreferences
+              .getString(SharedPreferencesKeys.hopperIdKey) ??
+          '';
       await apiClient.post(
         ApiConstantsNew.profile.deleteDocument,
         data: {'document_id': documentId},

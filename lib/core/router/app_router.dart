@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/features/splash/presentation/pages/splash_screen.dart';
-import 'package:presshop/main.dart'; // To access navigatorKey
+import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_helper.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_web_view.dart';
@@ -15,10 +15,10 @@ import 'package:presshop/features/authentication/presentation/pages/SocialSignUp
 import 'package:presshop/features/authentication/presentation/pages/UploadDocumnetsScreen.dart';
 import 'package:presshop/features/authentication/presentation/pages/VerifyAccountScreen.dart';
 import 'package:presshop/features/onboarding/presentation/pages/WalkThrough.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/authentication/presentation/bloc/signup_bloc.dart';
+import 'package:presshop/features/chat/presentation/bloc/chat_bloc.dart';
 import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/features/authentication/presentation/bloc/signup_event.dart';
 import 'package:presshop/features/bank/presentation/pages/my_banks_page.dart';
@@ -42,6 +42,8 @@ import 'package:presshop/features/task/presentation/pages/broadcast_chat/broadCa
 import 'package:presshop/features/news/presentation/pages/news_page.dart';
 import 'package:presshop/features/news/presentation/pages/news_details_screen_legacy.dart';
 import 'package:presshop/features/news/domain/entities/news.dart';
+import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
+import 'package:presshop/features/news/presentation/bloc/news_event.dart';
 import 'package:presshop/features/feed/presentation/pages/FeedScreen.dart';
 import 'package:presshop/features/task/presentation/pages/broadcast_chat/MediaPreviewScreen.dart';
 import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
@@ -227,9 +229,12 @@ class AppRouter {
         name: AppRoutes.chatName,
         builder: (context, state) {
           final args = state.extra as Map<String, dynamic>?;
-          return ConversationScreen(
-            hideLeading: args?['hideLeading'] ?? false,
-            message: args?['message'] ?? "",
+          return BlocProvider(
+            create: (context) => sl<ChatBloc>(),
+            child: ConversationScreen(
+              hideLeading: args?['hideLeading'] ?? false,
+              message: args?['message'] ?? "",
+            ),
           );
         },
       ),
@@ -238,9 +243,12 @@ class AppRouter {
         name: AppRoutes.conversationName,
         builder: (context, state) {
           final args = state.extra as Map<String, dynamic>?;
-          return ConversationScreen(
-            hideLeading: args?['hideLeading'] ?? false,
-            message: args?['message'] ?? "",
+          return BlocProvider(
+            create: (context) => sl<ChatBloc>(),
+            child: ConversationScreen(
+              hideLeading: args?['hideLeading'] ?? false,
+              message: args?['message'] ?? "",
+            ),
           );
         },
       ),
@@ -402,10 +410,18 @@ class AppRouter {
         name: AppRoutes.newsName,
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};
-          return NewsPage(
-            hideLeading: extra['hideLeading'] ?? false,
-            latitude: extra['latitude'],
-            longitude: extra['longitude'],
+          return BlocProvider(
+            create: (context) => sl<NewsBloc>()
+              ..add(GetAggregatedNewsEvent(
+                lat: extra['latitude'] ?? 0.0,
+                lng: extra['longitude'] ?? 0.0,
+                km: 50,
+              )),
+            child: NewsPage(
+              hideLeading: extra['hideLeading'] ?? false,
+              latitude: extra['latitude'],
+              longitude: extra['longitude'],
+            ),
           );
         },
       ),
@@ -659,7 +675,7 @@ class AppRouter {
         builder: (context, state) => const MenuScreen(),
       ),
     ],
-    // Error handler or redirect logic can go here
+
     errorBuilder: (context, state) => Scaffold(
       body: Center(
         child: Text('Error: ${state.error}'),

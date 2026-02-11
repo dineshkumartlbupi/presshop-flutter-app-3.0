@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 enum ChatStatus { initial, loading, loaded, failure, sending, recording }
 
 class ChatState extends Equatable {
-
   const ChatState({
     this.status = ChatStatus.initial,
     this.chatList = const [],
@@ -22,9 +20,9 @@ class ChatState extends Equatable {
     this.uploadProgress = '0.0',
   });
   final ChatStatus status;
-  final List<DocumentSnapshot> chatList;
-  final List<DocumentSnapshot> searchResult;
-  final List<DocumentSnapshot> messages;
+  final List<Map<String, dynamic>> chatList;
+  final List<Map<String, dynamic>> searchResult;
+  final List<Map<String, dynamic>> messages;
   final bool isTyping; // Received typing status from other user
   final bool isSelfTyping;
   final bool isRecording;
@@ -38,9 +36,9 @@ class ChatState extends Equatable {
 
   ChatState copyWith({
     ChatStatus? status,
-    List<DocumentSnapshot>? chatList,
-    List<DocumentSnapshot>? searchResult,
-    List<DocumentSnapshot>? messages,
+    List<Map<String, dynamic>>? chatList,
+    List<Map<String, dynamic>>? searchResult,
+    List<Map<String, dynamic>>? messages,
     bool? isTyping,
     bool? isSelfTyping,
     bool? isRecording,

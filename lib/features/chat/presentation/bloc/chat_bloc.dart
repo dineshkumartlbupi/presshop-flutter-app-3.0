@@ -1,33 +1,36 @@
 import 'dart:async';
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:presshop/core/core_export.dart'; // Constants
-import 'package:presshop/core/utils/shared_preferences.dart'; // Prefs
+
 import 'package:presshop/features/chat/presentation/bloc/chat_event.dart';
 import 'package:presshop/features/chat/presentation/bloc/chat_state.dart';
 import 'package:presshop/main.dart'; // Globals
 import 'package:record/record.dart';
+import 'package:presshop/features/chat/data/services/chat_socket_service.dart';
+import 'package:presshop/core/api/api_client.dart';
+import 'package:get_it/get_it.dart';
+import 'package:flutter/foundation.dart';
+import 'package:presshop/features/chat/data/datasources/chat_local_data_source.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
+  final ChatSocketService _chatSocketService;
+  final ChatLocalDataSource _chatLocalDataSource;
+  final ApiClient _apiClient = GetIt.I<ApiClient>();
+  final AudioRecorder _audioRecorder;
 
   ChatBloc({
-    FirebaseFirestore? firestore,
-    FirebaseStorage? storage,
+    required ChatSocketService chatSocketService,
+    required ChatLocalDataSource localDataSource,
     AudioRecorder? audioRecorder,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _storage = storage ?? FirebaseStorage.instance,
+  })  : _chatSocketService = chatSocketService,
+        _chatLocalDataSource = localDataSource,
         _audioRecorder = audioRecorder ?? AudioRecorder(),
         super(const ChatState()) {
     on<LoadChatListEvent>(_onLoadChatList);
-    on<SearchUserEvent>(_onSearchUser);
     on<EnterChatRoomEvent>(_onEnterChatRoom);
     on<LeaveChatRoomEvent>(_onLeaveChatRoom);
     on<SendMessageEvent>(_onSendMessage);
-    on<ReceiveMessageEvent>(_onReceiveMessage);
     on<UpdateTypingStatusEvent>(_onUpdateTypingStatus);
     on<StartAudioRecordingEvent>(_onStartAudioRecording);
     on<StopAudioRecordingEvent>(_onStopAudioRecording);
@@ -35,41 +38,43 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<OtherUserTypingUpdatedEvent>(_onOtherUserTypingUpdated);
     on<OtherUserOnlineStatusUpdatedEvent>(_onOtherUserOnlineStatusUpdated);
     on<ChatListUpdatedEvent>(_onChatListUpdated);
+    on<ReceiveMessageEvent>(_onReceiveMessage);
   }
-  final FirebaseFirestore _firestore;
-  final FirebaseStorage _storage;
-  final AudioRecorder _audioRecorder;
-
-  StreamSubscription? _messagesSubscription;
-  StreamSubscription? _chatListSubscription;
-  StreamSubscription? _typingSubscription;
-  StreamSubscription? _onlineStatusSubscription;
 
   @override
   Future<void> close() {
-    _messagesSubscription?.cancel();
-    _chatListSubscription?.cancel();
-    _typingSubscription?.cancel();
-    _onlineStatusSubscription?.cancel();
+    _chatSocketService.dispose();
     _audioRecorder.dispose();
     return super.close();
   }
 
   Future<void> _onLoadChatList(
-      LoadChatListEvent event, Emitter<ChatState> emit) async {
+    LoadChatListEvent event,
+    Emitter<ChatState> emit,
+  ) async {
     emit(state.copyWith(status: ChatStatus.loading));
     try {
-      _chatListSubscription?.cancel();
-      _chatListSubscription = _firestore
-          .collection("Chat2")
-          .orderBy('date', descending: true)
-          .snapshots()
-          .listen((snapshot) {
-        add(ChatListUpdatedEvent(snapshot.docs));
-      });
+      final response = await _apiClient.post(
+        ApiConstantsNew.chat.chatList,
+        data: {'offset': 0, 'limit': 50},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> rooms = response.data['response'] ?? [];
+        final chatList = rooms.cast<Map<String, dynamic>>();
+        emit(state.copyWith(status: ChatStatus.loaded, chatList: chatList));
+      } else {
+        emit(
+          state.copyWith(
+            status: ChatStatus.failure,
+            errorMessage: "Failed to load chat list",
+          ),
+        );
+      }
     } catch (e) {
-      emit(state.copyWith(
-          status: ChatStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(status: ChatStatus.failure, errorMessage: e.toString()),
+      );
     }
   }
 
@@ -77,76 +82,147 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(state.copyWith(status: ChatStatus.loaded, chatList: event.chatList));
   }
 
-  Future<void> _onSearchUser(
-      SearchUserEvent event, Emitter<ChatState> emit) async {
-    // Filtering logic would go here if we had the full list in state.
-  }
-
   Future<void> _onEnterChatRoom(
-      EnterChatRoomEvent event, Emitter<ChatState> emit) async {
-    emit(state.copyWith(
-      status: ChatStatus.loading,
-      currentRoomId: event.roomId,
-      receiverId: event.receiverId,
-      receiverName: event.receiverName,
-      receiverImage: event.receiverImage,
-    ));
+    EnterChatRoomEvent event,
+    Emitter<ChatState> emit,
+  ) async {
+    final hopperId =
+        sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
 
-    await _messagesSubscription?.cancel();
-    await _typingSubscription?.cancel();
-    await _onlineStatusSubscription?.cancel();
+    // 1. Initialize Socket immediately to prevent race conditions
+    debugPrint(":::: ChatBloc _onEnterChatRoom :::::");
+    debugPrint("hopperId: $hopperId, roomId: ${event.roomId}");
+    _chatSocketService.initSocket(userId: hopperId, userType: "hopper");
 
-    // Subscribe to messages
-    _messagesSubscription = _firestore
-        .collection('Chat2')
-        .doc(event.roomId)
-        .collection('Messages')
-        .orderBy('date', descending: true)
-        .snapshots()
-        .listen((snapshot) {
-      add(ReceiveMessageEvent(snapshot.docs));
-    });
+    emit(
+      state.copyWith(
+        status: ChatStatus.loading,
+        currentRoomId: event.roomId,
+        receiverId: event.receiverId,
+        receiverName: event.receiverName,
+        receiverImage: event.receiverImage,
+        messages: [],
+      ),
+    );
 
-    // Listen to typing status of receiver
-    if (event.receiverId.isNotEmpty) {
-      _typingSubscription = _firestore
-          .collection('Chat2')
-          .doc(event.roomId)
-          .collection('Typing')
-          .doc(event.receiverId)
-          .snapshots()
-          .listen((snapshot) {
-        if (snapshot.exists) {
-          bool isTyping = snapshot.data()?['isTyping'] ?? false;
-          add(OtherUserTypingUpdatedEvent(isTyping));
-        }
-      });
-
-      // Listen to online status of receiver
-      _onlineStatusSubscription = _firestore
-          .collection('OnlineOffline')
-          .doc(event.receiverId)
-          .snapshots()
-          .listen((snapshot) {
-        if (snapshot.exists) {
-          bool isOnline = snapshot.data()?['isOnline'] ?? false;
-          add(OtherUserOnlineStatusUpdatedEvent(isOnline));
-        }
-      });
+    // 2. Load Local Data
+    try {
+      final localMessages = await _chatLocalDataSource.getMessages(
+        event.roomId,
+      );
+      if (localMessages.isNotEmpty) {
+        emit(
+          state.copyWith(status: ChatStatus.loaded, messages: localMessages),
+        );
+      }
+    } catch (e) {
+      debugPrint("Error loading local messages: $e");
     }
 
-    // Mark messages as read
-    final unreadQuery = await _firestore
-        .collection('Chat2')
-        .doc(event.roomId)
-        .collection('Messages')
-        .where('receiverId',
-            isEqualTo: sharedPreferences!.getString(hopperIdKey))
-        .where('readStatus', isEqualTo: 'unread')
-        .get();
+    // 3. Setup Listeners
+    // Unified message handler
+    _handleIncomingMessage(dynamic data) async {
+      debugPrint(":::: ChatBloc _handleIncomingMessage :::::");
+      debugPrint("data: $data");
+      debugPrint("currentRoomId: ${state.currentRoomId}");
+      debugPrint("receiverId: ${state.receiverId}, hopperId: $hopperId");
 
-    for (var doc in unreadQuery.docs) {
-      doc.reference.update({'readStatus': 'read'});
+      // Save to local storage
+      await _chatLocalDataSource.saveMessage(data);
+
+      bool isRelevant = false;
+
+      // 1. Direct Room Match
+      if (data['room_id'] == state.currentRoomId) {
+        isRelevant = true;
+      }
+      // 2. Sender/Receiver Match (for mismatched room IDs)
+      else if ((data['sender_id'] == state.receiverId &&
+              data['receiver_id'] == hopperId) ||
+          (data['sender_id'] == hopperId &&
+              data['receiver_id'] == state.receiverId)) {
+        isRelevant = true;
+        debugPrint(
+            ":::: Message accepted via sender/receiver match despite room mismatch :::::");
+      }
+
+      if (isRelevant) {
+        final currentMessages = List<Map<String, dynamic>>.from(state.messages);
+        currentMessages.insert(0, data);
+        add(ReceiveMessageEvent(currentMessages));
+
+        // Mark as read immediately if it's from the other user
+        if (data['sender_id'] != hopperId) {
+          _chatSocketService.markAsRead(
+            state.currentRoomId,
+            hopperId,
+            receiverId: state.receiverId,
+          );
+        }
+      } else {
+        debugPrint(":::: Message ignored - not for this room/context :::::");
+      }
+    }
+
+    // 3. Setup Listeners
+    _chatSocketService.onChatMessage = _handleIncomingMessage;
+    _chatSocketService.onMediaMessage = _handleIncomingMessage;
+    _chatSocketService.onVoiceMessage = _handleIncomingMessage;
+
+    _chatSocketService.onTyping = (data) {
+      debugPrint(":::: ChatBloc onTyping :::::");
+      debugPrint("data: $data");
+      debugPrint("currentRoomId: ${state.currentRoomId}");
+      debugPrint("hopperId: $hopperId, data['user_id']: ${data['user_id']}");
+
+      if (data['room_id'] == state.currentRoomId &&
+          data['user_id'] != hopperId) {
+        debugPrint(":::: Adding OtherUserTypingUpdatedEvent :::::");
+        add(OtherUserTypingUpdatedEvent(data['is_typing'] ?? false));
+      } else {
+        debugPrint(":::: Type event ignored :::::");
+      }
+    };
+
+    _chatSocketService.onAdminStatus = (data) {
+      final status = data['status'] == 'online';
+      add(OtherUserOnlineStatusUpdatedEvent(status));
+    };
+
+    _chatSocketService.onReadMessage = (data) async {
+      debugPrint(":::: ChatBloc onReadMessage :::::");
+      if (data['room_id'] == state.currentRoomId) {
+        final updatedMessages = state.messages.map((m) {
+          final newMsg = Map<String, dynamic>.from(m);
+          newMsg['read_status'] = 'read';
+          return newMsg;
+        }).toList();
+
+        add(ReceiveMessageEvent(updatedMessages));
+        await _chatLocalDataSource.saveMessages(updatedMessages);
+      }
+    };
+    _chatSocketService.joinRoom(event.roomId);
+    try {
+      final response = await _apiClient.post(
+        ApiConstantsNew.chat.roomHistory,
+        data: {'room_id': event.roomId},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> history = response.data['response'] ?? [];
+        final messages = history.cast<Map<String, dynamic>>().toList();
+        await _chatLocalDataSource.saveMessages(messages);
+
+        emit(state.copyWith(status: ChatStatus.loaded, messages: messages));
+        _chatSocketService.markAsRead(
+          event.roomId,
+          hopperId,
+          receiverId: state.receiverId,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error fetching chat history: $e");
     }
 
     emit(state.copyWith(status: ChatStatus.loaded));
@@ -157,146 +233,99 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   Future<void> _onLeaveChatRoom(
-      LeaveChatRoomEvent event, Emitter<ChatState> emit) async {
-    await _messagesSubscription?.cancel();
-    await _typingSubscription?.cancel();
-    await _onlineStatusSubscription?.cancel();
+    LeaveChatRoomEvent event,
+    Emitter<ChatState> emit,
+  ) async {
+    if (state.currentRoomId.isNotEmpty) {
+      _chatSocketService.leaveRoom(state.currentRoomId);
+    }
     emit(state.copyWith(messages: [], currentRoomId: ''));
   }
 
   Future<void> _onSendMessage(
-      SendMessageEvent event, Emitter<ChatState> emit) async {
-    emit(state.copyWith(status: ChatStatus.sending)); // Optional: optimistic UI
-
-    final senderId = sharedPreferences!.getString(hopperIdKey) ?? "";
+    SendMessageEvent event,
+    Emitter<ChatState> emit,
+  ) async {
+    final senderId =
+        sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
     final senderName =
-        "${sharedPreferences!.getString(firstNameKey) ?? ""} ${sharedPreferences!.getString(lastNameKey) ?? ""}"
+        "${sharedPreferences!.getString(SharedPreferencesKeys.firstNameKey) ?? ""} ${sharedPreferences!.getString(SharedPreferencesKeys.lastNameKey) ?? ""}"
             .trim();
-    final senderImage = sharedPreferences!.getString(avatarKey) ?? "";
-    final senderUserName = sharedPreferences!.getString(userNameKey) ?? "";
+    final senderImage =
+        sharedPreferences!.getString(SharedPreferencesKeys.avatarKey) ?? "";
 
-    String messageId = DateTime.now().toUtc().millisecondsSinceEpoch.toString();
-    String message = event.message;
-    String thumbnail = event.thumbnailPath ?? "";
-    // double uploadPercent = 0.0;
-
-    // Upload Media if needed
-    if (event.messageType != "text" &&
-        event.filePath != null &&
-        event.filePath!.isNotEmpty) {
-      String fileName = event.messageType == 'video'
-          ? '${DateTime.now().millisecondsSinceEpoch}.mp4'
-          : '${DateTime.now().millisecondsSinceEpoch}.jpg'; // or png
-      if (event.messageType == 'audio') {
-        fileName = '${DateTime.now().millisecondsSinceEpoch}.m4a';
-      }
-
-      String path = 'Media/$fileName';
-      if (event.messageType == 'video') {
-        path = 'Media/$fileName'; // Matches ChatScreen logic somewhat
-      }
-
-      Reference storageRef = _storage.ref().child(path);
-      UploadTask uploadTask = storageRef.putFile(File(event.filePath!));
-
-      // We could listen to progress here and emit state, but it triggers too many rebuilds usually.
-      // ChatScreen updates a field in Firestore `uploadPercent`.
-      // We can do that too, OR just rely on local state.
-
-      try {
-        TaskSnapshot taskSnapshot = await uploadTask;
-        message = await taskSnapshot.ref.getDownloadURL();
-        // uploadPercent = 100.0;
-
-        // Upload Thumbnail if video
-        if (event.messageType == 'video' && thumbnail.isNotEmpty) {
-          String thumbName =
-              'thumbnail_${DateTime.now().millisecondsSinceEpoch}.png';
-          Reference thumbRef = _storage.ref().child('Media/$thumbName');
-          var thumbTask = thumbRef.putFile(File(thumbnail));
-          await thumbTask;
-          thumbnail = await thumbRef.getDownloadURL();
-        }
-      } catch (e) {
-        emit(state.copyWith(
-            status: ChatStatus.failure, errorMessage: "Upload failed: $e"));
-        return;
-      }
+    String roomId = state.currentRoomId;
+    if (roomId.isEmpty) {
+      roomId =
+          sharedPreferences!.getString(SharedPreferencesKeys.adminRoomIdKey) ??
+              "";
     }
 
-    Map<String, dynamic> map = {
-      'messageId': messageId,
-      'senderId': senderId,
-      'senderName': senderName,
-      'senderImage': senderImage,
-      'receiverId': state.receiverId,
-      'receiverName': state.receiverName,
-      'receiverImage': state.receiverImage,
-      'roomId': state.currentRoomId,
-      'replyMessage': event.replyMessageContent ?? "Empty Coming Soon",
-      'messageType': event.messageType, // text, image, video, audio
-      'message': message, // URL or Text
-      'duration': event.audioDuration ?? '',
-      'senderUserName': senderUserName,
-      'videoThumbnail': thumbnail,
-      'date': DateTime.now().toString(),
-      'uploadPercent': 100.0,
-      'readStatus': "unread",
-      'replyType': "text", // default
-      'latitude': 0.0,
-      'longitude': 0.0,
-      'isReply': event.replyToMessageId != null ? 1 : 0,
-      'isLocal': 0,
-      'isAudioSelected': event.messageType == 'audio'
+    if (roomId.isEmpty) {
+      debugPrint(
+          ":::: ERROR: Cannot send message, roomId is empty in state and storage :::::");
+      return;
+    }
+
+    Map<String, dynamic> messageData = {
+      'room_id': roomId,
+      'sender_id': senderId,
+      'receiver_id': state.receiverId,
+      'message': event.message,
+      'message_type': event.messageType,
+      'sender_name': senderName,
+      'sender_image': senderImage,
+      'createdAt': DateTime.now().toUtc().toIso8601String(),
     };
 
-    try {
-      DocumentReference docRef = _firestore
-          .collection('Chat2')
-          .doc(state.currentRoomId)
-          .collection('Messages')
-          .doc(); // Auto-ID or use messageId? ChatScreen uses .doc(messageId) in some places but .doc() in uploadChatNew.
-      // ChatScreen: .doc() -> Autogenerated ID
-      await docRef.set(map);
+    if (event.messageType != "text" && event.filePath != null) {
+      emit(state.copyWith(status: ChatStatus.sending));
+    }
 
-      // Update Room Details (Last Message) - Use merge to avoid overwriting metadata
-      DocumentReference roomRef =
-          _firestore.collection('Chat2').doc(state.currentRoomId);
-      await roomRef.set(map, SetOptions(merge: true));
+    await _chatLocalDataSource.saveMessage(messageData);
 
-      emit(state.copyWith(status: ChatStatus.loaded));
-    } catch (e) {
-      emit(state.copyWith(
-          status: ChatStatus.failure, errorMessage: "Send failed: $e"));
+    debugPrint(":::: ChatBloc _onSendMessage :::::");
+    debugPrint("messageType: ${event.messageType}");
+    debugPrint("roomId: $roomId");
+
+    // Ensure socket is initialized
+    _chatSocketService.initSocket(userId: senderId, userType: "hopper");
+
+    if (event.messageType == 'audio') {
+      _chatSocketService.sendVoiceMessage(messageData);
+    } else if (event.messageType == 'text') {
+      _chatSocketService.sendMessage(messageData);
+    } else {
+      _chatSocketService.sendMediaMessage(messageData);
     }
   }
 
   Future<void> _onUpdateTypingStatus(
-      UpdateTypingStatusEvent event, Emitter<ChatState> emit) async {
-    if (state.currentRoomId.isNotEmpty) {
-      final senderId = sharedPreferences!.getString(hopperIdKey) ?? "";
-      _firestore
-          .collection('Chat2')
-          .doc(state.currentRoomId)
-          .collection('Typing')
-          .doc(senderId)
-          .set({'isTyping': event.isTyping}, SetOptions(merge: true));
-    }
+    UpdateTypingStatusEvent event,
+    Emitter<ChatState> emit,
+  ) async {
+    final senderId =
+        sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
+    _chatSocketService.sendTypingStatus(event.roomId, senderId, event.isTyping);
   }
 
   Future<void> _onStartAudioRecording(
-      StartAudioRecordingEvent event, Emitter<ChatState> emit) async {
+    StartAudioRecordingEvent event,
+    Emitter<ChatState> emit,
+  ) async {
     if (await _audioRecorder.hasPermission()) {
       final directory = await getApplicationDocumentsDirectory();
       String path =
           '${directory.path}/${DateTime.now().millisecondsSinceEpoch}.m4a';
       await _audioRecorder.start(const RecordConfig(), path: path);
-      emit(state.copyWith(isRecording: true)); // Local state for UI updates
+      emit(state.copyWith(isRecording: true));
     }
   }
 
   Future<void> _onStopAudioRecording(
-      StopAudioRecordingEvent event, Emitter<ChatState> emit) async {
+    StopAudioRecordingEvent event,
+    Emitter<ChatState> emit,
+  ) async {
     if (!state.isRecording) return;
     final path = await _audioRecorder.stop();
     emit(state.copyWith(isRecording: false));
@@ -306,24 +335,21 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   Future<void> _onUpdateAppLifecycle(
-      UpdateAppLifecycleEvent event, Emitter<ChatState> emit) async {
-    final senderId = sharedPreferences!.getString(hopperIdKey) ?? "";
-    if (senderId.isNotEmpty) {
-      await _firestore.collection('OnlineOffline').doc(senderId).set({
-        'isOnline': event.isOnline,
-        'last_seen': DateTime.now().toUtc().toLocal(),
-        'roomId': event.roomId,
-      }, SetOptions(merge: true));
-    }
-  }
+    UpdateAppLifecycleEvent event,
+    Emitter<ChatState> emit,
+  ) async {}
 
   void _onOtherUserTypingUpdated(
-      OtherUserTypingUpdatedEvent event, Emitter<ChatState> emit) {
+    OtherUserTypingUpdatedEvent event,
+    Emitter<ChatState> emit,
+  ) {
     emit(state.copyWith(isTyping: event.isTyping));
   }
 
   void _onOtherUserOnlineStatusUpdated(
-      OtherUserOnlineStatusUpdatedEvent event, Emitter<ChatState> emit) {
+    OtherUserOnlineStatusUpdatedEvent event,
+    Emitter<ChatState> emit,
+  ) {
     emit(state.copyWith(isOnline: event.isOnline));
   }
 }

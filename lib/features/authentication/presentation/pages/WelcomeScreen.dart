@@ -37,7 +37,8 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
-  String userName = sharedPreferences!.getString(userNameKey) ?? '';
+  String userName =
+      sharedPreferences!.getString(SharedPreferencesKeys.userNameKey) ?? '';
 
   @override
   Widget build(BuildContext context) {

@@ -18,7 +18,6 @@ import 'package:presshop/core/router/router_constants.dart';
 
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:presshop/features/map/domain/usecases/search_places.dart';
 import 'package:presshop/features/map/domain/usecases/get_place_details.dart';
 
@@ -114,171 +113,156 @@ class _NewsPageState extends State<NewsPage>
     super.build(context);
     var size = MediaQuery.of(context).size;
 
-    return BlocProvider(
-      create: (_) {
-        final bloc = sl<NewsBloc>();
-        if (bloc.state.newsList.isEmpty) {
-          bloc.add(GetAggregatedNewsEvent(
-            lat: widget.latitude ?? 0.0,
-            lng: widget.longitude ?? 0.0,
-            km: 50,
-          ));
+    return BlocConsumer<NewsBloc, NewsState>(
+      listener: (context, state) {
+        if (!state.isLoading) {
+          _refreshController.refreshCompleted();
         }
-        return bloc;
+        if (state.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.errorMessage!)),
+          );
+        }
       },
-      child: BlocConsumer<NewsBloc, NewsState>(
-        listener: (context, state) {
-          if (!state.isLoading) {
-            _refreshController.refreshCompleted();
-          }
-          if (state.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.errorMessage!)),
-            );
-          }
-        },
-        builder: (context, state) {
-          final newsList = state.newsList;
+      builder: (context, state) {
+        final newsList = state.newsList;
 
-          return Scaffold(
-            backgroundColor: Colors.white,
-            appBar: NewHomeAppBar(
-              size: size,
-              hideLeading: widget.hideLeading,
-              showFilter: false,
-            ),
-            body: Stack(
-              children: [
-                SmartRefresher(
-                  controller: _refreshController,
-                  enablePullDown: true,
-                  enablePullUp: false,
-                  onRefresh: () {
-                    context.read<NewsBloc>().add(GetAggregatedNewsEvent(
-                          lat: widget.latitude ?? 0.0,
-                          lng: widget.longitude ?? 0.0,
-                          km: 50,
-                        ));
-                  },
-                  header: const WaterDropHeader(),
-                  child: newsList.isEmpty && !state.isLoading
-                      ? Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * AppDimensions.numD05),
-                            child: Text(
-                              state.isProcessing
-                                  ? "News is being aggregated for your location. Please pull down to refresh in a few moments."
-                                  : "No news found",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: size.width * AppDimensions.numD04,
-                                color: Colors.black,
-                              ),
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: NewHomeAppBar(
+            size: size,
+            hideLeading: widget.hideLeading,
+            showFilter: false,
+          ),
+          body: Stack(
+            children: [
+              SmartRefresher(
+                controller: _refreshController,
+                enablePullDown: true,
+                enablePullUp: false,
+                onRefresh: () {
+                  context.read<NewsBloc>().add(GetAggregatedNewsEvent(
+                        lat: widget.latitude ?? 0.0,
+                        lng: widget.longitude ?? 0.0,
+                        km: 50,
+                      ));
+                },
+                header: const WaterDropHeader(),
+                child: newsList.isEmpty && !state.isLoading
+                    ? Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD05),
+                          child: Text(
+                            state.isProcessing
+                                ? "News is being aggregated for your location. Please pull down to refresh in a few moments."
+                                : "No news found",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: size.width * AppDimensions.numD04,
+                              color: Colors.black,
                             ),
                           ),
-                        )
-                      : ListView.separated(
-                          padding: EdgeInsets.only(
-                            top: 130, // Adjusted for SearchAndFilterBar
-                            left: size.width * AppDimensions.numD04,
-                            right: size.width * AppDimensions.numD04,
-                            bottom: size.width * AppDimensions.numD04,
-                          ),
-                          itemCount: newsList.length,
-                          separatorBuilder: (context, index) => SizedBox(
-                              height: size.width * AppDimensions.numD06),
-                          itemBuilder: (context, index) {
-                            return _buildNewsCard(
-                                context, newsList[index], size);
-                          },
                         ),
-                ),
-                Positioned(
-                  top: 10,
-                  left: 0,
-                  right: 0,
-                  child: SearchAndFilterBar(
-                    searchController: _searchController,
-                    searchFocusNode: _searchFocusNode,
-                    selectedAlertType: selectedAlertType,
-                    selectedDistance: selectedDistance,
-                    selectedCategory: selectedCategory,
-                    onChange: _onSearchChanged,
-                    onAlertTypeChanged: (val) {
-                      if (val != null) {
-                        setState(() => selectedAlertType = val);
-                        _applyFilters();
-                      }
-                    },
-                    onDistanceChanged: (val) {
-                      if (val != null) {
-                        setState(() => selectedDistance = val);
-                        _applyFilters();
-                      }
-                    },
-                    onCategoryChanged: (val) {
-                      if (val != null) {
-                        setState(() => selectedCategory = val);
-                        _applyFilters();
-                      }
-                    },
-                    showNavigationIcon: false,
-                  ),
-                ),
-                if (_predictions.isNotEmpty)
-                  Positioned(
-                    top: 60, // Below the search text field
-                    left: 12,
-                    right:
-                        60, // Adjusted to avoid overlapping with navigation icon
-                    child: Container(
-                      constraints: BoxConstraints(
-                        maxHeight: size.height * 0.4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        itemCount: _predictions.length,
+                      )
+                    : ListView.separated(
+                        padding: EdgeInsets.only(
+                          top: 130, // Adjusted for SearchAndFilterBar
+                          left: size.width * AppDimensions.numD04,
+                          right: size.width * AppDimensions.numD04,
+                          bottom: size.width * AppDimensions.numD04,
+                        ),
+                        itemCount: newsList.length,
                         separatorBuilder: (context, index) =>
-                            const Divider(height: 1),
+                            SizedBox(height: size.width * AppDimensions.numD06),
                         itemBuilder: (context, index) {
-                          final p = _predictions[index];
-                          return ListTile(
-                            dense: true,
-                            title: Text(
-                              p['description'],
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                            onTap: () => _selectPrediction(p),
-                          );
+                          return _buildNewsCard(context, newsList[index], size);
                         },
                       ),
+              ),
+              Positioned(
+                top: 10,
+                left: 0,
+                right: 0,
+                child: SearchAndFilterBar(
+                  searchController: _searchController,
+                  searchFocusNode: _searchFocusNode,
+                  selectedAlertType: selectedAlertType,
+                  selectedDistance: selectedDistance,
+                  selectedCategory: selectedCategory,
+                  onChange: _onSearchChanged,
+                  onAlertTypeChanged: (val) {
+                    if (val != null) {
+                      setState(() => selectedAlertType = val);
+                      _applyFilters();
+                    }
+                  },
+                  onDistanceChanged: (val) {
+                    if (val != null) {
+                      setState(() => selectedDistance = val);
+                      _applyFilters();
+                    }
+                  },
+                  onCategoryChanged: (val) {
+                    if (val != null) {
+                      setState(() => selectedCategory = val);
+                      _applyFilters();
+                    }
+                  },
+                  showNavigationIcon: false,
+                ),
+              ),
+              if (_predictions.isNotEmpty)
+                Positioned(
+                  top: 60,
+                  left: 12,
+                  right: 60,
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxHeight: size.height * 0.4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      itemCount: _predictions.length,
+                      separatorBuilder: (context, index) =>
+                          const Divider(height: 1),
+                      itemBuilder: (context, index) {
+                        final p = _predictions[index];
+                        return ListTile(
+                          dense: true,
+                          title: Text(
+                            p['description'],
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          onTap: () => _selectPrediction(p),
+                        );
+                      },
                     ),
                   ),
-                if (state.isLoading && newsList.isEmpty)
-                  Container(
-                    color: Colors.transparent,
-                    child: Center(
-                      child: showAnimatedLoader(size),
-                    ),
+                ),
+              if (state.isLoading && newsList.isEmpty)
+                Container(
+                  color: Colors.transparent,
+                  child: Center(
+                    child: showAnimatedLoader(size),
                   ),
-              ],
-            ),
-          );
-        },
-      ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -287,6 +271,7 @@ class _NewsPageState extends State<NewsPage>
   }
 
   Future<void> _handleShare(BuildContext context, News item) async {
+    context.read<NewsBloc>().add(ShareNewsEvent(contentId: item.id));
     await shareLink(
       title: item.title,
       description: item.description,
@@ -637,36 +622,36 @@ class _NewsPageState extends State<NewsPage>
     );
   }
 
-  void _showFilterBottomSheet(BuildContext context, Size size) {
-    final newsBloc = context.read<NewsBloc>();
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) {
-        return BlocProvider.value(
-          value: newsBloc,
-          child: _FilterBottomSheetContent(
-            size: size,
-            initialAlertType: 'Alert',
-            initialDistance: '2 miles',
-            initialCategory: 'Category',
-            onApply: (alertType, distance, category) {
-              double km = _convertDistanceToKm(distance);
-              newsBloc.add(GetAggregatedNewsEvent(
-                lat: widget.latitude ?? 0.0,
-                lng: widget.longitude ?? 0.0,
-                km: km,
-                category: category == 'Category' ? 'all' : category,
-                alertType: alertType == 'Alert' ? null : alertType,
-              ));
-              context.pop();
-            },
-          ),
-        );
-      },
-    );
-  }
+  // void _showFilterBottomSheet(BuildContext context, Size size) {
+  //   final newsBloc = context.read<NewsBloc>();
+  //   showModalBottomSheet(
+  //     context: context,
+  //     backgroundColor: Colors.transparent,
+  //     isScrollControlled: true,
+  //     builder: (context) {
+  //       return BlocProvider.value(
+  //         value: newsBloc,
+  //         child: _FilterBottomSheetContent(
+  //           size: size,
+  //           initialAlertType: 'Alert',
+  //           initialDistance: '2 miles',
+  //           initialCategory: 'Category',
+  //           onApply: (alertType, distance, category) {
+  //             double km = _convertDistanceToKm(distance);
+  //             newsBloc.add(GetAggregatedNewsEvent(
+  //               lat: widget.latitude ?? 0.0,
+  //               lng: widget.longitude ?? 0.0,
+  //               km: km,
+  //               category: category == 'Category' ? 'all' : category,
+  //               alertType: alertType == 'Alert' ? null : alertType,
+  //             ));
+  //             context.pop();
+  //           },
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   double _convertDistanceToKm(String distance) {
     switch (distance) {
@@ -905,10 +890,9 @@ class _FilterBottomSheetContentState extends State<_FilterBottomSheetContent> {
               ),
               if (_predictions.isNotEmpty)
                 Positioned(
-                  top: 60, // Below the search text field
+                  top: 60,
                   left: 12,
-                  right:
-                      60, // Adjusted to avoid overlapping with navigation icon
+                  right: 60,
                   child: Container(
                     constraints: BoxConstraints(
                       maxHeight: widget.size.height * 0.4,

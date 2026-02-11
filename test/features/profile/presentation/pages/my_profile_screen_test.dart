@@ -30,8 +30,8 @@ void main() {
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({
-      hopperIdKey: "123", // Mock required keys
-      tokenKey: "mock_token",
+      SharedPreferencesKeys.hopperIdKey: "123", // Mock required keys
+      SharedPreferencesKeys.tokenKey: "mock_token",
     });
     sharedPreferences = await SharedPreferences
         .getInstance(); // Initialize global var from main.dart

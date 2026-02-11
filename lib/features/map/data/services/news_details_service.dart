@@ -15,15 +15,16 @@ class NewsDetailsService {
 
       // Get token from SharedPreferences if available
       final prefs = await SharedPreferences.getInstance();
-      String token = prefs.getString(tokenKey) ?? "";
-      String deviceID = prefs.getString(deviceIdKey) ?? "";
+      String token = prefs.getString(SharedPreferencesKeys.tokenKey) ?? "";
+      String deviceID =
+          prefs.getString(SharedPreferencesKeys.deviceIdKey) ?? "";
 
       final headers = {
         'Content-Type': 'application/json',
         'Authorization': token,
-        headerDeviceTypeKey:
+        SharedPreferencesKeys.headerDeviceTypeKey:
             "mobile-flutter-ios", // Should detect or hardcode for now
-        headerDeviceIdKey: deviceID,
+        SharedPreferencesKeys.headerDeviceIdKey: deviceID,
       };
 
       print("News Headers: $headers");
@@ -76,14 +77,16 @@ class NewsDetailsService {
     try {
       final url = Uri.parse('$baseUrl/hopper/getAggregatedNewsComments');
       final prefs = await SharedPreferences.getInstance();
-      String token = prefs.getString(tokenKey) ?? "";
-      String deviceID = prefs.getString(deviceIdKey) ?? "";
+      String token = prefs.getString(SharedPreferencesKeys.tokenKey) ?? "";
+      String deviceID =
+          prefs.getString(SharedPreferencesKeys.deviceIdKey) ?? "";
 
       final headers = {
         'Content-Type': 'application/json',
         'Authorization': token, // As per previous fix, it was just the token
-        headerDeviceTypeKey: "mobile-flutter-ios", // Fallback or detect
-        headerDeviceIdKey: deviceID,
+        SharedPreferencesKeys.headerDeviceTypeKey:
+            "mobile-flutter-ios", // Fallback or detect
+        SharedPreferencesKeys.headerDeviceIdKey: deviceID,
       };
 
       // Helper for platform type if needed, but for now hardcoded or basic check
@@ -127,7 +130,7 @@ class NewsDetailsService {
     try {
       final url = Uri.parse('$baseUrl/hopper/getAggregatedNews');
       final prefs = await SharedPreferences.getInstance();
-      String token = prefs.getString(tokenKey) ?? "";
+      String token = prefs.getString(SharedPreferencesKeys.tokenKey) ?? "";
 
       final body = {
         "category": category,

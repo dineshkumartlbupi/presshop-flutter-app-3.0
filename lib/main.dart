@@ -43,9 +43,9 @@ void main() async {
   AppInitializationService.setupAudioPlayer();
 
   final storage = FlutterSecureStorage();
-  String? token = await storage.read(key: tokenKey);
+  String? token = await storage.read(key: SharedPreferencesKeys.tokenKey);
   if (token == null || token.isEmpty) {
-    token = sharedPreferences?.getString(tokenKey);
+    token = sharedPreferences?.getString(SharedPreferencesKeys.tokenKey);
     debugPrint("🔍 CHECKING TOKEN (SharedPreferences Fallback): $token");
   } else {
     debugPrint("🔍 CHECKING TOKEN (SecureStorage): $token");

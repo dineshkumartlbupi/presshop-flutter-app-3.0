@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:presshop/core/constants/app_assets.dart';
-import 'package:presshop/core/constants/app_dimensions_new.dart';
+import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/features/map/data/services/socket_service.dart';
 import 'package:presshop/features/news/domain/entities/comment.dart';
-import 'package:presshop/features/news/data/models/comment_model.dart';
+
 import 'package:presshop/features/news/domain/entities/news.dart';
 import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
 import 'package:presshop/features/news/presentation/bloc/news_event.dart';
@@ -82,8 +82,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
 
   Future<void> _loadUserId() async {
     final prefs = sl<SharedPreferences>();
-    _userId =
-        prefs.getString("hopperId") ?? ""; // Assuming hopperIdKey is "hopperId"
+    _userId = prefs.getString("_id") ?? "";
     setState(() {});
     _initializeSocket();
   }
@@ -92,68 +91,37 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
     if (_userId.isEmpty) return;
     _socketService.initSocket(userId: _userId, joinAs: "hopper");
     _socketService.joinContent(widget.newsId);
-    _socketService.viewNews(contentId: widget.newsId);
+
+    // Track view
+    _newsBloc.add(ViewNewsEvent(contentId: widget.newsId));
     // Optimistically update view count
     _newsBloc.add(IncrementViewCountEvent());
 
-    _socketService.onCommentNew = (data) {
-      if (data != null && data['content_id'] == widget.newsId) {
-        try {
-          final newComment = CommentModel.fromJson(data);
-          final parentId = data['parent_id'] ??
-              data['parentId'] ??
-              data['root_parent_id'] ??
-              data['root_comment_id'];
-
-          _newsBloc.add(AddCommentLocalEvent(
-            comment: newComment,
-            parentId: parentId?.toString(),
-          ));
-        } catch (e) {
-          debugPrint("Error parsing new comment: $e");
-        }
-      }
-    };
-
-    _socketService.onCommentLike = (data) {
-      if (data != null && data['commentId'] != null) {
-        _newsBloc.add(UpdateLikeLocalEvent(
-          commentId: data['commentId'],
-          count: data['likes_count'] ?? 0,
-        ));
-      }
-    };
-
-    _socketService.onNewsShare = (data) {
-      if (data != null && data['contentId'] == widget.newsId) {
-        _newsBloc.add(UpdateShareCountEvent(
-          count: data['shares_count'] ?? 0,
-        ));
-      }
-    };
+    // NOTE: Socket listeners (onCommentNew, onCommentLike, onNewsShare)
+    // are handled by NewsBloc's _initSocketListener.
+    // We don't overwrite them here to avoid breaking other listeners.
   }
 
   void _addComment(String text) {
     if (_userId.isEmpty) return;
-    _socketService.addComment(
+    _newsBloc.add(PostCommentEvent(
       contentId: widget.newsId,
       text: text,
-      userId: _userId,
-    );
+      // userId is handled in Bloc via SharedPreferences
+    ));
     _commentController.clear();
   }
 
   void _addReply(String parentId, String text,
       {String? rootParentId, String? replyToName}) {
     if (_userId.isEmpty) return;
-    _socketService.addComment(
+    _newsBloc.add(PostCommentEvent(
       contentId: widget.newsId,
       text: text,
-      userId: _userId,
       parentId: parentId,
       rootParentId: rootParentId,
       replyToName: replyToName,
-    );
+    ));
     _replyController.clear();
   }
 
@@ -177,7 +145,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
   }
 
   Future<void> _handleShare(BuildContext context, News currentNews) async {
-    _socketService.shareNews(contentId: currentNews.id);
+    _newsBloc.add(ShareNewsEvent(contentId: currentNews.id));
 
     final String shareText =
         "Check out this news: ${currentNews.title}\n\n${currentNews.description}\n\nRead more at: ${currentNews.mediaUrl ?? ''}";

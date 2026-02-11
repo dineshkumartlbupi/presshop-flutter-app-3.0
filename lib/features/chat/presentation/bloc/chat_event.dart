@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 // import 'package:image_picker/image_picker.dart';
 
@@ -48,7 +47,6 @@ class EnterChatRoomEvent extends ChatEvent {
 class LeaveChatRoomEvent extends ChatEvent {}
 
 class SendMessageEvent extends ChatEvent {
-
   const SendMessageEvent(
       {required this.message,
       required this.messageType,
@@ -87,14 +85,15 @@ class UpdateTypingStatusEvent extends ChatEvent {
 
 class ReceiveMessageEvent extends ChatEvent {
   const ReceiveMessageEvent(this.messages);
-  final List<DocumentSnapshot> messages;
+  final List<Map<String, dynamic>> messages;
 
   @override
   List<Object> get props => [messages];
 }
 
 /// Media Picking
-class PickChatAttachmentEvent extends ChatEvent { // 'camera', 'gallery', 'video'
+class PickChatAttachmentEvent extends ChatEvent {
+  // 'camera', 'gallery', 'video'
   const PickChatAttachmentEvent(this.type);
   final String type;
 
@@ -126,7 +125,7 @@ class OtherUserTypingUpdatedEvent extends ChatEvent {
 
 class ChatListUpdatedEvent extends ChatEvent {
   const ChatListUpdatedEvent(this.chatList);
-  final List<DocumentSnapshot> chatList;
+  final List<Map<String, dynamic>> chatList;
 
   @override
   List<Object> get props => [chatList];

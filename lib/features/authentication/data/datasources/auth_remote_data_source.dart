@@ -33,6 +33,50 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl(this.apiClient);
   final ApiClient apiClient;
 
+  UserModel _handleUserResponse(dynamic responseData) {
+    if (responseData is! Map<String, dynamic>) {
+      throw ServerFailure(message: "Invalid response format");
+    }
+
+    Map<String, dynamic>? userMap;
+
+    // First check nested data structure
+    if (responseData['data'] != null && responseData['data'] is Map) {
+      final nestedData = responseData['data'] as Map<String, dynamic>;
+      userMap = (nestedData['user'] is Map)
+          ? nestedData['user']
+          : (nestedData['admin'] is Map ? nestedData['admin'] : nestedData);
+    } else {
+      userMap = (responseData['user'] is Map)
+          ? responseData['user']
+          : (responseData['admin'] is Map ? responseData['admin'] : null);
+
+      // If still null, maybe it is a flat structure
+      userMap ??= responseData;
+    }
+
+    if (userMap == null) {
+      throw ServerFailure(message: "User data not found in response");
+    }
+
+    // Robust token parsing
+    String? accessToken = responseData['token'] ??
+        responseData['access_token'] ??
+        userMap['token'] ??
+        userMap['access_token'];
+    String? refreshToken = responseData['refreshToken'] ??
+        responseData['refresh_token'] ??
+        userMap['refreshToken'] ??
+        userMap['refresh_token'];
+
+    // Create a mutable copy and inject tokens
+    final finalUserMap = Map<String, dynamic>.from(userMap);
+    if (accessToken != null) finalUserMap['token'] = accessToken;
+    if (refreshToken != null) finalUserMap['refreshToken'] = refreshToken;
+
+    return UserModel.fromJson(finalUserMap);
+  }
+
   @override
   Future<UserModel> login(String username, String password) async {
     try {
@@ -46,36 +90,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        print("🔵 LOGIN RESPONSE DATA: ${data['data']}");
         if (data['code'] == 200 || data['success'] == true) {
-          final userMap = data['data'];
-          if (userMap != null) {
-            print(
-                "****************************************************************");
-            print("🔵 LOGIN RESPONSE RAW DATA: $userMap");
-            print("🔵 LOGIN RESPONSE KEYS: ${userMap.keys.toList()}");
-            print(
-                "****************************************************************");
-            // Robust token parsing
-            String? accessToken = data['token'] ??
-                data['access_token'] ??
-                userMap['token'] ??
-                userMap['access_token'];
-            String? refreshToken = data['refreshToken'] ??
-                data['refresh_token'] ??
-                userMap['refreshToken'] ??
-                userMap['refresh_token'];
-
-            if (accessToken != null) {
-              userMap['token'] = accessToken;
-            }
-            if (refreshToken != null) {
-              userMap['refreshToken'] = refreshToken;
-            }
-            return UserModel.fromJson(userMap);
-          } else {
-            throw ServerFailure(message: "User data is null");
-          }
+          return _handleUserResponse(data);
         } else {
           throw ServerFailure(message: data['message'] ?? 'Login failed');
         }
@@ -103,36 +119,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        print("🔵 SOCIAL LOGIN RESPONSE DATA: $data");
         if (data['code'] == 200 || data['success'] == true) {
-          final userMap = data['user'] ?? data['data'];
-
-          if (userMap != null) {
-            // Robust token parsing
-            String? accessToken = data['token'] ??
-                data['access_token'] ??
-                userMap['token'] ??
-                userMap['access_token'];
-            String? refreshToken = data['refreshToken'] ??
-                data['refresh_token'] ??
-                userMap['refreshToken'] ??
-                userMap['refresh_token'];
-
-            if (accessToken != null) {
-              userMap['token'] = accessToken;
-            }
-            if (refreshToken != null) {
-              userMap['refreshToken'] = refreshToken;
-            }
-
-            if (userMap['isSocialRegister'] == false) {
-              throw const UserNotRegisteredFailure(
-                  message: "Social registration required");
-            }
-            return UserModel.fromJson(userMap);
-          } else {
-            throw ServerFailure(message: "User data is null");
+          final user = _handleUserResponse(data);
+          if (user.source is Map &&
+              (user.source as Map)['isSocialRegister'] == false) {
+            throw const UserNotRegisteredFailure(
+                message: "Social registration required");
           }
+          return user;
         } else {
           throw ServerFailure(
               message: data['message'] ?? 'Social Login failed');
@@ -179,29 +173,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final resData = response.data;
         if (resData['code'] == 200 || resData['success'] == true) {
-          final userMap =
-              resData['user'] ?? resData['data']; // Check API structure
-
-          if (userMap == null) {
-            throw ServerFailure(message: 'Invalid response: User data missing');
-          }
-
-          String? accessToken = resData['token'] ??
-              resData['access_token'] ??
-              userMap['token'] ??
-              userMap['access_token'];
-          String? refreshToken = resData['refreshToken'] ??
-              resData['refresh_token'] ??
-              userMap['refreshToken'] ??
-              userMap['refresh_token'];
-
-          if (accessToken != null) {
-            userMap['token'] = accessToken;
-          }
-          if (refreshToken != null) {
-            userMap['refreshToken'] = refreshToken;
-          }
-          return UserModel.fromJson(userMap);
+          return _handleUserResponse(resData);
         } else {
           throw ServerFailure(
               message: resData['message'] ?? 'Registration failed');
@@ -260,10 +232,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final resData = response.data;
 
       if (response.statusCode == 200 && resData['success'] == true) {
-        if (resData['data'] == null) {
-          throw ServerFailure(message: "Profile data is empty");
-        }
-        return UserModel.fromJson(resData['data']);
+        return _handleUserResponse(resData);
       } else {
         throw ServerFailure(
           message: resData['message'] ?? 'Failed to load profile',
@@ -404,11 +373,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final response = await apiClient.get(ApiConstantsNew.profile.getAvatars);
       if (response.statusCode == 200) {
-        final data = response.data;
-        print("🔵 GET AVATARS RESPONSE: $data");
-        // API returns: {"success": true, "data": [{"avatar": "...", ...}]}
-        final List list = data['data'] ?? [];
-        return list.map((e) => AvatarModel.fromJson(e)).toList();
+        final dynamic responseData = response.data;
+        List list = [];
+        if (responseData is Map) {
+          list = (responseData['data'] ?? responseData['status'] ?? []) as List;
+        } else if (responseData is List) {
+          list = responseData;
+        }
+        return list.map((e) {
+          if (e is Map<String, dynamic>) {
+            return AvatarModel.fromJson(e);
+          } else {
+            return AvatarModel(id: '', avatar: e.toString());
+          }
+        }).toList();
       }
       return [];
     } catch (e) {
@@ -479,30 +457,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final resData = response.data;
-        if (resData['code'] == 200) {
-          final userMap = resData['user'] ?? resData['data'];
-
-          if (userMap == null) {
-            throw ServerFailure(message: 'Invalid response: User data missing');
-          }
-
-          // Robust token parsing
-          String? accessToken = resData['token'] ??
-              resData['access_token'] ??
-              userMap['token'] ??
-              userMap['access_token'];
-          String? refreshToken = resData['refreshToken'] ??
-              resData['refresh_token'] ??
-              userMap['refreshToken'] ??
-              userMap['refresh_token'];
-
-          if (accessToken != null) {
-            userMap['token'] = accessToken;
-          }
-          if (refreshToken != null) {
-            userMap['refreshToken'] = refreshToken;
-          }
-          return UserModel.fromJson(userMap);
+        if (resData['code'] == 200 || resData['success'] == true) {
+          return _handleUserResponse(resData);
         } else {
           throw ServerFailure(
               message: resData['message'] ?? 'Social Registration failed');

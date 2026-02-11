@@ -12,13 +12,12 @@ void main() {
     GetIt.instance.reset();
   });
 
-  testWidgets('ReferScreen displays referral code',
-      (tester) async {
+  testWidgets('ReferScreen displays referral code', (tester) async {
     // 1. Mock SharedPreferences
     SharedPreferences.setMockInitialValues({
-      referralCode: 'TEST_CODE_123',
-      firstNameKey: 'John',
-      totalHopperArmy: '5'
+      SharedPreferencesKeys.referralCode: 'TEST_CODE_123',
+      SharedPreferencesKeys.firstNameKey: 'John',
+      SharedPreferencesKeys.totalHopperArmy: '5'
     });
 
     // 2. Initialize global variable

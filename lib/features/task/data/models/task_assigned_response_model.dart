@@ -29,6 +29,26 @@ class TaskAssignedDataModel {
   });
 
   factory TaskAssignedDataModel.fromJson(Map<String, dynamic> json) {
+    bool isFlattened = json.containsKey('_id') && !json.containsKey('task');
+
+    if (isFlattened) {
+      final String effectiveRoomId =
+          SafeParser.parseString(json['room_id'] ?? json['resp']?['room_id']);
+
+      return TaskAssignedDataModel(
+        code: 200,
+        task: TaskAssignedItemModel.fromJson(json),
+        resp: ChatRoomDataModel(
+            id: effectiveRoomId.isNotEmpty ? effectiveRoomId : "dummy",
+            participants: const [],
+            type: "",
+            roomId: effectiveRoomId,
+            senderId: "",
+            taskId: SafeParser.parseString(json['_id']),
+            createdAt: DateTime.now()),
+      );
+    }
+
     return TaskAssignedDataModel(
       code: SafeParser.parseInt(json['code']),
       task: TaskAssignedItemModel.fromJson(json['task']),
@@ -167,13 +187,15 @@ class MediaHouseDataModel extends MediaHouseEntity {
 
   factory MediaHouseDataModel.fromJson(Map<String, dynamic> json) {
     return MediaHouseDataModel(
-      id: SafeParser.parseString(json['_id']),
-      firstName: SafeParser.parseString(json['firstName']),
-      lastName: SafeParser.parseString(json['lastName']),
+      id: SafeParser.parseString(json['_id'] ?? json['id']),
+      firstName:
+          SafeParser.parseString(json['firstName'] ?? json['first_name']),
+      lastName: SafeParser.parseString(json['lastName'] ?? json['last_name']),
       email: SafeParser.parseString(json['email']),
       phone: SafeParser.parseString(json['phone']),
       role: SafeParser.parseString(json['role']),
-      profileImage: SafeParser.parseString(json['profile_image']),
+      profileImage:
+          SafeParser.parseString(json['profile_image'] ?? json['profileImage']),
     );
   }
 }
@@ -245,7 +267,7 @@ class ChatRoomDataModel extends ChatRoomEntity {
 
   factory ChatRoomDataModel.fromJson(Map<String, dynamic> json) {
     return ChatRoomDataModel(
-      id: SafeParser.parseString(json['_id']),
+      id: SafeParser.parseString(json['_id'] ?? json['room_id']),
       participants: SafeParser.parseList<String>(
           json['participants'], (e) => SafeParser.parseString(e)),
       type: SafeParser.parseString(json['type']),

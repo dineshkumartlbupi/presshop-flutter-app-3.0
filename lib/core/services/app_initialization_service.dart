@@ -20,9 +20,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:presshop/features/publish/data/models/tutorials_model.dart';
 import 'package:presshop/features/publish/data/models/category_data_model.dart';
 
-/// Service for handling app initialization tasks
 class AppInitializationService {
-  /// Load environment variables
   static Future<void> loadEnvironment() async {
     try {
       await dotenv.load(fileName: ".env");
@@ -32,7 +30,6 @@ class AppInitializationService {
     }
   }
 
-  /// Initialize dependency injection
   static Future<void> initializeDI() async {
     try {
       await di.init();
@@ -42,7 +39,6 @@ class AppInitializationService {
     }
   }
 
-  /// Set system UI preferences
   static void setSystemUIPreferences() {
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle.dark.copyWith(
@@ -116,12 +112,16 @@ class AppInitializationService {
       );
 
       // Get remember me preference
-      if (sharedPreferences!.getBool(rememberKey) != null) {
-        rememberMe = sharedPreferences!.getBool(rememberKey)!;
+      if (sharedPreferences!.getBool(SharedPreferencesKeys.rememberKey) !=
+          null) {
+        rememberMe =
+            sharedPreferences!.getBool(SharedPreferencesKeys.rememberKey)!;
       }
 
       // Set currency symbol
-      currencySymbol = sharedPreferences!.getString(currencySymbolKey) ?? "£";
+      currencySymbol = sharedPreferences!
+              .getString(SharedPreferencesKeys.currencySymbolKey) ??
+          "£";
 
       debugPrint("✅ SharedPreferences initialized");
     } catch (e) {
@@ -146,8 +146,10 @@ class AppInitializationService {
   /// Set Crashlytics user identity
   static void setCrashlyticsIdentity() {
     try {
-      final name = sharedPreferences?.getString(adminNameKey);
-      final email = sharedPreferences?.getString(emailKey);
+      final name =
+          sharedPreferences?.getString(SharedPreferencesKeys.adminNameKey);
+      final email =
+          sharedPreferences?.getString(SharedPreferencesKeys.emailKey);
 
       if (email != null) {
         FirebaseCrashlytics.instance.setUserIdentifier(email);

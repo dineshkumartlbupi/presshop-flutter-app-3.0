@@ -126,24 +126,40 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   }
 
   void _loadCachedData() {
-    userNameController.text = sharedPreferences?.getString(userNameKey) ?? "";
-    firstNameController.text = sharedPreferences?.getString(firstNameKey) ?? "";
-    lastNameController.text = sharedPreferences?.getString(lastNameKey) ?? "";
-    emailAddressController.text = sharedPreferences?.getString(emailKey) ?? "";
-    phoneNumberController.text = sharedPreferences?.getString(phoneKey) ?? "";
-    addressController.text = sharedPreferences?.getString(addressKey) ?? "";
-    postCodeController.text = sharedPreferences?.getString(postCodeKey) ?? "";
-    selectedCountryCode = sharedPreferences?.getString(countryCodeKey) ?? "+44";
-    cityNameController.text = sharedPreferences?.getString(cityKey) ?? "";
-    countryNameController.text = sharedPreferences?.getString(countryKey) ?? "";
+    userNameController.text =
+        sharedPreferences?.getString(SharedPreferencesKeys.userNameKey) ?? "";
+    firstNameController.text =
+        sharedPreferences?.getString(SharedPreferencesKeys.firstNameKey) ?? "";
+    lastNameController.text =
+        sharedPreferences?.getString(SharedPreferencesKeys.lastNameKey) ?? "";
+    emailAddressController.text =
+        sharedPreferences?.getString(SharedPreferencesKeys.emailKey) ?? "";
+    phoneNumberController.text =
+        sharedPreferences?.getString(SharedPreferencesKeys.phoneKey) ?? "";
+    addressController.text =
+        sharedPreferences?.getString(SharedPreferencesKeys.addressKey) ?? "";
+    postCodeController.text =
+        sharedPreferences?.getString(SharedPreferencesKeys.postCodeKey) ?? "";
+    selectedCountryCode =
+        sharedPreferences?.getString(SharedPreferencesKeys.countryCodeKey) ??
+            "+44";
+    cityNameController.text =
+        sharedPreferences?.getString(SharedPreferencesKeys.cityKey) ?? "";
+    countryNameController.text =
+        sharedPreferences?.getString(SharedPreferencesKeys.countryKey) ?? "";
     apartmentAndHouseNameController.text =
-        sharedPreferences?.getString(apartmentKey) ?? "";
+        sharedPreferences?.getString(SharedPreferencesKeys.apartmentKey) ?? "";
 
     // Partially initialize myProfileData for the top card
-    String cachedAvatar = sharedPreferences?.getString(avatarKey) ?? "";
-    String cachedUsername = sharedPreferences?.getString(userNameKey) ?? "";
-    String cachedIncome = sharedPreferences?.getString(totalIncomeKey) ?? "0";
-    String cachedAddress = sharedPreferences?.getString(addressKey) ?? "";
+    String cachedAvatar =
+        sharedPreferences?.getString(SharedPreferencesKeys.avatarKey) ?? "";
+    String cachedUsername =
+        sharedPreferences?.getString(SharedPreferencesKeys.userNameKey) ?? "";
+    String cachedIncome =
+        sharedPreferences?.getString(SharedPreferencesKeys.totalIncomeKey) ??
+            "0";
+    String cachedAddress =
+        sharedPreferences?.getString(SharedPreferencesKeys.addressKey) ?? "";
 
     if (cachedUsername.isNotEmpty) {
       myProfileData = MyProfileData();
@@ -1552,7 +1568,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   }
 
   Future<void> myProfileApi() async {
-    String userId = sharedPreferences!.getString(hopperIdKey) ?? "";
+    String userId =
+        sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
     print("🔴 DEBUG: Fetching Profile for userId: '$userId'");
     setState(() {
       isLoading = true;
@@ -1586,37 +1603,63 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           }
 
           updateKey(
-              firstNameKey, userData[firstNameKey] ?? userData['firstName']);
-          updateKey(lastNameKey, userData[lastNameKey] ?? userData['lastName']);
-          updateKey(emailKey, userData[emailKey]);
-          updateKey(countryCodeKey,
-              userData[countryCodeKey] ?? userData['countryCode']);
-          updateKey(phoneKey, userData[phoneKey] ?? userData['mobile_number']);
-          updateKey(addressKey, userData[addressKey]);
-          updateKey(cityKey, userData[cityKey] ?? userData['city']);
-          updateKey(countryKey, userData[countryKey] ?? userData['country']);
+              SharedPreferencesKeys.firstNameKey,
+              userData[SharedPreferencesKeys.firstNameKey] ??
+                  userData['firstName']);
           updateKey(
-              apartmentKey, userData[apartmentKey] ?? userData['appartment']);
-          updateKey(postCodeKey, userData[postCodeKey] ?? userData['postCode']);
+              SharedPreferencesKeys.lastNameKey,
+              userData[SharedPreferencesKeys.lastNameKey] ??
+                  userData['lastName']);
+          updateKey(SharedPreferencesKeys.emailKey,
+              userData[SharedPreferencesKeys.emailKey]);
+          updateKey(
+              SharedPreferencesKeys.countryCodeKey,
+              userData[SharedPreferencesKeys.countryCodeKey] ??
+                  userData['countryCode']);
+          updateKey(
+              SharedPreferencesKeys.phoneKey,
+              userData[SharedPreferencesKeys.phoneKey] ??
+                  userData['mobile_number']);
+          updateKey(SharedPreferencesKeys.addressKey,
+              userData[SharedPreferencesKeys.addressKey]);
+          updateKey(SharedPreferencesKeys.cityKey,
+              userData[SharedPreferencesKeys.cityKey] ?? userData['city']);
+          updateKey(
+              SharedPreferencesKeys.countryKey,
+              userData[SharedPreferencesKeys.countryKey] ??
+                  userData['country']);
+          updateKey(
+              SharedPreferencesKeys.apartmentKey,
+              userData[SharedPreferencesKeys.apartmentKey] ??
+                  userData['appartment']);
+          updateKey(
+              SharedPreferencesKeys.postCodeKey,
+              userData[SharedPreferencesKeys.postCodeKey] ??
+                  userData['postCode']);
 
-          if (userData[latitudeKey] != null) {
-            updateKey(latitudeKey, userData[latitudeKey]);
+          if (userData[SharedPreferencesKeys.latitudeKey] != null) {
+            updateKey(SharedPreferencesKeys.latitudeKey,
+                userData[SharedPreferencesKeys.latitudeKey]);
           }
-          if (userData[longitudeKey] != null) {
-            updateKey(longitudeKey, userData[longitudeKey]);
+          if (userData[SharedPreferencesKeys.longitudeKey] != null) {
+            updateKey(SharedPreferencesKeys.longitudeKey,
+                userData[SharedPreferencesKeys.longitudeKey]);
           }
-          if (userData[avatarIdKey] != null) {
-            updateKey(avatarIdKey, userData[avatarIdKey]);
+          if (userData[SharedPreferencesKeys.avatarIdKey] != null) {
+            updateKey(SharedPreferencesKeys.avatarIdKey,
+                userData[SharedPreferencesKeys.avatarIdKey]);
           }
           if (userData["totalEarnings"] != null) {
-            updateKey(totalIncomeKey, userData["totalEarnings"]);
+            updateKey(SharedPreferencesKeys.totalIncomeKey,
+                userData["totalEarnings"]);
           }
 
           // Save Profile Image (for Digital ID)
           String? profileImg = userData["profile_image"]?.toString() ??
               userData["profileImage"]?.toString();
           if (profileImg != null && profileImg.isNotEmpty) {
-            sharedPreferences!.setString(profileImageKey, fixS3Url(profileImg));
+            sharedPreferences!.setString(
+                SharedPreferencesKeys.profileImageKey, fixS3Url(profileImg));
           }
 
           // Save Avatar (for Profile Card)
@@ -1628,7 +1671,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           }
 
           if (av != null && av.isNotEmpty) {
-            sharedPreferences!.setString(avatarKey, fixS3Url(av));
+            sharedPreferences!
+                .setString(SharedPreferencesKeys.avatarKey, fixS3Url(av));
           }
 
           final src1 = userData["source"];
@@ -1670,21 +1714,24 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     });
     try {
       Map<String, String> params = {
-        firstNameKey: firstNameController.text.trim(),
-        lastNameKey: lastNameController.text.trim(),
-        userNameKey: userNameController.text.trim().toLowerCase(),
-        emailKey: emailAddressController.text.trim(),
-        countryCodeKey: selectedCountryCode.trim(),
-        phoneKey: phoneNumberController.text.trim(),
-        addressKey: addressController.text.trim(),
-        latitudeKey: latitude.isNotEmpty ? latitude : myProfileData!.latitude,
-        longitudeKey:
+        SharedPreferencesKeys.firstNameKey: firstNameController.text.trim(),
+        SharedPreferencesKeys.lastNameKey: lastNameController.text.trim(),
+        SharedPreferencesKeys.userNameKey:
+            userNameController.text.trim().toLowerCase(),
+        SharedPreferencesKeys.emailKey: emailAddressController.text.trim(),
+        SharedPreferencesKeys.countryCodeKey: selectedCountryCode.trim(),
+        SharedPreferencesKeys.phoneKey: phoneNumberController.text.trim(),
+        SharedPreferencesKeys.addressKey: addressController.text.trim(),
+        SharedPreferencesKeys.latitudeKey:
+            latitude.isNotEmpty ? latitude : myProfileData!.latitude,
+        SharedPreferencesKeys.longitudeKey:
             longitude.isNotEmpty ? longitude : myProfileData!.longitude,
-        avatarIdKey: myProfileData!.avatarId,
-        postCodeKey: postCodeController.text,
-        cityKey: cityNameController.text.trim(),
-        countryKey: countryNameController.text.trim(),
-        apartmentKey: apartmentAndHouseNameController.text.trim(),
+        SharedPreferencesKeys.avatarIdKey: myProfileData!.avatarId,
+        SharedPreferencesKeys.postCodeKey: postCodeController.text,
+        SharedPreferencesKeys.cityKey: cityNameController.text.trim(),
+        SharedPreferencesKeys.countryKey: countryNameController.text.trim(),
+        SharedPreferencesKeys.apartmentKey:
+            apartmentAndHouseNameController.text.trim(),
 
         // Add new profile address fields
         "profile_address": profileAddressController.text.trim(),
@@ -1692,7 +1739,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         "profile_country": profileCountryController.text.trim(),
         "profile_post_code": profilePostCodeController.text.trim(),
 
-        roleKey: "hopper",
+        SharedPreferencesKeys.roleKey: "hopper",
       };
 
       final response = await sl<ApiClient>().post(
@@ -1712,7 +1759,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           debugPrint("heloooo::::${myProfileData!.avatarId}");
 
           myProfileApi();
-          sharedPreferences!.setString(avatarKey, myProfileData!.avatarImage);
+          sharedPreferences!.setString(
+              SharedPreferencesKeys.avatarKey, myProfileData!.avatarImage);
         }
         setState(() {});
       }
@@ -1888,10 +1936,14 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                                         mode: LaunchMode.externalApplication,
                                       );
 
-                                      sharedPreferences!
-                                          .setBool(sourceDataIsClickKey, true);
-                                      sharedPreferences!
-                                          .setBool(sourceDataIsOpenedKey, true);
+                                      sharedPreferences!.setBool(
+                                          SharedPreferencesKeys
+                                              .sourceDataIsClickKey,
+                                          true);
+                                      sharedPreferences!.setBool(
+                                          SharedPreferencesKeys
+                                              .sourceDataIsOpenedKey,
+                                          true);
                                       context.pop();
 
                                       if (!launched) {
@@ -1918,19 +1970,27 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
 class MyProfileData {
   MyProfileData.fromJson(json) {
-    firstName = json[firstNameKey] ?? json['firstName'] ?? "";
-    lastName = json[lastNameKey] ?? json['lastName'] ?? "";
-    userName = json[userNameKey] ?? json['username'] ?? json['userName'] ?? "";
-    countryCode = json[countryCodeKey] ?? json['countryCode'] ?? "";
-    phoneNumber = (json[phoneKey] ?? "").toString();
+    firstName =
+        json[SharedPreferencesKeys.firstNameKey] ?? json['firstName'] ?? "";
+    lastName =
+        json[SharedPreferencesKeys.lastNameKey] ?? json['lastName'] ?? "";
+    userName = json[SharedPreferencesKeys.userNameKey] ??
+        json['username'] ??
+        json['userName'] ??
+        "";
+    countryCode =
+        json[SharedPreferencesKeys.countryCodeKey] ?? json['countryCode'] ?? "";
+    phoneNumber = (json[SharedPreferencesKeys.phoneKey] ?? "").toString();
     debugPrint("MyPhone: $phoneNumber");
 
-    cityName = json[cityKey] ?? json['city'] ?? '';
-    countryName = json[countryKey] ?? json['country'] ?? '';
-    apartment = json[apartmentKey] ?? '';
-    email = json[emailKey] ?? "";
-    address = json[addressKey] ?? "";
-    postCode = json[postCodeKey] ?? json['postCode'] ?? "";
+    cityName = json[SharedPreferencesKeys.cityKey] ?? json['city'] ?? '';
+    countryName =
+        json[SharedPreferencesKeys.countryKey] ?? json['country'] ?? '';
+    apartment = json[SharedPreferencesKeys.apartmentKey] ?? '';
+    email = json[SharedPreferencesKeys.emailKey] ?? "";
+    address = json[SharedPreferencesKeys.addressKey] ?? "";
+    postCode =
+        json[SharedPreferencesKeys.postCodeKey] ?? json['postCode'] ?? "";
 
     // New profile address fields
     profileAddress = json['profile_address'] ?? "";
@@ -1938,10 +1998,11 @@ class MyProfileData {
     profileCountry = json['profile_country'] ?? "";
     profilePostCode = json['profile_post_code'] ?? "";
 
-    latitude = (json[latitudeKey] ?? "").toString();
-    longitude = (json[longitudeKey] ?? "").toString();
-    totalIncome =
-        json[totalIncomeKey] != null ? json[totalIncomeKey].toString() : "0";
+    latitude = (json[SharedPreferencesKeys.latitudeKey] ?? "").toString();
+    longitude = (json[SharedPreferencesKeys.longitudeKey] ?? "").toString();
+    totalIncome = json[SharedPreferencesKeys.totalIncomeKey] != null
+        ? json[SharedPreferencesKeys.totalIncomeKey].toString()
+        : "0";
     String tempAvatar = "";
     if (json["avatarData"] is Map) {
       tempAvatar = json["avatarData"]["avatar"]?.toString() ?? "";

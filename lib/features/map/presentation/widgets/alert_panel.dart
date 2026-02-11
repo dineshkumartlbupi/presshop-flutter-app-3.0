@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:presshop/core/constants/app_dimensions_new.dart';
+import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:presshop/features/map/constants/map_news_constants.dart';
 
 class AlertPanel extends StatelessWidget {
@@ -24,7 +24,8 @@ class AlertPanel extends StatelessWidget {
             width: size.width * AppDimensions.numD47,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(size.width * AppDimensions.numD05),
+              borderRadius:
+                  BorderRadius.circular(size.width * AppDimensions.numD05),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
@@ -51,10 +52,12 @@ class AlertPanel extends StatelessWidget {
                 Container(
                   height: size.width * AppDimensions.numD005,
                   width: double.infinity,
-                  margin: EdgeInsets.only(bottom: size.width * AppDimensions.numD026),
+                  margin: EdgeInsets.only(
+                      bottom: size.width * AppDimensions.numD026),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(size.width * AppDimensions.numD005),
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD005),
                   ),
                 ),
                 SizedBox(height: size.width * AppDimensions.numD01),
@@ -104,7 +107,8 @@ class AlertPanel extends StatelessWidget {
                               height: size.width * AppDimensions.numD065,
                               fit: BoxFit.contain,
                             ),
-                            SizedBox(height: size.width * AppDimensions.numD016),
+                            SizedBox(
+                                height: size.width * AppDimensions.numD016),
                             Text(
                               item['label']!,
                               style: TextStyle(

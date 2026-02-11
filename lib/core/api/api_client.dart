@@ -40,29 +40,32 @@ class ApiClient {
   Future<void> _onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     // Prioritize SharedPreferences for speed and stability
-    String? token = _sharedPreferences.getString(tokenKey);
+    String? token =
+        _sharedPreferences.getString(SharedPreferencesKeys.tokenKey);
     if (token == null || token.isEmpty) {
-      token = await _secureStorage.read(key: tokenKey);
+      token = await _secureStorage.read(key: SharedPreferencesKeys.tokenKey);
       if (token != null && token.isNotEmpty) {
         // Sync back to SharedPreferences if found in SecureStorage
-        await _sharedPreferences.setString(tokenKey, token);
+        await _sharedPreferences.setString(
+            SharedPreferencesKeys.tokenKey, token);
       }
     }
 
-    final deviceId = _sharedPreferences.getString(deviceIdKey) ?? "";
+    final deviceId =
+        _sharedPreferences.getString(SharedPreferencesKeys.deviceIdKey) ?? "";
 
     if (token != null && token.isNotEmpty) {
       debugPrint("DEBUG: ApiClient Token: $token");
 
       /// Using same behavior as your existing NetworkClass
-      options.headers[headerKey] = "Bearer $token";
+      options.headers[SharedPreferencesKeys.headerKey] = "Bearer $token";
       options.headers['x-access-token'] = token;
     } else {
       debugPrint("DEBUG: ApiClient Token is NULL or EMPTY");
     }
 
-    options.headers[headerDeviceIdKey] = deviceId;
-    options.headers[headerDeviceTypeKey] =
+    options.headers[SharedPreferencesKeys.headerDeviceIdKey] = deviceId;
+    options.headers[SharedPreferencesKeys.headerDeviceTypeKey] =
         "mobile-flutter-${Platform.isIOS ? "ios" : "android"}";
 
     handler.next(options);

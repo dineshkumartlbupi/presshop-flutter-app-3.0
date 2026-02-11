@@ -2,7 +2,8 @@ class TermsResponse {
   TermsResponse({required this.data});
 
   factory TermsResponse.fromJson(Map<String, dynamic> json) {
-    return TermsResponse(data: TermsData.fromJson(json['data']));
+    return TermsResponse(
+        data: TermsData.fromJson(json['data'] ?? json['status']));
   }
   final TermsData data;
 }
@@ -17,14 +18,13 @@ class TermsData {
     if (json is List) {
       for (var item in json) {
         if (item is Map<String, dynamic>) {
-          final slug =
-              (item['slug'] ??
-                      item['type'] ??
-                      item['name'] ??
-                      item['title'] ??
-                      "")
-                  .toString()
-                  .toLowerCase();
+          final slug = (item['slug'] ??
+                  item['type'] ??
+                  item['name'] ??
+                  item['title'] ??
+                  "")
+              .toString()
+              .toLowerCase();
           if (slug.contains('privacy')) {
             privacyPolicy = CmsItem.fromJson(item);
           } else if (slug.contains('term') ||
@@ -35,9 +35,8 @@ class TermsData {
         }
       }
     } else if (json is Map<String, dynamic>) {
-      final targetMap = (json['data'] is Map<String, dynamic>)
-          ? json['data']
-          : json;
+      final targetMap =
+          (json['data'] is Map<String, dynamic>) ? json['data'] : json;
 
       if (targetMap['privacyPolicy'] != null) {
         privacyPolicy = CmsItem.fromJson(targetMap['privacyPolicy']);
