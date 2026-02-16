@@ -150,13 +150,9 @@ class DashboardState extends State<Dashboard>
     };
     _dashboardBloc.add(FetchRoomIdEvent(roomParams));
 
-    currentIndex = 2; // Always start at Camera as requested
-    _loadedIndices.add(
-        currentIndex); // Only load the current tab (Camera) to avoid build lag spike
-
-    // Trigger data loading for other tabs immediately in background
+    currentIndex = 2;
+    _loadedIndices.add(currentIndex);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Content
       context
           .read<ContentBloc>()
           .add(const FetchMyContentEvent(type: 'all', page: 1, limit: 10));
@@ -164,7 +160,6 @@ class DashboardState extends State<Dashboard>
           .read<ContentBloc>()
           .add(const FetchMyContentEvent(type: 'my', page: 1, limit: 10));
 
-      // Tasks - Fetching basic tasks (location-based fetch will still happen in TaskScreen if needed)
       context.read<TaskBloc>().add(const FetchAllTasksEvent(offset: 0));
       context.read<TaskBloc>().add(const FetchLocalTasksEvent());
     });

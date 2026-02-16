@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:intl/intl.dart';
 import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
@@ -261,18 +262,22 @@ void broadcastDialog({
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         children: [
-                                          Icon(
-                                            Icons.access_time,
-                                            color: Colors.black,
-                                            size: size.width *
-                                                AppDimensions.numD04,
+                                          Image.asset(
+                                            "${iconsPath}ic_yearly_calendar.png",
+                                            height: size.width *
+                                                AppDimensions.numD03,
+                                            color: AppColorTheme
+                                                .colorTextFieldIcon,
                                           ),
                                           SizedBox(
                                             width: size.width *
                                                 AppDimensions.numD01,
                                           ),
                                           Text(
-                                            AppStrings.deadlineText,
+                                            dateTimeFormatter(
+                                                dateTime: taskDetail
+                                                    .task.createdAt
+                                                    .toString()),
                                             style: commonTextStyle(
                                                 size: size,
                                                 fontSize: size.width *
@@ -283,42 +288,107 @@ void broadcastDialog({
                                         ],
                                       ),
                                       SizedBox(
+                                        height:
+                                            size.width * AppDimensions.numD01,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Image.asset(
+                                            "${iconsPath}ic_clock.png",
+                                            height: size.width *
+                                                AppDimensions.numD03,
+                                            color: AppColorTheme
+                                                .colorTextFieldIcon,
+                                          ),
+                                          SizedBox(
+                                            width: size.width *
+                                                AppDimensions.numD01,
+                                          ),
+                                          Text.rich(
+                                            TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: "From : ",
+                                                  style: commonTextStyle(
+                                                      size: size,
+                                                      fontSize: size.width *
+                                                          AppDimensions.numD03,
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                                TextSpan(
+                                                  text: DateFormat('hh:mm a')
+                                                      .format(taskDetail
+                                                          .task.createdAt),
+                                                  style: commonTextStyle(
+                                                      size: size,
+                                                      fontSize: size.width *
+                                                          AppDimensions.numD03,
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height:
+                                            size.width * AppDimensions.numD01,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Image.asset(
+                                            "${iconsPath}ic_clock.png",
+                                            height: size.width *
+                                                AppDimensions.numD03,
+                                            color: AppColorTheme
+                                                .colorTextFieldIcon,
+                                          ),
+                                          SizedBox(
+                                            width: size.width *
+                                                AppDimensions.numD01,
+                                          ),
+                                          Text.rich(
+                                            TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: "To       : ",
+                                                  style: commonTextStyle(
+                                                      size: size,
+                                                      fontSize: size.width *
+                                                          AppDimensions.numD03,
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                                TextSpan(
+                                                  text: DateFormat('hh:mm a')
+                                                      .format(taskDetail
+                                                          .task.deadlineDate),
+                                                  style: commonTextStyle(
+                                                      size: size,
+                                                      fontSize: size.width *
+                                                          AppDimensions.numD03,
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
                                         width:
                                             size.width * AppDimensions.numD01,
                                       ),
-                                      Padding(
-                                          padding: EdgeInsets.only(
-                                            left: size.width *
-                                                AppDimensions.numD01,
-                                            top: size.width *
-                                                AppDimensions.numD01,
-                                          ),
-                                          child: TimerCountdown(
-                                            endTime:
-                                                taskDetail.task.deadlineDate,
-                                            spacerWidth: 3,
-                                            enableDescriptions: false,
-                                            countDownFormatter:
-                                                (day, hour, min, sec) {
-                                              if (taskDetail.task.deadlineDate
-                                                      .difference(
-                                                          DateTime.now())
-                                                      .inDays >
-                                                  0) {
-                                                return "${day}d:${hour}h:${min}m:${sec}s";
-                                              } else {
-                                                return "${hour}h:${min}m:${sec}s";
-                                              }
-                                            },
-                                            format: CountDownTimerFormat
-                                                .customFormats,
-                                            timeTextStyle: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width *
-                                                    AppDimensions.numD03,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.normal),
-                                          )),
                                     ],
                                   ),
                                 ),
