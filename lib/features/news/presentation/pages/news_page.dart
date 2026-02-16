@@ -423,28 +423,34 @@ class _NewsPageState extends State<NewsPage>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: size.width * AppDimensions.numD035,
-                  backgroundImage: (item.userImage != null &&
-                          item.userImage!.isNotEmpty)
-                      ? NetworkImage(item.userImage!)
-                      : const NetworkImage(
-                          "https://i.pravatar.cc/150?u=a042581f4e29026704d"),
-                  backgroundColor: Colors.grey[300],
-                ),
-                SizedBox(width: size.width * AppDimensions.numD02),
-                Text(
-                  item.userName ?? "Unknown",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
-                    fontSize: size.width * AppDimensions.numD035,
-                    fontFamily: "AirbnbCereal",
+            Expanded(
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: size.width * AppDimensions.numD035,
+                    backgroundImage: (item.userImage != null &&
+                            item.userImage!.isNotEmpty)
+                        ? NetworkImage(item.userImage!)
+                        : const NetworkImage(
+                            "https://i.pravatar.cc/150?u=a042581f4e29026704d"),
+                    backgroundColor: Colors.grey[300],
                   ),
-                ),
-              ],
+                  SizedBox(width: size.width * AppDimensions.numD02),
+                  Flexible(
+                    child: Text(
+                      item.userName ?? "Unknown",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                        fontSize: size.width * AppDimensions.numD035,
+                        fontFamily: "AirbnbCereal",
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

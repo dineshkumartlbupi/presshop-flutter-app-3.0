@@ -99,6 +99,9 @@ class BankRemoteDataSourceImpl implements BankRemoteDataSource {
         // Legacy code: Navigator.push(CommonWebView(webUrl: data['accountLink']))
         if (data['accountLink'] != null) {
           return data['accountLink'];
+        } else if (data['data'] != null &&
+            data['data']['accountLink'] != null) {
+          return data['data']['accountLink'];
         } else if (data['error'] != null) {
           throw ServerFailure(message: data['error']);
         }

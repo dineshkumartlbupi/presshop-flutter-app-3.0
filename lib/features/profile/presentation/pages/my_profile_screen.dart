@@ -517,51 +517,57 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             width: size.width * AppDimensions.numD04,
           ),
           Expanded(
+              child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  vertical: size.width * AppDimensions.numD02),
               child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                  myProfileData != null
-                      ? myProfileData!.userName.toCapitalized()
-                      : "",
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * AppDimensions.numD04,
-                      color: AppColorTheme.colorThemePink,
-                      fontWeight: FontWeight.w500)),
-              SizedBox(
-                height: size.width * AppDimensions.numD01,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                      myProfileData != null
+                          ? myProfileData!.userName.toCapitalized()
+                          : "",
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD04,
+                          color: AppColorTheme.colorThemePink,
+                          fontWeight: FontWeight.w500)),
+                  SizedBox(
+                    height: size.width * AppDimensions.numD01,
+                  ),
+                  Text(
+                      "${AppStrings.joinedText} - ${myProfileData != null ? myProfileData!.joinedDate : ""}",
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD035,
+                          color: Colors.white,
+                          fontWeight: FontWeight.normal)),
+                  SizedBox(
+                    height: size.width * AppDimensions.numD005,
+                  ),
+                  Text(
+                      "${AppStrings.earningsText} - $currencySymbol${myProfileData != null ? formatDouble(double.parse(myProfileData!.totalIncome)) : "0"}",
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD035,
+                          color: Colors.white,
+                          fontWeight: FontWeight.normal)),
+                  SizedBox(
+                    height: size.width * AppDimensions.numD005,
+                  ),
+                  Text(_getCurrentAddress(),
+                      maxLines: 10,
+                      overflow: TextOverflow.ellipsis,
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD035,
+                          color: Colors.white,
+                          fontWeight: FontWeight.normal))
+                ],
               ),
-              Text(
-                  "${AppStrings.joinedText} - ${myProfileData != null ? myProfileData!.joinedDate : ""}",
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * AppDimensions.numD035,
-                      color: Colors.white,
-                      fontWeight: FontWeight.normal)),
-              SizedBox(
-                height: size.width * AppDimensions.numD005,
-              ),
-              Text(
-                  "${AppStrings.earningsText} - $currencySymbol${myProfileData != null ? formatDouble(double.parse(myProfileData!.totalIncome)) : "0"}",
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * AppDimensions.numD035,
-                      color: Colors.white,
-                      fontWeight: FontWeight.normal)),
-              SizedBox(
-                height: size.width * AppDimensions.numD005,
-              ),
-              Text(_getCurrentAddress(),
-                  maxLines: 5,
-                  overflow: TextOverflow.ellipsis,
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * AppDimensions.numD035,
-                      color: Colors.white,
-                      fontWeight: FontWeight.normal))
-            ],
+            ),
           ))
         ],
       ),

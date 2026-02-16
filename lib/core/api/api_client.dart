@@ -190,7 +190,15 @@ class ApiClient {
       }
 
       if (options.data != null) {
-        curl += " -d '${jsonEncode(options.data)}'";
+        if (options.data is FormData) {
+          curl += " -d '[FormData]'";
+        } else {
+          try {
+            curl += " -d '${jsonEncode(options.data)}'";
+          } catch (e) {
+            curl += " -d '[Unencodable Data: $e]'";
+          }
+        }
       }
 
       debugPrint("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");

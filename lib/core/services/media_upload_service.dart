@@ -87,17 +87,6 @@ class MediaUploadService {
         isDraft: jsonBody?['is_draft'] == 'true',
       );
 
-      // Transition to processing state after upload completes but before response
-      _showProcessingNotification(
-        localNotificationService.flutterLocalNotificationsPlugin,
-        isDraft: jsonBody?['is_draft'] == 'true',
-      );
-      uploadStatus.value = {
-        'status': 'processing',
-        'progress': 100,
-        'taskId': jsonBody?['task_id'],
-      };
-
       // Use ApiClient.post with custom timeouts via Options if needed, though ApiClient has defaults.
       // If stricter timeouts needed, pass Options.
       Response response = await apiClient.post(
@@ -191,6 +180,15 @@ class MediaUploadService {
 
     if (progress == 100) {
       _lastProgress = -1; // Reset for next upload
+      _showProcessingNotification(
+        localNotificationService.flutterLocalNotificationsPlugin,
+        isDraft: jsonBody?['is_draft'] == 'true',
+      );
+      uploadStatus.value = {
+        'status': 'processing',
+        'progress': 100,
+        'taskId': jsonBody?['task_id'],
+      };
     }
   }
 

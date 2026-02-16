@@ -997,74 +997,75 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     SizedBox(
                       height: size.width * AppDimensions.numD1,
                     ),
-                    // if (isOwner)
-                    widget.taskStatus != "rejected"
-                        ? GestureDetector(
-                            onTap: () {
-                              context.pushNamed(AppRoutes.broadcastChatName,
-                                  extra: {
-                                    'taskDetail': taskDetail!,
-                                    'roomId': roomId,
-                                  }).then((value) => context
-                                  .read<TaskBloc>()
-                                  .add(GetTaskDetailEvent(widget.taskId,
-                                      showLoader: false)));
-                            },
-                            child: AnimatedButtonWidget(
-                              shouldRestartAnimation: shouldRestartAnimation,
-                              size: size,
-                              buttonText: AppStringsNew2.manageTaskText,
-                              onPressed: () {
+                    if (isOwner)
+                      widget.taskStatus != "rejected"
+                          ? GestureDetector(
+                              onTap: () {
                                 context.pushNamed(AppRoutes.broadcastChatName,
                                     extra: {
                                       'taskDetail': taskDetail!,
                                       'roomId': roomId,
-                                    }).then((value) {
-                                  shouldRestartAnimation = true;
-                                  context.read<TaskBloc>().add(
-                                      GetTaskDetailEvent(widget.taskId,
-                                          showLoader: false));
-                                });
+                                    }).then((value) => context
+                                    .read<TaskBloc>()
+                                    .add(GetTaskDetailEvent(widget.taskId,
+                                        showLoader: false)));
                               },
+                              child: AnimatedButtonWidget(
+                                shouldRestartAnimation: shouldRestartAnimation,
+                                size: size,
+                                buttonText: AppStringsNew2.manageTaskText,
+                                onPressed: () {
+                                  context.pushNamed(AppRoutes.broadcastChatName,
+                                      extra: {
+                                        'taskDetail': taskDetail!,
+                                        'roomId': roomId,
+                                      }).then((value) {
+                                    shouldRestartAnimation = true;
+                                    context.read<TaskBloc>().add(
+                                        GetTaskDetailEvent(widget.taskId,
+                                            showLoader: false));
+                                  });
+                                },
+                              ),
+                            )
+                          : Container(
+                              width: size.width,
+                              height: size.width * AppDimensions.numD14,
+                              margin: EdgeInsets.symmetric(
+                                  horizontal:
+                                      size.width * AppDimensions.numD04),
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.black,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              size.width *
+                                                  AppDimensions.numD04))),
+                                  onPressed: () {},
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        AppStringsNew2.youHaveEarnedText,
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width *
+                                                AppDimensions.numD035,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                      Text(
+                                        "${taskDetail != null && taskDetail!.task.currencySymbol.isNotEmpty ? taskDetail!.task.currencySymbol : currencySymbol}${widget.totalEarning.isNotEmpty ? widget.totalEarning : "0"}",
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width *
+                                                AppDimensions.numD065,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                    ],
+                                  )),
                             ),
-                          )
-                        : Container(
-                            width: size.width,
-                            height: size.width * AppDimensions.numD14,
-                            margin: EdgeInsets.symmetric(
-                                horizontal: size.width * AppDimensions.numD04),
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.black,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            size.width *
-                                                AppDimensions.numD04))),
-                                onPressed: () {},
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      AppStringsNew2.youHaveEarnedText,
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width *
-                                              AppDimensions.numD035,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                    Text(
-                                      "${taskDetail != null && taskDetail!.task.currencySymbol.isNotEmpty ? taskDetail!.task.currencySymbol : currencySymbol}${widget.totalEarning.isNotEmpty ? widget.totalEarning : "0"}",
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width *
-                                              AppDimensions.numD065,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                  ],
-                                )),
-                          ),
 
                     SizedBox(
                       height: size.width * AppDimensions.numD02,
