@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class DocumentInstruction extends Equatable {
-
   const DocumentInstruction({
     required this.id,
     required this.name,
@@ -13,4 +12,24 @@ class DocumentInstruction extends Equatable {
 
   @override
   List<Object?> get props => [id, name, isSelected];
+
+  DocumentInstruction copyWith({
+    String? id,
+    String? name,
+    bool? isSelected,
+  }) {
+    return DocumentInstruction(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      isSelected: isSelected ?? this.isSelected,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'isSelected': isSelected,
+    };
+  }
 }

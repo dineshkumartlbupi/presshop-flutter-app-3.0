@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/features/bank/data/models/bank_detail_model.dart';
@@ -21,14 +22,35 @@ class BankRemoteDataSourceImpl implements BankRemoteDataSource {
       final response = await apiClient.get(ApiConstantsNew.profile.bankList);
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data['code'] == 200) {
-          final List list = data["bankList"] ?? [];
-          return list.map((e) => BankDetailModel.fromJson(e)).toList();
+        debugPrint("BankRemoteDataSource: Data keys: ${data.keys}");
+        debugPrint(
+            "BankRemoteDataSource: success: ${data['success']} (${data['success'].runtimeType})");
+
+        bool isSuccess = data['success'] == true ||
+            data['success']?.toString() == "true" ||
+            data['code'] == 200 ||
+            data['code']?.toString() == "200";
+
+        if (isSuccess) {
+          final bankData = data['data'] ?? data;
+          final List list = bankData["bankList"] ?? [];
+          debugPrint("BankRemoteDataSource: Found ${list.length} banks");
+          return list
+              .map(
+                  (e) => BankDetailModel.fromJson(Map<String, dynamic>.from(e)))
+              .toList();
         }
-        throw ServerFailure(message: data['message'] ?? 'Failed to load banks');
+
+        debugPrint(
+            "BankRemoteDataSource: Success check failed, throwing message: ${data['message']}");
+        throw ServerFailure(
+            message:
+                (data['message'] ?? data['error'] ?? 'Failed to load banks')
+                    .toString());
       }
       throw ServerFailure(message: 'Failed to load banks');
     } catch (e) {
+      debugPrint("BankRemoteDataSource: Error during fetch: $e");
       throw ApiErrorHandler.handle(e);
     }
   }

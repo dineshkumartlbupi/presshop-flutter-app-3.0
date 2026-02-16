@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:presshop/core/theme/app_colors.dart';
+import 'package:presshop/features/map/domain/usecases/get_place_details.dart';
+import 'package:presshop/features/map/domain/usecases/search_places.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:presshop/core/constants/app_assets.dart';
 import 'package:presshop/core/di/injection_container.dart';
@@ -18,16 +20,23 @@ import 'package:presshop/core/router/router_constants.dart';
 
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
-import 'package:presshop/features/map/domain/usecases/search_places.dart';
-import 'package:presshop/features/map/domain/usecases/get_place_details.dart';
 
 class NewsPage extends StatefulWidget {
-  const NewsPage(
-      {Key? key, this.hideLeading = false, this.latitude, this.longitude})
-      : super(key: key);
+  const NewsPage({
+    Key? key,
+    this.hideLeading = false,
+    this.latitude,
+    this.longitude,
+    this.hideFilters = false,
+    this.prioritizedContentId,
+    this.appBarTitle,
+  }) : super(key: key);
   final bool hideLeading;
   final double? latitude;
   final double? longitude;
+  final bool hideFilters;
+  final String? prioritizedContentId;
+  final String? appBarTitle;
 
   @override
   State<NewsPage> createState() => _NewsPageState();
@@ -40,6 +49,28 @@ class _NewsPageState extends State<NewsPage>
 
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.prioritizedContentId != null &&
+          widget.prioritizedContentId!.isNotEmpty) {
+        context.read<NewsBloc>().add(GetAggregatedNewsEvent(
+              lat: widget.latitude ?? 0.0,
+              lng: widget.longitude ?? 0.0,
+              km: 50,
+              prioritizedContentId: widget.prioritizedContentId,
+            ));
+      } else {
+        if (widget.latitude != null && widget.longitude != null) {
+          _applyFilters();
+        } else {
+          context.read<NewsBloc>().add(const GetAllNewsEvent());
+        }
+      }
+    });
+  }
 
   @override
   String get pageName => PageNames.newsPage;
@@ -97,15 +128,64 @@ class _NewsPageState extends State<NewsPage>
     );
   }
 
+  void _onRefresh() async {
+    if (widget.latitude == null &&
+        widget.longitude == null &&
+        widget.prioritizedContentId == null) {
+      context.read<NewsBloc>().add(GetAllNewsEvent(
+            km: _convertDistanceToKm(selectedDistance),
+            category: selectedCategory == 'Category' ? 'all' : selectedCategory,
+            alertType: selectedAlertType == 'Alert' ? null : selectedAlertType,
+          ));
+    } else {
+      _applyFilters();
+    }
+  }
+
+  void _onLoading() async {
+    final newsList = context.read<NewsBloc>().state.newsList;
+    if (widget.latitude == null &&
+        widget.longitude == null &&
+        widget.prioritizedContentId == null) {
+      context.read<NewsBloc>().add(GetAllNewsEvent(
+            km: _convertDistanceToKm(selectedDistance),
+            category: selectedCategory == 'Category' ? 'all' : selectedCategory,
+            alertType: selectedAlertType == 'Alert' ? null : selectedAlertType,
+            offset: newsList.length,
+          ));
+    } else {
+      context.read<NewsBloc>().add(GetAggregatedNewsEvent(
+            lat: widget.latitude ?? 0.0,
+            lng: widget.longitude ?? 0.0,
+            km: _convertDistanceToKm(selectedDistance),
+            category: selectedCategory == 'Category' ? 'all' : selectedCategory,
+            alertType: selectedAlertType == 'Alert' ? null : selectedAlertType,
+            prioritizedContentId: widget.prioritizedContentId,
+            offset: newsList.length,
+          ));
+    }
+  }
+
   void _applyFilters() {
     double km = _convertDistanceToKm(selectedDistance);
-    context.read<NewsBloc>().add(GetAggregatedNewsEvent(
-          lat: widget.latitude ?? 0.0,
-          lng: widget.longitude ?? 0.0,
-          km: km,
-          category: selectedCategory == 'Category' ? 'all' : selectedCategory,
-          alertType: selectedAlertType == 'Alert' ? null : selectedAlertType,
-        ));
+    if (widget.latitude == null &&
+        widget.longitude == null &&
+        widget.prioritizedContentId == null) {
+      context.read<NewsBloc>().add(GetAllNewsEvent(
+            km: km,
+            category: selectedCategory == 'Category' ? 'all' : selectedCategory,
+            alertType: selectedAlertType == 'Alert' ? null : selectedAlertType,
+          ));
+    } else {
+      context.read<NewsBloc>().add(GetAggregatedNewsEvent(
+            lat: widget.latitude ?? 0.0,
+            lng: widget.longitude ?? 0.0,
+            km: km,
+            category: selectedCategory == 'Category' ? 'all' : selectedCategory,
+            alertType: selectedAlertType == 'Alert' ? null : selectedAlertType,
+            prioritizedContentId: widget.prioritizedContentId,
+          ));
+    }
   }
 
   @override
@@ -117,6 +197,10 @@ class _NewsPageState extends State<NewsPage>
       listener: (context, state) {
         if (!state.isLoading) {
           _refreshController.refreshCompleted();
+          _refreshController.loadComplete();
+        }
+        if (!state.hasMoreNews) {
+          _refreshController.loadNoData();
         }
         if (state.errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -133,21 +217,19 @@ class _NewsPageState extends State<NewsPage>
             size: size,
             hideLeading: widget.hideLeading,
             showFilter: false,
+            appBarTitle: widget.appBarTitle,
+            hideHamburger: widget.appBarTitle != null,
           ),
           body: Stack(
             children: [
               SmartRefresher(
                 controller: _refreshController,
                 enablePullDown: true,
-                enablePullUp: false,
-                onRefresh: () {
-                  context.read<NewsBloc>().add(GetAggregatedNewsEvent(
-                        lat: widget.latitude ?? 0.0,
-                        lng: widget.longitude ?? 0.0,
-                        km: 50,
-                      ));
-                },
+                enablePullUp: state.hasMoreNews,
+                onRefresh: _onRefresh,
+                onLoading: _onLoading,
                 header: const WaterDropHeader(),
+                footer: const CustomFooter(builder: commonRefresherFooter),
                 child: newsList.isEmpty && !state.isLoading
                     ? Center(
                         child: Padding(
@@ -167,7 +249,9 @@ class _NewsPageState extends State<NewsPage>
                       )
                     : ListView.separated(
                         padding: EdgeInsets.only(
-                          top: 130, // Adjusted for SearchAndFilterBar
+                          top: widget.hideFilters
+                              ? size.width * AppDimensions.numD04
+                              : 130, // Adjusted for SearchAndFilterBar
                           left: size.width * AppDimensions.numD04,
                           right: size.width * AppDimensions.numD04,
                           bottom: size.width * AppDimensions.numD04,
@@ -180,38 +264,39 @@ class _NewsPageState extends State<NewsPage>
                         },
                       ),
               ),
-              Positioned(
-                top: 10,
-                left: 0,
-                right: 0,
-                child: SearchAndFilterBar(
-                  searchController: _searchController,
-                  searchFocusNode: _searchFocusNode,
-                  selectedAlertType: selectedAlertType,
-                  selectedDistance: selectedDistance,
-                  selectedCategory: selectedCategory,
-                  onChange: _onSearchChanged,
-                  onAlertTypeChanged: (val) {
-                    if (val != null) {
-                      setState(() => selectedAlertType = val);
-                      _applyFilters();
-                    }
-                  },
-                  onDistanceChanged: (val) {
-                    if (val != null) {
-                      setState(() => selectedDistance = val);
-                      _applyFilters();
-                    }
-                  },
-                  onCategoryChanged: (val) {
-                    if (val != null) {
-                      setState(() => selectedCategory = val);
-                      _applyFilters();
-                    }
-                  },
-                  showNavigationIcon: false,
+              if (!widget.hideFilters)
+                Positioned(
+                  top: 10,
+                  left: 0,
+                  right: 0,
+                  child: SearchAndFilterBar(
+                    searchController: _searchController,
+                    searchFocusNode: _searchFocusNode,
+                    selectedAlertType: selectedAlertType,
+                    selectedDistance: selectedDistance,
+                    selectedCategory: selectedCategory,
+                    onChange: _onSearchChanged,
+                    onAlertTypeChanged: (val) {
+                      if (val != null) {
+                        setState(() => selectedAlertType = val);
+                        _applyFilters();
+                      }
+                    },
+                    onDistanceChanged: (val) {
+                      if (val != null) {
+                        setState(() => selectedDistance = val);
+                        _applyFilters();
+                      }
+                    },
+                    onCategoryChanged: (val) {
+                      if (val != null) {
+                        setState(() => selectedCategory = val);
+                        _applyFilters();
+                      }
+                    },
+                    showNavigationIcon: false,
+                  ),
                 ),
-              ),
               if (_predictions.isNotEmpty)
                 Positioned(
                   top: 60,

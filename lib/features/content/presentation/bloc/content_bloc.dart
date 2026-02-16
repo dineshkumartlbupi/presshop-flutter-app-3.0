@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:presshop/core/usecases/usecase.dart';
 import '../../domain/usecases/get_my_content.dart';
 import '../../domain/usecases/publish_content.dart';
@@ -12,6 +13,8 @@ import '../../domain/usecases/get_content_detail.dart';
 import '../../domain/usecases/get_media_house_offers.dart';
 import '../../domain/usecases/get_content_transactions.dart';
 import '../../domain/entities/content_item.dart';
+import '../../domain/entities/category_data.dart';
+import '../../domain/entities/content_metadata.dart';
 import 'content_event.dart';
 import 'content_state.dart';
 
@@ -59,22 +62,128 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
         : const MyContentLoaded();
 
     bool isAll = event.type == 'all';
-    List<ContentItem> currentList =
-        isAll ? currentState.allContent : currentState.myContent;
 
-    // If data is already loaded and it's not a refresh or pagination, don't fetch
-    if (!event.isRefresh && event.page == 1 && currentList.isNotEmpty) {
-      // Still need to emit the state to ensure UI is updated if it was in a different state
-      emit(currentState);
-      return;
+    final cacheBox = Hive.box('sync_cache');
+    final String cacheKey = 'content_${event.type}';
+
+    if (event.page == 1) {
+      final cachedData = cacheBox.get(cacheKey);
+      if (cachedData != null && cachedData is List) {
+        try {
+          // Robust parsing for cached content items
+          final List<ContentItem> items = cachedData.map((e) {
+            return ContentItem(
+              id: (e['id'] ?? '').toString(),
+              description: (e['description'] ?? '').toString(),
+              location: (e['location'] ?? '').toString(),
+              latitude: (e['latitude'] ?? '').toString(),
+              longitude: (e['longitude'] ?? '').toString(),
+              categoryId: (e['category_id'] ?? '').toString(),
+              hopperId: (e['hopper_id'] ?? '').toString(),
+              type: e['type']?.toString(),
+              askPrice: (e['ask_price'] ?? '').toString(),
+              isDraft: e['is_draft'] ?? false,
+              isCharity: e['is_charity'] ?? false,
+              images: List<String>.from(e['images'] ?? []),
+              videos: List<dynamic>.from(e['videos'] ?? []),
+              createdAt: (e['created_at'] ?? '').toString(),
+              status: (e['status'] ?? '').toString(),
+              contentMetadata: (e['content_metadata'] as List? ?? [])
+                  .map((m) => m is Map
+                      ? ContentMetadata(
+                          media: (m['media'] ?? '').toString(),
+                          isNsfw: m['is_nsfw'] ?? false,
+                          deepFake: m['deep_fake'] ?? false,
+                          thumbnail: (m['thumbnail'] ?? '').toString(),
+                          mediaType: (m['media_type'] ?? '').toString(),
+                          isWatermarked: m['is_watermarked'] ?? false,
+                          originalFileName:
+                              (m['original_file_name'] ?? '').toString(),
+                          watermarkedMedia:
+                              (m['watermarked_media'] ?? '').toString(),
+                        )
+                      : const ContentMetadata(
+                          media: '',
+                          isNsfw: false,
+                          deepFake: false,
+                          thumbnail: '',
+                          mediaType: '',
+                          isWatermarked: false,
+                          originalFileName: '',
+                          watermarkedMedia: '',
+                        ))
+                  .toList(),
+              productId: (e['product_id'] ?? '').toString(),
+              priceOriginal: (e['price_original'] ?? '').toString(),
+              convertedAskPrice: (e['converted_ask_price'] ?? '').toString(),
+              currencyOriginal: (e['currency_original'] ?? '').toString(),
+              priceBase: e['price_base']?.toString(),
+              currencyBase: e['currency_base']?.toString(),
+              imageCount: e['image_count'] ?? 0,
+              videoCount: e['video_count'] ?? 0,
+              audioCount: e['audio_count'],
+              otherCount: e['other_count'],
+              contentUnderOffer: e['content_under_offer'] ?? false,
+              paidStatus: e['paid_status'] ?? false,
+              contentViewCount: e['content_view_count'] ?? 0,
+              isFavourite: e['is_favourite'] ?? false,
+              isLiked: e['is_liked'] ?? false,
+              isEmoji: e['is_emoji'] == true,
+              isClap: e['is_clap'] == true,
+              updatedAt: e['updated_at']?.toString(),
+              categoryData: CategoryData(
+                id: (e['categoryData']?['id'] ??
+                        e['category_data']?['id'] ??
+                        '')
+                    .toString(),
+                name: (e['categoryData']?['name'] ??
+                        e['category_data']?['name'] ??
+                        '')
+                    .toString(),
+                icon:
+                    (e['categoryData']?['icon'] ?? e['category_data']?['icon'])
+                        ?.toString(),
+                percentage: (e['categoryData']?['percentage'] ??
+                        e['category_data']?['percentage'] ??
+                        '')
+                    .toString(),
+                type: (e['categoryData']?['type'] ??
+                        e['category_data']?['type'] ??
+                        '')
+                    .toString(),
+              ),
+              purchasedMediahouseCount: int.tryParse(
+                      e['purchased_mediahouse_count']?.toString() ?? '0') ??
+                  0,
+              totalOffer:
+                  int.tryParse(e['total_offer']?.toString() ?? '0') ?? 0,
+              isExclusive: e['is_exclusive'] == true,
+              isPaidStatusToHopper: e['is_paid_status_to_hopper'] == true,
+              currency: (e['currency'] ?? '').toString(),
+              currencySymbol: (e['currency_symbol'] ?? '').toString(),
+            );
+          }).toList();
+
+          if (items.isNotEmpty) {
+            emit(isAll
+                ? currentState.copyWith(allContent: items, isLoadingAll: false)
+                : currentState.copyWith(myContent: items, isLoadingMy: false));
+          }
+        } catch (e) {
+          debugPrint("Error loading content from cache: $e");
+        }
+      }
     }
 
     // Only emit loading if we don't have data already for this specific type or if it's a refresh of the first page
-    // Always use granular loading flags to prevent state clobbering
     if (isAll) {
-      emit(currentState.copyWith(isLoadingAll: true));
+      if (currentState.allContent.isEmpty) {
+        emit(currentState.copyWith(isLoadingAll: true));
+      }
     } else {
-      emit(currentState.copyWith(isLoadingMy: true));
+      if (currentState.myContent.isEmpty) {
+        emit(currentState.copyWith(isLoadingMy: true));
+      }
     }
 
     final showLoader = event.page == 1 && !event.isRefresh;
@@ -88,27 +197,27 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
           type: event.type),
     );
 
-    // Re-fetch state as it might have changed while waiting for the API response
+    // Re-fetch state
     final freshState = (state is MyContentLoaded)
         ? (state as MyContentLoaded)
         : const MyContentLoaded();
 
     result.fold(
       (failure) {
-        debugPrint(
-            "DEBUG: ContentBloc FetchMyContent failure: ${failure.message}");
-        emit(freshState.copyWith(
-          errorMessage: failure.message,
-          isLoadingAll: isAll ? false : freshState.isLoadingAll,
-          isLoadingMy: isAll ? freshState.isLoadingMy : false,
-          // Stop pagination on error to prevent repeated loading
-          hasMoreAll: isAll ? false : freshState.hasMoreAll,
-          hasMoreMy: isAll ? freshState.hasMoreMy : false,
-        ));
+        if ((isAll && freshState.allContent.isEmpty) ||
+            (!isAll && freshState.myContent.isEmpty)) {
+          emit(freshState.copyWith(
+            errorMessage: failure.message,
+            isLoadingAll: isAll ? false : freshState.isLoadingAll,
+            isLoadingMy: isAll ? freshState.isLoadingMy : false,
+          ));
+        }
       },
       (content) {
-        debugPrint(
-            "DEBUG: ContentBloc FetchMyContent success, type: ${event.type}, items: ${content.length}");
+        if (event.page == 1) {
+          cacheBox.put(cacheKey, content.map((e) => e.toJson()).toList());
+        }
+
         List<ContentItem> updatedContent = [];
         List<ContentItem> currentList =
             isAll ? freshState.allContent : freshState.myContent;

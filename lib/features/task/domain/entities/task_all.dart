@@ -73,6 +73,8 @@ class TaskAll extends Equatable {
     this.currency = "",
     this.currencySymbol = "",
     this.isAvailableForAccept = false,
+    this.latitude = 0.0,
+    this.longitude = 0.0,
   });
   final String id;
   final String userId;
@@ -94,6 +96,8 @@ class TaskAll extends Equatable {
   final String currency;
   final String currencySymbol;
   final bool isAvailableForAccept;
+  final double latitude;
+  final double longitude;
 
   @override
   List<Object?> get props => [
@@ -117,5 +121,7 @@ class TaskAll extends Equatable {
         currency,
         currencySymbol,
         isAvailableForAccept,
+        latitude,
+        longitude,
       ];
 }

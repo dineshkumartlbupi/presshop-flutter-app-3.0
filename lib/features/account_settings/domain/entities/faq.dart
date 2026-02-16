@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class FAQ extends Equatable {
-
   const FAQ({
     required this.id,
     required this.question,
@@ -32,5 +31,14 @@ class FAQ extends Equatable {
       category: category ?? this.category,
       selected: selected ?? this.selected,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'question': question,
+      'answer': answer,
+      'category': category,
+    };
   }
 }

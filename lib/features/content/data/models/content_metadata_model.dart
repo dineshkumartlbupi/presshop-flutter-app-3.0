@@ -14,14 +14,14 @@ class ContentMetadataModel extends ContentMetadata {
 
   factory ContentMetadataModel.fromJson(Map<String, dynamic> json) {
     return ContentMetadataModel(
-      media: json['media'] ?? '',
+      media: (json['media'] ?? '').toString(),
       isNsfw: json['is_nsfw'] == true,
       deepFake: json['deep_fake'] == true,
-      thumbnail: json['thumbnail'] ?? '',
-      mediaType: json['media_type'] ?? '',
+      thumbnail: (json['thumbnail'] ?? '').toString(),
+      mediaType: (json['media_type'] ?? '').toString(),
       isWatermarked: json['is_watermarked'] == true,
-      originalFileName: json['originalFileName'] ?? '',
-      watermarkedMedia: json['watermarked_media'] ?? '',
+      originalFileName: (json['originalFileName'] ?? '').toString(),
+      watermarkedMedia: (json['watermarked_media'] ?? '').toString(),
     );
   }
 

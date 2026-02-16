@@ -13,33 +13,47 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onFilterTap,
     this.showFilter = true,
     this.bottom,
+    this.appBarTitle,
+    this.hideHamburger = false,
   });
   final Size size;
   final bool hideLeading;
   final Function()? onFilterTap;
   final bool showFilter;
   final PreferredSizeWidget? bottom;
+  final String? appBarTitle;
+  final bool hideHamburger;
 
   @override
   Widget build(BuildContext context) {
     return CommonAppBar(
       elevation: 0,
       hideLeading: hideLeading,
-      title: Padding(
-        padding: EdgeInsets.only(
-            left: hideLeading ? size.width * AppDimensions.numD04 : 0),
-        child: InkWell(
-          onTap: () {
-            context.goNamed(AppRoutes.dashboardName,
-                extra: {'initialPosition': 2});
-          },
-          child: Image.asset(
-            "${commonImagePath}rabbitLogo.png",
-            height: size.width * AppDimensions.numD11,
-            width: size.width * AppDimensions.numD11,
-          ),
-        ),
-      ),
+      title: appBarTitle != null
+          ? Text(
+              appBarTitle!,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: size.width * AppDimensions.numD05,
+                fontWeight: FontWeight.w700,
+                fontFamily: "AirbnbCereal",
+              ),
+            )
+          : Padding(
+              padding: EdgeInsets.only(
+                  left: hideLeading ? size.width * AppDimensions.numD04 : 0),
+              child: InkWell(
+                onTap: () {
+                  context.goNamed(AppRoutes.dashboardName,
+                      extra: {'initialPosition': 2});
+                },
+                child: Image.asset(
+                  "${commonImagePath}rabbitLogo.png",
+                  height: size.width * AppDimensions.numD11,
+                  width: size.width * AppDimensions.numD11,
+                ),
+              ),
+            ),
       centerTitle: false,
       titleSpacing: 0,
       size: size,
@@ -61,26 +75,27 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           SizedBox(
             width: size.width * AppDimensions.numD02,
           ),
-        Center(
-          child: InkWell(
-            onTap: () {
-              context.pushNamed(AppRoutes.menuName);
-            },
-            child: Container(
-              padding: EdgeInsets.all(size.width * AppDimensions.numD025),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius:
-                    BorderRadius.circular(size.width * AppDimensions.numD035),
-              ),
-              child: Image.asset(
-                'assets/icons/menu3.png',
-                width: size.width * AppDimensions.numD06,
-                height: size.width * AppDimensions.numD06,
+        if (!hideHamburger)
+          Center(
+            child: InkWell(
+              onTap: () {
+                context.pushNamed(AppRoutes.menuName);
+              },
+              child: Container(
+                padding: EdgeInsets.all(size.width * AppDimensions.numD025),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD035),
+                ),
+                child: Image.asset(
+                  'assets/icons/menu3.png',
+                  width: size.width * AppDimensions.numD06,
+                  height: size.width * AppDimensions.numD06,
+                ),
               ),
             ),
           ),
-        ),
         SizedBox(
           width: size.width * AppDimensions.numD04,
         )

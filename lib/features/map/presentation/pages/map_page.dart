@@ -12,7 +12,8 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
+import 'package:presshop/features/news/presentation/pages/news_page.dart';
+import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
 
 import 'package:presshop/features/map/constants/map_news_constants.dart';
 import 'package:presshop/features/map/presentation/bloc/map_bloc.dart';
@@ -28,6 +29,7 @@ import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget
 import 'package:presshop/features/map/presentation/widgets/side_action_panal.dart';
 import 'package:presshop/features/map/presentation/widgets/get_direction_card.dart';
 import 'package:presshop/features/map/presentation/widgets/route_info_window.dart';
+import 'package:custom_info_window/custom_info_window.dart' as ciw;
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
@@ -96,6 +98,15 @@ class _MapPageContentState extends State<_MapPageContent>
 
   bool _isSelectingAlertLocation = false;
   String? _pendingAlertType;
+
+  bool _isUserDragging = false;
+  bool _isProgrammaticMovement = false;
+  LatLng? _lastSelectedPosition;
+  String? _lastDistanceFilter;
+
+  final ciw.CustomInfoWindowController _customInfoWindowController =
+      ciw.CustomInfoWindowController();
+
   Offset? _routeInfoOffset;
 
   void _checkPulseAnimation(double zoom) {
@@ -114,6 +125,27 @@ class _MapPageContentState extends State<_MapPageContent>
         _pulseController.repeat();
       }
     }
+  }
+
+  void _animateToDistance(String distance) {
+    double zoom = 12.0;
+    if (distance.contains('2')) {
+      zoom = 14.0;
+    } else if (distance.contains('5')) {
+      zoom = 12.5;
+    } else if (distance.contains('10')) {
+      zoom = 11.5;
+    } else if (distance.contains('25')) {
+      zoom = 10.0;
+    } else if (distance.contains('50')) {
+      zoom = 9.0;
+    }
+
+    _controller.future.then((ctrl) {
+      if (mounted) {
+        ctrl.animateCamera(CameraUpdate.zoomTo(zoom));
+      }
+    });
   }
 
   @override
@@ -138,7 +170,6 @@ class _MapPageContentState extends State<_MapPageContent>
     )..addListener(() {
         if (!mounted) return;
         final val = Curves.easeOutQuad.transform(_pulseController.value);
-        // Only update if BLoC is available/open - hard to check, but mounted check helps
         context.read<MapBloc>().add(UpdatePulseCircleEvent(
               radiusMultiplier: 1.0 + val * 0.5,
               opacity: 1.0 - val,
@@ -159,6 +190,7 @@ class _MapPageContentState extends State<_MapPageContent>
     _pulseController.dispose();
     _searchController.dispose();
     _searchFocusNode.dispose();
+    _customInfoWindowController.dispose();
     super.dispose();
   }
 
@@ -168,12 +200,14 @@ class _MapPageContentState extends State<_MapPageContent>
       if (!mounted) return;
       final state = context.read<MapBloc>().state;
       if (state.myLocation != null) {
-        _currentZoom = 17.0; // Zoom in when going to current location
+        _currentZoom = 17.0;
+        _isProgrammaticMovement = true;
         await mapCtrl.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(target: state.myLocation!, zoom: _currentZoom),
           ),
         );
+        _isProgrammaticMovement = false;
       }
     } catch (e) {
       debugPrint("Error going to current location: $e");
@@ -229,11 +263,12 @@ class _MapPageContentState extends State<_MapPageContent>
       final location = data['result']['geometry']['location'];
       final latLng = LatLng(location['lat'], location['lng']);
 
-      // Trigger news search for this location
       context.read<MapBloc>().add(SetSearchedLocationEvent(latLng));
 
-      _controller.future.then((ctrl) {
-        ctrl.animateCamera(CameraUpdate.newLatLngZoom(latLng, 15));
+      _controller.future.then((ctrl) async {
+        _isProgrammaticMovement = true;
+        await ctrl.animateCamera(CameraUpdate.newLatLngZoom(latLng, 15));
+        _isProgrammaticMovement = false;
       });
 
       setState(() {
@@ -250,7 +285,9 @@ class _MapPageContentState extends State<_MapPageContent>
       _currentZoom += 1;
       final mapCtrl = await _controller.future;
       if (!mounted) return;
+      _isProgrammaticMovement = true;
       await mapCtrl.animateCamera(CameraUpdate.zoomTo(_currentZoom));
+      _isProgrammaticMovement = false;
     } catch (e) {
       debugPrint("Error zooming in: $e");
     }
@@ -261,7 +298,9 @@ class _MapPageContentState extends State<_MapPageContent>
       _currentZoom -= 1;
       final mapCtrl = await _controller.future;
       if (!mounted) return;
+      _isProgrammaticMovement = true;
       await mapCtrl.animateCamera(CameraUpdate.zoomTo(_currentZoom));
+      _isProgrammaticMovement = false;
     } catch (e) {
       debugPrint("Error zooming out: $e");
     }
@@ -275,7 +314,6 @@ class _MapPageContentState extends State<_MapPageContent>
       p.scale = 0.6 + t * 0.5;
       p.opacity = (1 - t).clamp(0.0, 1.0);
 
-      // Move upward with individual speed
       p.position = p.position.translate(
         (p.position.dx - size.width / 2) * 0.02 * t, // Spread outwards
         -size.height * 0.01 * p.speed, // Move up based on speed
@@ -321,8 +359,7 @@ class _MapPageContentState extends State<_MapPageContent>
           position: Offset(randomX, randomY),
           scale: 0.4 + Random().nextDouble() * 0.8,
           opacity: 1.0,
-          speed: 1.0 + Random().nextDouble() * 1.5, // Random speed 1.0 - 2.5
-          // rotation: Random().nextDouble() * 2 * pi, // Removed rotation
+          speed: 1.0 + Random().nextDouble() * 1.5,
         ),
       );
     }
@@ -399,6 +436,7 @@ class _MapPageContentState extends State<_MapPageContent>
         if (point.longitude > maxLng) maxLng = point.longitude;
       }
 
+      _isProgrammaticMovement = true;
       await controller.animateCamera(CameraUpdate.newLatLngBounds(
         LatLngBounds(
           southwest: LatLng(minLat, minLng),
@@ -406,6 +444,7 @@ class _MapPageContentState extends State<_MapPageContent>
         ),
         50,
       ));
+      _isProgrammaticMovement = false;
     } catch (e) {
       debugPrint("Error fitting bounds: $e");
     }
@@ -435,9 +474,20 @@ class _MapPageContentState extends State<_MapPageContent>
     );
   }
 
+  LatLng _adjustPositionForInfoWindow(LatLng position, double zoom) {
+    double lat = position.latitude;
+    double cosLat = cos(lat * pi / 180);
+    double metersPerPixel = 156543.03392 * cosLat / pow(2, zoom);
+    double metersPerDegreeLat = 111319.49 * cosLat;
+    double pixels = 150;
+    double deltaLat = pixels * metersPerPixel / metersPerDegreeLat;
+    return LatLng(lat + deltaLat, position.longitude);
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    final double responsiveWidth = size.width > 600 ? 500 : size.width;
 
     return BlocConsumer<MapBloc, MapState>(
       listener: (context, state) {
@@ -456,26 +506,28 @@ class _MapPageContentState extends State<_MapPageContent>
           // Initial location set
         }
 
+        if (state.selectedDistance != _lastDistanceFilter) {
+          _lastDistanceFilter = state.selectedDistance;
+          if (_lastDistanceFilter != null) {
+            _animateToDistance(_lastDistanceFilter!);
+          }
+        }
+
         // Listen for selection changes to update info window position
-        if (state.selectedPosition != null) {
+        if (state.selectedPosition == null) {
+          _lastSelectedPosition = null;
+        } else if (state.selectedPosition != _lastSelectedPosition) {
+          _lastSelectedPosition = state.selectedPosition;
           _controller.future.then((ctrl) async {
             try {
               if (mounted) {
-                // Calculate adjusted position to counter the bottom padding and popup space
-                // Moving camera HIGHER (latitude) puts the marker LOWER on the screen.
-                double zoom = _currentZoom;
-                double lat = state.selectedPosition!.latitude;
-                double cosLat = cos(lat * pi / 180);
-                double metersPerPixel = 156543.03392 * cosLat / pow(2, zoom);
-                double metersPerDegreeLat = 111319.49;
+                _isProgrammaticMovement = true;
 
-                // Shift camera focus UP by 220 pixels to move marker DOWN on screen
-                double pixels = 220;
-                double deltaLat = pixels * metersPerPixel / metersPerDegreeLat;
-                LatLng adjusted =
-                    LatLng(lat + deltaLat, state.selectedPosition!.longitude);
+                LatLng adjusted = _adjustPositionForInfoWindow(
+                    state.selectedPosition!, _currentZoom);
 
                 await ctrl.animateCamera(CameraUpdate.newLatLng(adjusted));
+                _isProgrammaticMovement = false;
                 _updateInfoWindow();
               }
             } catch (e) {
@@ -484,11 +536,12 @@ class _MapPageContentState extends State<_MapPageContent>
           });
         }
 
-        // Handle Navigation Camera
         if (state.isNavigating && state.myLocation != null) {
           _controller.future.then((ctrl) async {
             try {
               if (mounted) {
+                _isProgrammaticMovement = true;
+
                 await ctrl.animateCamera(CameraUpdate.newCameraPosition(
                   CameraPosition(
                     target: state.myLocation!,
@@ -497,24 +550,67 @@ class _MapPageContentState extends State<_MapPageContent>
                     bearing: 0,
                   ),
                 ));
+                _isProgrammaticMovement = false;
               }
             } catch (e) {
               debugPrint("Error moving camera for navigation: $e");
             }
           });
         }
-
-        // Fit bounds for route if not navigating
-        // Note: Logic to prevent continuous fitting while user drags map might be needed
-        // For now, simpler implementation
         if (state.routeInfo != null &&
             !state.isNavigating &&
             state.routeInfo!.points.isNotEmpty) {
           _fitBounds(state.routeInfo!.points);
         }
+        if (state.newlyCreatedIncident != null) {
+          final incident = state.newlyCreatedIncident!;
+          final type = incident.type ?? incident.alertType ?? "accident";
+          _addBurst(incident.position, type);
+        }
       },
       listenWhen: (previous, current) {
-        // Add custom logic if needed to filter updates
+        if (previous?.selectedIncident?.id != current.selectedIncident?.id) {
+          if (current.selectedIncident != null &&
+              current.selectedPosition != null) {
+            _customInfoWindowController.hideInfoWindow!();
+            _customInfoWindowController.addInfoWindow!(
+              current.selectedIncident!.markerType == 'content' ||
+                      current.selectedIncident!.markerType == 'news' ||
+                      (current.selectedIncident!.markerType == 'icon' &&
+                          current.selectedIncident!.title != null &&
+                          current.selectedIncident!.title!.isNotEmpty)
+                  ? ContentMarkerPopup(
+                      key: ValueKey('popup_${current.selectedIncident!.id}'),
+                      incident: current.selectedIncident!,
+                      onViewPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BlocProvider(
+                              create: (context) => sl<NewsBloc>(),
+                              child: NewsPage(
+                                hideFilters: true,
+                                appBarTitle: 'All News',
+                                prioritizedContentId:
+                                    current.selectedIncident!.id,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : CustomInfoWindow(
+                      key: ValueKey('popup_${current.selectedIncident!.id}'),
+                      incident: current.selectedIncident!,
+                      onPressed: () {},
+                    ),
+              current.selectedPosition!,
+            );
+          } else {
+            _customInfoWindowController.hideInfoWindow!();
+          }
+        }
+
         return true;
       },
       builder: (context, state) {
@@ -527,6 +623,7 @@ class _MapPageContentState extends State<_MapPageContent>
           appBar: NewHomeAppBar(
             size: size,
             hideLeading: widget.hideLeading,
+            showFilter: false,
           ),
           body: Stack(
             children: [
@@ -534,30 +631,46 @@ class _MapPageContentState extends State<_MapPageContent>
                 onMapCreated: (c) async {
                   if (!_controller.isCompleted) {
                     _controller.complete(c);
-                    // Camera position is already set via initialCameraPosition from bloc state
-                    // No need for additional animation - this prevents duplicate loading states
+                    _customInfoWindowController.googleMapController = c;
                   }
 
-                  // Update info window asynchronously without blocking
                   if (mounted) {
                     unawaited(_updateInfoWindow());
                   }
                 },
                 onCameraMoveStarted: () {
-                  // mapController.setDragging(true); // Add event if needed
+                  if (!_isProgrammaticMovement) {
+                    _isUserDragging = true;
+                  }
+                  _customInfoWindowController.onCameraMove!();
                 },
                 onCameraMove: (pos) {
                   _currentZoom = pos.zoom;
                   _checkPulseAnimation(pos.zoom);
+                  _customInfoWindowController.onCameraMove!();
                   _updateInfoWindow();
+
+                  if (_isUserDragging) {
+                    // _customInfoWindowController.hideInfoWindow!();
+                    context.read<MapBloc>().add(const SetDraggingEvent(true));
+                  }
                 },
                 onCameraIdle: () {
                   if (mounted) {
-                    // mapController.setDragging(false); // Add event if needed
                     _updateInfoWindow();
+                    _isProgrammaticMovement = false;
+                    if (_isUserDragging) {
+                      context
+                          .read<MapBloc>()
+                          .add(const SetDraggingEvent(false));
+                      _isUserDragging = false;
+                    }
                   }
                 },
                 onTap: (pos) async {
+                  _customInfoWindowController.hideInfoWindow!();
+                  context.read<MapBloc>().add(ClearRouteEvent());
+
                   if (_isSelectingAlertLocation && _pendingAlertType != null) {
                     context.read<MapBloc>().add(SetPreviewAlertMarkerEvent(
                         type: _pendingAlertType!, position: pos));
@@ -599,6 +712,25 @@ class _MapPageContentState extends State<_MapPageContent>
                     return;
                   }
 
+                  if (state.showGetDirectionCard) {
+                    final repo = sl<MapRepository>();
+                    String address = "${pos.latitude}, ${pos.longitude}";
+
+                    final result = await repo.getAddressFromCoordinates(pos);
+                    result.fold(
+                      (failure) => debugPrint(
+                          "Failed to get address: ${failure.message}"),
+                      (addr) => address = addr,
+                    );
+
+                    context.read<MapBloc>().add(SetMapSelectedLocationEvent(
+                          position: pos,
+                          address: address,
+                          isOrigin: false,
+                        ));
+                    return;
+                  }
+
                   context.read<MapBloc>().add(ClearSelectedMarkerEvent());
                   context.read<MapBloc>().add(ClearSelectedPolygonEvent());
                   setState(() {
@@ -608,8 +740,7 @@ class _MapPageContentState extends State<_MapPageContent>
                 },
                 initialCameraPosition: state.initialCamera ??
                     const CameraPosition(
-                      target:
-                          LatLng(51.5074, -0.1278), // Safe fallback to London
+                      target: LatLng(51.5074, -0.1278),
                       zoom: 14,
                     ),
                 markers: state.markers,
@@ -621,37 +752,32 @@ class _MapPageContentState extends State<_MapPageContent>
                 zoomControlsEnabled: false,
                 padding: const EdgeInsets.only(bottom: 220),
               ),
-              if (_infoOffset != null && state.selectedIncident != null)
+
+              // CustomInfoWindow overlay for popups
+              ciw.CustomInfoWindow(
+                controller: _customInfoWindowController,
+                height: responsiveWidth * 0.70,
+                width: responsiveWidth * 0.65,
+                offset: responsiveWidth * 0.12,
+              ),
+
+              // Dedicated CustomInfoWindow for Route Details (Smaller)
+              // ======================= Route Info (Positioned) =======================
+              if (_routeInfoOffset != null &&
+                  state.routeInfo != null &&
+                  state.routeMidpoint != null)
                 Positioned(
-                  left: _infoOffset!.dx -
-                      ((state.selectedIncident!.markerType == 'content' ||
-                              state.selectedIncident!.markerType == 'news')
-                          ? 32
-                          : 140),
-                  top: _infoOffset!.dy -
-                      ((state.selectedIncident!.markerType == 'content' ||
-                              state.selectedIncident!.markerType == 'news')
-                          ? 215 // Reduced from 245 to match smaller marker size
-                          : 180), // Reduced from 195
-                  child: (state.selectedIncident!.markerType == 'content' ||
-                          state.selectedIncident!.markerType == 'news')
-                      ? ContentMarkerPopup(
-                          key: ValueKey('info_${state.selectedIncident!.id}'),
-                          incident: state.selectedIncident!,
-                          onViewPressed: () {
-                            context.pushNamed(
-                              AppRoutes.newsDetailsName,
-                              extra: {
-                                'newsId': state.selectedIncident!.id,
-                              },
-                            );
-                          },
-                        )
-                      : CustomInfoWindow(
-                          key: ValueKey('info_${state.selectedIncident!.id}'),
-                          incident: state.selectedIncident!,
-                          onPressed: () {},
-                        ),
+                  left: _routeInfoOffset!.dx -
+                      100, // Center horizontally (width 200/2)
+                  top: _routeInfoOffset!.dy - 130, // Place above marker
+                  child: RouteInfoWindow(
+                    distance:
+                        "${state.routeInfo!.distanceKm.toStringAsFixed(2)} km",
+                    duration: "${state.routeInfo!.durationMinutes} min",
+                    onClose: () {
+                      context.read<MapBloc>().add(ClearRouteEvent());
+                    },
+                  ),
                 ),
 
               // ======================= Polygon Info =======================
@@ -665,24 +791,6 @@ class _MapPageContentState extends State<_MapPageContent>
                     onPressed: () {
                       context.read<MapBloc>().add(ClearSelectedPolygonEvent());
                       setState(() => _polygonInfoOffset = null);
-                    },
-                  ),
-                ),
-
-              // ======================= Route Info =======================
-              if (_routeInfoOffset != null &&
-                  state.routeInfo != null &&
-                  state.routeMidpoint != null)
-                Positioned(
-                  left: _routeInfoOffset!.dx -
-                      100, // Center horizontally (width 200/2)
-                  top: _routeInfoOffset!.dy - 100, // Position above the route
-                  child: RouteInfoWindow(
-                    distance:
-                        "${state.routeInfo!.distanceKm.toStringAsFixed(2)} km",
-                    duration: "${state.routeInfo!.durationMinutes} min",
-                    onClose: () {
-                      context.read<MapBloc>().add(ClearRouteEvent());
                     },
                   ),
                 ),
@@ -726,13 +834,11 @@ class _MapPageContentState extends State<_MapPageContent>
                   },
                 ),
               ),
-
-              // Dropdown overlaps filters and starts right under the search bar
               if (_showDropdown && _predictions.isNotEmpty)
                 Positioned(
                   left: 12,
                   right: 55,
-                  top: 60, // Adjusted to start below search bar
+                  top: 60,
                   child: Material(
                     elevation: 4,
                     borderRadius: BorderRadius.circular(8),
@@ -768,12 +874,12 @@ class _MapPageContentState extends State<_MapPageContent>
               // ======================= Get Direction Card =======================
               Positioned(
                 top: 65,
-                right: 15, // Aligned to the right button
+                right: 10, // Aligned to the right button
                 child: AnimatedOpacity(
                   duration: const Duration(milliseconds: 300),
                   opacity: state.showGetDirectionCard ? 1 : 0,
                   child: AnimatedScale(
-                    duration: const Duration(milliseconds: 400),
+                    duration: const Duration(milliseconds: 450),
                     curve: Curves.easeOutBack,
                     alignment: Alignment.topRight,
                     scale: state.showGetDirectionCard ? 1.0 : 0.0,

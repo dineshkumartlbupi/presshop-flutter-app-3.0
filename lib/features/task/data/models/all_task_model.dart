@@ -22,6 +22,8 @@ class AllTaskModel extends TaskAll {
     super.currency = "",
     super.currencySymbol = "",
     super.isAvailableForAccept = false,
+    super.latitude = 0.0,
+    super.longitude = 0.0,
   });
 
   factory AllTaskModel.fromJson(Map<String, dynamic> json) {
@@ -70,7 +72,44 @@ class AllTaskModel extends TaskAll {
       currency: (json['currency'] ?? "").toString(),
       currencySymbol:
           (json['currency_symbol'] ?? json['currencySymbol'] ?? "").toString(),
+      latitude: json["address_location"] != null &&
+              json["address_location"]["coordinates"] != null
+          ? (json["address_location"]["coordinates"] as List).first.toDouble()
+          : 0.0,
+      longitude: json["address_location"] != null &&
+              json["address_location"]["coordinates"] != null
+          ? (json["address_location"]["coordinates"] as List).last.toDouble()
+          : 0.0,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'hopper_id': userId,
+      'deadline_date': deadlineDate?.toIso8601String(),
+      'heading': heading,
+      'createdAt': createdAt,
+      'task_description': description,
+      'location': location,
+      'status': status,
+      'is_available_for_accept': isAvailableForAccept,
+      'mediahouse_id': (mediaHouseDetails as MediaHouseDetails?)?.toJson(),
+      'acceptedTasks':
+          acceptedTasks.map((e) => (e as AcceptedTask).toJson()).toList(),
+      'uploadContents': (uploadContents as UploadContents?)?.toJson(),
+      'need_photos': isNeedPhoto,
+      'need_videos': isNeedVideo,
+      'need_interview': isNeedInterview,
+      'hopper_photo_price': photoPrice,
+      'hopper_videos_price': videoPrice,
+      'hopper_interview_price': interviewPrice,
+      'currency': currency,
+      'currency_symbol': currencySymbol,
+      'address_location': {
+        'coordinates': [latitude, longitude]
+      },
+    };
   }
 }
 
@@ -89,6 +128,15 @@ class UploadContents extends UploadContentsEntity {
       type: (json['type'] ?? "").toString(),
       imageAndVideo: (json['imageAndVideo'] ?? "").toString(),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'videothubnail': videothubnail,
+      'type': type,
+      'imageAndVideo': imageAndVideo,
+    };
   }
 }
 
@@ -112,6 +160,17 @@ class AcceptedTask extends AcceptedTaskEntity {
       updatedAt: (json['updatedAt'] ?? "").toString(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'task_id': taskId,
+      'task_status': taskStatus,
+      'hopper_id': hopperId,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+    };
+  }
 }
 
 class MediaHouseDetails extends MediaHouseDetailsEntity {
@@ -127,5 +186,13 @@ class MediaHouseDetails extends MediaHouseDetailsEntity {
       fullName: (json['full_name'] ?? "").toString(),
       profileImage: (json['profile_image'] ?? "").toString(),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'full_name': fullName,
+      'profile_image': profileImage,
+    };
   }
 }

@@ -451,53 +451,31 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
               // Assuming it's part of data model or entity.
               // If not present, I'll comment out or handle if existing.
               // The API response mapping might have 'featureList'.
-              /*
               Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal:
-                        size.width * AppDimensions.numD02),
+                    horizontal: size.width * AppDimensions.numD02),
                 child: Wrap(
-                    children:
-                        List<Widget>.generate(
-                            review.featureList
-                                .length,
-                            (int idx) {
+                    children: List<Widget>.generate(review.featureList.length,
+                        (int idx) {
                   return Container(
                       margin: EdgeInsets.only(
-                          right: size.width *
-                              0.04,
-                          top: size.width *
-                              0.014),
+                          right: size.width * 0.04, top: size.width * 0.014),
                       decoration: BoxDecoration(
                           color: AppColorTheme.colorThemePink,
                           borderRadius:
-                              BorderRadius
-                                  .circular(size
-                                          .width *
-                                      0.04)),
-                      padding: EdgeInsets
-                          .symmetric(
-                              vertical:
-                                  size.width *
-                                      0.012,
-                              horizontal:
-                                  size.width *
-                                      0.018),
+                              BorderRadius.circular(size.width * 0.04)),
+                      padding: EdgeInsets.symmetric(
+                          vertical: size.width * 0.012,
+                          horizontal: size.width * 0.018),
                       child: Text(
-                        review
-                            .featureList[idx],
+                        review.featureList[idx],
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize:
-                                size.width *
-                                    0.025,
-                            fontWeight:
-                                FontWeight
-                                    .w600),
+                            fontSize: size.width * 0.025,
+                            fontWeight: FontWeight.w600),
                       ));
                 })),
               ),
-              */
               SizedBox(
                 height: size.width * AppDimensions.numD03,
               ),

@@ -1,14 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:presshop/core/usecases/usecase.dart';
 import 'package:presshop/features/bank/domain/usecases/delete_bank.dart';
 import 'package:presshop/features/bank/domain/usecases/get_banks.dart';
 import 'package:presshop/features/bank/domain/usecases/get_stripe_onboarding_url.dart';
 import 'package:presshop/features/bank/domain/usecases/set_default_bank.dart';
+import 'package:presshop/features/bank/data/models/bank_detail_model.dart';
 import 'bank_event.dart';
 import 'bank_state.dart';
 
 class BankBloc extends Bloc<BankEvent, BankState> {
-
   BankBloc({
     required this.getBanks,
     required this.deleteBank,
@@ -29,11 +31,52 @@ class BankBloc extends Bloc<BankEvent, BankState> {
     FetchBanksEvent event,
     Emitter<BankState> emit,
   ) async {
-    emit(BankLoading());
+    final cacheBox = Hive.box('sync_cache');
+    const String cacheKey = 'my_banks';
+
+    debugPrint("BankBloc: Fetching banks starting...");
+
+    final cachedData = cacheBox.get(cacheKey);
+    if (cachedData != null && cachedData is List) {
+      try {
+        debugPrint("BankBloc: Found cached data: ${cachedData.length} items");
+        final banks = cachedData
+            .map((e) => BankDetailModel.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+        if (banks.isNotEmpty) {
+          emit(BanksLoaded(banks));
+          debugPrint("BankBloc: Emitted cached banks");
+        }
+      } catch (e) {
+        debugPrint("BankBloc: Error loading banks from cache: $e");
+      }
+    }
+
+    if (state is! BanksLoaded) {
+      debugPrint("BankBloc: Emitting BankLoading...");
+      emit(BankLoading());
+    }
+
     final result = await getBanks(NoParams());
     result.fold(
-      (failure) => emit(BankError(failure.message)),
-      (banks) => emit(BanksLoaded(banks)),
+      (failure) {
+        debugPrint("BankBloc: API Error: ${failure.message}");
+        if (state is! BanksLoaded) {
+          emit(BankError(failure.message));
+        }
+      },
+      (banks) {
+        debugPrint("BankBloc: API Success: ${banks.length} banks");
+        try {
+          cacheBox.put(cacheKey,
+              banks.map((e) => (e as BankDetailModel).toJson()).toList());
+          debugPrint("BankBloc: Cache updated in Hive");
+        } catch (e) {
+          debugPrint("BankBloc: Error updating cache: $e");
+        }
+        emit(BanksLoaded(banks));
+        debugPrint("BankBloc: Emitted BanksLoaded from API");
+      },
     );
   }
 
@@ -50,7 +93,7 @@ class BankBloc extends Bloc<BankEvent, BankState> {
       (failure) => emit(BankError(failure.message)),
       (_) {
         emit(BankDeleted());
-        add(FetchBanksEvent()); // Refresh list
+        add(FetchBanksEvent());
       },
     );
   }

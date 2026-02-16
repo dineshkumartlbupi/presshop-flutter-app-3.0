@@ -14,7 +14,6 @@ class GetCurrentLocationEvent extends MapEvent {
 }
 
 class GetRouteEvent extends MapEvent {
-
   const GetRouteEvent({required this.start, required this.end});
   final LatLng start;
   final LatLng end;
@@ -24,7 +23,6 @@ class GetRouteEvent extends MapEvent {
 }
 
 class SearchPlacesEvent extends MapEvent {
-
   const SearchPlacesEvent({required this.query});
   final String query;
 
@@ -47,20 +45,21 @@ class OnIncidentUpdatedEvent extends MapEvent {
 }
 
 class FetchNewsEvent extends MapEvent {
-
   const FetchNewsEvent({
     required this.lat,
     required this.lng,
     required this.km,
     this.category = "all",
+    this.isFeedOnly = false,
   });
   final double lat;
   final double lng;
   final double km;
   final String category;
+  final bool isFeedOnly;
 
   @override
-  List<Object> get props => [lat, lng, km, category];
+  List<Object> get props => [lat, lng, km, category, isFeedOnly];
 }
 
 class SetSearchedLocationEvent extends MapEvent {
@@ -90,7 +89,6 @@ class ClearSelectedPolygonEvent extends MapEvent {
 }
 
 class UpdateFiltersEvent extends MapEvent {
-
   const UpdateFiltersEvent({this.alertType, this.distance, this.category});
   final String? alertType;
   final String? distance;
@@ -101,7 +99,6 @@ class UpdateFiltersEvent extends MapEvent {
 }
 
 class AddAlertMarkerEvent extends MapEvent {
-
   const AddAlertMarkerEvent({required this.type, required this.position});
   final String type;
   final LatLng position;
@@ -111,7 +108,6 @@ class AddAlertMarkerEvent extends MapEvent {
 }
 
 class SetPreviewAlertMarkerEvent extends MapEvent {
-
   const SetPreviewAlertMarkerEvent(
       {required this.type, required this.position});
   final String type;
@@ -129,7 +125,6 @@ class SetSelectedIncidentEvent extends MapEvent {
 }
 
 class SetMapSelectedLocationEvent extends MapEvent {
-
   const SetMapSelectedLocationEvent({
     required this.position,
     required this.address,
@@ -160,7 +155,6 @@ class ToggleGetDirectionCardEvent extends MapEvent {
 }
 
 class SetDestinationSelectionModeEvent extends MapEvent {
-
   const SetDestinationSelectionModeEvent({
     required this.isSelectionMode,
     this.isOrigin = false,
@@ -177,7 +171,6 @@ class ClearRouteEvent extends MapEvent {
 }
 
 class UpdatePulseCircleEvent extends MapEvent {
-
   const UpdatePulseCircleEvent({
     required this.radiusMultiplier,
     required this.opacity,
@@ -189,4 +182,12 @@ class UpdatePulseCircleEvent extends MapEvent {
 
   @override
   List<Object> get props => [radiusMultiplier, opacity, zoomLevel];
+}
+
+class SetDraggingEvent extends MapEvent {
+  const SetDraggingEvent(this.isDragging);
+  final bool isDragging;
+
+  @override
+  List<Object> get props => [isDragging];
 }

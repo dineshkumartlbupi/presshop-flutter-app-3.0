@@ -2,19 +2,27 @@ const Map<String, String> markerIcons = {
   "accident": "assets/markers/marker-icons/accident.png",
   "crash": "assets/markers/marker-icons/carcrash.png",
   "fire": "assets/markers/marker-icons/fire.png",
+
+  ///
   "medical": "assets/markers/marker-icons/medical.png",
-  "gun": "assets/markers/marker-icons/gun.png",
+  "gun": "assets/markers/marker-icons/vandalism.png",
   "protest": "assets/markers/marker-icons/protest.png",
-  "knife": "assets/markers/marker-icons/knife.png",
+  //
+  "knife": "assets/markers/marker-icons/public_safty_alert.png",
   "fight": "assets/markers/marker-icons/fight.png",
   "police": "assets/markers/marker-icons/police.png",
+
+  ///
   "floods": "assets/markers/marker-icons/floods.png",
   "road-block": "assets/markers/marker-icons/road-block.png",
   "storm": "assets/markers/marker-icons/storm.png",
+
+  ///
   "snow": "assets/markers/marker-icons/snow.png",
   "earthquake": "assets/markers/marker-icons/earthquake.png",
+  "icon": "assets/markers/marker-icons/earthquake.png",
   // "nomarker": "assets/markers/marker-icons/no_marker.png",
-  "nomarker": "assets/markers/marker-icons/accident.png",
+  "nomarker": "assets/markers/marker-icons/carcrash.png",
 };
 
 final List<Map<String, String>> alertTypes = [
@@ -28,18 +36,33 @@ final List<Map<String, String>> alertTypes = [
     'icon': 'assets/markers/gifs/fire.gif',
     'label': 'Fire',
   },
-  {'type': 'fight', 'icon': 'assets/markers/gifs/fight.gif', 'label': 'Fight'},
+  {
+    'type': 'fight',
+    'icon': 'assets/markers/gifs/fight.gif',
+    'label': 'Altercation'
+  },
+
+  ///////
   {
     'type': 'knife',
-    'icon': 'assets/markers/gifs/knife.gif',
-    'label': 'Stabbing'
+    // 'icon': 'assets/markers/gifs/knife.gif',
+    'icon': 'assets/markers/gifs/public_safty_alert.gif',
+    // 'label': 'Stabbing'
+    'label': 'Public Safety'
   },
-  {'type': 'gun', 'icon': 'assets/markers/gifs/gun.gif', 'label': 'Shooting'},
+  {
+    'type': 'gun',
+    // 'icon': 'assets/markers/gifs/gun.gif',
+    'icon': 'assets/markers/gifs/vandalism.gif',
+    // 'label': 'Shooting'
+    'label': 'Vandalism'
+  },
   {
     'type': 'medical',
     'icon': 'assets/markers/gifs/medicine.gif',
     'label': 'Medical',
   },
+  /////
   {
     'type': 'protest',
     'icon': 'assets/markers/gifs/protesters.gif',
@@ -50,16 +73,16 @@ final List<Map<String, String>> alertTypes = [
     'icon': 'assets/markers/gifs/police1.gif',
     'label': 'Police',
   },
-  // New types
-  {
-    'type': 'floods',
-    'icon': 'assets/markers/gifs/floods.gif',
-    'label': 'Flood',
-  },
   {
     'type': 'road-block',
     'icon': 'assets/markers/gifs/road-block.gif',
     'label': 'Road Block',
+  },
+  /////
+  {
+    'type': 'floods',
+    'icon': 'assets/markers/gifs/floods.gif',
+    'label': 'Flood',
   },
   {
     'type': 'snow',
@@ -78,17 +101,51 @@ final Map<String, String> burstIcons = {
   "crash": "assets/markers/bg-removed/bg-removed-crash.png",
   "fire": "assets/markers/bg-removed/bg-removed-fire.png",
   "medical": "assets/markers/bg-removed/bg-removed-medicine.png",
-  "gun": "assets/markers/bg-removed/bg-removed-gun.png",
+  //
+  "gun": "assets/markers/bg-removed/bg-removed-vandalism.png",
   "protest": "assets/markers/bg-removed/bg-removed-protest.png",
-  "knife": "assets/markers/bg-removed/bg-removed-knife.png",
+  "knife": "assets/markers/bg-removed/bg-removed-public_safety_alert.png",
   "fight": "assets/markers/bg-removed/bg-removed-fight.png",
-  "content": "assets/markers/image-icon.png",
+  //
+  "content": "assets/markers/bg-removed/bg-removed-content.png",
   "police": "assets/markers/bg-removed/bg-removed-police.png",
-
-  // New types
   "floods": "assets/markers/bg-removed/bg-removed-flood.png",
   "storm": "assets/markers/bg-removed/bg-removed-storm.png",
   "earthquake": "assets/markers/bg-removed/bg-removed-earthquake.png",
   "road-block": "assets/markers/bg-removed/bg-removed-road-block.png",
   "snow": "assets/markers/bg-removed/bg-removed-snow.png",
 };
+
+const List<String> alertTypeFilter = [
+  'Alert',
+  'Accident',
+  'Crash',
+  'Fire Alert',
+  'Fight',
+  'Knife',
+  'Gun',
+  'Medical',
+  'Protest',
+];
+
+const List<String> distanceFilter = [
+  // '1 mile',
+  '2 miles',
+  '5 miles',
+  '10 miles',
+  // '15 miles',
+  // '20 miles',
+  // '25 miles',
+  // '30 miles',
+  // '50 miles',
+];
+
+const List<String> categoryFilter = [
+  'Category',
+  'Latest',
+  'Crime',
+  'Event',
+  'Political',
+  'Celebrity',
+  'Sports',
+];

@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 
 import 'package:geocoding/geocoding.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
@@ -82,7 +83,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       showAddressError = false,
       showApartmentNumberError = false,
       showPostalCodeError = false,
-      isLoading = false;
+      isLoading = false,
+      isSilentLoading = false;
   FocusNode apartmentFocusNode = FocusNode();
   Timer? _debounceTimer;
 
@@ -115,21 +117,19 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     setUserNameListener();
     setPhoneListener();
     setEmailListener();
-    Future.delayed(const Duration(milliseconds: 600), () {
-      if (mounted) {
-        myProfileApi();
-        if (widget.editProfileScreen) {
-          getAvatarsApi();
-        }
-      }
-    });
+    myProfileApi(showLoader: false);
+    if (widget.editProfileScreen) {
+      getAvatarsApi(showLoader: false);
+    }
   }
 
   void _loadCachedData() {
     userNameController.text =
-        sharedPreferences?.getString(SharedPreferencesKeys.userNameKey) ?? "";
+        sharedPreferences?.getString(SharedPreferencesKeys.userNameKey) ??
+            "Hopper";
     firstNameController.text =
-        sharedPreferences?.getString(SharedPreferencesKeys.firstNameKey) ?? "";
+        sharedPreferences?.getString(SharedPreferencesKeys.firstNameKey) ??
+            "Hopper";
     lastNameController.text =
         sharedPreferences?.getString(SharedPreferencesKeys.lastNameKey) ?? "";
     emailAddressController.text =
@@ -161,16 +161,15 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     String cachedAddress =
         sharedPreferences?.getString(SharedPreferencesKeys.addressKey) ?? "";
 
-    if (cachedUsername.isNotEmpty) {
-      myProfileData = MyProfileData();
-      myProfileData!.userName = cachedUsername;
-      myProfileData!.totalIncome = cachedIncome;
-      myProfileData!.address = cachedAddress;
+    myProfileData = MyProfileData();
+    myProfileData!.userName =
+        cachedUsername.isNotEmpty ? cachedUsername : "Hopper";
+    myProfileData!.totalIncome = cachedIncome;
+    myProfileData!.address = cachedAddress;
 
-      if (cachedAvatar.isNotEmpty) {
-        myProfileData!.avatarImage = cachedAvatar;
-        myProfileData!.avatarImage = fixS3Url(myProfileData!.avatarImage);
-      }
+    if (cachedAvatar.isNotEmpty) {
+      myProfileData!.avatarImage = cachedAvatar;
+      myProfileData!.avatarImage = fixS3Url(myProfileData!.avatarImage);
     }
   }
 
@@ -281,54 +280,51 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     debugPrint("Building MyProfileScreen with size: $size");
-    return /*WillPopScope(
-      onWillPop: () async {
-        if (widget.editProfileScreen) {
-          widget.editProfileScreen = false;
-        }
-        return true;
-      },
-      child:*/
-        Scaffold(
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: false,
-        title: Text(
-          widget.screenType,
-          style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
+    return Scaffold(
+      appBar: CommonBrandedAppBar(
+        title: widget.screenType,
         size: size,
-        showActions: true,
-        leadingFxn: () {
-          /*  if (widget.editProfileScreen) {
-              widget.editProfileScreen = false;
-            }*/
-          context.pop();
-        },
-        actionWidget: [
-          InkWell(
-            onTap: () {
-              context.goNamed(
-                AppRoutes.dashboardName,
-                extra: {'initialPosition': 2},
-              );
-            },
-            child: Image.asset(
-              "${commonImagePath}rabbitLogo.png",
-              height: size.width * AppDimensions.numD07,
-              width: size.width * AppDimensions.numD07,
-            ),
-          ),
-          SizedBox(
-            width: size.width * AppDimensions.numD02,
-          ),
-        ],
       ),
+      // appBar: CommonAppBar(
+      //   elevation: 0,
+      //   hideLeading: false,
+      //   title: Text(
+      //     widget.screenType,
+      //     style: TextStyle(
+      //         color: Colors.black,
+      //         fontWeight: FontWeight.bold,
+      //         fontSize: size.width * AppDimensions.appBarHeadingFontSize),
+      //   ),
+      //   centerTitle: false,
+      //   titleSpacing: 0,
+      //   size: size,
+      //   showActions: true,
+      //   leadingFxn: () {
+      //     /*  if (widget.editProfileScreen) {
+      //         widget.editProfileScreen = false;
+      //       }*/
+      //     context.pop();
+      //   },
+      //   actionWidget: [
+      //     InkWell(
+      //       onTap: () {
+      //         context.goNamed(
+      //           AppRoutes.dashboardName,
+      //           extra: {'initialPosition': 2},
+      //         );
+      //       },
+      //       child: Image.asset(
+      //         "${commonImagePath}rabbitLogo.png",
+      //         height: size.width * AppDimensions.numD07,
+      //         width: size.width * AppDimensions.numD07,
+      //       ),
+      //     ),
+      //     SizedBox(
+      //       width: size.width * AppDimensions.numD04,
+      //     )
+      //   ],
+      // ),
+
       body: Stack(
         children: [
           GestureDetector(
@@ -342,7 +338,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   key: formKey,
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: size.width * AppDimensions.numD06),
+                        horizontal: size.width * AppDimensions.numD04),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -469,6 +465,26 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                     width: size.width * AppDimensions.numD37,
                     height: size.width * AppDimensions.numD35,
                   )),
+              if (isSilentLoading)
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.3),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(
+                              size.width * AppDimensions.numD04),
+                          bottomLeft: Radius.circular(
+                              size.width * AppDimensions.numD04)),
+                    ),
+                    child: Center(
+                      child: Lottie.asset(
+                        "assets/lottieFiles/loader_new.json",
+                        height: size.width * 0.15,
+                        width: size.width * 0.15,
+                      ),
+                    ),
+                  ),
+                ),
               widget.editProfileScreen
                   ? Positioned(
                       bottom: size.width * AppDimensions.numD01,
@@ -1541,10 +1557,16 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     }
   }
 
-  Future<void> getAvatarsApi() async {
-    setState(() {
-      isLoading = true;
-    });
+  Future<void> getAvatarsApi({bool showLoader = true}) async {
+    if (showLoader) {
+      setState(() {
+        isLoading = true;
+      });
+    } else {
+      setState(() {
+        isSilentLoading = true;
+      });
+    }
     try {
       final response = await sl<ApiClient>()
           .get(ApiConstantsNew.profile.getAvatars, showLoader: false);
@@ -1562,18 +1584,25 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       if (mounted) {
         setState(() {
           isLoading = false;
+          isSilentLoading = false;
         });
       }
     }
   }
 
-  Future<void> myProfileApi() async {
+  Future<void> myProfileApi({bool showLoader = true}) async {
     String userId =
         sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
     print("🔴 DEBUG: Fetching Profile for userId: '$userId'");
-    setState(() {
-      isLoading = true;
-    });
+    if (showLoader) {
+      setState(() {
+        isLoading = true;
+      });
+    } else {
+      setState(() {
+        isSilentLoading = true;
+      });
+    }
     try {
       final response = await sl<ApiClient>().get(
         ApiConstantsNew.profile.myProfile,
@@ -1610,6 +1639,11 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
               SharedPreferencesKeys.lastNameKey,
               userData[SharedPreferencesKeys.lastNameKey] ??
                   userData['lastName']);
+          updateKey(
+              SharedPreferencesKeys.userNameKey,
+              userData[SharedPreferencesKeys.userNameKey] ??
+                  userData['userName'] ??
+                  userData['user_name']);
           updateKey(SharedPreferencesKeys.emailKey,
               userData[SharedPreferencesKeys.emailKey]);
           updateKey(
@@ -1703,6 +1737,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       if (mounted) {
         setState(() {
           isLoading = false;
+          isSilentLoading = false;
         });
       }
     }

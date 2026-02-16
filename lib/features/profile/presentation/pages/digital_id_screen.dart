@@ -5,16 +5,12 @@ import 'package:intl/intl.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:presshop/core/widgets/common_app_bar.dart';
 import '../../presentation/bloc/profile_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import '../../presentation/bloc/profile_event.dart';
 import '../../presentation/bloc/profile_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
@@ -129,46 +125,14 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
           bool isLoading = state is ProfileLoading;
 
           return Scaffold(
-            appBar: CommonAppBar(
-              elevation: 0,
-              title: Text(
-                AppStrings.digitalId,
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-              ),
-              centerTitle: true,
-              titleSpacing: 0,
+            appBar: CommonBrandedAppBar(
+              title: AppStrings.digitalId,
               size: size,
-              showActions: true,
-              leadingFxn: () {
-                context.pop();
-              },
-              actionWidget: [
-                InkWell(
-                  onTap: () {
-                    context.goNamed(
-                      AppRoutes.dashboardName,
-                      extra: {'initialPosition': 2},
-                    );
-                  },
-                  child: Image.asset(
-                    "${commonImagePath}rabbitLogo.png",
-                    height: size.width * AppDimensions.numD07,
-                    width: size.width * AppDimensions.numD07,
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * AppDimensions.numD04,
-                )
-              ],
-              hideLeading: false,
             ),
             body: Container(
               margin: EdgeInsets.only(
-                left: size.width * AppDimensions.numD02,
-                right: size.width * AppDimensions.numD02,
+                left: size.width * AppDimensions.numD04,
+                right: size.width * AppDimensions.numD04,
                 top: size.width * AppDimensions.numD02,
                 bottom: size.width * AppDimensions.numD1,
               ),
@@ -613,11 +577,17 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
       if (profile.userName.isNotEmpty || profile.firstName.isNotEmpty) {
         userName =
             profile.userName.isNotEmpty ? profile.userName : profile.firstName;
+        sharedPreferences!
+            .setString(SharedPreferencesKeys.userNameKey, profile.userName);
       }
       if (profile.firstName.isNotEmpty) {
         String firstName = profile.firstName;
         String lastName = profile.lastName;
         fullName = firstName + (lastName.isNotEmpty ? " $lastName" : "");
+        sharedPreferences!
+            .setString(SharedPreferencesKeys.firstNameKey, firstName);
+        sharedPreferences!
+            .setString(SharedPreferencesKeys.lastNameKey, lastName);
       }
 
       if (profile.profileImage.isNotEmpty) {

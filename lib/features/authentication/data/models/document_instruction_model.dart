@@ -9,15 +9,16 @@ class DocumentInstructionModel extends DocumentInstruction {
 
   factory DocumentInstructionModel.fromJson(Map<String, dynamic> json) {
     return DocumentInstructionModel(
-      id: json['_id'] ?? '',
-      name: json['document_name'] ?? '',
-      isSelected: false,
+      id: (json['_id'] ?? json['id'] ?? '').toString(),
+      name: (json['doc_name'] ?? json['document_name'] ?? json['name'] ?? '')
+          .toString(),
+      isSelected: json['isSelected'] ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      'id': id,
       'document_name': name,
       'isSelected': isSelected,
     };

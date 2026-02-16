@@ -43,7 +43,7 @@ class RatingReviewModel extends Review {
       review: json["updateddata"] != null
           ? json['updateddata']['review'].toString()
           : "",
-      id: json["_id"] != null ? json["_id"].toString() : "",
+      id: _parseMongoId(json["_id"]),
       from: json["updateddata"] != null && json["updateddata"]["from"] != null
           ? json["updateddata"]["from"].toString()
           : "",
@@ -83,5 +83,15 @@ class RatingReviewModel extends Review {
               ? List<String>.from(json['updateddata']['features'])
               : [],
     );
+  }
+
+  static String _parseMongoId(dynamic id) {
+    if (id == null) return "";
+    if (id is String) return id;
+    if (id is Map && id['\$oid'] != null) return id['\$oid'].toString();
+    if (id is Map && id['buffer'] != null) {
+      return "ID_FROM_BUFFER"; // Or implement hex conversion if needed
+    }
+    return id.toString();
   }
 }

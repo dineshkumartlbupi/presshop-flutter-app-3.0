@@ -48,6 +48,7 @@ enum MenuAction {
   accountSettings,
   logout,
   currency,
+  locationSharing,
 }
 
 class MenuData {
@@ -133,8 +134,8 @@ List<MenuData> buildMenu() => [
         icon: "${iconsPath}ic_content.png",
         action: MenuAction.myContent,
         pageBuilder: (context) => const MyContentPage(
-            // hideLeading: false,
-            ),
+          fromMenu: true,
+        ),
       ),
       MenuData(
         title: AppStrings.feedText,
@@ -236,16 +237,21 @@ List<MenuData> buildMenu() => [
         pageBuilder: (context) => const ChangePasswordScreen(),
       ),
       MenuData(
+        title: "Location sharing",
+        icon: "assets/markers/location1.png",
+        action: MenuAction.locationSharing,
+      ),
+      MenuData(
         title: AppStrings.accountSettingText,
         icon: "${iconsPath}ic_my_profile.png",
         action: MenuAction.accountSettings,
         pageBuilder: (context) => const AccountSetting(),
       ),
-      MenuData(
-        title: "Choose currency",
-        icon: "${iconsPath}ic_payment_method.png",
-        action: MenuAction.currency,
-      ),
+      // MenuData(
+      //   title: "Choose currency",
+      //   icon: "${iconsPath}ic_payment_method.png",
+      //   action: MenuAction.currency,
+      // ),
       MenuData(
         title: AppStrings.logoutText,
         icon: "${iconsPath}ic_logout.png",

@@ -8,18 +8,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 
 class MarkerService {
-  final Map<String, String> markerIcons = {
-    "accident": "assets/markers/marker-icons/carcrash.png", // Corrected path
-    "fire": "assets/markers/marker-icons/fire.png",
-    "medical": "assets/markers/marker-icons/medical.png",
-    "gun": "assets/markers/marker-icons/gun.png",
-    "protest": "assets/markers/marker-icons/protest.png",
-    "knife": "assets/markers/marker-icons/knife.png",
-    "fight": "assets/markers/marker-icons/fight.png",
-    "content": "assets/markers/bg-removed-content.png",
-    "hopper": "assets/markers/avatar.png",
-  };
-
   // Cache for bitmap descriptors to avoid reprocessing same images
   final Map<String, BitmapDescriptor> _bitmapCache = {};
 
@@ -218,109 +206,88 @@ class MarkerService {
 
   Future<BitmapDescriptor> createContentMarker(
     String url, {
-    int size = 60,
-    String defaultAsset = "assets/markers/bg-removed-content.png",
-    String? overlayIcon,
+    int size = 120,
+    String? mediaType,
   }) async {
-    // Check cache first
-    final cacheKey = '$url:$size:$overlayIcon';
-    if (_bitmapCache.containsKey(cacheKey)) {
-      return _bitmapCache[cacheKey]!;
-    }
-
     try {
-      Uint8List bytes;
-      if (url.isNotEmpty) {
-        try {
-          // Use timeout to prevent hanging on slow networks
-          final response = await http.get(Uri.parse(url)).timeout(
-                const Duration(seconds: 5),
-                onTimeout: () => throw Exception('Image download timeout'),
-              );
-          if (response.statusCode == 200) {
-            bytes = response.bodyBytes;
-          } else {
-            bytes = (await rootBundle.load(defaultAsset)).buffer.asUint8List();
-          }
-        } catch (e) {
-          debugPrint("Failed to download image from $url, using default: $e");
-          bytes = (await rootBundle.load(defaultAsset)).buffer.asUint8List();
-        }
-      } else {
-        bytes = (await rootBundle.load(defaultAsset)).buffer.asUint8List();
-      }
-
+      final response = await http.get(Uri.parse(url));
+      final bytes = response.bodyBytes;
       final codec = await ui.instantiateImageCodec(bytes, targetWidth: size);
       final frame = await codec.getNextFrame();
       final ui.Image img = frame.image;
-
       final recorder = ui.PictureRecorder();
       final canvas = Canvas(recorder);
 
-      // White Rounded Rectangle background
       final bgPaint = Paint()
         ..color = Colors.white
         ..style = PaintingStyle.fill;
 
       final rect = Rect.fromLTWH(0, 0, size.toDouble(), size.toDouble());
-      final rrect = RRect.fromRectAndRadius(
-          rect, Radius.circular(size * 0.23)); // ~28 for size 120
+      final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(28));
 
       canvas.drawRRect(rrect, bgPaint);
 
-      // Clip image to rounded rectangle
       final clipPath = Path()..addRRect(rrect);
       canvas.clipPath(clipPath);
-
       final srcSize = Size(img.width.toDouble(), img.height.toDouble());
       final dstSize = Size(size.toDouble(), size.toDouble());
       final srcRect = _centerCrop(srcSize, dstSize);
 
-      canvas.drawImageRect(img, srcRect, rect, Paint());
+      canvas.drawImageRect(
+        img,
+        srcRect,
+        rect,
+        Paint(),
+      );
 
-      // Draw grey border (from old code)
       canvas.drawRRect(
         rrect,
         Paint()
           ..color = const Color.fromARGB(170, 158, 158, 158)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = size * 0.15, // Proportionate to size (20 for 120)
+          ..strokeWidth = 20,
       );
 
-      // Draw Overlay Icon if provided
-      if (overlayIcon != null && overlayIcon.isNotEmpty) {
-        try {
-          final overlayByteData = await rootBundle.load(overlayIcon);
-          final overlayUint8List = overlayByteData.buffer.asUint8List();
-          final overlayCodec = await ui.instantiateImageCodec(overlayUint8List,
-              targetWidth: (size * 0.33).toInt()); // ~40 for 120
-          final overlayFrame = await overlayCodec.getNextFrame();
-          final ui.Image overlayImg = overlayFrame.image;
+      // 🔹 Load and Draw Overlay Icon (Image/Video Icon)
+      try {
+        final String assetPath = (mediaType?.toLowerCase() == 'video')
+            ? 'assets/markers/video-icon.png'
+            : 'assets/markers/image-icon.png';
 
-          final overlayOffset = Offset(
-            (size - overlayImg.width) / 2,
-            (size - overlayImg.height) / 2,
-          );
-          canvas.drawImage(overlayImg, overlayOffset, Paint());
-        } catch (e) {
-          debugPrint("Error loading overlay icon $overlayIcon: $e");
-        }
+        final overlayData = await rootBundle.load(assetPath);
+        final overlayBytes = overlayData.buffer.asUint8List();
+        final overlayCodec =
+            await ui.instantiateImageCodec(overlayBytes, targetWidth: 40);
+        final overlayFrame = await overlayCodec.getNextFrame();
+        final ui.Image overlayImg = overlayFrame.image;
+
+        final overlaySize =
+            Size(overlayImg.width.toDouble(), overlayImg.height.toDouble());
+
+        // Position at Top Right
+        final overlayOffset = Offset(
+          size - overlaySize.width - 8, // Padding from right
+          8, // Padding from top
+        );
+
+        canvas.drawImage(overlayImg, overlayOffset, Paint());
+      } catch (e) {
+        debugPrint("Error loading overlay icon: $e");
       }
 
-      final picture = recorder.endRecording();
-      final finalImage = await picture.toImage(size, size);
-      final byteData =
-          await finalImage.toByteData(format: ui.ImageByteFormat.png);
+      // Convert to png bytes and release native peer
+      final ui.Image finalImage = await recorder.endRecording().toImage(
+            size,
+            size,
+          );
 
-      final bitmap = BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
-
-      // Cache the result
-      _bitmapCache[cacheKey] = bitmap;
-
-      return bitmap;
+      final byteData = await finalImage.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
+      return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
     } catch (e) {
-      print("Error creating content marker: $e");
-      return bitmapResize(defaultAsset, width: size);
+      debugPrint("Error creating content marker: $e. Using default.");
+      return bitmapResize("assets/markers/bg-removed-content.png", width: size);
     }
   }
 

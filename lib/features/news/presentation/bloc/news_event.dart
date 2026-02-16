@@ -17,6 +17,7 @@ class GetAggregatedNewsEvent extends NewsEvent {
     this.alertType,
     this.limit = 10,
     this.offset = 0,
+    this.prioritizedContentId,
   });
   final double lat;
   final double lng;
@@ -25,9 +26,29 @@ class GetAggregatedNewsEvent extends NewsEvent {
   final String? alertType;
   final int limit;
   final int offset;
+  final String? prioritizedContentId;
 
   @override
-  List<Object?> get props => [lat, lng, km, category, alertType, limit, offset];
+  List<Object?> get props =>
+      [lat, lng, km, category, alertType, limit, offset, prioritizedContentId];
+}
+
+class GetAllNewsEvent extends NewsEvent {
+  const GetAllNewsEvent({
+    this.km = 3.21869, // Default to 2 miles
+    this.category = "all",
+    this.alertType,
+    this.limit = 10,
+    this.offset = 0,
+  });
+  final double km;
+  final String category;
+  final String? alertType;
+  final int limit;
+  final int offset;
+
+  @override
+  List<Object?> get props => [km, category, alertType, limit, offset];
 }
 
 class GetNewsDetailEvent extends NewsEvent {

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/usecases/usecase.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:presshop/features/map/constants/map_news_constants.dart';
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 import 'package:presshop/features/map/domain/usecases/get_current_location.dart';
 import 'package:presshop/features/map/domain/usecases/get_route.dart';
@@ -26,9 +27,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     required this.markerService,
     required this.sharedPreferences,
   }) : super(MapState(
-          // Set default initial camera position to prevent null crashes
           initialCamera: const CameraPosition(
-            target: LatLng(51.5074, -0.1278), // London as default
+            target: LatLng(51.5074, -0.1278),
             zoom: 14,
           ),
         )) {
@@ -55,6 +55,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<UpdatePulseCircleEvent>(_onUpdatePulseCircle);
     on<SetDestinationSelectionModeEvent>(_onSetDestinationSelectionMode);
     on<ClearRouteEvent>(_onClearRoute);
+    on<SetDraggingEvent>(_onSetDragging);
 
     _initSocket();
   }
@@ -65,6 +66,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final NewsRepository newsRepository;
   final MarkerService markerService;
   final SharedPreferences sharedPreferences;
+
+  static const int kContentMarkerSize = 120;
+  static const int kIncidentMarkerSize = 50;
 
   void _onToggleGetDirectionCard(
     ToggleGetDirectionCardEvent event,
@@ -102,15 +106,17 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       }
 
       BitmapDescriptor icon;
-      if (incident.markerType == 'content') {
+      if (incident.markerType == 'content' || incident.markerType == 'news') {
         icon = await markerService.createContentMarker(
           incident.image ?? '',
-          size: 60, // Reduced from 90 for better appearance
+          size: kContentMarkerSize,
+          mediaType: incident.mediaType,
         );
       } else {
-        String assetPath = markerService.markerIcons[incident.type] ??
-            markerService.markerIcons['accident']!;
-        icon = await markerService.bitmapResize(assetPath, width: 50);
+        final iconType = _resolveIconType(incident.type ?? incident.alertType);
+        String assetPath = markerIcons[iconType] ?? markerIcons['accident']!;
+        icon = await markerService.bitmapResize(assetPath,
+            width: kIncidentMarkerSize);
       }
 
       final marker = Marker(
@@ -124,7 +130,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
       emit(state.copyWith(
         markers: {...state.markers, marker},
+        newlyCreatedIncident: incident,
       ));
+
+      await Future.delayed(const Duration(milliseconds: 100));
+      if (!emit.isDone) {
+        emit(state.copyWith(clearNewlyCreatedIncident: true));
+      }
     } catch (e) {
       debugPrint("Error handling new incident: $e");
     }
@@ -138,15 +150,17 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       final incident = Incident.fromJson(event.data);
 
       BitmapDescriptor icon;
-      if (incident.markerType == 'content') {
+      if (incident.markerType == 'content' || incident.markerType == 'news') {
         icon = await markerService.createContentMarker(
           incident.image ?? '',
-          size: 60, // Reduced from 90 for better appearance
+          size: kContentMarkerSize, // Align with legacy size
+          mediaType: incident.mediaType,
         );
       } else {
-        String assetPath = markerService.markerIcons[incident.type] ??
-            markerService.markerIcons['accident']!;
-        icon = await markerService.bitmapResize(assetPath, width: 50);
+        final iconType = _resolveIconType(incident.type ?? incident.alertType);
+        String assetPath = markerIcons[iconType] ?? markerIcons['accident']!;
+        icon = await markerService.bitmapResize(assetPath,
+            width: kIncidentMarkerSize);
       }
 
       final marker = Marker(
@@ -170,6 +184,42 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     }
   }
 
+  String _resolveIconType(String? typeInput) {
+    if (typeInput == null) return 'accident';
+    final type = typeInput.toLowerCase();
+
+    if (type.contains('accident') || type.contains('crash')) {
+      return 'accident';
+    } else if (type.contains('fire')) {
+      return 'fire';
+    } else if (type.contains('gun')) {
+      return 'gun';
+    } else if (type.contains('knife')) {
+      return 'knife';
+    } else if (type.contains('fight')) {
+      return 'fight';
+    } else if (type.contains('protest')) {
+      return 'protest';
+    } else if (type.contains('medicine') || type.contains('medical')) {
+      return 'medical';
+    } else if (type.contains('police')) {
+      return 'police';
+    } else if (type.contains('flood') || type.contains('floods')) {
+      return 'floods';
+    } else if (type.contains('road') || type.contains('block')) {
+      return 'road-block';
+    } else if (type.contains('snow')) {
+      return 'snow';
+    } else if (type.contains('storm')) {
+      return 'storm';
+    } else if (type.contains('earthquake') || type.contains('quake')) {
+      return 'earthquake';
+    } else if (type.contains('weather')) {
+      return 'weather';
+    }
+    return 'nomarker';
+  }
+
   Future<void> _onGetCurrentLocation(
     GetCurrentLocationEvent event,
     Emitter<MapState> emit,
@@ -191,16 +241,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             km: 10));
       },
       (location) async {
-        // Emit location IMMEDIATELY for instant camera positioning
         emit(state.copyWith(
           myLocation: location,
           initialCamera: CameraPosition(target: location, zoom: 14),
         ));
-
-        // Small delay to let map platform channel initialize
         await Future.delayed(const Duration(milliseconds: 100));
-
-        // Fetch news immediately (non-blocking)
         add(FetchNewsEvent(
             lat: location.latitude, lng: location.longitude, km: 10));
 
@@ -211,13 +256,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
 
         // Reduce avatar size for better performance (100x100 instead of 150x150)
+        // Updating to 120 to match legacy code as per request
         if (profileImage.isNotEmpty) {
           icon = await markerService.createAvatarMarker(profileImage,
-              size: const Size(100, 100));
+              size: const Size(120, 120));
         } else {
           icon = await markerService.createCircularAssetMarker(
               "assets/markers/avatar.png",
-              size: const Size(100, 100));
+              size: const Size(120, 120));
         }
 
         final meMarker = Marker(
@@ -281,11 +327,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         try {
           startIcon = await markerService.bitmapFromIncidentAsset(
             "assets/markers/starting_markers.png",
-            60,
+            70,
           );
           endIcon = await markerService.bitmapFromIncidentAsset(
             "assets/markers/destination-marker.png",
-            60,
+            70,
           );
         } catch (e) {
           debugPrint("Error loading route markers: $e");
@@ -300,6 +346,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         final destinationMarker = Marker(
           markerId: const MarkerId('destination'),
           position: event.end,
+          infoWindow: InfoWindow(
+            title: 'Destination',
+            snippet:
+                "${routeInfo.distanceKm.toStringAsFixed(2)} km, ${routeInfo.durationMinutes} min",
+          ),
           icon: endIcon,
         );
 
@@ -338,6 +389,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   ) async {
     debugPrint(
         "DEBUG: _onFetchNews triggered. Lat: ${event.lat}, Lng: ${event.lng}");
+    if (event.isFeedOnly) return;
+
     emit(state.copyWith(isLoadingNews: true));
     final result = await newsRepository.getAggregatedNews(
       lat: event.lat,
@@ -364,8 +417,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               lng = double.tryParse(news.location?.split(',')[1] ?? '0') ?? 0.0;
             }
 
-            // Removed noisy per-item print
-
             return Incident(
                 id: news.id,
                 markerType: news.markerType ?? 'news',
@@ -381,9 +432,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 mediaType: news.mediaType);
           }).toList();
 
-          // Load markers progressively in batches for better performance
           final Set<Marker> newMarkers = {};
-          const int batchSize = 5; // Process 5 markers at a time
+          const int batchSize = 5;
 
           for (int i = 0; i < incidents.length; i += batchSize) {
             final end = (i + batchSize < incidents.length)
@@ -396,19 +446,19 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
 
               if (incident.markerType == 'icon') {
-                String assetPath = markerService.markerIcons[incident.type] ??
-                    markerService.markerIcons['accident']!;
-                icon = await markerService.bitmapResize(assetPath, width: 50);
+                final iconType =
+                    _resolveIconType(incident.type ?? incident.alertType);
+                String assetPath =
+                    markerIcons[iconType] ?? markerIcons['accident']!;
+                icon = await markerService.bitmapResize(assetPath,
+                    width: kIncidentMarkerSize);
               } else if (incident.markerType == 'news' ||
                   incident.markerType == 'content') {
                 try {
-                  String overlayIcon = incident.mediaType == 'video'
-                      ? 'assets/markers/video-icon.png'
-                      : 'assets/markers/image-icon.png';
                   icon = await markerService.createContentMarker(
                     incident.image ?? '',
-                    size: 60, // Reduced from 90 for better appearance
-                    overlayIcon: overlayIcon,
+                    size: kContentMarkerSize, // Align with legacy size
+                    mediaType: incident.mediaType,
                   );
                 } catch (e) {
                   debugPrint(
@@ -427,19 +477,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 },
               );
             }).toList();
-
-            // Wait for this batch to complete
             final batchMarkers = await Future.wait(batchFutures);
             newMarkers.addAll(batchMarkers);
-
-            // Update UI progressively after each batch
             emit(state.copyWith(
               isLoadingNews: i + batchSize >= incidents.length ? false : true,
               newsList: incidents,
               markers: {...state.markers, ...newMarkers},
             ));
-
-            // Removed noisy batch print
           }
 
           debugPrint("DEBUG: Created ${newMarkers.length} markers for news.");
@@ -466,7 +510,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     add(FetchNewsEvent(
       lat: event.location.latitude,
       lng: event.location.longitude,
-      km: 10, // Default or from state
+      km: 10,
       category: state.selectedCategory ?? 'all',
     ));
   }
@@ -515,9 +559,19 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       add(FetchNewsEvent(
         lat: state.searchedLocation?.latitude ?? state.myLocation!.latitude,
         lng: state.searchedLocation?.longitude ?? state.myLocation!.longitude,
-        km: double.tryParse(event.distance?.split(' ')[0] ?? '10') ?? 10,
+        km: _convertDistanceToKm(event.distance),
         category: event.category ?? 'all',
       ));
+    }
+  }
+
+  double _convertDistanceToKm(String? distance) {
+    if (distance == null) return 10.0;
+    try {
+      final value = double.parse(distance.split(' ')[0]);
+      return value * 1.60934;
+    } catch (e) {
+      return 10.0;
     }
   }
 
@@ -539,8 +593,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         address: state.myLocationAddress ?? "",
         userId: userId,
       );
-      // We rely on the socket 'incident:created'/'incident:new' event to add the marker back to the map.
-      // This ensures we have the correct server-generated ID and data.
     } catch (e) {
       debugPrint("Error emitting alert: $e");
     }
@@ -560,7 +612,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     SetSelectedIncidentEvent event,
     Emitter<MapState> emit,
   ) {
-    // If in destination selection mode, use this incident's location
     if (state.isDestinationSelectionMode) {
       add(SetMapSelectedLocationEvent(
         position: event.incident.position,
@@ -570,6 +621,18 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       ));
       add(SetDestinationSelectionModeEvent(isSelectionMode: false));
       // Don't select incident detail
+      return;
+    }
+
+    // If GetDirectionCard is visible, clicking marker sets destination
+    if (state.showGetDirectionCard) {
+      add(SetMapSelectedLocationEvent(
+        position: event.incident.position,
+        address: event.incident.address ??
+            event.incident.title ??
+            "${event.incident.position.latitude}, ${event.incident.position.longitude}",
+        isOrigin: false,
+      ));
       return;
     }
 
@@ -698,6 +761,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     ));
   }
 
+  void _onSetDragging(
+    SetDraggingEvent event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.copyWith(isDragging: event.isDragging));
+  }
+
   Future<void> _fetchInitialIncidents(Emitter<MapState> emit) async {
     final result = await repository.getIncidents();
     await result.fold(
@@ -710,14 +780,20 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         final List<Future<Marker>> markerFutures =
             incidents.map((incident) async {
           BitmapDescriptor icon;
-          if (incident.markerType == 'content') {
-            icon =
-                await markerService.createContentMarker(incident.image ?? '');
+          if (incident.markerType == 'content' ||
+              incident.markerType == 'news') {
+            icon = await markerService.createContentMarker(
+              incident.image ?? '',
+              size: kContentMarkerSize,
+              mediaType: incident.mediaType,
+            );
           } else {
-            String assetPath = markerService.markerIcons[incident.type] ??
-                markerService.markerIcons['accident']!;
-            // Using generic resize for now, respecting the new 50px size
-            icon = await markerService.bitmapResize(assetPath, width: 50);
+            final iconType =
+                _resolveIconType(incident.type ?? incident.alertType);
+            String assetPath =
+                markerIcons[iconType] ?? markerIcons['accident']!;
+            icon = await markerService.bitmapResize(assetPath,
+                width: kIncidentMarkerSize);
           }
 
           return Marker(
@@ -732,8 +808,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
         final List<Marker> newMarkersList = await Future.wait(markerFutures);
         final Set<Marker> newMarkers = newMarkersList.toSet();
-
-        // We use state.markers to keep existing markers (like myLocation)
         emit(state.copyWith(
           markers: {...state.markers, ...newMarkers},
         ));

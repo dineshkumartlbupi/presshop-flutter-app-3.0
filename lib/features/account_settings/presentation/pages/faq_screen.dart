@@ -128,7 +128,6 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                 _refreshController.loadComplete();
               } else if (state.status == FAQStatus.failure) {
                 _refreshController.refreshFailed();
-                // Show error snackbar or dialog?
               }
             },
             builder: (context, state) {

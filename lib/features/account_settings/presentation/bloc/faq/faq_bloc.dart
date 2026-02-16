@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:dartz/dartz.dart';
 
 import 'package:presshop/core/error/failures.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../../publish/domain/entities/content_category.dart';
 import '../../../domain/entities/faq.dart';
@@ -14,7 +15,6 @@ part 'faq_event.dart';
 part 'faq_state.dart';
 
 class FAQBloc extends Bloc<FAQEvent, FAQState> {
-
   FAQBloc({
     required this.getFAQs,
     required this.getPriceTips,
@@ -34,7 +34,30 @@ class FAQBloc extends Bloc<FAQEvent, FAQState> {
     FAQLoadCategories event,
     Emitter<FAQState> emit,
   ) async {
-    emit(state.copyWith(status: FAQStatus.loading));
+    final cacheBox = Hive.box('sync_cache');
+    final cacheKey = 'faq_categories_${event.type}';
+    final cachedData = cacheBox.get(cacheKey);
+
+    bool emittedFromCache = false;
+    if (cachedData != null && cachedData is List) {
+      final categories = cachedData
+          .map((e) => ContentCategory(
+                id: e['id'],
+                name: e['name'],
+                type: e['type'],
+                percentage: e['percentage'],
+              ))
+          .toList();
+      if (categories.isNotEmpty) {
+        _emitCategories(categories, event, emit);
+        add(const FAQLoadData());
+        emittedFromCache = true;
+      }
+    }
+
+    if (!emittedFromCache) {
+      emit(state.copyWith(status: FAQStatus.loading));
+    }
 
     // Determine the type string for API
     String apiType = 'FAQ';
@@ -51,50 +74,62 @@ class FAQBloc extends Bloc<FAQEvent, FAQState> {
         await getFAQCategories(GetFAQCategoriesParams(type: apiType));
 
     result.fold(
-      (failure) => emit(state.copyWith(
-          status: FAQStatus.failure, errorMessage: failure.message)),
+      (failure) {
+        if (!emittedFromCache) {
+          // Only emit failure if no data was emitted from cache
+          emit(state.copyWith(
+              status: FAQStatus.failure, errorMessage: failure.message));
+        }
+      },
       (categories) {
         if (categories.isNotEmpty) {
-          var updatedCategories = List<ContentCategory>.from(categories);
-
-          int selectedIndex = 0;
-
-          if (event.initialCategoryIndex != null &&
-              event.initialCategoryIndex! >= 0 &&
-              event.initialCategoryIndex! < updatedCategories.length) {
-            selectedIndex = event.initialCategoryIndex!;
-          } else if (event.initialCategoryName != null &&
-              event.initialCategoryName!.isNotEmpty) {
-            final index = updatedCategories.indexWhere((c) =>
-                c.name.toLowerCase() ==
-                event.initialCategoryName!.toLowerCase());
-            if (index != -1) {
-              selectedIndex = index;
-            } else if (event.initialCategoryName!.contains("benefits")) {
-              // Fallback for benefits if exact name not found, try last like original code?
-              // Original code: if benefits not empty, select last. name contains "benefits"?
-              // Let's assume passed name is correct or we use index.
-              // If "benefits" logic is needed, caller should pass index or name.
-            }
-          }
-
-          // Mark selected
-          for (int i = 0; i < updatedCategories.length; i++) {
-            updatedCategories[i] =
-                updatedCategories[i].copyWith(selected: i == selectedIndex);
-          }
-
-          emit(state.copyWith(
-            categories: updatedCategories,
-            selectedCategoryIndex: selectedIndex,
-            status: FAQStatus.loading, // Keep loading for data fetch
-          ));
+          cacheBox.put(cacheKey, categories.map((e) => e.toJson()).toList());
+          _emitCategories(categories, event, emit);
           add(const FAQLoadData());
-        } else {
+        } else if (!emittedFromCache) {
+          // Only emit success with empty categories if no data was emitted from cache
           emit(state.copyWith(status: FAQStatus.success, categories: []));
         }
       },
     );
+  }
+
+  void _emitCategories(List<ContentCategory> categories,
+      FAQLoadCategories event, Emitter<FAQState> emit) {
+    var updatedCategories = List<ContentCategory>.from(categories);
+    int selectedIndex = 0;
+
+    if (event.initialCategoryIndex != null &&
+        event.initialCategoryIndex! >= 0 &&
+        event.initialCategoryIndex! < updatedCategories.length) {
+      selectedIndex = event.initialCategoryIndex!;
+    } else if (event.initialCategoryName != null &&
+        event.initialCategoryName!.isNotEmpty) {
+      final index = updatedCategories.indexWhere((c) =>
+          c.name.toLowerCase() == event.initialCategoryName!.toLowerCase());
+      if (index != -1) {
+        selectedIndex = index;
+      } else if (event.initialCategoryName!.contains("benefits")) {
+        // Fallback for benefits if exact name not found, try last like original code?
+        // Original code: if benefits not empty, select last. name contains "benefits"?
+        // Let's assume passed name is correct or we use index.
+        // If "benefits" logic is needed, caller should pass index or name.
+      }
+    }
+
+    for (int i = 0; i < updatedCategories.length; i++) {
+      updatedCategories[i] =
+          updatedCategories[i].copyWith(selected: i == selectedIndex);
+    }
+
+    emit(state.copyWith(
+      categories: updatedCategories,
+      selectedCategoryIndex: selectedIndex,
+      status: state.status == FAQStatus.initial
+          ? FAQStatus.loading
+          : state
+              .status, // Keep loading for data fetch if it was initial, otherwise preserve current status
+    ));
   }
 
   Future<void> _onSelectCategory(
@@ -129,7 +164,31 @@ class FAQBloc extends Bloc<FAQEvent, FAQState> {
   ) async {
     if (state.categories.isEmpty) return;
     final category = state.categories[state.selectedCategoryIndex];
-    if (!event.isRefresh) emit(state.copyWith(status: FAQStatus.loading));
+    final cacheBox = Hive.box('sync_cache');
+    final cacheKey = 'faq_items_${category.name}';
+
+    if (!event.isRefresh && state.items.isEmpty) {
+      final cachedData = cacheBox.get(cacheKey);
+      if (cachedData != null && cachedData is List) {
+        final cachedItems = cachedData
+            .map((e) => FAQ(
+                  id: e['id'],
+                  question: e['question'],
+                  answer: e['answer'],
+                  category: e['category'],
+                ))
+            .toList();
+        emit(state.copyWith(
+          status: FAQStatus.success,
+          items: cachedItems,
+          allItems: cachedItems,
+        ));
+      }
+    }
+
+    if (!event.isRefresh && state.items.isEmpty) {
+      emit(state.copyWith(status: FAQStatus.loading));
+    }
 
     Either<Failure, List<FAQ>> result;
 
@@ -148,9 +207,14 @@ class FAQBloc extends Bloc<FAQEvent, FAQState> {
     }
 
     result.fold(
-      (failure) => emit(state.copyWith(
-          status: FAQStatus.failure, errorMessage: failure.message)),
+      (failure) {
+        if (state.items.isEmpty) {
+          emit(state.copyWith(
+              status: FAQStatus.failure, errorMessage: failure.message));
+        }
+      },
       (items) {
+        cacheBox.put(cacheKey, items.map((e) => e.toJson()).toList());
         emit(state.copyWith(
           status: FAQStatus.success,
           items: items,

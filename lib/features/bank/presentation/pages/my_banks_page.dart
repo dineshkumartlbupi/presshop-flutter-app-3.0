@@ -228,15 +228,21 @@ class _MyBanksViewState extends State<MyBanksView> {
           }
         },
         builder: (context, state) {
-          if (state is BankLoading && state is! BanksLoaded) {
-            return const SizedBox.shrink();
-          } else if (state is BanksLoaded) {
+          debugPrint("MyBanksPage: Current State: $state");
+          if (state is BanksLoaded) {
             final banks = state.banks;
             return banks.isNotEmpty
                 ? _upliftAccountsPaymentDesign(context, size, banks)
                 : _upliftNoAccountsPaymentDesign(context, size);
+          } else if (state is BankLoading || state is BankInitial) {
+            return Center(
+              child: showAnimatedLoader(size),
+            );
+          } else if (state is BankError) {
+            return Center(child: Text(state.message));
           } else {
-            return const SizedBox.shrink();
+            // Support showing loader for other transient states if no data
+            return Center(child: showAnimatedLoader(size));
           }
         },
       ),
@@ -246,8 +252,6 @@ class _MyBanksViewState extends State<MyBanksView> {
   Widget _upliftAccountsPaymentDesign(
       BuildContext context, Size size, List banks) {
     final firstBank = banks.first;
-    // Assuming the first bank is the default/primary one as per legacy logic (sort of)
-    // Legacy logic did a bit of swapping for default. Here we just display them.
 
     return SingleChildScrollView(
       child: Padding(

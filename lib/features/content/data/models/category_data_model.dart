@@ -11,11 +11,11 @@ class CategoryDataModel extends CategoryData {
 
   factory CategoryDataModel.fromJson(Map<String, dynamic> json) {
     return CategoryDataModel(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      icon: json['icon'],
-      percentage: json['percentage'] ?? '',
-      type: json['type'] ?? '',
+      id: (json['id'] ?? '').toString(),
+      name: (json['name'] ?? '').toString(),
+      icon: json['icon']?.toString(),
+      percentage: (json['percentage'] ?? '').toString(),
+      type: (json['type'] ?? '').toString(),
     );
   }
 

@@ -1,178 +1,371 @@
 import 'package:flutter/material.dart';
 import 'package:presshop/features/map/constants/map_news_constants.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
+import 'package:intl/intl.dart';
+import 'package:presshop/core/constants/app_dimensions.dart';
+import 'package:presshop/core/constants/app_assets.dart';
 
 class CustomInfoWindow extends StatelessWidget {
+  final Incident incident;
+  final VoidCallback onPressed;
 
   const CustomInfoWindow({
     super.key,
     required this.incident,
     required this.onPressed,
   });
-  final Incident incident;
-  final VoidCallback onPressed;
 
-  String _getDisplayName() {
-    if (incident.type != null) {
-      return incident.type![0].toUpperCase() + incident.type!.substring(1);
+  String _getDisplayTitle(String? type, String? address) {
+    String typeName = (type ?? "Incident");
+    if (typeName.isNotEmpty) {
+      typeName =
+          typeName[0].toUpperCase() + typeName.substring(1).toLowerCase();
     }
-    return incident.name ?? "Incident";
+
+    String city = "Unknown City";
+    if (address != null && address.isNotEmpty) {
+      List<String> parts = address.split(',');
+      if (parts.length > 1) {
+        city = parts[1].trim();
+      } else {
+        city = address;
+      }
+    }
+
+    return "$typeName at $city";
+  }
+
+  String _formatTime(String? timeStr) {
+    if (timeStr == null || timeStr.isEmpty) return "No Time";
+
+    DateTime? parsed = DateTime.tryParse(timeStr);
+    if (parsed != null) {
+      return DateFormat('hh:mm a').format(parsed);
+    }
+
+    try {
+      return DateFormat('hh:mm a').format(DateFormat("HH:mm").parse(timeStr));
+    } catch (_) {}
+
+    return timeStr;
+  }
+
+  String _formatDate(String? dateStr, String? timeStr) {
+    if (dateStr != null && dateStr.isNotEmpty) {
+      try {
+        DateTime? parsed = DateTime.tryParse(dateStr);
+        if (parsed != null) {
+          return DateFormat("dd MMM yyyy").format(parsed);
+        }
+      } catch (_) {}
+      return dateStr;
+    }
+
+    if (timeStr != null && timeStr.isNotEmpty) {
+      try {
+        DateTime? parsed = DateTime.tryParse(timeStr);
+        if (parsed != null) {
+          return DateFormat("dd MMM yyyy").format(parsed);
+        }
+      } catch (_) {}
+    }
+
+    return "No Date";
   }
 
   @override
   Widget build(BuildContext context) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.0, end: 1.0),
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOutQuart,
-      builder: (context, value, child) {
-        return Transform.scale(
-          scale: value,
+    var size = MediaQuery.of(context).size;
+    return Transform.translate(
+      offset: const Offset(0, 0),
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0.0, end: 1.0),
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutQuart,
+        builder: (context, value, child) {
+          return Transform.scale(
+            scale: value,
+            alignment: Alignment.bottomCenter, // Scale from center bottom
+            child: Opacity(
+              opacity: value,
+              child: child,
+            ),
+          );
+        },
+        child: Container(
           alignment: Alignment.bottomCenter,
-          child: Opacity(
-            opacity: value,
-            child: child,
-          ),
-        );
-      },
-      child: Material(
-        color: Colors.transparent,
-        elevation: 6,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // MAIN CARD
-            Container(
-              width: 250,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // TOP ROW (ICON + TITLE)
-                  Row(
-                    children: [
-                      Image.asset(
-                        markerIcons[incident.type] ?? markerIcons["accident"]!,
-                        width: 35,
-                        height: 35,
+          child: Material(
+            color: Colors.transparent,
+            elevation: 20,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // MAIN CARD
+                Container(
+                  width: size.width * AppDimensions.numD65,
+                  padding: EdgeInsets.only(
+                      left: size.width * AppDimensions.numD04,
+                      right: size.width * AppDimensions.numD04,
+                      top: size.width * AppDimensions.numD02,
+                      bottom: size.width * AppDimensions.numD04),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD045),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: size.width * AppDimensions.numD02,
+                        offset: Offset(0, size.width * AppDimensions.numD008),
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // TOP ROW (ICON + CITY)
+                      Container(
+                        padding: EdgeInsets.only(
+                            bottom: size.width * AppDimensions.numD02),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Text(
-                              incident.heading ?? _getDisplayName(),
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                            Image.asset(
+                              burstIcons[incident.type] ??
+                                  markerIcons[incident.type] ??
+                                  markerIcons["nomarker"]!,
+                              height: size.width * AppDimensions.numD10,
                             ),
-                            if (incident.temperature != null ||
-                                incident.wind != null)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 2),
-                                child: Row(
-                                  children: [
-                                    if (incident.temperature != null)
-                                      Text(
-                                        "${incident.temperature}°C  ",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey.shade700,
-                                          fontWeight: FontWeight.w500,
+                            SizedBox(width: size.width * AppDimensions.numD015),
+                            Flexible(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    // Use heading if available, else fallback
+                                    incident.heading ??
+                                        _getDisplayTitle(
+                                            incident.type, incident.address),
+                                    style: TextStyle(
+                                      fontSize:
+                                          size.width * AppDimensions.numD045,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  if (incident.temperature != null ||
+                                      incident.wind != null ||
+                                      (incident.type
+                                              ?.toLowerCase()
+                                              .contains('snow') ??
+                                          false) ||
+                                      (incident.type
+                                              ?.toLowerCase()
+                                              .contains('weather') ??
+                                          false) ||
+                                      (incident.type
+                                              ?.toLowerCase()
+                                              .contains('storm') ??
+                                          false)) ...[
+                                    SizedBox(
+                                        height:
+                                            size.width * AppDimensions.numD01),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${incident.temperature ?? '--'}°C",
+                                          style: TextStyle(
+                                            fontSize: size.width *
+                                                AppDimensions.numD032,
+                                            color: Colors.grey.shade700,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
-                                      ),
-                                    if (incident.wind != null)
-                                      Text(
-                                        "${incident.wind} km/h Wind",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey.shade700,
-                                          fontWeight: FontWeight.w500,
+                                        SizedBox(
+                                            width: size.width *
+                                                AppDimensions.numD02),
+                                        Text(
+                                          "${incident.wind ?? '--'} km/h Wind",
+                                          style: TextStyle(
+                                            fontSize: size.width *
+                                                AppDimensions.numD032,
+                                            color: Colors.grey.shade700,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
-                                      ),
+                                      ],
+                                    ),
                                   ],
-                                ),
+                                ],
                               ),
+                            ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
 
-                  const SizedBox(height: 10),
+                      // DIVIDER
+                      Container(height: 1, color: Colors.grey.shade300),
 
-                  // DIVIDER
-                  Container(height: 1, color: Colors.grey.shade300),
+                      SizedBox(height: size.width * AppDimensions.numD025),
 
-                  const SizedBox(height: 8),
-
-                  // TIME ROW
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.access_time,
-                        size: 14,
-                        color: Colors.grey.shade800,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        incident.time ?? "Unknown Time",
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey.shade700,
+                      // FULL ADDRESS
+                      if (incident.address != null &&
+                          incident.address!.isNotEmpty) ...[
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: SizedBox(
+                                width: size.width * AppDimensions.numD06,
+                                child: Image.asset(
+                                    "assets/icons/news_location.png",
+                                    height: size.width * AppDimensions.numD04,
+                                    color: Colors.grey[800]),
+                              ),
+                            ),
+                            SizedBox(width: size.width * AppDimensions.numD02),
+                            Expanded(
+                              child: Text(
+                                incident.address!,
+                                style: TextStyle(
+                                  fontSize: size.width * AppDimensions.numD035,
+                                  color: Colors.grey.shade700,
+                                  // height: 1.3,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
 
-                  const SizedBox(height: 6),
+                      if (incident.description != null &&
+                          incident.description!.isNotEmpty) ...[
+                        SizedBox(height: size.width * AppDimensions.numD02),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: size.width * AppDimensions.numD06,
+                              child: Icon(Icons.info_outline,
+                                  size: size.width * AppDimensions.numD04,
+                                  color: Colors.grey[800]),
+                            ),
+                            SizedBox(width: size.width * AppDimensions.numD02),
+                            Expanded(
+                              child: Text(
+                                incident.description!,
+                                style: TextStyle(
+                                  fontSize: size.width * AppDimensions.numD032,
+                                  color: Colors.grey.shade600,
+                                  fontStyle: FontStyle.italic,
+                                  height: 1.3,
+                                ),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
 
-                  // LOCATION ROW
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 16,
-                        color: Colors.grey.shade800,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          incident.address ?? "Unknown Location",
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey.shade700,
+                      SizedBox(height: size.width * AppDimensions.numD02),
+
+                      // TIME AND VIEW COUNT (ROW)
+                      Row(
+                        children: [
+                          // Time (Left)
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: size.width * AppDimensions.numD06,
+                                child: Image.asset(
+                                  "${iconsPath}ic_clock.png",
+                                  height: size.width * AppDimensions.numD035,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
+                              SizedBox(
+                                  width: size.width * AppDimensions.numD025),
+                              Text(
+                                _formatTime(incident.time),
+                                style: TextStyle(
+                                  fontSize: size.width * AppDimensions.numD035,
+                                  color: Colors.grey.shade700,
+                                ),
+                              ),
+                            ],
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+
+                          SizedBox(width: size.width * AppDimensions.numD03),
+
+                          // Views (Right)
+                          Row(
+                            children: [
+                              Image.asset(
+                                "assets/icons/news_eye.png",
+                                height: size.width * AppDimensions.numD03,
+                                color: Colors.grey.shade800,
+                              ),
+                              SizedBox(
+                                  width: size.width * AppDimensions.numD015),
+                              Text(
+                                "${incident.viewCount ?? 0}",
+                                style: TextStyle(
+                                  fontSize: size.width * AppDimensions.numD035,
+                                  color: Colors.grey.shade700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: size.width * AppDimensions.numD02),
+
+                      // DATE
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: size.width * AppDimensions.numD06,
+                            child: Image.asset(
+                              "${iconsPath}ic_yearly_calendar.png",
+                              height: size.width * AppDimensions.numD035,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                          SizedBox(width: size.width * AppDimensions.numD02),
+                          Text(
+                            _formatDate(incident.date, incident.time),
+                            style: TextStyle(
+                              fontSize: size.width * AppDimensions.numD035,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+
+                // TRIANGLE
+                Padding(
+                  padding: EdgeInsets.zero,
+                  child: CustomPaint(
+                      size: Size(size.width * AppDimensions.numD06,
+                          size.width * AppDimensions.numD03),
+                      painter: _TrianglePainter()),
+                ),
+              ],
             ),
-            // TRIANGLE
-            CustomPaint(size: const Size(20, 12), painter: _TrianglePainter()),
-          ],
+          ),
         ),
       ),
     );

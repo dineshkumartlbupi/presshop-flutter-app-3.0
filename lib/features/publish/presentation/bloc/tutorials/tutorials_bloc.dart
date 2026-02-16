@@ -6,12 +6,12 @@ import '../../../domain/usecases/get_tutorial_videos.dart';
 import '../../../domain/usecases/add_tutorial_view_count.dart';
 import '../../../data/models/tutorials_model.dart';
 import '../../../data/models/category_data_model.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 part 'tutorials_event.dart';
 part 'tutorials_state.dart';
 
 class TutorialsBloc extends Bloc<TutorialsEvent, TutorialsState> {
-
   TutorialsBloc({
     required this.getTutorialCategories,
     required this.getTutorialVideos,
@@ -31,23 +31,45 @@ class TutorialsBloc extends Bloc<TutorialsEvent, TutorialsState> {
     TutorialsLoadCategories event,
     Emitter<TutorialsState> emit,
   ) async {
-    // Only load if empty or refresh needed.
-    // Usually initial load.
-    emit(state.copyWith(status: TutorialsStatus.loading));
+    final cacheBox = Hive.box('sync_cache');
+    final cachedData = cacheBox.get('tutorial_categories');
+
+    if (cachedData != null && cachedData is List) {
+      final categories = cachedData.cast<CategoryDataModel>();
+      if (categories.isNotEmpty) {
+        var updatedCategories = List<CategoryDataModel>.from(categories);
+        updatedCategories[0] = updatedCategories[0].copyWith(selected: true);
+        emit(state.copyWith(
+          status: TutorialsStatus.success,
+          categories: updatedCategories,
+          selectedCategoryIndex: 0,
+        ));
+        add(TutorialsLoadVideos(category: updatedCategories[0].name));
+      }
+    }
+
+    if (state.categories.isEmpty) {
+      emit(state.copyWith(status: TutorialsStatus.loading));
+    }
+
     final result = await getTutorialCategories(NoParams());
     result.fold(
-      (failure) => emit(state.copyWith(
-          status: TutorialsStatus.failure, errorMessage: failure.message)),
+      (failure) {
+        if (state.categories.isEmpty) {
+          emit(state.copyWith(
+              status: TutorialsStatus.failure, errorMessage: failure.message));
+        }
+      },
       (categories) {
         if (categories.isNotEmpty) {
-          // Select first category
+          cacheBox.put('tutorial_categories', categories);
           var updatedCategories = List<CategoryDataModel>.from(categories);
           updatedCategories[0] = updatedCategories[0].copyWith(selected: true);
 
           emit(state.copyWith(
+            status: TutorialsStatus.success,
             categories: updatedCategories,
             selectedCategoryIndex: 0,
-            // After loading categories, load videos for first category
           ));
           add(TutorialsLoadVideos(category: updatedCategories[0].name));
         } else {
@@ -61,11 +83,26 @@ class TutorialsBloc extends Bloc<TutorialsEvent, TutorialsState> {
     TutorialsLoadVideos event,
     Emitter<TutorialsState> emit,
   ) async {
+    final cacheKey = 'tutorial_videos_${event.category}';
+    final cacheBox = Hive.box('sync_cache');
+
+    if (!event.isLoadMore && !event.isRefresh) {
+      final cachedData = cacheBox.get(cacheKey);
+      if (cachedData != null && cachedData is List) {
+        final cachedVideos = cachedData.cast<TutorialsModel>();
+        emit(state.copyWith(
+          status: TutorialsStatus.success,
+          videos: cachedVideos,
+          offset: 0,
+          hasReachedMax: false,
+        ));
+      }
+    }
+
     if (event.isLoadMore) {
       if (state.hasReachedMax) return;
-      // emit loading more? usually just keep ui showing loading at bottom
     } else {
-      if (!event.isRefresh) {
+      if (!event.isRefresh && state.videos.isEmpty) {
         emit(state.copyWith(status: TutorialsStatus.loading));
       }
     }
@@ -79,12 +116,19 @@ class TutorialsBloc extends Bloc<TutorialsEvent, TutorialsState> {
     ));
 
     result.fold(
-      (failure) => emit(state.copyWith(
-          status: TutorialsStatus.failure, errorMessage: failure.message)),
+      (failure) {
+        if (state.videos.isEmpty) {
+          emit(state.copyWith(
+              status: TutorialsStatus.failure, errorMessage: failure.message));
+        }
+      },
       (newVideos) {
         List<TutorialsModel> allVideos = [];
         if (event.isRefresh || !event.isLoadMore) {
           allVideos = newVideos;
+          if (offset == 0) {
+            cacheBox.put(cacheKey, newVideos);
+          }
         } else {
           allVideos = List.of(state.videos)..addAll(newVideos);
         }

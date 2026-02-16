@@ -64,7 +64,8 @@ class LeaderboardModel extends LeaderboardEntity {
 
     // Ensure "Global" is at the start if countryListRaw is not empty
     if (countryListRaw.isNotEmpty) {
-      bool hasGlobal = countryListRaw.any((c) => c is Map &&
+      bool hasGlobal = countryListRaw.any((c) =>
+          c is Map &&
           (c['country_code'] == '' ||
               c['countryCode'] == '' ||
               c['country'] == 'Global'));
@@ -84,6 +85,16 @@ class LeaderboardModel extends LeaderboardEntity {
           .map((item) => MemberModel.fromJson(item as Map<String, dynamic>))
           .toList(),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'totalMember': totalMember,
+      'countryList': countryList
+          .map((e) => (e as LeaderboardCountryModel).toJson())
+          .toList(),
+      'memberList': memberList.map((e) => (e as MemberModel).toJson()).toList(),
+    };
   }
 }
 
@@ -120,13 +131,13 @@ class MemberModel extends MemberEntity {
   });
 
   factory MemberModel.fromJson(Map<String, dynamic> json) {
-    String userName = json['user_name'] ?? '';
+    String userName = (json['user_name'] ?? '').toString();
     if (userName.isEmpty) {
       userName =
           "${json['first_name'] ?? ''} ${json['last_name'] ?? ''}".trim();
     }
     if (userName.isEmpty) {
-      userName = json['userName'] ?? '';
+      userName = (json['userName'] ?? '').toString();
     }
 
     String avatar = (json['avatar'] ?? json['profile_image'] ?? '').toString();
@@ -152,5 +163,16 @@ class MemberModel extends MemberEntity {
           '0.00',
       avatar: avatar.isEmpty ? "" : fixS3Url(avatar),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'user_name': userName,
+      'country': country,
+      'created_at': createdAt.toIso8601String(),
+      'total_earnings': totalEarnings,
+      'avatar': avatar,
+    };
   }
 }

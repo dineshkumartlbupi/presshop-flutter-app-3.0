@@ -11,6 +11,8 @@ class NewsState extends Equatable {
     this.isProcessing = false,
     this.errorMessage,
     this.hasMoreComments = true,
+    this.hasMoreNews = true,
+    this.isLoadingComments = false,
   });
   final List<News> newsList;
   final News? selectedNews;
@@ -19,6 +21,8 @@ class NewsState extends Equatable {
   final bool isProcessing;
   final String? errorMessage;
   final bool hasMoreComments;
+  final bool hasMoreNews;
+  final bool isLoadingComments;
 
   NewsState copyWith({
     List<News>? newsList,
@@ -28,6 +32,8 @@ class NewsState extends Equatable {
     bool? isProcessing,
     String? errorMessage,
     bool? hasMoreComments,
+    bool? hasMoreNews,
+    bool? isLoadingComments,
   }) {
     return NewsState(
       newsList: newsList ?? this.newsList,
@@ -37,6 +43,8 @@ class NewsState extends Equatable {
       isProcessing: isProcessing ?? this.isProcessing,
       errorMessage: errorMessage ?? this.errorMessage,
       hasMoreComments: hasMoreComments ?? this.hasMoreComments,
+      hasMoreNews: hasMoreNews ?? this.hasMoreNews,
+      isLoadingComments: isLoadingComments ?? this.isLoadingComments,
     );
   }
 
@@ -49,5 +57,7 @@ class NewsState extends Equatable {
         isProcessing,
         errorMessage,
         hasMoreComments,
+        hasMoreNews,
+        isLoadingComments,
       ];
 }

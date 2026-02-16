@@ -57,12 +57,10 @@ class TokenRefreshManager {
       debugPrint(
           "Refreshing token: $uri (Attempt ${retryAttempt + 1}/${_maxRetries + 1})");
 
-      String tokenforAccess = refreshTokenValue == "" ? token : "";
-
       final request = http.Request("GET", uri);
       request.headers.addAll({
         SharedPreferencesKeys.refreshHeaderKey: refreshTokenValue,
-        SharedPreferencesKeys.accessHeaderKey: tokenforAccess,
+        SharedPreferencesKeys.accessHeaderKey: token,
         SharedPreferencesKeys.headerDeviceTypeKey:
             "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
         SharedPreferencesKeys.headerDeviceIdKey: deviceID,
@@ -94,15 +92,20 @@ class TokenRefreshManager {
       if (response.statusCode <= 201) {
         try {
           final map = jsonDecode(response.body);
+          final data = map["data"] ?? map;
 
-          if (map["success"] == true &&
-              map["data"] != null &&
-              map["data"]["access_token"] != null &&
-              map["data"]["refresh_token"] != null) {
+          final newAccessToken = data["access_token"] ??
+              data["token"] ??
+              (data["user"] != null ? data["user"]["token"] : null);
+          final newRefreshToken = data["refresh_token"] ??
+              data["refreshToken"] ??
+              (data["user"] != null ? data["user"]["refreshToken"] : null);
+
+          if ((map["success"] == true || map["code"] == 200) &&
+              newAccessToken != null &&
+              newRefreshToken != null) {
             await storage.delete(key: SharedPreferencesKeys.tokenKey);
             await storage.delete(key: SharedPreferencesKeys.refreshtokenKey);
-            final newAccessToken = map["data"]["access_token"];
-            final newRefreshToken = map["data"]["refresh_token"];
 
             await storage.write(
                 key: SharedPreferencesKeys.tokenKey, value: newAccessToken);
@@ -116,7 +119,6 @@ class TokenRefreshManager {
                 SharedPreferencesKeys.refreshtokenKey, newRefreshToken);
 
             debugPrint("Token refreshed successfully");
-            // _retryCount = 0;
             if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
               _refreshCompleter!.complete(true);
             }
@@ -125,7 +127,7 @@ class TokenRefreshManager {
             _refreshCompleter = null;
             return true;
           } else {
-            debugPrint("Invalid token refresh response format");
+            debugPrint("Invalid token refresh response format or data missing");
             if (retryAttempt < _maxRetries) {
               debugPrint(
                   "Retrying token refresh after invalid response format...");

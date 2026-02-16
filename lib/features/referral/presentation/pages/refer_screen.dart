@@ -86,15 +86,17 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
             padding: EdgeInsets.all(size.width * AppDimensions.numD04),
             child: Column(
               children: [
-                Center(
-                  child: Text(
-                    "Hoppers unite — let’s grow the army",
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * AppDimensions.numD048,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600),
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      "Hoppers unite — let’s grow the army",
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD048,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ],
                 ),
                 SizedBox(
                   height: size.width * AppDimensions.numD06,

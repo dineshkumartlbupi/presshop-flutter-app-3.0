@@ -13,6 +13,7 @@ import 'package:presshop/features/authentication/data/repositories/term_reposito
 import 'package:presshop/core/di/injection_container.dart'; // For sl
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
 class TermCheckScreen extends StatefulWidget {
@@ -59,8 +60,9 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return BlocProvider(
-      create: (context) => TermsBloc(sl<TermsRepository>())
-        ..add(FetchTermsEvent(type: widget.type)),
+      create: (context) =>
+          TermsBloc(sl<TermsRepository>(), sl<SharedPreferences>())
+            ..add(FetchTermsEvent(type: widget.type)),
       child: BlocConsumer<TermsBloc, TermsState>(
         listener: (context, state) {
           if (state is TermsLoaded) {

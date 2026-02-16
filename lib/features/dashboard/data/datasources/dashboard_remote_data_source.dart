@@ -184,8 +184,13 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   @override
   Future<Map<String, dynamic>> checkStudentBeans() async {
     try {
-      final response = await apiClient.get(ApiConstantsNew.profile.myProfile,
-          showLoader: false);
+      final userId = apiClient.sharedPreferences
+          .getString(SharedPreferencesKeys.hopperIdKey);
+      final response = await apiClient.get(
+        ApiConstantsNew.profile.myProfile,
+        queryParameters: userId != null ? {"userId": userId} : null,
+        showLoader: false,
+      );
       if (response.statusCode == 200) {
         final data = response.data;
         final responseMap =

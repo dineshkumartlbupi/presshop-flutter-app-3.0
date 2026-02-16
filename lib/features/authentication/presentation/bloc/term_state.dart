@@ -1,15 +1,21 @@
-abstract class TermsState {}
+abstract class TermsState {
+  const TermsState();
+}
 
-class TermsInitial extends TermsState {}
+class TermsInitial extends TermsState {
+  const TermsInitial();
+}
 
-class TermsLoading extends TermsState {}
+class TermsLoading extends TermsState {
+  const TermsLoading();
+}
 
 class TermsLoaded extends TermsState {
-  TermsLoaded({required this.htmlContent});
+  const TermsLoaded({required this.htmlContent}) : super();
   final String htmlContent;
 }
 
 class TermsError extends TermsState {
-  TermsError({required this.message});
+  const TermsError({required this.message}) : super();
   final String message;
 }

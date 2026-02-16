@@ -23,4 +23,5 @@ export 'package:presshop/core/utils/validator_utils.dart';
 export 'package:presshop/core/widgets/button_widgets.dart';
 export 'package:presshop/core/utils/dialog_utils.dart';
 export 'package:presshop/core/widgets/common_widgets.dart';
+export 'package:presshop/core/widgets/common_branded_app_bar.dart';
 export 'package:presshop/core/widgets/error/connection_error_overlay.dart';

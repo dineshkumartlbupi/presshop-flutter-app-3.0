@@ -71,43 +71,46 @@ class MyContentItemModel extends ContentItem {
 
   factory MyContentItemModel.fromJson(Map<String, dynamic> json) {
     return MyContentItemModel(
-      id: json['id'],
-      description: json['description'] ?? '',
-      location: json['location'] ?? '',
-      latitude: json['latitude'] ?? '',
-      longitude: json['longitude'] ?? '',
-      categoryId: json['category_id'],
-      hopperId: json['hopper_id'],
-      type: json['type'],
-      askPrice: json['ask_price'],
-      isDraft: json['is_draft'] == "true",
-      isCharity: json['is_charity'] == "true",
-      images: List<String>.from(json['images']),
-      videos: List<dynamic>.from(json['videos']),
-      createdAt: json['created_at'],
-      status: json['status'],
-      contentMetadata: (json['content_metadata'] as List)
+      id: (json['id'] ?? '').toString(),
+      description: (json['description'] ?? '').toString(),
+      location: (json['location'] ?? '').toString(),
+      latitude: (json['latitude'] ?? '').toString(),
+      longitude: (json['longitude'] ?? '').toString(),
+      categoryId: (json['category_id'] ?? '').toString(),
+      hopperId: (json['hopper_id'] ?? '').toString(),
+      type: json['type']?.toString(),
+      askPrice: (json['ask_price'] ?? '').toString(),
+      isDraft: (json['is_draft'] ?? "false").toString() == "true",
+      isCharity: (json['is_charity'] ?? "false").toString() == "true",
+      images: List<String>.from(json['images'] ?? []),
+      videos: List<dynamic>.from(json['videos'] ?? []),
+      createdAt: (json['created_at'] ?? '').toString(),
+      status: (json['status'] ?? '').toString(),
+      contentMetadata: (json['content_metadata'] as List? ?? [])
           .map((e) => ContentMetadataModel.fromJson(e))
           .toList(),
-      productId: json['product_id'],
-      priceOriginal: json['price_original'],
-      convertedAskPrice: json['converted_ask_price'],
-      currencyOriginal: json['currency_original'],
-      priceBase: json['price_base'],
-      currencyBase: json['currency_base'],
-      imageCount: json['image_count'],
-      videoCount: json['video_count'],
-      audioCount: json['audio_count'],
-      otherCount: json['other_count'],
-      contentUnderOffer: json['content_under_offer'],
-      paidStatus: json['paid_status'],
-      contentViewCount: json['content_view_count_by_marketplace_for_app'],
-      isFavourite: json['is_favourite'],
-      isLiked: json['is_liked'],
-      isEmoji: json['is_emoji'],
-      isClap: json['is_clap'],
-      updatedAt: json['updated_at'],
-      categoryData: CategoryDataModel.fromJson(json['categoryData']),
+      productId: (json['product_id'] ?? '').toString(),
+      priceOriginal: (json['price_original'] ?? '').toString(),
+      convertedAskPrice: (json['converted_ask_price'] ?? '').toString(),
+      currencyOriginal: (json['currency_original'] ?? '').toString(),
+      priceBase: json['price_base']?.toString(),
+      currencyBase: json['currency_base']?.toString(),
+      imageCount: int.tryParse(json['image_count']?.toString() ?? '0') ?? 0,
+      videoCount: int.tryParse(json['video_count']?.toString() ?? '0') ?? 0,
+      audioCount: int.tryParse(json['audio_count']?.toString() ?? '0') ?? 0,
+      otherCount: int.tryParse(json['other_count']?.toString() ?? '0') ?? 0,
+      contentUnderOffer: json['content_under_offer'] == true,
+      paidStatus: json['paid_status'] == true,
+      contentViewCount: int.tryParse(
+              json['content_view_count_by_marketplace_for_app']?.toString() ??
+                  '0') ??
+          0,
+      isFavourite: json['is_favourite'] == true,
+      isLiked: json['is_liked'] == true,
+      isEmoji: json['is_emoji'] == true,
+      isClap: json['is_clap'] == true,
+      updatedAt: json['updated_at']?.toString(),
+      categoryData: CategoryDataModel.fromJson(json['categoryData'] ?? {}),
       currency: (json['currency'] ?? '').toString(),
       currencySymbol: (json['currency_symbol'] != null &&
               json['currency_symbol'].toString().isNotEmpty)
@@ -161,44 +164,70 @@ class MyContentData {
         dateTime: (json["timestamp"] ?? "").toString(),
         format: "HH:mm, dd MMM, yyyy",
         utc: true);
-    String textValue = json["description"] ?? "";
-    String location = json["location"] ?? "";
+    String textValue = (json["description"] ?? "").toString();
+    String location = (json["location"] ?? "").toString();
     String latitude = (json["latitude"] ?? "0.0").toString();
     String longitude = (json["longitude"] ?? "0.0").toString();
-    String amount = (json["original_ask_price"] ?? "0").toString();
+    String amount = (json["original_ask_price"] ??
+            json["ask_price"] ??
+            json["display_price"] ??
+            "0")
+        .toString();
 
     List<ContentMediaData> contentMediaList = [];
     if (json["content"] != null) {
       var contentList = json["content"] as List;
       contentMediaList =
           contentList.map((e) => ContentMediaData.fromJson(e)).toList();
+    } else if (json["images"] != null || json["videos"] != null) {
+      // Fallback for direct images/videos lists if 'content' is missing
+      if (json["images"] is List) {
+        for (var img in json["images"]) {
+          contentMediaList.add(ContentMediaData(
+              "", img.toString(), "image", img.toString(), ""));
+        }
+      }
+      if (json["videos"] is List) {
+        for (var vid in json["videos"]) {
+          contentMediaList.add(ContentMediaData(
+              "", vid.toString(), "video", vid.toString(), ""));
+        }
+      }
     }
 
     List<dynamic> hashTagList = [];
     if (json["tagData"] != null) {
       hashTagList = json["tagData"] as List;
+    } else if (json["tag_ids"] != null) {
+      // Handle tag_ids string/list if present
     }
 
     CategoryDataModel? categoryData;
     if (json["categoryData"] != null) {
       categoryData = CategoryDataModel.fromJson(json["categoryData"]);
+    } else if (json["category_id"] != null) {
+      categoryData = CategoryDataModel(
+          id: json["category_id"].toString(),
+          name: "Unknown",
+          percentage: "0",
+          type: "content");
     }
 
     int count = 0;
     if (textValue.trim().isNotEmpty) count += 1;
     if (time.trim().isNotEmpty) count += 1;
     if (location.trim().isNotEmpty) count += 1;
-    if (amount.trim().isNotEmpty) count += 1;
+    if (amount.trim().isNotEmpty && amount != "0") count += 1;
     if (contentMediaList.isNotEmpty) count += 1;
     if (hashTagList.isNotEmpty) count += 1;
-    if (categoryData != null) count += 1;
+    if (categoryData != null && categoryData.name != "Unknown") count += 1;
 
     String completionPercent = ((count * 14.286) / 100).round().toString();
     int leftPercent = ((7 - count) * 14.286).round();
 
     return MyContentData(
-      id: (json["_id"] ?? json["id"] ?? "").toString(),
-      title: json["title"] ?? "",
+      id: (json["id"] ?? json["_id"] ?? json["mongo_id"] ?? "").toString(),
+      title: (json["title"] ?? json["heading"] ?? "").toString(),
       textValue: textValue,
       time: time,
       location: location,
@@ -206,11 +235,11 @@ class MyContentData {
       longitude: longitude,
       amount: amount,
       originalAmount: amount,
-      status: json["status"] ?? "",
-      soldStatus: json["sale_status"] ?? "",
-      paidStatus: json["paid_status"] ?? "",
-      contentType: json["media_type"] ?? "",
-      dateTime: (json["created_at"] ?? "").toString(),
+      status: (json["status"] ?? "").toString(),
+      soldStatus: (json["sale_status"] ?? "").toString(),
+      paidStatus: (json["paid_status"] ?? "").toString(),
+      contentType: (json["media_type"] ?? "").toString(),
+      dateTime: (json["created_at"] ?? json["timestamp"] ?? "").toString(),
       isPaidStatusToHopper: false,
       exclusive: exclusive,
       showVideo: false,
@@ -269,6 +298,29 @@ class MyContentData {
   String totalEarning;
   String currency;
   String currencySymbol;
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'title': title,
+      'description': textValue,
+      'timestamp': dateTime,
+      'location': location,
+      'latitude': latitude,
+      'longitude': longitude,
+      'original_ask_price': amount,
+      'status': status,
+      'sale_status': soldStatus,
+      'paid_status': paidStatus,
+      'media_type': contentType,
+      'created_at': dateTime,
+      'type': exclusive ? 'exclusive' : 'shared',
+      'content': contentMediaList.map((e) => e.toJson()).toList(),
+      'tagData': hashTagList,
+      'categoryData': categoryData?.toJson(),
+      'total_offer': offerCount,
+    };
+  }
 }
 
 class ContentMediaData {
@@ -277,9 +329,9 @@ class ContentMediaData {
 
   ContentMediaData.fromJson(json) {
     id = (json["_id"] ?? json["id"] ?? "").toString();
-    media = json["media"];
-    mediaType = json["media_type"] ?? "";
-    thumbNail = (json["thumbnail"] ?? json["media"]).toString();
+    media = (json["media"] ?? "").toString();
+    mediaType = (json["media_type"] ?? "").toString();
+    thumbNail = (json["thumbnail"] ?? json["media"] ?? "").toString();
     waterMark =
         (json["watermark"] ?? json["watermarked_media"] ?? "").toString();
   }
@@ -288,6 +340,16 @@ class ContentMediaData {
   String mediaType = "";
   String thumbNail = "";
   String waterMark = "";
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'media': media,
+      'media_type': mediaType,
+      'thumbnail': thumbNail,
+      'watermark': waterMark,
+    };
+  }
 
   Future<String> getVideoThumbNail(String path) async {
     debugPrint("MediaIs:::::: $path");

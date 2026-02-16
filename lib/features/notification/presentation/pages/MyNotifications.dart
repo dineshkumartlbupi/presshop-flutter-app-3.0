@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
 
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/widgets/common_app_bar.dart';
+import 'package:presshop/core/widgets/common_branded_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/notification/presentation/bloc/notification_bloc.dart';
@@ -349,94 +349,11 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
         builder: (context, state) {
           return Scaffold(
             backgroundColor: Colors.white,
-            appBar: CommonAppBar(
-              elevation: 0,
-              title: Text(
-                AppStrings.notificationText,
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-              ),
-              centerTitle: false,
-              titleSpacing: 0,
+            appBar: CommonBrandedAppBar(
+              title: AppStrings.notificationText,
               size: size,
-              showActions: true,
-              leadingFxn: () {
-                context.pop();
-              },
-              actionWidget: [
-                InkWell(
-                  child: Container(
-                    margin: EdgeInsets.only(
-                        top: size.width * AppDimensions.numD048),
-                    child: Stack(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(top: 5),
-                          height: size.width * AppDimensions.numD06,
-                          width: size.width * AppDimensions.numD06,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.grey.shade800, width: 2),
-                              borderRadius: BorderRadius.circular(
-                                  size.width * AppDimensions.numD02)),
-                        ),
-                        Positioned(
-                          right: 0,
-                          top: 0,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(size.width * 0.002),
-                                decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle),
-                                child: Icon(
-                                  Icons.circle,
-                                  color: AppColorTheme.colorThemePink,
-                                  size: size.width * AppDimensions.numD04,
-                                ),
-                              ),
-                              Text(
-                                state.unreadCount.toString(),
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize:
-                                        size.width * AppDimensions.numD025,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500),
-                                textAlign: TextAlign.center,
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * AppDimensions.numD04,
-                ),
-                InkWell(
-                  onTap: () {
-                    context.goNamed(
-                      AppRoutes.dashboardName,
-                      extra: {'initialPosition': 2},
-                    );
-                  },
-                  child: Image.asset(
-                    "${commonImagePath}rabbitLogo.png",
-                    height: size.width * AppDimensions.numD07,
-                    width: size.width * AppDimensions.numD07,
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * AppDimensions.numD04,
-                )
-              ],
-              hideLeading: false,
+              notificationCount: state.unreadCount,
+              showLogo: false,
             ),
             body: SafeArea(
               child: Column(
@@ -513,20 +430,6 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                             'contentId': item.contentId,
                                             'offerCount': 0,
                                             'purchasedMediahouseCount': 0,
-                                          },
-                                        );
-                                      } else if (item.messageType ==
-                                          "offer_received") {
-                                        context.pushNamed(
-                                          AppRoutes.manageTaskName,
-                                          extra: {
-                                            'roomId': item.contentId,
-                                            'contentId': item.contentId,
-                                            'type': 'content',
-                                            'mediaHouseDetail': null,
-                                            'contentMedia': null,
-                                            'contentHeader': null,
-                                            'myContentData': null,
                                           },
                                         );
                                       } else if (item.messageType ==

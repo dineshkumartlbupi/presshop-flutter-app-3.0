@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:hive/hive.dart';
 import '../../../../core/di/injection_container.dart';
 
 // ignore: must_be_immutable
@@ -34,6 +35,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
   List<FilterModel> sortList = [];
   List<FilterModel> filterList = [];
   bool showData = false;
+  bool showLoader = false;
   int limit = 10, offset = 0;
   int draftIndex = 0;
   int selectedIndex = 0;
@@ -65,256 +67,271 @@ class MyDraftScreenState extends State<MyDraftScreen> {
 
         return false;
       },
-      child: Scaffold(
-        appBar: CommonAppBar(
-          elevation: 0,
-          title: Text(
-            AppStrings.myDraftText,
-            style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-          ),
-          centerTitle: false,
-          titleSpacing: 0,
-          size: size,
-          showActions: true,
-          leadingFxn: () {
-            context.pop();
-          },
-          actionWidget: [
-            InkWell(
-                onTap: () {
-                  showBottomSheet(size);
-                },
-                child: commonFilterIcon(size)),
-            SizedBox(
-              width: size.width * AppDimensions.numD02,
-            ),
-            Container(
-              margin:
-                  EdgeInsets.only(bottom: size.width * AppDimensions.numD02),
-              child: InkWell(
-                onTap: () {
-                  context.goNamed(
-                    AppRoutes.dashboardName,
-                    extra: {'initialPosition': 2},
-                  );
-                },
-                child: Image.asset(
-                  "${commonImagePath}rabbitLogo.png",
-                  height: size.width * AppDimensions.numD07,
-                  width: size.width * AppDimensions.numD07,
-                ),
+      child: Stack(
+        children: [
+          Scaffold(
+            appBar: CommonAppBar(
+              elevation: 0,
+              title: Text(
+                AppStrings.myDraftText,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: size.width * AppDimensions.appBarHeadingFontSize),
               ),
+              centerTitle: false,
+              titleSpacing: 0,
+              size: size,
+              showActions: true,
+              leadingFxn: () {
+                context.pop();
+              },
+              actionWidget: [
+                InkWell(
+                    onTap: () {
+                      showBottomSheet(size);
+                    },
+                    child: commonFilterIcon(size)),
+                SizedBox(
+                  width: size.width * AppDimensions.numD02,
+                ),
+                Container(
+                  margin: EdgeInsets.only(
+                      bottom: size.width * AppDimensions.numD02),
+                  child: InkWell(
+                    onTap: () {
+                      context.goNamed(
+                        AppRoutes.dashboardName,
+                        extra: {'initialPosition': 2},
+                      );
+                    },
+                    child: Image.asset(
+                      "${commonImagePath}rabbitLogo.png",
+                      height: size.width * AppDimensions.numD07,
+                      width: size.width * AppDimensions.numD07,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: size.width * AppDimensions.numD04,
+                )
+              ],
+              hideLeading: false,
             ),
-            SizedBox(
-              width: size.width * AppDimensions.numD04,
-            )
-          ],
-          hideLeading: false,
-        ),
-        body: SafeArea(
-          child: myDraftList.isNotEmpty
-              ? SmartRefresher(
-                  enablePullDown: true,
-                  enablePullUp: true,
-                  onLoading: _onLoading,
-                  onRefresh: _onRefresh,
-                  controller: _refreshController,
-                  child: ListView.separated(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * AppDimensions.numD04,
-                          vertical: size.width * AppDimensions.numD04),
-                      itemBuilder: (context, index) {
-                        var item = myDraftList[index];
-                        return InkWell(
-                          onTap: () {
-                            selectedIndex = index;
-                            context.pushNamed(
-                              AppRoutes.publishContentName,
-                              extra: {
-                                'publishData': null,
-                                'myContentData': myDraftList[selectedIndex],
-                                'hideDraft': true,
-                                'docType': '',
+            body: SafeArea(
+              child: myDraftList.isNotEmpty
+                  ? SmartRefresher(
+                      enablePullDown: true,
+                      enablePullUp: true,
+                      onLoading: _onLoading,
+                      onRefresh: _onRefresh,
+                      controller: _refreshController,
+                      child: ListView.separated(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD04,
+                              vertical: size.width * AppDimensions.numD04),
+                          itemBuilder: (context, index) {
+                            var item = myDraftList[index];
+                            return InkWell(
+                              onTap: () {
+                                selectedIndex = index;
+                                context.pushNamed(
+                                  AppRoutes.publishContentName,
+                                  extra: {
+                                    'publishData': null,
+                                    'myContentData': myDraftList[selectedIndex],
+                                    'hideDraft': true,
+                                    'docType': '',
+                                  },
+                                );
                               },
-                            );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.only(
-                                left: size.width * AppDimensions.numD03,
-                                right: size.width * AppDimensions.numD03,
-                                top: size.width * AppDimensions.numD03),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                item.contentMediaList.isNotEmpty
-                                    ? mediaWidget(item)
-                                    : Text("No media found."),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD02,
-                                ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                    left: size.width * AppDimensions.numD03,
+                                    right: size.width * AppDimensions.numD03,
+                                    top: size.width * AppDimensions.numD03),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(
-                                      child: Text(
-                                          myDraftList[index]
-                                              .textValue
-                                              .toCapitalized(),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
+                                    item.contentMediaList.isNotEmpty
+                                        ? mediaWidget(item)
+                                        : Text("No media found."),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD02,
+                                    ),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                              myDraftList[index]
+                                                  .textValue
+                                                  .toCapitalized(),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD035,
+                                                  color: Colors.black,
+                                                  lineHeight: 1.5,
+                                                  fontWeight: FontWeight.w600)),
+                                        ),
+                                        SizedBox(
+                                            height: size.width *
+                                                AppDimensions.numD02),
+                                        Image.asset(
+                                          myDraftList[index].exclusive
+                                              ? "${iconsPath}ic_exclusive.png"
+                                              : "${iconsPath}ic_share.png",
+                                          height: size.width *
+                                              AppDimensions.numD035,
+                                          color:
+                                              AppColorTheme.colorTextFieldIcon,
+                                        ),
+                                        SizedBox(
+                                          width:
+                                              size.width * AppDimensions.numD02,
+                                        ),
+                                        Text(
+                                          myDraftList[index].exclusive
+                                              ? AppStrings.exclusiveText
+                                              : AppStrings.sharedText,
                                           style: commonTextStyle(
                                               size: size,
                                               fontSize: size.width *
                                                   AppDimensions.numD035,
                                               color: Colors.black,
-                                              lineHeight: 1.5,
-                                              fontWeight: FontWeight.w600)),
+                                              fontWeight: FontWeight.normal),
+                                        )
+                                      ],
                                     ),
                                     SizedBox(
-                                        height:
-                                            size.width * AppDimensions.numD02),
-                                    Image.asset(
-                                      myDraftList[index].exclusive
-                                          ? "${iconsPath}ic_exclusive.png"
-                                          : "${iconsPath}ic_share.png",
-                                      height:
-                                          size.width * AppDimensions.numD035,
-                                      color: AppColorTheme.colorTextFieldIcon,
+                                      height: size.width * AppDimensions.numD02,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Image.asset(
+                                          "${iconsPath}ic_clock.png",
+                                          height:
+                                              size.width * AppDimensions.numD04,
+                                          color:
+                                              AppColorTheme.colorTextFieldIcon,
+                                        ),
+                                        SizedBox(
+                                          width:
+                                              size.width * AppDimensions.numD01,
+                                        ),
+                                        Text(
+                                          dateTimeFormatter(
+                                              dateTime: item.time.toString(),
+                                              format: "hh:mm a, dd MMM yyyy",
+                                              utc: true),
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD028,
+                                              color: AppColorTheme.colorHint,
+                                              fontWeight: FontWeight.normal),
+                                        )
+                                      ],
                                     ),
                                     SizedBox(
-                                      width: size.width * AppDimensions.numD02,
+                                      height: size.width * AppDimensions.numD02,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Image.asset(
+                                          "${iconsPath}ic_location.png",
+                                          height: size.width *
+                                              AppDimensions.numD045,
+                                          color:
+                                              AppColorTheme.colorTextFieldIcon,
+                                        ),
+                                        SizedBox(
+                                          width:
+                                              size.width * AppDimensions.numD01,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            item.location,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD028,
+                                                color: AppColorTheme.colorHint,
+                                                fontWeight: FontWeight.normal),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD02,
                                     ),
                                     Text(
-                                      myDraftList[index].exclusive
-                                          ? AppStrings.exclusiveText
-                                          : AppStrings.sharedText,
+                                      "${myDraftList[index].leftPercent}% left to complete",
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width *
-                                              AppDimensions.numD035,
+                                          fontSize:
+                                              size.width * AppDimensions.numD03,
                                           color: Colors.black,
+                                          lineHeight: 1.5,
                                           fontWeight: FontWeight.normal),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD02,
-                                ),
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      "${iconsPath}ic_clock.png",
-                                      height: size.width * AppDimensions.numD04,
-                                      color: AppColorTheme.colorTextFieldIcon,
                                     ),
                                     SizedBox(
-                                      width: size.width * AppDimensions.numD01,
+                                      height: size.width * AppDimensions.numD02,
                                     ),
-                                    Text(
-                                      dateTimeFormatter(
-                                          dateTime: item.time.toString(),
-                                          format: "hh:mm a, dd MMM yyyy",
-                                          utc: true),
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width *
-                                              AppDimensions.numD028,
-                                          color: AppColorTheme.colorHint,
-                                          fontWeight: FontWeight.normal),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD02,
-                                ),
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      "${iconsPath}ic_location.png",
-                                      height:
-                                          size.width * AppDimensions.numD045,
-                                      color: AppColorTheme.colorTextFieldIcon,
-                                    ),
-                                    SizedBox(
-                                      width: size.width * AppDimensions.numD01,
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        item.location,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width *
-                                                AppDimensions.numD028,
-                                            color: AppColorTheme.colorHint,
-                                            fontWeight: FontWeight.normal),
+                                    SliderTheme(
+                                      data: SliderTheme.of(context).copyWith(
+                                        overlayShape:
+                                            SliderComponentShape.noThumb,
+                                        thumbColor: Colors.transparent,
+                                        trackHeight:
+                                            size.width * AppDimensions.numD025,
                                       ),
-                                    )
+                                      child: Slider(
+                                        value: 100.0 -
+                                            double.parse(myDraftList[index]
+                                                .leftPercent
+                                                .toString()),
+                                        min: 0.0,
+                                        max: 100.0,
+                                        inactiveColor:
+                                            AppColorTheme.colorLightGrey,
+                                        activeColor:
+                                            AppColorTheme.colorThemePink,
+                                        onChanged: (double newValue) {},
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD02,
+                                    ),
                                   ],
                                 ),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD02,
-                                ),
-                                Text(
-                                  "${myDraftList[index].leftPercent}% left to complete",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize:
-                                          size.width * AppDimensions.numD03,
-                                      color: Colors.black,
-                                      lineHeight: 1.5,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD02,
-                                ),
-                                SliderTheme(
-                                  data: SliderTheme.of(context).copyWith(
-                                    overlayShape: SliderComponentShape.noThumb,
-                                    thumbColor: Colors.transparent,
-                                    trackHeight:
-                                        size.width * AppDimensions.numD025,
-                                  ),
-                                  child: Slider(
-                                    value: 100.0 -
-                                        double.parse(myDraftList[index]
-                                            .leftPercent
-                                            .toString()),
-                                    min: 0.0,
-                                    max: 100.0,
-                                    inactiveColor: AppColorTheme.colorLightGrey,
-                                    activeColor: AppColorTheme.colorThemePink,
-                                    onChanged: (double newValue) {},
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD02,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Divider(
-                          thickness: 1,
-                          color: AppColorTheme.colorLightGrey,
-                        );
-                      },
-                      itemCount: myDraftList.length),
-                )
-              : showData
-                  ? errorMessageWidget("No Saved Content")
-                  : Container(),
-        ),
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return const Divider(
+                              thickness: 1,
+                              color: AppColorTheme.colorLightGrey,
+                            );
+                          },
+                          itemCount: myDraftList.length),
+                    )
+                  : showData
+                      ? errorMessageWidget("No Saved Content")
+                      : Container(),
+            ),
+          ),
+          if (showLoader) showAnimatedLoader(size),
+        ],
       ),
     );
   }
 
-  /// Load Filter And Sort
   void initializeFilter() {
     sortList.addAll([
       FilterModel(
@@ -795,6 +812,33 @@ class MyDraftScreenState extends State<MyDraftScreen> {
   ///--------Apis Section------------
 
   Future<void> myDraftApi() async {
+    final cacheBox = Hive.box('sync_cache');
+    final String cacheKey = 'my_drafts';
+
+    if (offset == 0) {
+      final cachedData = cacheBox.get(cacheKey);
+      if (cachedData != null && cachedData is List) {
+        try {
+          final list =
+              cachedData.map((e) => MyContentData.fromJson(e)).toList();
+          if (list.isNotEmpty) {
+            setState(() {
+              myDraftList = list;
+              showData = true;
+            });
+          }
+        } catch (e) {
+          debugPrint("Error loading drafts from cache: $e");
+        }
+      }
+
+      if (myDraftList.isEmpty) {
+        setState(() {
+          showLoader = true;
+        });
+      }
+    }
+
     Map<String, dynamic> params = {"is_draft": 'true'};
 
     int pos = sortList.indexWhere((element) => element.isSelected);
@@ -840,10 +884,13 @@ class MyDraftScreenState extends State<MyDraftScreen> {
         log("myDraftUrlRequest success: $data");
         if (data != null) {
           var contentList = [];
-          if (data['data'] != null &&
-              data['data'] is Map &&
-              data['data']['contentList'] != null) {
-            contentList = data['data']['contentList'];
+          if (data['data'] != null) {
+            if (data['data'] is List) {
+              contentList = data['data'];
+            } else if (data['data'] is Map &&
+                data['data']['contentList'] != null) {
+              contentList = data['data']['contentList'];
+            }
           } else if (data['contentList'] != null) {
             contentList = data['contentList'];
           }
@@ -860,24 +907,32 @@ class MyDraftScreenState extends State<MyDraftScreen> {
 
           if (offset == 0) {
             myDraftList.clear();
+            cacheBox.put(cacheKey, list.map((e) => e.toJson()).toList());
           }
 
           myDraftList.addAll(list);
         }
         showData = true;
-        setState(() {});
+        showLoader = false;
+        if (mounted) setState(() {});
       } else {
         _refreshController.loadFailed();
-        setState(() {
-          showData = true;
-        });
+        if (mounted) {
+          setState(() {
+            showData = true;
+            showLoader = false;
+          });
+        }
       }
     } catch (e) {
       debugPrint("Exception::::::::$e");
       _refreshController.loadFailed();
-      setState(() {
-        showData = true;
-      });
+      if (mounted) {
+        setState(() {
+          showData = true;
+          showLoader = false;
+        });
+      }
     }
   }
 

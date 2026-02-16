@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class ContentCategory extends Equatable {
-
   const ContentCategory({
     required this.id,
     required this.name,
@@ -32,5 +31,14 @@ class ContentCategory extends Equatable {
       percentage: percentage ?? this.percentage,
       selected: selected ?? this.selected,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'type': type,
+      'percentage': percentage,
+    };
   }
 }

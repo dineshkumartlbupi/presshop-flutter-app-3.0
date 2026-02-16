@@ -2,28 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/content/domain/entities/content_item.dart';
 import 'package:presshop/features/content/presentation/bloc/content_bloc.dart';
 import 'package:presshop/features/content/presentation/bloc/content_event.dart';
 import 'package:presshop/features/content/presentation/bloc/content_state.dart';
-
 import 'package:presshop/features/content/presentation/widgets/content_filter_bottom_sheet.dart';
 import 'package:presshop/features/content/presentation/widgets/content_item_widget.dart';
-import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
 
 class MyContentPage extends StatelessWidget {
-  const MyContentPage({super.key});
+  final bool hideLeading;
+  final bool fromMenu;
+
+  const MyContentPage({
+    super.key,
+    this.hideLeading = false,
+    this.fromMenu = false,
+  });
+
   @override
   Widget build(BuildContext context) {
-    return const MyContentView();
+    return MyContentView(
+      hideLeading: hideLeading,
+      fromMenu: fromMenu,
+    );
   }
 }
 
 class MyContentView extends StatefulWidget {
-  const MyContentView({super.key});
+  final bool hideLeading;
+  final bool fromMenu;
+
+  const MyContentView({
+    super.key,
+    this.hideLeading = false,
+    this.fromMenu = false,
+  });
 
   @override
   State<MyContentView> createState() => _MyContentViewState();
@@ -43,7 +60,6 @@ class _MyContentViewState extends State<MyContentView>
   List<FilterModel> sortList = [];
   List<FilterModel> filterList = [];
 
-  // Local constants for missing strings
   static const String newestText = "Newest";
   static const String oldestText = "Oldest";
   static const String lowToHighText = "Price: Low to High";
@@ -60,6 +76,7 @@ class _MyContentViewState extends State<MyContentView>
     _tabController = TabController(length: 2, vsync: this);
     initializeFilter();
     _loadAllContent(false);
+    _loadMyContent(false);
   }
 
   void initializeFilter() {
@@ -179,7 +196,7 @@ class _MyContentViewState extends State<MyContentView>
         'exclusive': item.isExclusive ?? false,
         'offerCount': item.totalOffer,
         'purchasedMediahouseCount': item.purchasedMediahouseCount,
-        'hopperID': "", // Assuming empty or null based on previous context
+        'hopperID': "",
       },
     );
   }
@@ -190,11 +207,73 @@ class _MyContentViewState extends State<MyContentView>
     var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: NewHomeAppBar(
-        size: size,
-        hideLeading: true,
-        onFilterTap: _showFilterSheet,
-      ),
+      appBar: (true
+          ? NewHomeAppBar(
+              size: size,
+              hideLeading: true,
+              onFilterTap: () {
+                _showFilterSheet();
+              },
+            )
+          : CommonBrandedAppBar(
+              title: "My Content",
+              size: size,
+              hideLeading: widget.hideLeading,
+              actionWidgets: [
+                InkWell(
+                  onTap: () {
+                    _showFilterSheet();
+                  },
+                  child: commonFilterIcon(size),
+                ),
+                SizedBox(width: size.width * AppDimensions.numD02),
+              ],
+            )) as PreferredSizeWidget,
+      // appBar: CommonAppBar(
+      //   elevation: 0,
+      //   hideLeading: widget.hideLeading,
+      //   title: Text(
+      //     "My Content",
+      //     style: TextStyle(
+      //         color: Colors.black,
+      //         fontWeight: FontWeight.bold,
+      //         fontSize: size.width * AppDimensions.appBarHeadingFontSize),
+      //   ),
+      //   centerTitle: false,
+      //   titleSpacing: 0,
+      //   size: size,
+      //   showActions: true,
+      //   leadingFxn: () {
+      //     context.pop();
+      //   },
+      //   actionWidget: [
+      //     InkWell(
+      // onTap: () {
+      //   _showFilterSheet();
+      // },
+      //       child: commonFilterIcon(size),
+      //     ),
+      //     SizedBox(
+      //       width: size.width * AppDimensions.numD02,
+      //     ),
+      //     InkWell(
+      //       onTap: () {
+      //         context.goNamed(
+      //           AppRoutes.dashboardName,
+      //           extra: {'initialPosition': 2},
+      //         );
+      //       },
+      //       child: Image.asset(
+      //         "${commonImagePath}rabbitLogo.png",
+      //         height: size.width * AppDimensions.numD07,
+      //         width: size.width * AppDimensions.numD07,
+      //       ),
+      //     ),
+      //     SizedBox(
+      //       width: size.width * AppDimensions.numD04,
+      //     )
+      //   ],
+      // ),
       body: SafeArea(
         child: Column(
           children: [

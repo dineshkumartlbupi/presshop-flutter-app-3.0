@@ -11,6 +11,7 @@ import 'package:presshop/features/chat/data/services/chat_socket_service.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/foundation.dart';
+import 'package:hive/hive.dart';
 import 'package:presshop/features/chat/data/datasources/chat_local_data_source.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
@@ -52,7 +53,32 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     LoadChatListEvent event,
     Emitter<ChatState> emit,
   ) async {
-    emit(state.copyWith(status: ChatStatus.loading));
+    final cacheBox = Hive.box('sync_cache');
+    const String cacheKey = 'chat_list_v2';
+
+    debugPrint("ChatBloc: Loading chat list starting...");
+
+    // 1. Silent Load from Cache
+    final cachedData = cacheBox.get(cacheKey);
+    if (cachedData != null && cachedData is List) {
+      try {
+        debugPrint(
+            "ChatBloc: Found cached chat list: ${cachedData.length} rooms");
+        final chatList =
+            cachedData.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        if (chatList.isNotEmpty) {
+          emit(state.copyWith(status: ChatStatus.loaded, chatList: chatList));
+        }
+      } catch (e) {
+        debugPrint("ChatBloc: Error loading chat list from cache: $e");
+      }
+    }
+
+    if (state.status != ChatStatus.loaded) {
+      emit(state.copyWith(status: ChatStatus.loading));
+    }
+
+    // 2. Refresh from API
     try {
       final response = await _apiClient.post(
         ApiConstantsNew.chat.chatList,
@@ -61,20 +87,37 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
       if (response.statusCode == 200) {
         final List<dynamic> rooms = response.data['response'] ?? [];
-        final chatList = rooms.cast<Map<String, dynamic>>();
+        final chatList = rooms.cast<Map<String, dynamic>>().toList();
+
+        debugPrint("ChatBloc: API Success: ${chatList.length} rooms");
+
+        // Update Cache
+        try {
+          await cacheBox.put(cacheKey, chatList);
+          debugPrint("ChatBloc: Chat list cache updated");
+        } catch (e) {
+          debugPrint("ChatBloc: Error updating chat list cache: $e");
+        }
+
         emit(state.copyWith(status: ChatStatus.loaded, chatList: chatList));
       } else {
-        emit(
-          state.copyWith(
-            status: ChatStatus.failure,
-            errorMessage: "Failed to load chat list",
-          ),
-        );
+        if (state.chatList.isEmpty) {
+          emit(
+            state.copyWith(
+              status: ChatStatus.failure,
+              errorMessage: "Failed to load chat list",
+            ),
+          );
+        }
       }
     } catch (e) {
-      emit(
-        state.copyWith(status: ChatStatus.failure, errorMessage: e.toString()),
-      );
+      debugPrint("ChatBloc: API Error: $e");
+      if (state.chatList.isEmpty) {
+        emit(
+          state.copyWith(
+              status: ChatStatus.failure, errorMessage: e.toString()),
+        );
+      }
     }
   }
 
@@ -107,16 +150,21 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
     // 2. Load Local Data
     try {
+      debugPrint(
+          "ChatBloc: Loading local messages for room: ${event.roomId}...");
       final localMessages = await _chatLocalDataSource.getMessages(
         event.roomId,
       );
       if (localMessages.isNotEmpty) {
+        debugPrint("ChatBloc: Found ${localMessages.length} local messages");
         emit(
           state.copyWith(status: ChatStatus.loaded, messages: localMessages),
         );
+      } else {
+        debugPrint("ChatBloc: No local messages found");
       }
     } catch (e) {
-      debugPrint("Error loading local messages: $e");
+      debugPrint("ChatBloc: Error loading local messages: $e");
     }
 
     // 3. Setup Listeners
@@ -204,6 +252,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     };
     _chatSocketService.joinRoom(event.roomId);
     try {
+      debugPrint("ChatBloc: Fetching room history from API...");
       final response = await _apiClient.post(
         ApiConstantsNew.chat.roomHistory,
         data: {'room_id': event.roomId},
@@ -212,6 +261,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       if (response.statusCode == 200) {
         final List<dynamic> history = response.data['response'] ?? [];
         final messages = history.cast<Map<String, dynamic>>().toList();
+        debugPrint(
+            "ChatBloc: API History Success: ${messages.length} messages");
         await _chatLocalDataSource.saveMessages(messages);
 
         emit(state.copyWith(status: ChatStatus.loaded, messages: messages));
@@ -220,9 +271,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           hopperId,
           receiverId: state.receiverId,
         );
+      } else {
+        debugPrint(
+            "ChatBloc: API History Error: Status ${response.statusCode}");
       }
     } catch (e) {
-      debugPrint("Error fetching chat history: $e");
+      debugPrint("ChatBloc: Error fetching chat history: $e");
     }
 
     emit(state.copyWith(status: ChatStatus.loaded));

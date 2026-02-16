@@ -206,19 +206,14 @@ class AppInitializationService {
     }
   }
 
-  /// Initialize Hive local database
   static Future<void> initializeHive() async {
     try {
       await Hive.initFlutter();
-
-      // Register Adapters
       Hive.registerAdapter(TutorialsModelAdapter());
       Hive.registerAdapter(CategoryDataModelAdapter());
-
-      // Open Boxes
       await Hive.openBox<TutorialsModel>('tutorials_box');
       await Hive.openBox<CategoryDataModel>('categories_box');
-
+      await Hive.openBox('sync_cache');
       debugPrint("✅ Hive initialized and boxes opened");
     } catch (e) {
       debugPrint("❌ Hive initialization error: $e");

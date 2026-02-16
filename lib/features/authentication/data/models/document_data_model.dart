@@ -9,16 +9,17 @@ class DocumentDataModel extends DocumentData {
 
   factory DocumentDataModel.fromJson(Map<String, dynamic> json) {
     return DocumentDataModel(
-      id: json['_id'] ?? '',
-      documentName: json['doc_name'] ?? '',
-      isSelected: false,
+      id: (json['_id'] ?? json['id'] ?? '').toString(),
+      documentName:
+          (json['doc_name'] ?? json['document_name'] ?? '').toString(),
+      isSelected: json['isSelected'] ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
-      'doc_name': documentName,
+      'id': id,
+      'document_name': documentName,
       'isSelected': isSelected,
     };
   }

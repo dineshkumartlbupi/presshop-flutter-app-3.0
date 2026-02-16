@@ -6,7 +6,6 @@ import '../datasources/notification_remote_datasource.dart';
 import '../models/notification_model.dart';
 
 class NotificationRepositoryImpl implements NotificationRepository {
-
   NotificationRepositoryImpl({required this.remoteDataSource});
   final NotificationRemoteDataSource remoteDataSource;
 
@@ -17,14 +16,28 @@ class NotificationRepositoryImpl implements NotificationRepository {
       final remoteData = await remoteDataSource.getNotifications(limit, offset);
 
       List<NotificationModel> notifications = [];
-      if (remoteData['data'] != null && remoteData['data']['data'] != null) {
-        notifications = (remoteData['data']['data'] as List)
+      int unreadCount = 0;
+      int alertCount = 0;
+
+      // Handle cases where response might be wrapped in 'data' or not
+      final dynamic nestedData = remoteData['data'] ?? remoteData;
+
+      if (nestedData is Map<String, dynamic>) {
+        final dynamic listData = nestedData['data'];
+        if (listData is List) {
+          notifications = listData
+              .whereType<Map<String, dynamic>>()
+              .map((e) => NotificationModel.fromJson(e))
+              .toList();
+        }
+        unreadCount = nestedData['unreadCount'] ?? 0;
+        alertCount = nestedData['hopperAlertCount'] ?? 0;
+      } else if (nestedData is List) {
+        notifications = nestedData
+            .whereType<Map<String, dynamic>>()
             .map((e) => NotificationModel.fromJson(e))
             .toList();
       }
-
-      int unreadCount = remoteData['data']?['unreadCount'] ?? 0;
-      int alertCount = remoteData['data']?['hopperAlertCount'] ?? 0;
 
       return Right(NotificationsResult(
         notifications: notifications,

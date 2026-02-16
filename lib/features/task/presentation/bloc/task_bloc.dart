@@ -14,6 +14,8 @@ import 'package:presshop/features/task/domain/usecases/get_local_tasks.dart';
 import 'package:presshop/core/utils/app_logger.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
+import 'package:hive/hive.dart';
+import 'package:presshop/features/task/data/models/all_task_model.dart';
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
   TaskBloc({
@@ -209,8 +211,33 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Future<void> _onFetchAllTasks(
       FetchAllTasksEvent event, Emitter<TaskState> emit) async {
-    emit(state.copyWith(
-        allTasksStatus: TaskStatus.loading, clearErrorMessage: true));
+    final cacheBox = Hive.box('sync_cache');
+    const String cacheKey = 'all_tasks_v2';
+
+    debugPrint("TaskBloc: Fetching all tasks starting...");
+
+    // 1. Silent Load from Cache
+    final cachedData = cacheBox.get(cacheKey);
+    if (cachedData != null && cachedData is List && event.offset == 0) {
+      try {
+        debugPrint("TaskBloc: Found cached tasks: ${cachedData.length} items");
+        final tasks = cachedData
+            .map((e) =>
+                AllTaskModel.fromJson(Map<String, dynamic>.from(e as Map)))
+            .toList();
+        if (tasks.isNotEmpty) {
+          emit(state.copyWith(
+              allTasksStatus: TaskStatus.success, allTasks: tasks));
+        }
+      } catch (e) {
+        debugPrint("TaskBloc: Error loading from cache: $e");
+      }
+    }
+
+    if (state.allTasksStatus != TaskStatus.success || event.offset > 0) {
+      emit(state.copyWith(
+          allTasksStatus: TaskStatus.loading, clearErrorMessage: true));
+    }
 
     final result = await getAllTasks(GetAllTasksParams(
       limit: 10,
@@ -219,12 +246,27 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       showLoader: event.showLoader,
     ));
 
-    result.fold(
-        (failure) => emit(state.copyWith(
-            allTasksStatus: TaskStatus.failure,
-            errorMessage: failure.message)), (tasks) {
+    result.fold((failure) {
+      debugPrint("TaskBloc: API Error: ${failure.message}");
+      if (state.allTasks.isEmpty) {
+        emit(state.copyWith(
+            allTasksStatus: TaskStatus.failure, errorMessage: failure.message));
+      }
+    }, (tasks) {
+      debugPrint("TaskBloc: API Success: ${tasks.length} tasks");
       final updatedTasks =
           event.offset == 0 ? tasks : [...state.allTasks, ...tasks];
+
+      if (event.offset == 0) {
+        try {
+          cacheBox.put(cacheKey,
+              tasks.map((e) => (e as AllTaskModel).toJson()).toList());
+          debugPrint("TaskBloc: All tasks cache updated");
+        } catch (e) {
+          debugPrint("TaskBloc: Error updating cache: $e");
+        }
+      }
+
       emit(state.copyWith(
           allTasksStatus: TaskStatus.success, allTasks: updatedTasks));
     });

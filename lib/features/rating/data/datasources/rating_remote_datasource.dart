@@ -22,13 +22,18 @@ class RatingRemoteDataSourceImpl implements RatingRemoteDataSource {
         ApiConstantsNew.content.getAllRating,
         queryParameters: params,
       );
-      final data = response.data; // Access .data from Response
-      if (data != null && data['resp'] != null) {
-        return (data['resp'] as List)
-            .map((e) => RatingReviewModel.fromJson(e))
-            .toList();
+      final responseData = response.data;
+      if (responseData != null &&
+          responseData['data'] != null &&
+          responseData['data']['resp'] != null) {
+        final List dataList = responseData['data']['resp'] as List;
+        return dataList.map((e) => RatingReviewModel.fromJson(e)).toList();
+      } else if (responseData != null && responseData['resp'] != null) {
+        // Fallback for different API structure if applicable
+        final List dataList = responseData['resp'] as List;
+        return dataList.map((e) => RatingReviewModel.fromJson(e)).toList();
       } else {
-        throw ServerException('No data found');
+        return []; // Return empty list instead of throwing to avoid failure state when no reviews found
       }
     } catch (e) {
       throw ApiErrorHandler.handle(e);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:presshop/features/map/constants/map_news_constants.dart';
 
 class SearchAndFilterBar extends StatelessWidget {
   const SearchAndFilterBar({
@@ -123,17 +124,7 @@ class SearchAndFilterBar extends StatelessWidget {
                   children: [
                     Expanded(
                       child: _FilterDropdown(
-                        items: const [
-                          'Alert',
-                          'Accident',
-                          'Crash',
-                          'Fire Alert',
-                          'Fight',
-                          'Knife',
-                          'Gun',
-                          'Medical',
-                          'Protest'
-                        ],
+                        items: alertTypeFilter,
                         selected: selectedAlertType ?? 'Alert',
                         onChanged: onAlertTypeChanged,
                       ),
@@ -141,17 +132,7 @@ class SearchAndFilterBar extends StatelessWidget {
                     const SizedBox(width: 6),
                     Expanded(
                       child: _FilterDropdown(
-                        items: const [
-                          '1 mile',
-                          '2 miles',
-                          '5 miles',
-                          '10 miles',
-                          '15 miles',
-                          '20 miles',
-                          '25 miles',
-                          '30 miles',
-                          '50 miles'
-                        ],
+                        items: distanceFilter,
                         selected: selectedDistance ?? '2 miles',
                         onChanged: onDistanceChanged,
                       ),
@@ -159,15 +140,7 @@ class SearchAndFilterBar extends StatelessWidget {
                     const SizedBox(width: 6),
                     Expanded(
                       child: _FilterDropdown(
-                        items: const [
-                          'Category',
-                          'Latest',
-                          'Crime',
-                          'Event',
-                          'Political',
-                          'Celebrity',
-                          'Sports'
-                        ],
+                        items: categoryFilter,
                         selected: selectedCategory ?? 'Category',
                         onChanged: onCategoryChanged,
                       ),

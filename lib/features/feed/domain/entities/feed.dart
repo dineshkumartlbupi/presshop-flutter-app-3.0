@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class Feed extends Equatable {
-
   const Feed({
     required this.id,
     required this.heading,
@@ -74,10 +73,92 @@ class Feed extends Equatable {
         contentList,
         paidStatus,
       ];
+
+  Feed copyWith({
+    String? id,
+    String? heading,
+    String? description,
+    String? location,
+    String? categoryName,
+    String? askPrice,
+    String? displayPrice,
+    String? displayCurrency,
+    int? viewCount,
+    int? offerCount,
+    String? createdAt,
+    String? timeAgo,
+    String? feedImage,
+    String? status,
+    bool? isFavourite,
+    bool? isLiked,
+    bool? isEmoji,
+    bool? isClap,
+    List<FeedContent>? contentList,
+    String? type,
+    bool? isDraft,
+    String? userId,
+    String? saleStatus,
+    String? paidStatus,
+  }) {
+    return Feed(
+      id: id ?? this.id,
+      heading: heading ?? this.heading,
+      description: description ?? this.description,
+      location: location ?? this.location,
+      categoryName: categoryName ?? this.categoryName,
+      askPrice: askPrice ?? this.askPrice,
+      displayPrice: displayPrice ?? this.displayPrice,
+      displayCurrency: displayCurrency ?? this.displayCurrency,
+      viewCount: viewCount ?? this.viewCount,
+      offerCount: offerCount ?? this.offerCount,
+      createdAt: createdAt ?? this.createdAt,
+      timeAgo: timeAgo ?? this.timeAgo,
+      feedImage: feedImage ?? this.feedImage,
+      status: status ?? this.status,
+      isFavourite: isFavourite ?? this.isFavourite,
+      isLiked: isLiked ?? this.isLiked,
+      isEmoji: isEmoji ?? this.isEmoji,
+      isClap: isClap ?? this.isClap,
+      contentList: contentList ?? this.contentList,
+      type: type ?? this.type,
+      isDraft: isDraft ?? this.isDraft,
+      userId: userId ?? this.userId,
+      saleStatus: saleStatus ?? this.saleStatus,
+      paidStatus: paidStatus ?? this.paidStatus,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'heading': heading,
+      'description': description,
+      'location': location,
+      'category_name': categoryName,
+      'ask_price': askPrice,
+      'display_price': displayPrice,
+      'display_currency': displayCurrency,
+      'view_count': viewCount,
+      'offer_count': offerCount,
+      'created_at': createdAt,
+      'time_ago': timeAgo,
+      'feed_image': feedImage,
+      'status': status,
+      'is_favourite': isFavourite,
+      'is_liked': isLiked,
+      'is_emoji': isEmoji,
+      'is_clap': isClap,
+      'content_list': contentList.map((e) => e.toJson()).toList(),
+      'type': type,
+      'is_draft': isDraft,
+      'user_id': userId,
+      'sale_status': saleStatus,
+      'paid_status': paidStatus,
+    };
+  }
 }
 
 class FeedContent extends Equatable {
-
   const FeedContent({
     required this.id,
     required this.mediaType,
@@ -91,4 +172,27 @@ class FeedContent extends Equatable {
 
   @override
   List<Object?> get props => [id, mediaType, mediaUrl, thumbnail];
+
+  FeedContent copyWith({
+    String? id,
+    String? mediaType,
+    String? mediaUrl,
+    String? thumbnail,
+  }) {
+    return FeedContent(
+      id: id ?? this.id,
+      mediaType: mediaType ?? this.mediaType,
+      mediaUrl: mediaUrl ?? this.mediaUrl,
+      thumbnail: thumbnail ?? this.thumbnail,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'media_type': mediaType,
+      'media_url': mediaUrl,
+      'thumbnail': thumbnail,
+    };
+  }
 }

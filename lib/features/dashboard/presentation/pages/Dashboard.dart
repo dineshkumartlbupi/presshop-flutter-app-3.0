@@ -6,16 +6,11 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:presshop/core/constants/string_constants_new2.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/global_loader.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
-import 'package:presshop/core/widgets/error/location_error_screen.dart';
 import 'package:presshop/features/content/presentation/pages/content_page.dart';
 import 'package:presshop/features/task/presentation/pages/task_screen.dart';
-
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
@@ -23,19 +18,26 @@ import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:location/location.dart' as lc;
-
-import 'package:presshop/features/notification/presentation/pages/MyNotifications.dart';
 import 'package:presshop/features/map/presentation/pages/map_page.dart';
 import 'package:presshop/features/news/presentation/pages/news_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
 import 'package:presshop/features/news/presentation/bloc/news_event.dart';
+import 'package:presshop/features/content/presentation/bloc/content_bloc.dart';
+import 'package:presshop/features/content/presentation/bloc/content_event.dart';
+import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
+import 'package:presshop/features/task/presentation/bloc/task_event.dart'
+    hide FetchTaskDetailEvent;
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
+import 'package:presshop/features/dashboard/presentation/widgets/student_beans_dialog.dart';
+import 'package:presshop/features/dashboard/presentation/utils/dashboard_notification_mixin.dart';
+import 'package:presshop/features/dashboard/presentation/utils/dashboard_location_mixin.dart';
+import 'package:presshop/features/dashboard/presentation/utils/dashboard_deeplink_mixin.dart';
 
 // ignore: must_be_immutable
 class Dashboard extends StatefulWidget {
@@ -73,13 +75,17 @@ class Dashboard extends StatefulWidget {
 }
 
 class DashboardState extends State<Dashboard>
-    with AnalyticsPageMixin, WidgetsBindingObserver {
+    with
+        AnalyticsPageMixin,
+        WidgetsBindingObserver,
+        DashboardNotificationMixin,
+        DashboardLocationMixin,
+        DashboardDeepLinkMixin {
   late Size size;
   late DashboardBloc _dashboardBloc;
   int currentIndex = 2;
   String fcmToken = "";
   String deviceId = "";
-  // StreamSubscription? _sub;
   static DashBoardInterface? dashBoardInterface;
   final GlobalKey<CameraScreenState> _cameraKey =
       GlobalKey<CameraScreenState>();
@@ -89,7 +95,6 @@ class DashboardState extends State<Dashboard>
   String? savedSourceDataHeading = "";
   String? savedSourceDataDescription = "";
 
-  /// Prince
   lc.LocationData? locationData;
   late LocationService _locationService;
   String mediaAddress = "", mediaDate = "", country = "", state = "", city = "";
@@ -106,11 +111,10 @@ class DashboardState extends State<Dashboard>
   List<String> adminIDList = [];
   DateTime? currentTime;
   late List<Widget> bottomNavigationScreens;
-  final Set<int> _loadedIndices = {}; // Track loaded tabs
+  final Set<int> _loadedIndices = {};
 
   late AppLinks linkStream;
 
-  // Analytics Mixin Requirements
   @override
   String get pageName => PageNames.dashboard;
 
@@ -124,7 +128,6 @@ class DashboardState extends State<Dashboard>
       };
 
   @override
-  @override
   void initState() {
     GlobalLoader.forceHide();
     _dashboardBloc = sl<DashboardBloc>();
@@ -133,16 +136,13 @@ class DashboardState extends State<Dashboard>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkUpdateAndShowPopup();
     });
-    // Initialize screens once
     _updateBottomNavigationScreens();
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     _locationService = sl<LocationService>();
 
-    // forceUpdateCheck();
     _dashboardBloc.add(CheckAppVersionEvent());
 
-    // callGetRoomIdApi();
     Map<String, dynamic> roomParams = {
       "participants": ["hopper_id_1", "media_house_id_1"],
       "type": "content_negotiation",
@@ -150,40 +150,48 @@ class DashboardState extends State<Dashboard>
     };
     _dashboardBloc.add(FetchRoomIdEvent(roomParams));
 
-    // facebookAppEvents.logEvent(
-    //   name: "dashboard_open",
-    //   parameters: {
-    //     "app_name": "Presshop",
-    //     "platform": Platform.operatingSystem,
-    //     "version": Platform.version,
-    //   },
-    // );
-    currentIndex = widget.initialPosition;
-    _loadedIndices.add(currentIndex); // Mark initial tab as loaded
+    currentIndex = 2; // Always start at Camera as requested
+    _loadedIndices.add(
+        currentIndex); // Only load the current tab (Camera) to avoid build lag spike
 
-    if (widget.taskStatus == 'rejected') {
-    } else {
+    // Trigger data loading for other tabs immediately in background
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Content
+      context
+          .read<ContentBloc>()
+          .add(const FetchMyContentEvent(type: 'all', page: 1, limit: 10));
+      context
+          .read<ContentBloc>()
+          .add(const FetchMyContentEvent(type: 'my', page: 1, limit: 10));
+
+      // Tasks - Fetching basic tasks (location-based fetch will still happen in TaskScreen if needed)
+      context.read<TaskBloc>().add(const FetchAllTasksEvent(offset: 0));
+      context.read<TaskBloc>().add(const FetchLocalTasksEvent());
+    });
+
+    if (widget.taskStatus != 'rejected') {
       if (widget.broadCastId != null) {
-        // callTaskDetailApi(widget.broadCastId!);
         _dashboardBloc.add(FetchTaskDetailEvent(widget.broadCastId!));
       }
       getFcmToken();
-      fireBaseMessaging();
+      initFirebaseMessaging(
+        onTaskAssigned: (broadCastId) {
+          if (mounted) {
+            if (dashBoardInterface != null) {
+              dashBoardInterface!.saveDraft();
+            }
+            callTaskDetailApi(broadCastId);
+          }
+        },
+        onProfileUpdate: () => myProfileApi(),
+      );
     }
-    debugPrint(":::: Dashboard initState :::::");
-    debugPrint(
-        "adminRoomIdKey in Prefs: ${sharedPreferences!.getString(SharedPreferencesKeys.adminRoomIdKey)}");
+
     if (sharedPreferences!.getString(SharedPreferencesKeys.adminRoomIdKey) ==
             null ||
         sharedPreferences!
             .getString(SharedPreferencesKeys.adminRoomIdKey)!
-            .isEmpty ||
-        sharedPreferences!.getString(SharedPreferencesKeys.adminIdKey) ==
-            null ||
-        sharedPreferences!
-            .getString(SharedPreferencesKeys.adminIdKey)!
             .isEmpty) {
-      debugPrint(":::: Fetching Active Admins (Missing Room or ID) :::::");
       _dashboardBloc.add(FetchActiveAdmins());
     }
 
@@ -191,45 +199,37 @@ class DashboardState extends State<Dashboard>
     if (widget.openChatScreen) {
       Future.delayed(const Duration(seconds: 2), () {
         if (mounted) {
-          context.pushNamed(
-            AppRoutes.chatName,
-            extra: {
-              'hideLeading': false,
-              'message': '',
-            },
-          );
+          context.pushNamed(AppRoutes.chatName,
+              extra: {'hideLeading': false, 'message': ''});
         }
       });
     } else if (widget.openNotification) {
       Future.delayed(const Duration(seconds: 2), () {
         if (mounted) {
-          context.pushNamed(
-            AppRoutes.notificationsName,
-            extra: {
-              'count': 1,
-            },
-          );
+          context.pushNamed(AppRoutes.notificationsName, extra: {'count': 1});
         }
       });
     } else if (widget.openBeansActivation) {
       Future.delayed(const Duration(seconds: 2), () {
-        setIsClickForBeansActivation();
+        _dashboardBloc.add(ActivateStudentBeansEvent());
       });
     } else {
       _dashboardBloc.add(DashboardCheckStudentBeansEvent());
     }
+    initDeepLinks(sl<AppLinks>());
     super.initState();
   }
 
   @override
   void dispose() {
+    player.dispose();
     _dashboardBloc.close();
     super.dispose();
   }
 
   void _updateBottomNavigationScreens() {
     bottomNavigationScreens = <Widget>[
-      MyContentPage(),
+      MyContentPage(hideLeading: true),
       MyTaskScreen(hideLeading: true),
       CameraScreen(
         key: _cameraKey,
@@ -237,16 +237,9 @@ class DashboardState extends State<Dashboard>
         previousScreen: ScreenNameEnum.dashboardScreen,
       ),
       BlocProvider(
-        create: (context) => sl<NewsBloc>()
-          ..add(GetAggregatedNewsEvent(
-            lat: latitude,
-            lng: longitude,
-            km: 50,
-          )),
-        child: NewsPage(
+        create: (context) => sl<NewsBloc>()..add(const GetAllNewsEvent()),
+        child: const NewsPage(
           hideLeading: true,
-          latitude: latitude,
-          longitude: longitude,
         ),
       ),
       MapPage(hideLeading: true)
@@ -260,8 +253,6 @@ class DashboardState extends State<Dashboard>
   void _checkUpdateAndShowPopup() async {
     final String? savedSourceDataType =
         sharedPreferences?.getString(SharedPreferencesKeys.sourceDataTypeKey);
-    // final String? savedSourceDataUrl =
-    //     sharedPreferences?.getString(sourceDataUrlKey);
     savedSourceDataHeading = sharedPreferences
         ?.getString(SharedPreferencesKeys.sourceDataHeadingKey);
     savedSourceDataDescription = sharedPreferences
@@ -277,247 +268,79 @@ class DashboardState extends State<Dashboard>
     debugPrint('savedSourceDataIsOpened: $savedSourceDataIsOpened');
     debugPrint('savedSourceDataIsClickKey: $savedSourceDataIsClickKey');
 
-    // sharedPreferences!.setBool(sourceDataIsClickKey, false);
-    // sharedPreferences!.setBool(sourceDataIsOpenedKey, false);
-    // sharedPreferences!.setString(sourceDataTypeKey, "studentbeans");
-
     bool checkFromLocalStorage =
         (savedSourceDataType ?? '').toLowerCase() == 'studentbeans' &&
             (savedSourceDataIsOpened == false) &&
             savedSourceDataIsClickKey == false;
 
     if (checkFromLocalStorage) {
-      // if (true) {
       final size = MediaQuery.of(navigatorKey.currentState!.context).size;
-      _showForceUpdateDialog(
+      _showStudentBeansDialog(
         size,
       );
     }
   }
 
-  /// An implementation using a link Amit
-  Future<void> initPlatformStateForStringUniLinks() async {
-    debugPrint("initPlatformStateForStringUniLinks=======>Enter");
-
-    ///Attach a listener to the links stream
-    // _sub = linkStream.uriLinkStream.listen((link) {
-    //   if (!mounted) return;
-    //   debugPrint('initPlatformStateForStringUniLinks  $link');
-    // }, onError: (err) {
-    //   if (!mounted) return;
-    //   debugPrint('exception $err');
-    // });
-
-    /// Attach a second listener to the stream Note:
-    /// The jump here should be when the APP is opened and cut to the background process.
-    linkStream.uriLinkStream.listen((link) {
-      debugPrint('linkStream index got? link: $link');
-      jump2Screen(link.path);
-    }, onError: (err) {
-      debugPrint('got err: $err');
-    });
-
-    ///Get the latest link
-    Uri? initialLink;
-
-    ///Uri? initialUri;
-    /// Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      initialLink = await linkStream.getInitialLink();
-      debugPrint('initial link: $initialLink');
-      jump2Screen(initialLink!.path);
-    } catch (e) {
-      debugPrint('exception -----> $e');
-    }
-
-    if (!mounted) return;
-    setState(() {});
-  }
-
-  /// Get Room Id
-  // Removed manual API call. Using Bloc event FetchRoomIdEvent in initState.
-
-  void setIsClickForBeansActivation() {
-    _dashboardBloc.add(ActivateStudentBeansEvent());
-  }
-
-  /// Navigate other screen using share link
-  void jump2Screen(String link) async {
-    debugPrint("dashboardDeepLiking-->$link");
-    debugPrint("dashboardDeepLiking-->${link.split("&").last}");
-
-    if (link.isNotEmpty) {
-      debugPrint("link Enter::::::::::>");
-      if (link.contains("shareLinkforUserid")) {
-        String id = link.substring(link.lastIndexOf("?") + 1, link.length);
-        String type = link.substring(link.lastIndexOf("&") + 1, link.length);
-        debugPrint("type:::::$type");
-        debugPrint("commonID-->$id");
-        context.pushNamed(AppRoutes.myContentName);
-      } else if (link.split("&").last == "type=Group") {
-        String groupId = link.substring(link.lastIndexOf("?") + 1, link.length);
-        // String id =
-        //     groupId.replaceAll("group_id=", "").replaceAll("&type=Group", "");
-        debugPrint(
-            "groupId : ${groupId.replaceAll("group_id=", "").replaceAll("&type=Group", "")}");
-      }
-    }
-  }
-
-  void _showForceUpdateDialog(Size size,
+  void _showStudentBeansDialog(Size size,
       {String? sourceDataHeading, String? sourceDataDescription}) {
-    // ... (existing implementation) ...
     showDialog(
-        barrierDismissible: false,
-        context: navigatorKey.currentState!.context,
-        builder: (context) {
-          return AlertDialog(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              contentPadding: EdgeInsets.zero,
-              insetPadding: EdgeInsets.symmetric(
-                  horizontal: size.width * AppDimensions.numD04),
-              content: StatefulBuilder(
-                builder: (context, setState) {
-                  return Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(
-                            size.width * AppDimensions.numD045)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: size.width * AppDimensions.numD04),
-                          child: Row(
-                            children: [
-                              Text(
-                                (savedSourceDataHeading?.isNotEmpty == true
-                                    ? savedSourceDataHeading
-                                    : sourceDataHeading?.isNotEmpty == true
-                                        ? sourceDataHeading
-                                        : "Brains, beans, and breaking news!")!,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: size.width * AppDimensions.numD04,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const Spacer(),
-                              IconButton(
-                                  onPressed: () {
-                                    context.pop();
-                                  },
-                                  icon: Icon(
-                                    Icons.close,
-                                    color: Colors.black,
-                                    size: size.width * AppDimensions.numD06,
-                                  ))
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * AppDimensions.numD04),
-                          child: const Divider(
-                            color: Colors.black,
-                            thickness: 0.5,
-                          ),
-                        ),
-                        SizedBox(
-                          height: size.width * AppDimensions.numD02,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * AppDimensions.numD04),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 120, // fixed width
-                                height: 120, // fixed height
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Colors.black),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Image.asset(
-                                    "assets/rabbits/student_beans_rabbit2.png",
-                                    width: 120,
-                                    height: 120,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: size.width * AppDimensions.numD04,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  (savedSourceDataDescription?.isNotEmpty ==
-                                          true
-                                      ? savedSourceDataDescription
-                                      : sourceDataDescription?.isNotEmpty ==
-                                              true
-                                          ? sourceDataDescription
-                                          : "Please confirm your student status to continue")!,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize:
-                                        size.width * AppDimensions.numD035,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: size.width * AppDimensions.numD02,
-                        ),
-                        SizedBox(
-                          height: size.width * AppDimensions.numD02,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * AppDimensions.numD04,
-                              vertical: size.width * AppDimensions.numD04),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Expanded(
-                                child: SizedBox(
-                                  height: size.width * AppDimensions.numD12,
-                                  child: commonElevatedButton(
-                                      "Confirm",
-                                      size,
-                                      commonButtonTextStyle(size),
-                                      commonButtonStyle(
-                                          size, AppColorTheme.colorThemePink),
-                                      () async {
-                                    try {
-                                      // final url =
-                                      //     setIsClickForBeansActivation();
+      barrierDismissible: false,
+      context: navigatorKey.currentState!.context,
+      builder: (context) => StudentBeansDialog(
+        size: size,
+        heading: sourceDataHeading,
+        description: sourceDataDescription,
+        onConfirm: () async {
+          try {
+            context.pop();
+          } catch (e) {
+            debugPrint("Error launching URL: $e");
+          }
+        },
+      ),
+    );
+  }
 
-                                      context.pop();
-                                    } catch (e) {
-                                      debugPrint("Error launching URL: $e");
-                                    }
-                                  }),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ));
-        });
+  Widget _buildBottomNavigationBar(Size size) {
+    return BottomNavigationBar(
+      backgroundColor: Colors.white,
+      currentIndex: currentIndex,
+      showUnselectedLabels: true,
+      showSelectedLabels: true,
+      unselectedItemColor: Colors.black,
+      selectedItemColor: AppColorTheme.colorThemePink,
+      elevation: 0,
+      iconSize: size.width * AppDimensions.numD05,
+      selectedFontSize: size.width * AppDimensions.numD03,
+      unselectedFontSize: size.width * AppDimensions.numD03,
+      type: BottomNavigationBarType.fixed,
+      onTap: _onBottomBarItemTapped,
+      items: [
+        BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage("${iconsPath}ic_content1.png")),
+          label: "Content",
+        ),
+        BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage("${iconsPath}ic_task1.png")),
+          label: "Tasks",
+        ),
+        BottomNavigationBarItem(
+          icon: Transform.scale(
+            scale: 1.3,
+            child: ImageIcon(AssetImage("${iconsPath}ic_camera1.png")),
+          ),
+          label: "Camera",
+        ),
+        BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage("${iconsPath}ic_news1.png")),
+          label: "News",
+        ),
+        BottomNavigationBarItem(
+          icon: ImageIcon(const AssetImage("assets/icons/ic_alert2.png")),
+          label: "Alerts",
+        ),
+      ],
+    );
   }
 
   @override
@@ -593,8 +416,6 @@ class DashboardState extends State<Dashboard>
                   if (shouldUpdate) forceUpdateCheck();
                 } else {
                   debugPrint("Version check failed: ${map["message"]}");
-                  // showSnackBar(
-                  //    map["message"] ?? "Unknown error", "error", Colors.red);
                 }
               } else if (state is DashboardTaskDetailLoaded) {
                 var task = state.taskDetail;
@@ -631,7 +452,6 @@ class DashboardState extends State<Dashboard>
                   _launchStudentBeansUrl(studentBeansResponseUrl);
                 }
 
-                // Complete the completer if someone is waiting (legacy support)
                 if (_studentBeansCompleter != null &&
                     !_studentBeansCompleter!.isCompleted) {
                   _studentBeansCompleter!.complete(studentBeansResponseUrl);
@@ -641,12 +461,11 @@ class DashboardState extends State<Dashboard>
                 if (info.shouldShow) {
                   final size =
                       MediaQuery.of(navigatorKey.currentState!.context).size;
-                  _showForceUpdateDialog(size,
+                  _showStudentBeansDialog(size,
                       sourceDataHeading: info.heading,
                       sourceDataDescription: info.description);
                 }
               } else if (state is DashboardMarkStudentBeansVisitedLoaded) {
-                // Visited state updated on server
               } else if (state is DashboardMyProfileLoaded) {
                 var user = state.user;
                 if (user.avatar != null && user.avatar!.isNotEmpty) {
@@ -657,14 +476,14 @@ class DashboardState extends State<Dashboard>
               } else if (state is DashboardTabChanged) {
                 setState(() {
                   currentIndex = state.index;
-                  _loadedIndices.add(currentIndex); // Mark new tab as loaded
+                  _loadedIndices.add(currentIndex);
                 });
-              } else if (state is DashboardError) {
-                // Optional
-              }
+              } else if (state is DashboardError) {}
             },
-            child: WillPopScope(
-              onWillPop: () async {
+            child: PopScope(
+              canPop: false,
+              onPopInvokedWithResult: (didPop, result) async {
+                if (didPop) return;
                 DateTime now = DateTime.now();
                 if (currentTime == null ||
                     now.difference(currentTime!) > const Duration(seconds: 2)) {
@@ -674,73 +493,17 @@ class DashboardState extends State<Dashboard>
                       content: Text('Press again to exit'),
                     ),
                   );
-                  return Future.value(false);
                 } else {
                   SystemNavigator.pop();
                   exit(0);
                 }
               },
               child: Scaffold(
-                bottomNavigationBar: BottomNavigationBar(
-                  backgroundColor: Colors.white,
-                  currentIndex: currentIndex,
-                  showUnselectedLabels: true,
-                  showSelectedLabels: true,
-                  unselectedItemColor: Colors.black,
-                  selectedItemColor: AppColorTheme.colorThemePink,
-                  elevation: 0,
-                  iconSize: size.width * AppDimensions.numD05,
-                  selectedFontSize: size.width * AppDimensions.numD03,
-                  unselectedFontSize: size.width * AppDimensions.numD03,
-                  type: BottomNavigationBarType.fixed,
-                  onTap: _onBottomBarItemTapped,
-                  items: [
-                    BottomNavigationBarItem(
-                        icon: ImageIcon(
-                          AssetImage("${iconsPath}ic_content1.png"),
-                        ),
-                        label: AppStringsNew2.contentText),
-                    BottomNavigationBarItem(
-                        icon: ImageIcon(
-                          AssetImage("${iconsPath}ic_task1.png"),
-                        ),
-                        label: AppStringsNew2.taskText),
-                    BottomNavigationBarItem(
-                        icon: Transform.scale(
-                          scale: 1.3,
-                          child: ImageIcon(
-                            AssetImage(
-                              "${iconsPath}ic_camera1.png",
-                            ),
-                          ),
-                        ),
-                        label: AppStringsNew2.cameraText),
-                    // BottomNavigationBarItem(
-                    //     icon: ImageIcon(
-                    //       AssetImage("${iconsPath}ic_feed.png"),
-                    //     ),
-                    //     label: AppstringnewfeedText),
-
-                    BottomNavigationBarItem(
-                        icon: ImageIcon(
-                          AssetImage("${iconsPath}ic_news1.png"),
-                        ),
-                        label: "News"),
-
-                    BottomNavigationBarItem(
-                        icon: ImageIcon(
-                          AssetImage("${iconsPath}ic_map1.png"),
-                        ),
-                        label: "Map"),
-                  ],
-                ),
+                bottomNavigationBar: _buildBottomNavigationBar(size),
                 body: Stack(
                   children: [
-                    // Background text (optional)
                     const Center(
                         child: Text("This is the center Text for popup")),
-
-                    // Show loader while getting location
                     Visibility(
                       visible: !isGetLatLong,
                       replacement: showLoader(isForLocation: false),
@@ -748,11 +511,10 @@ class DashboardState extends State<Dashboard>
                         index: currentIndex,
                         children: List.generate(bottomNavigationScreens.length,
                             (index) {
-                          // Lazy load: only render if in _loadedIndices
                           if (_loadedIndices.contains(index)) {
                             return bottomNavigationScreens[index];
                           }
-                          return const SizedBox(); // Placeholder
+                          return const SizedBox();
                         }),
                       ),
                     ),
@@ -762,130 +524,9 @@ class DashboardState extends State<Dashboard>
             )));
   }
 
-  /// FireBase Notification Initialize
-  void fireBaseMessaging() async {
-    debugPrint("InsideFirebase");
-/*
-    FirebaseMessaging.instance.requestPermission(
-      badge: true,
-      alert: true,
-    );
-*/
-    /* await FirebaseMessaging.instance
-        .setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-*/
-    FirebaseMessaging.instance.getInitialMessage().then(
-      (message) {
-        debugPrint("FirebaseMessaging.instance.getInitialMessage");
-        if (message != null) {
-          debugPrint("New Notification");
-        }
-      },
-    );
-
-    FirebaseMessaging.onMessage.listen((message) {
-      debugPrint("Fi1rebaseMessage: ${message.data}");
-
-      if (message.data.isNotEmpty &&
-          message.data["notification_type"].toString() == "media_house_tasks") {
-        debugPrint("Inside Task Assigned notification");
-
-        if (mounted) {
-          if (dashBoardInterface != null) {
-            dashBoardInterface!.saveDraft();
-          }
-          callTaskDetailApi(message.data["broadCast_id"]);
-        } else {
-          debugPrint('Unmounted:::::dashBoardInterface');
-        }
-
-        /// --------------------------------------------------------------------
-        /// --------------------------------------------------------------------
-        callTaskDetailApi(message.data["broadCast_id"]);
-      } else {
-        debugPrint("inside else------>");
-        debugPrint("desensitising------>${message.notification!.android}");
-        // localNotificationService.showFlutterNotificationWithSound(message);
-      }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen(
-      (message) {
-        if (mounted) {
-          setState(() {});
-        }
-        if (message.data.isNotEmpty &&
-            message.data["notification_type"].toString() == "studentbeans") {
-          myProfileApi();
-          return;
-        }
-        debugPrint("FirebaseMessaging.onMessageOpenedApp.listen");
-        if (message.data.isNotEmpty &&
-            message.data["notification_type"].toString() ==
-                "media_house_tasks") {
-          debugPrint("Inside Task Assigned notification");
-          if (mounted) {
-            callTaskDetailApi(message.data["broadCast_id"]);
-          }
-        } else if (message.data.isNotEmpty &&
-            message.data["notification_type"].toString() ==
-                "initiate_admin_chat") {
-          Future.delayed(const Duration(seconds: 2), () {
-            if (mounted) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ConversationScreen(
-                    hideLeading: false,
-                    message: '',
-                  ),
-                ),
-              );
-            }
-          });
-        } else if (message.data.isNotEmpty &&
-            message.data["image"] != null &&
-            message.data["image"].isNotEmpty) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MyNotificationScreen(
-                count: 1,
-              ),
-            ),
-          );
-        }
-        if (message.notification != null) {
-          debugPrint(message.notification!.title);
-          debugPrint(message.notification!.body);
-          debugPrint("message.data22:::: ${message.data.toString()}");
-        }
-      },
-    );
-  }
-
-  /// Not Use
-  void showMediaTaskDialog(Map<String, dynamic> taskDetail) {
-    var dis = calculateDistance(
-            double.parse(taskDetail["lat"].toString()),
-            double.parse(taskDetail["long"]),
-            double.parse(sharedPreferences!
-                .getString(SharedPreferencesKeys.latitudeKey)!),
-            double.parse(sharedPreferences!
-                .getString(SharedPreferencesKeys.longitudeKey)!)) *
-        0.621371;
-    debugPrint("DistanceNew: $dis");
-  }
-
   Future<void> getFcmToken() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-
     fcmToken = await FirebaseMessaging.instance.getToken() ?? "";
-
     debugPrint("FCM Token:::: $fcmToken");
 
     if (Platform.isAndroid) {
@@ -910,91 +551,38 @@ class DashboardState extends State<Dashboard>
   }
 
   void goToLocationErrorScreen() {
-    Navigator.of(navigatorKey.currentContext!)
-        .push(
-      MaterialPageRoute(
-        builder: (context) => LocationErrorScreen(),
-      ),
-    )
-        .then((value) {
-      if (value != null) {
-        proceedWithLocation(value);
-      } else {
-        debugPrint("Location Error");
-      }
+    handleGoToLocationErrorScreen((lc.LocationData data) {
+      proceedWithLocation(data);
     });
   }
 
   void proceedWithLocation(lc.LocationData? locationData) async {
-    if (locationData != null) {
-      debugPrint("NotNull");
-      if (locationData.latitude != null) {
-        latitude = locationData.latitude!;
-        longitude = locationData.longitude!;
+    handleProceedWithLocation(
+      locationData: locationData,
+      onLocationUpdated: (lat, lng, address) {
+        latitude = lat;
+        longitude = lng;
 
-        try {
-          // Get address details from coordinates
-          List<Placemark> placemarks =
-              await placemarkFromCoordinates(latitude, longitude);
+        sharedPreferences!
+            .setDouble(SharedPreferencesKeys.currentLat, latitude);
+        sharedPreferences!
+            .setDouble(SharedPreferencesKeys.currentLon, longitude);
+        sharedPreferences!
+            .setString(SharedPreferencesKeys.currentAddress, address);
 
-          if (placemarks.isNotEmpty) {
-            final place = placemarks.first;
-
-            String fullAddress = [
-              if (place.street?.isNotEmpty ?? false) place.street,
-              if (place.locality?.isNotEmpty ?? false) place.locality,
-              if (place.administrativeArea?.isNotEmpty ?? false)
-                place.administrativeArea,
-              if (place.country?.isNotEmpty ?? false) place.country,
-            ].whereType<String>().join(", ");
-
-            debugPrint("Address: $fullAddress");
-
-            // Save in shared preferences
-            sharedPreferences!
-                .setDouble(SharedPreferencesKeys.currentLat, latitude);
-            sharedPreferences!
-                .setDouble(SharedPreferencesKeys.currentLon, longitude);
-            sharedPreferences!
-                .setString(SharedPreferencesKeys.currentAddress, fullAddress);
-            sharedPreferences!.setString(
-                SharedPreferencesKeys.currentCountry, place.country ?? "");
-            sharedPreferences!.setString(SharedPreferencesKeys.currentState,
-                place.administrativeArea ?? "");
-            sharedPreferences!.setString(
-                SharedPreferencesKeys.currentCity, place.locality ?? "");
-
-            isGetLatLong = false;
-            callUpdateCurrentData1();
-            // Removed _updateBottomNavigationScreens() to prevent recreation of tab screens
-            setState(() {});
-
-            if (alertDialog != null) {
-              alertDialog = null;
-              Navigator.of(navigatorKey.currentContext!).pop();
-            }
-          } else {
-            debugPrint("No placemarks found");
-            showSnackBar("Error", "Unable to find address", Colors.black);
-          }
-        } catch (e) {
-          debugPrint("Geocoding error: $e");
-          showSnackBar("Error", "Failed to get address: $e", Colors.black);
-        }
-      }
-    } else {
-      debugPrint("Null-ll");
-      showSnackBar("Location Error", "nullLocationText", Colors.black);
-    }
+        isGetLatLong = false;
+        callUpdateCurrentData1();
+        setState(() {});
+      },
+    );
   }
 
   void _onBottomBarItemTapped(int index) {
-    // Camera lifecycle management
+    if (currentIndex == index) return;
+
     if (currentIndex == 2 && index != 2) {
-      // Switching AWAY from camera - turn it OFF
       _cameraKey.currentState?.closeCamera();
     } else if (currentIndex != 2 && index == 2) {
-      // Switching TO camera - turn it ON and clear previous media
       _cameraKey.currentState?.clearCapturedMedia();
       _cameraKey.currentState?.resumeCamera();
     }
@@ -1013,8 +601,6 @@ class DashboardState extends State<Dashboard>
       currentIndex = index;
       _loadedIndices.add(currentIndex);
     });
-
-    // _dashboardBloc.add(ChangeDashboardTabEvent(index));
   }
 
   void _launchStudentBeansUrl(String url) async {

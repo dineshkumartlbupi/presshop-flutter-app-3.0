@@ -243,6 +243,11 @@ class _MenuScreenState extends State<MenuScreen> {
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
+      case MenuAction.locationSharing:
+        context.pushNamed(AppRoutes.locationSharingName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
     }
   }
 
@@ -600,36 +605,35 @@ class NotificationBadge extends StatelessWidget {
                       BorderRadius.circular(size.width * AppDimensions.numD015),
                 ),
               ),
-              if (count > 0)
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(size.width * 0.002),
-                        decoration: const BoxDecoration(
-                            color: Colors.white, shape: BoxShape.circle),
-                        child: Icon(
-                          Icons.circle,
-                          color: AppColorTheme.colorThemePink,
-                          size: size.width * AppDimensions.numD04,
-                        ),
+              Positioned(
+                right: 0,
+                top: 0,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(size.width * 0.002),
+                      decoration: const BoxDecoration(
+                          color: Colors.white, shape: BoxShape.circle),
+                      child: Icon(
+                        Icons.circle,
+                        color: AppColorTheme.colorThemePink,
+                        size: size.width * AppDimensions.numD04,
                       ),
-                      Text(
-                        count.toString(),
-                        style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD025,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
-                      )
-                    ],
-                  ),
-                )
+                    ),
+                    Text(
+                      count.toString(),
+                      style: commonTextStyle(
+                        size: size,
+                        fontSize: size.width * AppDimensions.numD025,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
+                    )
+                  ],
+                ),
+              )
             ],
           ),
         );

@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
+import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/core/services/media_upload_service.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
@@ -132,14 +131,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
           myId = value.getString("_id") ?? "";
         });
       });
-      // Initial Fetch via Bloc
-      // Assuming handled by BlocProvider creation or explicit add here if Bloc is provided from above.
-      // But we will ensure BlocProvider is in build.
     });
 
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
-        // Logic to trigger fetch if needed handled in UI/Bloc
         setState(() {});
       }
     });
@@ -198,7 +193,6 @@ class MyTaskScreenState extends State<MyTaskScreen>
               previous.allTasksStatus != current.allTasksStatus ||
               previous.localTasksStatus != current.localTasksStatus,
           listener: (context, state) {
-            // Complete refresh controllers when loading finishes
             if (state.allTasksStatus != TaskStatus.loading) {
               _allRefreshController.refreshCompleted();
               _allRefreshController.loadComplete();
@@ -261,8 +255,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                     Flexible(child: BlocBuilder<TaskBloc, TaskState>(
                       builder: (context, state) {
                         // Check if we need to fetch tasks for All Tasks tab
-                        if (_tabController.index == 0 &&
-                            !_allTasksFetchInitiated &&
+                        if (!_allTasksFetchInitiated &&
                             state.allTasks.isEmpty &&
                             state.allTasksStatus == TaskStatus.initial) {
                           _allTasksFetchInitiated = true;
@@ -272,8 +265,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                           });
                         }
                         // Check if we need to fetch tasks for Local Tasks tab
-                        else if (_tabController.index == 1 &&
-                            !_localTasksFetchInitiated &&
+                        if (!_localTasksFetchInitiated &&
                             state.localTasks.isEmpty &&
                             state.localTasksStatus == TaskStatus.initial) {
                           _localTasksFetchInitiated = true;

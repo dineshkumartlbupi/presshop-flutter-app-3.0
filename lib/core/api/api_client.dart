@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:presshop/core/api/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:presshop/core/api/token_refresh_manager.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/utils/app_logger.dart';
@@ -39,13 +40,20 @@ class ApiClient {
 
   Future<void> _onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    // Prioritize SharedPreferences for speed and stability
+    // Check if this is a retry from _onError
+    if (options.extra['is_retry'] == true) {
+      debugPrint(
+          "DEBUG: [RETRY] Detected retry flag for ${options.path}. Keeping existing headers.");
+      handler.next(options);
+      return;
+    }
+
+    // Normal flow: Read tokens from SharedPreferences or SecureStorage
     String? token =
         _sharedPreferences.getString(SharedPreferencesKeys.tokenKey);
     if (token == null || token.isEmpty) {
       token = await _secureStorage.read(key: SharedPreferencesKeys.tokenKey);
       if (token != null && token.isNotEmpty) {
-        // Sync back to SharedPreferences if found in SecureStorage
         await _sharedPreferences.setString(
             SharedPreferencesKeys.tokenKey, token);
       }
@@ -56,12 +64,8 @@ class ApiClient {
 
     if (token != null && token.isNotEmpty) {
       debugPrint("DEBUG: ApiClient Token: $token");
-
-      /// Using same behavior as your existing NetworkClass
       options.headers[SharedPreferencesKeys.headerKey] = "Bearer $token";
       options.headers['x-access-token'] = token;
-    } else {
-      debugPrint("DEBUG: ApiClient Token is NULL or EMPTY");
     }
 
     options.headers[SharedPreferencesKeys.headerDeviceIdKey] = deviceId;
@@ -82,10 +86,17 @@ class ApiClient {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
-    /*
     if (ApiErrorHandler.isUnauthenticated(err)) {
-      /// Avoid infinite loops if the refresh token call itself fails
+      // 1. Avoid infinite loops if the refresh token call itself fails
       if (err.requestOptions.path.contains(ApiConstantsNew.auth.refreshToken)) {
+        handler.next(err);
+        return;
+      }
+
+      // 2. Check if this request has already been retried once
+      if (err.requestOptions.extra['is_retry'] == true) {
+        debugPrint(
+            "❌ 401 Detected again on a retried request for: ${err.requestOptions.path}. Stopping to avoid infinite loop.");
         handler.next(err);
         return;
       }
@@ -97,24 +108,41 @@ class ApiClient {
 
         if (refreshSuccess) {
           debugPrint("✅ Token Refresh Success - Retrying original request");
-          final newAccessToken = _sharedPreferences.getString(tokenKey);
+
+          // CRITICAL: Read the NEW token directly after refresh
+          final newAccessToken =
+              _sharedPreferences.getString(SharedPreferencesKeys.tokenKey);
 
           if (newAccessToken != null && newAccessToken.isNotEmpty) {
             final opts = err.requestOptions;
-            opts.headers[headerKey] = "Bearer $newAccessToken";
+
+            // Set mandatory headers for retry
+            final Map<String, dynamic> newHeaders =
+                Map<String, dynamic>.from(opts.headers);
+            newHeaders[SharedPreferencesKeys.headerKey] =
+                "Bearer $newAccessToken";
+            newHeaders['x-access-token'] = newAccessToken;
+
+            // Mark as retry to ensure _onRequest skips it
+            final Map<String, dynamic> newExtra =
+                Map<String, dynamic>.from(opts.extra);
+            newExtra['is_retry'] = true;
+
+            debugPrint(
+                "DEBUG: Retrying request with new token (last 4 chars): ${newAccessToken.substring(newAccessToken.length - 4)}");
 
             final cloneReq = await _dio.request(
               opts.path,
               options: Options(
                 method: opts.method,
-                headers: opts.headers,
+                headers: newHeaders,
                 contentType: opts.contentType,
                 responseType: opts.responseType,
                 followRedirects: opts.followRedirects,
                 validateStatus: opts.validateStatus,
                 receiveTimeout: opts.receiveTimeout,
                 sendTimeout: opts.sendTimeout,
-                extra: opts.extra,
+                extra: newExtra,
               ),
               data: opts.data,
               queryParameters: opts.queryParameters,
@@ -125,14 +153,10 @@ class ApiClient {
       } catch (e) {
         debugPrint("❌ Token Refresh Exception in ApiClient: $e");
       }
-
-      // If refresh failed or was not possible, continue to error handling
-      // TokenRefreshManager already handles logout/navigation if needed.
     }
-    */
+
     _printCurlCommand(err.requestOptions);
 
-    // Use ApiErrorHandler to sanitize the error before passing it up
     final failure = ApiErrorHandler.handle(err);
 
     AppLogger.error(
@@ -152,58 +176,43 @@ class ApiClient {
   }
 
   void _printCurlCommand(RequestOptions options) {
-    try {
-      debugPrint("👇👇👇 CURL COMMAND FOR REPRODUCTION 👇👇👇");
-      String curl = "curl --request ${options.method} '${options.uri}'";
-
-      options.headers.forEach((key, value) {
-        if (key != "content-length") {
-          curl += " --header '$key: $value'";
-        }
-      });
-
-      if (options.data != null) {
-        if (options.data is FormData) {
-          curl += " --data '[FormData]'";
-        } else if (options.data is Map || options.data is List) {
-          curl += " --data '${jsonEncode(options.data)}'";
-        } else {
-          curl += " --data '${options.data}'";
-        }
+    if (kDebugMode) {
+      String queryParams = "";
+      if (options.queryParameters.isNotEmpty) {
+        queryParams =
+            "?${options.queryParameters.entries.map((e) => "${e.key}=${e.value}").join("&")}";
       }
 
+      String curl =
+          "curl -X ${options.method} '${options.baseUrl}${options.path}$queryParams'";
+      for (var header in options.headers.entries) {
+        curl += " -H '${header.key}: ${header.value}'";
+      }
+
+      if (options.data != null) {
+        curl += " -d '${jsonEncode(options.data)}'";
+      }
+
+      debugPrint("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+      debugPrint("� CURL COMMAND:");
       debugPrint(curl);
-      debugPrint("👆👆👆 COPY AND RUN THIS IN TERMINAL 👆👆👆");
-    } catch (e) {
-      debugPrint("❌ Failed to generate CURL command: $e");
+      debugPrint("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     }
   }
 
-  // Future<void> _clearSession() async {
-  //   debugPrint("🧹 Clearing User Session (ApiClient)...");
-  //   await _secureStorage.delete(key: tokenKey);
-  //   await _secureStorage.delete(key: refreshtokenKey);
-  //   await _sharedPreferences.remove(tokenKey);
-  //   await _sharedPreferences.remove(refreshtokenKey);
-  //   await _sharedPreferences.remove(rememberKey);
-  // }
-
+  // Adding back the helper methods that were lost in the replace_file_content error
   Future<Response> get(
     String path, {
     Map<String, dynamic>? queryParameters,
     Options? options,
-    bool? showLoader,
+    bool showLoader = true,
+    ProgressCallback? onReceiveProgress,
   }) async {
-    options ??= Options();
-    options.extra ??= {};
-    if (showLoader != null) {
-      options.extra!['show_loader'] = showLoader;
-    }
-
     return _dio.get(
       path,
       queryParameters: queryParameters,
       options: options,
+      onReceiveProgress: onReceiveProgress,
     );
   }
 
@@ -212,16 +221,10 @@ class ApiClient {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    bool showLoader = true,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
-    bool? showLoader,
   }) async {
-    options ??= Options();
-    options.extra ??= {};
-    if (showLoader != null) {
-      options.extra!['show_loader'] = showLoader;
-    }
-
     return _dio.post(
       path,
       data: data,
@@ -237,16 +240,10 @@ class ApiClient {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    bool showLoader = true,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
-    bool? showLoader,
   }) async {
-    options ??= Options();
-    options.extra ??= {};
-    if (showLoader != null) {
-      options.extra!['show_loader'] = showLoader;
-    }
-
     return _dio.put(
       path,
       data: data,
@@ -262,16 +259,10 @@ class ApiClient {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    bool showLoader = true,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
-    bool? showLoader,
   }) async {
-    options ??= Options();
-    options.extra ??= {};
-    if (showLoader != null) {
-      options.extra!['show_loader'] = showLoader;
-    }
-
     return _dio.patch(
       path,
       data: data,
@@ -287,14 +278,8 @@ class ApiClient {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
-    bool? showLoader,
+    bool showLoader = true,
   }) async {
-    options ??= Options();
-    options.extra ??= {};
-    if (showLoader != null) {
-      options.extra!['show_loader'] = showLoader;
-    }
-
     return _dio.delete(
       path,
       data: data,
@@ -303,35 +288,21 @@ class ApiClient {
     );
   }
 
+  // Support for multipart/form-data
   Future<Response> multipartPost(
     String path, {
     required FormData formData,
-    Map<String, dynamic>? queryParameters,
     Options? options,
-    bool? showLoader,
+    bool showLoader = true,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
   }) async {
-    options ??= Options();
-    options.extra ??= {};
-    if (showLoader != null) {
-      options.extra!['show_loader'] = showLoader;
-    }
-
-    return _dio.post(path,
-        data: formData, queryParameters: queryParameters, options: options);
-  }
-
-  Future<Response> postUri(
-    Uri uri, {
-    dynamic data,
-    Options? options,
-    bool? showLoader,
-  }) async {
-    options ??= Options();
-    options.extra ??= {};
-    if (showLoader != null) {
-      options.extra!['show_loader'] = showLoader;
-    }
-
-    return _dio.postUri(uri, data: data, options: options);
+    return _dio.post(
+      path,
+      data: formData,
+      options: options,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
   }
 }

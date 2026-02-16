@@ -74,6 +74,13 @@ class SharedPreferencesKeys {
   static const sourceDataHeadingKey = "sourceDataHeading";
   static const sourceDataDescriptionKey = "sourceDataDescription";
   static const sourceDataIsClickKey = "isClick";
+
+  // Caching Keys
+  static const tutorialCategoriesCacheKey = "tutorial_categories_cache";
+  static const tutorialVideosCachePrefix = "tutorial_videos_cache_";
+  static const faqCategoriesCacheKey = "faq_categories_cache_";
+  static const faqItemsCachePrefix = "faq_items_cache_";
+  static const termsCachePrefix = "terms_cache_";
 }
 /*------------------------------------*/
 

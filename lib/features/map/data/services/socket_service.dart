@@ -35,7 +35,11 @@ class SocketService {
     _socket = IO.io(
       _socketUrl,
       IO.OptionBuilder()
-          .setTransports(['websocket'])
+          .setTransports(['websocket', 'polling'])
+          .setQuery({
+            'userId': userId,
+            'userType': joinAs,
+          })
           .disableAutoConnect()
           .build(),
     );
@@ -53,12 +57,8 @@ class SocketService {
       if (joinAs == "hopper") socket.emit("joinHopper", userId);
       if (joinAs == "user") socket.emit("joinUser", userId);
 
-      // socket.emit('add_hopper_comment', {
-      //   'id': "385855634",
-      //   'text': "text",
-      //   'parent_id': null,
-      //   'user_id': userId,
-      // });
+      // Important: Rejoin news channel on every fresh connection
+      joinNewsAll();
     });
 
     socket.onDisconnect((_) {
@@ -137,6 +137,15 @@ class SocketService {
       return;
     }
     socket.emit("incident:create", data);
+  }
+
+  void joinNewsAll() {
+    if (!isInitialized) {
+      debugPrint("Socket: Cannot join news:all room, socket not initialized");
+      return;
+    }
+    debugPrint("Socket: Joining news:all room");
+    socket.emit("join:news:all");
   }
 
   void joinContent(String contentId) {

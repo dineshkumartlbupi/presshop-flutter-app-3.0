@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class Review extends Equatable {
-
   const Review({
     required this.id,
     required this.newsName,
@@ -44,4 +43,63 @@ class Review extends Equatable {
         ratingValue,
         review,
       ];
+
+  Review copyWith({
+    String? id,
+    String? newsName,
+    String? image,
+    String? dateTime,
+    String? date,
+    String? time,
+    double? ratingValue,
+    String? review,
+    String? senderType,
+    String? from,
+    String? to,
+    String? hopperImage,
+    String? userName,
+    String? totalEarning,
+    String? hopperCreatedAt,
+    List<String>? featureList,
+  }) {
+    return Review(
+      id: id ?? this.id,
+      newsName: newsName ?? this.newsName,
+      image: image ?? this.image,
+      dateTime: dateTime ?? this.dateTime,
+      date: date ?? this.date,
+      time: time ?? this.time,
+      ratingValue: ratingValue ?? this.ratingValue,
+      review: review ?? this.review,
+      senderType: senderType ?? this.senderType,
+      from: from ?? this.from,
+      to: to ?? this.to,
+      hopperImage: hopperImage ?? this.hopperImage,
+      userName: userName ?? this.userName,
+      totalEarning: totalEarning ?? this.totalEarning,
+      hopperCreatedAt: hopperCreatedAt ?? this.hopperCreatedAt,
+      featureList: featureList ?? this.featureList,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'newsName': newsName,
+      'image': image,
+      'dateTime': dateTime,
+      'date': date,
+      'time': time,
+      'ratingValue': ratingValue,
+      'review': review,
+      'senderType': senderType,
+      'from': from,
+      'to': to,
+      'hopperImage': hopperImage,
+      'userName': userName,
+      'totalEarning': totalEarning,
+      'hopperCreatedAt': hopperCreatedAt,
+      'featureList': featureList,
+    };
+  }
 }

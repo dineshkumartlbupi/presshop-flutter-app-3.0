@@ -62,15 +62,14 @@ class NotificationModel extends NotificationEntity {
 
     return NotificationModel(
       title: json['title'] ?? "",
-      senderImage: json['sender_id'] is Map
-          ? json['sender_id']['admin_detail'] != null
-              ? json['sender_id']['admin_detail']['admin_profile'].toString()
-              : ""
+      senderImage: (json['sender_id'] is Map &&
+              json['sender_id']['admin_detail'] is Map)
+          ? json['sender_id']['admin_detail']['admin_profile']?.toString() ?? ""
           : "",
 
-      senderId: json['sender_id'] is Map
-          ? json['sender_id']['_id']
-          : (json['sender_id'] ?? ''),
+      senderId: (json['sender_id'] is Map)
+          ? json['sender_id']['_id']?.toString() ?? ""
+          : (json['sender_id']?.toString() ?? ''),
 
       unread: !(json['is_read'] ??
           false), // Note: Logic was `unread` property but json is `is_read`. If `is_read` is true, unread is false. Or if unread means "is unread".
@@ -89,28 +88,32 @@ class NotificationModel extends NotificationEntity {
       // Let's change Entity `unread` to `isRead`? Or just map it strictly.
       // Existing: `unread: json['is_read'] ?? false`.
 
-      paymentStatus: json['content_details'] != null
-          ? json['content_details']['status'] ?? ""
-          : "",
+      paymentStatus:
+          (json['content_details'] != null && json['content_details'] is Map)
+              ? json['content_details']['status']?.toString() ?? ""
+              : "",
 
-      id: json['_id'] ?? "",
+      id: json['_id']?.toString() ?? "",
 
-      description: json['body'] ?? "",
+      description: json['body']?.toString() ?? "",
 
-      imageUrl: json['image_url'] ?? "",
+      imageUrl: json['image_url']?.toString() ?? "",
 
-      videoUrl: json['video_url'] ?? "",
-      messageType: json['message_type'] ?? json['type'] ?? "",
-      time: json['createdAt'] ?? "",
+      videoUrl: json['video_url']?.toString() ?? "",
+      messageType: (json['message_type'] ?? json['type'] ?? "").toString(),
+      time: json['createdAt']?.toString() ?? "",
 
       contentId:
-          json['content_details'] != null ? json['content_details']['_id'] : "",
+          (json['content_details'] != null && json['content_details'] is Map)
+              ? json['content_details']['_id']?.toString() ?? ""
+              : "",
 
-      exclusive: json['content_details'] != null
-          ? json['content_details']['type'] == "shared"
-              ? false
-              : true
-          : false,
+      exclusive:
+          (json['content_details'] != null && json['content_details'] is Map)
+              ? json['content_details']['type'] == "shared"
+                  ? false
+                  : true
+              : false,
 
       transactionDetailData: transactionEntity,
 

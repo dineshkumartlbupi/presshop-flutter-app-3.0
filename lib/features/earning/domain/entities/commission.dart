@@ -40,4 +40,48 @@ class Commission extends Equatable {
         currency,
         currencySymbol,
       ];
+
+  Commission copyWith({
+    double? totalEarning,
+    double? commission,
+    double? commissionReceived,
+    double? commissionPending,
+    String? paidOn,
+    String? firstName,
+    String? lastName,
+    String? dateOfJoining,
+    String? avatar,
+    String? currency,
+    String? currencySymbol,
+  }) {
+    return Commission(
+      totalEarning: totalEarning ?? this.totalEarning,
+      commission: commission ?? this.commission,
+      commissionReceived: commissionReceived ?? this.commissionReceived,
+      commissionPending: commissionPending ?? this.commissionPending,
+      paidOn: paidOn ?? this.paidOn,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      dateOfJoining: dateOfJoining ?? this.dateOfJoining,
+      avatar: avatar ?? this.avatar,
+      currency: currency ?? this.currency,
+      currencySymbol: currencySymbol ?? this.currencySymbol,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'totalEarning': totalEarning,
+      'commission': commission,
+      'commissionReceived': commissionReceived,
+      'commissionPending': commissionPending,
+      'paidOn': paidOn,
+      'firstName': firstName,
+      'lastName': lastName,
+      'dateOfJoining': dateOfJoining,
+      'avatar': avatar,
+      'currency': currency,
+      'currencySymbol': currencySymbol,
+    };
+  }
 }

@@ -40,7 +40,7 @@ import 'package:presshop/features/task/presentation/pages/detail_new/task_detail
 import 'package:presshop/features/task/presentation/pages/broadcast/BroardcastScreen.dart';
 import 'package:presshop/features/task/presentation/pages/broadcast_chat/broadCastChatTaskScreen.dart';
 import 'package:presshop/features/news/presentation/pages/news_page.dart';
-import 'package:presshop/features/news/presentation/pages/news_details_screen_legacy.dart';
+import 'package:presshop/features/news/presentation/pages/news_detail_page.dart';
 import 'package:presshop/features/news/domain/entities/news.dart';
 import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
 import 'package:presshop/features/news/presentation/bloc/news_event.dart';
@@ -62,6 +62,7 @@ import 'package:presshop/features/publish/presentation/pages/AudioRecorderScreen
 import 'package:presshop/features/publish/presentation/pages/HashTagSearchScreen.dart';
 import 'package:presshop/features/task/presentation/pages/preview/manageTaskPreviewScreen.dart';
 import 'package:presshop/features/task/presentation/pages/preview_media/manageTaskPreviewMediaScreen.dart';
+import 'package:presshop/features/task/presentation/pages/task_grabbing_screen.dart';
 import 'package:presshop/features/publish/presentation/pages/PublishContentScreen.dart';
 import 'package:presshop/features/publish/presentation/pages/ContentSubmittedScreen.dart';
 import 'package:presshop/features/publication/presentation/pages/publication_list_screen.dart';
@@ -430,10 +431,11 @@ class AppRouter {
         name: AppRoutes.newsDetailsName,
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>;
-          return NewsDetailsScreen(
+          return NewsDetailPage(
             newsId: extra['newsId'] as String,
             initialNews: extra['initialNews'] as News?,
             scrollToComments: extra['scrollToComments'] ?? false,
+            initialCommentId: extra['initialCommentId'] as String?,
           );
         },
       ),
@@ -668,6 +670,11 @@ class AppRouter {
             picAgain: extra['picAgain'] ?? false,
           );
         },
+      ),
+      GoRoute(
+        path: AppRoutes.locationSharingPath,
+        name: AppRoutes.locationSharingName,
+        builder: (context, state) => const TaskGrabbingScreen(),
       ),
       GoRoute(
         path: AppRoutes.menuPath,

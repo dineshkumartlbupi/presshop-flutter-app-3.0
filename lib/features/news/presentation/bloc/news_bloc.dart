@@ -21,6 +21,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     required this.sharedPreferences,
   }) : super(const NewsState()) {
     on<GetAggregatedNewsEvent>(_onGetAggregatedNews);
+    on<GetAllNewsEvent>(_onGetAllNews);
     on<GetNewsDetailEvent>(_onGetNewsDetail);
     on<GetCommentsEvent>(_onGetComments);
     on<AddCommentLocalEvent>(_onAddCommentLocal);
@@ -59,18 +60,36 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
 
   void _initSocketListener() {
     _ensureSocketInitialized();
+    socketService.joinNewsAll();
     socketService.onNewsLike = (data) {
-      add(OnNewsLikeUpdatedEvent(likeData: data));
+      if (!isClosed) {
+        add(OnNewsLikeUpdatedEvent(likeData: data));
+      }
     };
     socketService.onCommentLike = (data) {
-      add(OnCommentLikeUpdatedEvent(likeData: data));
+      if (!isClosed) {
+        add(OnCommentLikeUpdatedEvent(likeData: data));
+      }
     };
     socketService.onCommentNew = (data) {
-      add(OnCommentNewEvent(commentData: data));
+      if (!isClosed) {
+        add(OnCommentNewEvent(commentData: data));
+      }
     };
     socketService.onNewsShare = (data) {
-      add(OnNewsShareUpdatedEvent(shareData: data));
+      if (!isClosed) {
+        add(OnNewsShareUpdatedEvent(shareData: data));
+      }
     };
+  }
+
+  @override
+  Future<void> close() {
+    socketService.onNewsLike = null;
+    socketService.onCommentLike = null;
+    socketService.onCommentNew = null;
+    socketService.onNewsShare = null;
+    return super.close();
   }
 
   void _onCommentLikeUpdated(
@@ -129,14 +148,29 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
         final comment = CommentModel.fromJson(data);
         add(AddCommentLocalEvent(comment: comment, parentId: comment.parentId));
 
-        // Update comment count for the news item
-        if (state.selectedNews != null &&
-            state.selectedNews!.id == comment.contentId) {
-          final updatedNews = state.selectedNews!.copyWith(
-            commentsCount: (state.selectedNews!.commentsCount ?? 0) + 1,
+        // Update comment count for the news item in list
+        final updatedList = state.newsList.map((news) {
+          if (news.id == comment.contentId) {
+            return news.copyWith(
+              commentsCount: (news.commentsCount ?? 0) + 1,
+            );
+          }
+          return news;
+        }).toList();
+
+        // Update comment count for the selected news
+        News? updatedSelectedNews = state.selectedNews;
+        if (updatedSelectedNews != null &&
+            updatedSelectedNews.id == comment.contentId) {
+          updatedSelectedNews = updatedSelectedNews.copyWith(
+            commentsCount: (updatedSelectedNews.commentsCount ?? 0) + 1,
           );
-          emit(state.copyWith(selectedNews: updatedNews));
         }
+
+        emit(state.copyWith(
+          newsList: updatedList,
+          selectedNews: updatedSelectedNews,
+        ));
       } catch (e) {
         // Log error but don't crash
         print('Error parsing comment from socket: $e');
@@ -220,8 +254,8 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
       offset: event.offset,
     ));
 
-    result.fold(
-      (failure) {
+    await result.fold(
+      (failure) async {
         if (failure is ProcessingFailure) {
           emit(state
               .copyWith(isLoading: false, isProcessing: true, newsList: []));
@@ -232,8 +266,86 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
               errorMessage: "Failed to fetch news"));
         }
       },
-      (newsList) => emit(state.copyWith(
-          isLoading: false, isProcessing: false, newsList: newsList)),
+      (newsList) async {
+        List<News> updatedList;
+        if (event.offset > 0) {
+          updatedList = List.from(state.newsList)..addAll(newsList);
+        } else {
+          updatedList = List.from(newsList);
+        }
+
+        if (event.prioritizedContentId != null && event.offset == 0) {
+          final index =
+              updatedList.indexWhere((n) => n.id == event.prioritizedContentId);
+          if (index != -1) {
+            final item = updatedList.removeAt(index);
+            updatedList.insert(0, item);
+          } else {
+            final detailResult = await getNewsDetail(
+                GetNewsDetailParams(id: event.prioritizedContentId!));
+            detailResult.fold(
+              (_) {},
+              (news) {
+                if (!updatedList.any((n) => n.id == news.id)) {
+                  updatedList.insert(0, news);
+                }
+              },
+            );
+          }
+        }
+        emit(state.copyWith(
+          isLoading: false,
+          isProcessing: false,
+          newsList: updatedList,
+          hasMoreNews: newsList.length == event.limit,
+        ));
+      },
+    );
+  }
+
+  Future<void> _onGetAllNews(
+    GetAllNewsEvent event,
+    Emitter<NewsState> emit,
+  ) async {
+    double lat =
+        sharedPreferences.getDouble(SharedPreferencesKeys.currentLat) ?? 0.0;
+    double lng =
+        sharedPreferences.getDouble(SharedPreferencesKeys.currentLon) ?? 0.0;
+
+    emit(state.copyWith(isLoading: true, isProcessing: false));
+    final result = await getAggregatedNews(GetAggregatedNewsParams(
+      lat: lat,
+      lng: lng,
+      km: event.km,
+      category: event.category,
+      alertType: event.alertType,
+      limit: event.limit,
+      offset: event.offset,
+    ));
+
+    result.fold(
+      (failure) {
+        if (failure is ProcessingFailure) {
+          emit(state
+              .copyWith(isLoading: false, isProcessing: true, newsList: []));
+        } else {
+          emit(state.copyWith(
+              isLoading: false,
+              isProcessing: false,
+              errorMessage: "Failed to fetch all news"));
+        }
+      },
+      (newsList) {
+        final List<News> updatedList = event.offset > 0
+            ? (List.from(state.newsList)..addAll(newsList))
+            : List.from(newsList);
+        emit(state.copyWith(
+          isLoading: false,
+          isProcessing: false,
+          newsList: updatedList,
+          hasMoreNews: newsList.length == event.limit,
+        ));
+      },
     );
   }
 
@@ -285,6 +397,15 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     AddCommentLocalEvent event,
     Emitter<NewsState> emit,
   ) {
+    if (event.comment.id.isEmpty) return;
+
+    // Duplicate check
+    bool exists = state.comments.any((c) => c.id == event.comment.id) ||
+        state.comments
+            .any((c) => c.replies.any((r) => r.id == event.comment.id));
+
+    if (exists) return;
+
     final updatedComments = List<Comment>.from(state.comments);
     final targetParentId = event.comment.rootParentId ?? event.parentId;
 
@@ -294,6 +415,9 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
 
       if (parentIndex != -1) {
         final parent = updatedComments[parentIndex];
+        // Double check in replies just in case it's a deep reply
+        if (parent.replies.any((r) => r.id == event.comment.id)) return;
+
         final updatedReplies = List<Comment>.from(parent.replies)
           ..add(event.comment);
         updatedComments[parentIndex] = parent.copyWith(replies: updatedReplies);

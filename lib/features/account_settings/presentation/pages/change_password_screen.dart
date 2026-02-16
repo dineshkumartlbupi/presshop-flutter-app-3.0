@@ -75,40 +75,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           }
         },
         child: Scaffold(
-          appBar: CommonAppBar(
-            elevation: 0,
-            hideLeading: false,
-            title: Text(
-              AppStrings.changePasswordText,
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-            ),
-            centerTitle: false,
-            titleSpacing: 0,
+          appBar: CommonBrandedAppBar(
+            title: AppStrings.changePasswordText,
             size: size,
-            showActions: true,
-            leadingFxn: () {
-              context.pop();
-            },
-            actionWidget: [
-              InkWell(
-                onTap: () {
-                  context.goNamed(
-                    AppRoutes.dashboardName,
-                    extra: {'initialPosition': 2},
-                  );
-                },
-                child: Image.asset(
-                  "${commonImagePath}rabbitLogo.png",
-                  height: size.width * AppDimensions.numD07,
-                  width: size.width * AppDimensions.numD07,
-                ),
-              ),
-              SizedBox(
-                width: size.width * AppDimensions.numD04,
-              )
-            ],
+            showLogo: false,
           ),
           body: SafeArea(
             child: Form(
@@ -119,23 +89,34 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: size.width * AppDimensions.numD11,
-                          right: size.width * AppDimensions.numD1),
-                      child: Text(
-                        AppStrings.changePasswordSubTitleText,
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: size.width * AppDimensions.numD033),
-                      ),
-                    ),
-                    SizedBox(
-                      height: size.width * AppDimensions.numD06,
-                    ),
+                    // Padding(
+                    //   padding: EdgeInsets.only(
+                    //       left: size.width * AppDimensions.numD11,
+                    //       right: size.width * AppDimensions.numD1),
+                    //   child: Text(
+                    //     AppStrings.changePasswordSubTitleText,
+                    //     style: TextStyle(
+                    //         color: Colors.black,
+                    //         fontSize: size.width * AppDimensions.numD033),
+                    //   ),
+
                     Expanded(
                         child: ListView(
                       children: [
+                        // ),
+                        SizedBox(
+                          height: size.width * AppDimensions.numD06,
+                        ),
+                        Text(
+                          AppStrings.changePasswordSubTitleText,
+                          style: TextStyle(
+                              color: const Color.fromARGB(255, 26, 24, 24),
+                              fontSize: size.width * AppDimensions.numD033),
+                        ),
+                        SizedBox(
+                          height: size.width * AppDimensions.numD06,
+                        ),
+
                         /// Current Password
                         Text(
                           AppStrings.currentPasswordText,

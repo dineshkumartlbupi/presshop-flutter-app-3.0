@@ -58,6 +58,7 @@ class AppRoutes {
   static const String commonWebViewPath = '/commonWebView';
   static const String customGalleryPath = '/customGallery';
   static const String menuPath = '/menu';
+  static const String locationSharingPath = '/locationSharing';
 
   // Names
   static const String splashName = 'splash';
@@ -118,4 +119,5 @@ class AppRoutes {
   static const String commonWebViewName = 'commonWebView';
   static const String customGalleryName = 'customGallery';
   static const String menuName = 'menu';
+  static const String locationSharingName = 'locationSharing';
 }

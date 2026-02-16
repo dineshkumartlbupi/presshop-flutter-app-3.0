@@ -4,7 +4,6 @@ import 'package:presshop/features/map/domain/entities/route_info.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
 
 class MapState extends Equatable {
-
   const MapState({
     this.myLocation,
     this.initialCamera,
@@ -41,6 +40,7 @@ class MapState extends Equatable {
     this.searchedLocation,
     this.placeSuggestions = const [],
     this.errorMessage,
+    this.newlyCreatedIncident,
   });
   final LatLng? myLocation;
   final CameraPosition? initialCamera;
@@ -78,6 +78,7 @@ class MapState extends Equatable {
   final List<Incident> newsList;
   final List<Map<String, dynamic>> placeSuggestions;
   final String? errorMessage;
+  final Incident? newlyCreatedIncident;
 
   MapState copyWith({
     LatLng? myLocation,
@@ -115,6 +116,7 @@ class MapState extends Equatable {
     LatLng? searchedLocation,
     List<Map<String, dynamic>>? placeSuggestions,
     String? errorMessage,
+    Incident? newlyCreatedIncident,
     bool clearDestination = false,
     bool clearRouteInfo = false,
     bool clearSelectedIncident = false,
@@ -127,6 +129,7 @@ class MapState extends Equatable {
     bool clearMapSelectedIsOrigin = false,
     bool clearPreviewAlert = false,
     bool clearSearchedLocation = false,
+    bool clearNewlyCreatedIncident = false,
   }) {
     return MapState(
       myLocation: myLocation ?? this.myLocation,
@@ -190,6 +193,9 @@ class MapState extends Equatable {
           : (searchedLocation ?? this.searchedLocation),
       placeSuggestions: placeSuggestions ?? this.placeSuggestions,
       errorMessage: errorMessage ?? this.errorMessage,
+      newlyCreatedIncident: clearNewlyCreatedIncident
+          ? null
+          : (newlyCreatedIncident ?? this.newlyCreatedIncident),
     );
   }
 
@@ -230,5 +236,6 @@ class MapState extends Equatable {
         searchedLocation,
         placeSuggestions,
         errorMessage,
+        newlyCreatedIncident,
       ];
 }
