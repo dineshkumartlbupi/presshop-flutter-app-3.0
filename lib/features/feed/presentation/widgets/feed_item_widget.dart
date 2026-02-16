@@ -60,7 +60,8 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                 ChewieController? chewieController =
                     widget.initialController(feed, idx);
                 return ClipRRect(
-                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD04),
                   child: InkWell(
                     onTap: () {
                       if (item.mediaType == "pdf" || item.mediaType == "doc") {
@@ -87,23 +88,25 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                                     chewieController: chewieController)
                                 : item.mediaType == "pdf"
                                     ? Padding(
-                                        padding:
-                                            EdgeInsets.all(size.width * AppDimensions.numD04),
+                                        padding: EdgeInsets.all(
+                                            size.width * AppDimensions.numD04),
                                         child: Image.asset(
                                           "${dummyImagePath}pngImage.png",
                                           fit: BoxFit.contain,
-                                          height: size.width * AppDimensions.numD35,
+                                          height:
+                                              size.width * AppDimensions.numD35,
                                           width: size.width,
                                         ),
                                       )
                                     : item.mediaType == "doc"
                                         ? Padding(
-                                            padding: EdgeInsets.all(
-                                                size.width * AppDimensions.numD04),
+                                            padding: EdgeInsets.all(size.width *
+                                                AppDimensions.numD04),
                                             child: Image.asset(
                                               "${dummyImagePath}doc_black_icon.png",
                                               fit: BoxFit.contain,
-                                              height: size.width * AppDimensions.numD35,
+                                              height: size.width *
+                                                  AppDimensions.numD35,
                                               width: size.width,
                                             ),
                                           )
@@ -116,6 +119,14 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                                                     item.mediaType == "video"),
                                             width: size.width,
                                             fit: BoxFit.cover,
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                              return Image.asset(
+                                                "${commonImagePath}rabbitLogo.png",
+                                                width: size.width,
+                                                fit: BoxFit.contain,
+                                              );
+                                            },
                                           ),
                         Positioned(
                           right: size.width * AppDimensions.numD02,
@@ -162,7 +173,8 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                     BoxShadow(color: Colors.grey.shade200, spreadRadius: 3)
                   ]),
               child: ClipRRect(
-                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD06),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD06),
                   child: Image.network(
                     feed.feedImage,
                     height: size.width * AppDimensions.numD06,
@@ -368,7 +380,8 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                     height: size.width * AppDimensions.numD03,
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: size.width * AppDimensions.numD002),
+                    margin: EdgeInsets.only(
+                        left: size.width * AppDimensions.numD002),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -395,8 +408,8 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                         SizedBox(
                           width: size.width * AppDimensions.numD1,
                           child: Padding(
-                            padding:
-                                EdgeInsets.only(bottom: size.width * AppDimensions.numD002),
+                            padding: EdgeInsets.only(
+                                bottom: size.width * AppDimensions.numD002),
                             child: InkWell(
                               splashColor: Colors.transparent,
                               highlightColor: Colors.transparent,
@@ -404,11 +417,13 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                               child: feed.isLiked
                                   ? Image.asset(
                                       "${iconsPath}like_icon_fill.png",
-                                      height: size.width * AppDimensions.numD057,
+                                      height:
+                                          size.width * AppDimensions.numD057,
                                     )
                                   : Image.asset(
                                       "${iconsPath}like_grey.png",
-                                      height: size.width * AppDimensions.numD057,
+                                      height:
+                                          size.width * AppDimensions.numD057,
                                     ),
                             ),
                           ),
@@ -416,7 +431,8 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                         SizedBox(
                           width: size.width * AppDimensions.numD1,
                           child: Padding(
-                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD003),
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD003),
                             child: InkWell(
                               splashColor: Colors.transparent,
                               highlightColor: Colors.transparent,
@@ -424,11 +440,13 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                               child: feed.isEmoji
                                   ? Image.asset(
                                       "${iconsPath}sad.png",
-                                      height: size.width * AppDimensions.numD058,
+                                      height:
+                                          size.width * AppDimensions.numD058,
                                     )
                                   : Image.asset(
                                       "${iconsPath}ic_grey_sad_emoji.png",
-                                      height: size.width * AppDimensions.numD058,
+                                      height:
+                                          size.width * AppDimensions.numD058,
                                     ),
                             ),
                           ),
@@ -447,12 +465,14 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
             ),
             Container(
               width: size.width * AppDimensions.numD30,
-              padding: EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD012),
+              padding: EdgeInsets.symmetric(
+                  vertical: size.width * AppDimensions.numD012),
               decoration: BoxDecoration(
                   color: feed.paidStatus == AppStrings.unPaidText
                       ? AppColorTheme.colorThemePink
                       : AppColorTheme.colorLightGrey,
-                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03)),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD03)),
               child: Column(
                 children: [
                   Text(

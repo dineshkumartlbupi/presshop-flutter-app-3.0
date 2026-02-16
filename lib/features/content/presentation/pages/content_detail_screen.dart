@@ -109,11 +109,15 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String currentUserId = prefs.getString("_id") ?? "";
 
+    print("currentUserId: $currentUserId");
+    print("contentItem!.hopperId: ${contentItem!.hopperId}");
+
     if (contentItem != null) {
-      isOwner = currentUserId == (contentItem!.id);
+      isOwner = currentUserId == (contentItem!.hopperId);
     } else {
       isOwner = currentUserId == widget.hopperID;
     }
+    print("isOwner: $isOwner");
 
     if (isOwner) {
       _startTimer();
@@ -357,58 +361,61 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                               height: size.width *
                                                   AppDimensions.numD03,
                                             ),
-                                            // if (isOwner)
-                                            AnimatedButtonWidget(
-                                              shouldRestartAnimation:
-                                                  shouldRestartAnimation,
-                                              size: size,
-                                              buttonText:
-                                                  AppStrings.manageContentText,
-                                              onPressed: () {
-                                                context.pushNamed(
-                                                    AppRoutes.manageTaskName,
-                                                    extra: {
-                                                      'roomId': contentItem!.id,
-                                                      'contentId':
-                                                          contentItem!.id,
-                                                      'type': 'content',
-                                                      'mediaHouseDetail': null,
-                                                      'contentMedia':
-                                                          showMediaWidget(),
-                                                      'contentHeader':
-                                                          headerWidget(),
-                                                      'myContentData':
-                                                          contentItem!
-                                                              .toMyContentData(),
-                                                    }).then((value) {
-                                                  shouldRestartAnimation = true;
+                                            if (isOwner)
+                                              AnimatedButtonWidget(
+                                                shouldRestartAnimation:
+                                                    shouldRestartAnimation,
+                                                size: size,
+                                                buttonText: AppStrings
+                                                    .manageContentText,
+                                                onPressed: () {
+                                                  context.pushNamed(
+                                                      AppRoutes.manageTaskName,
+                                                      extra: {
+                                                        'roomId':
+                                                            contentItem!.id,
+                                                        'contentId':
+                                                            contentItem!.id,
+                                                        'type': 'content',
+                                                        'mediaHouseDetail':
+                                                            null,
+                                                        'contentMedia':
+                                                            showMediaWidget(),
+                                                        'contentHeader':
+                                                            headerWidget(),
+                                                        'myContentData':
+                                                            contentItem!
+                                                                .toMyContentData(),
+                                                      }).then((value) {
+                                                    shouldRestartAnimation =
+                                                        true;
 
-                                                  // Add events with safety checks
-                                                  try {
-                                                    if (!_contentBloc
-                                                        .isClosed) {
-                                                      _contentBloc.add(
-                                                          FetchContentDetailEvent(
-                                                              widget
-                                                                  .contentId));
-                                                      _contentBloc.add(
-                                                          FetchMediaHouseOffersEvent(
-                                                              widget
-                                                                  .contentId));
-                                                      _contentBloc.add(
-                                                          FetchContentTransactionsEvent(
-                                                              contentId: widget
-                                                                  .contentId,
-                                                              limit: 10,
-                                                              offset: 0));
+                                                    // Add events with safety checks
+                                                    try {
+                                                      if (!_contentBloc
+                                                          .isClosed) {
+                                                        _contentBloc.add(
+                                                            FetchContentDetailEvent(
+                                                                widget
+                                                                    .contentId));
+                                                        _contentBloc.add(
+                                                            FetchMediaHouseOffersEvent(
+                                                                widget
+                                                                    .contentId));
+                                                        _contentBloc.add(
+                                                            FetchContentTransactionsEvent(
+                                                                contentId: widget
+                                                                    .contentId,
+                                                                limit: 10,
+                                                                offset: 0));
+                                                      }
+                                                    } catch (e) {
+                                                      debugPrint(
+                                                          'Error adding events to ContentBloc after navigation: \$e');
                                                     }
-                                                  } catch (e) {
-                                                    debugPrint(
-                                                        'Error adding events to ContentBloc after navigation: \$e');
-                                                  }
-                                                });
-                                              },
-                                            ),
+                                                  });
+                                                },
+                                              ),
                                             SizedBox(
                                               height: size.width *
                                                   AppDimensions.numD05,
@@ -540,6 +547,16 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                           height:
                                               size.width * AppDimensions.numD50,
                                           fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return Image.asset(
+                                              "${commonImagePath}rabbitLogo.png",
+                                              width: double.infinity,
+                                              height: size.width *
+                                                  AppDimensions.numD50,
+                                              fit: BoxFit.contain,
+                                            );
+                                          },
                                         ),
                       Positioned(
                         right: size.width * AppDimensions.numD02,

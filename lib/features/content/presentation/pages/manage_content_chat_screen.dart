@@ -3124,6 +3124,16 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                           height:
                                               size.width * AppDimensions.numD50,
                                           fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return Image.asset(
+                                              "${commonImagePath}rabbitLogo.png",
+                                              width: double.infinity,
+                                              height: size.width *
+                                                  AppDimensions.numD50,
+                                              fit: BoxFit.contain,
+                                            );
+                                          },
                                         ),
 
                       /*   mediaList[index]

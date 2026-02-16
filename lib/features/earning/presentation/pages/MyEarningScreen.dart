@@ -919,27 +919,33 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: size.width * AppDimensions.numD01,
-                                    horizontal:
-                                        size.width * AppDimensions.numD04),
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * AppDimensions.numD015),
-                                  color: AppColorTheme.colorThemePink,
-                                ),
-                                child: Text(
-                                  item.amount.isNotEmpty
-                                      ? "$currencySymbol${formatDouble(double.parse(item.payableT0Hopper))}"
-                                      : "",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize:
-                                          size.width * AppDimensions.numD04,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600),
+                              Flexible(
+                                flex: 2,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical:
+                                          size.width * AppDimensions.numD01,
+                                      horizontal:
+                                          size.width * AppDimensions.numD04),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * AppDimensions.numD015),
+                                    color: AppColorTheme.colorThemePink,
+                                  ),
+                                  child: Text(
+                                    item.amount.isNotEmpty
+                                        ? "$currencySymbol${formatDouble(double.parse(item.payableT0Hopper))}"
+                                        : "",
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD04,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ),
                               Row(
@@ -961,7 +967,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                             }
                                           },
                                           child: Image.asset(
-                                            "${iconsPath}ic_play_img.png",
+                                            "${iconsPath}ic_square_play.png",
                                             height: size.width *
                                                 AppDimensions.numD08,
                                             width: size.width *
