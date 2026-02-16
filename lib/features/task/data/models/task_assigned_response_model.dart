@@ -94,6 +94,7 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
     super.currencySymbol = "",
     super.hopperInfo = const [],
     super.hopperTaskAmount = "0",
+    super.acceptedHoppers = const [],
   });
 
   factory TaskAssignedItemModel.fromJson(Map<String, dynamic> json) {
@@ -152,6 +153,8 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
       hopperInfo: SafeParser.parseList<HopperInfoDataModel>(
           json['hopperInfo'], (e) => HopperInfoDataModel.fromJson(e)),
       hopperTaskAmount: SafeParser.parseString(json['hopperTaskAmount']),
+      acceptedHoppers: SafeParser.parseList<String>(
+          json['accepted_hoppers'], (e) => SafeParser.parseString(e)),
     );
   }
 }

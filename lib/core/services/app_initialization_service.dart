@@ -13,6 +13,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:presshop/core/services/appsflyer_service.dart';
 import 'package:presshop/core/services/local_notification_service.dart';
+import 'package:presshop/core/utils/app_logger.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/firebase_options.dart';
 import 'package:presshop/main.dart';
@@ -61,6 +62,10 @@ class AppInitializationService {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
+
+      // Disable Crashlytics in debug mode
+      await FirebaseCrashlytics.instance
+          .setCrashlyticsCollectionEnabled(AppLogger.isCrashlyticsEnabled);
 
       await localNotificationService.setup();
 
@@ -132,11 +137,15 @@ class AppInitializationService {
   /// Setup error handlers for Crashlytics
   static void setupErrorHandlers() {
     FlutterError.onError = (errorDetails) {
-      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+      if (AppLogger.isCrashlyticsEnabled) {
+        FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+      }
     };
 
     PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      if (AppLogger.isCrashlyticsEnabled) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      }
       return true;
     };
 

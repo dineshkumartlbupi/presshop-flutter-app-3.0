@@ -4,15 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:presshop/core/analytics/analytics_helper.dart';
 import 'package:presshop/core/di/injection_container.dart';
 
-/// Global Unified Logger and Tracker for Presshop
-///
-/// This class handles all logging to:
-/// 1. Console (Debug only)
-/// 2. Firebase Analytics (Events, Screen views)
-/// 3. Firebase Crashlytics (Logs, Errors)
 class AppLogger {
   static FirebaseAnalytics get _analytics => sl<FirebaseAnalytics>();
   static FirebaseCrashlytics get _crashlytics => sl<FirebaseCrashlytics>();
+
+  // Toggle this to manually control crashlytics in dev
+  static bool isCrashlyticsEnabled = !kDebugMode;
 
   /// Log an informative message (Console + Crashlytics)
   static void info(String message, {Map<String, dynamic>? data}) {
@@ -23,10 +20,11 @@ class AppLogger {
       print(formattedMessage);
     }
 
-    _crashlytics.log(formattedMessage);
+    if (isCrashlyticsEnabled) {
+      _crashlytics.log(formattedMessage);
+    }
   }
 
-  /// Log a warning message (Console + Crashlytics)
   static void warning(String message, {Map<String, dynamic>? data}) {
     final formattedMessage =
         "⚠️ [WARN] $message ${data != null ? data.toString() : ""}";
@@ -35,10 +33,11 @@ class AppLogger {
       print(formattedMessage);
     }
 
-    _crashlytics.log(formattedMessage);
+    if (isCrashlyticsEnabled) {
+      _crashlytics.log(formattedMessage);
+    }
   }
 
-  /// Log an error with stack trace (Console + Crashlytics + optional Analytics)
   static void error(String message,
       {Object? error, StackTrace? stackTrace, bool trackAnalytics = false}) {
     final formattedMessage = "❌ [ERROR] $message";
@@ -48,7 +47,9 @@ class AppLogger {
       if (error != null) print("Error detail: $error");
     }
 
-    _crashlytics.recordError(error ?? message, stackTrace, reason: message);
+    if (isCrashlyticsEnabled) {
+      _crashlytics.recordError(error ?? message, stackTrace, reason: message);
+    }
 
     if (trackAnalytics) {
       AnalyticsHelper.trackError(message, 'app_logger');
@@ -81,16 +82,22 @@ class AppLogger {
     info("Setting User Identity: $userId");
 
     _analytics.setUserId(id: userId);
-    _crashlytics.setUserIdentifier(userId);
+    if (isCrashlyticsEnabled) {
+      _crashlytics.setUserIdentifier(userId);
+    }
 
     if (email != null) {
       _analytics.setUserProperty(name: 'email', value: email);
-      _crashlytics.setCustomKey('email', email);
+      if (isCrashlyticsEnabled) {
+        _crashlytics.setCustomKey('email', email);
+      }
     }
 
     if (name != null) {
       _analytics.setUserProperty(name: 'full_name', value: name);
-      _crashlytics.setCustomKey('name', name);
+      if (isCrashlyticsEnabled) {
+        _crashlytics.setCustomKey('name', name);
+      }
     }
   }
 
@@ -98,6 +105,8 @@ class AppLogger {
   static void clearUserIdentity() {
     info("Clearing User Identity");
     _analytics.setUserId(id: null);
-    _crashlytics.setUserIdentifier("");
+    if (isCrashlyticsEnabled) {
+      _crashlytics.setUserIdentifier("");
+    }
   }
 }

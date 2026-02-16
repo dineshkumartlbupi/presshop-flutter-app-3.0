@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart' as fic;
 import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
@@ -419,15 +420,23 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
 
   Future<void> getMedia() async {
     final LocationService locationService = di.sl<LocationService>();
-    final bool hasAccess =
-        await locationService.requestPermission(Permission.photos);
+    Permission permission = Permission.photos;
+
+    if (Platform.isAndroid) {
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      if (androidInfo.version.sdkInt < 33) {
+        permission = Permission.storage;
+      }
+    }
+
+    final bool hasAccess = await locationService.requestPermission(permission);
 
     if (!hasAccess) {
       if (!mounted) return;
       context.pushReplacementNamed(
         AppRoutes.permissionErrorName,
         extra: {
-          'permissionsStatus': {Permission.photos: false},
+          'permissionsStatus': {permission: false},
         },
       );
       return;

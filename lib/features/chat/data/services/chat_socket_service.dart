@@ -4,7 +4,7 @@ import 'package:presshop/core/api/api_constant.dart';
 
 class ChatSocketService {
   IO.Socket? _socket;
-  final String _socketUrl = ApiConstantsNew.config.socketUrl;
+  final String _socketUrl = ApiConstantsNew.config.socketUrl2;
 
   IO.Socket get socket {
     if (_socket == null) {

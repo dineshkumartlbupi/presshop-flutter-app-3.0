@@ -66,18 +66,24 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
       if (!permissionsStatus[permission]!) {
         var data = await permission.request();
         if (data.isDenied || data.isPermanentlyDenied) {
-          commonErrorDialogDialog(
-            isFromNetworkError: false,
-            actionButton: "Open Settings",
-            MediaQuery.of(context).size,
-            "This app needs access to your ${permission.toString().split('.').last.toTitleCase()} to provide its features. Please enable the permission in your app settings.",
-            "${permission.toString().split('.').last.toTitleCase()} Permission Required",
-            () {
-              openAppSettings().then((value) => {context.pop(true)});
-            },
-          );
+          if (mounted) {
+            commonErrorDialogDialog(
+              isFromNetworkError: false,
+              actionButton: "Open Settings",
+              MediaQuery.of(context).size,
+              "This app needs access to your ${permission.toString().split('.').last.toTitleCase()} to provide its features. Please enable the permission in your app settings.",
+              "${permission.toString().split('.').last.toTitleCase()} Permission Required",
+              () {
+                openAppSettings().then((value) {
+                  if (context.canPop()) {
+                    context.pop(true);
+                  }
+                });
+              },
+            );
+          }
+          break;
         }
-        break;
       }
     }
 

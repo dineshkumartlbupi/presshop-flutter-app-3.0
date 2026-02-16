@@ -6,7 +6,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketService {
   IO.Socket? _socket;
-  final String _socketUrl = ApiConstantsNew.config.socketUrl;
+  final String _socketUrl = ApiConstantsNew.config.socketUrl2;
 
   IO.Socket get socket => _socket!;
 

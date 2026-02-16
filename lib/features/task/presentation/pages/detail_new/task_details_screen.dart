@@ -42,6 +42,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   String roomId = "";
   bool isExtraTime = false;
   bool isOwner = false;
+  String myId = "";
   BitmapDescriptor? mapIcon;
   List<Marker> marker = [];
   bool shouldRestartAnimation = false;
@@ -65,6 +66,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   void initState() {
     getAllIcons();
     getCurrentLocation();
+    SharedPreferences.getInstance().then((value) {
+      if (mounted) {
+        setState(() {
+          myId = value.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
+        });
+      }
+    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       context
           .read<TaskBloc>()
@@ -123,20 +131,25 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 taskDetail!.task.addressLocation.coordinates[0],
                 taskDetail!.task.addressLocation.coordinates[1]));
 
-            SharedPreferences.getInstance().then((input) {
-              input.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
-              // acceptedBy is not in new model, assuming false or skipping check
-              isOwner = false;
+            if (myId.isEmpty) {
+              SharedPreferences.getInstance().then((input) {
+                myId = input.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
+                isOwner = taskDetail!.task.acceptedHoppers.contains(myId);
+                if (mounted) {
+                  setState(() {});
+                }
+              });
+            } else {
+              isOwner = taskDetail!.task.acceptedHoppers.contains(myId);
               if (mounted) {
                 setState(() {});
               }
-            });
+            }
           } else if (state.errorMessage != null) {
             showSnackBar("Error", state.errorMessage!, Colors.red);
           }
         },
         builder: (context, state) {
-          // Sync local variable with state if needed
           if (state.taskDetail != null &&
               state.taskDetailStatus == TaskStatus.success) {
             taskDetail = state.taskDetail;
@@ -155,7 +168,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /// Status Or Media House Name
                     Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: size.width * AppDimensions.numD01,
@@ -192,7 +204,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     SizedBox(
                       height: size.width * AppDimensions.numD02,
                     ),
-
                     Row(
                       children: [
                         Expanded(
@@ -404,7 +415,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     SizedBox(
                       height: size.width * AppDimensions.numD04,
                     ),
-
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -578,12 +588,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     SizedBox(
                       height: size.width * AppDimensions.numD025,
                     ),
-
                     const Divider(
                       thickness: 1,
                       color: AppColorTheme.colorGreyChat,
                     ),
-
                     Text("HEADING",
                         style: commonTextStyle(
                             size: size,
@@ -602,7 +610,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           lineHeight: 1.5,
                           fontWeight: FontWeight.w700),
                     ),
-
                     SizedBox(
                       height: size.width * AppDimensions.numD06,
                     ),
@@ -615,7 +622,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     SizedBox(
                       height: size.width * AppDimensions.numD018,
                     ),
-
                     Text(taskDetail!.task.description,
                         style: commonTextStyle(
                             size: size,
@@ -623,11 +629,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                             color: Colors.black,
                             lineHeight: 2,
                             fontWeight: FontWeight.normal)),
-
                     SizedBox(
                       height: size.width * AppDimensions.numD06,
                     ),
-
                     "".isNotEmpty
                         ? Text("SPECIAL REQUIREMENTS",
                             style: commonTextStyle(
@@ -641,7 +645,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           ? size.width * AppDimensions.numD025
                           : 0,
                     ),
-
                     "".isNotEmpty
                         ? Text("",
                             style: commonTextStyle(
@@ -651,22 +654,18 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal))
                         : Container(),
-
                     SizedBox(
                       height: "".isNotEmpty
                           ? size.width * AppDimensions.numD025
                           : 0,
                     ),
-
                     const Divider(
                       thickness: 1,
                       color: AppColorTheme.colorGreyChat,
                     ),
-
                     SizedBox(
                       height: size.width * AppDimensions.numD025,
                     ),
-
                     Text("PRICE OFFERED",
                         style: commonTextStyle(
                             size: size,
@@ -822,7 +821,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     SizedBox(
                       height: size.width * AppDimensions.numD025,
                     ),
-
                     const Divider(
                       thickness: 1,
                       color: AppColorTheme.colorGreyChat,
@@ -830,7 +828,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     SizedBox(
                       height: size.width * AppDimensions.numD025,
                     ),
-
                     taskDetail!.task.content.isNotEmpty
                         ? Text(AppStringsNew2.uploadedContentText.toUpperCase(),
                             style: commonTextStyle(
@@ -844,7 +841,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           ? size.width * AppDimensions.numD05
                           : 0,
                     ),
-
                     GridView.builder(
                       itemCount: taskDetail!.task.content.length,
                       shrinkWrap: true,
@@ -993,7 +989,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         );
                       },
                     ),
-
                     SizedBox(
                       height: size.width * AppDimensions.numD1,
                     ),
@@ -1066,11 +1061,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                     ],
                                   )),
                             ),
-
                     SizedBox(
                       height: size.width * AppDimensions.numD02,
                     ),
-
                     Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: size.width * AppDimensions.numD02),
@@ -1100,7 +1093,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                 )
                               ])),
                     ),
-
                     SizedBox(
                       height: size.height * AppDimensions.numD02,
                     ),
