@@ -226,6 +226,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
                 AllTaskModel.fromJson(Map<String, dynamic>.from(e as Map)))
             .toList();
         if (tasks.isNotEmpty) {
+          // Verify we don't block loading state emission by setting success here immediately?
+          // We can emit success from cache, but we MUST emit loading before API call if we want refresh indicator to show/work.
           emit(state.copyWith(
               allTasksStatus: TaskStatus.success, allTasks: tasks));
         }
@@ -234,10 +236,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       }
     }
 
-    if (state.allTasksStatus != TaskStatus.success || event.offset > 0) {
-      emit(state.copyWith(
-          allTasksStatus: TaskStatus.loading, clearErrorMessage: true));
-    }
+    // Always emit loading state to ensure listeners react to state changes
+    emit(state.copyWith(
+        allTasksStatus: TaskStatus.loading, clearErrorMessage: true));
 
     final result = await getAllTasks(GetAllTasksParams(
       limit: 10,
@@ -248,10 +249,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
     result.fold((failure) {
       debugPrint("TaskBloc: API Error: ${failure.message}");
-      if (state.allTasks.isEmpty) {
-        emit(state.copyWith(
-            allTasksStatus: TaskStatus.failure, errorMessage: failure.message));
-      }
+      // Even if we have tasks, we MUST emit a non-loading state to stop the refresher
+      emit(state.copyWith(
+          allTasksStatus: TaskStatus.failure, errorMessage: failure.message));
     }, (tasks) {
       debugPrint("TaskBloc: API Success: ${tasks.length} tasks");
       final updatedTasks =

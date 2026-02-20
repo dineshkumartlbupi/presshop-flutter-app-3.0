@@ -266,7 +266,7 @@ class _NewsPageState extends State<NewsPage>
               ),
               if (!widget.hideFilters)
                 Positioned(
-                  top: 10,
+                  top: 0,
                   left: 0,
                   right: 0,
                   child: SearchAndFilterBar(

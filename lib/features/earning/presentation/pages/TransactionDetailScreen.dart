@@ -850,6 +850,9 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
   }
 
   void initialController(currentMediaIndex) {
+    if (widget.transactionData!.contentDataList.isEmpty) {
+      return;
+    }
     if (widget.transactionData!.contentDataList[currentMediaIndex].mediaType ==
         "audio") {
       initWaveData(getMediaImageUrl(

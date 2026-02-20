@@ -45,6 +45,7 @@ class ContentItem extends Equatable {
     this.isPaidStatusToHopper = false,
     this.currency = "",
     this.currencySymbol = "",
+    this.totalEarnings = "0",
   });
   final String id;
   final String description;
@@ -87,6 +88,7 @@ class ContentItem extends Equatable {
   final bool isPaidStatusToHopper;
   final String currency;
   final String currencySymbol;
+  final String totalEarnings;
 
   // Getters for UI compatibility
   int get totalView => contentViewCount;
@@ -95,7 +97,7 @@ class ContentItem extends Equatable {
   List<String> get mediaUrls => images.isNotEmpty
       ? images
       : (videos.isNotEmpty ? videos.map((e) => e.toString()).toList() : []);
-  String get totalSold => "0";
+  String get totalSold => totalEarnings;
   String get title => description.isNotEmpty ? description : "No Title";
   String? get price => askPrice.isNotEmpty ? askPrice : priceOriginal;
 
@@ -142,6 +144,7 @@ class ContentItem extends Equatable {
         isPaidStatusToHopper,
         currency,
         currencySymbol,
+        totalEarnings,
       ];
 
   ContentItem copyWith({
@@ -186,6 +189,7 @@ class ContentItem extends Equatable {
     bool? isPaidStatusToHopper,
     String? currency,
     String? currencySymbol,
+    String? totalEarnings,
   }) {
     return ContentItem(
       id: id ?? this.id,
@@ -230,6 +234,7 @@ class ContentItem extends Equatable {
       isPaidStatusToHopper: isPaidStatusToHopper ?? this.isPaidStatusToHopper,
       currency: currency ?? this.currency,
       currencySymbol: currencySymbol ?? this.currencySymbol,
+      totalEarnings: totalEarnings ?? this.totalEarnings,
     );
   }
 
@@ -276,6 +281,7 @@ class ContentItem extends Equatable {
       'is_paid_status_to_hopper': isPaidStatusToHopper,
       'currency': currency,
       'currency_symbol': currencySymbol,
+      'total_earnings': totalEarnings,
     };
   }
 }
