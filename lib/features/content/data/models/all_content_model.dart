@@ -64,6 +64,7 @@ class ContentItemModel extends ContentItem {
     super.isPaidStatusToHopper = false,
     super.currency = "",
     super.currencySymbol = "",
+    super.totalEarnings = "0",
   });
 
   factory ContentItemModel.fromJson(Map<String, dynamic> json) {
@@ -115,6 +116,33 @@ class ContentItemModel extends ContentItem {
           ? json['currency_symbol'].toString()
           : getCurrencySymbol(
               (json['currency'] ?? json['currency_original'] ?? '').toString()),
+      totalEarnings: (() {
+        // First try to get total earnings directly
+        var earning = json['total_earnings'] ??
+            json['totalEarnings'] ??
+            json['total_earning'] ??
+            json['totalEarning'];
+        if (earning != null) {
+          return earning.toString();
+        }
+
+        // If not found, calculate from purchased_mediahouse list
+        double total = 0.0;
+        if (json['purchased_mediahouse'] != null &&
+            json['purchased_mediahouse'] is List) {
+          for (var item in json['purchased_mediahouse']) {
+            if (item is Map) {
+              var amount = item['payable_to_hopper'] ??
+                  item['hopper_price'] ??
+                  item['amount'];
+              if (amount != null) {
+                total += double.tryParse(amount.toString()) ?? 0.0;
+              }
+            }
+          }
+        }
+        return total > 0 ? total.toStringAsFixed(2) : "0";
+      })(),
     );
   }
 
@@ -154,5 +182,6 @@ class ContentItemModel extends ContentItem {
         'paid_status_to_hopper': isPaidStatusToHopper,
         'currency': currency,
         'currency_symbol': currencySymbol,
+        'total_earnings': totalEarnings,
       };
 }

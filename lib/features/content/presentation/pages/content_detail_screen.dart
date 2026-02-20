@@ -866,7 +866,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   padding: EdgeInsets.symmetric(
                       vertical: size.width * AppDimensions.numD012),
                   decoration: BoxDecoration(
-                      color: !contentItem!.paidStatus
+                      color: contentItem!.paidStatus
                           ? AppColorTheme.colorThemePink
                           : /*myContentData!.paidStatus == AppStrings.paidText &&
                                   !myContentData!.isPaidStatusToHopper
@@ -887,7 +887,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD035,
-                            color: !contentItem!.paidStatus
+                            color: contentItem!.paidStatus
                                 ? Colors.white
                                 : Colors.black,
                             fontWeight: FontWeight.w400),
@@ -909,11 +909,11 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             right: size.width * AppDimensions.numD02,
                           ),
                           child: Text(
-                            "${contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency)}${formatDouble(double.parse(contentItem!.price ?? "0"))}",
+                            "${contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency)}${formatDouble(double.parse(contentItem!.totalSold))}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD05,
-                                color: !contentItem!.paidStatus
+                                color: contentItem!.paidStatus
                                     ? Colors.white
                                     : Colors.black,
                                 fontWeight: FontWeight.bold),

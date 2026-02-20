@@ -214,7 +214,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
               body: SafeArea(
                 child: Column(
                   children: [
-                    SizedBox(height: size.width * AppDimensions.numD04),
+                    // SizedBox(height: size.width * AppDimensions.numD04),
                     Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: size.width * AppDimensions.numD04),
