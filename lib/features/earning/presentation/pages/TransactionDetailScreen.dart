@@ -11,6 +11,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import 'package:intl/intl.dart';
+
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
@@ -421,11 +423,19 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                               fontWeight: FontWeight.w400),
                         ),
                         Text(
-                          /* widget.transactionData!.createdAT.isNotEmpty
-                          ? DateFormat('dd MMMM,yyyy').format(
-                              DateTime.parse(widget.transactionData!.createdAT))
-                          : '',*/
-                          widget.transactionData!.createdAT,
+                          widget.transactionData!.createdAT.isNotEmpty
+                              ? (() {
+                                  try {
+                                    final dt = DateTime.tryParse(
+                                        widget.transactionData!.createdAt);
+                                    return dt != null
+                                        ? DateFormat('dd MMM yyyy').format(dt)
+                                        : widget.transactionData!.createdAT;
+                                  } catch (_) {
+                                    return widget.transactionData!.createdAT;
+                                  }
+                                })()
+                              : '-',
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
@@ -449,11 +459,19 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                               fontWeight: FontWeight.w400),
                         ),
                         Text(
-                          /* widget.transactionData!.createdAT.isNotEmpty
-                          ? DateFormat('dd MMMM,yyyy').format(
-                              DateTime.parse(widget.transactionData!.createdAT))
-                          : '',*/
-                          widget.transactionData!.createdAT,
+                          widget.transactionData!.createdAT.isNotEmpty
+                              ? (() {
+                                  try {
+                                    final dt = DateTime.tryParse(
+                                        widget.transactionData!.createdAt);
+                                    return dt != null
+                                        ? DateFormat('dd MMM yyyy').format(dt)
+                                        : widget.transactionData!.createdAT;
+                                  } catch (_) {
+                                    return widget.transactionData!.createdAT;
+                                  }
+                                })()
+                              : '-',
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
@@ -644,8 +662,9 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      // "${widget.transactionData!.adminFullName} ",
-                      "PressHop Media UK Limited",
+                      widget.transactionData!.adminFullName.isNotEmpty
+                          ? widget.transactionData!.adminFullName
+                          : "PressHop Media UK Limited",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
@@ -694,8 +713,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      // "Total earnings from AppStrings.sold content"
-                      "Content AppStrings.sold for",
+                      "Content sold for",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,

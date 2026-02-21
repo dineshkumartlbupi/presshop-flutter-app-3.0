@@ -95,6 +95,9 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
     super.hopperInfo = const [],
     super.hopperTaskAmount = "0",
     super.acceptedHoppers = const [],
+    super.distance = "",
+    super.walkTime = "",
+    super.driveTime = "",
   });
 
   factory TaskAssignedItemModel.fromJson(Map<String, dynamic> json) {
@@ -155,6 +158,11 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
       hopperTaskAmount: SafeParser.parseString(json['hopperTaskAmount']),
       acceptedHoppers: SafeParser.parseList<String>(
           json['accepted_hoppers'], (e) => SafeParser.parseString(e)),
+      distance: SafeParser.parseString(json['distance'] ?? json['miles'] ?? ""),
+      walkTime: SafeParser.parseString(
+          json['timeByWalking'] ?? json['by_feet'] ?? json['walk_time'] ?? ""),
+      driveTime: SafeParser.parseString(
+          json['timeByDriving'] ?? json['by_car'] ?? json['drive_time'] ?? ""),
     );
   }
 }

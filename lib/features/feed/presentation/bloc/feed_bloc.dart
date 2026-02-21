@@ -113,13 +113,21 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
         }
       },
       (feeds) {
+        // Sort by createdAt descending (newest first)
+        final sortedFeeds = List<Feed>.from(feeds)
+          ..sort((a, b) {
+            final dateA = DateTime.tryParse(a.createdAt) ?? DateTime(0);
+            final dateB = DateTime.tryParse(b.createdAt) ?? DateTime(0);
+            return dateB.compareTo(dateA);
+          });
+
         if (offset == 0) {
-          cacheBox.put(cacheKey, feeds.map((e) => e.toJson()).toList());
+          cacheBox.put(cacheKey, sortedFeeds.map((e) => e.toJson()).toList());
         }
 
         emit(state.copyWith(
           status: FeedStatus.success,
-          feeds: offset == 0 ? feeds : [...state.feeds, ...feeds],
+          feeds: offset == 0 ? sortedFeeds : [...state.feeds, ...sortedFeeds],
           hasReachedMax: feeds.isEmpty ||
               feeds.length < (int.tryParse(filters['limit'] ?? "10") ?? 10),
           filters: filters,
@@ -144,9 +152,17 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     result.fold(
       (failure) => emit(state.copyWith(errorMessage: failure.toString())),
       (newFeeds) {
+        // Sort by createdAt descending (newest first)
+        final sortedNewFeeds = List<Feed>.from(newFeeds)
+          ..sort((a, b) {
+            final dateA = DateTime.tryParse(a.createdAt) ?? DateTime(0);
+            final dateB = DateTime.tryParse(b.createdAt) ?? DateTime(0);
+            return dateB.compareTo(dateA);
+          });
+
         emit(state.copyWith(
           status: FeedStatus.success,
-          feeds: List.of(state.feeds)..addAll(newFeeds),
+          feeds: List.of(state.feeds)..addAll(sortedNewFeeds),
           hasReachedMax: newFeeds.isEmpty || newFeeds.length < limit,
           filters: filters,
         ));

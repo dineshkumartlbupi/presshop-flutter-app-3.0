@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:intl/intl.dart';
 import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
@@ -78,7 +77,7 @@ void commonDialog(BuildContext context, String message, VoidCallback pressed) {
 void broadcastDialog({
   required Size size,
   required TaskAssignedEntity taskDetail,
-  required VoidCallback onTapView,
+  required VoidCallback onTapViewDetails,
 }) {
   showDialog(
       context: navigatorKey.currentState!.context,
@@ -232,433 +231,241 @@ void broadcastDialog({
                           ),
                         ),
 
-                        /// Location or deadline
-                        Container(
-                          margin: EdgeInsets.only(
-                            top: size.width * AppDimensions.numD03,
-                            bottom: size.width * AppDimensions.numD05,
-                            left: size.width * AppDimensions.numD04,
-                            right: size.width * AppDimensions.numD04,
+                        /// Left & Right Cards
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: size.width * AppDimensions.numD04,
+                            vertical: size.width * AppDimensions.numD03,
                           ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  height: size.width * AppDimensions.numD20,
-                                  padding: EdgeInsets.symmetric(
-                                      vertical:
-                                          size.width * AppDimensions.numD03,
-                                      horizontal:
-                                          size.width * AppDimensions.numD02),
-                                  decoration: BoxDecoration(
-                                      color: AppColorTheme.colorLightGrey,
+                          child: IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                /// Date/Time Card
+                                Expanded(
+                                  child: Container(
+                                    padding: EdgeInsets.all(
+                                        size.width * AppDimensions.numD03),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF7F7F7),
                                       borderRadius: BorderRadius.circular(
-                                          size.width * AppDimensions.numD03)),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Image.asset(
-                                            "${iconsPath}ic_yearly_calendar.png",
-                                            height: size.width *
-                                                AppDimensions.numD03,
-                                            color: AppColorTheme
-                                                .colorTextFieldIcon,
-                                          ),
-                                          SizedBox(
-                                            width: size.width *
-                                                AppDimensions.numD01,
-                                          ),
-                                          Text(
-                                            dateTimeFormatter(
+                                          size.width * AppDimensions.numD03),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Image.asset(
+                                              "${iconsPath}ic_yearly_calendar.png",
+                                              width: size.width *
+                                                  AppDimensions.numD035,
+                                              color: Colors.black,
+                                            ),
+                                            SizedBox(
+                                                width: size.width *
+                                                    AppDimensions.numD02),
+                                            Text(
+                                              dateTimeFormatter(
                                                 dateTime: taskDetail
                                                     .task.createdAt
-                                                    .toString()),
-                                            style: commonTextStyle(
-                                                size: size,
+                                                    .toString(),
+                                                format: "dd MMM yyyy",
+                                              ),
+                                              style: TextStyle(
+                                                color: Colors.black,
                                                 fontSize: size.width *
                                                     AppDimensions.numD03,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height:
-                                            size.width * AppDimensions.numD01,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Image.asset(
-                                            "${iconsPath}ic_clock.png",
-                                            height: size.width *
-                                                AppDimensions.numD03,
-                                            color: AppColorTheme
-                                                .colorTextFieldIcon,
-                                          ),
-                                          SizedBox(
-                                            width: size.width *
-                                                AppDimensions.numD01,
-                                          ),
-                                          Text.rich(
-                                            TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: "From : ",
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize: size.width *
-                                                          AppDimensions.numD03,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                TextSpan(
-                                                  text: DateFormat('hh:mm a')
-                                                      .format(taskDetail
-                                                          .task.createdAt),
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize: size.width *
-                                                          AppDimensions.numD03,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w400),
-                                                ),
-                                              ],
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height:
-                                            size.width * AppDimensions.numD01,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Image.asset(
-                                            "${iconsPath}ic_clock.png",
+                                          ],
+                                        ),
+                                        SizedBox(
                                             height: size.width *
-                                                AppDimensions.numD03,
-                                            color: AppColorTheme
-                                                .colorTextFieldIcon,
-                                          ),
-                                          SizedBox(
-                                            width: size.width *
-                                                AppDimensions.numD01,
-                                          ),
-                                          Text.rich(
-                                            TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: "To       : ",
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize: size.width *
-                                                          AppDimensions.numD03,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                TextSpan(
-                                                  text: DateFormat('hh:mm a')
-                                                      .format(taskDetail
-                                                          .task.deadlineDate),
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize: size.width *
-                                                          AppDimensions.numD03,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w400),
-                                                ),
-                                              ],
+                                                AppDimensions.numD015),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.access_time,
+                                              size: size.width *
+                                                  AppDimensions.numD035,
+                                              color: Colors.black54,
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        width:
-                                            size.width * AppDimensions.numD01,
-                                      ),
-                                    ],
+                                            SizedBox(
+                                                width: size.width *
+                                                    AppDimensions.numD02),
+                                            Text(
+                                              "From : ${dateTimeFormatter(dateTime: taskDetail.task.createdAt.toString(), format: "hh:mm a")}",
+                                              style: TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD028,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                            height: size.width *
+                                                AppDimensions.numD01),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.access_time,
+                                              size: size.width *
+                                                  AppDimensions.numD035,
+                                              color: Colors.black54,
+                                            ),
+                                            SizedBox(
+                                                width: size.width *
+                                                    AppDimensions.numD02),
+                                            Text(
+                                              "To      : ${dateTimeFormatter(dateTime: taskDetail.task.deadlineDate.toString(), format: "hh:mm a")}",
+                                              style: TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD028,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                width: size.width * AppDimensions.numD05,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  height: size.width * AppDimensions.numD20,
-                                  padding: EdgeInsets.symmetric(
-                                      vertical:
-                                          size.width * AppDimensions.numD03,
-                                      horizontal:
-                                          size.width * AppDimensions.numD02),
-                                  decoration: BoxDecoration(
-                                      color: AppColorTheme.colorLightGrey,
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * AppDimensions.numD03)),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Image.asset(
-                                            "${iconsPath}ic_location.png",
-                                            width: size.width *
-                                                AppDimensions.numD03,
-                                          ),
-                                          SizedBox(
-                                            width: size.width *
-                                                AppDimensions.numD01,
-                                          ),
-                                          Text(
-                                            AppStrings.locationText
-                                                .toUpperCase(),
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width *
-                                                    AppDimensions.numD03,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                        ],
-                                      ),
+                                SizedBox(
+                                    width: size.width * AppDimensions.numD03),
 
-                                      /// Location Data
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          left:
-                                              size.width * AppDimensions.numD01,
-                                          top:
-                                              size.width * AppDimensions.numD01,
-                                        ),
-                                        child: Text(
-                                          taskDetail.task.location,
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width *
-                                                  AppDimensions.numD03,
+                                /// Location Card
+                                Expanded(
+                                  child: Container(
+                                    padding: EdgeInsets.all(
+                                        size.width * AppDimensions.numD03),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF7F7F7),
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * AppDimensions.numD03),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Icon(
+                                              Icons.location_on_outlined,
+                                              size: size.width *
+                                                  AppDimensions.numD038,
                                               color: Colors.black,
-                                              fontWeight: FontWeight.w400),
+                                            ),
+                                            SizedBox(
+                                                width: size.width *
+                                                    AppDimensions.numD01),
+                                            Expanded(
+                                              child: Text(
+                                                AppStrings.locationText
+                                                    .toUpperCase(),
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD028,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                    ],
+                                        SizedBox(
+                                            height: size.width *
+                                                AppDimensions.numD015),
+                                        Text(
+                                          taskDetail.task.location,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: size.width *
+                                                AppDimensions.numD028,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: size.width * AppDimensions.numD02),
+
+                        /// Illustration
+                        Image.asset(
+                          "assets/illustrations/priceimage2.png",
+                          height: size.width * AppDimensions.numD25,
+                          fit: BoxFit.contain,
+                        ),
+
+                        SizedBox(height: size.width * AppDimensions.numD05),
+
+                        /// Price and Hours
+                        RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text:
+                                    "${taskDetail.task.currencySymbol.isNotEmpty ? taskDetail.task.currencySymbol : currencySymbol}${taskDetail.task.hopperTaskAmount} ",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: size.width * AppDimensions.numD07,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    "for ${taskDetail.task.hopperInfo.isNotEmpty ? taskDetail.task.hopperInfo.first.hours : "0"} hours",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: size.width * AppDimensions.numD04,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ],
                           ),
                         ),
 
-                        /* Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    taskDetail.task.isNeedPhoto &&
-                                            (double.tryParse(taskDetail
-                                                        .task.photoPrice) ??
-                                                    0) >
-                                                0
-                                        ? "$currencySymbol${formatDouble(double.parse(taskDetail.task.photoPrice))}"
-                                        : "-",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD058,
-                                        color: AppColorTheme.colorThemePink,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    AppStrings.offeredText,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD035,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  SizedBox(
-                                    height: size.width * AppDimensions.numD04,
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal:
-                                            size.width * AppDimensions.numD06,
-                                        vertical:
-                                            size.width * AppDimensions.numD02),
-                                    decoration: BoxDecoration(
-                                        color: AppColorTheme.colorThemePink,
-                                        borderRadius: BorderRadius.circular(
-                                            size.width * AppDimensions.numD02)),
-                                    child: Text(
-                                      AppStrings.photoText.toUpperCase(),
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width *
-                                              AppDimensions.numD035,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    taskDetail.task.isNeedInterview &&
-                                            (double.tryParse(taskDetail
-                                                        .task.interviewPrice) ??
-                                                    0) >
-                                                0
-                                        ? "$currencySymbol${formatDouble(double.parse(taskDetail.task.interviewPrice))}"
-                                        : "-",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD058,
-                                        color: AppColorTheme.colorThemePink,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    AppStrings.offeredText,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD035,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  SizedBox(
-                                    height: size.width * AppDimensions.numD04,
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical:
-                                            size.width * AppDimensions.numD02,
-                                        horizontal:
-                                            size.width * AppDimensions.numD03),
-                                    decoration: BoxDecoration(
-                                        color: AppColorTheme.colorThemePink,
-                                        borderRadius: BorderRadius.circular(
-                                            size.width * AppDimensions.numD02)),
-                                    child: Text(
-                                      AppStrings.interviewText.toUpperCase(),
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width *
-                                              AppDimensions.numD035,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    taskDetail.task.isNeedVideo &&
-                                            (double.tryParse(taskDetail
-                                                        .task.videoPrice) ??
-                                                    0) >
-                                                0
-                                        ? "$currencySymbol${formatDouble(double.parse(taskDetail.task.videoPrice))}"
-                                        : "-",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD058,
-                                        color: AppColorTheme.colorThemePink,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                  Text(
-                                    AppStrings.offeredText,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD035,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  SizedBox(
-                                    height: size.width * AppDimensions.numD04,
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal:
-                                            size.width * AppDimensions.numD06,
-                                        vertical:
-                                            size.width * AppDimensions.numD02),
-                                    decoration: BoxDecoration(
-                                        color: AppColorTheme.colorThemePink,
-                                        borderRadius: BorderRadius.circular(
-                                            size.width * AppDimensions.numD02)),
-                                    child: Text(
-                                      AppStrings.videoText.toUpperCase(),
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width *
-                                              AppDimensions.numD035,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ), */
-                        priceImageWithButton(
-                          size,
-                          taskDetail.task.hopperTaskAmount,
-                          taskDetail.task.hopperInfo.isNotEmpty
-                              ? taskDetail.task.hopperInfo.first.hours
-                              : "0",
-                        ),
-
-                        SizedBox(
-                          height: size.width * AppDimensions.numD02,
-                        ),
+                        SizedBox(height: size.width * AppDimensions.numD02),
 
                         Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: size.width * AppDimensions.numD04,
                               vertical: size.width * AppDimensions.numD04),
                           child: SizedBox(
+                            width: size.width,
                             height: size.width * AppDimensions.numD12,
                             child: commonElevatedButton(
-                              "View Details",
-                              size,
-                              commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700),
-                              commonButtonStyle(
-                                  size, AppColorTheme.colorThemePink),
-                              onTapView,
-                            ),
+                                "View Details",
+                                size,
+                                commonTextStyle(
+                                    size: size,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700),
+                                commonButtonStyle(
+                                    size, AppColorTheme.colorThemePink),
+                                onTapViewDetails),
                           ),
                         ),
                       ],

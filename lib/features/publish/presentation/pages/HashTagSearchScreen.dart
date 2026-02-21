@@ -278,16 +278,10 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                                 hashtagSearchList[index].id.isEmpty
                                     ? InkWell(
                                         onTap: () {
-                                          if (hashTagController.text
-                                              .trim()
-                                              .isNotEmpty) {
-                                            addHashTagsApi();
-                                          }
-                                          if (hashtagSearchList[index]
-                                              .id
-                                              .isEmpty) {
-                                            hashtagSearchList.removeAt(index);
-                                            setState(() {});
+                                          final tagName =
+                                              hashtagSearchList[index].name;
+                                          if (tagName.isNotEmpty) {
+                                            addHashTagsApi(tagName);
                                           }
                                         },
                                         child: Container(
@@ -427,18 +421,20 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
             tags.map((e) => HashTagData.fromJson(e)).toList();
 
         hashtagSearchList = fetchedTags;
-        if (hashtagSearchList.isEmpty &&
-            hashTagController.text.trim().isNotEmpty) {
+
+        final searchedText = hashTagController.text.trim();
+        bool exactMatchExists = hashtagSearchList.any((element) =>
+            element.name.toLowerCase() == searchedText.toLowerCase());
+
+        if (!exactMatchExists && searchedText.isNotEmpty) {
           addNew = true;
+          debugPrint("add new:::::::");
+          hashtagSearchList.insert(
+              0, HashTagData(id: '', name: searchedText, selected: false));
         } else {
           addNew = false;
         }
-        if (hashtagSearchList.isEmpty &&
-            hashTagController.text.trim().isNotEmpty) {
-          debugPrint("add new:::::::");
-          hashtagSearchList.add(HashTagData(
-              id: '', name: hashTagController.text.trim(), selected: false));
-        }
+
         syncSelectionState();
 
         if (mounted) {
@@ -450,8 +446,20 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
     }
   }
 
-  Future<void> addHashTagsApi() async {
-    Map<String, String> params = {"name": hashTagController.text.trim()};
+  Future<void> addHashTagsApi(String tagName) async {
+    // Optimistically add to the selected list instantly
+    final tempTag = HashTagData(id: tagName, name: tagName, selected: true);
+    if (!selectedHashTagList.any(
+        (element) => element.name.toLowerCase() == tagName.toLowerCase())) {
+      selectedHashTagList.add(tempTag);
+    }
+    hashTagController.clear();
+    hashtagSearchList.removeWhere((element) => element.id.isEmpty);
+    // Fetch generic tags again when text is cleared
+    searchHashTagsApi("");
+    setState(() {});
+
+    Map<String, String> params = {"name": tagName};
     debugPrint("AddHashTagsParams: $params");
 
     try {
@@ -460,25 +468,27 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
         data: params,
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         debugPrint("AddHashTagResponse: $response");
         var map = response.data;
         if (map is String) map = jsonDecode(map);
 
+        String newId = '';
         if (map["id"] != null) {
-          var newTag = HashTagData.fromJson(map).copyWith(selected: true);
-          hashtagSearchList.add(newTag);
-          selectedHashTagList.add(newTag);
+          newId = map["id"];
+        } else if (map["data"] != null && map["data"]["_id"] != null) {
+          newId = map["data"]["_id"];
         } else if (map["code"] == 200 && map['tag'] != null) {
-          // Fallback to original if wrapped
-          final newTag = HashTagData(
-              id: map['tag']["id"] ?? map['tag']["_id"] ?? '',
-              name: map['tag']['name'],
-              selected: true);
-          hashtagSearchList.add(newTag);
-          selectedHashTagList.add(newTag);
+          newId = map['tag']["id"] ?? map['tag']["_id"] ?? '';
         }
-        setState(() {});
+
+        if (newId.isNotEmpty) {
+          // Update temp tag with real ID to prevent any issues down the line
+          final idx = selectedHashTagList.indexOf(tempTag);
+          if (idx != -1) {
+            selectedHashTagList[idx] = tempTag.copyWith(id: newId);
+          }
+        }
       }
     } catch (e) {
       debugPrint("$e");

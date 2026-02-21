@@ -2,6 +2,7 @@ import 'package:chewie/chewie.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/feed.dart';
 import 'package:presshop/features/feed/presentation/pages/feed_description.dart';
 
@@ -35,6 +36,24 @@ class FeedItemWidget extends StatefulWidget {
 
 class _FeedItemWidgetState extends State<FeedItemWidget> {
   int _currentMediaIndex = 0;
+  String _userCurrencySymbol = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserCurrency();
+  }
+
+  Future<void> _loadUserCurrency() async {
+    final prefs = await SharedPreferences.getInstance();
+    final symbol =
+        prefs.getString(SharedPreferencesKeys.currencySymbolKey) ?? '';
+    if (mounted) {
+      setState(() {
+        _userCurrencySymbol = symbol;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,21 +191,29 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                   boxShadow: [
                     BoxShadow(color: Colors.grey.shade200, spreadRadius: 3)
                   ]),
-              child: ClipRRect(
-                  borderRadius:
-                      BorderRadius.circular(size.width * AppDimensions.numD06),
-                  child: Image.network(
-                    feed.feedImage,
-                    height: size.width * AppDimensions.numD06,
-                    fit: BoxFit.fill,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
+              child: ClipOval(
+                child: feed.categoryImage.isNotEmpty
+                    ? Image.network(
+                        feed.categoryImage,
+                        width: size.width * AppDimensions.numD09,
+                        height: size.width * AppDimensions.numD09,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            "${commonImagePath}rabbitLogo.png",
+                            width: size.width * AppDimensions.numD09,
+                            height: size.width * AppDimensions.numD09,
+                            fit: BoxFit.contain,
+                          );
+                        },
+                      )
+                    : Image.asset(
                         "${commonImagePath}rabbitLogo.png",
-                        height: size.width * AppDimensions.numD06,
-                        fit: BoxFit.fill,
-                      );
-                    },
-                  )),
+                        width: size.width * AppDimensions.numD09,
+                        height: size.width * AppDimensions.numD09,
+                        fit: BoxFit.contain,
+                      ),
+              ),
             ),
             SizedBox(
               width: size.width * AppDimensions.numD02,
@@ -325,7 +352,7 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD028,
-                            color: AppColorTheme.colorHint,
+                            color: Colors.black,
                             fontWeight: FontWeight.normal),
                       ),
                       SizedBox(
@@ -345,7 +372,7 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD028,
-                            color: AppColorTheme.colorHint,
+                            color: Colors.black,
                             fontWeight: FontWeight.normal),
                       ),
                     ],
@@ -370,7 +397,7 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD028,
-                              color: AppColorTheme.colorHint,
+                              color: Colors.black,
                               fontWeight: FontWeight.normal),
                         ),
                       )
@@ -466,38 +493,34 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
             Container(
               width: size.width * AppDimensions.numD30,
               padding: EdgeInsets.symmetric(
-                  vertical: size.width * AppDimensions.numD012),
+                  vertical: size.width * AppDimensions.numD025,
+                  horizontal: size.width * AppDimensions.numD02),
               decoration: BoxDecoration(
-                  color: feed.paidStatus == AppStrings.unPaidText
-                      ? AppColorTheme.colorThemePink
-                      : AppColorTheme.colorLightGrey,
+                  color: AppColorTheme.colorThemePink,
                   borderRadius:
                       BorderRadius.circular(size.width * AppDimensions.numD03)),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    feed.saleStatus == "AppStrings.sold" ? "Sold" : "Sold",
+                    AppStrings.soldText,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * AppDimensions.numD035,
-                        color: feed.paidStatus == "paid"
-                            ? Colors.black
-                            : Colors.white,
+                        fontSize: size.width * AppDimensions.numD03,
+                        color: Colors.white,
                         fontWeight: FontWeight.normal),
                   ),
                   FittedBox(
                     child: Text(
-                      "${feed.displayCurrency}${amountFormat(feed.displayPrice)}",
+                      "${_userCurrencySymbol.isNotEmpty ? _userCurrencySymbol : (feed.displayCurrency.isNotEmpty ? feed.displayCurrency : '£')}${amountFormat(feed.displayPrice)}",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD055,
-                          color: feed.paidStatus == "paid"
-                              ? Colors.black
-                              : Colors.white,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold),
                     ),
                   ),

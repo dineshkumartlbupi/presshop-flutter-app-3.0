@@ -260,34 +260,38 @@ class _MyBanksViewState extends State<MyBanksView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Hi ${sharedPreferences!.getString(SharedPreferencesKeys.userNameKey) ?? ''}",
+              "Hi hopper32 ${sharedPreferences!.getString(SharedPreferencesKeys.userNameKey) ?? ''}",
               style: TextStyle(
                 color: Colors.black,
-                fontSize: size.width * AppDimensions.numD05,
+                fontSize: size.width * AppDimensions.numD06,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: size.height * AppDimensions.numD03),
+            SizedBox(height: size.height * AppDimensions.numD04),
             Center(
               child: Image.asset("${iconsPath}payment_page_icon_2.png"),
             ),
             SizedBox(height: size.width * AppDimensions.numD02),
             Container(
               decoration: BoxDecoration(
-                color: AppColorTheme.colorLightWhite,
+                color: const Color(
+                    0xFFF3F4F6), // Very light grey background matching image
                 borderRadius:
                     BorderRadius.circular(size.width * AppDimensions.numD03),
-                border: Border.all(color: Colors.black),
+                border: Border.all(
+                    color: Colors.grey.shade600,
+                    width: 0.8), // Distinct thin border
               ),
-              padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD045),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Manage your bank account on Stripe",
+                    "Ready to get paid?",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: size.width * AppDimensions.numD033,
+                      fontSize: size.width * AppDimensions.numD032,
+                      fontFamily: "AirbnbCereal",
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -295,12 +299,13 @@ class _MyBanksViewState extends State<MyBanksView> {
                   // Display the first bank detail
                   Container(
                     decoration: BoxDecoration(
-                      color: AppColorTheme.colorLightWhite,
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD03),
-                      border: Border.all(color: Colors.black),
+                      border:
+                          Border.all(color: Colors.grey.shade300, width: 0.8),
                     ),
-                    padding: EdgeInsets.all(size.width * AppDimensions.numD02),
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD03),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -450,8 +455,9 @@ class _MyBanksViewState extends State<MyBanksView> {
                           text:
                               "This is your connected bank account on Stripe — where your payments will be sent.\n\n",
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.black87,
                             fontSize: size.width * AppDimensions.numD032,
+                            fontFamily: "AirbnbCereal",
                             fontWeight: FontWeight.normal,
                           ),
                         ),
@@ -459,8 +465,9 @@ class _MyBanksViewState extends State<MyBanksView> {
                           text:
                               "Need to update your details or switch to a different account? Simply click below to log into Stripe and make any changes you need.",
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.black87,
                             fontSize: size.width * AppDimensions.numD032,
+                            fontFamily: "AirbnbCereal",
                             fontWeight: FontWeight.normal,
                           ),
                         ),
@@ -499,7 +506,7 @@ class _MyBanksViewState extends State<MyBanksView> {
                       commonButtonTextStyle(size),
                       commonButtonStyle(size, AppColorTheme.colorThemePink),
                       () {
-                        stripeBankPageTitle = "Change bank account";
+                        stripeBankPageTitle = "Add bank";
                         _generateAddBankApi(context);
                       },
                     ),
@@ -529,22 +536,29 @@ class _MyBanksViewState extends State<MyBanksView> {
               ),
             ),
             SizedBox(height: size.height * AppDimensions.numD04),
-            Image.asset("${iconsPath}payment_page_icon.png"),
+            Center(
+              child: Image.asset("${iconsPath}payment_page_icon.png"),
+            ),
             SizedBox(height: size.width * AppDimensions.numD02),
             Container(
               decoration: BoxDecoration(
-                color: AppColorTheme.colorLightWhite,
+                color: Color(
+                    0xFFF3F4F6), // Very light grey background matching image
                 borderRadius:
                     BorderRadius.circular(size.width * AppDimensions.numD03),
-                border: Border.all(color: Colors.black),
+                border: Border.all(
+                    color: Colors.grey.shade600,
+                    width: 0.8), // Distinct thin border
               ),
-              padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD045),
               child: RichText(
                 text: TextSpan(
                   text: "Ready to get paid?\n\n",
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: size.width * AppDimensions.numD03,
+                    fontSize:
+                        size.width * AppDimensions.numD032, // Matched body size
+                    fontFamily: "AirbnbCereal",
                     fontWeight: FontWeight.bold,
                   ),
                   children: [
@@ -552,17 +566,19 @@ class _MyBanksViewState extends State<MyBanksView> {
                       text:
                           "Set up your Stripe account now to receive payments within 2-7 days when your content is purchased.\n\n",
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.black87,
                         fontSize: size.width * AppDimensions.numD032,
+                        fontFamily: "AirbnbCereal",
                         fontWeight: FontWeight.normal,
                       ),
                     ),
                     TextSpan(
                       text:
-                          "Just tap the CTA below to get started - it takes less than a minute.\n\n",
+                          "Just tap the CTA below to get started - it takes less than a minute.",
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.black87,
                         fontSize: size.width * AppDimensions.numD032,
+                        fontFamily: "AirbnbCereal",
                         fontWeight: FontWeight.normal,
                       ),
                     ),
