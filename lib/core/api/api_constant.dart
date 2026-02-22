@@ -184,6 +184,7 @@ class Chat {
   final String getChatbotMessages = "hopper/getchatbotMessages";
   final String getOfferPaymentChat = "hopper/get-offer-payment-chat";
   final String sendChatInitToAdmin = "hopper/sendChatInitiatedMailToAdmin";
+  final String sendChatMessage = "hopper/send/chat/message";
   final String allAlerts = "hopper/getHopperAlertList?";
   final String getAlertIncidents = "hopper/getAlertIncidents";
 }

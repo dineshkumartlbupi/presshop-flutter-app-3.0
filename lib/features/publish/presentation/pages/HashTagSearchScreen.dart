@@ -281,15 +281,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                                           final tagName =
                                               hashtagSearchList[index].name;
                                           if (tagName.isNotEmpty) {
-<<<<<<< HEAD
-                                            hashtagSearchList.removeAt(index);
                                             addHashTagsApi(tagName);
-                                            hashTagController.clear();
-                                            searchHashTagsApi("");
-                                            setState(() {});
-=======
-                                            addHashTagsApi(tagName);
->>>>>>> a0cdfcdaab405450221e4621439f64bb3ada7b02
                                           }
                                         },
                                         child: Container(
@@ -455,18 +447,6 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
   }
 
   Future<void> addHashTagsApi(String tagName) async {
-<<<<<<< HEAD
-    // 1. Optimistic Update
-    final tempTag = HashTagData(
-        id: 'temp_${DateTime.now().millisecondsSinceEpoch}',
-        name: tagName,
-        selected: true);
-
-    selectedHashTagList.insert(0, tempTag);
-    setState(() {});
-
-    // 2. Network Request
-=======
     // Optimistically add to the selected list instantly
     final tempTag = HashTagData(id: tagName, name: tagName, selected: true);
     if (!selectedHashTagList.any(
@@ -479,7 +459,6 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
     searchHashTagsApi("");
     setState(() {});
 
->>>>>>> a0cdfcdaab405450221e4621439f64bb3ada7b02
     Map<String, String> params = {"name": tagName};
     debugPrint("AddHashTagsParams: $params");
 
@@ -489,37 +468,6 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
         data: params,
       );
 
-<<<<<<< HEAD
-      if (response.statusCode == 200) {
-        var map = response.data;
-        if (map is String) map = jsonDecode(map);
-
-        HashTagData? realTag;
-        if (map["id"] != null) {
-          realTag = HashTagData.fromJson(map).copyWith(selected: true);
-        } else if (map["code"] == 200 && map['tag'] != null) {
-          realTag = HashTagData(
-              id: map['tag']["id"] ?? map['tag']["_id"] ?? '',
-              name: map['tag']['name'],
-              selected: true);
-        }
-
-        if (realTag != null) {
-          int selIdx = selectedHashTagList.indexOf(tempTag);
-          if (selIdx != -1) {
-            selectedHashTagList[selIdx] = realTag;
-          } else {
-            selectedHashTagList.insert(0, realTag);
-          }
-          setState(() {});
-        } else {
-          selectedHashTagList.remove(tempTag);
-          setState(() {});
-        }
-      } else {
-        selectedHashTagList.remove(tempTag);
-        setState(() {});
-=======
       if (response.statusCode == 200 || response.statusCode == 201) {
         debugPrint("AddHashTagResponse: $response");
         var map = response.data;
@@ -541,7 +489,6 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
             selectedHashTagList[idx] = tempTag.copyWith(id: newId);
           }
         }
->>>>>>> a0cdfcdaab405450221e4621439f64bb3ada7b02
       }
     } catch (e) {
       debugPrint("$e");

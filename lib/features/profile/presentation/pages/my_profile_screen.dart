@@ -15,7 +15,6 @@ import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/api/api_client.dart';
@@ -27,7 +26,6 @@ import 'package:presshop/features/profile/constants/profile_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 // ignore: must_be_immutable
 class MyProfile extends StatefulWidget {
@@ -69,7 +67,6 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   List<AvatarData> avatarList = [];
   MyProfileData? myProfileData;
-  static final Set<String> _loadedUrls = {};
   // Completer<String?>? _studentBeansCompleter;
 
   String selectedCountryCode = "",
@@ -112,6 +109,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   void initState() {
     debugPrint("class:::: $runtimeType");
     super.initState();
+    // Enforce editable state by default
+    widget.editProfileScreen = true;
     debugPrint("editStatus::::::: ${widget.editProfileScreen}");
     _loadCachedData();
     setUserNameListener();

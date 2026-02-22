@@ -196,6 +196,26 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
       if (isRelevant) {
         final currentMessages = List<Map<String, dynamic>>.from(state.messages);
+
+        // Deduplication: skip if this is an echo of our optimistically added message
+        final String incomingSenderId =
+            (data['sender_id'] ?? '').toString().trim();
+        final String incomingMessage =
+            (data['message'] ?? '').toString().trim();
+        final bool isDuplicate = currentMessages.any((m) {
+          final String existingSenderId =
+              (m['sender_id'] ?? '').toString().trim();
+          final String existingMessage = (m['message'] ?? '').toString().trim();
+          return existingSenderId == incomingSenderId &&
+              existingMessage == incomingMessage &&
+              existingSenderId == hopperId;
+        });
+
+        if (isDuplicate) {
+          debugPrint(":::: Skipping duplicate message (optimistic echo) :::::");
+          return;
+        }
+
         currentMessages.insert(0, data);
         add(ReceiveMessageEvent(currentMessages));
 
@@ -258,8 +278,25 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         data: {'room_id': event.roomId},
       );
 
+      debugPrint("ChatBloc: Room history raw response: ${response.data}");
+
       if (response.statusCode == 200) {
-        final List<dynamic> history = response.data['response'] ?? [];
+        List<dynamic> history = [];
+
+        // Handle multiple API response formats
+        if (response.data is Map) {
+          final responseData = response.data as Map<String, dynamic>;
+          if (responseData['response'] is List) {
+            history = responseData['response'];
+          } else if (responseData['data'] is List) {
+            history = responseData['data'];
+          } else if (responseData['messages'] is List) {
+            history = responseData['messages'];
+          }
+        } else if (response.data is List) {
+          history = response.data;
+        }
+
         final messages = history.cast<Map<String, dynamic>>().toList();
         debugPrint(
             "ChatBloc: API History Success: ${messages.length} messages");
@@ -332,9 +369,15 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       'createdAt': DateTime.now().toUtc().toIso8601String(),
     };
 
-    if (event.messageType != "text" && event.filePath != null) {
-      emit(state.copyWith(status: ChatStatus.sending));
-    }
+    // Optimistic update: add message to UI immediately
+    final currentMessages = List<Map<String, dynamic>>.from(state.messages);
+    currentMessages.insert(0, messageData);
+    emit(state.copyWith(
+      status: event.messageType != "text" && event.filePath != null
+          ? ChatStatus.sending
+          : ChatStatus.loaded,
+      messages: currentMessages,
+    ));
 
     await _chatLocalDataSource.saveMessage(messageData);
 
@@ -351,6 +394,18 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       _chatSocketService.sendMessage(messageData);
     } else {
       _chatSocketService.sendMediaMessage(messageData);
+    }
+
+    // Also send via HTTP API as fallback for reliability
+    try {
+      await _apiClient.post(
+        ApiConstantsNew.chat.sendChatMessage,
+        data: messageData,
+        showLoader: false,
+      );
+      debugPrint(":::: Message also sent via HTTP API :::::");
+    } catch (e) {
+      debugPrint(":::: HTTP API send fallback error (non-critical): $e :::::");
     }
   }
 

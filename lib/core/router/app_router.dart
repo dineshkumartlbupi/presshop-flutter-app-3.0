@@ -9,11 +9,7 @@ import 'package:presshop/core/widgets/common_web_view.dart';
 import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart';
 import 'package:presshop/features/authentication/presentation/pages/SignUpScreen.dart';
 import 'package:presshop/features/authentication/presentation/pages/WelcomeScreen.dart';
-<<<<<<< HEAD
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
-=======
 // import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
->>>>>>> a0cdfcdaab405450221e4621439f64bb3ada7b02
 import 'package:presshop/features/authentication/presentation/pages/ForgotPasswordScreen.dart';
 import 'package:presshop/features/authentication/presentation/pages/ResetPasswordScreen.dart';
 import 'package:presshop/features/authentication/presentation/pages/SocialSignUpScreen.dart';

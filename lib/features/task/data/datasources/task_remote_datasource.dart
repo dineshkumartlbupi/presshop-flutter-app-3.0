@@ -216,6 +216,11 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         if (possibleList != null && possibleList is List) {
           debugPrint(
               "🚀 getTaskChat Found List Length: ${possibleList.length}");
+          if (possibleList.isNotEmpty) {
+            debugPrint(
+                "🚀 getTaskChat First item keys: ${(possibleList.first as Map).keys.toList()}");
+            debugPrint("🚀 getTaskChat First item data: ${possibleList.first}");
+          }
           for (var v in possibleList) {
             // Map types for UI consistency
             if (v["message_type"] == "initialoffer" ||

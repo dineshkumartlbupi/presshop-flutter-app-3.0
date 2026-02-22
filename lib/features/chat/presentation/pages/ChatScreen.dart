@@ -3085,47 +3085,67 @@ class _ConversationScreenState extends State<ConversationScreen>
     debugPrint("receiverId: $_receiverId");
     debugPrint("room_id: $roomId");
 
-    if (roomId.isEmpty || _receiverId.isEmpty) {
-      if (_receiverId.isEmpty) {
-        debugPrint(":::: receiverId is empty, fetching admins first :::::");
-        try {
-          final response = await _apiClient.get(ApiConstantsNew.misc.adminList);
-          List dataModel = response.data["data"] ?? [];
-          if (dataModel.isEmpty && response.data is List) {
-            dataModel = response.data;
-          }
+    // Step 1: Make sure we have admin data
+    if (_receiverId.isEmpty) {
+      debugPrint(":::: receiverId is empty, fetching admins first :::::");
+      try {
+        final response = await _apiClient.get(ApiConstantsNew.misc.adminList);
+        debugPrint(":::: Admin list response: ${response.data} :::::");
 
-          if (dataModel.isNotEmpty) {
-            var firstAdmin = AdminDetailModel.fromJson(dataModel.first);
-            _receiverId = firstAdmin.id;
-            _receiverName = firstAdmin.name;
-            _receiverProfilePic = firstAdmin.profilePic;
-
-            sharedPreferences!
-                .setString(SharedPreferencesKeys.adminIdKey, _receiverId);
-            sharedPreferences!
-                .setString(SharedPreferencesKeys.adminNameKey, _receiverName);
-            sharedPreferences!.setString(
-                SharedPreferencesKeys.adminImageKey, _receiverProfilePic);
-
-            debugPrint(":::: Fetched Admin Fallback: $_receiverId :::::");
-          }
-        } catch (e) {
-          debugPrint(":::: Error fetching admins fallback: $e :::::");
+        List dataModel = [];
+        if (response.data is Map && response.data["data"] != null) {
+          dataModel =
+              response.data["data"] is List ? response.data["data"] : [];
+        } else if (response.data is List) {
+          dataModel = response.data;
         }
-      }
 
-      if (roomId.isEmpty && _receiverId.isNotEmpty) {
-        callGetRoomIdApi();
-      } else if (roomId.isNotEmpty) {
-        _enterChat();
+        if (dataModel.isNotEmpty) {
+          var firstAdmin = AdminDetailModel.fromJson(dataModel.first);
+          _receiverId = firstAdmin.id;
+          _receiverName = firstAdmin.name;
+          _receiverProfilePic = firstAdmin.profilePic;
+
+          // Also get roomId from admin data if available
+          if (firstAdmin.roomId.isNotEmpty && roomId.isEmpty) {
+            roomId = firstAdmin.roomId;
+            sharedPreferences!
+                .setString(SharedPreferencesKeys.adminRoomIdKey, roomId);
+          }
+
+          sharedPreferences!
+              .setString(SharedPreferencesKeys.adminIdKey, _receiverId);
+          sharedPreferences!
+              .setString(SharedPreferencesKeys.adminNameKey, _receiverName);
+          sharedPreferences!.setString(
+              SharedPreferencesKeys.adminImageKey, _receiverProfilePic);
+
+          debugPrint(
+              ":::: Fetched Admin: id=$_receiverId, name=$_receiverName, roomId=$roomId :::::");
+
+          if (mounted) setState(() {});
+        } else {
+          debugPrint(":::: No admins found in API response :::::");
+        }
+      } catch (e) {
+        debugPrint(":::: Error fetching admins: $e :::::");
       }
-    } else {
+    }
+
+    // Step 2: Create room if we have admin but no room
+    if (roomId.isEmpty && _receiverId.isNotEmpty) {
+      await callGetRoomIdApi();
+    } else if (roomId.isNotEmpty && _receiverId.isNotEmpty) {
       _enterChat();
+    } else {
+      debugPrint(
+          ":::: Cannot initialize chat: receiverId=$_receiverId, roomId=$roomId :::::");
     }
   }
 
   void _enterChat() {
+    debugPrint(
+        ":::: _enterChat called with roomId=$roomId, receiverId=$_receiverId :::::");
     _chatBloc.add(
       EnterChatRoomEvent(
         roomId: roomId,
@@ -3313,13 +3333,28 @@ class _ConversationScreenState extends State<ConversationScreen>
       );
       debugPrint("getRoomIdReq Success : ${response.data}");
       var data = response.data;
+
+      // Handle multiple response formats
       if (data["data"] != null && data["data"]["details"] != null) {
         roomId = data["data"]["details"]["room_id"] ?? "";
+      } else if (data["data"] != null && data["data"]["_id"] != null) {
+        roomId = data["data"]["_id"] ?? "";
+      } else if (data["data"] != null && data["data"]["room_id"] != null) {
+        roomId = data["data"]["room_id"] ?? "";
+      } else if (data["details"] != null) {
+        roomId = data["details"]["room_id"] ?? "";
+      } else if (data["room_id"] != null) {
+        roomId = data["room_id"] ?? "";
+      }
 
+      if (roomId.isNotEmpty) {
         sharedPreferences!
             .setString(SharedPreferencesKeys.adminRoomIdKey, roomId);
         debugPrint("Room Id : $roomId");
-        _initializeData();
+        // Directly enter chat instead of recursive _initializeData
+        _enterChat();
+      } else {
+        debugPrint(":::: ERROR: Could not extract room_id from response :::::");
       }
     } catch (e) {
       debugPrint("getRoomIdReq Error : $e");

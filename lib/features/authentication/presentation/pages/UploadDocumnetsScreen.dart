@@ -874,12 +874,4 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
       return null;
     }
   }
-
-  Future<void> _pickFiles(BuildContext context, bool isGallery) async {
-    // Forward to new method with corrected mapping
-    // original: isGallery(true)=FilePicker, false=Camera
-    // new: true=Gallery(ImagePicker), false=FilePicker
-    // This mapping is tricky. I'll just use _pickFilesNew in the UI calls.
-    _pickFilesNew(context, isGallery);
-  }
 }

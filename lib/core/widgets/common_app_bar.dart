@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:presshop/core/constants/app_assets.dart';
 import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:presshop/core/utils/ui_utils.dart';
 import 'package:presshop/main.dart';
@@ -101,17 +100,14 @@ class CommonAppBarState extends State<CommonAppBar> {
                 ? InkWell(
                     onTap: widget.leadingFxn,
                     child: Container(
+                      alignment: Alignment.centerLeft,
                       margin: EdgeInsets.only(
-                        left: widget.leadingLeftSPace ?? 0,
-                        top: widget.size.width * AppDimensions.numD01,
+                        left: widget.leadingLeftSPace ??
+                            widget.size.width * AppDimensions.numD04,
                       ),
-                      padding: EdgeInsets.all(
-                        widget.size.width * AppDimensions.numD043,
-                      ),
-                      child: Image.asset(
-                        "${iconsPath}ic_arrow_left.png",
-                        height: widget.size.width * AppDimensions.numD025,
-                        width: widget.size.width * AppDimensions.numD025,
+                      child: Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size: widget.size.width * AppDimensions.numD06,
                         color: widget.leadingIconColor,
                       ),
                     ),
@@ -120,7 +116,7 @@ class CommonAppBarState extends State<CommonAppBar> {
             leadingWidth:
                 widget.leadingLeftSPace != null && widget.leadingLeftSPace! > 0
                     ? widget.size.width * AppDimensions.numD19
-                    : widget.size.width * AppDimensions.numD14,
+                    : widget.size.width * AppDimensions.numD12,
             title: widget.title,
             centerTitle: widget.centerTitle,
             titleSpacing: widget.titleSpacing,

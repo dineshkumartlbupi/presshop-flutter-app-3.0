@@ -183,7 +183,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     }
   }
 
-  void getCurrentLocation() async {
+  Future<void> getCurrentLocation() async {
     try {
       // Fetch current location using your custom LocationService
       locationData = await LocationService().getCurrentLocation(
@@ -205,7 +205,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
         address =
             "${place.street ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
 
-        debugPrint("Address:> $address");
+        debugPrint("📍 Location Address resolved: $address");
+        if (mounted) setState(() {});
       } else {
         debugPrint("Location data is null");
       }
@@ -550,9 +551,12 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
         itemCount: item.mediaList.length,
         itemBuilder: (context, idx) {
           var mediaItem = item.mediaList[idx];
+          // Use media item's address, fallback to device's current address
+          String displayAddress =
+              mediaItem.address.isNotEmpty ? mediaItem.address : address;
           return RightMediaChatBubble(
             item: item,
-            address: mediaItem.address,
+            address: displayAddress,
             currentUploadingLocalTaskId: _currentUploadingLocalTaskId,
           );
         },
@@ -834,6 +838,11 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   }
 
   void callUploadMediaApi() async {
+    // Ensure location is fetched before uploading
+    if (address.isEmpty) {
+      await getCurrentLocation();
+    }
+
     List<String> mediaList =
         selectMultipleMediaList.map((e) => e.mediaPath).toList();
 
@@ -857,6 +866,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                 imageVideoUrl: e.mediaPath,
                 type: e.mimeType,
                 thumbnail: e.thumbnail,
+                address: address,
               ),
             )
             .toList(),

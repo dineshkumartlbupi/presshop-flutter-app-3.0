@@ -148,22 +148,12 @@ class RightMediaChatBubble extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(color: Colors.grey.shade400),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(size.width * AppDimensions.numD04),
-                    bottomLeft:
-                        Radius.circular(size.width * AppDimensions.numD04),
-                    bottomRight:
-                        Radius.circular(size.width * AppDimensions.numD04),
-                  ),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD04),
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(size.width * AppDimensions.numD04),
-                    bottomLeft:
-                        Radius.circular(size.width * AppDimensions.numD04),
-                    bottomRight:
-                        Radius.circular(size.width * AppDimensions.numD04),
-                  ),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD04),
                   child: Stack(
                     children: [
                       _buildMediaContent(context, size),

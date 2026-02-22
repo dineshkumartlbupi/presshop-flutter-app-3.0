@@ -110,19 +110,7 @@ class _MyContentViewState extends State<MyContentView>
     ];
   }
 
-  void _loadAllContent(bool isRefresh) {
-    if (isRefresh) allPage = 1;
-    context.read<ContentBloc>().add(FetchMyContentEvent(
-          page: allPage,
-          limit: 10,
-          isRefresh: isRefresh,
-          type: 'all',
-        ));
-  }
-
-  void _loadMyContent(bool isRefresh) {
-    if (isRefresh) myPage = 1;
-
+  Map<String, dynamic> _buildFilterParams() {
     Map<String, dynamic> params = {};
 
     final selectedSort = sortList.firstWhere((e) => e.isSelected,
@@ -162,12 +150,29 @@ class _MyContentViewState extends State<MyContentView>
       params['toDate'] = selectedFilter.toDate;
     }
 
+    return params;
+  }
+
+  void _loadAllContent(bool isRefresh) {
+    if (isRefresh) allPage = 1;
+    context.read<ContentBloc>().add(FetchMyContentEvent(
+          page: allPage,
+          limit: 10,
+          isRefresh: isRefresh,
+          type: 'all',
+          params: _buildFilterParams(),
+        ));
+  }
+
+  void _loadMyContent(bool isRefresh) {
+    if (isRefresh) myPage = 1;
+
     context.read<ContentBloc>().add(FetchMyContentEvent(
           page: myPage,
           limit: 10,
           isRefresh: isRefresh,
           type: 'my',
-          params: params,
+          params: _buildFilterParams(),
         ));
   }
 

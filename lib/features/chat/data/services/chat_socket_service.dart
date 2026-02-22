@@ -41,6 +41,9 @@ class ChatSocketService {
           .setTransports(['websocket'])
           .setQuery({'userId': userId, 'userType': userType})
           .disableAutoConnect()
+          .enableReconnection()
+          .setReconnectionDelay(3000)
+          .setReconnectionAttempts(5)
           .build(),
     );
 
@@ -63,6 +66,14 @@ class ChatSocketService {
 
     socket.onError((data) {
       debugPrint("Chat Socket Error: $data");
+    });
+
+    socket.on('reconnect_attempt', (data) {
+      debugPrint("Chat Socket Reconnect Attempt: $data");
+    });
+
+    socket.on('connect_error', (data) {
+      debugPrint("Chat Socket Connect Error: $data");
     });
 
     // Listeners

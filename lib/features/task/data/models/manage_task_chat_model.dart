@@ -25,10 +25,29 @@ class ManageTaskChatModel {
   ManageTaskChatModel.fromJson(Map<String, dynamic> json) {
     List<TaskVideoModel> mediaListTem = [];
 
+    // Extract parent-level address (may be used as fallback for media items)
+    String parentAddress = (json["address"] ??
+            json["location"] ??
+            json["place"] ??
+            json["place_name"] ??
+            "")
+        .toString();
+    debugPrint(
+        "📍 ManageTaskChatModel parent address: '$parentAddress', keys: ${json.keys.toList()}");
+
     if (json["media"] != null) {
       var data = json["media"] as List;
       mediaListTem = data.map((e) => TaskVideoModel.fromJson(e)).toList();
       debugPrint("mediaListTem Length::::: ${mediaListTem.length}");
+
+      // If media items don't have their own address, use parent's address
+      if (parentAddress.isNotEmpty) {
+        for (var m in mediaListTem) {
+          if (m.address.isEmpty) {
+            m.address = parentAddress;
+          }
+        }
+      }
     }
 
     id = (json["_id"] ?? "").toString();
@@ -96,8 +115,8 @@ class ManageTaskChatModel {
       mediaHouseId = (receiverData["_id"] ?? "").toString();
       mediaHouseName = json["message_type"] == "PaymentIntent"
           ? json["user_info"] != null
-                ? json["user_info"]["company_name"]
-                : ""
+              ? json["user_info"]["company_name"]
+              : ""
           : (receiverData["company_name"] ?? "").toString();
       mediaHouseImage = (receiverData["profile_image"] ?? "").toString();
     } else {

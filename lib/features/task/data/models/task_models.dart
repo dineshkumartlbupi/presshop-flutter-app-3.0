@@ -18,6 +18,7 @@ class TaskVideoModel {
       this.address = ""});
 
   TaskVideoModel.fromJson(Map<String, dynamic> json) {
+    debugPrint("📍 TaskVideoModel.fromJson keys: ${json.keys.toList()}");
     id = (json["_id"] ?? json["image_id"] ?? "").toString();
     type = (json["mime"] ?? json["media_type"] ?? "").toString();
     thumbnail = (json["thumbnail_url"] ??
@@ -34,7 +35,14 @@ class TaskVideoModel {
     paidAmount = json["amount_paid_to_hopper"].toString();
     payableAmount = json["amount_payable_to_hopper"] ?? "";
     commitionAmount = json["commition_to_payable"].toString();
-    address = json["location"] ?? "";
+    // Try multiple field names for location/address
+    address = (json["location"] ??
+            json["address"] ??
+            json["place"] ??
+            json["place_name"] ??
+            "")
+        .toString();
+    debugPrint("📍 TaskVideoModel address resolved: '$address'");
   }
   String id = "";
   String type = "";

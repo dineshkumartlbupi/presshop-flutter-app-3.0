@@ -168,11 +168,16 @@ Future<String?> commonDatePicker({String? date}) async {
 /// FilterIcon
 Container commonFilterIcon(Size size) {
   return Container(
-      padding: EdgeInsets.all(size.width *
-          (isIpad ? AppDimensions.numD008 : AppDimensions.numD043)),
+      padding: EdgeInsets.all(size.width * AppDimensions.numD025),
       child: Image.asset(
         "assets/icons/newfilter.png",
-        fit: BoxFit.fill,
+        width: size.width * AppDimensions.numD06,
+        height: size.width * AppDimensions.numD06,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return Icon(Icons.tune_rounded,
+              color: Colors.black, size: size.width * AppDimensions.numD06);
+        },
       ));
 }
 

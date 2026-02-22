@@ -16,9 +16,24 @@ class TermsRepository {
         debugPrint("Terms API Response (Legal): ${response.data}");
 
         if (response.statusCode == 200) {
-          final legalData = response.data['data'];
+          var legalData = response.data['data'] ??
+              response.data['response'] ??
+              response.data['status'] ??
+              response.data;
+
+          if (legalData is List && legalData.isNotEmpty) {
+            legalData = legalData[0];
+          }
+
           if (legalData != null) {
-            final cmsItem = CmsItem.fromJson(legalData);
+            final String desc = (legalData['description'] ??
+                    legalData['content'] ??
+                    legalData['terms'] ??
+                    "")
+                .toString();
+            final cmsItem = CmsItem(
+                id: legalData['id'] ?? legalData['_id'] ?? '',
+                description: desc);
             return TermsResponse(
               data: TermsData(
                 privacyPolicy: CmsItem(id: '', description: ''),
