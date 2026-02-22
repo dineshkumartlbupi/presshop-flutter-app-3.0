@@ -13,7 +13,6 @@ class BankInitial extends BankState {}
 class BankLoading extends BankState {}
 
 class BanksLoaded extends BankState {
-
   const BanksLoaded(this.banks);
   final List<BankDetail> banks;
 
@@ -22,7 +21,6 @@ class BanksLoaded extends BankState {
 }
 
 class BankError extends BankState {
-
   const BankError(this.message);
   final String message;
 
@@ -34,8 +32,15 @@ class BankDeleted extends BankState {}
 
 class BankDefaultSet extends BankState {}
 
-class StripeUrlLoaded extends BankState {
+class StripeUrlLoading extends BankState {
+  const StripeUrlLoading(this.banks);
+  final List<BankDetail> banks;
 
+  @override
+  List<Object> get props => [banks];
+}
+
+class StripeUrlLoaded extends BankState {
   const StripeUrlLoaded(this.url);
   final String url;
 

@@ -7,6 +7,7 @@ import 'package:presshop/features/bank/domain/usecases/get_banks.dart';
 import 'package:presshop/features/bank/domain/usecases/get_stripe_onboarding_url.dart';
 import 'package:presshop/features/bank/domain/usecases/set_default_bank.dart';
 import 'package:presshop/features/bank/data/models/bank_detail_model.dart';
+import 'package:presshop/features/bank/domain/entities/bank_detail.dart';
 import 'bank_event.dart';
 import 'bank_state.dart';
 
@@ -120,10 +121,15 @@ class BankBloc extends Bloc<BankEvent, BankState> {
     GetStripeUrlEvent event,
     Emitter<BankState> emit,
   ) async {
-    emit(BankLoading());
+    // Preserve current bank data while loading Stripe URL
+    final List<BankDetail> currentBanks =
+        state is BanksLoaded ? (state as BanksLoaded).banks : [];
+    emit(StripeUrlLoading(currentBanks));
     final result = await getStripeOnboardingUrl(NoParams());
     result.fold(
-      (failure) => emit(BankError(failure.message)),
+      (failure) => emit(currentBanks.isNotEmpty
+          ? BanksLoaded(currentBanks)
+          : BankError(failure.message)),
       (url) => emit(StripeUrlLoaded(url)),
     );
   }

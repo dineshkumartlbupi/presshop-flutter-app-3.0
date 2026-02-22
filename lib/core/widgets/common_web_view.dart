@@ -26,15 +26,15 @@ class CommonWebView extends StatefulWidget {
   _CommonWebViewState createState() => _CommonWebViewState();
 }
 
-bool isPageLoad = false;
-
 class _CommonWebViewState extends State<CommonWebView> {
   late final WebViewController controller;
+  bool _isLoading = true;
+  int _loadingProgress = 0;
+  Timer? _timeoutTimer;
 
   @override
   void initState() {
     super.initState();
-    isPageLoad = true;
 
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -43,19 +43,37 @@ class _CommonWebViewState extends State<CommonWebView> {
         NavigationDelegate(
           onProgress: (progress) {
             debugPrint("onProgress :: $progress");
+            if (mounted) {
+              setState(() {
+                _loadingProgress = progress;
+              });
+            }
           },
           onPageStarted: (url) {
             debugPrint("onPageStarted :: $url");
+            if (mounted) {
+              setState(() {
+                _isLoading = true;
+              });
+            }
           },
           onPageFinished: (url) {
             debugPrint("onPageFinished :: $url");
-            isPageLoad = false;
+            _timeoutTimer?.cancel();
             if (mounted) {
-              setState(() {});
+              setState(() {
+                _isLoading = false;
+              });
             }
           },
           onWebResourceError: (error) {
             debugPrint("onWebResourceError :: $error");
+            _timeoutTimer?.cancel();
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+              });
+            }
           },
           onNavigationRequest: (request) {
             if (request.url.contains("status=1")) {
@@ -71,6 +89,22 @@ class _CommonWebViewState extends State<CommonWebView> {
         ),
       )
       ..loadRequest(Uri.parse(widget.webUrl));
+
+    // Auto-hide loader after 4 seconds even if page hasn't fully loaded
+    _timeoutTimer = Timer(const Duration(seconds: 4), () {
+      if (mounted && _isLoading) {
+        setState(() {
+          _isLoading = false;
+        });
+        debugPrint("WebView: Loading timeout - showing page after 4s");
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timeoutTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -100,15 +134,37 @@ class _CommonWebViewState extends State<CommonWebView> {
               actionWidget: [],
             ),
             body: Stack(
-              alignment: Alignment.topLeft,
               children: [
-                isPageLoad
-                    ? showLoader()
-                    : Builder(builder: (context) {
-                        return WebViewWidget(
-                          controller: controller,
-                        );
-                      }),
+                // Always show the WebView (loads in background)
+                WebViewWidget(
+                  controller: controller,
+                ),
+                // Show loading overlay on top while page loads
+                if (_isLoading)
+                  Container(
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        LinearProgressIndicator(
+                          value: _loadingProgress > 0
+                              ? _loadingProgress / 100.0
+                              : null,
+                          backgroundColor: Colors.grey.shade200,
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                            Colors.redAccent,
+                          ),
+                          minHeight: 3,
+                        ),
+                        const Expanded(
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.redAccent,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
               ],
             )),
       ),
@@ -120,7 +176,6 @@ class _CommonWebViewState extends State<CommonWebView> {
       debugPrint("onWillGoBack");
       controller.goBack();
     } else {
-      // showToast(message: "No back history item");
       navigatorKey.currentState!.pop(false);
     }
     return false;

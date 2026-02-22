@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/di/injection_container.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 
 import 'package:presshop/features/authentication/presentation/bloc/upload_documents/upload_documents_bloc.dart';
@@ -166,7 +168,14 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                                   fontFamily: "AirbnbCereal",
                                   height: 1.5,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  fontWeight: FontWeight.w600)),
+                                  fontWeight: FontWeight.w600),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  context.pushNamed(
+                                    AppRoutes.faqName,
+                                    extra: {"type": "faq"},
+                                  );
+                                }),
                         ]),
                       ),
 
@@ -462,12 +471,26 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                 // Dropdown to select document
                 InkWell(
                   onTap: () async {
-                    final result = await _showDocumentTypeSheet(
+                    // 1. Pick document type
+                    final docType = await _showDocumentTypeSheet(
                         contextValue, instructions);
-                    if (result != null) {
+                    if (docType != null) {
                       setModalState(() {
-                        selectedDocType = result;
+                        selectedDocType = docType;
                       });
+
+                      // 2. Show option to pick between Gallery and Files
+                      bool? isGallery =
+                          await _showSelectionOption(contextValue);
+                      if (isGallery != null) {
+                        List<File>? files =
+                            await _pickFilesNew(contextValue, isGallery);
+                        if (files != null && files.isNotEmpty) {
+                          setModalState(() {
+                            selectedFiles.addAll(files);
+                          });
+                        }
+                      }
                     }
                   },
                   child: Container(
@@ -499,24 +522,10 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                   ),
                 ),
 
-                SizedBox(height: size.width * AppDimensions.numD06),
-
-                // File selection box
-                InkWell(
-                  onTap: () async {
-                    // Show option to pick between Gallery and Files
-                    bool? isGallery = await _showSelectionOption(contextValue);
-                    if (isGallery != null) {
-                      List<File>? files =
-                          await _pickFilesNew(contextValue, isGallery);
-                      if (files != null && files.isNotEmpty) {
-                        setModalState(() {
-                          selectedFiles.addAll(files);
-                        });
-                      }
-                    }
-                  },
-                  child: Container(
+                // Only show the selected files if there are any
+                if (selectedFiles.isNotEmpty) ...[
+                  SizedBox(height: size.width * AppDimensions.numD06),
+                  Container(
                     width: size.width,
                     padding: EdgeInsets.all(size.width * AppDimensions.numD03),
                     decoration: BoxDecoration(
@@ -527,74 +536,60 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                             size.width * AppDimensions.numD03),
                         color: AppColorTheme.colorThemePink
                             .withValues(alpha: 0.05)),
-                    child: selectedFiles.isNotEmpty
-                        ? Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: selectedFiles.map((file) {
-                              bool isImage = file.path.endsWith('.jpg') ||
-                                  file.path.endsWith('.png') ||
-                                  file.path.endsWith('.jpeg');
-                              return Stack(
-                                children: [
-                                  Container(
-                                    width: size.width * 0.2,
-                                    height: size.width * 0.2,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                        color: Colors.white,
-                                        border: Border.all(
-                                            color: Colors.grey.shade300)),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: isImage
-                                          ? Image.file(file, fit: BoxFit.cover)
-                                          : Icon(Icons.insert_drive_file,
-                                              color:
-                                                  AppColorTheme.colorThemePink,
-                                              size: size.width * 0.08),
-                                    ),
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: selectedFiles.map((file) {
+                        bool isImage = file.path.endsWith('.jpg') ||
+                            file.path.endsWith('.png') ||
+                            file.path.endsWith('.jpeg');
+                        return Stack(
+                          children: [
+                            Container(
+                              width: size.width * 0.2,
+                              height: size.width * 0.2,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: Colors.white,
+                                  border:
+                                      Border.all(color: Colors.grey.shade300)),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: isImage
+                                    ? Image.file(file, fit: BoxFit.cover)
+                                    : Icon(Icons.insert_drive_file,
+                                        color: AppColorTheme.colorThemePink,
+                                        size: size.width * 0.08),
+                              ),
+                            ),
+                            Positioned(
+                              top: 0,
+                              right: 0,
+                              child: InkWell(
+                                onTap: () {
+                                  setModalState(() {
+                                    selectedFiles.remove(file);
+                                  });
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
                                   ),
-                                  Positioned(
-                                    top: 0,
-                                    right: 0,
-                                    child: InkWell(
-                                      onTap: () {
-                                        setModalState(() {
-                                          selectedFiles.remove(file);
-                                        });
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.all(2),
-                                        decoration: const BoxDecoration(
-                                          color: Colors.white,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Icon(Icons.cancel,
-                                            color: Colors.red, size: 20),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              );
-                            }).toList(),
-                          )
-                        : Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.file_upload_outlined,
-                                  color: AppColorTheme.colorThemePink,
-                                  size: size.width * 0.08),
-                              SizedBox(height: size.width * 0.02),
-                              Text("Tap to select image or document",
-                                  style: TextStyle(
-                                      color: AppColorTheme.colorThemePink,
-                                      fontFamily: "AirbnbCereal",
-                                      fontWeight: FontWeight.w500)),
-                            ],
-                          ),
+                                  child: const Icon(Icons.cancel,
+                                      color: Colors.red, size: 20),
+                                ),
+                              ),
+                            )
+                          ],
+                        );
+                      }).toList(),
+                    ),
                   ),
-                ),
+                ],
+
+                SizedBox(height: size.width * AppDimensions.numD06),
 
                 // Submit Button
                 SizedBox(
@@ -616,13 +611,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                               content: Text("Please select a document type")));
                       return;
                     }
-                    if (selectedFiles.isEmpty) {
-                      ScaffoldMessenger.of(contextValue).showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                  "Please select an image or document to upload")));
-                      return;
-                    }
+
                     // Dispatch upload event with the selected files
                     contextValue
                         .read<UploadDocumentsBloc>()
@@ -703,6 +692,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
   }
 
   Future<bool?> _showSelectionOption(BuildContext context) async {
+    var size = MediaQuery.sizeOf(context);
     return showModalBottomSheet<bool>(
       context: context,
       backgroundColor: Colors.transparent,
@@ -844,7 +834,6 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
     );
   }
 
-  // New helper to distinguish gallery vs files cleaner
   Future<List<File>?> _pickFilesNew(
       BuildContext context, bool isGallery) async {
     try {

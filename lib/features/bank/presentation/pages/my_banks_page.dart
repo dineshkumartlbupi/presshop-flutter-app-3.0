@@ -234,6 +234,20 @@ class _MyBanksViewState extends State<MyBanksView> {
             return banks.isNotEmpty
                 ? _upliftAccountsPaymentDesign(context, size, banks)
                 : _upliftNoAccountsPaymentDesign(context, size);
+          } else if (state is StripeUrlLoading) {
+            // Keep showing bank data with a loading overlay while Stripe URL loads
+            if (state.banks.isNotEmpty) {
+              return Stack(
+                children: [
+                  _upliftAccountsPaymentDesign(context, size, state.banks),
+                  Container(
+                    color: Colors.white.withOpacity(0.6),
+                    child: Center(child: showAnimatedLoader(size)),
+                  ),
+                ],
+              );
+            }
+            return Center(child: showAnimatedLoader(size));
           } else if (state is BankLoading || state is BankInitial) {
             return Center(
               child: showAnimatedLoader(size),
