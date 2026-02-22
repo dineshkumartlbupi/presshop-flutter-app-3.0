@@ -175,7 +175,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
             broadcastDialog(
               size: size,
               taskDetail: state.taskDetail!,
-              onTapView: () {
+              onTapViewDetails: () {
                 context.pop();
                 context.pushNamed(
                   AppRoutes.broadcastName,
@@ -277,10 +277,35 @@ class MyTaskScreenState extends State<MyTaskScreen>
                           });
                         }
 
+                        List<Task> currentLocalTasks =
+                            state.localTasks.where((item) {
+                          if (item.status == "accepted" ||
+                              item.status == "completed") return true;
+                          if (item is TaskPending && item.taskDetail != null) {
+                            return !item.taskDetail!.deadLine
+                                .isBefore(DateTime.now());
+                          } else if (item is TaskMy &&
+                              item.taskDetail != null) {
+                            return !item.taskDetail!.deadLine
+                                .isBefore(DateTime.now());
+                          }
+                          return true;
+                        }).toList();
+
+                        List<TaskAll> currentAllTasks =
+                            state.allTasks.where((item) {
+                          if (item.status == "accepted" ||
+                              item.status == "completed") return true;
+                          if (item.deadlineDate != null) {
+                            return !item.deadlineDate!.isBefore(DateTime.now());
+                          }
+                          return true;
+                        }).toList();
+
                         return _tabController.index == 0
-                            ? allTaskWidget(state.allTasks, context)
+                            ? allTaskWidget(currentAllTasks, context)
                             : showLocalTasksDataWidget(
-                                state.localTasks, context);
+                                currentLocalTasks, context);
                       },
                     )),
                   ],

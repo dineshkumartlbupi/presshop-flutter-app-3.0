@@ -7,6 +7,7 @@ class Feed extends Equatable {
     required this.description,
     required this.location,
     required this.categoryName,
+    this.categoryImage = "",
     required this.askPrice,
     required this.displayPrice,
     required this.displayCurrency,
@@ -32,6 +33,7 @@ class Feed extends Equatable {
   final String description;
   final String location;
   final String categoryName;
+  final String categoryImage;
   final String askPrice;
   final String displayPrice;
   final String displayCurrency;
@@ -80,6 +82,7 @@ class Feed extends Equatable {
     String? description,
     String? location,
     String? categoryName,
+    String? categoryImage,
     String? askPrice,
     String? displayPrice,
     String? displayCurrency,
@@ -106,6 +109,7 @@ class Feed extends Equatable {
       description: description ?? this.description,
       location: location ?? this.location,
       categoryName: categoryName ?? this.categoryName,
+      categoryImage: categoryImage ?? this.categoryImage,
       askPrice: askPrice ?? this.askPrice,
       displayPrice: displayPrice ?? this.displayPrice,
       displayCurrency: displayCurrency ?? this.displayCurrency,
@@ -135,6 +139,7 @@ class Feed extends Equatable {
       'description': description,
       'location': location,
       'category_name': categoryName,
+      'category_image': categoryImage,
       'ask_price': askPrice,
       'display_price': displayPrice,
       'display_currency': displayCurrency,

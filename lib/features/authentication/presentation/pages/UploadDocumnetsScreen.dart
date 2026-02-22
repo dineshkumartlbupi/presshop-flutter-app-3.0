@@ -111,16 +111,6 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                             fontSize: size.width * AppDimensions.numD07),
                       ),
                       SizedBox(height: size.width * AppDimensions.numD02),
-                      Text(
-                        "If you're a professional photographer or journalist, and want to sign up as a PRO please upload your docs for review.",
-                        style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                      SizedBox(height: size.width * AppDimensions.numD02),
                       RichText(
                         text: TextSpan(children: [
                           TextSpan(
@@ -128,6 +118,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: "AirbnbCereal",
+                                  height: 1.5,
                                   fontSize:
                                       size.width * AppDimensions.numD035)),
                           WidgetSpan(
@@ -139,8 +130,43 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: "AirbnbCereal",
+                                  height: 1.5,
                                   fontSize:
                                       size.width * AppDimensions.numD035)),
+                        ]),
+                      ),
+                      SizedBox(height: size.width * AppDimensions.numD04),
+                      RichText(
+                        text: TextSpan(children: [
+                          TextSpan(
+                              text:
+                                  "Once your docs are approved, you will qualify as a ",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: "AirbnbCereal",
+                                  height: 1.5,
+                                  fontSize:
+                                      size.width * AppDimensions.numD035)),
+                          WidgetSpan(
+                              alignment: PlaceholderAlignment.middle,
+                              child: Image.asset("${iconsPath}ic_pro.png",
+                                  height: size.width * AppDimensions.numD06)),
+                          TextSpan(
+                              text: "\nand be eligible for attractive ",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: "AirbnbCereal",
+                                  height: 1.5,
+                                  fontSize:
+                                      size.width * AppDimensions.numD035)),
+                          TextSpan(
+                              text: "benefits",
+                              style: TextStyle(
+                                  color: AppColorTheme.colorThemePink,
+                                  fontFamily: "AirbnbCereal",
+                                  height: 1.5,
+                                  fontSize: size.width * AppDimensions.numD035,
+                                  fontWeight: FontWeight.w600)),
                         ]),
                       ),
 
@@ -636,32 +662,38 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                     children: [
                       Text(
                         "Select Document",
-                        style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD05,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: size.width * AppDimensions.numD048,
+                            fontFamily: "AirbnbCereal",
+                            fontWeight: FontWeight.w700),
                       ),
                       IconButton(
-                        icon: Icon(Icons.close),
+                        icon: Icon(Icons.close_rounded,
+                            color: Colors.black,
+                            size: size.width * AppDimensions.numD08),
                         onPressed: () => context.pop(),
                       )
                     ],
                   ),
-                  Divider(),
+                  const Divider(color: Colors.black, thickness: 1.2),
+                  SizedBox(height: size.width * AppDimensions.numD02),
                   ...instructions
-                      .map((e) => ListTile(
-                            title: Text(e.name,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize:
-                                        size.width * AppDimensions.numD035,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal)),
+                      .map((e) => InkWell(
                             onTap: () {
                               context.pop(e.name);
                             },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: size.width * AppDimensions.numD03),
+                              child: Text(e.name,
+                                  style: TextStyle(
+                                      fontSize:
+                                          size.width * AppDimensions.numD038,
+                                      color: Colors.black,
+                                      fontFamily: "AirbnbCereal",
+                                      fontWeight: FontWeight.w400)),
+                            ),
                           ))
                       .toList(),
                   SizedBox(height: size.width * AppDimensions.numD05),
@@ -730,7 +762,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                               color: Colors.white,
                               border: Border.all(color: Colors.black),
                               borderRadius: BorderRadius.circular(
-                                  size.width * AppDimensions.numD02),
+                                  size.width * AppDimensions.numD04),
                             ),
                             height: size.width * AppDimensions.numD25,
                             padding: EdgeInsets.all(
@@ -770,7 +802,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                               color: Colors.white,
                               border: Border.all(color: Colors.black),
                               borderRadius: BorderRadius.circular(
-                                  size.width * AppDimensions.numD02),
+                                  size.width * AppDimensions.numD04),
                             ),
                             height: size.width * AppDimensions.numD25,
                             padding: EdgeInsets.all(

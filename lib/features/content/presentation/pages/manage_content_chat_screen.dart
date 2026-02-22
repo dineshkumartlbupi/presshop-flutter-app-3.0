@@ -3962,14 +3962,14 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     SizedBox(
                       height: size.width * AppDimensions.numD04,
                     ),
-                    /* Row(
+                    Row(
                       children: [
                         Expanded(
                           child: Column(
                             children: [
                               Text(
                                 widget.taskDetail!.isNeedPhoto
-                                    ? "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.photoPrice))}"
+                                    ? "${widget.taskDetail!.currencySymbol.isNotEmpty ? widget.taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(widget.taskDetail!.photoPrice))}"
                                     : "-",
                                 style: commonTextStyle(
                                     size: size,
@@ -4018,7 +4018,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             children: [
                               Text(
                                 widget.taskDetail!.isNeedInterview
-                                    ? "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}"
+                                    ? "${widget.taskDetail!.currencySymbol.isNotEmpty ? widget.taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}"
                                     : "-",
                                 style: commonTextStyle(
                                     size: size,
@@ -4068,7 +4068,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             children: [
                               Text(
                                 widget.taskDetail!.isNeedVideo
-                                    ? "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.videoPrice))}"
+                                    ? "${widget.taskDetail!.currencySymbol.isNotEmpty ? widget.taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(widget.taskDetail!.videoPrice))}"
                                     : "-",
                                 style: commonTextStyle(
                                     size: size,
@@ -4113,13 +4113,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           ),
                         )
                       ],
-                    ), */
-                    priceImageWithButton(
-                        size,
-                        widget.taskDetail!.hopperTaskAmount,
-                        widget.taskDetail!.hopperInfo.isNotEmpty
-                            ? widget.taskDetail!.hopperInfo.first['hours']
-                            : "0"),
+                    ),
                     SizedBox(
                       height: size.width * AppDimensions.numD03,
                     ),

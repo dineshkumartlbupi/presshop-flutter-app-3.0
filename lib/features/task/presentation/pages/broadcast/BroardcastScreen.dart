@@ -29,9 +29,13 @@ import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart
 // ignore: must_be_immutable
 class BroadCastScreen extends StatefulWidget {
   BroadCastScreen(
-      {super.key, required this.taskId, required this.mediaHouseId});
+      {super.key,
+      required this.taskId,
+      required this.mediaHouseId,
+      this.autoAction});
   String taskId = "";
   String mediaHouseId = "";
+  String? autoAction;
 
   @override
   State<BroadCastScreen> createState() => _BroadCastScreenState();
@@ -201,6 +205,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                     })
                 .toList(),
             hopperTaskAmount: assignedEntity.task.hopperTaskAmount,
+            acceptedBy: assignedEntity.task.acceptedHoppers,
           );
           if (taskDetail != null) {
             _updateGoogleMap(
@@ -211,6 +216,25 @@ class _BroadCastScreenState extends State<BroadCastScreen>
             context
                 .read<TaskBloc>()
                 .add(GetHopperAcceptedCountEvent(taskDetail!.id));
+
+            if (widget.autoAction != null) {
+              if (widget.autoAction == 'accept') {
+                _isAccepted = true;
+                _hasSubmittedAction = true;
+                if (player.state == PlayerState.playing) {
+                  player.stop();
+                }
+                callAcceptRejectApi();
+              } else if (widget.autoAction == 'decline') {
+                _isAccepted = false;
+                _hasSubmittedAction = true;
+                if (player.state == PlayerState.playing) {
+                  player.stop();
+                }
+                callAcceptRejectApi();
+              }
+              widget.autoAction = null;
+            }
           }
         }
 
@@ -221,6 +245,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
 
         // Handle errors
         if (state.errorMessage != null) {
+          if (state.actionStatus == TaskStatus.failure) {
+            _hasSubmittedAction = false;
+          }
           showSnackBar("Error", state.errorMessage!, Colors.red);
         }
       },
@@ -640,7 +667,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700),
                             commonButtonStyle(size, Colors.black),
-                            state.actionStatus == TaskStatus.loading
+                            state.actionStatus == TaskStatus.loading ||
+                                    _hasSubmittedAction
                                 ? () {}
                                 : () {
                                     _isAccepted = false;
@@ -668,10 +696,40 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700),
                             commonButtonStyle(
-                                size, AppColorTheme.colorThemePink),
-                            state.actionStatus == TaskStatus.loading
+                                size,
+                                taskDetail!.deadLine.isBefore(DateTime.now()) ||
+                                        (sharedPreferences != null &&
+                                            taskDetail!.acceptedBy.contains(
+                                                sharedPreferences!.getString(
+                                                        SharedPreferencesKeys
+                                                            .hopperIdKey) ??
+                                                    ""))
+                                    ? Colors.grey
+                                    : AppColorTheme.colorThemePink),
+                            state.actionStatus == TaskStatus.loading ||
+                                    _hasSubmittedAction
                                 ? () {}
                                 : () {
+                                    if (taskDetail!.deadLine
+                                        .isBefore(DateTime.now())) {
+                                      showSnackBar(
+                                          "Task Expired",
+                                          "The deadline for this task has passed and it can no longer be accepted.",
+                                          Colors.red);
+                                      return;
+                                    }
+                                    if (sharedPreferences != null &&
+                                        taskDetail!.acceptedBy.contains(
+                                            sharedPreferences!.getString(
+                                                    SharedPreferencesKeys
+                                                        .hopperIdKey) ??
+                                                "")) {
+                                      showSnackBar(
+                                          "Already Accepted",
+                                          "You have already accepted this task.",
+                                          Colors.red);
+                                      return;
+                                    }
                                     _isAccepted = true;
                                     //isDirection = true;
                                     if (player.state == PlayerState.playing) {
@@ -755,7 +813,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
         ),
 
         /// Price Offer
-        /* Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
@@ -891,13 +949,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
               ),
             )
           ],
-        ), */
-        priceImageWithButton(
-            size,
-            taskDetail!.hopperTaskAmount,
-            taskDetail!.hopperInfo.isNotEmpty
-                ? (taskDetail!.hopperInfo.first as Map)['hours']
-                : "0"),
+        ),
 
         SizedBox(
           height: size.width * AppDimensions.numD03,

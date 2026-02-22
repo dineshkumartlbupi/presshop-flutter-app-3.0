@@ -421,7 +421,7 @@ class DashboardState extends State<Dashboard>
                 broadcastDialog(
                   size: MediaQuery.of(context).size,
                   taskDetail: task,
-                  onTapView: () {
+                  onTapViewDetails: () {
                     if (mounted) {
                       if (dashBoardInterface != null) {
                         dashBoardInterface!.saveDraft();

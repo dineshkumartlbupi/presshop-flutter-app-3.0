@@ -67,6 +67,8 @@ class _MyContentViewState extends State<MyContentView>
   static const String photosText = "Photos";
   static const String videosText = "Videos";
   static const String allText = "All";
+  static const String sharedText = "Shared";
+  static const String exclusiveText = "Exclusive";
   static const String noAllContentFound = "No Content Found";
   static const String noMyContentFound = "No Content Published";
 
@@ -93,9 +95,10 @@ class _MyContentViewState extends State<MyContentView>
 
     filterList = [
       FilterModel(name: allText, icon: "ic_content.png", isSelected: true),
-      FilterModel(
-          name: photosText, icon: "ic_camera_publish.png", isSelected: false),
       FilterModel(name: videosText, icon: "ic_v_cam.png", isSelected: false),
+      FilterModel(name: sharedText, icon: "ic_share.png", isSelected: false),
+      FilterModel(
+          name: exclusiveText, icon: "ic_exclusive.png", isSelected: false),
       FilterModel(
           name: AppStrings.soldContentText,
           icon: "dollar1.png",
@@ -144,6 +147,10 @@ class _MyContentViewState extends State<MyContentView>
       params['type'] = "photo";
     } else if (selectedFilter.name == videosText) {
       params['type'] = "video";
+    } else if (selectedFilter.name == sharedText) {
+      params['typeofcontent'] = "shared";
+    } else if (selectedFilter.name == exclusiveText) {
+      params['typeofcontent'] = "exclusive";
     } else if (selectedFilter.name == AppStrings.soldContentText) {
       params['isSold'] = true;
     }
@@ -210,7 +217,7 @@ class _MyContentViewState extends State<MyContentView>
       appBar: (true
           ? NewHomeAppBar(
               size: size,
-              hideLeading: true,
+              hideLeading: widget.hideLeading,
               onFilterTap: () {
                 _showFilterSheet();
               },

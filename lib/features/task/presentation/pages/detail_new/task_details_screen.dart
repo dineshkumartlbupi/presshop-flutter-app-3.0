@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -188,8 +189,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                             widget.totalEarning == "0" &&
                                     widget.taskStatus == "accepted"
                                 ? "TASK ACCEPTED"
-                                // : "COMPLETED",
-                                : "LIVE TASK",
+                                : (taskDetail!.task.deadlineDate
+                                        .isBefore(DateTime.now())
+                                    ? ""
+                                    : "LIVE TASK"),
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD036,
@@ -508,7 +511,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                     width: size.width * AppDimensions.numD02,
                                   ),
                                   Text(
-                                    "20 miles",
+                                    _getDistanceText(),
                                     overflow: TextOverflow.ellipsis,
                                     style: commonTextStyle(
                                         size: size,
@@ -536,7 +539,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                     width: size.width * AppDimensions.numD01,
                                   ),
                                   Text(
-                                    "34 mins",
+                                    _getWalkingTimeText(),
                                     overflow: TextOverflow.ellipsis,
                                     style: commonTextStyle(
                                         size: size,
@@ -564,7 +567,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                     width: size.width * AppDimensions.numD01,
                                   ),
                                   Text(
-                                    "3 mins",
+                                    _getDrivingTimeText(),
                                     style: commonTextStyle(
                                         size: size,
                                         fontSize:
@@ -677,146 +680,145 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 14),
-                      /* child: Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            children: [
-                              Text(
-                                  taskDetail != null &&
-                                          taskDetail!.task.isNeedPhoto
-                                      ? "${taskDetail!.task.currencySymbol.isNotEmpty ? taskDetail!.task.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.task.photoPrice))}"
-                                      : "-",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize:
-                                          size.width * AppDimensions.numD058,
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text(
+                                    taskDetail != null &&
+                                            taskDetail!.task.isNeedPhoto
+                                        ? "${taskDetail!.task.currencySymbol.isNotEmpty ? taskDetail!.task.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.task.photoPrice))}"
+                                        : "-",
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD058,
+                                        color: AppColorTheme.colorThemePink,
+                                        fontWeight: FontWeight.w800)),
+                                Text("Offered",
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500)),
+                                SizedBox(
+                                  height: size.width * AppDimensions.numD018,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical:
+                                          size.width * AppDimensions.numD02),
+                                  decoration: BoxDecoration(
                                       color: AppColorTheme.colorThemePink,
-                                      fontWeight: FontWeight.w800)),
-                              Text("Offered",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize:
-                                          size.width * AppDimensions.numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500)),
-                              SizedBox(
-                                height: size.width * AppDimensions.numD018,
-                              ),
-                              Container(
-                                width: size.width * AppDimensions.numD26,
-                                padding: EdgeInsets.symmetric(
-                                    vertical:
-                                        size.width * AppDimensions.numD02),
-                                decoration: BoxDecoration(
-                                    color: AppColorTheme.colorThemePink,
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * AppDimensions.numD02)),
-                                child: Center(
-                                    child: Text("PHOTO",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width *
-                                                AppDimensions.numD035,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w500))),
-                              )
-                            ],
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * AppDimensions.numD02)),
+                                  child: Center(
+                                      child: Text("PHOTO",
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD035,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500))),
+                                )
+                              ],
+                            ),
                           ),
-                          Column(
-                            children: [
-                              Text(
-                                  taskDetail != null &&
-                                          taskDetail!.task.isNeedInterview
-                                      ? "${taskDetail!.task.currencySymbol.isNotEmpty ? taskDetail!.task.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.task.interviewPrice))}"
-                                      : "-",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize:
-                                          size.width * AppDimensions.numD058,
+                          SizedBox(width: size.width * AppDimensions.numD02),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text(
+                                    taskDetail != null &&
+                                            taskDetail!.task.isNeedInterview
+                                        ? "${taskDetail!.task.currencySymbol.isNotEmpty ? taskDetail!.task.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.task.interviewPrice))}"
+                                        : "-",
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD058,
+                                        color: AppColorTheme.colorThemePink,
+                                        fontWeight: FontWeight.w800)),
+                                Text("Offered",
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500)),
+                                SizedBox(
+                                  height: size.width * AppDimensions.numD018,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical:
+                                          size.width * AppDimensions.numD02),
+                                  decoration: BoxDecoration(
                                       color: AppColorTheme.colorThemePink,
-                                      fontWeight: FontWeight.w800)),
-                              Text("Offered",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize:
-                                          size.width * AppDimensions.numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500)),
-                              SizedBox(
-                                height: size.width * AppDimensions.numD018,
-                              ),
-                              Container(
-                                width: size.width * AppDimensions.numD26,
-                                padding: EdgeInsets.symmetric(
-                                    vertical:
-                                        size.width * AppDimensions.numD02),
-                                decoration: BoxDecoration(
-                                    color: AppColorTheme.colorThemePink,
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * AppDimensions.numD02)),
-                                child: Center(
-                                    child: Text("INTERVIEW",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width *
-                                                AppDimensions.numD035,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w500))),
-                              )
-                            ],
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * AppDimensions.numD02)),
+                                  child: Center(
+                                      child: Text("INTERVIEW",
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD035,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500))),
+                                )
+                              ],
+                            ),
                           ),
-                          Column(
-                            children: [
-                              Text(
-                                  taskDetail != null &&
-                                          taskDetail!.task.isNeedVideo
-                                      ? "${taskDetail!.task.currencySymbol.isNotEmpty ? taskDetail!.task.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.task.videoPrice))}"
-                                      : "-",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize:
-                                          size.width * AppDimensions.numD058,
+                          SizedBox(width: size.width * AppDimensions.numD02),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text(
+                                    taskDetail != null &&
+                                            taskDetail!.task.isNeedVideo
+                                        ? "${taskDetail!.task.currencySymbol.isNotEmpty ? taskDetail!.task.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.task.videoPrice))}"
+                                        : "-",
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD058,
+                                        color: AppColorTheme.colorThemePink,
+                                        fontWeight: FontWeight.w800)),
+                                Text("Offered",
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500)),
+                                SizedBox(
+                                  height: size.width * AppDimensions.numD018,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical:
+                                          size.width * AppDimensions.numD02),
+                                  decoration: BoxDecoration(
                                       color: AppColorTheme.colorThemePink,
-                                      fontWeight: FontWeight.w800)),
-                              Text("Offered",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize:
-                                          size.width * AppDimensions.numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500)),
-                              SizedBox(
-                                height: size.width * AppDimensions.numD018,
-                              ),
-                              Container(
-                                width: size.width * AppDimensions.numD26,
-                                padding: EdgeInsets.symmetric(
-                                    vertical:
-                                        size.width * AppDimensions.numD02),
-                                decoration: BoxDecoration(
-                                    color: AppColorTheme.colorThemePink,
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * AppDimensions.numD02)),
-                                child: Center(
-                                    child: Text("VIDEO",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width *
-                                                AppDimensions.numD035,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w500))),
-                              )
-                            ],
-                          )
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * AppDimensions.numD02)),
+                                  child: Center(
+                                      child: Text("VIDEO",
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD035,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500))),
+                                )
+                              ],
+                            ),
+                          ),
                         ],
-                      ), */
-                      child: priceImageWithButton(
-                          size,
-                          taskDetail!.task.hopperTaskAmount,
-                          taskDetail!.task.hopperInfo.isNotEmpty
-                              ? taskDetail!.task.hopperInfo.first.hours
-                              : "0"),
+                      ),
                     ),
                     SizedBox(
                       height: size.width * AppDimensions.numD025,
@@ -1183,5 +1185,87 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       return true;
     }
     return false;
+  }
+
+  /// Calculate distance between user and task location using Haversine formula
+  double _calculateDistanceKm() {
+    if (_latLng == null || taskDetail == null) return 0.0;
+
+    final taskLat = taskDetail!.task.addressLocation.coordinates[0];
+    final taskLng = taskDetail!.task.addressLocation.coordinates[1];
+    final userLat = _latLng!.latitude;
+    final userLng = _latLng!.longitude;
+
+    const R = 6371.0; // Earth radius in km
+    final dLat = _degToRad(taskLat - userLat);
+    final dLon = _degToRad(taskLng - userLng);
+    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(_degToRad(userLat)) *
+            math.cos(_degToRad(taskLat)) *
+            math.sin(dLon / 2) *
+            math.sin(dLon / 2);
+    final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
+    return R * c;
+  }
+
+  double _degToRad(double deg) => deg * (math.pi / 180);
+
+  String _getDistanceText() {
+    if (taskDetail != null && taskDetail!.task.distance.isNotEmpty) {
+      if (taskDetail!.task.distance.toLowerCase().contains("mile") ||
+          taskDetail!.task.distance.toLowerCase().contains("yard")) {
+        return taskDetail!.task.distance;
+      }
+      return "${taskDetail!.task.distance} miles";
+    }
+    if (_latLng == null) return "-- miles";
+    final km = _calculateDistanceKm();
+    final miles = km * 0.621371;
+    if (miles < 1) {
+      return "${(miles * 1760).round()} yards";
+    }
+    return "${miles.toStringAsFixed(1)} miles";
+  }
+
+  String _getWalkingTimeText() {
+    if (taskDetail != null && taskDetail!.task.walkTime.isNotEmpty) {
+      if (taskDetail!.task.walkTime.toLowerCase().contains("min") ||
+          taskDetail!.task.walkTime.toLowerCase().contains("h")) {
+        return taskDetail!.task.walkTime;
+      }
+      return "${taskDetail!.task.walkTime} mins";
+    }
+    if (_latLng == null) return "-- mins";
+    final km = _calculateDistanceKm();
+    // Average walking speed: ~5 km/h
+    final walkMinutes = (km / 5.0 * 60).round();
+    if (walkMinutes < 1) return "1 min";
+    if (walkMinutes >= 60) {
+      final hours = walkMinutes ~/ 60;
+      final mins = walkMinutes % 60;
+      return mins > 0 ? "${hours}h ${mins}m" : "${hours}h";
+    }
+    return "$walkMinutes mins";
+  }
+
+  String _getDrivingTimeText() {
+    if (taskDetail != null && taskDetail!.task.driveTime.isNotEmpty) {
+      if (taskDetail!.task.driveTime.toLowerCase().contains("min") ||
+          taskDetail!.task.driveTime.toLowerCase().contains("h")) {
+        return taskDetail!.task.driveTime;
+      }
+      return "${taskDetail!.task.driveTime} mins";
+    }
+    if (_latLng == null) return "-- mins";
+    final km = _calculateDistanceKm();
+    // Average driving speed: ~40 km/h (city driving)
+    final driveMinutes = (km / 40.0 * 60).round();
+    if (driveMinutes < 1) return "1 min";
+    if (driveMinutes >= 60) {
+      final hours = driveMinutes ~/ 60;
+      final mins = driveMinutes % 60;
+      return mins > 0 ? "${hours}h ${mins}m" : "${hours}h";
+    }
+    return "$driveMinutes mins";
   }
 }

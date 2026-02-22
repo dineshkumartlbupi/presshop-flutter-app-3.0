@@ -2,24 +2,24 @@ import 'package:equatable/equatable.dart';
 import '../../domain/entities/feed.dart';
 
 enum FeedStatus { initial, loading, success, failure }
+
 enum FeedInteractionStatus { initial, loading, success, failure }
 
 class FeedState extends Equatable {
-
   const FeedState({
     this.status = FeedStatus.initial,
     this.feeds = const [],
     this.hasReachedMax = false,
     this.errorMessage = '',
     this.interactionStatus = FeedInteractionStatus.initial,
-    this.filters = const {"limit": "10", "offset": "0"},
+    this.filters = const {"limit": "10", "offset": "0", "sort": "desc"},
   });
   final FeedStatus status;
   final List<Feed> feeds;
   final bool hasReachedMax;
   final String errorMessage;
   final FeedInteractionStatus interactionStatus;
-  
+
   // Filter states
   final Map<String, dynamic> filters;
 
@@ -42,5 +42,6 @@ class FeedState extends Equatable {
   }
 
   @override
-  List<Object> get props => [status, feeds, hasReachedMax, errorMessage, interactionStatus, filters];
+  List<Object> get props =>
+      [status, feeds, hasReachedMax, errorMessage, interactionStatus, filters];
 }

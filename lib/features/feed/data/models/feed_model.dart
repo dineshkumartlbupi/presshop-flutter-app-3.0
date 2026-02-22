@@ -8,6 +8,7 @@ class FeedModel extends Feed {
     required super.description,
     required super.location,
     required super.categoryName,
+    super.categoryImage = "",
     required super.askPrice,
     required super.displayPrice,
     required super.displayCurrency,
@@ -91,6 +92,9 @@ class FeedModel extends Feed {
       categoryName: json['category_id'] is Map
           ? (json['category_id']['name'] ?? "")
           : "General", // Fallback for ID string
+      categoryImage: json['category_id'] is Map
+          ? getMediaImageUrl(json['category_id']['icon']?.toString() ?? "")
+          : "",
       askPrice: json['ask_price']?.toString() ??
           json['original_ask_price']?.toString() ??
           "",

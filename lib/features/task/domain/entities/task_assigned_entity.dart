@@ -39,6 +39,9 @@ class TaskAssignedDetailEntity extends Equatable {
   final List<HopperInfoEntity> hopperInfo;
   final String hopperTaskAmount;
   final List<String> acceptedHoppers;
+  final String distance;
+  final String walkTime;
+  final String driveTime;
 
   const TaskAssignedDetailEntity({
     required this.id,
@@ -65,6 +68,9 @@ class TaskAssignedDetailEntity extends Equatable {
     this.hopperInfo = const [],
     this.hopperTaskAmount = "0",
     this.acceptedHoppers = const [],
+    this.distance = "",
+    this.walkTime = "",
+    this.driveTime = "",
   });
 
   @override
@@ -93,6 +99,9 @@ class TaskAssignedDetailEntity extends Equatable {
         hopperInfo,
         hopperTaskAmount,
         acceptedHoppers,
+        distance,
+        walkTime,
+        driveTime,
       ];
 }
 
