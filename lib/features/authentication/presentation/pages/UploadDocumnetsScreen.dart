@@ -340,6 +340,8 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
 
   void _showVerificationSheet(
       BuildContext contextValue, List<dynamic> instructions) {
+    List<File> selectedFiles = [];
+
     showModalBottomSheet(
       context: contextValue,
       isScrollControlled: true,
@@ -449,10 +451,20 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                             color: AppColorTheme.colorTextFieldBorder),
                         borderRadius: BorderRadius.circular(
                             size.width * AppDimensions.numD03)),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(
+                        Expanded(
+                            child: Text(selectedDocType ?? "Select Document",
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    color: selectedDocType == null
+                                        ? Colors.grey
+                                        : Colors.black,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
+                                    fontFamily: "AirbnbCereal"))),
+                        const Icon(
                           Icons.keyboard_arrow_down_sharp,
                           color: Colors.black,
                         ),
@@ -462,6 +474,101 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                 ),
 
                 SizedBox(height: size.width * AppDimensions.numD06),
+
+                // File selection box
+                InkWell(
+                  onTap: () async {
+                    // Show option to pick between Gallery and Files
+                    bool? isGallery = await _showSelectionOption(contextValue);
+                    if (isGallery != null) {
+                      List<File>? files =
+                          await _pickFilesNew(contextValue, isGallery);
+                      if (files != null && files.isNotEmpty) {
+                        setModalState(() {
+                          selectedFiles.addAll(files);
+                        });
+                      }
+                    }
+                  },
+                  child: Container(
+                    width: size.width,
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD03),
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: AppColorTheme.colorThemePink,
+                            style: BorderStyle.solid),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD03),
+                        color: AppColorTheme.colorThemePink
+                            .withValues(alpha: 0.05)),
+                    child: selectedFiles.isNotEmpty
+                        ? Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: selectedFiles.map((file) {
+                              bool isImage = file.path.endsWith('.jpg') ||
+                                  file.path.endsWith('.png') ||
+                                  file.path.endsWith('.jpeg');
+                              return Stack(
+                                children: [
+                                  Container(
+                                    width: size.width * 0.2,
+                                    height: size.width * 0.2,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: Colors.white,
+                                        border: Border.all(
+                                            color: Colors.grey.shade300)),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: isImage
+                                          ? Image.file(file, fit: BoxFit.cover)
+                                          : Icon(Icons.insert_drive_file,
+                                              color:
+                                                  AppColorTheme.colorThemePink,
+                                              size: size.width * 0.08),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 0,
+                                    right: 0,
+                                    child: InkWell(
+                                      onTap: () {
+                                        setModalState(() {
+                                          selectedFiles.remove(file);
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(2),
+                                        decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(Icons.cancel,
+                                            color: Colors.red, size: 20),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              );
+                            }).toList(),
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.file_upload_outlined,
+                                  color: AppColorTheme.colorThemePink,
+                                  size: size.width * 0.08),
+                              SizedBox(height: size.width * 0.02),
+                              Text("Tap to select image or document",
+                                  style: TextStyle(
+                                      color: AppColorTheme.colorThemePink,
+                                      fontFamily: "AirbnbCereal",
+                                      fontWeight: FontWeight.w500)),
+                            ],
+                          ),
+                  ),
+                ),
 
                 // Submit Button
                 SizedBox(
@@ -477,12 +584,23 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                           fontWeight: FontWeight.w700),
                       commonButtonStyle(size, AppColorTheme.colorThemePink),
                       () {
-                    if (selectedDocType != null) {
-                      _showSelectionOption(contextValue);
-                    } else {
-                      ScaffoldMessenger.of(contextValue).showSnackBar(SnackBar(
-                          content: Text("Please select a document type")));
+                    if (selectedDocType == null) {
+                      ScaffoldMessenger.of(contextValue).showSnackBar(
+                          const SnackBar(
+                              content: Text("Please select a document type")));
+                      return;
                     }
+                    if (selectedFiles.isEmpty) {
+                      ScaffoldMessenger.of(contextValue).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  "Please select an image or document to upload")));
+                      return;
+                    }
+                    // Dispatch upload event with the selected files
+                    contextValue
+                        .read<UploadDocumentsBloc>()
+                        .add(UploadFilesEvent(selectedFiles));
                   }),
                 ),
                 SizedBox(height: size.width * AppDimensions.numD04),
@@ -552,8 +670,8 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
         });
   }
 
-  void _showSelectionOption(BuildContext context) {
-    showModalBottomSheet(
+  Future<bool?> _showSelectionOption(BuildContext context) async {
+    return showModalBottomSheet<bool>(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (bc) {
@@ -579,7 +697,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                         color: Colors.black,
                         fontSize: size.width * AppDimensions.numD048,
                         fontFamily: "AirbnbCereal",
-                        fontWeight: FontWeight.w500),
+                        fontWeight: FontWeight.w700),
                     textAlign: TextAlign.center,
                   ),
                   IconButton(
@@ -591,6 +709,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                           size: size.width * AppDimensions.numD08)),
                 ],
               ),
+              const Divider(color: Colors.black, thickness: 1.2),
               SizedBox(
                 height: size.width * AppDimensions.numD04,
               ),
@@ -603,8 +722,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                     Expanded(
                       child: InkWell(
                         onTap: () {
-                          context.pop();
-                          _pickFiles(context, true);
+                          context.pop(true);
                         },
                         child: Container(
                             alignment: Alignment.center,
@@ -621,7 +739,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.upload,
+                                Icon(Icons.file_upload_outlined,
                                     size: size.width * AppDimensions.numD08),
                                 SizedBox(
                                   height: size.width * AppDimensions.numD03,
@@ -645,8 +763,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                     Expanded(
                       child: InkWell(
                         onTap: () {
-                          context.pop();
-                          _pickFiles(context, false);
+                          context.pop(false);
                         },
                         child: Container(
                             decoration: BoxDecoration(
@@ -696,11 +813,8 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
   }
 
   // New helper to distinguish gallery vs files cleaner
-  Future<void> _pickFilesNew(BuildContext context, bool isGallery) async {
-    // Logic adaptation...
-    // For "My Gallery" (isGallery=true), use ImagePicker.gallery
-    // For "My Files" (isGallery=false), use FilePicker
-
+  Future<List<File>?> _pickFilesNew(
+      BuildContext context, bool isGallery) async {
     try {
       final List<File> pickedFiles = [];
       if (isGallery) {
@@ -722,11 +836,10 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
         }
       }
 
-      if (pickedFiles.isNotEmpty && context.mounted) {
-        context.read<UploadDocumentsBloc>().add(UploadFilesEvent(pickedFiles));
-      }
+      return pickedFiles;
     } catch (e) {
       debugPrint("Error picking files: $e");
+      return null;
     }
   }
 

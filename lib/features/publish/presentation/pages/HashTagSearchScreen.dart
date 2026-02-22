@@ -278,15 +278,13 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                                 hashtagSearchList[index].id.isEmpty
                                     ? InkWell(
                                         onTap: () {
-                                          if (hashTagController.text
-                                              .trim()
-                                              .isNotEmpty) {
-                                            addHashTagsApi();
-                                          }
-                                          if (hashtagSearchList[index]
-                                              .id
-                                              .isEmpty) {
+                                          final tagName =
+                                              hashtagSearchList[index].name;
+                                          if (tagName.isNotEmpty) {
                                             hashtagSearchList.removeAt(index);
+                                            addHashTagsApi(tagName);
+                                            hashTagController.clear();
+                                            searchHashTagsApi("");
                                             setState(() {});
                                           }
                                         },
@@ -450,8 +448,18 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
     }
   }
 
-  Future<void> addHashTagsApi() async {
-    Map<String, String> params = {"name": hashTagController.text.trim()};
+  Future<void> addHashTagsApi(String tagName) async {
+    // 1. Optimistic Update
+    final tempTag = HashTagData(
+        id: 'temp_${DateTime.now().millisecondsSinceEpoch}',
+        name: tagName,
+        selected: true);
+
+    selectedHashTagList.insert(0, tempTag);
+    setState(() {});
+
+    // 2. Network Request
+    Map<String, String> params = {"name": tagName};
     debugPrint("AddHashTagsParams: $params");
 
     try {
@@ -461,27 +469,39 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
       );
 
       if (response.statusCode == 200) {
-        debugPrint("AddHashTagResponse: $response");
         var map = response.data;
         if (map is String) map = jsonDecode(map);
 
+        HashTagData? realTag;
         if (map["id"] != null) {
-          var newTag = HashTagData.fromJson(map).copyWith(selected: true);
-          hashtagSearchList.add(newTag);
-          selectedHashTagList.add(newTag);
+          realTag = HashTagData.fromJson(map).copyWith(selected: true);
         } else if (map["code"] == 200 && map['tag'] != null) {
-          // Fallback to original if wrapped
-          final newTag = HashTagData(
+          realTag = HashTagData(
               id: map['tag']["id"] ?? map['tag']["_id"] ?? '',
               name: map['tag']['name'],
               selected: true);
-          hashtagSearchList.add(newTag);
-          selectedHashTagList.add(newTag);
         }
+
+        if (realTag != null) {
+          int selIdx = selectedHashTagList.indexOf(tempTag);
+          if (selIdx != -1) {
+            selectedHashTagList[selIdx] = realTag;
+          } else {
+            selectedHashTagList.insert(0, realTag);
+          }
+          setState(() {});
+        } else {
+          selectedHashTagList.remove(tempTag);
+          setState(() {});
+        }
+      } else {
+        selectedHashTagList.remove(tempTag);
         setState(() {});
       }
     } catch (e) {
       debugPrint("$e");
+      selectedHashTagList.remove(tempTag);
+      setState(() {});
     }
   }
 }

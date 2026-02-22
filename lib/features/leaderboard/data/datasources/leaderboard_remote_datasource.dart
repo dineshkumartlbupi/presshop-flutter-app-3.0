@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../../../../core/api/api_client.dart';
 import '../../../../core/api/api_constant.dart';
@@ -23,6 +25,13 @@ class LeaderboardRemoteDataSourceImpl implements LeaderboardRemoteDataSource {
       debugPrint(
           "DEBUG: getLeaderboardData response keys: ${response.data is Map ? (response.data as Map).keys.toList() : 'Not a Map'}");
       debugPrint("DEBUG: getLeaderboardData response data: ${response.data}");
+
+      try {
+        File('${Directory.current.path}/leaderboard_debug.json')
+            .writeAsStringSync(jsonEncode(response.data));
+      } catch (e) {
+        debugPrint("Failed to write debug file: $e");
+      }
 
       return LeaderboardModel.fromJson(response.data);
     } catch (e) {

@@ -137,10 +137,34 @@ class MemberModel extends MemberEntity {
           "${json['first_name'] ?? ''} ${json['last_name'] ?? ''}".trim();
     }
     if (userName.isEmpty) {
-      userName = (json['userName'] ?? '').toString();
+      userName = (json['userName'] ?? json['full_name'] ?? json['name'] ?? '')
+          .toString();
     }
 
     String avatar = (json['avatar'] ?? json['profile_image'] ?? '').toString();
+
+    // Check nested objects if empty
+    if (userName.isEmpty || avatar.isEmpty) {
+      final nestedUser = json['hopper_id'] ??
+          json['user_id'] ??
+          json['hopper_details'] ??
+          json['user_details'];
+      if (nestedUser != null && nestedUser is Map) {
+        if (userName.isEmpty) {
+          userName = (nestedUser['user_name'] ??
+                  nestedUser['userName'] ??
+                  nestedUser['full_name'] ??
+                  nestedUser['name'] ??
+                  '')
+              .toString();
+        }
+        if (avatar.isEmpty) {
+          avatar = (nestedUser['avatar'] ?? nestedUser['profile_image'] ?? '')
+              .toString();
+        }
+      }
+    }
+
     if (avatar.isNotEmpty && !avatar.startsWith("http")) {
       const String mediaBaseUrl =
           "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
