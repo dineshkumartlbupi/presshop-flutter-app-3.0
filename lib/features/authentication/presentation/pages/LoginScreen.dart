@@ -36,11 +36,7 @@ class LoginScreen extends StatefulWidget {
 
 class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
   var formKey = GlobalKey<FormState>();
-  GoogleSignIn googleSignIn = GoogleSignIn(
-    scopes: [
-      'email',
-    ],
-  );
+  final GoogleSignIn googleSignIn = sl<GoogleSignIn>();
   TextEditingController loginController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 

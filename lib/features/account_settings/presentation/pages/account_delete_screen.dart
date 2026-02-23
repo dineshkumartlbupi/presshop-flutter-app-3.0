@@ -1,4 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
@@ -334,7 +335,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
 
       // Clear data
       await sharedPreferences!.clear();
-      await googleSignIn.signOut();
+      await sl<GoogleSignIn>().signOut();
 
       // Show message
       showToast(state.message);

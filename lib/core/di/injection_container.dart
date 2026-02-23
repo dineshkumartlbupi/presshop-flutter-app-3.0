@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:get_it/get_it.dart';
 import 'package:app_links/app_links.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -242,7 +243,12 @@ Future<void> init() async {
 
   sl.registerLazySingleton(() => FirebaseAnalytics.instance);
   sl.registerLazySingleton(() => FirebaseCrashlytics.instance);
-  sl.registerLazySingleton(() => GoogleSignIn(scopes: ['email']));
+  sl.registerLazySingleton(() => GoogleSignIn(
+        scopes: ['email'],
+        serverClientId: Platform.isAndroid
+            ? "750460561502-fajfc82s14phu6iu767i7qm53qmu2r8f.apps.googleusercontent.com"
+            : null,
+      ));
 
   //! Core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
