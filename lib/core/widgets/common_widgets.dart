@@ -10,7 +10,8 @@ export 'package:presshop/core/core_export.dart';
 Size globalSize = MediaQuery.of(navigatorKey.currentContext!).size;
 
 // Reusable widget for Price Image and Button
-Widget priceImageWithButton(Size size, String amount, String hour) {
+Widget priceImageWithButton(Size size, String amount, String hour,
+    {String? localCurrencySymbol}) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
@@ -35,7 +36,7 @@ Widget priceImageWithButton(Size size, String amount, String hour) {
           children: [
             TextSpan(
               text:
-                  "$currencySymbol${formatDouble(double.tryParse(amount) ?? 0.0)} ",
+                  "${localCurrencySymbol ?? currencySymbol}${formatDouble(double.tryParse(amount) ?? 0.0)} ",
               style: commonTextStyle(
                   size: size,
                   fontSize: size.width * AppDimensions.numD08,

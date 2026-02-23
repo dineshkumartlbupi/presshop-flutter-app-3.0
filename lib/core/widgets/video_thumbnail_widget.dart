@@ -114,8 +114,10 @@ class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
         height: widget.height,
         fit: widget.fit ?? BoxFit.cover,
         // Optimize memory usage for thumbnails
-        memCacheWidth: widget.width != null ? (widget.width! * 2).toInt() : null,
-        memCacheHeight: widget.height != null ? (widget.height! * 2).toInt() : null,
+        memCacheWidth:
+            widget.width != null ? (widget.width! * 2).toInt() : null,
+        memCacheHeight:
+            widget.height != null ? (widget.height! * 2).toInt() : null,
         placeholder: (context, url) => Container(
           width: widget.width,
           height: widget.height,

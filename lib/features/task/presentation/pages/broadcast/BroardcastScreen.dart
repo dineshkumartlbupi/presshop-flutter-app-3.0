@@ -146,7 +146,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
           return; // Exit listener after handling
         }
 
-        // Handle roomId (only if action was submitted)
+        //andle roomId (only if action was submitted)
         if (_hasSubmittedAction &&
             state.roomId != null &&
             state.roomId!.isNotEmpty) {
@@ -804,156 +804,206 @@ class _BroadCastScreenState extends State<BroadCastScreen>
   }
 
   /// Price Offer widget
+  // Widget priceOfferWidget() {
+  //   return Column(
+  //     children: [
+  //       const Divider(),
+  //       SizedBox(
+  //         height: size.width * AppDimensions.numD03,
+  //       ),
+
+  //       /// Price Offer
+  //       Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //         children: [
+  //           Expanded(
+  //             child: Column(
+  //               children: [
+  //                 Text(
+  //                   taskDetail!.isNeedPhoto
+  //                       ? "${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.photoPrice))}"
+  //                       : "-",
+  //                   style: commonTextStyle(
+  //                       size: size,
+  //                       fontSize: size.width * AppDimensions.numD06,
+  //                       color: AppColorTheme.colorThemePink,
+  //                       fontWeight: FontWeight.w700),
+  //                 ),
+  //                 Text(
+  //                   AppStrings.offeredText,
+  //                   style: commonTextStyle(
+  //                       size: size,
+  //                       fontSize: size.width * AppDimensions.numD035,
+  //                       color: Colors.black,
+  //                       fontWeight: FontWeight.w500),
+  //                 ),
+  //                 SizedBox(
+  //                   height: size.width * AppDimensions.numD016,
+  //                 ),
+  //                 Container(
+  //                   padding: EdgeInsets.symmetric(
+  //                       horizontal: size.width * AppDimensions.numD06,
+  //                       vertical: size.width * AppDimensions.numD025),
+  //                   decoration: BoxDecoration(
+  //                       color: AppColorTheme.colorThemePink,
+  //                       borderRadius: BorderRadius.circular(
+  //                           size.width * AppDimensions.numD02)),
+  //                   child: Text(
+  //                     AppStrings.photoText.toUpperCase(),
+  //                     style: commonTextStyle(
+  //                         size: size,
+  //                         fontSize: size.width * AppDimensions.numD035,
+  //                         color: Colors.white,
+  //                         fontWeight: FontWeight.w500),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //           Expanded(
+  //             child: Column(
+  //               children: [
+  //                 Text(
+  //                   taskDetail!.isNeedInterview
+  //                       ? "${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.interviewPrice))}"
+  //                       : "-",
+  //                   style: commonTextStyle(
+  //                       size: size,
+  //                       fontSize: size.width * AppDimensions.numD06,
+  //                       color: AppColorTheme.colorThemePink,
+  //                       fontWeight: FontWeight.w700),
+  //                 ),
+  //                 Text(
+  //                   AppStrings.offeredText,
+  //                   style: commonTextStyle(
+  //                       size: size,
+  //                       fontSize: size.width * AppDimensions.numD035,
+  //                       color: Colors.black,
+  //                       fontWeight: FontWeight.w500),
+  //                 ),
+  //                 SizedBox(
+  //                   height: size.width * AppDimensions.numD016,
+  //                 ),
+  //                 Container(
+  //                   padding: EdgeInsets.symmetric(
+  //                       horizontal: size.width * AppDimensions.numD06,
+  //                       vertical: size.width * AppDimensions.numD025),
+  //                   decoration: BoxDecoration(
+  //                       color: AppColorTheme.colorThemePink,
+  //                       borderRadius: BorderRadius.circular(
+  //                           size.width * AppDimensions.numD02)),
+  //                   child: Text(
+  //                     AppStrings.interviewText.toUpperCase(),
+  //                     style: commonTextStyle(
+  //                         size: size,
+  //                         fontSize: size.width * AppDimensions.numD035,
+  //                         color: Colors.white,
+  //                         fontWeight: FontWeight.w500),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //           Expanded(
+  //             child: Column(
+  //               children: [
+  //                 Text(
+  //                   taskDetail!.isNeedVideo
+  //                       ? "${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.videoPrice))}"
+  //                       : "-",
+  //                   style: commonTextStyle(
+  //                       size: size,
+  //                       fontSize: size.width * AppDimensions.numD06,
+  //                       color: AppColorTheme.colorThemePink,
+  //                       fontWeight: FontWeight.w700),
+  //                 ),
+  //                 Text(
+  //                   AppStrings.offeredText,
+  //                   style: commonTextStyle(
+  //                       size: size,
+  //                       fontSize: size.width * AppDimensions.numD035,
+  //                       color: Colors.black,
+  //                       fontWeight: FontWeight.w500),
+  //                 ),
+  //                 SizedBox(
+  //                   height: size.width * AppDimensions.numD016,
+  //                 ),
+  //                 Container(
+  //                   padding: EdgeInsets.symmetric(
+  //                       horizontal: size.width * AppDimensions.numD06,
+  //                       vertical: size.width * AppDimensions.numD025),
+  //                   decoration: BoxDecoration(
+  //                       color: AppColorTheme.colorThemePink,
+  //                       borderRadius: BorderRadius.circular(
+  //                           size.width * AppDimensions.numD02)),
+  //                   child: Text(
+  //                     AppStrings.videoText.toUpperCase(),
+  //                     style: commonTextStyle(
+  //                         size: size,
+  //                         fontSize: size.width * AppDimensions.numD035,
+  //                         color: Colors.white,
+  //                         fontWeight: FontWeight.w500),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           )
+  //         ],
+  //       ),
+
+  //       SizedBox(
+  //         height: size.width * AppDimensions.numD03,
+  //       ),
+  //     ],
+  //   );
+  // }
+
+  // /// show-share-bottom-sheet
+
+  /// Price Offer widget
   Widget priceOfferWidget() {
     return Column(
       children: [
         const Divider(),
-        SizedBox(
-          height: size.width * AppDimensions.numD03,
+        SizedBox(height: size.width * AppDimensions.numD02),
+
+        /// Illustration
+        Image.asset(
+          "assets/illustrations/priceimage2.png",
+          height: size.width * AppDimensions.numD25,
+          fit: BoxFit.contain,
         ),
 
-        /// Price Offer
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  Text(
-                    taskDetail!.isNeedPhoto
-                        ? "${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.photoPrice))}"
-                        : "-",
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * AppDimensions.numD06,
-                        color: AppColorTheme.colorThemePink,
-                        fontWeight: FontWeight.w700),
-                  ),
-                  Text(
-                    AppStrings.offeredText,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * AppDimensions.numD035,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(
-                    height: size.width * AppDimensions.numD016,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: size.width * AppDimensions.numD06,
-                        vertical: size.width * AppDimensions.numD025),
-                    decoration: BoxDecoration(
-                        color: AppColorTheme.colorThemePink,
-                        borderRadius: BorderRadius.circular(
-                            size.width * AppDimensions.numD02)),
-                    child: Text(
-                      AppStrings.photoText.toUpperCase(),
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                ],
+        SizedBox(height: size.width * AppDimensions.numD05),
+
+        /// Price and Hours
+        RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text:
+                    "${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${taskDetail!.hopperTaskAmount} ",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: size.width * AppDimensions.numD07,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
-            ),
-            Expanded(
-              child: Column(
-                children: [
-                  Text(
-                    taskDetail!.isNeedInterview
-                        ? "${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.interviewPrice))}"
-                        : "-",
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * AppDimensions.numD06,
-                        color: AppColorTheme.colorThemePink,
-                        fontWeight: FontWeight.w700),
-                  ),
-                  Text(
-                    AppStrings.offeredText,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * AppDimensions.numD035,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(
-                    height: size.width * AppDimensions.numD016,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: size.width * AppDimensions.numD06,
-                        vertical: size.width * AppDimensions.numD025),
-                    decoration: BoxDecoration(
-                        color: AppColorTheme.colorThemePink,
-                        borderRadius: BorderRadius.circular(
-                            size.width * AppDimensions.numD02)),
-                    child: Text(
-                      AppStrings.interviewText.toUpperCase(),
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                ],
+              TextSpan(
+                text:
+                    "for ${taskDetail!.hopperInfo.isNotEmpty ? taskDetail!.hopperInfo.first["hours"] : "0"} hours",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: size.width * AppDimensions.numD04,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            Expanded(
-              child: Column(
-                children: [
-                  Text(
-                    taskDetail!.isNeedVideo
-                        ? "${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.videoPrice))}"
-                        : "-",
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * AppDimensions.numD06,
-                        color: AppColorTheme.colorThemePink,
-                        fontWeight: FontWeight.w700),
-                  ),
-                  Text(
-                    AppStrings.offeredText,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * AppDimensions.numD035,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(
-                    height: size.width * AppDimensions.numD016,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: size.width * AppDimensions.numD06,
-                        vertical: size.width * AppDimensions.numD025),
-                    decoration: BoxDecoration(
-                        color: AppColorTheme.colorThemePink,
-                        borderRadius: BorderRadius.circular(
-                            size.width * AppDimensions.numD02)),
-                    child: Text(
-                      AppStrings.videoText.toUpperCase(),
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
+            ],
+          ),
         ),
 
-        SizedBox(
-          height: size.width * AppDimensions.numD03,
-        ),
+        SizedBox(height: size.width * AppDimensions.numD02),
       ],
     );
   }

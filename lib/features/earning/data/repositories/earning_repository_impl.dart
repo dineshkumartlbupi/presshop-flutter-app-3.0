@@ -27,6 +27,8 @@ class EarningRepositoryImpl implements EarningRepository {
           id: remoteProfile.id,
           avatar: remoteProfile.avatar,
           totalEarning: remoteProfile.totalEarning,
+          currency: remoteProfile.currency,
+          currencySymbol: remoteProfile.currencySymbol,
         );
         return Right(entity);
       } catch (e) {
@@ -92,9 +94,12 @@ class EarningRepositoryImpl implements EarningRepository {
 
         double totalVal = double.tryParse(remoteData['totalEarning']
                     ?.toString() ??
+                remoteData['totalEarnings']?.toString() ??
                 remoteData['total_earnings']?.toString() ??
-                (remoteData['data'] is Map
-                    ? (remoteData['data']['total_earnings']?.toString() ??
+                ((remoteData['data'] is Map)
+                    ? (remoteData['data']['totalEarning']?.toString() ??
+                        remoteData['data']['totalEarnings']?.toString() ??
+                        remoteData['data']['total_earnings']?.toString() ??
                         remoteData['data']['total_earnings_sum']?.toString())
                     : null) ??
                 "") ??

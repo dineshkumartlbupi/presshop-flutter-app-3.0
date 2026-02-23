@@ -126,6 +126,19 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
   @override
   String get pageName => PageNames.manageContent;
 
+  String get itemCurrencySymbol {
+    if (widget.type == 'content' && widget.myContentData != null) {
+      return widget.myContentData!.currencySymbol.isNotEmpty
+          ? widget.myContentData!.currencySymbol
+          : getCurrencySymbol(widget.myContentData!.currency);
+    } else if (widget.taskDetail != null) {
+      return widget.taskDetail!.currencySymbol.isNotEmpty
+          ? widget.taskDetail!.currencySymbol
+          : getCurrencySymbol(widget.taskDetail!.currency);
+    }
+    return currencySymbol;
+  }
+
   @override
   void initState() {
     debugPrint(
@@ -1482,7 +1495,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                         ),
                                                                         TextSpan(
                                                                           text:
-                                                                              "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
+                                                                              "$itemCurrencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
                                                                           style: commonTextStyle(
                                                                               size: size,
                                                                               fontSize: size.width * AppDimensions.numD036,
@@ -1673,7 +1686,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                         ),
                                                                         TextSpan(
                                                                           text:
-                                                                              "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
+                                                                              "$itemCurrencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
                                                                           style: commonTextStyle(
                                                                               size: size,
                                                                               fontSize: size.width * AppDimensions.numD036,
@@ -2973,7 +2986,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             right: size.width * AppDimensions.numD02,
                           ),
                           child: Text(
-                            "$currencySymbol${formatDouble(double.parse(widget.myContentData!.amount))}",
+                            "$itemCurrencySymbol${formatDouble(double.tryParse(widget.myContentData!.paidStatus == AppStringsNew2.unPaidText ? widget.myContentData!.amount : widget.myContentData!.totalEarning) ?? 0.0)}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD05,
@@ -3020,7 +3033,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             right: size.width * AppDimensions.numD02,
                           ),
                           child: Text(
-                            "$currencySymbol${formatDouble(double.parse(widget.myContentData!.totalEarning))}",
+                            "$itemCurrencySymbol${formatDouble(double.tryParse(widget.myContentData!.totalEarning) ?? 0.0)}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD05,
@@ -3389,7 +3402,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           // TextSpan(
                           //   text: item.hopperPrice.isEmpty
                           //       ? ""
-                          //       : "$currencySymbol${amountFormat(item.hopperPrice)} ",
+                          //       : "$itemCurrencySymbol${amountFormat(item.hopperPrice)} ",
                           //   style: commonTextStyle(
                           //       size: size,
                           //       fontSize: size.width * AppDimensions.numD036,
@@ -3669,7 +3682,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     Text(
                       item.amount.isEmpty
                           ? ""
-                          : "$currencySymbol${formatDouble(double.parse(item.amount))}",
+                          : "$itemCurrencySymbol${formatDouble(double.parse(item.amount))}",
                       style: TextStyle(
                           fontSize: size.width * AppDimensions.numD045,
                           color: Colors.white,
@@ -4849,7 +4862,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                               fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
-                          text: " $currencySymbol${model.amount}",
+                          text: " $itemCurrencySymbol${model.amount}",
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD036,
@@ -4859,7 +4872,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                         // TextSpan(
                         //   text: item.hopperPrice.isEmpty
                         //       ? ""
-                        //       : "$currencySymbol${amountFormat(item.hopperPrice)} ",
+                        //       : "$itemCurrencySymbol${amountFormat(item.hopperPrice)} ",
                         //   style: commonTextStyle(
                         //       size: size,
                         //       fontSize: size.width * AppDimensions.numD036,
@@ -4957,7 +4970,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                         TextSpan(
                           text: model.payableHopperPrice.isEmpty
                               ? ""
-                              : "$currencySymbol${formatDouble(double.parse(model.payableHopperPrice))}",
+                              : "$itemCurrencySymbol${formatDouble(double.parse(model.payableHopperPrice))}",
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD036,
@@ -5096,7 +5109,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                               fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
-                          text: "$currencySymbol$hopperAmount ",
+                          text: "$itemCurrencySymbol$hopperAmount ",
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD036,
@@ -5112,7 +5125,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                               fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
-                          text: '$currencySymbol$amount',
+                          text: '$itemCurrencySymbol$amount',
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD036,
@@ -5502,7 +5515,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             child: Column(
                               children: [
                                 Text(
-                                  "${currencySymbol}150",
+                                  "${itemCurrencySymbol}150",
                                   style: commonTextStyle(
                                       size: size,
                                       fontSize:
@@ -5549,7 +5562,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             child: Column(
                               children: [
                                 Text(
-                                  "${currencySymbol}350",
+                                  "${itemCurrencySymbol}350",
                                   style: commonTextStyle(
                                       size: size,
                                       fontSize:
@@ -5596,7 +5609,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             child: Column(
                               children: [
                                 Text(
-                                  "${currencySymbol}500",
+                                  "${itemCurrencySymbol}500",
                                   style: commonTextStyle(
                                       size: size,
                                       fontSize:
@@ -5787,7 +5800,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     height: size.width * AppDimensions.numD04,
                   ),
                   Text(
-                    "Congrats, you’ve received £200 from Reuters Media ",
+                    "Congrats, you’ve received ${itemCurrencySymbol}200 from Reuters Media ",
                     style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD035,
@@ -6132,7 +6145,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           fontWeight: FontWeight.w600),
                     ),
                     TextSpan(
-                      text: "${currencySymbol}150 ",
+                      text: "${itemCurrencySymbol}150 ",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
@@ -6474,7 +6487,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           fontWeight: FontWeight.w600),
                     ),
                     TextSpan(
-                      text: "${currencySymbol}200 ",
+                      text: "${itemCurrencySymbol}200 ",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
@@ -6598,7 +6611,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     height: size.width * AppDimensions.numD04,
                   ),
                   Text(
-                    "Congrats, you’ve received £200 from Reuters Media ",
+                    "Congrats, you’ve received ${itemCurrencySymbol}200 from Reuters Media ",
                     style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD035,
@@ -6906,7 +6919,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                 result.files[i].extension == 'png') {
               debugPrint("fileType====> ${result.files[i].extension}");
               debugPrint(
-                  "imagePath======$currencySymbol> ${result.files[i].path!}");
+                  "imagePath======$itemCurrencySymbol> ${result.files[i].path!}");
               Map<String, String> mediaMap = {
                 "imageAndVideo": result.files[i].path!,
               };

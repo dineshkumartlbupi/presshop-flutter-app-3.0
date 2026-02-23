@@ -152,6 +152,31 @@ class PublishContentScreenState extends State<PublishContentScreen>
     });
   }
 
+  String get localCurrencySymbol {
+    final priceStr = sharedPrice.isNotEmpty ? sharedPrice : exclusivePrice;
+    if (priceStr.isEmpty) return currencySymbol;
+    final extractedSymbol =
+        priceStr.replaceAll(RegExp(r'[0-9.\-\s]'), '').trim();
+    if (extractedSymbol.isNotEmpty) {
+      return extractedSymbol[0];
+    }
+    return currencySymbol;
+  }
+
+  String _formatPrice(String price) {
+    if (price.isEmpty) return price;
+    final currentSymbol = localCurrencySymbol;
+    if (price.contains('-')) {
+      final parts = price.split('-');
+      final minStr = parts[0].replaceAll(RegExp(r'[^0-9.]'), '').trim();
+      final maxStr = parts[1].replaceAll(RegExp(r'[^0-9.]'), '').trim();
+      return '$currentSymbol$minStr - $currentSymbol$maxStr';
+    } else {
+      final valStr = price.replaceAll(RegExp(r'[^0-9.]'), '').trim();
+      return '$currentSymbol$valStr';
+    }
+  }
+
   /// selected-category
   void selectedCategoryFunc() {
     if (widget.myContentData != null) {
@@ -271,9 +296,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
       debugPrint('publishData:::::::::${widget.publishData!.mediaList.length}');
     }
 
+    final String country = widget.publishData?.country ?? "";
+
     return BlocProvider(
       create: (_) => sl<PublishBloc>()
-        ..add(LoadPublishDataEvent())
+        ..add(LoadPublishDataEvent(country: country))
         ..add(const FetchCharitiesEvent()),
       child: BlocConsumer<PublishBloc, PublishState>(
         listener: (context, state) {
@@ -320,6 +347,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
           // Fallback to ensure UI has data if listener didn't cover (e.g. initial build after reload)
           if (state.categories.isNotEmpty) categoryList = state.categories;
           if (state.charities.isNotEmpty) allCharityList = state.charities;
+          if (state.prices.isNotEmpty) {
+            sharedPrice = state.prices['shared'] ?? sharedPrice;
+            exclusivePrice = state.prices['exclusive'] ?? exclusivePrice;
+          }
           // Ensure selectedCategory is not null if list is not empty
           if (selectedCategory == null && categoryList.isNotEmpty) {
             selectedCategory = categoryList.first;
@@ -2238,7 +2269,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                       : Colors.white,
                                                 ),
                                                 child: Text(
-                                                  sharedPrice,
+                                                  _formatPrice(sharedPrice),
                                                   style: TextStyle(
                                                       color: selectedSellType ==
                                                               AppStrings
@@ -2377,7 +2408,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                       : Colors.white,
                                                 ),
                                                 child: Text(
-                                                  exclusivePrice,
+                                                  _formatPrice(exclusivePrice),
                                                   style: TextStyle(
                                                       color: selectedSellType ==
                                                               AppStrings
@@ -2446,10 +2477,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                           inputFormatters: [
                             // CurrencyTextInputFormatter(NumberFormat.compactCurrency(
                             //   decimalDigits: 0,
-                            //   symbol: currencySymbol,
+                            //   symbol: localCurrencySymbol,
                             // )),
                             CurrencyTextInputFormatter(NumberFormat.currency(
-                                decimalDigits: 0, symbol: currencySymbol))
+                                decimalDigits: 0, symbol: localCurrencySymbol))
                           ],
                           style: commonTextStyle(
                               size: size,
@@ -2457,7 +2488,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               color: Colors.black,
                               fontWeight: FontWeight.normal),
                           decoration: InputDecoration(
-                            hintText: "${currencySymbol}0",
+                            hintText: "${localCurrencySymbol}0",
                             hintStyle: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD06,
@@ -2750,9 +2781,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       "Please type or record what you saw",
                                       Colors.red);
                                 } else if (priceController.text
+                                        .replaceAll(RegExp(r'[^0-9.]'), '')
                                         .trim()
                                         .isEmpty ||
-                                    priceController.text == '0') {
+                                    priceController.text
+                                            .replaceAll(RegExp(r'[^0-9.]'), '')
+                                            .trim() ==
+                                        '0') {
                                   showSnackBar("Price",
                                       "Please enter your price", Colors.red);
                                 } else {
@@ -3272,7 +3307,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
           .toList());
       debugPrint("priceValuee=====> ${widget.myContentData!.amount}");
       priceController.text = widget.myContentData!.amount.isNotEmpty
-          ? "$currencySymbol${widget.myContentData!.amount}"
+          ? "$localCurrencySymbol${widget.myContentData!.amount}"
           : '';
       if (widget.myContentData!.categoryData != null) {
         var cat = widget.myContentData!.categoryData!;
@@ -3448,11 +3483,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
       "type":
           selectedSellType == AppStrings.sharedText ? "shared" : "exclusive",
       "ask_price": priceController.text.isNotEmpty
-          ? priceController.text
-              .trim()
-              .replaceAll(',', '')
-              .split(currencySymbol)
-              .last
+          ? priceController.text.replaceAll(RegExp(r'[^0-9.]'), '')
           : "",
       "timestamp": changeDateFormat("HH:mm, dd MMM yyyy",
           timestampController.text, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),

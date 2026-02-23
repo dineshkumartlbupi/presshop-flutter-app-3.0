@@ -9,16 +9,33 @@ class EarningProfileDataModel {
     required this.avatarId,
     required this.avatar,
     required this.totalEarning,
+    required this.currency,
+    required this.currencySymbol,
   });
 
   factory EarningProfileDataModel.fromJson(Map<String, dynamic> json) {
-    final data = json['data'] is Map<String, dynamic> ? json['data'] : json;
+    var data = json['data'] is Map<String, dynamic>
+        ? json['data'] as Map<String, dynamic>
+        : json;
+
+    // Check for nested data object if total_earnings is missing at first level
+    if (data['data'] is Map<String, dynamic> &&
+        !data.containsKey('total_earnings') &&
+        !data.containsKey('totalEarnings')) {
+      final innerData = data['data'] as Map<String, dynamic>;
+      if (innerData.containsKey('total_earnings') ||
+          innerData.containsKey('totalEarnings')) {
+        data = innerData;
+      }
+    }
+
     return EarningProfileDataModel(
-      id: data['_id'] ?? data['user_id'] ?? '',
-      avatarId:
-          data['avatar_details'] != null ? data['avatar_details']['_id'] : '',
+      id: data['_id']?.toString() ?? data['user_id']?.toString() ?? '',
+      avatarId: data['avatar_details'] != null
+          ? data['avatar_details']['_id']?.toString() ?? ''
+          : '',
       avatar: data['avatar_details'] != null
-          ? data['avatar_details']['avatar']
+          ? data['avatar_details']['avatar']?.toString() ?? ''
           : '',
       totalEarning: double.tryParse(data['total_earnings']?.toString() ??
                   data['totalEarnings']?.toString() ??
@@ -26,25 +43,41 @@ class EarningProfileDataModel {
                   data['totalEarning']?.toString() ??
                   "")
               ?.toString() ??
-          "0.0",
+          "0",
+      currency: data['currency']?.toString() ?? '',
+      currencySymbol: data['currency_symbol']?.toString() ??
+          data['currencySymbol']?.toString() ??
+          '',
     );
   }
   String id = '';
   String avatarId = '';
   String avatar = '';
   String totalEarning = "";
+  String currency = "";
+  String currencySymbol = "";
 }
 
 class CommissionData {
   factory CommissionData.fromJson(Map<String, dynamic> json) {
+    double parseDouble(String key1, [String? key2, String? key3]) {
+      return double.tryParse(json[key1]?.toString() ??
+              (key2 != null ? json[key2]?.toString() : null) ??
+              (key3 != null ? json[key3]?.toString() : null) ??
+              "") ??
+          0.0;
+    }
+
     return CommissionData(
-      totalEarning: json['totalEarning']?.toDouble() ?? 0.0,
-      commission: json['commission']?.toDouble() ?? 0.0,
+      totalEarning:
+          parseDouble('totalEarning', 'total_earnings', 'total_earning'),
+      commission: parseDouble('commission', 'commission_amount'),
       avatar: (json['avatarInfo'] != null && json['avatarInfo'] is Map)
           ? '${json['avatarInfo']['avatar'] ?? ''}'.trim()
           : '',
-      commissionReceived: json['commissionReceived']?.toDouble() ?? 0.0,
-      commissionPending: json['commissionPending']?.toDouble() ?? 0.0,
+      commissionReceived:
+          parseDouble('commissionReceived', 'commission_received'),
+      commissionPending: parseDouble('commissionPending', 'commission_pending'),
       paidOn: json['paidOn'] != null
           ? dateTimeFormatter(dateTime: json['paidOn'].toString())
           : null,

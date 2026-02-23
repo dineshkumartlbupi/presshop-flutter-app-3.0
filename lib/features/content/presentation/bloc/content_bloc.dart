@@ -224,9 +224,16 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
 
         if (event.page > 1) {
           updatedContent = List.from(currentList);
-          updatedContent.addAll(content);
+          final existingIds = updatedContent.map((e) => e.id).toSet();
+          updatedContent
+              .addAll(content.where((e) => !existingIds.contains(e.id)));
         } else {
-          updatedContent = content;
+          final Set<String> ids = {};
+          for (var e in content) {
+            if (ids.add(e.id)) {
+              updatedContent.add(e);
+            }
+          }
         }
 
         if (isAll) {

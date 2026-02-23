@@ -15,7 +15,7 @@ abstract class PublishRemoteDataSource {
   Future<List<TutorialModel>> getTutorials(
       String category, int offset, int limit);
   Future<void> addViewCount(String tutorialId);
-  Future<Map<String, String>> getShareExclusivePrice();
+  Future<Map<String, String>> getShareExclusivePrice(String? country);
   Future<void> submitContent(
       Map<String, dynamic> params, List<String> filePaths);
 }
@@ -134,13 +134,17 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
   }
 
   @override
-  Future<Map<String, String>> getShareExclusivePrice() async {
+  Future<Map<String, String>> getShareExclusivePrice(String? country) async {
     try {
       final Map<String, dynamic> params = {
         "type": "price",
       };
+      if (country != null && country.isNotEmpty) {
+        params['country'] = country;
+      }
       final response = await apiClient.get(ApiConstantsNew.misc.generalMgmt,
           queryParameters: params, showLoader: false);
+      debugPrint("PRICE API RESPONSE: ${response.data}");
       final data = (response.data is Map)
           ? (response.data['status'] ?? response.data['data'])
           : null;
@@ -151,8 +155,14 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
 
       if (data is Map) {
         return {
-          "shared": data['shared']?.toString() ?? "",
-          "exclusive": data['exclusive']?.toString() ?? "",
+          "shared": data['shared']?.toString() ??
+              data['sharedPrice']?.toString() ??
+              data['shared_price']?.toString() ??
+              "",
+          "exclusive": data['exclusive']?.toString() ??
+              data['exclusivePrice']?.toString() ??
+              data['exclusive_price']?.toString() ??
+              "",
         };
       }
       return {"shared": "", "exclusive": ""};

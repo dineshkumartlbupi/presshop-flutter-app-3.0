@@ -155,24 +155,30 @@ class _MyContentViewState extends State<MyContentView>
 
   void _loadAllContent(bool isRefresh) {
     if (isRefresh) allPage = 1;
+    Map<String, dynamic> params = _buildFilterParams();
+    params['status'] = 'published';
+
     context.read<ContentBloc>().add(FetchMyContentEvent(
           page: allPage,
           limit: 10,
           isRefresh: isRefresh,
           type: 'all',
-          params: _buildFilterParams(),
+          params: params,
         ));
   }
 
   void _loadMyContent(bool isRefresh) {
     if (isRefresh) myPage = 1;
+    Map<String, dynamic> params = _buildFilterParams();
+    params['status'] =
+        'pending,rejected'; // "Under Review" maps to pending/rejected
 
     context.read<ContentBloc>().add(FetchMyContentEvent(
           page: myPage,
           limit: 10,
           isRefresh: isRefresh,
           type: 'my',
-          params: _buildFilterParams(),
+          params: params,
         ));
   }
 
@@ -378,8 +384,21 @@ class _MyContentViewState extends State<MyContentView>
         bool isLoading = false;
         List<ContentItem> currentList = [];
         if (state is MyContentLoaded) {
-          currentList = isAll ? state.allContent : state.myContent;
+          List<ContentItem> fetchedList =
+              isAll ? state.allContent : state.myContent;
           isLoading = isAll ? state.isLoadingAll : state.isLoadingMy;
+
+          if (isAll) {
+            currentList = fetchedList
+                .where((item) => item.status.toLowerCase() == 'published')
+                .toList();
+          } else {
+            currentList = fetchedList
+                .where((item) =>
+                    item.status.toLowerCase() == 'pending' ||
+                    item.status.toLowerCase() == 'rejected')
+                .toList();
+          }
         }
 
         return SmartRefresher(

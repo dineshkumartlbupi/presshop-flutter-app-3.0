@@ -678,147 +678,16 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     SizedBox(
                       height: size.width * AppDimensions.numD05,
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 14),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              children: [
-                                Text(
-                                    taskDetail != null &&
-                                            taskDetail!.task.isNeedPhoto
-                                        ? "${taskDetail!.task.currencySymbol.isNotEmpty ? taskDetail!.task.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.task.photoPrice))}"
-                                        : "-",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD058,
-                                        color: AppColorTheme.colorThemePink,
-                                        fontWeight: FontWeight.w800)),
-                                Text("Offered",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD035,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w500)),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD018,
-                                ),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical:
-                                          size.width * AppDimensions.numD02),
-                                  decoration: BoxDecoration(
-                                      color: AppColorTheme.colorThemePink,
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * AppDimensions.numD02)),
-                                  child: Center(
-                                      child: Text("PHOTO",
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width *
-                                                  AppDimensions.numD035,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w500))),
-                                )
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: size.width * AppDimensions.numD02),
-                          Expanded(
-                            child: Column(
-                              children: [
-                                Text(
-                                    taskDetail != null &&
-                                            taskDetail!.task.isNeedInterview
-                                        ? "${taskDetail!.task.currencySymbol.isNotEmpty ? taskDetail!.task.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.task.interviewPrice))}"
-                                        : "-",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD058,
-                                        color: AppColorTheme.colorThemePink,
-                                        fontWeight: FontWeight.w800)),
-                                Text("Offered",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD035,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w500)),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD018,
-                                ),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical:
-                                          size.width * AppDimensions.numD02),
-                                  decoration: BoxDecoration(
-                                      color: AppColorTheme.colorThemePink,
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * AppDimensions.numD02)),
-                                  child: Center(
-                                      child: Text("INTERVIEW",
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width *
-                                                  AppDimensions.numD035,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w500))),
-                                )
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: size.width * AppDimensions.numD02),
-                          Expanded(
-                            child: Column(
-                              children: [
-                                Text(
-                                    taskDetail != null &&
-                                            taskDetail!.task.isNeedVideo
-                                        ? "${taskDetail!.task.currencySymbol.isNotEmpty ? taskDetail!.task.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.task.videoPrice))}"
-                                        : "-",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD058,
-                                        color: AppColorTheme.colorThemePink,
-                                        fontWeight: FontWeight.w800)),
-                                Text("Offered",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD035,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w500)),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD018,
-                                ),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical:
-                                          size.width * AppDimensions.numD02),
-                                  decoration: BoxDecoration(
-                                      color: AppColorTheme.colorThemePink,
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * AppDimensions.numD02)),
-                                  child: Center(
-                                      child: Text("VIDEO",
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width *
-                                                  AppDimensions.numD035,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w500))),
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                    priceImageWithButton(
+                      size,
+                      taskDetail!.task.hopperTaskAmount,
+                      taskDetail!.task.hopperInfo.isNotEmpty
+                          ? taskDetail!.task.hopperInfo.first.hours
+                          : "0",
+                      localCurrencySymbol:
+                          taskDetail!.task.currencySymbol.isNotEmpty
+                              ? taskDetail!.task.currencySymbol
+                              : currencySymbol,
                     ),
                     SizedBox(
                       height: size.width * AppDimensions.numD025,

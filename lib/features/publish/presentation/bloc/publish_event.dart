@@ -7,7 +7,13 @@ abstract class PublishEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class LoadPublishDataEvent extends PublishEvent {}
+class LoadPublishDataEvent extends PublishEvent {
+  final String? country;
+  const LoadPublishDataEvent({this.country});
+
+  @override
+  List<Object?> get props => [country];
+}
 
 class SelectCategoryEvent extends PublishEvent {
   const SelectCategoryEvent(this.categoryId);

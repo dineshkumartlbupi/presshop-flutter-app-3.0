@@ -38,6 +38,8 @@ class EarningBloc extends Bloc<EarningEvent, EarningState> {
           id: (cachedData['id'] ?? '').toString(),
           avatar: (cachedData['avatar'] ?? '').toString(),
           totalEarning: (cachedData['total_earning'] ?? '').toString(),
+          currency: (cachedData['currency'] ?? '').toString(),
+          currencySymbol: (cachedData['currency_symbol'] ?? '').toString(),
         );
         emit(state.copyWith(
             status: EarningStatus.success, earningData: profile));

@@ -636,9 +636,13 @@ class CameraScreenState extends State<CameraScreen>
             child: SizedBox(
               height: size.height,
               width: size.width,
-              child: AspectRatio(
-                aspectRatio: state.cameraController!.value.aspectRatio,
-                child: CameraPreview(state.cameraController!),
+              child: FittedBox(
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: size.width,
+                  child: CameraPreview(state.cameraController!),
+                ),
               ),
             ),
           ),

@@ -347,8 +347,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                         earningData != null &&
                                                 earningData
                                                     .totalEarning.isNotEmpty
-                                            ? '$currencySymbol${formatDouble(double.parse(earningData.totalEarning))}'
-                                            : '£0',
+                                            ? '${earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}${formatDouble(double.parse(earningData.totalEarning))}'
+                                            : '${earningData != null && earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}0',
                                         style: commonTextStyle(
                                             size: size,
                                             fontSize: size.width *
@@ -374,8 +374,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                       ),
                                       Text(
                                         state.monthlyEarnings.isNotEmpty
-                                            ? '$currencySymbol${formatDouble(double.parse(state.monthlyEarnings))}'
-                                            : '£0',
+                                            ? '${earningData != null && earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}${formatDouble(double.parse(state.monthlyEarnings))}'
+                                            : '${earningData != null && earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}0',
                                         style: commonTextStyle(
                                             size: size,
                                             fontSize: size.width *

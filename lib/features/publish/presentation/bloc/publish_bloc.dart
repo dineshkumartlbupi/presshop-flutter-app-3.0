@@ -35,8 +35,9 @@ class PublishBloc extends Bloc<PublishEvent, PublishState> {
     // Fetch categories
     final failureOrCategories = await getContentCategories(NoParams());
 
-    // Fetch prices
-    final failureOrPrices = await getShareExclusivePrice(NoParams());
+    // Fetch prices with country
+    final failureOrPrices = await getShareExclusivePrice(
+        GetShareExclusivePriceParams(country: event.country));
 
     // Combine results
     // Simpler sequential handling for now

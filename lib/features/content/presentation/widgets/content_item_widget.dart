@@ -186,7 +186,7 @@ class ContentItemWidget extends StatelessWidget {
         vertical: size.width * AppDimensions.numD01,
       ),
       decoration: BoxDecoration(
-        color: item.paidStatus
+        color: item.paidStatus == false
             ? AppColorTheme.colorThemePink
             : AppColorTheme.colorLightGrey,
         borderRadius: BorderRadius.circular(size.width * AppDimensions.numD015),
@@ -208,18 +208,18 @@ class ContentItemWidget extends StatelessWidget {
               style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD022,
-                color: item.paidStatus ? Colors.white : Colors.black,
+                color: item.paidStatus == false ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w400,
               ),
             ),
           ),
           Text(
-            "${item.currencySymbol.isNotEmpty ? item.currencySymbol : getCurrencySymbol(item.currency)}${formatDouble(double.tryParse(item.price ?? '0') ?? 0)}",
+            "${item.currencySymbol.isNotEmpty ? item.currencySymbol : getCurrencySymbol(item.currency)}${formatDouble(double.tryParse(item.paidStatus == false ? (item.price ?? '0') : item.totalSold) ?? 0.0)}",
             textAlign: TextAlign.center,
             style: commonTextStyle(
               size: size,
               fontSize: size.width * AppDimensions.numD022,
-              color: item.paidStatus ? Colors.white : Colors.black,
+              color: item.paidStatus == false ? Colors.white : Colors.black,
               fontWeight: FontWeight.w600,
             ),
           ),

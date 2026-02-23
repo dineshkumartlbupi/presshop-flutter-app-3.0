@@ -9,7 +9,6 @@ import '../../domain/repositories/publish_repository.dart';
 import '../datasources/publish_remote_data_source.dart';
 
 class PublishRepositoryImpl implements PublishRepository {
-
   PublishRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
@@ -107,10 +106,11 @@ class PublishRepositoryImpl implements PublishRepository {
   }
 
   @override
-  Future<Either<Failure, Map<String, String>>> getShareExclusivePrice() async {
+  Future<Either<Failure, Map<String, String>>> getShareExclusivePrice(
+      String? country) async {
     if (await networkInfo.isConnected) {
       try {
-        final prices = await remoteDataSource.getShareExclusivePrice();
+        final prices = await remoteDataSource.getShareExclusivePrice(country);
         return Right(prices);
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));

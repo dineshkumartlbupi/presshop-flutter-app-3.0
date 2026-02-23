@@ -7,7 +7,8 @@ abstract class ContentEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class FetchMyContentEvent extends ContentEvent { // 'all' or 'my'
+class FetchMyContentEvent extends ContentEvent {
+  // 'all' or 'my'
 
   const FetchMyContentEvent({
     this.page = 1,
@@ -27,7 +28,6 @@ class FetchMyContentEvent extends ContentEvent { // 'all' or 'my'
 }
 
 class PublishContentEvent extends ContentEvent {
-
   const PublishContentEvent(this.data);
   final Map<String, dynamic> data;
 
@@ -36,7 +36,6 @@ class PublishContentEvent extends ContentEvent {
 }
 
 class SaveDraftEvent extends ContentEvent {
-
   const SaveDraftEvent(this.data);
   final Map<String, dynamic> data;
 
@@ -45,7 +44,6 @@ class SaveDraftEvent extends ContentEvent {
 }
 
 class UploadMediaEvent extends ContentEvent {
-
   const UploadMediaEvent(this.filePaths);
   final List<String> filePaths;
 
@@ -54,7 +52,6 @@ class UploadMediaEvent extends ContentEvent {
 }
 
 class DeleteContentEvent extends ContentEvent {
-
   const DeleteContentEvent(this.contentId);
   final String contentId;
 
@@ -63,7 +60,6 @@ class DeleteContentEvent extends ContentEvent {
 }
 
 class SearchHashtagsEvent extends ContentEvent {
-
   const SearchHashtagsEvent(this.query);
   final String query;
 
@@ -74,7 +70,6 @@ class SearchHashtagsEvent extends ContentEvent {
 class FetchTrendingHashtagsEvent extends ContentEvent {}
 
 class FetchContentDetailEvent extends ContentEvent {
-
   const FetchContentDetailEvent(this.contentId);
   final String contentId;
 
@@ -83,7 +78,6 @@ class FetchContentDetailEvent extends ContentEvent {
 }
 
 class FetchMediaHouseOffersEvent extends ContentEvent {
-
   const FetchMediaHouseOffersEvent(this.contentId);
   final String contentId;
 
@@ -92,7 +86,6 @@ class FetchMediaHouseOffersEvent extends ContentEvent {
 }
 
 class FetchContentTransactionsEvent extends ContentEvent {
-
   const FetchContentTransactionsEvent(
       {required this.contentId, required this.limit, required this.offset});
   final String contentId;

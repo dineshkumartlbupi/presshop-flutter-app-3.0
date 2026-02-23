@@ -71,9 +71,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
   bool isMediaOffer = false;
   bool isLoading = true; // Start loading true
   bool shouldRestartAnimation = false;
-  bool showTimer = false;
-  String _timeLeft = "";
-  Timer? _timer;
   bool isOwner = false;
   late ContentBloc _contentBloc;
 
@@ -103,7 +100,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
     }
   }
 
-  void _checkOwnershipAndStartTimer() async {
+  void _checkOwnership() async {
     if (contentItem == null) return;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -118,51 +115,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
       isOwner = currentUserId == widget.hopperID;
     }
     print("isOwner: $isOwner");
-
-    if (isOwner) {
-      _startTimer();
-    }
-  }
-
-  void _startTimer() {
-    if (contentItem == null) return;
-    DateTime createdTime = DateTime.parse(contentItem!.createdAt);
-    DateTime endTime = createdTime.add(const Duration(hours: 24));
-
-    if (DateTime.now().isAfter(endTime)) {
-      if (mounted) {
-        setState(() {
-          showTimer = false;
-          _timeLeft = "00:00:00";
-        });
-      }
-      return;
-    }
-
-    showTimer = true;
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (!mounted) return;
-      Duration difference = endTime.difference(DateTime.now());
-      if (difference.isNegative) {
-        _timer?.cancel();
-        setState(() {
-          showTimer = false;
-          _timeLeft = "00:00:00";
-        });
-      } else {
-        setState(() {
-          _timeLeft = _printDuration(difference);
-        });
-      }
-    });
-  }
-
-  String _printDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
 
   @override
@@ -174,7 +126,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
       flickManager?.dispose();
       flickManager = null;
     }
-    _timer?.cancel();
     super.dispose();
   }
 
@@ -206,7 +157,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
               contentItem = state.content;
               isLoading = false;
               initialController();
-              _checkOwnershipAndStartTimer();
+              _checkOwnership();
             });
           } else if (state is MediaHouseOffersLoaded) {
             debugPrint('✅ MediaHouseOffersLoaded');
@@ -601,28 +552,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
               )
             : Container(),
 
-        if (showTimer)
-          Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: size.width * AppDimensions.numD02),
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: size.width * AppDimensions.numD04,
-                  vertical: size.width * AppDimensions.numD02),
-              decoration: BoxDecoration(
-                  color: Colors.redAccent,
-                  borderRadius:
-                      BorderRadius.circular(size.width * AppDimensions.numD02)),
-              child: Text(
-                "Time Left: $_timeLeft",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: size.width * AppDimensions.numD04),
-              ),
-            ),
-          ),
-
         (contentItem!.mediaList.isNotEmpty)
             ? SizedBox(
                 height: size.width * AppDimensions.numD02,
@@ -866,42 +795,27 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   padding: EdgeInsets.symmetric(
                       vertical: size.width * AppDimensions.numD012),
                   decoration: BoxDecoration(
-                      color: contentItem!.paidStatus
+                      color: contentItem!.paidStatus == false
                           ? AppColorTheme.colorThemePink
-                          : /*myContentData!.paidStatus == AppStrings.paidText &&
-                                  !myContentData!.isPaidStatusToHopper
-                              ? AppColorTheme.colorThemePink
-                              :*/
-                          AppColorTheme.colorLightGrey,
+                          : AppColorTheme.colorLightGrey,
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD03)),
                   child: Column(
                     children: [
                       Text(
-                        contentItem!.paidStatus == false
-                            ? 'Published Price'
-                            : contentItem!.paidStatus == true &&
-                                    (contentItem!.isPaidStatusToHopper)
-                                ? AppStrings.receivedText
-                                : AppStrings.soldText,
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * AppDimensions.numD035,
-                            color: contentItem!.paidStatus
-                                ? Colors.white
-                                : Colors.black,
-                            fontWeight: FontWeight.w400),
-                        /*myContentData!.paidStatus == AppStrings.unPaidText
-                                ? size.width * AppDimensions.numD035
-                                : myContentData!.paidStatus == AppStrings.paidText &&
-                                        myContentData!.isPaidStatusToHopper
-                                    ? size.width * AppDimensions.numD035
-                                    : size.width * AppDimensions.numD03,*/
-                        /*myContentData!.paidStatus == AppStrings.paidText &&
-                                        myContentData!.isPaidStatusToHopper
-                                    ?
-                                    : Colors.white*/
-                      ),
+                          contentItem!.paidStatus == false
+                              ? 'Published Price'
+                              : contentItem!.paidStatus == true &&
+                                      (contentItem!.isPaidStatusToHopper)
+                                  ? AppStrings.receivedText
+                                  : AppStrings.soldText,
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * AppDimensions.numD035,
+                              color: contentItem!.paidStatus == false
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontWeight: FontWeight.w400)),
                       FittedBox(
                         child: Container(
                           margin: EdgeInsets.only(
@@ -909,18 +823,14 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             right: size.width * AppDimensions.numD02,
                           ),
                           child: Text(
-                            "${contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency)}${formatDouble(double.parse(contentItem!.totalSold))}",
+                            "${contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency)}${formatDouble(double.tryParse(contentItem!.paidStatus == false ? (contentItem!.price ?? '0') : contentItem!.totalSold) ?? 0.0)}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD05,
-                                color: contentItem!.paidStatus
+                                color: contentItem!.paidStatus == false
                                     ? Colors.white
                                     : Colors.black,
                                 fontWeight: FontWeight.bold),
-                            /*myContentData!.paidStatus == AppStrings.paidText &&
-                                            myContentData!.isPaidStatusToHopper
-                                        ?
-                            : Colors.white*/
                           ),
                         ),
                       ),
@@ -955,7 +865,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             right: size.width * AppDimensions.numD02,
                           ),
                           child: Text(
-                            "${(contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency))}${contentItem!.totalSold}",
+                            "${(contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency))}${formatDouble(double.tryParse(contentItem!.totalSold) ?? 0.0)}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD05,

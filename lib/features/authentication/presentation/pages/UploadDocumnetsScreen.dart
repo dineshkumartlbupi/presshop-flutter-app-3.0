@@ -373,9 +373,75 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
     );
   }
 
+  void _showTopOverlayAlert(BuildContext context, String message) {
+    final overlay = Overlay.of(context);
+    late OverlayEntry entry;
+    entry = OverlayEntry(
+      builder: (ctx) => Positioned(
+        top: MediaQuery.of(ctx).padding.top,
+        left: 0,
+        right: 0,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(
+                horizontal: size.width * AppDimensions.numD05,
+                vertical: size.width * AppDimensions.numD04),
+            color: Colors.red,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Error",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: size.width * AppDimensions.numD04)),
+                SizedBox(height: 4),
+                Text(message,
+                    style: const TextStyle(color: Colors.white, fontSize: 14)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    overlay.insert(entry);
+    Future.delayed(const Duration(seconds: 3), () {
+      entry.remove();
+    });
+  }
+
   void _showVerificationSheet(
       BuildContext contextValue, List<dynamic> instructions) {
-    List<File> selectedFiles = [];
+    // Track uploaded files per instruction index
+    Map<int, List<File>> uploadedFilesPerInstruction = {};
+    int selectedInstructionIndex = -1;
+
+    // Helper to get all files across all instructions
+    List<File> getAllFiles() {
+      final allFiles = <File>[];
+      uploadedFilesPerInstruction.forEach((_, files) {
+        allFiles.addAll(files);
+      });
+      return allFiles;
+    }
+
+    // Helper to pick files for the currently selected instruction (only 1 file per option)
+    Future<void> pickFilesForInstruction(
+        int instructionIndex, StateSetter setModalState) async {
+      bool? isGallery = await _showSelectionOption(contextValue);
+      if (isGallery != null) {
+        List<File>? files = await _pickFilesNew(contextValue, isGallery);
+        if (files != null && files.isNotEmpty) {
+          setModalState(() {
+            // Only keep the first picked file — one upload per option
+            uploadedFilesPerInstruction[instructionIndex] = [files.first];
+          });
+        }
+      }
+    }
 
     showModalBottomSheet(
       context: contextValue,
@@ -383,6 +449,9 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
       backgroundColor: Colors.transparent,
       builder: (bc) {
         return StatefulBuilder(builder: (context, setModalState) {
+          // All uploaded files across all options for display
+          List<File> allUploadedFiles = getAllFiles();
+
           return Container(
             height: size.height * 0.85,
             decoration: BoxDecoration(
@@ -433,32 +502,59 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                   child: ListView.separated(
                     itemCount: instructions.length,
                     itemBuilder: (context, index) {
-                      return Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(
-                                  top: size.width * AppDimensions.numD005),
-                              child: Icon(
-                                Icons.circle,
-                                color: AppColorTheme.colorThemePink,
-                                size: size.width * AppDimensions.numD035,
+                      // Checkmark only if files have been uploaded for this option
+                      bool hasUploadedFiles =
+                          (uploadedFilesPerInstruction[index] ?? []).isNotEmpty;
+                      return InkWell(
+                        onTap: () async {
+                          // Check if already uploaded for this option
+                          if ((uploadedFilesPerInstruction[index] ?? [])
+                              .isNotEmpty) {
+                            _showTopOverlayAlert(contextValue,
+                                "You have already uploaded ${instructions[index].name}.");
+                            return;
+                          }
+                          setModalState(() {
+                            selectedInstructionIndex = index;
+                            selectedDocType = instructions[index].name;
+                          });
+                          // Immediately open file picker for this option
+                          await pickFilesForInstruction(index, setModalState);
+                        },
+                        child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(
+                                    top: size.width * AppDimensions.numD005),
+                                child: hasUploadedFiles
+                                    ? Icon(
+                                        Icons.check_box,
+                                        color: AppColorTheme.colorThemePink,
+                                        size: size.width * AppDimensions.numD05,
+                                      )
+                                    : Icon(
+                                        Icons.circle,
+                                        color: AppColorTheme.colorThemePink,
+                                        size:
+                                            size.width * AppDimensions.numD035,
+                                      ),
                               ),
-                            ),
-                            SizedBox(
-                              width: size.width * AppDimensions.numD04,
-                            ),
-                            Expanded(
-                              child: Text(instructions[index].name,
-                                  style: TextStyle(
-                                      fontSize:
-                                          size.width * AppDimensions.numD035,
-                                      color: Colors.black,
-                                      fontFamily: "AirbnbCereal",
-                                      fontWeight: FontWeight.w400)),
-                            ),
-                          ]);
+                              SizedBox(
+                                width: size.width * AppDimensions.numD04,
+                              ),
+                              Expanded(
+                                child: Text(instructions[index].name,
+                                    style: TextStyle(
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
+                                        color: Colors.black,
+                                        fontFamily: "AirbnbCereal",
+                                        fontWeight: FontWeight.w400)),
+                              ),
+                            ]),
+                      );
                     },
                     separatorBuilder: (context, index) {
                       return SizedBox(
@@ -475,21 +571,27 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                     final docType = await _showDocumentTypeSheet(
                         contextValue, instructions);
                     if (docType != null) {
+                      final instrIndex =
+                          instructions.indexWhere((e) => e.name == docType);
+
+                      // Check if already uploaded for this option
+                      if (instrIndex >= 0 &&
+                          (uploadedFilesPerInstruction[instrIndex] ?? [])
+                              .isNotEmpty) {
+                        _showTopOverlayAlert(contextValue,
+                            "You have already uploaded $docType.");
+                        return;
+                      }
+
                       setModalState(() {
                         selectedDocType = docType;
+                        selectedInstructionIndex = instrIndex;
                       });
 
-                      // 2. Show option to pick between Gallery and Files
-                      bool? isGallery =
-                          await _showSelectionOption(contextValue);
-                      if (isGallery != null) {
-                        List<File>? files =
-                            await _pickFilesNew(contextValue, isGallery);
-                        if (files != null && files.isNotEmpty) {
-                          setModalState(() {
-                            selectedFiles.addAll(files);
-                          });
-                        }
+                      // 2. Pick files for the selected instruction
+                      if (instrIndex >= 0) {
+                        await pickFilesForInstruction(
+                            instrIndex, setModalState);
                       }
                     }
                   },
@@ -522,70 +624,73 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                   ),
                 ),
 
-                // Only show the selected files if there are any
-                if (selectedFiles.isNotEmpty) ...[
+                // Show all uploaded files across all options
+                if (allUploadedFiles.isNotEmpty) ...[
                   SizedBox(height: size.width * AppDimensions.numD06),
-                  Container(
-                    width: size.width,
-                    padding: EdgeInsets.all(size.width * AppDimensions.numD03),
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: AppColorTheme.colorThemePink,
-                            style: BorderStyle.solid),
-                        borderRadius: BorderRadius.circular(
-                            size.width * AppDimensions.numD03),
-                        color: AppColorTheme.colorThemePink
-                            .withValues(alpha: 0.05)),
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: selectedFiles.map((file) {
-                        bool isImage = file.path.endsWith('.jpg') ||
-                            file.path.endsWith('.png') ||
-                            file.path.endsWith('.jpeg');
-                        return Stack(
-                          children: [
-                            Container(
-                              width: size.width * 0.2,
-                              height: size.width * 0.2,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: Colors.white,
-                                  border:
-                                      Border.all(color: Colors.grey.shade300)),
-                              child: ClipRRect(
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: allUploadedFiles.map((file) {
+                      bool isImage = file.path.endsWith('.jpg') ||
+                          file.path.endsWith('.png') ||
+                          file.path.endsWith('.jpeg');
+                      return Stack(
+                        children: [
+                          Container(
+                            width: size.width * 0.2,
+                            height: size.width * 0.2,
+                            decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
-                                child: isImage
-                                    ? Image.file(file, fit: BoxFit.cover)
-                                    : Icon(Icons.insert_drive_file,
-                                        color: AppColorTheme.colorThemePink,
-                                        size: size.width * 0.08),
+                                color: Colors.white,
+                                border: Border.all(color: Colors.black)),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: isImage
+                                  ? Image.file(file, fit: BoxFit.cover)
+                                  : Icon(Icons.insert_drive_file,
+                                      color: AppColorTheme.colorThemePink,
+                                      size: size.width * 0.08),
+                            ),
+                          ),
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: InkWell(
+                              onTap: () {
+                                setModalState(() {
+                                  // Find which instruction this file belongs to and remove it
+                                  for (var key in uploadedFilesPerInstruction
+                                      .keys
+                                      .toList()) {
+                                    if (uploadedFilesPerInstruction[key]
+                                            ?.contains(file) ==
+                                        true) {
+                                      uploadedFilesPerInstruction[key]
+                                          ?.remove(file);
+                                      if ((uploadedFilesPerInstruction[key] ??
+                                              [])
+                                          .isEmpty) {
+                                        uploadedFilesPerInstruction.remove(key);
+                                      }
+                                      break;
+                                    }
+                                  }
+                                });
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(2),
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.cancel,
+                                    color: Colors.red, size: 20),
                               ),
                             ),
-                            Positioned(
-                              top: 0,
-                              right: 0,
-                              child: InkWell(
-                                onTap: () {
-                                  setModalState(() {
-                                    selectedFiles.remove(file);
-                                  });
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(2),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(Icons.cancel,
-                                      color: Colors.red, size: 20),
-                                ),
-                              ),
-                            )
-                          ],
-                        );
-                      }).toList(),
-                    ),
+                          )
+                        ],
+                      );
+                    }).toList(),
                   ),
                 ],
 
@@ -605,17 +710,19 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                           fontWeight: FontWeight.w700),
                       commonButtonStyle(size, AppColorTheme.colorThemePink),
                       () {
-                    if (selectedDocType == null) {
+                    final allFiles = getAllFiles();
+                    if (allFiles.isEmpty) {
                       ScaffoldMessenger.of(contextValue).showSnackBar(
                           const SnackBar(
-                              content: Text("Please select a document type")));
+                              content:
+                                  Text("Please upload at least one document")));
                       return;
                     }
 
-                    // Dispatch upload event with the selected files
+                    // Dispatch upload event with all files
                     contextValue
                         .read<UploadDocumentsBloc>()
-                        .add(UploadFilesEvent(selectedFiles));
+                        .add(UploadFilesEvent(allFiles));
                   }),
                 ),
                 SizedBox(height: size.width * AppDimensions.numD04),
@@ -839,16 +946,17 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
     try {
       final List<File> pickedFiles = [];
       if (isGallery) {
-        // My Gallery
+        // My Gallery - only 1 image allowed
         final ImagePicker picker = ImagePicker();
-        final List<XFile> images = await picker.pickMultiImage();
-        if (images.isNotEmpty) {
-          pickedFiles.addAll(images.map((e) => File(e.path)).toList());
+        final XFile? image =
+            await picker.pickImage(source: ImageSource.gallery);
+        if (image != null) {
+          pickedFiles.add(File(image.path));
         }
       } else {
         // My Files
         FilePickerResult? result = await FilePicker.platform.pickFiles(
-          allowMultiple: true,
+          allowMultiple: false,
           type: FileType.custom,
           allowedExtensions: ['jpg', 'pdf', 'doc', 'png', 'jpeg'],
         );

@@ -3,12 +3,19 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../repositories/publish_repository.dart';
 
-class GetShareExclusivePrice implements UseCase<Map<String, String>, NoParams> {
+class GetShareExclusivePriceParams {
+  final String? country;
+  GetShareExclusivePriceParams({this.country});
+}
+
+class GetShareExclusivePrice
+    implements UseCase<Map<String, String>, GetShareExclusivePriceParams> {
   GetShareExclusivePrice(this.repository);
   final PublishRepository repository;
 
   @override
-  Future<Either<Failure, Map<String, String>>> call(NoParams params) async {
-    return await repository.getShareExclusivePrice();
+  Future<Either<Failure, Map<String, String>>> call(
+      GetShareExclusivePriceParams params) async {
+    return await repository.getShareExclusivePrice(params.country);
   }
 }

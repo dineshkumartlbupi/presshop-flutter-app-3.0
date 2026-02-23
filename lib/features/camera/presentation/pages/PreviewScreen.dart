@@ -364,9 +364,9 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                 (isIpad
                                     ? AppDimensions.numD1
                                     : AppDimensions.numD02),
-                            child: IconButton(
+                            child: InkWell(
                               /// @aditya 17 sep
-                              onPressed: () {
+                              onTap: () {
                                 if (mediaList.isNotEmpty &&
                                     index < mediaList.length) {
                                   if (mediaList.length == 1) {
@@ -384,14 +384,16 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
 
                                 setState(() {});
                               },
-                              icon: Container(
+                              child: Container(
+                                padding: EdgeInsets.all(
+                                    size.width * AppDimensions.numD015),
                                 decoration: const BoxDecoration(
                                     color: Colors.white,
                                     shape: BoxShape.circle),
                                 child: Icon(
                                   Icons.close,
                                   color: Colors.black,
-                                  size: size.width * AppDimensions.numD06,
+                                  size: size.width * AppDimensions.numD05,
                                 ),
                               ),
                             ),
