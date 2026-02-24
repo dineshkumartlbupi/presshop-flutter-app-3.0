@@ -16,9 +16,13 @@ import 'package:presshop/core/router/router_constants.dart';
 class MyContentPage extends StatelessWidget {
   final bool hideLeading;
   final bool fromMenu;
+  final Key? contentKey;
+  final bool showAppBar;
 
   const MyContentPage({
     super.key,
+    this.contentKey,
+    this.showAppBar = false,
     this.hideLeading = false,
     this.fromMenu = false,
   });
@@ -26,6 +30,8 @@ class MyContentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MyContentView(
+      key: contentKey,
+      showAppBar: showAppBar,
       hideLeading: hideLeading,
       fromMenu: fromMenu,
     );
@@ -35,18 +41,20 @@ class MyContentPage extends StatelessWidget {
 class MyContentView extends StatefulWidget {
   final bool hideLeading;
   final bool fromMenu;
+  final bool showAppBar;
 
   const MyContentView({
     super.key,
+    this.showAppBar = false,
     this.hideLeading = false,
     this.fromMenu = false,
   });
 
   @override
-  State<MyContentView> createState() => _MyContentViewState();
+  State<MyContentView> createState() => MyContentViewState();
 }
 
-class _MyContentViewState extends State<MyContentView>
+class MyContentViewState extends State<MyContentView>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
@@ -225,28 +233,30 @@ class _MyContentViewState extends State<MyContentView>
     var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: (true
-          ? NewHomeAppBar(
-              size: size,
-              hideLeading: widget.hideLeading,
-              onFilterTap: () {
-                _showFilterSheet();
-              },
-            )
-          : CommonBrandedAppBar(
-              title: "My Content",
-              size: size,
-              hideLeading: widget.hideLeading,
-              actionWidgets: [
-                InkWell(
-                  onTap: () {
-                    _showFilterSheet();
+      appBar: widget.showAppBar
+          ? (true
+              ? NewHomeAppBar(
+                  size: size,
+                  hideLeading: widget.hideLeading,
+                  onFilterTap: () {
+                    showFilterSheet();
                   },
-                  child: commonFilterIcon(size),
-                ),
-                SizedBox(width: size.width * AppDimensions.numD02),
-              ],
-            )) as PreferredSizeWidget,
+                )
+              : CommonBrandedAppBar(
+                  title: "My Content",
+                  size: size,
+                  hideLeading: widget.hideLeading,
+                  actionWidgets: [
+                    InkWell(
+                      onTap: () {
+                        showFilterSheet();
+                      },
+                      child: commonFilterIcon(size),
+                    ),
+                    SizedBox(width: size.width * AppDimensions.numD02),
+                  ],
+                )) as PreferredSizeWidget
+          : null,
       // appBar: CommonAppBar(
       //   elevation: 0,
       //   hideLeading: widget.hideLeading,
@@ -267,7 +277,7 @@ class _MyContentViewState extends State<MyContentView>
       //   actionWidget: [
       //     InkWell(
       // onTap: () {
-      //   _showFilterSheet();
+      //   showFilterSheet();
       // },
       //       child: commonFilterIcon(size),
       //     ),
@@ -454,7 +464,7 @@ class _MyContentViewState extends State<MyContentView>
     );
   }
 
-  void _showFilterSheet() {
+  void showFilterSheet() {
     var size = MediaQuery.of(context).size;
     showModalBottomSheet(
       context: context,

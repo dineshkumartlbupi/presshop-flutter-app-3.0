@@ -37,8 +37,10 @@ import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 
 class MapPage extends StatefulWidget {
-  const MapPage({Key? key, this.hideLeading = false}) : super(key: key);
+  const MapPage({Key? key, this.hideLeading = false, this.showAppBar = false})
+      : super(key: key);
   final bool hideLeading;
+  final bool showAppBar;
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -63,14 +65,18 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _mapBloc,
-      child: _MapPageContent(hideLeading: widget.hideLeading),
+      child: _MapPageContent(
+          hideLeading: widget.hideLeading, showAppBar: widget.showAppBar),
     );
   }
 }
 
 class _MapPageContent extends StatefulWidget {
-  const _MapPageContent({Key? key, this.hideLeading = false}) : super(key: key);
+  const _MapPageContent(
+      {Key? key, this.hideLeading = false, this.showAppBar = false})
+      : super(key: key);
   final bool hideLeading;
+  final bool showAppBar;
 
   @override
   State<_MapPageContent> createState() => _MapPageContentState();
@@ -620,11 +626,13 @@ class _MapPageContentState extends State<_MapPageContent>
         }
 
         return Scaffold(
-          appBar: NewHomeAppBar(
-            size: size,
-            hideLeading: widget.hideLeading,
-            showFilter: false,
-          ),
+          appBar: widget.showAppBar
+              ? NewHomeAppBar(
+                  size: size,
+                  hideLeading: widget.hideLeading,
+                  showFilter: false,
+                )
+              : null,
           body: Stack(
             children: [
               GoogleMap(
