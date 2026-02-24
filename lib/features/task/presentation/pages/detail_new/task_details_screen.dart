@@ -723,140 +723,154 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                       itemBuilder: (context, index) {
                         var item = taskDetail!.task.content[index];
                         debugPrint("item.type::::${item.mediaType}");
-                        return Stack(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                if (item.mediaType == "video") {
-                                  context.pushNamed(
-                                    AppRoutes.fullVideoViewName,
-                                    extra: {
-                                      'mediaFile': item.media,
-                                      'type': MediaTypeEnum.video,
-                                    },
-                                  );
-                                } else if (item.mediaType == "audio") {
-                                  context.pushNamed(
-                                    AppRoutes.fullVideoViewName,
-                                    extra: {
-                                      'mediaFile': getMediaImageUrl(item.media,
-                                          isTask: true),
-                                      'type': MediaTypeEnum.audio,
-                                    },
-                                  );
-                                } else {
-                                  context.pushNamed(
-                                    AppRoutes.fullVideoViewName,
-                                    extra: {
-                                      'mediaFile': getMediaImageUrl(item.media,
-                                          isTask: true),
-                                      'type': MediaTypeEnum.image,
-                                    },
-                                  );
-                                }
-                              },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                    size.width * AppDimensions.numD028),
-                                child: item.mediaType == "audio"
+                        return Container(
+                          decoration: index == 1
+                              ? BoxDecoration(
+                                  border: Border.all(
+                                      color: AppColorTheme.colorThemePink,
+                                      width: 2),
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * AppDimensions.numD02))
+                              : null,
+                          child: Stack(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  if (item.mediaType == "video") {
+                                    context.pushNamed(
+                                      AppRoutes.fullVideoViewName,
+                                      extra: {
+                                        'mediaFile': item.media,
+                                        'type': MediaTypeEnum.video,
+                                      },
+                                    );
+                                  } else if (item.mediaType == "audio") {
+                                    context.pushNamed(
+                                      AppRoutes.fullVideoViewName,
+                                      extra: {
+                                        'mediaFile': getMediaImageUrl(
+                                            item.media,
+                                            isTask: true),
+                                        'type': MediaTypeEnum.audio,
+                                      },
+                                    );
+                                  } else {
+                                    context.pushNamed(
+                                      AppRoutes.fullVideoViewName,
+                                      extra: {
+                                        'mediaFile': getMediaImageUrl(
+                                            item.media,
+                                            isTask: true),
+                                        'type': MediaTypeEnum.image,
+                                      },
+                                    );
+                                  }
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * AppDimensions.numD028),
+                                  child: item.mediaType == "audio"
+                                      ? Container(
+                                          height: double.infinity,
+                                          width: size.width / 2,
+                                          decoration: BoxDecoration(
+                                              color:
+                                                  AppColorTheme.colorThemePink,
+                                              border: Border.all(
+                                                  color: AppColorTheme
+                                                      .colorGreyNew),
+                                              borderRadius:
+                                                  BorderRadius.circular(size
+                                                          .width *
+                                                      AppDimensions.numD028)),
+                                          child: Icon(
+                                            Icons.play_arrow_rounded,
+                                            color: Colors.white,
+                                            size: size.width * 0.17,
+                                          ))
+                                      : item.mediaType == "video"
+                                          ? Image.network(
+                                              getMediaImageUrl(item.media,
+                                                  isVideo: true, isTask: true),
+                                              width: size.width / 2,
+                                              height: double.infinity,
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return Image.asset(
+                                                  "${commonImagePath}rabbitLogo.png",
+                                                  width: size.width / 2,
+                                                  height: double.infinity,
+                                                  fit: BoxFit.cover,
+                                                );
+                                              },
+                                            )
+                                          : Image.network(
+                                              getMediaImageUrl(item.media,
+                                                  isTask: true),
+                                              width: size.width / 2,
+                                              height: double.infinity,
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return Image.asset(
+                                                  "${commonImagePath}rabbitLogo.png",
+                                                  width: size.width / 2,
+                                                  height: double.infinity,
+                                                  fit: BoxFit.cover,
+                                                );
+                                              },
+                                            ),
+                                ),
+                              ),
+                              Positioned(
+                                right: size.width * AppDimensions.numD01,
+                                top: size.width * AppDimensions.numD01,
+                                child: item.mediaType != "audio"
                                     ? Container(
-                                        height: double.infinity,
-                                        width: size.width / 2,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: size.width *
+                                                AppDimensions.numD006,
+                                            vertical: size.width *
+                                                AppDimensions.numD002),
                                         decoration: BoxDecoration(
-                                            color: AppColorTheme.colorThemePink,
-                                            border: Border.all(
-                                                color:
-                                                    AppColorTheme.colorGreyNew),
+                                            color: AppColorTheme.colorLightGreen
+                                                .withOpacity(0.8),
                                             borderRadius: BorderRadius.circular(
                                                 size.width *
-                                                    AppDimensions.numD028)),
+                                                    AppDimensions.numD01)),
                                         child: Icon(
-                                          Icons.play_arrow_rounded,
+                                          item.mediaType == "video"
+                                              ? Icons.videocam_outlined
+                                              : Icons.camera_alt_outlined,
+                                          size: size.width *
+                                              AppDimensions.numD035,
                                           color: Colors.white,
-                                          size: size.width * 0.17,
                                         ))
-                                    : item.mediaType == "video"
-                                        ? Image.network(
-                                            getMediaImageUrl(item.media,
-                                                isVideo: true, isTask: true),
-                                            width: size.width / 2,
-                                            height: double.infinity,
-                                            fit: BoxFit.cover,
-                                            errorBuilder:
-                                                (context, error, stackTrace) {
-                                              return Image.asset(
-                                                "${commonImagePath}rabbitLogo.png",
-                                                width: size.width / 2,
-                                                height: double.infinity,
-                                                fit: BoxFit.cover,
-                                              );
-                                            },
-                                          )
-                                        : Image.network(
-                                            getMediaImageUrl(item.media,
-                                                isTask: true),
-                                            width: size.width / 2,
-                                            height: double.infinity,
-                                            fit: BoxFit.cover,
-                                            errorBuilder:
-                                                (context, error, stackTrace) {
-                                              return Image.asset(
-                                                "${commonImagePath}rabbitLogo.png",
-                                                width: size.width / 2,
-                                                height: double.infinity,
-                                                fit: BoxFit.cover,
-                                              );
-                                            },
-                                          ),
-                              ),
-                            ),
-                            Positioned(
-                              right: size.width * AppDimensions.numD01,
-                              top: size.width * AppDimensions.numD01,
-                              child: item.mediaType != "audio"
-                                  ? Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: size.width *
-                                              AppDimensions.numD006,
-                                          vertical: size.width *
-                                              AppDimensions.numD002),
-                                      decoration: BoxDecoration(
-                                          color: AppColorTheme.colorLightGreen
-                                              .withOpacity(0.8),
-                                          borderRadius: BorderRadius.circular(
-                                              size.width *
-                                                  AppDimensions.numD01)),
-                                      child: Icon(
-                                        item.mediaType == "video"
-                                            ? Icons.videocam_outlined
-                                            : Icons.camera_alt_outlined,
-                                        size:
-                                            size.width * AppDimensions.numD035,
-                                        color: Colors.white,
-                                      ))
-                                  : Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: size.width *
-                                              AppDimensions.numD008,
-                                          vertical: size.width *
-                                              AppDimensions.numD005),
-                                      decoration: BoxDecoration(
-                                          color: AppColorTheme.colorLightGreen
-                                              .withOpacity(0.8),
-                                          borderRadius: BorderRadius.circular(
-                                              size.width *
-                                                  AppDimensions.numD01)),
-                                      child: Image.asset(
-                                        "${iconsPath}ic_mic1.png",
-                                        fit: BoxFit.cover,
-                                        height:
-                                            size.width * AppDimensions.numD025,
-                                        width:
-                                            size.width * AppDimensions.numD025,
+                                    : Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: size.width *
+                                                AppDimensions.numD008,
+                                            vertical: size.width *
+                                                AppDimensions.numD005),
+                                        decoration: BoxDecoration(
+                                            color: AppColorTheme.colorLightGreen
+                                                .withOpacity(0.8),
+                                            borderRadius: BorderRadius.circular(
+                                                size.width *
+                                                    AppDimensions.numD01)),
+                                        child: Image.asset(
+                                          "${iconsPath}ic_mic1.png",
+                                          fit: BoxFit.cover,
+                                          height: size.width *
+                                              AppDimensions.numD025,
+                                          width: size.width *
+                                              AppDimensions.numD025,
+                                        ),
                                       ),
-                                    ),
-                            ),
-                          ],
+                              ),
+                            ],
+                          ),
                         );
                       },
                     ),

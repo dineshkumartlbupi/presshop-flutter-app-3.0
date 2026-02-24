@@ -3975,157 +3975,28 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     SizedBox(
                       height: size.width * AppDimensions.numD04,
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Text(
-                                widget.taskDetail!.isNeedPhoto
-                                    ? "${widget.taskDetail!.currencySymbol.isNotEmpty ? widget.taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(widget.taskDetail!.photoPrice))}"
-                                    : "-",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize:
-                                        size.width * AppDimensions.numD055,
-                                    color: AppColorTheme.colorThemePink,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                              Text(
-                                AppStringsNew2.offeredText,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize:
-                                        size.width * AppDimensions.numD035,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                              SizedBox(
-                                height: size.width * AppDimensions.numD03,
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        size.width * AppDimensions.numD04,
-                                    vertical:
-                                        size.width * AppDimensions.numD02),
-                                decoration: BoxDecoration(
-                                    color: AppColorTheme.colorThemePink,
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * AppDimensions.numD02)),
-                                child: Text(
-                                  AppStringsNew2.photoText,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize:
-                                          size.width * AppDimensions.numD033,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Text(
-                                widget.taskDetail!.isNeedInterview
-                                    ? "${widget.taskDetail!.currencySymbol.isNotEmpty ? widget.taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}"
-                                    : "-",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize:
-                                        size.width * AppDimensions.numD055,
-                                    color: AppColorTheme.colorThemePink,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                              Text(
-                                AppStringsNew2.offeredText,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize:
-                                        size.width * AppDimensions.numD035,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                              SizedBox(
-                                height: size.width * AppDimensions.numD03,
-                              ),
-                              Container(
-                                // alignment: Alignment.center,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        size.width * AppDimensions.numD018,
-                                    vertical:
-                                        size.width * AppDimensions.numD02),
-                                decoration: BoxDecoration(
-                                    color: AppColorTheme.colorThemePink,
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * AppDimensions.numD02)),
-                                child: Text(
-                                  AppStringsNew2.interviewText,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize:
-                                          size.width * AppDimensions.numD033,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Text(
-                                widget.taskDetail!.isNeedVideo
-                                    ? "${widget.taskDetail!.currencySymbol.isNotEmpty ? widget.taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(widget.taskDetail!.videoPrice))}"
-                                    : "-",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize:
-                                        size.width * AppDimensions.numD055,
-                                    color: AppColorTheme.colorThemePink,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                              Text(
-                                AppStringsNew2.offeredText,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize:
-                                        size.width * AppDimensions.numD035,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                              SizedBox(
-                                height: size.width * AppDimensions.numD03,
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        size.width * AppDimensions.numD04,
-                                    vertical:
-                                        size.width * AppDimensions.numD02),
-                                decoration: BoxDecoration(
-                                    color: AppColorTheme.colorThemePink,
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * AppDimensions.numD02)),
-                                child: Text(
-                                  AppStringsNew2.videoText,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize:
-                                          size.width * AppDimensions.numD033,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
+                    Text(
+                      "PRICE OFFERED",
+                      style: commonTextStyle(
+                        size: size,
+                        fontSize: size.width * AppDimensions.numD035,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: size.width * AppDimensions.numD03),
+                    priceImageWithButton(
+                      size,
+                      widget.taskDetail!.hopperTaskAmount,
+                      widget.taskDetail!.hopperInfo.isNotEmpty
+                          ? widget.taskDetail!.hopperInfo.first["hours"]
+                                  ?.toString() ??
+                              "0"
+                          : "0",
+                      localCurrencySymbol:
+                          widget.taskDetail!.currencySymbol.isNotEmpty
+                              ? widget.taskDetail!.currencySymbol
+                              : itemCurrencySymbol,
                     ),
                     SizedBox(
                       height: size.width * AppDimensions.numD03,
