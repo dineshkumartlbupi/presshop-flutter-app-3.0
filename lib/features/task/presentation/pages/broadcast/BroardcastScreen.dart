@@ -667,10 +667,16 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700),
                             commonButtonStyle(size, Colors.black),
-                            state.actionStatus == TaskStatus.loading ||
-                                    _hasSubmittedAction
+                            state.actionStatus == TaskStatus.loading
                                 ? () {}
                                 : () {
+                                    if (_hasSubmittedAction) {
+                                      showSnackBar(
+                                          "Action already submitted",
+                                          "You have already performed an action on this task.",
+                                          Colors.red);
+                                      return;
+                                    }
                                     _isAccepted = false;
                                     if (player.state == PlayerState.playing) {
                                       player.stop();
@@ -706,10 +712,16 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                     ""))
                                     ? Colors.grey
                                     : AppColorTheme.colorThemePink),
-                            state.actionStatus == TaskStatus.loading ||
-                                    _hasSubmittedAction
+                            state.actionStatus == TaskStatus.loading
                                 ? () {}
                                 : () {
+                                    if (_hasSubmittedAction) {
+                                      showSnackBar(
+                                          "Action already submitted",
+                                          "You have already performed an action on this task.",
+                                          Colors.red);
+                                      return;
+                                    }
                                     if (taskDetail!.deadLine
                                         .isBefore(DateTime.now())) {
                                       showSnackBar(

@@ -428,7 +428,6 @@ class DashboardState extends State<Dashboard>
                       }
                     }
                     context.pop();
-                    context.pop();
                     context.pushNamed(
                       AppRoutes.broadcastName,
                       extra: {

@@ -8,6 +8,7 @@ import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart
 import 'package:audioplayers/audioplayers.dart';
 
 AlertDialog? alertDialog;
+final Set<String> _shownBroadcastIds = {};
 
 void commonDialog(BuildContext context, String message, VoidCallback pressed) {
   var screenWidth = MediaQuery.of(context).size.width;
@@ -79,6 +80,11 @@ void broadcastDialog({
   required TaskAssignedEntity taskDetail,
   required VoidCallback onTapViewDetails,
 }) {
+  if (_shownBroadcastIds.contains(taskDetail.task.id)) {
+    return;
+  }
+  _shownBroadcastIds.add(taskDetail.task.id);
+
   showDialog(
       context: navigatorKey.currentState!.context,
       barrierDismissible: false,
