@@ -27,7 +27,7 @@ class Assets {
   static const String chatIconsPhotoIcon = 'assets/chatIcons/photo_icon.png';
   static const String chatIconsSmileIcon = 'assets/chatIcons/smile_icon.png';
   static const String chatIconsSongIcon = 'assets/chatIcons/song_icon.png';
-  static const String chatIconsTypingIcon = 'assets/chatIcons/typing_icon.gif';
+  static const String chatIconsTypingIcon = 'assets/chatIcons/typing_icon.webp';
   static const String chatIconsUserIcon = 'assets/chatIcons/user_icon.png';
   static const String chatIconsUserPlaceholder =
       'assets/chatIcons/user_placeholder.jpeg';

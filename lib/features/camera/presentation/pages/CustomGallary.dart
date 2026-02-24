@@ -4,7 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart' as fic;
 import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
-import 'package:native_exif/native_exif.dart';
+import 'package:exif/exif.dart' as pure_exif;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 import 'package:video_thumbnail/video_thumbnail.dart' as vt;
@@ -58,6 +58,25 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
 
   int totalEntitiesCount = 0;
   double x = 0, y = 0, latitude = 0, longitude = 0;
+
+  double _convertRatioToDouble(dynamic ratio) {
+    try {
+      if (ratio is List && ratio.length >= 3) {
+        double d = ratio[0].numerator /
+            (ratio[0].denominator == 0 ? 1 : ratio[0].denominator);
+        double m = ratio[1].numerator /
+            (ratio[1].denominator == 0 ? 1 : ratio[1].denominator);
+        double s = ratio[2].numerator /
+            (ratio[2].denominator == 0 ? 1 : ratio[2].denominator);
+        double result = d + (m / 60.0) + (s / 3600.0);
+        if (result.isNaN || result.isInfinite) return 0.0;
+        return result;
+      }
+    } catch (e) {
+      debugPrint("pure_exif convert error: $e");
+    }
+    return 0.0;
+  }
 
   final int _sizePerPage = 50;
   int page = 0;
@@ -254,18 +273,35 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                             quality: 100,
                           );
                           if (selectedList[index] == true) {
+                            double lat = 0.0;
+                            double lng = 0.0;
+
+                            final assetLatLng =
+                                await _mediaList[index].latlngAsync();
+
+                            if (assetLatLng != null &&
+                                assetLatLng.latitude != 0.0) {
+                              lat = assetLatLng.latitude;
+                              lng = assetLatLng.longitude;
+                            } else if (_mediaList[index].latitude != null &&
+                                _mediaList[index].latitude != 0.0) {
+                              lat = _mediaList[index].latitude!;
+                              lng = _mediaList[index].longitude!;
+                            } else {
+                              lat = sharedPreferences?.getDouble(
+                                      SharedPreferencesKeys.currentLat) ??
+                                  0.0;
+                              lng = sharedPreferences?.getDouble(
+                                      SharedPreferencesKeys.currentLon) ??
+                                  0.0;
+                            }
+
                             camListData.add(CameraData(
                               path: imgPath,
                               mimeType: "video",
                               videoImagePath: thumbnail ?? "",
-                              latitude: (sharedPreferences?.getDouble(
-                                          SharedPreferencesKeys.currentLat) ??
-                                      0)
-                                  .toString(),
-                              longitude: (sharedPreferences?.getDouble(
-                                          SharedPreferencesKeys.currentLon) ??
-                                      0)
-                                  .toString(),
+                              latitude: lat.toString(),
+                              longitude: lng.toString(),
                               dateTime: DateFormat("HH:mm, dd MMM yyyy")
                                   .format(DateTime.now()),
                               location: sharedPreferences?.getString(
@@ -287,17 +323,62 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                           }
                         } else {
                           try {
-                            var exif = await Exif.fromPath(imgPath);
-                            final latLong = await exif.getLatLong();
+                            final bytes = await File(imgPath).readAsBytes();
+                            final tags =
+                                await pure_exif.readExifFromBytes(bytes);
 
-                            final latitude = latLong?.latitude ??
-                                sharedPreferences?.getDouble(
-                                    SharedPreferencesKeys.currentLat) ??
-                                0.0;
-                            final longitude = latLong?.longitude ??
-                                sharedPreferences?.getDouble(
-                                    SharedPreferencesKeys.currentLon) ??
-                                0.0;
+                            double extractedLat = 0.0;
+                            double extractedLng = 0.0;
+
+                            if (tags.containsKey('GPS GPSLatitude') &&
+                                tags.containsKey('GPS GPSLongitude')) {
+                              final latRatio =
+                                  tags['GPS GPSLatitude']!.values.toList();
+                              final lonRatio =
+                                  tags['GPS GPSLongitude']!.values.toList();
+                              final latRef =
+                                  tags['GPS GPSLatitudeRef']?.printable;
+                              final lonRef =
+                                  tags['GPS GPSLongitudeRef']?.printable;
+
+                              double lat = _convertRatioToDouble(latRatio);
+                              double lon = _convertRatioToDouble(lonRatio);
+
+                              if (latRef == 'S') lat = -lat;
+                              if (lonRef == 'W') lon = -lon;
+
+                              extractedLat = lat;
+                              extractedLng = lon;
+                            }
+
+                            double lat = 0.0;
+                            double lng = 0.0;
+
+                            final assetLatLng =
+                                await _mediaList[index].latlngAsync();
+
+                            if (extractedLat != 0.0 && extractedLng != 0.0) {
+                              lat = extractedLat;
+                              lng = extractedLng;
+                            } else if (assetLatLng != null &&
+                                assetLatLng.latitude != 0.0) {
+                              lat = assetLatLng.latitude;
+                              lng = assetLatLng.longitude;
+                            } else if (_mediaList[index].latitude != null &&
+                                _mediaList[index].latitude != 0.0) {
+                              lat = _mediaList[index].latitude!;
+                              lng = _mediaList[index].longitude!;
+                            } else {
+                              lat = sharedPreferences?.getDouble(
+                                      SharedPreferencesKeys.currentLat) ??
+                                  0.0;
+                              lng = sharedPreferences?.getDouble(
+                                      SharedPreferencesKeys.currentLon) ??
+                                  0.0;
+                            }
+
+                            final latitude = lat;
+                            final longitude = lng;
 
                             // 🔹 Use geocoding to get address info
                             List<Placemark> placemarks =

@@ -31,6 +31,8 @@ void main() {
     avatarId: 'a1',
     avatar: 'avatar',
     totalEarning: '100',
+    currency: '',
+    currencySymbol: '',
   );
 
   const tEarningProfile = EarningProfile(

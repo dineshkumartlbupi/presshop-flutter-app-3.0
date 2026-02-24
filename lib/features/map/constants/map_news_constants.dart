@@ -28,70 +28,70 @@ const Map<String, String> markerIcons = {
 final List<Map<String, String>> alertTypes = [
   {
     'type': 'accident',
-    'icon': 'assets/markers/gifs/accident.gif',
+    'icon': 'assets/markers/gifs/accident.webp',
     'label': 'Accident',
   },
   {
     'type': 'fire',
-    'icon': 'assets/markers/gifs/fire.gif',
+    'icon': 'assets/markers/gifs/fire.webp',
     'label': 'Fire',
   },
   {
     'type': 'fight',
-    'icon': 'assets/markers/gifs/fight.gif',
+    'icon': 'assets/markers/gifs/fight.webp',
     'label': 'Altercation'
   },
 
   ///////
   {
     'type': 'knife',
-    // 'icon': 'assets/markers/gifs/knife.gif',
-    'icon': 'assets/markers/gifs/public_safty_alert.gif',
+    // 'icon': 'assets/markers/gifs/knife.webp',
+    'icon': 'assets/markers/gifs/public_safty_alert.webp',
     // 'label': 'Stabbing'
     'label': 'Public Safety'
   },
   {
     'type': 'gun',
-    // 'icon': 'assets/markers/gifs/gun.gif',
-    'icon': 'assets/markers/gifs/vandalism.gif',
+    // 'icon': 'assets/markers/gifs/gun.webp',
+    'icon': 'assets/markers/gifs/vandalism.webp',
     // 'label': 'Shooting'
     'label': 'Vandalism'
   },
   {
     'type': 'medical',
-    'icon': 'assets/markers/gifs/medicine.gif',
+    'icon': 'assets/markers/gifs/medicine.webp',
     'label': 'Medical',
   },
   /////
   {
     'type': 'protest',
-    'icon': 'assets/markers/gifs/protesters.gif',
+    'icon': 'assets/markers/gifs/protesters.webp',
     'label': 'Protest',
   },
   {
     'type': 'police',
-    'icon': 'assets/markers/gifs/police1.gif',
+    'icon': 'assets/markers/gifs/police1.webp',
     'label': 'Police',
   },
   {
     'type': 'road-block',
-    'icon': 'assets/markers/gifs/road-block.gif',
+    'icon': 'assets/markers/gifs/road-block.webp',
     'label': 'Road Block',
   },
   /////
   {
     'type': 'floods',
-    'icon': 'assets/markers/gifs/floods.gif',
+    'icon': 'assets/markers/gifs/floods.webp',
     'label': 'Flood',
   },
   {
     'type': 'snow',
-    'icon': 'assets/markers/gifs/snow.gif',
+    'icon': 'assets/markers/gifs/snow.webp',
     'label': 'Snow',
   },
   {
     'type': 'earthquake',
-    'icon': 'assets/markers/gifs/earthquake.gif',
+    'icon': 'assets/markers/gifs/earthquake.webp',
     'label': 'Earthquake',
   },
 ];
