@@ -5,7 +5,6 @@ import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:presshop/core/di/injection_container.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
@@ -1022,7 +1021,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
   }
 
   Future<void> googleLogin() async {
-    sl<GoogleSignIn>().signIn().then((userData) {
+    googleSignIn.signIn().then((userData) {
       // _isLoggedIn = true;
       _userObj = userData!;
 

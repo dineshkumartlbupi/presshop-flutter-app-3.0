@@ -244,10 +244,12 @@ Future<void> init() async {
   sl.registerLazySingleton(() => FirebaseAnalytics.instance);
   sl.registerLazySingleton(() => FirebaseCrashlytics.instance);
   sl.registerLazySingleton(() => GoogleSignIn(
-        scopes: ['email'],
-        serverClientId: Platform.isAndroid
-            ? "750460561502-fajfc82s14phu6iu767i7qm53qmu2r8f.apps.googleusercontent.com"
+        clientId: Platform.isIOS
+            ? '750460561502-geuno4tt1ic52cor9l2obl1vhuogvsp0.apps.googleusercontent.com'
             : null,
+        serverClientId:
+            '750460561502-fajfc82s14phu6iu767i7qm53qmu2r8f.apps.googleusercontent.com',
+        scopes: ['email'],
       ));
 
   //! Core

@@ -15,6 +15,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.bottom,
     this.appBarTitle,
     this.hideHamburger = false,
+    this.appBarbackgroundColor = Colors.white,
   });
   final Size size;
   final bool hideLeading;
@@ -23,12 +24,14 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final PreferredSizeWidget? bottom;
   final String? appBarTitle;
   final bool hideHamburger;
+  final Color appBarbackgroundColor;
 
   @override
   Widget build(BuildContext context) {
     return CommonAppBar(
       elevation: 0,
       hideLeading: hideLeading,
+      appBarbackgroundColor: appBarbackgroundColor,
       title: appBarTitle != null
           ? Text(
               appBarTitle!,

@@ -243,22 +243,34 @@ class CameraScreenState extends State<CameraScreen>
         preferredSize: Size.fromHeight(size.width * AppDimensions.numD1),
         child: Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * AppDimensions.numD06,
+              horizontal: size.width * AppDimensions.numD04,
               vertical: size.width * AppDimensions.numD02),
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   if (widget.previousScreen != ScreenNameEnum.manageTaskScreen)
-                    _buildModeButton(context, AppStrings.scanText, state, size),
-                  _buildModeButton(context, AppStrings.photoText, state, size),
-                  _buildModeButton(context, AppStrings.videoText, state, size),
-                  _buildModeButton(context, AppStrings.audioText, state, size,
+                    Expanded(
+                        child: _buildModeButton(
+                            context, AppStrings.scanText, state, size)),
+                  Expanded(
+                      child: _buildModeButton(
+                          context, AppStrings.photoText, state, size)),
+                  Expanded(
+                      child: _buildModeButton(
+                          context, AppStrings.videoText, state, size)),
+                  Expanded(
+                    child: _buildModeButton(
+                      context,
+                      AppStrings.audioText,
+                      state,
+                      size,
                       label: widget.previousScreen ==
                               ScreenNameEnum.manageTaskScreen
                           ? AppStrings.interviewText
-                          : AppStrings.audioText),
+                          : AppStrings.audioText,
+                    ),
+                  ),
                 ],
               )
             ],
@@ -276,14 +288,19 @@ class CameraScreenState extends State<CameraScreen>
       onTap: () {
         context.read<CameraBloc>().add(CameraModeChangeEvent(mode));
       },
-      child: FittedBox(
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
           child: Text(
-        label ?? mode,
-        style: TextStyle(
-            color: isSelected ? AppColorTheme.colorThemePink : Colors.black,
-            fontSize: size.width * AppDimensions.numD035,
-            fontWeight: FontWeight.w500),
-      )),
+            label ?? mode,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: isSelected ? AppColorTheme.colorThemePink : Colors.black,
+                fontSize: size.width * AppDimensions.numD035,
+                fontWeight: FontWeight.w500),
+          ),
+        ),
+      ),
     );
   }
 
@@ -761,30 +778,36 @@ class CameraScreenState extends State<CameraScreen>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text(_minAvailableExposureOffset.toString(),
+                SizedBox(width: size.width * AppDimensions.numD04),
+                Text(_minAvailableExposureOffset.toStringAsFixed(1),
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: size.width * AppDimensions.numD03,
                         fontWeight: FontWeight.w500)),
-                SliderTheme(
-                  data: SliderThemeData(
-                      trackHeight: size.width * AppDimensions.numD009),
-                  child: Slider(
-                    value: _currentExposureOffset,
-                    min: _minAvailableExposureOffset,
-                    max: _maxAvailableExposureOffset,
-                    activeColor: AppColorTheme.colorThemePink,
-                    onChanged: (val) {
-                      setState(() => _currentExposureOffset = val);
-                      context.read<CameraBloc>().add(UpdateExposureEvent(val));
-                    },
+                Expanded(
+                  child: SliderTheme(
+                    data: SliderThemeData(
+                        trackHeight: size.width * AppDimensions.numD009),
+                    child: Slider(
+                      value: _currentExposureOffset,
+                      min: _minAvailableExposureOffset,
+                      max: _maxAvailableExposureOffset,
+                      activeColor: AppColorTheme.colorThemePink,
+                      onChanged: (val) {
+                        setState(() => _currentExposureOffset = val);
+                        context
+                            .read<CameraBloc>()
+                            .add(UpdateExposureEvent(val));
+                      },
+                    ),
                   ),
                 ),
-                Text(_maxAvailableExposureOffset.toString(),
+                Text(_maxAvailableExposureOffset.toStringAsFixed(1),
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: size.width * AppDimensions.numD03,
                         fontWeight: FontWeight.w500)),
+                SizedBox(width: size.width * AppDimensions.numD04),
               ],
             )
           ],
