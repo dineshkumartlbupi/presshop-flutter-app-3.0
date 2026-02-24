@@ -78,7 +78,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
       audioPath = "",
       audioDuration = "",
       sharedPrice = "",
-      exclusivePrice = "";
+      exclusivePrice = "",
+      userSharedPriceValue = "",
+      userExclusivePriceValue = "";
   ContentCategory? selectedCategory;
   bool audioPlaying = false,
       draftSelected = false,
@@ -2162,6 +2164,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
                             Expanded(
                               child: InkWell(
                                 onTap: () {
+                                  if (selectedSellType == AppStrings.sharedText)
+                                    return;
+                                  userExclusivePriceValue =
+                                      priceController.text;
+                                  priceController.text = userSharedPriceValue;
                                   selectedSellType = AppStrings.sharedText;
                                   setState(() {});
                                 },
@@ -2256,33 +2263,42 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 height: size.width *
                                                     AppDimensions.numD01,
                                               ),
-                                              Container(
-                                                alignment: Alignment.center,
-                                                width: size.width *
-                                                    AppDimensions.numD35,
-                                                height: size.width *
-                                                    AppDimensions.numD08,
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: size.width *
-                                                        AppDimensions.numD017),
-                                                decoration: BoxDecoration(
-                                                  color: selectedSellType ==
-                                                          AppStrings.sharedText
-                                                      ? Colors.black
-                                                      : Colors.white,
-                                                ),
-                                                child: Text(
-                                                  _formatPrice(sharedPrice),
-                                                  style: TextStyle(
-                                                      color: selectedSellType ==
-                                                              AppStrings
-                                                                  .sharedText
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                      fontSize: size.width *
-                                                          AppDimensions.numD03,
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                              Opacity(
+                                                opacity: selectedSellType ==
+                                                        AppStrings.sharedText
+                                                    ? 1.0
+                                                    : 0.0,
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  width: size.width *
+                                                      AppDimensions.numD35,
+                                                  height: size.width *
+                                                      AppDimensions.numD08,
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: size.width *
+                                                          AppDimensions
+                                                              .numD017),
+                                                  decoration: BoxDecoration(
+                                                    color: selectedSellType ==
+                                                            AppStrings
+                                                                .sharedText
+                                                        ? Colors.black
+                                                        : Colors.white,
+                                                  ),
+                                                  child: Text(
+                                                    _formatPrice(sharedPrice),
+                                                    style: TextStyle(
+                                                        color: selectedSellType ==
+                                                                AppStrings
+                                                                    .sharedText
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                        fontSize: size.width *
+                                                            AppDimensions
+                                                                .numD03,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
                                                 ),
                                               ),
                                             ],
@@ -2300,6 +2316,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
                             Expanded(
                               child: InkWell(
                                 onTap: () {
+                                  if (selectedSellType ==
+                                      AppStrings.exclusiveText) return;
+                                  userSharedPriceValue = priceController.text;
+                                  priceController.text =
+                                      userExclusivePriceValue;
                                   selectedSellType = AppStrings.exclusiveText;
                                   setState(() {});
                                 },
@@ -2394,34 +2415,43 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 height: size.width *
                                                     AppDimensions.numD01,
                                               ),
-                                              Container(
-                                                alignment: Alignment.center,
-                                                width: size.width *
-                                                    AppDimensions.numD35,
-                                                height: size.width *
-                                                    AppDimensions.numD08,
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: size.width *
-                                                        AppDimensions.numD017),
-                                                decoration: BoxDecoration(
-                                                  color: selectedSellType ==
-                                                          AppStrings
-                                                              .exclusiveText
-                                                      ? Colors.black
-                                                      : Colors.white,
-                                                ),
-                                                child: Text(
-                                                  _formatPrice(exclusivePrice),
-                                                  style: TextStyle(
-                                                      color: selectedSellType ==
-                                                              AppStrings
-                                                                  .exclusiveText
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                      fontSize: size.width *
-                                                          AppDimensions.numD03,
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                              Opacity(
+                                                opacity: selectedSellType ==
+                                                        AppStrings.exclusiveText
+                                                    ? 1.0
+                                                    : 0.0,
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  width: size.width *
+                                                      AppDimensions.numD35,
+                                                  height: size.width *
+                                                      AppDimensions.numD08,
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: size.width *
+                                                          AppDimensions
+                                                              .numD017),
+                                                  decoration: BoxDecoration(
+                                                    color: selectedSellType ==
+                                                            AppStrings
+                                                                .exclusiveText
+                                                        ? Colors.black
+                                                        : Colors.white,
+                                                  ),
+                                                  child: Text(
+                                                    _formatPrice(
+                                                        exclusivePrice),
+                                                    style: TextStyle(
+                                                        color: selectedSellType ==
+                                                                AppStrings
+                                                                    .exclusiveText
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                        fontSize: size.width *
+                                                            AppDimensions
+                                                                .numD03,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
                                                 ),
                                               ),
                                             ],
@@ -3324,6 +3354,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
       selectedSellType = widget.myContentData!.exclusive
           ? AppStrings.exclusiveText
           : AppStrings.sharedText;
+      if (widget.myContentData!.exclusive) {
+        userExclusivePriceValue = priceController.text;
+      } else {
+        userSharedPriceValue = priceController.text;
+      }
       if (widget.myContentData!.audioDuration.isNotEmpty) {
         audioDuration = widget.myContentData!.audioDuration;
       }
