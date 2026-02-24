@@ -6,7 +6,6 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:force_update_helper/force_update_helper.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-
 import 'package:presshop/core/services/force_update_service.dart';
 import 'package:presshop/features/splash/data/repositories/force_update_repositor.dart';
 import 'package:presshop/main.dart';
@@ -35,8 +34,7 @@ class MyApp extends StatelessWidget {
           routerConfig: AppRouter.router,
           builder: (context, child) {
             return ForceUpdateWidget(
-              navigatorKey:
-                  navigatorKey, // Keep passing navigatorKey for force update dialogs
+              navigatorKey: navigatorKey,
               forceUpdateClient: ForceUpdateClient(
                 fetchRequiredVersion: _fetchRequiredVersion,
                 iosAppStoreId: '6744651614',

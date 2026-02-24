@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui' as ui;
+import 'dart:typed_data';
 
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:camera/camera.dart';
@@ -111,6 +112,28 @@ class CameraScreenState extends State<CameraScreen>
     if (_bloc != null && !_bloc!.isClosed) {
       debugPrint("🗑️ CameraScreen: Clearing captured media");
       _bloc!.add(const UpdateCapturedMediaEvent([]));
+    }
+  }
+
+  Future<Uint8List?> _getLatestGalleryImageBytes() async {
+    try {
+      final perm = await PhotoManager.requestPermissionExtend();
+      if (!perm.isAuth) return null;
+
+      final List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
+          onlyAll: true, type: RequestType.image);
+      if (paths.isEmpty) return null;
+
+      final List<AssetEntity> assets =
+          await paths.first.getAssetListRange(start: 0, end: 1);
+      if (assets.isEmpty) return null;
+
+      final Uint8List? thumb =
+          await assets.first.thumbnailDataWithSize(const ThumbnailSize(200, 200));
+      return thumb;
+    } catch (e) {
+      debugPrint('Error fetching latest gallery image: $e');
+      return null;
     }
   }
 
@@ -464,22 +487,33 @@ class CameraScreenState extends State<CameraScreen>
                 child: ClipRRect(
                   borderRadius:
                       BorderRadius.circular(size.width * AppDimensions.numD025),
-                  child: state.galleryMedia.isNotEmpty
+                    child: state.galleryMedia.isNotEmpty
                       ? FutureBuilder(
-                          future: state.galleryMedia.first
-                              .thumbnailDataWithSize(
-                                  const ThumbnailSize(200, 200)),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                    ConnectionState.done &&
-                                snapshot.data != null) {
-                              return Image.memory(snapshot.data!,
-                                  fit: BoxFit.cover);
-                            }
-                            return Container(color: Colors.grey);
-                          })
-                      : Image.asset("${dummyImagePath}walk2.png",
-                          fit: BoxFit.cover),
+                        future: state.galleryMedia.first
+                          .thumbnailDataWithSize(
+                            const ThumbnailSize(200, 200)),
+                        builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.done &&
+                          snapshot.data != null) {
+                          return Image.memory(snapshot.data!,
+                            fit: BoxFit.cover);
+                        }
+                        return Container(color: Colors.grey);
+                        })
+                      : FutureBuilder<Uint8List?>(
+                        future: _getLatestGalleryImageBytes(),
+                        builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.done &&
+                          snapshot.data != null) {
+                          return Image.memory(snapshot.data!,
+                            fit: BoxFit.cover);
+                        }
+                        return Image.asset("${dummyImagePath}walk2.png",
+                          fit: BoxFit.cover);
+                        },
+                      ),
                 ),
               ),
             ),

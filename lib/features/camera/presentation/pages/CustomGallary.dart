@@ -59,6 +59,25 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
   int totalEntitiesCount = 0;
   double x = 0, y = 0, latitude = 0, longitude = 0;
 
+  double _convertRatioToDouble(dynamic ratio) {
+    try {
+      if (ratio is List && ratio.length >= 3) {
+        double d = ratio[0].numerator /
+            (ratio[0].denominator == 0 ? 1 : ratio[0].denominator);
+        double m = ratio[1].numerator /
+            (ratio[1].denominator == 0 ? 1 : ratio[1].denominator);
+        double s = ratio[2].numerator /
+            (ratio[2].denominator == 0 ? 1 : ratio[2].denominator);
+        double result = d + (m / 60.0) + (s / 3600.0);
+        if (result.isNaN || result.isInfinite) return 0.0;
+        return result;
+      }
+    } catch (e) {
+      debugPrint("pure_exif convert error: $e");
+    }
+    return 0.0;
+  }
+
   final int _sizePerPage = 50;
   int page = 0;
   bool isLoadingMore = false;

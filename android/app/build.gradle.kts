@@ -61,6 +61,7 @@ android {
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
+            isShrinkResources = true
             ndk {
                 abiFilters += listOf("arm64-v8a", "armeabi-v7a")
             }
