@@ -373,7 +373,12 @@ class _ManageTaskPreviewScreenState extends State<ManageTaskPreviewScreen> {
             location: element.location,
             dateTime: element.dateTime.toString(),
             latitude: element.latitude,
-            longitude: element.longitude));
+            longitude: element.longitude,
+            country: element.country,
+            state: element.state,
+            city: element.city,
+            isFromGallery: element.fromGallary,
+            isLocalMedia: true));
         debugPrint(" path ======> : ${element.path}");
         debugPrint("MedListSize: ${mediaList.length}");
         setState(() {});

@@ -60,6 +60,9 @@ void main() {
           latitude: '51.5074',
           longitude: '0.1278',
           location: 'London, UK',
+          country: 'UK',
+          state: 'England',
+          city: 'London',
           dateTime: DateTime.now().toIso8601String(),
           isLocalMedia: true)
     ];

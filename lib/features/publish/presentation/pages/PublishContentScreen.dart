@@ -1043,6 +1043,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 location: widget.myContentData
                                                         ?.location ??
                                                     "",
+                                                country: "",
+                                                state: "",
+                                                city: "",
                                                 dateTime:
                                                     timestampController.text,
                                                 mediaPath: item.media,

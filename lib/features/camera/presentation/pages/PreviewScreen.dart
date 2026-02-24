@@ -651,31 +651,19 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                     }
                                   } else {
                                     context.pop(PublishData(
-                                        imagePath: widget.cameraData!.path,
-                                        address: mediaAddress.isNotEmpty
-                                            ? mediaAddress
-                                            : widget
-                                                .cameraListData.first.location,
-                                        date: mediaDate,
-                                        city: city.isNotEmpty
-                                            ? city
-                                            : widget.cameraListData.first.city,
-                                        state: state.isNotEmpty
-                                            ? state
-                                            : widget.cameraListData.first.state,
-                                        country: country.isNotEmpty
-                                            ? country
-                                            : widget
-                                                .cameraListData.first.country,
-                                        latitude: latitude.isNotEmpty
-                                            ? latitude
-                                            : widget.cameraData!.latitude,
-                                        longitude: longitude.isNotEmpty
-                                            ? longitude
-                                            : widget.cameraData!.longitude,
-                                        mimeType: widget.cameraData!.mimeType,
+                                        imagePath: widget.cameraData != null
+                                            ? widget.cameraData!.path
+                                            : widget.cameraListData.first.path,
+                                        address: mediaList.first.location,
+                                        date: mediaList.first.dateTime,
+                                        city: mediaList.first.city,
+                                        state: mediaList.first.state,
+                                        country: mediaList.first.country,
+                                        latitude: mediaList.first.latitude,
+                                        longitude: mediaList.first.longitude,
+                                        mimeType: mediaList.first.mimeType,
                                         videoImagePath:
-                                            widget.cameraData!.videoImagePath,
+                                            mediaList.first.thumbnail,
                                         mediaList: mediaList));
                                   }
                                 } else {
@@ -695,49 +683,19 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                               ? widget.cameraData?.path ?? ""
                                               : widget
                                                   .cameraListData.first.path,
-                                          address: mediaAddress.isNotEmpty
-                                              ? mediaAddress
-                                              : widget
-                                                  .cameraListData.first.location,
-                                          date: mediaDate.isNotEmpty
-                                              ? mediaDate
-                                              : widget
-                                                  .cameraListData.first.dateTime,
-                                          city: city.isNotEmpty
-                                              ? city
-                                              : widget
-                                                  .cameraListData.first.city,
-                                          state: state.isNotEmpty
-                                              ? state
-                                              : widget
-                                                  .cameraListData.first.state,
-                                          country: country.isNotEmpty
-                                              ? country
-                                              : widget
-                                                  .cameraListData.first.country,
-                                          latitude: latitude.isNotEmpty
-                                              ? latitude
-                                              : widget.cameraData != null
-                                                  ? widget.cameraData!.latitude
-                                                  : widget.cameraListData.first
-                                                      .latitude,
-                                          longitude: longitude.isNotEmpty
-                                              ? longitude
-                                              : widget.cameraData != null
-                                                  ? widget.cameraData!.longitude
-                                                  : widget.cameraListData.first
-                                                      .longitude,
-                                          mimeType: widget.cameraData != null
-                                              ? widget.cameraData!.mimeType
-                                              : widget.cameraListData.first
-                                                  .mimeType,
-                                          videoImagePath: widget.cameraData != null
-                                              ? widget
-                                                  .cameraData!.videoImagePath
-                                              : widget.cameraListData.first
-                                                  .videoImagePath,
+                                          address: mediaList.first.location,
+                                          date: mediaList.first.dateTime,
+                                          city: mediaList.first.city,
+                                          state: mediaList.first.state,
+                                          country: mediaList.first.country,
+                                          latitude: mediaList.first.latitude,
+                                          longitude: mediaList.first.longitude,
+                                          mimeType: mediaList.first.mimeType,
+                                          videoImagePath:
+                                              mediaList.first.thumbnail,
                                           mediaList: mediaList
-                                              .where((media) => media.isLocalMedia)
+                                              .where(
+                                                  (media) => media.isLocalMedia)
                                               .toList());
 
                                       debugPrint("pubData $pubData");
@@ -851,30 +809,19 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                     }
                                   } else {
                                     context.pop(PublishData(
-                                        imagePath: widget.cameraData!.path,
-                                        address: mediaAddress.isNotEmpty
-                                            ? mediaAddress
-                                            : widget
-                                                .cameraListData.first.location,
-                                        date: mediaDate.isNotEmpty
-                                            ? mediaDate
-                                            : widget
-                                                .cameraListData.first.dateTime,
-                                        city: city.isNotEmpty
-                                            ? city
-                                            : widget.cameraListData.first.city,
-                                        state: state.isNotEmpty
-                                            ? state
-                                            : widget.cameraListData.first.state,
-                                        country: country.isNotEmpty
-                                            ? country
-                                            : widget
-                                                .cameraListData.first.country,
-                                        latitude: widget.cameraData!.latitude,
-                                        longitude: widget.cameraData!.longitude,
-                                        mimeType: widget.cameraData!.mimeType,
+                                        imagePath: widget.cameraData != null
+                                            ? widget.cameraData!.path
+                                            : widget.cameraListData.first.path,
+                                        address: mediaList.first.location,
+                                        date: mediaList.first.dateTime,
+                                        city: mediaList.first.city,
+                                        state: mediaList.first.state,
+                                        country: mediaList.first.country,
+                                        latitude: mediaList.first.latitude,
+                                        longitude: mediaList.first.longitude,
+                                        mimeType: mediaList.first.mimeType,
                                         videoImagePath:
-                                            widget.cameraData!.videoImagePath,
+                                            mediaList.first.thumbnail,
                                         mediaList: mediaList));
                                   }
                                 } else {
@@ -891,34 +838,26 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                           AppRoutes.publishContentName,
                                           extra: {
                                             'publishData': PublishData(
-                                                imagePath: widget.cameraData != null
+                                                imagePath: widget.cameraData !=
+                                                        null
                                                     ? widget.cameraData!.path
                                                     : widget.cameraListData
                                                         .first.path,
-                                                address: mediaAddress.isNotEmpty
-                                                    ? mediaAddress
-                                                    : widget.cameraListData
-                                                        .first.location,
-                                                date: mediaDate.isNotEmpty
-                                                    ? mediaDate
-                                                    : widget.cameraListData
-                                                        .first.dateTime,
-                                                city: city.isNotEmpty
-                                                    ? city
-                                                    : widget.cameraListData
-                                                        .first.city,
-                                                state: state.isNotEmpty
-                                                    ? state
-                                                    : widget.cameraListData
-                                                        .first.state,
-                                                country: country.isNotEmpty
-                                                    ? country
-                                                    : widget.cameraListData
-                                                        .first.country,
-                                                latitude: widget.cameraData != null ? mediaList.first.latitude : latitude,
-                                                longitude: widget.cameraData != null ? mediaList.first.longitude : longitude,
-                                                mimeType: widget.cameraData != null ? widget.cameraData!.mimeType : widget.cameraListData.first.mimeType,
-                                                videoImagePath: widget.cameraData != null ? widget.cameraData!.videoImagePath : widget.cameraListData.first.videoImagePath,
+                                                address:
+                                                    mediaList.first.location,
+                                                date: mediaList.first.dateTime,
+                                                city: mediaList.first.city,
+                                                state: mediaList.first.state,
+                                                country:
+                                                    mediaList.first.country,
+                                                latitude:
+                                                    mediaList.first.latitude,
+                                                longitude:
+                                                    mediaList.first.longitude,
+                                                mimeType:
+                                                    mediaList.first.mimeType,
+                                                videoImagePath:
+                                                    mediaList.first.thumbnail,
                                                 mediaList: mediaList),
                                             'myContentData': null,
                                             'hideDraft': false,
@@ -990,6 +929,9 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                 dateTime: element.dateTime.toString(),
                 latitude: element.latitude,
                 longitude: element.longitude,
+                country: element.country,
+                state: element.state,
+                city: element.city,
                 isLocalMedia: true));
 
         debugPrint(" path ======> : ${element.path}");
@@ -1048,6 +990,9 @@ class MediaData {
       required this.longitude,
       required this.location,
       required this.dateTime,
+      required this.country,
+      required this.state,
+      required this.city,
       this.isFromGallery = false,
       this.isLocalMedia = false});
   String mediaPath = "";
@@ -1057,6 +1002,9 @@ class MediaData {
   String location = "";
   String latitude = "";
   String longitude = "";
+  String country = "";
+  String state = "";
+  String city = "";
   bool isFromGallery = false;
   bool isLocalMedia = false;
 
@@ -1064,6 +1012,6 @@ class MediaData {
   String toString() {
     return 'MediaData(mediaPath: $mediaPath, mimeType: $mimeType, thumbnail: $thumbnail, '
         'dateTime: $dateTime, location: $location, latitude: $latitude, longitude: $longitude, '
-        'isLocalMedia: $isLocalMedia)';
+        'country: $country, state: $state, city: $city, isLocalMedia: $isLocalMedia)';
   }
 }

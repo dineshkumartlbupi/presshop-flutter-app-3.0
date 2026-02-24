@@ -4,7 +4,6 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart' as fic;
 import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
-import 'package:native_exif/native_exif.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 import 'package:video_thumbnail/video_thumbnail.dart' as vt;
@@ -23,6 +22,7 @@ import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:video_player/video_player.dart';
 import 'package:presshop/main.dart';
+import 'package:exif/exif.dart' as exif_lib;
 
 // ignore: must_be_immutable
 class CustomGallery extends StatefulWidget {
@@ -254,32 +254,46 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                             quality: 100,
                           );
                           if (selectedList[index] == true) {
+                            double? latitude = _mediaList[index].latitude;
+                            double? longitude = _mediaList[index].longitude;
+                            String location = "";
+                            String city = "";
+                            String state = "";
+                            String country = "";
+
+                            if (latitude != null &&
+                                longitude != null &&
+                                latitude != 0.0 &&
+                                longitude != 0.0) {
+                              try {
+                                List<Placemark> placemarks =
+                                    await placemarkFromCoordinates(
+                                        latitude, longitude);
+                                final place = placemarks.first;
+                                location =
+                                    "${place.street}, ${place.locality}, ${place.country}";
+                                city = place.locality ?? "";
+                                state = place.administrativeArea ?? "";
+                                country = place.country ?? "";
+                              } catch (e) {
+                                debugPrint("Geocoding error for video: $e");
+                              }
+                            }
+
                             camListData.add(CameraData(
                               path: imgPath,
                               mimeType: "video",
                               videoImagePath: thumbnail ?? "",
-                              latitude: (sharedPreferences?.getDouble(
-                                          SharedPreferencesKeys.currentLat) ??
-                                      0)
-                                  .toString(),
-                              longitude: (sharedPreferences?.getDouble(
-                                          SharedPreferencesKeys.currentLon) ??
-                                      0)
-                                  .toString(),
+                              latitude:
+                                  latitude != 0.0 ? latitude.toString() : "",
+                              longitude:
+                                  longitude != 0.0 ? longitude.toString() : "",
                               dateTime: DateFormat("HH:mm, dd MMM yyyy")
                                   .format(DateTime.now()),
-                              location: sharedPreferences?.getString(
-                                      SharedPreferencesKeys.currentAddress) ??
-                                  "",
-                              country: sharedPreferences?.getString(
-                                      SharedPreferencesKeys.currentCountry) ??
-                                  "",
-                              city: sharedPreferences?.getString(
-                                      SharedPreferencesKeys.currentCity) ??
-                                  "",
-                              state: sharedPreferences?.getString(
-                                      SharedPreferencesKeys.currentState) ??
-                                  "",
+                              location: location,
+                              country: country,
+                              city: city,
+                              state: state,
                             ));
                             setState(() {
                               isSelectedImageProcessing = true;
@@ -287,39 +301,80 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                           }
                         } else {
                           try {
-                            var exif = await Exif.fromPath(imgPath);
-                            final latLong = await exif.getLatLong();
+                            final bytes = await File(imgPath).readAsBytes();
+                            final tags =
+                                await exif_lib.readExifFromBytes(bytes);
 
-                            final latitude = latLong?.latitude ??
-                                sharedPreferences?.getDouble(
-                                    SharedPreferencesKeys.currentLat) ??
-                                0.0;
-                            final longitude = latLong?.longitude ??
-                                sharedPreferences?.getDouble(
-                                    SharedPreferencesKeys.currentLon) ??
-                                0.0;
+                            double? latitude;
+                            double? longitude;
 
-                            // 🔹 Use geocoding to get address info
-                            List<Placemark> placemarks =
-                                await placemarkFromCoordinates(
-                                    latitude, longitude);
-                            final place = placemarks.first;
+                            if (tags.containsKey('GPS GPSLatitude') &&
+                                tags.containsKey('GPS GPSLongitude')) {
+                              latitude =
+                                  _convertTagToDouble(tags['GPS GPSLatitude']);
+                              longitude =
+                                  _convertTagToDouble(tags['GPS GPSLongitude']);
 
-                            camListData.add(CameraData(
-                              path: imgPath,
-                              mimeType: "image",
-                              videoImagePath: "",
-                              fromGallary: true,
-                              latitude: latitude.toString(),
-                              longitude: longitude.toString(),
-                              dateTime: DateFormat("HH:mm, dd MMM yyyy")
-                                  .format(DateTime.now()),
-                              location:
-                                  "${place.street}, ${place.locality}, ${place.country}",
-                              country: place.country ?? "",
-                              city: place.locality ?? "",
-                              state: place.administrativeArea ?? "",
-                            ));
+                              // Handle North/South East/West ref
+                              if (tags['GPS GPSLatitudeRef']?.printable ==
+                                      'S' &&
+                                  latitude != null) {
+                                latitude = -latitude;
+                              }
+                              if (tags['GPS GPSLongitudeRef']?.printable ==
+                                      'W' &&
+                                  longitude != null) {
+                                longitude = -longitude;
+                              }
+                            }
+
+                            // 🔹 Fallback to photo_manager's location data
+                            if (latitude == null || longitude == null) {
+                              latitude = _mediaList[index].latitude;
+                              longitude = _mediaList[index].longitude;
+                            }
+
+                            if (latitude != null &&
+                                longitude != null &&
+                                latitude != 0.0 &&
+                                longitude != 0.0) {
+                              // 🔹 Use geocoding to get address info
+                              List<Placemark> placemarks =
+                                  await placemarkFromCoordinates(
+                                      latitude, longitude);
+                              final place = placemarks.first;
+
+                              camListData.add(CameraData(
+                                path: imgPath,
+                                mimeType: "image",
+                                videoImagePath: "",
+                                fromGallary: true,
+                                latitude: latitude.toString(),
+                                longitude: longitude.toString(),
+                                dateTime: DateFormat("HH:mm, dd MMM yyyy")
+                                    .format(DateTime.now()),
+                                location:
+                                    "${place.street}, ${place.locality}, ${place.country}",
+                                country: place.country ?? "",
+                                city: place.locality ?? "",
+                                state: place.administrativeArea ?? "",
+                              ));
+                            } else {
+                              camListData.add(CameraData(
+                                path: imgPath,
+                                mimeType: "image",
+                                videoImagePath: "",
+                                fromGallary: true,
+                                latitude: "",
+                                longitude: "",
+                                dateTime: DateFormat("HH:mm, dd MMM yyyy")
+                                    .format(DateTime.now()),
+                                location: "",
+                                country: "",
+                                city: "",
+                                state: "",
+                              ));
+                            }
 
                             setState(() {
                               isSelectedImageProcessing = true;
@@ -327,30 +382,6 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                           } catch (e) {
                             debugPrint("Exif Error: $e");
                           }
-
-                          // camListData.add(CameraData(
-                          //   path: imgPath,
-                          //   mimeType: "image",
-                          //   videoImagePath: "",
-                          //   fromGallary: true,
-                          //   latitude: data?.latitude.toString() ??
-                          //       sharedPreferences!
-                          //           .getDouble(currentLat)
-                          //           .toString(),
-                          //   longitude: data?.longitude.toString() ??
-                          //       sharedPreferences!
-                          //           .getDouble(currentLon)
-                          //           .toString(),
-                          //   dateTime: DateFormat("HH:mm, dd MMM yyyy")
-                          //       .format(DateTime.now()),
-                          //   location: data?.address ?? "",
-                          //   country: data?.country ?? "",
-                          //   city: data?.city ?? "",
-                          //   state: data?.state ?? "",
-                          // ));
-                          // setState(() {
-                          //   isSelectedImageProcessing = true;
-                          // });
                         }
                       });
                     } else {
@@ -426,6 +457,8 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
       final androidInfo = await DeviceInfoPlugin().androidInfo;
       if (androidInfo.version.sdkInt < 33) {
         permission = Permission.storage;
+      } else {
+        await locationService.requestPermission(Permission.accessMediaLocation);
       }
     }
 
@@ -506,6 +539,29 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
       hasMoreToLoad = _mediaList.length < totalEntitiesCount;
       isLoadingMore = false;
     });
+  }
+
+  double? _convertTagToDouble(exif_lib.IfdTag? tag) {
+    if (tag == null || tag.values is! List || (tag.values as List).length < 3) {
+      return null;
+    }
+    final values = tag.values as List;
+
+    double d = _toDouble(values[0]);
+    double m = _toDouble(values[1]);
+    double s = _toDouble(values[2]);
+
+    return d + (m / 60.0) + (s / 3600.0);
+  }
+
+  double _toDouble(dynamic value) {
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    try {
+      return value.toDouble();
+    } catch (e) {
+      return 0.0;
+    }
   }
 
   Future<String> convertHEICToJPEG(String path, int width, int height) async {

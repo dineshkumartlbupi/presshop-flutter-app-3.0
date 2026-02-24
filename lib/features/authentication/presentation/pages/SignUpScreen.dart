@@ -452,7 +452,11 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                       filled: false,
                                       filledColor: Colors.transparent,
                                       autofocus: false,
-                                      onChanged: _onUserNameChanged,
+                                      onChanged: (v) {
+                                        _onUserNameChanged(v);
+                                        setState(() {});
+                                        return null;
+                                      },
                                     ),
                                     SizedBox(
                                       height: size.width * AppDimensions.numD01,
@@ -513,17 +517,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                           size.width * AppDimensions.numD06,
                                       suffixIconIconHeight:
                                           size.width * AppDimensions.numD085,
-                                      suffixIcon: phoneController.text
-                                                  .trim()
-                                                  .length >=
-                                              7
-                                          ? phoneAlreadyExists
-                                              ? const Icon(
-                                                  Icons.highlight_remove,
-                                                  color: Colors.red)
-                                              : const Icon(Icons.check_circle,
-                                                  color: Colors.green)
-                                          : null,
+                                      suffixIcon: getPhoneSuffixIcon(),
                                       hidePassword: false,
                                       keyboardType:
                                           const TextInputType.numberWithOptions(
@@ -539,6 +533,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                       ///  DEBOUNCED HERE
                                       onChanged: (val) {
                                         _onPhoneChanged(val);
+                                        setState(() {});
                                         return null;
                                       },
                                     ),
@@ -557,8 +552,9 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                           const Icon(Icons.email_outlined),
                                       prefixIconHeight:
                                           size.width * AppDimensions.numD06,
-                                      suffixIconIconHeight: 0,
-                                      suffixIcon: null,
+                                      suffixIconIconHeight:
+                                          size.width * AppDimensions.numD085,
+                                      suffixIcon: getEmailSuffixIcon(),
                                       hidePassword: false,
                                       keyboardType: TextInputType.emailAddress,
                                       validator: checkSignupEmailValidator,
@@ -575,6 +571,8 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
 
                                         // cancel previous timer
                                         _emailDebounce?.cancel();
+
+                                        setState(() {});
 
                                         _emailDebounce = Timer(
                                             const Duration(milliseconds: 500),
@@ -682,28 +680,12 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                                             .colorHint,
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                  width: passwordStrengthValue
-                                                              .isNotEmpty &&
-                                                          passwordStrengthValue ==
-                                                              AppStrings
-                                                                  .strongText
-                                                      ? size.width *
-                                                          AppDimensions.numD02
-                                                      : 0,
-                                                ),
-                                                passwordStrengthValue
-                                                            .isNotEmpty &&
-                                                        passwordStrengthValue ==
-                                                            AppStrings
-                                                                .strongText
-                                                    ? const ImageIcon(
-                                                        AssetImage(
-                                                          "${iconsPath}checked.png",
-                                                        ),
-                                                        color: Colors.green,
-                                                      )
-                                                    : Container(),
+                                                if (passwordController
+                                                    .text.isNotEmpty) ...[
+                                                  const SizedBox(width: 8),
+                                                  getPasswordSuffixIcon() ??
+                                                      const SizedBox.shrink(),
+                                                ]
                                               ],
                                             ),
                                             hidePassword: hidePassword,
@@ -799,25 +781,37 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                                 AppDimensions.numD08,
                                             suffixIconIconHeight: size.width *
                                                 AppDimensions.numD08,
-                                            suffixIcon: InkWell(
-                                              onTap: () {
-                                                hideConfirmPassword =
-                                                    !hideConfirmPassword;
-                                                setState(() {});
-                                              },
-                                              child: ImageIcon(
-                                                !hideConfirmPassword
-                                                    ? const AssetImage(
-                                                        "${iconsPath}ic_show_eye.png",
-                                                      )
-                                                    : const AssetImage(
-                                                        "${iconsPath}ic_block_eye.png",
-                                                      ),
-                                                color: !hideConfirmPassword
-                                                    ? AppColorTheme
-                                                        .colorTextFieldIcon
-                                                    : AppColorTheme.colorHint,
-                                              ),
+                                            suffixIcon: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                InkWell(
+                                                  onTap: () {
+                                                    hideConfirmPassword =
+                                                        !hideConfirmPassword;
+                                                    setState(() {});
+                                                  },
+                                                  child: ImageIcon(
+                                                    !hideConfirmPassword
+                                                        ? const AssetImage(
+                                                            "${iconsPath}ic_show_eye.png",
+                                                          )
+                                                        : const AssetImage(
+                                                            "${iconsPath}ic_block_eye.png",
+                                                          ),
+                                                    color: !hideConfirmPassword
+                                                        ? AppColorTheme
+                                                            .colorTextFieldIcon
+                                                        : AppColorTheme
+                                                            .colorHint,
+                                                  ),
+                                                ),
+                                                if (confirmPasswordController
+                                                    .text.isNotEmpty) ...[
+                                                  const SizedBox(width: 8),
+                                                  getConfirmPasswordSuffixIcon() ??
+                                                      const SizedBox.shrink(),
+                                                ]
+                                              ],
                                             ),
                                             hidePassword: hideConfirmPassword,
                                             keyboardType: TextInputType.text,
@@ -1150,6 +1144,80 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
       Icons.check_circle,
       color: Colors.green,
     );
+  }
+
+  Icon? getEmailSuffixIcon() {
+    String email = emailController.text.trim();
+    if (email.isEmpty) {
+      return null;
+    }
+    if (!emailExpression.hasMatch(email) || emailAlreadyExists) {
+      return const Icon(
+        Icons.highlight_remove,
+        color: Colors.red,
+      );
+    }
+    return const Icon(
+      Icons.check_circle,
+      color: Colors.green,
+    );
+  }
+
+  Icon? getPhoneSuffixIcon() {
+    String phone = phoneController.text.trim();
+    if (phone.isEmpty) {
+      return null;
+    }
+    if (checkSignupPhoneValidator(phone) != null) {
+      return const Icon(
+        Icons.highlight_remove,
+        color: Colors.red,
+      );
+    }
+    return const Icon(
+      Icons.check_circle,
+      color: Colors.green,
+    );
+  }
+
+  Icon? getPasswordSuffixIcon() {
+    String password = passwordController.text;
+    if (password.isEmpty) {
+      return null;
+    }
+    if (showLowercase &&
+        showUppercase &&
+        showNumber &&
+        showSpecialcase &&
+        showMincase) {
+      return const Icon(
+        Icons.check_circle,
+        color: Colors.green,
+      );
+    } else {
+      return const Icon(
+        Icons.highlight_remove,
+        color: Colors.red,
+      );
+    }
+  }
+
+  Icon? getConfirmPasswordSuffixIcon() {
+    String confirmPassword = confirmPasswordController.text;
+    if (confirmPassword.isEmpty) {
+      return null;
+    }
+    if (confirmPassword == passwordController.text) {
+      return const Icon(
+        Icons.check_circle,
+        color: Colors.green,
+      );
+    } else {
+      return const Icon(
+        Icons.highlight_remove,
+        color: Colors.red,
+      );
+    }
   }
 
   void setUserNameListener() {

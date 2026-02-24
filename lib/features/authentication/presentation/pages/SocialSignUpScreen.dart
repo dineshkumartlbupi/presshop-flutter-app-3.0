@@ -392,6 +392,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                                   if (v!.trim().length >= 4) {
                                     checkUserNameApi();
                                   }
+                                  setState(() {});
                                   return null;
                                 },
                               ),
@@ -454,18 +455,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                                     size.width * AppDimensions.numD06,
                                 suffixIconIconHeight:
                                     size.width * AppDimensions.numD085,
-                                suffixIcon:
-                                    phoneController.text.trim().length >= 7
-                                        ? phoneAlreadyExists
-                                            ? const Icon(
-                                                Icons.highlight_remove,
-                                                color: Colors.red,
-                                              )
-                                            : const Icon(
-                                                Icons.check_circle,
-                                                color: Colors.green,
-                                              )
-                                        : null,
+                                suffixIcon: getPhoneSuffixIcon(),
                                 hidePassword: false,
                                 keyboardType:
                                     const TextInputType.numberWithOptions(
@@ -477,6 +467,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                                 autofocus: false,
                                 onChanged: (val) {
                                   checkPhoneApi();
+                                  setState(() {});
                                   return null;
                                 },
                               ),
@@ -513,6 +504,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                                     isRefferalCodeValid = false;
                                     setState(() {});
                                   }
+                                  setState(() {});
                                   return null;
                                 },
                                 validator: null,
@@ -682,6 +674,23 @@ class _SocialSignUpState extends State<SocialSignUp>
       return null;
     }
     if (referralCode.length < 4 || !isRefferalCodeValid) {
+      return const Icon(
+        Icons.highlight_remove,
+        color: Colors.red,
+      );
+    }
+    return const Icon(
+      Icons.check_circle,
+      color: Colors.green,
+    );
+  }
+
+  Icon? getPhoneSuffixIcon() {
+    String phone = phoneController.text.trim();
+    if (phone.isEmpty) {
+      return null;
+    }
+    if (checkSignupPhoneValidator(phone) != null) {
       return const Icon(
         Icons.highlight_remove,
         color: Colors.red,
