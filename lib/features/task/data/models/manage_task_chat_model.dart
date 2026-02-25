@@ -35,10 +35,11 @@ class ManageTaskChatModel {
     debugPrint(
         "📍 ManageTaskChatModel parent address: '$parentAddress', keys: ${json.keys.toList()}");
 
-    if (json["media"] != null) {
-      var data = json["media"] as List;
-      mediaListTem = data.map((e) => TaskVideoModel.fromJson(e)).toList();
-      debugPrint("mediaListTem Length::::: ${mediaListTem.length}");
+    var rawMedia = json["media"] ?? json["content"];
+    if (rawMedia != null && rawMedia is List) {
+      mediaListTem = rawMedia.map((e) => TaskVideoModel.fromJson(e)).toList();
+      debugPrint(
+          "🚀 ManageTaskChatModel Found Media Length: ${mediaListTem.length}");
 
       // If media items don't have their own address, use parent's address
       if (parentAddress.isNotEmpty) {
@@ -70,7 +71,13 @@ class ManageTaskChatModel {
     roomId = (json["room_id"] ?? "").toString();
     isMakeCounterOffer = (json["is_hide"] ?? "").toString() == "true";
     // Map<String, dynamic> mediaMap = json["media"] ?? {};
-    rating = double.parse(numberFormatting((json["rating"] ?? "")).toString());
+    // Safe parsing for rating
+    var rawRating = json["rating"];
+    if (rawRating != null) {
+      rating = double.tryParse(numberFormatting(rawRating).toString()) ?? 0.0;
+    } else {
+      rating = 0.0;
+    }
     priceController = TextEditingController(
       text: (json["finaloffer_price"] ?? "").toString(),
     );
@@ -109,19 +116,56 @@ class ManageTaskChatModel {
       audioCount = "0";
     }
 
-    // Handle receiver_id: can be String or Map
+    // Handle receiver_id or sender_id: can be String or Map
     var receiverData = json["receiver_id"] ?? json["sender_id"];
     if (receiverData is Map) {
       mediaHouseId = (receiverData["_id"] ?? "").toString();
-      mediaHouseName = json["message_type"] == "PaymentIntent"
-          ? json["user_info"] != null
-              ? json["user_info"]["company_name"]
-              : ""
-          : (receiverData["company_name"] ?? "").toString();
-      mediaHouseImage = (receiverData["profile_image"] ?? "").toString();
-    } else {
+
+      if (json["message_type"] == "PaymentIntent" &&
+          json["user_info"] != null) {
+        mediaHouseName = (json["user_info"]["company_name"] ??
+                json["user_info"]["full_name"] ??
+                "")
+            .toString();
+      } else {
+        mediaHouseName = (receiverData["company_name"] ??
+                receiverData["full_name"] ??
+                receiverData["userName"] ??
+                receiverData["username"] ??
+                "")
+            .toString();
+
+        // If still empty, try first_name + last_name
+        if (mediaHouseName.isEmpty) {
+          String fName =
+              (receiverData["first_name"] ?? receiverData["firstName"] ?? "")
+                  .toString();
+          String lName =
+              (receiverData["last_name"] ?? receiverData["lastName"] ?? "")
+                  .toString();
+          mediaHouseName = "$fName $lName".trim();
+        }
+
+        // Final fallback to email or id if still empty
+        if (mediaHouseName.isEmpty) {
+          mediaHouseName = (receiverData["email"] ??
+                  receiverData["_id"] ??
+                  receiverData["id"] ??
+                  "")
+              .toString();
+        }
+      }
+
+      mediaHouseImage =
+          (receiverData["profile_image"] ?? receiverData["profileImage"] ?? "")
+              .toString();
+    } else if (receiverData != null) {
       mediaHouseId = receiverData.toString();
       mediaHouseName = "";
+      mediaHouseImage = "";
+    } else {
+      mediaHouseId = "";
+      mediaHouseName = "Unknown";
       mediaHouseImage = "";
     }
     transactionId = json["transaction_id"] ?? "";

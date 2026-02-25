@@ -680,7 +680,6 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                               child: Container(
                                 padding: const EdgeInsets.all(2),
                                 decoration: const BoxDecoration(
-                                  color: Colors.white,
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(Icons.cancel,
