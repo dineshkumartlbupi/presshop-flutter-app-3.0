@@ -21,9 +21,14 @@ import 'package:presshop/features/task/domain/entities/task_all.dart';
 
 // ignore: must_be_immutable
 class MyTaskScreen extends StatefulWidget {
-  MyTaskScreen({super.key, required this.hideLeading, this.broadCastId});
+  MyTaskScreen(
+      {super.key,
+      required this.hideLeading,
+      this.broadCastId,
+      this.showAppBar = false});
   bool hideLeading = false;
   String? broadCastId;
+  bool showAppBar = false;
 
   @override
   State<StatefulWidget> createState() {
@@ -157,9 +162,6 @@ class MyTaskScreenState extends State<MyTaskScreen>
     return BlocProvider(
       create: (context) {
         final bloc = di.sl<TaskBloc>();
-        // Don't fetch tasks here - let the BlocBuilder handle it based on active tab
-        // This prevents both loaders from appearing when switching tabs
-
         if (widget.broadCastId != null) {
           bloc.add(FetchTaskDetailEvent(widget.broadCastId!));
         }
@@ -204,13 +206,15 @@ class MyTaskScreenState extends State<MyTaskScreen>
           },
           child: Builder(builder: (context) {
             return Scaffold(
-              appBar: NewHomeAppBar(
-                size: size,
-                hideLeading: widget.hideLeading,
-                onFilterTap: () {
-                  showBottomSheet(size);
-                },
-              ),
+              appBar: widget.showAppBar
+                  ? NewHomeAppBar(
+                      size: size,
+                      hideLeading: widget.hideLeading,
+                      onFilterTap: () {
+                        showBottomSheet(size);
+                      },
+                    )
+                  : null,
               body: SafeArea(
                 child: Column(
                   children: [

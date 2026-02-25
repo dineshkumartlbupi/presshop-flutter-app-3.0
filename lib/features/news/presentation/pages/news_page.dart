@@ -30,8 +30,10 @@ class NewsPage extends StatefulWidget {
     this.hideFilters = false,
     this.prioritizedContentId,
     this.appBarTitle,
+    this.showAppBar = false,
   }) : super(key: key);
   final bool hideLeading;
+  final bool showAppBar;
   final double? latitude;
   final double? longitude;
   final bool hideFilters;
@@ -213,13 +215,15 @@ class _NewsPageState extends State<NewsPage>
 
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar: NewHomeAppBar(
-            size: size,
-            hideLeading: widget.hideLeading,
-            showFilter: false,
-            appBarTitle: widget.appBarTitle,
-            hideHamburger: widget.appBarTitle != null,
-          ),
+          // appBar: widget.showAppBar
+          //     ? NewHomeAppBar(
+          //         size: size,
+          //         hideLeading: widget.hideLeading,
+          //         showFilter: false,
+          //         appBarTitle: widget.appBarTitle,
+          //         hideHamburger: widget.appBarTitle != null,
+          //       )
+          //     : null,
           body: Stack(
             children: [
               SmartRefresher(

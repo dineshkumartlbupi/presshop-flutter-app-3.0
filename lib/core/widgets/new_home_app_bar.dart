@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
 
 class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const NewHomeAppBar({
+  const   NewHomeAppBar({
     super.key,
     required this.size,
     this.hideLeading = false,
@@ -44,7 +44,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             )
           : Padding(
               padding: EdgeInsets.only(
-                  left: hideLeading ? size.width * AppDimensions.numD04 : 0),
+                  left: hideLeading ? size.width * AppDimensions.numD018 : 0),
               child: InkWell(
                 onTap: () {
                   context.goNamed(AppRoutes.dashboardName,
