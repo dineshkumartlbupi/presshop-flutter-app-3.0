@@ -394,17 +394,29 @@ class _NewsDetailPageState extends State<NewsDetailPage>
       children: [
         Row(
           children: [
-            _buildStatItem("assets/icons/news_heart.png", "$likeCount likes",
-                size, iconSize),
+            _buildStatItem(
+                "assets/icons/news_heart.png",
+                "$likeCount ${likeCount == 1 || likeCount == 0 ? 'like' : 'likes'}",
+                size,
+                iconSize),
             SizedBox(width: size.width * AppDimensions.numD03),
-            _buildStatItem("assets/icons/news_message1.png",
-                "$commentCount Comments", size, iconSize),
+            _buildStatItem(
+                "assets/icons/news_message1.png",
+                "$commentCount ${commentCount == 1 || commentCount == 0 ? 'comment' : 'comments'}",
+                size,
+                iconSize),
             SizedBox(width: size.width * AppDimensions.numD03),
-            _buildStatItem("assets/icons/news_send1.png", "$shareCount Shares",
-                size, iconSize),
+            _buildStatItem(
+                "assets/icons/news_send1.png",
+                "$shareCount ${shareCount == 1 || shareCount == 0 ? 'share' : 'shares'}",
+                size,
+                iconSize),
             SizedBox(width: size.width * AppDimensions.numD03),
-            _buildStatItem("assets/icons/news_eye.png", "$viewCount Views",
-                size, size.width * AppDimensions.numD035,
+            _buildStatItem(
+                "assets/icons/news_eye.png",
+                "$viewCount ${viewCount == 1 || viewCount == 0 ? 'view' : 'views'}",
+                size,
+                size.width * AppDimensions.numD035,
                 color: const Color(0xFF4A4A4A)),
           ],
         ),
