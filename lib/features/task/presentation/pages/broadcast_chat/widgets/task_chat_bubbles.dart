@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
@@ -339,24 +340,38 @@ class RightMediaChatBubble extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              Image.network(
-                mediaItem.thumbnail.isNotEmpty
-                    ? mediaItem.thumbnail
-                    : getMediaImageUrl(
-                        mediaItem.imageVideoUrl,
-                        isVideo: true,
-                        isTask: true,
+              item.isLocalUpload
+                  ? (mediaItem.thumbnail.isNotEmpty
+                      ? Image.file(
+                          File(mediaItem.thumbnail),
+                          height: size.height / 3,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.file(
+                          File(mediaItem.imageVideoUrl),
+                          height: size.height / 3,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ))
+                  : Image.network(
+                      mediaItem.thumbnail.isNotEmpty
+                          ? mediaItem.thumbnail
+                          : getMediaImageUrl(
+                              mediaItem.imageVideoUrl,
+                              isVideo: true,
+                              isTask: true,
+                            ),
+                      height: size.height / 3,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (c, s, o) => Image.asset(
+                        "${commonImagePath}rabbitLogo.png",
+                        height: size.height / 3,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
                       ),
-                height: size.height / 3,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (c, s, o) => Image.asset(
-                  "${commonImagePath}rabbitLogo.png",
-                  height: size.height / 3,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-              ),
+                    ),
               Positioned(
                 top: size.width * AppDimensions.numD02,
                 left: size.width * AppDimensions.numD02,
@@ -411,20 +426,27 @@ class RightMediaChatBubble extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            Image.network(
-              getMediaImageUrl(mediaItem.imageVideoUrl, isTask: true),
-              height: size.height / 3,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              errorBuilder: (context, exception, stackTrace) => Center(
-                child: Image.asset(
-                  "${commonImagePath}rabbitLogo.png",
-                  height: size.height / 3,
-                  width: size.width / 1.7,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+            item.isLocalUpload
+                ? Image.file(
+                    File(mediaItem.imageVideoUrl),
+                    height: size.height / 3,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  )
+                : Image.network(
+                    getMediaImageUrl(mediaItem.imageVideoUrl, isTask: true),
+                    height: size.height / 3,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, exception, stackTrace) => Center(
+                      child: Image.asset(
+                        "${commonImagePath}rabbitLogo.png",
+                        height: size.height / 3,
+                        width: size.width / 1.7,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
             Positioned(
               top: size.width * AppDimensions.numD02,
               left: size.width * AppDimensions.numD02,
