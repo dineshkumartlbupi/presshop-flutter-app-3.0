@@ -85,6 +85,8 @@ class _MapPageContent extends StatefulWidget {
 class _MapPageContentState extends State<_MapPageContent>
     with TickerProviderStateMixin, AnalyticsPageMixin {
   final Completer<GoogleMapController> _controller = Completer();
+  bool _locationTimeout = false;
+  Timer? _locationTimer;
   double _currentZoom = 14.0;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
@@ -183,6 +185,16 @@ class _MapPageContentState extends State<_MapPageContent>
             ));
       });
     _pulseController.repeat();
+
+    // Start a timer to detect location acquisition timeout
+    _locationTimeout = false;
+    _locationTimer = Timer(const Duration(seconds: 5), () {
+      if (mounted && context.read<MapBloc>().state.myLocation == null) {
+        setState(() {
+          _locationTimeout = true;
+        });
+      }
+    });
   }
 
   @override
@@ -197,6 +209,7 @@ class _MapPageContentState extends State<_MapPageContent>
     _searchController.dispose();
     _searchFocusNode.dispose();
     _customInfoWindowController.dispose();
+    _locationTimer?.cancel();
     super.dispose();
   }
 
@@ -575,7 +588,7 @@ class _MapPageContentState extends State<_MapPageContent>
         }
       },
       listenWhen: (previous, current) {
-        if (previous?.selectedIncident?.id != current.selectedIncident?.id) {
+        if (previous.selectedIncident?.id != current.selectedIncident?.id) {
           if (current.selectedIncident != null &&
               current.selectedPosition != null) {
             _customInfoWindowController.hideInfoWindow!();
@@ -620,9 +633,46 @@ class _MapPageContentState extends State<_MapPageContent>
         return true;
       },
       builder: (context, state) {
+
         if (state.myLocation == null) {
-          return const Scaffold(
-              body: Center(child: CircularProgressIndicator()));
+          if (_locationTimeout) {
+            return Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.location_off, size: 48, color: Colors.red),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Unable to get your location.',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _locationTimeout = false;
+                        });
+                        context.read<MapBloc>().add(GetCurrentLocationEvent());
+                        _locationTimer?.cancel();
+                        _locationTimer = Timer(const Duration(seconds: 5), () {
+                          if (mounted && context.read<MapBloc>().state.myLocation == null) {
+                            setState(() {
+                              _locationTimeout = true;
+                            });
+                          }
+                        });
+                      },
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          } else {
+            return const Scaffold(
+                body: Center(child: CircularProgressIndicator()));
+          }
         }
 
         return Scaffold(
