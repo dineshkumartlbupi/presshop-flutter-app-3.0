@@ -207,14 +207,15 @@ class MyTaskScreenState extends State<MyTaskScreen>
           child: Builder(builder: (context) {
             return Scaffold(
               appBar: NewHomeAppBar(
-                      size: size,
-                      hideLeading: widget.hideLeading,
-                      onFilterTap: () {
-                        showBottomSheet(size);
-                      },
-                    ),
-                
+                size: size,
+                hideLeading: widget.hideLeading,
+                onFilterTap: () {
+                  showBottomSheet(size);
+                },
+              ),
               body: SafeArea(
+                // top: true,
+                top: false,
                 child: Column(
                   children: [
                     // SizedBox(height: size.width * AppDimensions.numD04),
@@ -254,6 +255,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                     const Divider(
                       color: Color(0xFFD8D8D8),
                       thickness: 1.5,
+                      height:
+                          1, // Default is higher, reduced to 1 to remove extra vertical space
                     ),
                     Flexible(child: BlocBuilder<TaskBloc, TaskState>(
                       builder: (context, state) {
@@ -480,7 +483,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                 SliverPadding(
                   padding: EdgeInsets.symmetric(
                       horizontal: size.width * AppDimensions.numD04,
-                      vertical: size.width * AppDimensions.numD04),
+                      // vertical: size.width * AppDimensions.numD04,
+                      vertical: size.width * AppDimensions.numD02),
                   sliver: SliverGrid(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
@@ -1018,7 +1022,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
               SliverPadding(
                 padding: EdgeInsets.symmetric(
                     horizontal: size.width * AppDimensions.numD04,
-                    vertical: size.width * AppDimensions.numD04),
+                    // vertical: size.width * AppDimensions.numD04,
+                    vertical: size.width * AppDimensions.numD02),
                 sliver: SliverGrid(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,

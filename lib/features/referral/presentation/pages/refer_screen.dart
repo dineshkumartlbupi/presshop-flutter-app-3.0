@@ -482,34 +482,34 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                   SizedBox(height: size.width * AppDimensions.numD06),
 
                   /// Hopper Army Commission Details Section
-                  if (_commissionList.isNotEmpty || _isLoadingCommissions) ...[
-                    Divider(color: Colors.grey.shade300, thickness: 1),
-                    SizedBox(height: size.width * AppDimensions.numD03),
-                    Text(
-                      "Your Hopper Army Earnings",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD04,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: size.width * AppDimensions.numD03),
-                    if (_isLoadingCommissions)
-                      Center(
-                        child: Padding(
-                          padding:
-                              EdgeInsets.all(size.width * AppDimensions.numD05),
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                AppColorTheme.colorThemePink),
-                          ),
-                        ),
-                      )
-                    else
-                      ..._commissionList
-                          .map((item) => _buildCommissionCard(size, item))
-                          .toList(),
-                  ],
+                  // if (_commissionList.isNotEmpty || _isLoadingCommissions) ...[
+                  //   Divider(color: Colors.grey.shade300, thickness: 1),
+                  //   SizedBox(height: size.width * AppDimensions.numD03),
+                  //   Text(
+                  //     "Your Hopper Army Earnings",
+                  //     style: commonTextStyle(
+                  //         size: size,
+                  //         fontSize: size.width * AppDimensions.numD04,
+                  //         color: Colors.black,
+                  //         fontWeight: FontWeight.bold),
+                  //   ),
+                  //   SizedBox(height: size.width * AppDimensions.numD03),
+                  //   if (_isLoadingCommissions)
+                  //     Center(
+                  //       child: Padding(
+                  //         padding:
+                  //             EdgeInsets.all(size.width * AppDimensions.numD05),
+                  //         child: CircularProgressIndicator(
+                  //           valueColor: AlwaysStoppedAnimation<Color>(
+                  //               AppColorTheme.colorThemePink),
+                  //         ),
+                  //       ),
+                  //     )
+                  //   else
+                  //     ..._commissionList
+                  //         .map((item) => _buildCommissionCard(size, item))
+                  //         .toList(),
+                  // ],
 
                   if (!_isLoadingCommissions && _commissionList.isEmpty) ...[
                     SizedBox(height: size.width * AppDimensions.numD04),

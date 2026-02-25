@@ -7,7 +7,7 @@ import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/widgets/logo_widget.dart';
 
 class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const   NewHomeAppBar({
+  const NewHomeAppBar({
     super.key,
     required this.size,
     this.hideLeading = false,
@@ -110,7 +110,10 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(size.width * AppDimensions.numD15 +
-      (bottom?.preferredSize.height ??
-          0)); // Adjust height as per NewCommonAppBar
+  // Size get preferredSize => Size.fromHeight(size.width * AppDimensions.numD15 +
+  //     (bottom?.preferredSize.height ??
+  //         0)); // Adjust height as per NewCommonAppBar
+  Size get preferredSize =>
+      Size.fromHeight((isIpad ? kToolbarHeightIpad : kToolbarHeight) +
+          (bottom?.preferredSize.height ?? 0));
 }

@@ -235,14 +235,13 @@ class MyContentViewState extends State<MyContentView>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: NewHomeAppBar(
-                  size: size,
-                  hideLeading: widget.hideLeading,
-                  onFilterTap: () {
-                    showFilterSheet();
-                  },
-                ),
-            
-              
+        size: size,
+        hideLeading: widget.hideLeading,
+        onFilterTap: () {
+          showFilterSheet();
+        },
+      ),
+
       //          CommonAppBar(
       //   elevation: 0,
       //   hideLeading: widget.hideLeading,
@@ -289,6 +288,8 @@ class MyContentViewState extends State<MyContentView>
       //   ],
       // ),
       body: SafeArea(
+        // top: true,
+        top: false,
         child: Column(
           children: [
             // SizedBox(height: size.width * AppDimensions.numD04),
@@ -324,6 +325,7 @@ class MyContentViewState extends State<MyContentView>
             const Divider(
               color: Color(0xFFD8D8D8),
               thickness: 1.5,
+              height: 1, // Reduced height to fix the gap
             ),
             Flexible(
               child: TabBarView(
@@ -426,8 +428,10 @@ class MyContentViewState extends State<MyContentView>
                       ],
                     )
                   : GridView.builder(
-                      padding:
-                          EdgeInsets.all(size.width * AppDimensions.numD04),
+                      // padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD04,
+                          vertical: size.width * AppDimensions.numD02),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         childAspectRatio: 0.75,

@@ -422,6 +422,7 @@ class BackgroundLocationService {
         initialNotificationTitle: 'Tracking Location',
         initialNotificationContent: 'Location service running',
         foregroundServiceNotificationId: 888,
+        foregroundServiceTypes: [AndroidForegroundType.location],
       ),
       iosConfiguration: IosConfiguration(
         autoStart: true,
