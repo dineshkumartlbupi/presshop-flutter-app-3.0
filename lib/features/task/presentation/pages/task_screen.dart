@@ -162,9 +162,6 @@ class MyTaskScreenState extends State<MyTaskScreen>
     return BlocProvider(
       create: (context) {
         final bloc = di.sl<TaskBloc>();
-        // Don't fetch tasks here - let the BlocBuilder handle it based on active tab
-        // This prevents both loaders from appearing when switching tabs
-
         if (widget.broadCastId != null) {
           bloc.add(FetchTaskDetailEvent(widget.broadCastId!));
         }

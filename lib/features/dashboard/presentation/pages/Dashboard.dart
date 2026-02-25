@@ -517,7 +517,7 @@ class DashboardState extends State<Dashboard>
                 }
               },
               child: Scaffold(
-                // appBar: _buildDashboardAppBar(size),
+                appBar: _buildDashboardAppBar(size),
                 bottomNavigationBar: _buildBottomNavigationBar(size),
                 body: Stack(
                   children: [

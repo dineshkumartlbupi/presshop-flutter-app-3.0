@@ -233,30 +233,30 @@ class MyContentViewState extends State<MyContentView>
     var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: widget.showAppBar
-          ? (true
-              ? NewHomeAppBar(
-                  size: size,
-                  hideLeading: widget.hideLeading,
-                  onFilterTap: () {
-                    showFilterSheet();
-                  },
-                )
-              : CommonBrandedAppBar(
-                  title: "My Content",
-                  size: size,
-                  hideLeading: widget.hideLeading,
-                  actionWidgets: [
-                    InkWell(
-                      onTap: () {
-                        showFilterSheet();
-                      },
-                      child: commonFilterIcon(size),
-                    ),
-                    SizedBox(width: size.width * AppDimensions.numD02),
-                  ],
-                )) as PreferredSizeWidget
-          : null,
+      // appBar: widget.showAppBar
+      //     ? (true
+      //         ? NewHomeAppBar(
+      //             size: size,
+      //             hideLeading: widget.hideLeading,
+      //             onFilterTap: () {
+      //               showFilterSheet();
+      //             },
+      //           )
+      //         : CommonBrandedAppBar(
+      //             title: "My Content",
+      //             size: size,
+      //             hideLeading: widget.hideLeading,
+      //             actionWidgets: [
+      //               InkWell(
+      //                 onTap: () {
+      //                   showFilterSheet();
+      //                 },
+      //                 child: commonFilterIcon(size),
+      //               ),
+      //               SizedBox(width: size.width * AppDimensions.numD02),
+      //             ],
+      //           )) as PreferredSizeWidget
+      //     : null,
       // appBar: CommonAppBar(
       //   elevation: 0,
       //   hideLeading: widget.hideLeading,

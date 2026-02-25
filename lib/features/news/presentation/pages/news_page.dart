@@ -215,15 +215,15 @@ class _NewsPageState extends State<NewsPage>
 
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar: widget.showAppBar
-              ? NewHomeAppBar(
-                  size: size,
-                  hideLeading: widget.hideLeading,
-                  showFilter: false,
-                  appBarTitle: widget.appBarTitle,
-                  hideHamburger: widget.appBarTitle != null,
-                )
-              : null,
+          // appBar: widget.showAppBar
+          //     ? NewHomeAppBar(
+          //         size: size,
+          //         hideLeading: widget.hideLeading,
+          //         showFilter: false,
+          //         appBarTitle: widget.appBarTitle,
+          //         hideHamburger: widget.appBarTitle != null,
+          //       )
+          //     : null,
           body: Stack(
             children: [
               SmartRefresher(
