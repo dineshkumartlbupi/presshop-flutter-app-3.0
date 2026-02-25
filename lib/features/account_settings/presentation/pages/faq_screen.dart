@@ -147,7 +147,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                     children: [
                       Padding(
                         padding: EdgeInsets.symmetric(
-                            horizontal: size.width * AppDimensions.numD04,
+                            horizontal: AppDimensions.commonPaddingSize(size),
                             vertical: size.width * AppDimensions.numD03),
                         child: TextFormField(
                             decoration: InputDecoration(

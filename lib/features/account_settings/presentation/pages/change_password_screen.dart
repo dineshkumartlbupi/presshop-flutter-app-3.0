@@ -85,7 +85,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               key: formKey,
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: size.width * AppDimensions.numD05),
+                    horizontal: AppDimensions.commonPaddingSize(size)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

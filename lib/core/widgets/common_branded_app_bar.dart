@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
+import 'package:presshop/core/widgets/logo_widget.dart';
 import 'package:presshop/main.dart';
 
 class CommonBrandedAppBar extends StatelessWidget
@@ -47,6 +48,7 @@ class CommonBrandedAppBar extends StatelessWidget
           () {
             context.pop();
           },
+          
       actionWidget: [
         if (actionWidgets != null)
           ...actionWidgets!.map((w) => Center(child: w)),
@@ -110,11 +112,8 @@ class CommonBrandedAppBar extends StatelessWidget
                   extra: {'initialPosition': 2},
                 );
               },
-              child: Image.asset(
-                "${commonImagePath}rabbitLogo.png",
-                height: size.width * AppDimensions.numD10,
-                width: size.width * AppDimensions.numD10,
-              ),
+              child:  LogoWidget.buildLogo(size),
+              
             ),
           ),
         if (showLogo)

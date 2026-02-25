@@ -235,7 +235,7 @@ class _TaskGrabbingScreenState extends State<TaskGrabbingScreen> {
         actionWidget: [],
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
+        padding: EdgeInsets.symmetric(horizontal: AppDimensions.commonPaddingSize(size)),
         child: Column(
           children: [
             Container(

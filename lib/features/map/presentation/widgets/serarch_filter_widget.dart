@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:presshop/features/map/constants/map_news_constants.dart';
 
 class SearchAndFilterBar extends StatelessWidget {
@@ -31,11 +32,16 @@ class SearchAndFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 12, right: 6, top: 2, bottom: 6),
-          child: Row(
+    var size = MediaQuery.sizeOf(context);
+    return Padding(
+      padding: EdgeInsets.only(
+          left: size.width * AppDimensions.numD04,
+          right: size.width * AppDimensions.numD04,
+          top: 2,
+          bottom: 6),
+      child: Column(
+        children: [
+          Row(
             children: [
               Expanded(
                 child: Container(
@@ -88,7 +94,7 @@ class SearchAndFilterBar extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
+              if (showNavigationIcon) const SizedBox(width: 10),
               if (showNavigationIcon)
                 Container(
                   width: 40,
@@ -114,10 +120,10 @@ class SearchAndFilterBar extends StatelessWidget {
                 ),
             ],
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 12, right: 6, bottom: 6),
-          child: Row(
+          SizedBox(
+            height: size.height * 0.01,
+          ),
+          Row(
             children: [
               Expanded(
                 child: Row(
@@ -150,8 +156,8 @@ class SearchAndFilterBar extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -127,9 +127,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                       onRefresh: _onRefresh,
                       controller: _refreshController,
                       child: ListView.separated(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * AppDimensions.numD04,
-                              vertical: size.width * AppDimensions.numD04),
+                         
                           itemBuilder: (context, index) {
                             var item = myDraftList[index];
                             return InkWell(
@@ -146,10 +144,9 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                                 );
                               },
                               child: Container(
-                                padding: EdgeInsets.only(
-                                    left: size.width * AppDimensions.numD03,
-                                    right: size.width * AppDimensions.numD03,
-                                    top: size.width * AppDimensions.numD03),
+                              padding: EdgeInsets.symmetric(
+                              horizontal: AppDimensions.commonPaddingSize(size),
+                              vertical: size.width * AppDimensions.numD04),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [

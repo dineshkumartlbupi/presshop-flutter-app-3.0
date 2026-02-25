@@ -4,6 +4,7 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
+import 'package:presshop/core/widgets/logo_widget.dart';
 
 class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const   NewHomeAppBar({
@@ -50,11 +51,12 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   context.goNamed(AppRoutes.dashboardName,
                       extra: {'initialPosition': 2});
                 },
-                child: Image.asset(
-                  "${commonImagePath}rabbitLogo.png",
-                  height: size.width * AppDimensions.numD11,
-                  width: size.width * AppDimensions.numD11,
-                ),
+                child: LogoWidget.buildLogo(size),
+                // child: Image.asset(
+                //   "${commonImagePath}rabbitLogo.png",
+                //   height: size.width * AppDimensions.numD11,
+                //   width: size.width * AppDimensions.numD11,
+                // ),
               ),
             ),
       centerTitle: false,

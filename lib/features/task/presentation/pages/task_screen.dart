@@ -206,15 +206,14 @@ class MyTaskScreenState extends State<MyTaskScreen>
           },
           child: Builder(builder: (context) {
             return Scaffold(
-              appBar: widget.showAppBar
-                  ? NewHomeAppBar(
+              appBar: NewHomeAppBar(
                       size: size,
                       hideLeading: widget.hideLeading,
                       onFilterTap: () {
                         showBottomSheet(size);
                       },
-                    )
-                  : null,
+                    ),
+                
               body: SafeArea(
                 child: Column(
                   children: [

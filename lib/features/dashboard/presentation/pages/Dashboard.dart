@@ -229,7 +229,7 @@ class DashboardState extends State<Dashboard>
   void _updateBottomNavigationScreens() {
     bottomNavigationScreens = <Widget>[
       MyContentPage(
-          contentKey: _contentKey, hideLeading: true, showAppBar: false),
+          contentKey: _contentKey, hideLeading: true, showAppBar: false, fromMenu: false),
       MyTaskScreen(key: _taskKey, hideLeading: true, showAppBar: false),
       CameraScreen(
         key: _cameraKey,
@@ -344,23 +344,23 @@ class DashboardState extends State<Dashboard>
     );
   }
 
-  PreferredSizeWidget? _buildDashboardAppBar(Size size) {
-    if (currentIndex == 2) {
-      return null;
-    }
-    return NewHomeAppBar(
-      size: size,
-      hideLeading: true,
-      showFilter: currentIndex == 0 || currentIndex == 1,
-      onFilterTap: () {
-        if (currentIndex == 0) {
-          _contentKey.currentState?.showFilterSheet();
-        } else if (currentIndex == 1) {
-          _taskKey.currentState?.showBottomSheet(size);
-        }
-      },
-    );
-  }
+  // PreferredSizeWidget? _buildDashboardAppBar(Size size) {
+  //   if (currentIndex == 2 || currentIndex == 0 || currentIndex == 1) {
+  //     return null;
+  //   }
+  //   return NewHomeAppBar(
+  //     size: size,
+  //     hideLeading: true,
+  //     showFilter: currentIndex == 0 || currentIndex == 1,
+  //     onFilterTap: () {
+  //       if (currentIndex == 0) {
+  //         _contentKey.currentState?.showFilterSheet();
+  //       } else if (currentIndex == 1) {
+  //         _taskKey.currentState?.showBottomSheet(size);
+  //       }
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -517,7 +517,7 @@ class DashboardState extends State<Dashboard>
                 }
               },
               child: Scaffold(
-                appBar: _buildDashboardAppBar(size),
+                // appBar: _buildDashboardAppBar(size),
                 bottomNavigationBar: _buildBottomNavigationBar(size),
                 body: Stack(
                   children: [

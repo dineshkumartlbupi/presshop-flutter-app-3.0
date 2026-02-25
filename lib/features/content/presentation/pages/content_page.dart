@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/content/domain/entities/content_item.dart';
@@ -233,31 +234,16 @@ class MyContentViewState extends State<MyContentView>
     var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
-      // appBar: widget.showAppBar
-      //     ? (true
-      //         ? NewHomeAppBar(
-      //             size: size,
-      //             hideLeading: widget.hideLeading,
-      //             onFilterTap: () {
-      //               showFilterSheet();
-      //             },
-      //           )
-      //         : CommonBrandedAppBar(
-      //             title: "My Content",
-      //             size: size,
-      //             hideLeading: widget.hideLeading,
-      //             actionWidgets: [
-      //               InkWell(
-      //                 onTap: () {
-      //                   showFilterSheet();
-      //                 },
-      //                 child: commonFilterIcon(size),
-      //               ),
-      //               SizedBox(width: size.width * AppDimensions.numD02),
-      //             ],
-      //           )) as PreferredSizeWidget
-      //     : null,
-      // appBar: CommonAppBar(
+      appBar: NewHomeAppBar(
+                  size: size,
+                  hideLeading: widget.hideLeading,
+                  onFilterTap: () {
+                    showFilterSheet();
+                  },
+                ),
+            
+              
+      //          CommonAppBar(
       //   elevation: 0,
       //   hideLeading: widget.hideLeading,
       //   title: Text(

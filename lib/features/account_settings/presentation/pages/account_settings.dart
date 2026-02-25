@@ -13,6 +13,7 @@ class AccountSetting extends StatelessWidget {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
+      // backgroundColor: Colors.red,
         appBar: CommonAppBar(
           elevation: 0,
           hideLeading: false,
@@ -37,10 +38,11 @@ class AccountSetting extends StatelessWidget {
         ),
         body: ListView(
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * AppDimensions.numD01,
+              horizontal:AppDimensions.commonPaddingSize(size),
               vertical: size.height * AppDimensions.numD015),
           children: [
             ListTile(
+              contentPadding: EdgeInsets.zero,
               title: Text(
                 "Delete Account",
                 style: commonTextStyle(
