@@ -181,4 +181,5 @@ class AppDimensions {
   static const headerFontSize = 0.06;
   static const appBarHeadingFontSize = 0.045;
   static const appBarHeadingFontSizeNew = 0.05;
+ static  commonPaddingSize (size) =>  size.width * AppDimensions.numD04;
 }

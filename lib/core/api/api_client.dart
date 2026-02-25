@@ -208,7 +208,6 @@ class ApiClient {
     }
   }
 
-  // Adding back the helper methods that were lost in the replace_file_content error
   Future<Response> get(
     String path, {
     Map<String, dynamic>? queryParameters,

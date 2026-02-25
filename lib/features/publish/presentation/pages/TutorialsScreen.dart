@@ -130,7 +130,7 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * AppDimensions.numD04,
+                              horizontal: AppDimensions.commonPaddingSize(size),
                               vertical: size.height * AppDimensions.numD03),
                           child: TextFormField(
                             decoration: InputDecoration(

@@ -274,7 +274,7 @@ class _MenuScreenState extends State<MenuScreen> {
       body: SafeArea(
         child: ListView.separated(
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * AppDimensions.numD06,
+              horizontal: AppDimensions.commonPaddingSize(size),
               vertical: size.width * AppDimensions.numD02),
           itemCount: menuList.length,
           separatorBuilder: (context, index) => const Divider(

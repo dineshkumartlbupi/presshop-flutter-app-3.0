@@ -135,6 +135,7 @@ List<MenuData> buildMenu() => [
         action: MenuAction.myContent,
         pageBuilder: (context) => const MyContentPage(
           fromMenu: true,
+          showAppBar: true,
         ),
       ),
       MenuData(

@@ -626,13 +626,12 @@ class _MapPageContentState extends State<_MapPageContent>
         }
 
         return Scaffold(
-          appBar: widget.showAppBar
-              ? NewHomeAppBar(
+          appBar:  NewHomeAppBar(
                   size: size,
                   hideLeading: widget.hideLeading,
                   showFilter: false,
-                )
-              : null,
+                ),
+             
           body: Stack(
             children: [
               GoogleMap(

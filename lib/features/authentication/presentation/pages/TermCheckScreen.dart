@@ -201,8 +201,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                 !rememberMe
                                     ? Padding(
                                         padding: EdgeInsets.symmetric(
-                                            horizontal: size.width *
-                                                AppDimensions.numD04),
+                                            horizontal: AppDimensions.commonPaddingSize(size)),
                                         child: Text(
                                           "PLEASE READ THESE LICENCE TERMS CAREFULLY. BY CLICKING ON THE ${"ACCEPT"} BUTTON BELOW YOU AGREE TO THESE TERMS WHICH WILL BIND YOU. IF YOU DO NOT AGREE TO THESE TERMS, CLICK ON THE REJECT BUTTON BELOW.",
                                           style: TextStyle(

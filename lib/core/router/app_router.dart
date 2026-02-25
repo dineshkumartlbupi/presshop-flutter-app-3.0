@@ -634,7 +634,7 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.myContentPath,
         name: AppRoutes.myContentName,
-        builder: (context, state) => const MyContentPage(),
+        builder: (context, state) => const MyContentPage(fromMenu: false,),
       ),
       GoRoute(
         path: AppRoutes.contentSubmittedPath,

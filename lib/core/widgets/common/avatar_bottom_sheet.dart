@@ -94,7 +94,7 @@ class AvatarBottomSheet {
                                             errorBuilder: (context, exception,
                                                 stackTrace) {
                                               return Image.asset(
-                                                "${commonImagePath}rabbitLogo.png",
+                                                "${CommonAssets.commonImagePath}rabbitLogo.png",
                                                 fit: BoxFit.contain,
                                                 width: size.width *
                                                     AppDimensions.numD20,

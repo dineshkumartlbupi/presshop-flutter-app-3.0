@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:presshop/core/router/router_constants.dart';
+import 'package:presshop/core/widgets/common_app_bar.dart';
 
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
@@ -119,16 +121,48 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
           }
         },
         builder: (context, state) {
-          // You might want to show loading indicator if strictly needed,
-          // but for profile fetch we might just show skeleton or current data.
-          // For uploading, we set a local flag or check state.
+      
           bool isLoading = state is ProfileLoading;
 
           return Scaffold(
-            appBar: CommonBrandedAppBar(
-              title: AppStrings.digitalId,
-              size: size,
+            // appBar: CommonBrandedAppBar(
+            //   title: AppStrings.digitalId,
+            //   size: size,
+            // ),
+            appBar: CommonAppBar(
+        elevation: 0,
+        hideLeading: false,
+        title: Text(
+          "${AppStrings.digitalId}",
+          style: TextStyle(
+              color: Colors.black,
+              fontSize: size.width * AppDimensions.appBarHeadingFontSize,
+              fontWeight: FontWeight.w700),
+        ),
+        centerTitle: false,
+        titleSpacing: 0,
+        size: size,
+        showActions: true,
+        leadingFxn: () {
+          context.pop();
+        },
+        actionWidget: [
+          InkWell(
+            onTap: () {
+              context.goNamed(AppRoutes.dashboardName,
+                  extra: {'initialPosition': 2});
+            },
+            child: Image.asset(
+              "${commonImagePath}rabbitLogo.png",
+              height: size.width * AppDimensions.numD07,
+              width: size.width * AppDimensions.numD07,
             ),
+          ),
+          SizedBox(
+            width: size.width * AppDimensions.numD04,
+          )
+        ],
+      ),
             body: Container(
               margin: EdgeInsets.only(
                 left: size.width * AppDimensions.numD04,

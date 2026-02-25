@@ -74,7 +74,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
               adminEmail = state.adminContactInfo.email;
             });
           } else if (state is AccountSettingsError) {
-            // Optional: Show error or just fail silently since it's just prefetching email
+       
             debugPrint("Failed to load admin contact info: ${state.message}");
           }
         },
@@ -119,7 +119,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
             child: SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: size.width * AppDimensions.numD06),
+                    horizontal:AppDimensions.commonPaddingSize(size)),
                 child: Form(
                   key: contactUsKey,
                   child: Column(

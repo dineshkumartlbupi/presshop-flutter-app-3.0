@@ -103,7 +103,7 @@ class CommonAppBarState extends State<CommonAppBar> {
                       alignment: Alignment.centerLeft,
                       margin: EdgeInsets.only(
                         left: widget.leadingLeftSPace ??
-                            widget.size.width * AppDimensions.numD04,
+                            widget.size.width * AppDimensions.numD025,
                       ),
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,

@@ -39,7 +39,7 @@ final List<Map<String, String>> alertTypes = [
   {
     'type': 'fight',
     'icon': 'assets/markers/gifs/fight.webp',
-    'label': 'Altercation'
+    'label': 'Fight'
   },
 
   ///////
