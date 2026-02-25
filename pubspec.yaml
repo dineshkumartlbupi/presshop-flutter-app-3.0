@@ -114,8 +114,7 @@ dependencies:
   chewie: ^1.13.0
   go_router: ^17.1.0
   custom_info_window: ^1.0.1
-  exif: ^3.3.0
-
+ 
 dev_dependencies:
   # hive_generator: ^2.0.1
   build_runner: ^2.4.8
