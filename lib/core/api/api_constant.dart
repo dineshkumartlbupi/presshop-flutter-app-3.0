@@ -18,7 +18,6 @@ class Config {
   static const int env = 1;
   // "http://localhost:8100/api/";
 
-  // =============>>S
   // String get baseUrl =>
   //     "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/";
 

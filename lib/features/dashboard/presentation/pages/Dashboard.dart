@@ -16,6 +16,7 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:location/location.dart' as lc;
 import 'package:presshop/features/map/presentation/pages/map_page.dart';
@@ -89,6 +90,9 @@ class DashboardState extends State<Dashboard>
   static DashBoardInterface? dashBoardInterface;
   final GlobalKey<CameraScreenState> _cameraKey =
       GlobalKey<CameraScreenState>();
+  final GlobalKey<MyContentViewState> _contentKey =
+      GlobalKey<MyContentViewState>();
+  final GlobalKey<MyTaskScreenState> _taskKey = GlobalKey<MyTaskScreenState>();
 
   final player = AudioPlayer();
 
@@ -224,8 +228,9 @@ class DashboardState extends State<Dashboard>
 
   void _updateBottomNavigationScreens() {
     bottomNavigationScreens = <Widget>[
-      MyContentPage(hideLeading: true),
-      MyTaskScreen(hideLeading: true),
+      MyContentPage(
+          contentKey: _contentKey, hideLeading: true, showAppBar: false),
+      MyTaskScreen(key: _taskKey, hideLeading: true, showAppBar: false),
       CameraScreen(
         key: _cameraKey,
         picAgain: false,
@@ -235,9 +240,10 @@ class DashboardState extends State<Dashboard>
         create: (context) => sl<NewsBloc>()..add(const GetAllNewsEvent()),
         child: const NewsPage(
           hideLeading: true,
+          showAppBar: false,
         ),
       ),
-      MapPage(hideLeading: true)
+      MapPage(hideLeading: true, showAppBar: false)
     ];
   }
 
@@ -335,6 +341,24 @@ class DashboardState extends State<Dashboard>
           label: "Alerts",
         ),
       ],
+    );
+  }
+
+  PreferredSizeWidget? _buildDashboardAppBar(Size size) {
+    if (currentIndex == 2) {
+      return null;
+    }
+    return NewHomeAppBar(
+      size: size,
+      hideLeading: true,
+      showFilter: currentIndex == 0 || currentIndex == 1,
+      onFilterTap: () {
+        if (currentIndex == 0) {
+          _contentKey.currentState?.showFilterSheet();
+        } else if (currentIndex == 1) {
+          _taskKey.currentState?.showBottomSheet(size);
+        }
+      },
     );
   }
 
@@ -493,6 +517,7 @@ class DashboardState extends State<Dashboard>
                 }
               },
               child: Scaffold(
+                appBar: _buildDashboardAppBar(size),
                 bottomNavigationBar: _buildBottomNavigationBar(size),
                 body: Stack(
                   children: [
