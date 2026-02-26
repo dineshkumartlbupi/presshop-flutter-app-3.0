@@ -121,13 +121,14 @@ class CameraScreenState extends State<CameraScreen>
       if (!perm.isAuth) return null;
 
       final List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
-          onlyAll: true,
-          type: RequestType.all,
-          filterOption: FilterOptionGroup(
-            orders: [
-              const OrderOption(type: OrderOptionType.updateDate, asc: false),
-            ],
-          ));
+        onlyAll: true,
+        type: RequestType.image,
+        filterOption: FilterOptionGroup(
+          orders: [
+            const OrderOption(type: OrderOptionType.updateDate, asc: false),
+          ],
+        ),
+      );
       if (paths.isEmpty) return null;
 
       final List<AssetEntity> assets =
