@@ -331,6 +331,33 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                           ),
                         ],
                       ),
+                      SizedBox(
+                        width: size.width * AppDimensions.numD02,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Image.asset(
+                            "${iconsPath}heart_icon.png", // Assets path for heart
+                            color: feed.likesCount == 0
+                                ? Colors.grey
+                                : AppColorTheme.colorThemePink,
+                            height: size.width * AppDimensions.numD045,
+                            width: size.width * AppDimensions.numD045,
+                          ),
+                          SizedBox(
+                            width: size.width * AppDimensions.numD012,
+                          ),
+                          Text(
+                            '${feed.likesCount.toString()} Like${feed.likesCount > 1 ? 's' : ''}',
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * AppDimensions.numD029,
+                                color: AppColorTheme.colorThemePink,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   SizedBox(

@@ -380,6 +380,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
       // Gallery
       await ImageGallerySaverPlus.saveFile(picture.path);
+      add(LoadGalleryMediaEvent());
 
       final data = CameraData(
         path: picture.path,
@@ -571,6 +572,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
           capturedMedia: newList,
           status: CameraStatus.success,
           recordingTime: "00:00:00"));
+      add(LoadGalleryMediaEvent());
     } catch (e) {
       debugPrint("DEBUG: _onStopVideoRecording exception: $e");
       emit(state.copyWith(
@@ -746,8 +748,15 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         // but requestPermission already handled the UX and settings redirection.
         final PermissionState ps = await PhotoManager.requestPermissionExtend();
         if (ps.isAuth) {
-          List<AssetPathEntity> albums =
-              await PhotoManager.getAssetPathList(onlyAll: true);
+          List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
+            onlyAll: true,
+            type: RequestType.all,
+            filterOption: FilterOptionGroup(
+              orders: [
+                const OrderOption(type: OrderOptionType.updateDate, asc: false),
+              ],
+            ),
+          );
           if (albums.isNotEmpty) {
             List<AssetEntity> media =
                 await albums[0].getAssetListPaged(page: 0, size: 1);

@@ -121,15 +121,21 @@ class CameraScreenState extends State<CameraScreen>
       if (!perm.isAuth) return null;
 
       final List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
-          onlyAll: true, type: RequestType.image);
+          onlyAll: true,
+          type: RequestType.all,
+          filterOption: FilterOptionGroup(
+            orders: [
+              const OrderOption(type: OrderOptionType.updateDate, asc: false),
+            ],
+          ));
       if (paths.isEmpty) return null;
 
       final List<AssetEntity> assets =
           await paths.first.getAssetListRange(start: 0, end: 1);
       if (assets.isEmpty) return null;
 
-      final Uint8List? thumb =
-          await assets.first.thumbnailDataWithSize(const ThumbnailSize(200, 200));
+      final Uint8List? thumb = await assets.first
+          .thumbnailDataWithSize(const ThumbnailSize(200, 200));
       return thumb;
     } catch (e) {
       debugPrint('Error fetching latest gallery image: $e');
@@ -487,33 +493,33 @@ class CameraScreenState extends State<CameraScreen>
                 child: ClipRRect(
                   borderRadius:
                       BorderRadius.circular(size.width * AppDimensions.numD025),
-                    child: state.galleryMedia.isNotEmpty
+                  child: state.galleryMedia.isNotEmpty
                       ? FutureBuilder(
-                        future: state.galleryMedia.first
-                          .thumbnailDataWithSize(
-                            const ThumbnailSize(200, 200)),
-                        builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.done &&
-                          snapshot.data != null) {
-                          return Image.memory(snapshot.data!,
-                            fit: BoxFit.cover);
-                        }
-                        return Container(color: Colors.grey);
-                        })
+                          future: state.galleryMedia.first
+                              .thumbnailDataWithSize(
+                                  const ThumbnailSize(200, 200)),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                    ConnectionState.done &&
+                                snapshot.data != null) {
+                              return Image.memory(snapshot.data!,
+                                  fit: BoxFit.cover);
+                            }
+                            return Container(color: Colors.grey);
+                          })
                       : FutureBuilder<Uint8List?>(
-                        future: _getLatestGalleryImageBytes(),
-                        builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.done &&
-                          snapshot.data != null) {
-                          return Image.memory(snapshot.data!,
-                            fit: BoxFit.cover);
-                        }
-                        return Image.asset("${dummyImagePath}walk2.png",
-                          fit: BoxFit.cover);
-                        },
-                      ),
+                          future: _getLatestGalleryImageBytes(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                    ConnectionState.done &&
+                                snapshot.data != null) {
+                              return Image.memory(snapshot.data!,
+                                  fit: BoxFit.cover);
+                            }
+                            return Image.asset("${dummyImagePath}walk2.png",
+                                fit: BoxFit.cover);
+                          },
+                        ),
                 ),
               ),
             ),

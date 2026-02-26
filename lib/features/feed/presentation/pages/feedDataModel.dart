@@ -46,6 +46,7 @@ class FeedsDataModel {
     required this.displayPrice,
     required this.displayCurrency,
     required this.feedImage,
+    this.likesCount = 0,
   });
 
   factory FeedsDataModel.fromJson(Map<String, dynamic> json) {
@@ -105,6 +106,7 @@ class FeedsDataModel {
             : "",
         // viewCount: json['count_for_hopper'] ?? 0,
         viewCount: json['content_view_count_by_marketplace_for_app'] ?? 0,
+        likesCount: json['likes_count'] ?? 0,
         offerCount: json["purchased_mediahouse"] != null
             ? (json["purchased_mediahouse"] as List).length
             : 0);
@@ -141,6 +143,7 @@ class FeedsDataModel {
   String timestamp;
   int viewCount = 0;
   int offerCount = 0;
+  int likesCount = 0;
 
   List<ContentDataModel> contentDataList = [];
   String createdAt;

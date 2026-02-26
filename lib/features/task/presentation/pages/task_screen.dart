@@ -18,6 +18,7 @@ import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:presshop/features/task/domain/entities/task.dart';
 import 'package:presshop/features/task/domain/entities/task_all.dart';
+import 'package:presshop/features/task/domain/entities/task_detail.dart';
 
 // ignore: must_be_immutable
 class MyTaskScreen extends StatefulWidget {
@@ -308,10 +309,52 @@ class MyTaskScreenState extends State<MyTaskScreen>
                           return true;
                         }).toList();
 
+                        List<Task> combinedLocalTasks = [...currentLocalTasks];
+                        for (var taskAll in currentAllTasks) {
+                          bool alreadyExists = combinedLocalTasks.any((t) {
+                            if (t is TaskPending) {
+                              return t.broadCastId == taskAll.id;
+                            } else if (t is TaskMy) {
+                              return t.taskDetail?.id == taskAll.id;
+                            }
+                            return false;
+                          });
+
+                          if (!alreadyExists) {
+                            combinedLocalTasks.add(TaskPending(
+                              status: taskAll.status,
+                              totalAmount: "0",
+                              title: taskAll.heading,
+                              body: taskAll.description,
+                              broadCastId: taskAll.id,
+                              isAvailableForAccept:
+                                  taskAll.isAvailableForAccept,
+                              taskDetail: TaskDetail(
+                                id: taskAll.id,
+                                title: taskAll.heading,
+                                description: taskAll.description,
+                                deadLine: taskAll.deadlineDate ??
+                                    DateTime.now().add(const Duration(days: 1)),
+                                mediaHouseImage:
+                                    taskAll.uploadContents?.videothubnail ?? "",
+                                createdAt: taskAll.createdAt,
+                                status: taskAll.status,
+                                isNeedPhoto: taskAll.isNeedPhoto,
+                                isNeedVideo: taskAll.isNeedVideo,
+                                isNeedInterview: taskAll.isNeedInterview,
+                                mediaHouseId:
+                                    taskAll.mediaHouseDetails?.id ?? "",
+                                latitude: taskAll.latitude,
+                                longitude: taskAll.longitude,
+                              ),
+                            ));
+                          }
+                        }
+
                         return _tabController.index == 0
                             ? allTaskWidget(currentAllTasks, context)
                             : showLocalTasksDataWidget(
-                                currentLocalTasks, context);
+                                combinedLocalTasks, context);
                       },
                     )),
                   ],
@@ -874,10 +917,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                          item.totalAmount == "0" &&
-                                                  item.status == "accepted"
-                                              ? item.status.toUpperCase()
-                                              : "RECEIVED",
+                                          item.status == "accepted"
+                                              ? "ACCEPTED"
+                                              : item.totalAmount == "0"
+                                                  ? item.status.toUpperCase()
+                                                  : "RECEIVED",
                                           style: commonTextStyle(
                                               size: size,
                                               fontSize: size.width *
@@ -1205,11 +1249,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                      item.isAvailableForAccept &&
-                                              item.status == "accepted"
+                                      item.status == "accepted"
                                           ? "ACCEPTED"
-                                          : item.isAvailableForAccept &&
-                                                  item.status == "pending"
+                                          : item.status == "pending" ||
+                                                  item.isAvailableForAccept
                                               ? "TAP TO ACCEPT"
                                               : "",
                                       style: commonTextStyle(

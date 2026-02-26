@@ -27,6 +27,7 @@ class Feed extends Equatable {
     required this.userId,
     required this.saleStatus,
     required this.paidStatus,
+    this.likesCount = 0,
   });
   final String id;
   final String heading;
@@ -39,6 +40,7 @@ class Feed extends Equatable {
   final String displayCurrency;
   final int viewCount;
   final int offerCount;
+  final int likesCount;
   final String createdAt;
   final String timeAgo; // timestamp?
   final String feedImage; // Avatar?
@@ -65,6 +67,7 @@ class Feed extends Equatable {
         displayPrice,
         viewCount,
         offerCount,
+        likesCount,
         createdAt,
         status,
         isFavourite,
@@ -102,6 +105,7 @@ class Feed extends Equatable {
     String? userId,
     String? saleStatus,
     String? paidStatus,
+    int? likesCount,
   }) {
     return Feed(
       id: id ?? this.id,
@@ -115,6 +119,7 @@ class Feed extends Equatable {
       displayCurrency: displayCurrency ?? this.displayCurrency,
       viewCount: viewCount ?? this.viewCount,
       offerCount: offerCount ?? this.offerCount,
+      likesCount: likesCount ?? this.likesCount,
       createdAt: createdAt ?? this.createdAt,
       timeAgo: timeAgo ?? this.timeAgo,
       feedImage: feedImage ?? this.feedImage,
@@ -145,6 +150,7 @@ class Feed extends Equatable {
       'display_currency': displayCurrency,
       'view_count': viewCount,
       'offer_count': offerCount,
+      'likes_count': likesCount,
       'created_at': createdAt,
       'time_ago': timeAgo,
       'feed_image': feedImage,

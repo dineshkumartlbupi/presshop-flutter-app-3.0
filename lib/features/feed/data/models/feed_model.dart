@@ -28,6 +28,7 @@ class FeedModel extends Feed {
     required super.userId,
     required super.saleStatus,
     required super.paidStatus,
+    super.likesCount = 0,
   });
 
   factory FeedModel.fromJson(Map<String, dynamic> json) {
@@ -108,6 +109,7 @@ class FeedModel extends Feed {
           json['view_count'] ??
           0,
       offerCount: json['offer_count'] ?? 0,
+      likesCount: json['likes_count'] ?? 0,
       createdAt: json['created_at'] ?? json['createdAt'] ?? "",
       timeAgo: "",
       feedImage: avatarUrl,
