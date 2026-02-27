@@ -3,7 +3,7 @@ import '../../domain/entities/admin_contact_info.dart';
 
 abstract class AccountSettingsState extends Equatable {
   const AccountSettingsState();
-  
+
   @override
   List<Object> get props => [];
 }
@@ -13,7 +13,6 @@ class AccountSettingsInitial extends AccountSettingsState {}
 class AccountSettingsLoading extends AccountSettingsState {}
 
 class AdminContactInfoLoaded extends AccountSettingsState {
-
   const AdminContactInfoLoaded({required this.adminContactInfo});
   final AdminContactInfo adminContactInfo;
 
@@ -22,7 +21,6 @@ class AdminContactInfoLoaded extends AccountSettingsState {
 }
 
 class AccountDeleted extends AccountSettingsState {
-
   const AccountDeleted({this.message = 'Account deleted successfully'});
   final String message;
 
@@ -35,7 +33,6 @@ class PasswordChangedSuccess extends AccountSettingsState {
 }
 
 class AccountSettingsError extends AccountSettingsState {
-
   const AccountSettingsError({required this.message});
   final String message;
 

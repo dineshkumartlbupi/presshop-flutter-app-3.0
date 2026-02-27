@@ -177,8 +177,6 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
     controller.dispose();
     ratingReviewController1.dispose();
     socket.disconnect();
-    socket.onDisconnect(
-        (_) => socket.emit('room join', {"room_id": widget.roomId}));
     super.dispose();
   }
 
@@ -3117,8 +3115,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                             width: size.width,
                                           ),
                                         )
-                                      : Image.network(
-                                          widget
+                                      : CachedNetworkImage(
+                                          imageUrl: widget
                                                       .myContentData!
                                                       .contentMediaList[index]
                                                       .mediaType ==
@@ -3137,8 +3135,10 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                           height:
                                               size.width * AppDimensions.numD50,
                                           fit: BoxFit.cover,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
+                                          memCacheHeight: (size.width *
+                                                  AppDimensions.numD50)
+                                              .toInt(),
+                                          errorWidget: (context, url, error) {
                                             return Image.asset(
                                               "${commonImagePath}rabbitLogo.png",
                                               width: double.infinity,
@@ -3950,10 +3950,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             child: Padding(
                               padding: EdgeInsets.all(
                                   size.width * AppDimensions.numD013),
-                              child: Image.network(
-                                widget.taskDetail!.mediaHouseImage.toString(),
+                              child: CachedNetworkImage(
+                                imageUrl: widget.taskDetail!.mediaHouseImage
+                                    .toString(),
                                 width: size.width * AppDimensions.numD09,
                                 fit: BoxFit.contain,
+                                memCacheWidth:
+                                    (size.width * AppDimensions.numD10).toInt(),
                               ),
                             ),
                           ),
@@ -4271,11 +4274,12 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(
                         size.width * AppDimensions.numD04),
-                    child: Image.network(
-                      thumbnail,
+                    child: CachedNetworkImage(
+                      imageUrl: thumbnail,
                       height: size.height / 3,
                       width: double.infinity,
                       fit: BoxFit.cover,
+                      memCacheHeight: (size.height / 3).toInt(),
                     ),
                   ),
                 ),
@@ -4437,13 +4441,15 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                       shape: BoxShape.circle),
                   child: ClipOval(
                       clipBehavior: Clip.antiAlias,
-                      child: Image.network(
-                        sharedPreferences!
+                      child: CachedNetworkImage(
+                        imageUrl: sharedPreferences!
                                 .getString(SharedPreferencesKeys.avatarKey) ??
                             "",
                         fit: BoxFit.cover,
                         height: size.width * AppDimensions.numD09,
                         width: size.width * AppDimensions.numD09,
+                        memCacheWidth:
+                            (size.width * AppDimensions.numD10).toInt(),
                       )))
               : Container(
                   padding: EdgeInsets.all(
@@ -4500,11 +4506,14 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                       child: ClipRRect(
                           borderRadius: BorderRadius.circular(
                               size.width * AppDimensions.numD04),
-                          child: Image.network(
-                            imageUrl,
+                          child: CachedNetworkImage(
+                            imageUrl: imageUrl,
                             height: size.height / 3,
+                            width: double.infinity,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, exception, stackTrace) {
+                            memCacheHeight: (size.height / 3).toInt(),
+                            memCacheWidth: (size.width / 1.7).toInt(),
+                            errorWidget: (context, url, error) {
                               return Center(
                                 child: Image.asset(
                                   "${commonImagePath}rabbitLogo.png",
@@ -5034,12 +5043,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
             border: Border.all(color: Colors.grey.shade400)),
         child: ClipOval(
           clipBehavior: Clip.antiAlias,
-          child: Image.network(
-            widget.taskDetail?.mediaHouseImage ?? "",
+          child: CachedNetworkImage(
+            imageUrl: widget.taskDetail?.mediaHouseImage ?? "",
             width: size.width * AppDimensions.numD09,
             height: size.width * AppDimensions.numD09,
             fit: BoxFit.contain,
-            errorBuilder: (ctx, obj, stace) {
+            memCacheWidth: (size.width * AppDimensions.numD10).toInt(),
+            errorWidget: (ctx, url, error) {
               return Image.asset(
                 "${commonImagePath}rabbitLogo.png",
                 width: size.width * AppDimensions.numD09,

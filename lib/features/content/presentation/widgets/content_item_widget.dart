@@ -261,11 +261,6 @@ class MediaThumbnailWidget extends StatelessWidget {
               top: size.width * AppDimensions.numD02,
               child: _buildCountBadge(),
             ),
-          Positioned(
-            right: size.width * AppDimensions.numD02,
-            top: size.width * AppDimensions.numD02,
-            child: _buildCountBadge(),
-          ),
         ],
       ),
     );

@@ -16,7 +16,6 @@ class DashboardInitial extends DashboardState {}
 class DashboardLoading extends DashboardState {}
 
 class DashboardActiveAdminsLoaded extends DashboardState {
-
   const DashboardActiveAdminsLoaded(this.admins);
   final List<AdminDetail> admins;
 
@@ -29,7 +28,6 @@ class DashboardLocationUpdated extends DashboardState {}
 class DashboardDeviceAdded extends DashboardState {}
 
 class DashboardTaskDetailLoaded extends DashboardState {
-
   const DashboardTaskDetailLoaded(this.taskDetail);
   final TaskAssignedEntity taskDetail;
 
@@ -38,7 +36,6 @@ class DashboardTaskDetailLoaded extends DashboardState {
 }
 
 class DashboardRoomIdLoaded extends DashboardState {
-
   const DashboardRoomIdLoaded(this.roomData);
   final Map<String, dynamic> roomData;
 
@@ -47,7 +44,6 @@ class DashboardRoomIdLoaded extends DashboardState {
 }
 
 class DashboardAppVersionChecked extends DashboardState {
-
   const DashboardAppVersionChecked(this.versionData);
   final Map<String, dynamic> versionData;
 
@@ -56,7 +52,6 @@ class DashboardAppVersionChecked extends DashboardState {
 }
 
 class StudentBeansActivated extends DashboardState {
-
   const StudentBeansActivated(this.data);
   final Map<String, dynamic> data;
 
@@ -65,7 +60,6 @@ class StudentBeansActivated extends DashboardState {
 }
 
 class DashboardMyProfileLoaded extends DashboardState {
-
   const DashboardMyProfileLoaded(this.user);
   final User user;
 
@@ -74,7 +68,6 @@ class DashboardMyProfileLoaded extends DashboardState {
 }
 
 class DashboardTabChanged extends DashboardState {
-
   const DashboardTabChanged(this.index);
   final int index;
 
@@ -83,7 +76,6 @@ class DashboardTabChanged extends DashboardState {
 }
 
 class DashboardError extends DashboardState {
-
   const DashboardError(this.message);
   final String message;
 
@@ -92,7 +84,6 @@ class DashboardError extends DashboardState {
 }
 
 class DashboardStudentBeansInfoLoaded extends DashboardState {
-
   const DashboardStudentBeansInfoLoaded(this.info);
   final StudentBeansInfo info;
 

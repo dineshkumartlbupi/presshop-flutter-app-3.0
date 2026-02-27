@@ -47,7 +47,8 @@ void onStart(ServiceInstance service) async {
   );
 
   await prefs.setBool('stop_service_flag', false);
-  _pollStopFlag(service, notifications);
+  // Removed _pollStopFlag to save CPU/Battery.
+  // stopService event and port listener are sufficient.
   _registerIsolateStopListener(service, notifications);
 
   if (Platform.isAndroid) {
@@ -135,22 +136,7 @@ void internalNotificationTapBackground(
 /// ================= STOP SERVICE HANDLING =====================
 /// =============================================================
 
-void _pollStopFlag(
-  ServiceInstance service,
-  FlutterLocalNotificationsPlugin notifications,
-) {
-  Timer.periodic(const Duration(seconds: 1), (timer) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.reload();
-    if (prefs.getBool('stop_service_flag') == true) {
-      debugPrint("Stop flag detected");
-      await prefs.setBool('stop_service_flag', false);
-      notifications.cancel(888);
-      service.stopSelf();
-      timer.cancel();
-    }
-  });
-}
+// Removed _pollStopFlag to reduce CPU load from SharedPreferences polling.
 
 void _registerIsolateStopListener(
   ServiceInstance service,
@@ -269,9 +255,9 @@ Future<LocationSettings> _buildLocationSettings(SharedPreferences prefs) async {
 
   if (Platform.isAndroid) {
     return AndroidSettings(
-      accuracy: LocationAccuracy.bestForNavigation,
+      accuracy: LocationAccuracy.medium,
       distanceFilter: distanceFilter.toInt(),
-      intervalDuration: const Duration(seconds: 1),
+      intervalDuration: const Duration(seconds: 10),
       forceLocationManager: true,
     );
   }
@@ -287,7 +273,7 @@ Future<LocationSettings> _buildLocationSettings(SharedPreferences prefs) async {
   }
 
   return LocationSettings(
-    accuracy: LocationAccuracy.bestForNavigation,
+    accuracy: LocationAccuracy.medium,
     distanceFilter: distanceFilter.toInt(),
   );
 }

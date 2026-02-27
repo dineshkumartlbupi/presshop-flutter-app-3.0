@@ -26,10 +26,12 @@ class MyTaskScreen extends StatefulWidget {
       {super.key,
       required this.hideLeading,
       this.broadCastId,
-      this.showAppBar = false});
+      this.showAppBar = false,
+      this.isActive = true});
   bool hideLeading = false;
   String? broadCastId;
   bool showAppBar = false;
+  bool isActive;
 
   @override
   State<StatefulWidget> createState() {
@@ -127,7 +129,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
     _blinkingController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
-    )..repeat(reverse: true);
+    );
+    if (widget.isActive) {
+      _blinkingController.repeat(reverse: true);
+    }
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
@@ -144,6 +149,18 @@ class MyTaskScreenState extends State<MyTaskScreen>
         setState(() {});
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(MyTaskScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isActive != oldWidget.isActive) {
+      if (widget.isActive) {
+        _blinkingController.repeat(reverse: true);
+      } else {
+        _blinkingController.stop();
+      }
+    }
   }
 
   @override
@@ -219,10 +236,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                 top: false,
                 child: Column(
                   children: [
-                    // SizedBox(height: size.width * AppDimensions.numD04),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * AppDimensions.numD04),
+                          horizontal: size.width * AppDimensions.numD04,
+                          vertical: size.width * AppDimensions.numD02),
                       child: TabBar(
                         controller: _tabController,
                         physics: const NeverScrollableScrollPhysics(),
@@ -499,6 +516,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
       builder: (context, constraints) {
         return SmartRefresher(
           controller: _localRefreshController,
+          header:
+              const MaterialClassicHeader(color: AppColorTheme.colorThemePink),
           enablePullDown: true,
           enablePullUp: taskList.isNotEmpty,
           onRefresh: () => _onLocalRefresh(context),
@@ -1022,7 +1041,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                   child: Center(
                     child: (localTasksStatus == TaskStatus.loading ||
                             localTasksStatus == TaskStatus.initial)
-                        ? showAnimatedLoader(size)
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: AppColorTheme.colorThemePink,
+                            ),
+                          )
                         : errorMessageWidget("No Task Available"),
                   ),
                 ),
@@ -1039,6 +1062,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
     return LayoutBuilder(builder: (context, constraints) {
       return SmartRefresher(
         controller: _allRefreshController,
+        header:
+            const MaterialClassicHeader(color: AppColorTheme.colorThemePink),
         enablePullDown: true,
         enablePullUp: allTaskList.isNotEmpty,
         onRefresh: () => _onAllRefresh(context),
@@ -1078,249 +1103,219 @@ class MyTaskScreenState extends State<MyTaskScreen>
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       var item = allTaskList[index];
-                      return InkWell(
-                        onTap: () {
-                          if (item.isAvailableForAccept &&
-                              item.status != "rejected" &&
-                              item.status != "accepted") {
-                            context.pushNamed(AppRoutes.broadcastName, extra: {
-                              'taskId': item.id,
-                              'mediaHouseId': item.mediaHouseDetails?.id ?? "",
-                            }).then((value) {
-                              if (context.mounted) {
-                                context.read<TaskBloc>().add(FetchAllTasksEvent(
-                                    offset: 0,
-                                    filterParams: {},
-                                    showLoader: false));
-                              }
-                            });
-                          } else {
-                            context
-                                .pushNamed(AppRoutes.taskDetailNewName, extra: {
-                              'taskStatus': item.status,
-                              'taskId': item.id,
-                              'totalEarning': "0",
-                            }).then((value) {
-                              if (context.mounted) {
-                                context.read<TaskBloc>().add(FetchAllTasksEvent(
-                                    offset: 0,
-                                    filterParams: {},
-                                    showLoader: false));
-                              }
-                            });
-                          }
-                        },
-                        child: Container(
-                          padding: EdgeInsets.only(
-                              left: size.width * AppDimensions.numD03,
-                              right: size.width * AppDimensions.numD03,
-                              top: size.width * AppDimensions.numD03),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.grey.shade200,
-                                    spreadRadius: 2,
-                                    blurRadius: 1)
-                              ],
-                              borderRadius: BorderRadius.circular(
-                                  size.width * AppDimensions.numD04)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              /// Image
-                              Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * AppDimensions.numD04),
-                                    child: Image.network(
-                                      // item.taskDetail!.mediaHouseImage,
-                                      item.uploadContents?.videothubnail ?? "",
-                                      height: size.width * AppDimensions.numD28,
-                                      width: size.width,
-                                      fit: BoxFit.cover,
-                                      loadingBuilder:
-                                          (context, child, loadingProgress) {
-                                        if (loadingProgress == null)
-                                          return child;
-                                        return Container(
-                                          alignment: Alignment.topCenter,
-                                          child: Image.asset(
-                                            "${commonImagePath}rabbitLogo.png",
-                                            height: size.width *
-                                                AppDimensions.numD26,
-                                            width: size.width *
-                                                AppDimensions.numD26,
-                                          ),
-                                        );
-                                      },
-                                      errorBuilder:
-                                          (context, exception, stackTrace) {
-                                        return Container(
-                                          alignment: Alignment.topCenter,
-                                          child: Image.asset(
-                                            "${commonImagePath}rabbitLogo.png",
-                                            height: size.width *
-                                                AppDimensions.numD26,
-                                            width: size.width *
-                                                AppDimensions.numD26,
-                                          ),
-                                        );
-                                      },
+                      return RepaintBoundary(
+                        child: InkWell(
+                          onTap: () {
+                            if (item.isAvailableForAccept &&
+                                item.status != "rejected" &&
+                                item.status != "accepted") {
+                              context
+                                  .pushNamed(AppRoutes.broadcastName, extra: {
+                                'taskId': item.id,
+                                'mediaHouseId':
+                                    item.mediaHouseDetails?.id ?? "",
+                              }).then((value) {
+                                if (context.mounted) {
+                                  context.read<TaskBloc>().add(
+                                      FetchAllTasksEvent(
+                                          offset: 0,
+                                          filterParams: {},
+                                          showLoader: false));
+                                }
+                              });
+                            } else {
+                              context.pushNamed(AppRoutes.taskDetailNewName,
+                                  extra: {
+                                    'taskStatus': item.status,
+                                    'taskId': item.id,
+                                    'totalEarning': "0",
+                                  }).then((value) {
+                                if (context.mounted) {
+                                  context.read<TaskBloc>().add(
+                                      FetchAllTasksEvent(
+                                          offset: 0,
+                                          filterParams: {},
+                                          showLoader: false));
+                                }
+                              });
+                            }
+                          },
+                          child: Container(
+                            padding: EdgeInsets.only(
+                                left: size.width * AppDimensions.numD03,
+                                right: size.width * AppDimensions.numD03,
+                                top: size.width * AppDimensions.numD03),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.grey.shade200,
+                                      spreadRadius: 2,
+                                      blurRadius: 1)
+                                ],
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                /// Image
+                                Stack(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * AppDimensions.numD04),
+                                      child: Image.network(
+                                        // item.taskDetail!.mediaHouseImage,
+                                        item.uploadContents?.videothubnail ??
+                                            "",
+                                        height:
+                                            size.width * AppDimensions.numD28,
+                                        width: size.width,
+                                        fit: BoxFit.cover,
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return Container(
+                                            alignment: Alignment.topCenter,
+                                            child: Image.asset(
+                                              "${commonImagePath}rabbitLogo.png",
+                                              height: size.width *
+                                                  AppDimensions.numD26,
+                                              width: size.width *
+                                                  AppDimensions.numD26,
+                                            ),
+                                          );
+                                        },
+                                        errorBuilder:
+                                            (context, exception, stackTrace) {
+                                          return Container(
+                                            alignment: Alignment.topCenter,
+                                            child: Image.asset(
+                                              "${commonImagePath}rabbitLogo.png",
+                                              height: size.width *
+                                                  AppDimensions.numD26,
+                                              width: size.width *
+                                                  AppDimensions.numD26,
+                                            ),
+                                          );
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: size.width * AppDimensions.numD02,
-                              ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: size.width * AppDimensions.numD02,
+                                ),
 
-                              /// Title
-                              Text(
-                                // item.taskDetail!.title.toTitleCase(),
-                                item.heading.toTitleCase(),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.start,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * AppDimensions.numD03,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500),
-                              ),
+                                /// Title
+                                Text(
+                                  // item.taskDetail!.title.toTitleCase(),
+                                  item.heading.toTitleCase(),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.start,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD03,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500),
+                                ),
 
-                              const Spacer(),
+                                const Spacer(),
 
-                              /// Dead Line
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Image.asset(
-                                    "${iconsPath}ic_clock.png",
-                                    height: size.width * AppDimensions.numD029,
-                                  ),
-                                  SizedBox(
-                                    width: size.width * AppDimensions.numD01,
-                                  ),
-                                  Text(
-                                    dateTimeFormatter(
-                                        // dateTime:
-                                        // item.taskDetail!.createdAt.toString(),
-                                        dateTime: item.createdAt.toString(),
-                                        format: "hh:mm a"),
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD024,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                  SizedBox(
-                                    width: size.width * AppDimensions.numD018,
-                                  ),
-                                  Image.asset(
-                                    "${iconsPath}ic_yearly_calendar.png",
-                                    height: size.width * AppDimensions.numD028,
-                                  ),
-                                  SizedBox(
-                                    width: size.width * AppDimensions.numD01,
-                                  ),
-                                  Text(
-                                    dateTimeFormatter(
-                                        // dateTime:
-                                        //     item.taskDetail!.createdAt.toString(),
-                                        dateTime: item.createdAt.toString(),
-                                        format: "dd MMM yyyy"),
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD024,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: size.width * AppDimensions.numD013,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                      item.status == "accepted"
-                                          ? "ACCEPTED"
-                                          : item.status == "pending" ||
-                                                  item.isAvailableForAccept
-                                              ? "TAP TO ACCEPT"
-                                              : "",
+                                /// Dead Line
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Image.asset(
+                                      "${iconsPath}ic_clock.png",
+                                      height:
+                                          size.width * AppDimensions.numD029,
+                                    ),
+                                    SizedBox(
+                                      width: size.width * AppDimensions.numD01,
+                                    ),
+                                    Text(
+                                      dateTimeFormatter(
+                                          // dateTime:
+                                          // item.taskDetail!.createdAt.toString(),
+                                          dateTime: item.createdAt.toString(),
+                                          format: "hh:mm a"),
                                       style: commonTextStyle(
                                           size: size,
                                           fontSize: size.width *
-                                              AppDimensions.numD025,
-                                          color: AppColorTheme.colorThemePink,
-                                          fontWeight: FontWeight.normal)),
+                                              AppDimensions.numD024,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    SizedBox(
+                                      width: size.width * AppDimensions.numD018,
+                                    ),
+                                    Image.asset(
+                                      "${iconsPath}ic_yearly_calendar.png",
+                                      height:
+                                          size.width * AppDimensions.numD028,
+                                    ),
+                                    SizedBox(
+                                      width: size.width * AppDimensions.numD01,
+                                    ),
+                                    Text(
+                                      dateTimeFormatter(
+                                          // dateTime:
+                                          //     item.taskDetail!.createdAt.toString(),
+                                          dateTime: item.createdAt.toString(),
+                                          format: "dd MMM yyyy"),
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width *
+                                              AppDimensions.numD024,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: size.width * AppDimensions.numD013,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                        item.status == "accepted"
+                                            ? "ACCEPTED"
+                                            : item.status == "pending" ||
+                                                    item.isAvailableForAccept
+                                                ? "TAP TO ACCEPT"
+                                                : "",
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width *
+                                                AppDimensions.numD025,
+                                            color: AppColorTheme.colorThemePink,
+                                            fontWeight: FontWeight.normal)),
 
-                                  //////////////
-                                  item.status == "accepted"
-                                      ? Container(
-                                          height: size.width *
-                                              AppDimensions.numD065,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: size.width *
-                                                  AppDimensions.numD04,
-                                              vertical: size.width *
-                                                  AppDimensions.numD01),
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                              color: Colors.black,
-                                              borderRadius:
-                                                  BorderRadius.circular(size
-                                                          .width *
-                                                      AppDimensions.numD015)),
-                                          child: Text(
-                                            "Live",
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width *
-                                                    AppDimensions.numD025,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                        )
-                                      : FadeTransition(
-                                          opacity: (item.isAvailableForAccept &&
-                                                  item.status != "rejected")
-                                              ? _blinkingController
-                                              : const AlwaysStoppedAnimation(
-                                                  1.0),
-                                          child: Container(
-                                            alignment: Alignment.center,
+                                    //////////////
+                                    item.status == "accepted"
+                                        ? Container(
                                             height: size.width *
-                                                AppDimensions.numD06,
+                                                AppDimensions.numD065,
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: size.width *
-                                                    AppDimensions.numD025,
+                                                    AppDimensions.numD04,
                                                 vertical: size.width *
-                                                    AppDimensions.numD003),
+                                                    AppDimensions.numD01),
+                                            alignment: Alignment.center,
                                             decoration: BoxDecoration(
-                                                color: item.isAvailableForAccept
-                                                    ? item.status == "rejected"
-                                                        ? Colors.black
-                                                        : AppColorTheme
-                                                            .colorThemePink
-                                                    : Colors.black,
+                                                color: Colors.black,
                                                 borderRadius:
                                                     BorderRadius.circular(size
                                                             .width *
                                                         AppDimensions.numD015)),
                                             child: Text(
-                                              item.isAvailableForAccept
-                                                  ? item.status == "rejected"
-                                                      ? "Live"
-                                                      : "Available"
-                                                  : "Live",
+                                              "Live",
                                               style: commonTextStyle(
                                                   size: size,
                                                   fontSize: size.width *
@@ -1328,14 +1323,60 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.w600),
                                             ),
-                                          ),
-                                        )
-                                ],
-                              ),
-                              SizedBox(
-                                height: size.width * AppDimensions.numD02,
-                              )
-                            ],
+                                          )
+                                        : FadeTransition(
+                                            opacity: (widget.isActive &&
+                                                    item.isAvailableForAccept &&
+                                                    item.status != "rejected")
+                                                ? _blinkingController
+                                                : const AlwaysStoppedAnimation(
+                                                    1.0),
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              height: size.width *
+                                                  AppDimensions.numD06,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: size.width *
+                                                      AppDimensions.numD025,
+                                                  vertical: size.width *
+                                                      AppDimensions.numD003),
+                                              decoration: BoxDecoration(
+                                                  color: item
+                                                          .isAvailableForAccept
+                                                      ? item.status ==
+                                                              "rejected"
+                                                          ? Colors.black
+                                                          : AppColorTheme
+                                                              .colorThemePink
+                                                      : Colors.black,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          size.width *
+                                                              AppDimensions
+                                                                  .numD015)),
+                                              child: Text(
+                                                item.isAvailableForAccept
+                                                    ? item.status == "rejected"
+                                                        ? "Live"
+                                                        : "Available"
+                                                    : "Live",
+                                                style: commonTextStyle(
+                                                    size: size,
+                                                    fontSize: size.width *
+                                                        AppDimensions.numD025,
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                            ),
+                                          )
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: size.width * AppDimensions.numD02,
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -1349,7 +1390,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                 child: Center(
                   child: (allTasksStatus == TaskStatus.loading ||
                           allTasksStatus == TaskStatus.initial)
-                      ? showAnimatedLoader(size)
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                              color: AppColorTheme.colorThemePink))
                       : errorMessageWidget("No Task Available"),
                 ),
               ),

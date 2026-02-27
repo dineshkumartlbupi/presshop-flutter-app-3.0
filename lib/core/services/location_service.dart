@@ -96,7 +96,9 @@ class LocationService {
   }
 
   Future<LocationData?> getCurrentLocation(BuildContext context,
-      {bool shouldShowSettingPopup = true}) async {
+      {bool shouldShowSettingPopup = true,
+      geolocator.LocationAccuracy accuracy =
+          geolocator.LocationAccuracy.medium}) async {
     bool hasPermission =
         await _requestLocationPermission(context, shouldShowSettingPopup);
     if (!hasPermission) {
@@ -111,9 +113,8 @@ class LocationService {
     // Fetch location
     try {
       geolocator.Position? position = await Future.any([
-        geolocator.Geolocator.getCurrentPosition(
-            desiredAccuracy: geolocator.LocationAccuracy.high),
-        Future.delayed(Duration(seconds: 20), () => null),
+        geolocator.Geolocator.getCurrentPosition(desiredAccuracy: accuracy),
+        Future.delayed(const Duration(seconds: 20), () => null),
       ]);
 
       // Fallback to last known position if current position fetch fails

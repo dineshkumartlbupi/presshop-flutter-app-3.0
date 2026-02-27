@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:presshop/main.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -108,10 +107,10 @@ Widget showLoader({bool isForLocation = false}) {
     mainAxisAlignment: MainAxisAlignment.center,
     mainAxisSize: MainAxisSize.max,
     children: [
-      Center(
-        child: Lottie.asset("assets/lottieFiles/loader_new.json",
-            height: size.width * AppDimensions.numD28,
-            width: size.width * AppDimensions.numD28),
+      const Center(
+        child: CircularProgressIndicator(
+          color: AppColorTheme.colorThemePink,
+        ),
       ),
       if (isForLocation) ...[
         SizedBox(height: size.width * AppDimensions.numD005),
@@ -133,10 +132,8 @@ Widget showLoader({bool isForLocation = false}) {
 }
 
 Widget showAnimatedLoader(Size size) {
-  return Center(
-      child: Lottie.asset("assets/lottieFiles/loader_new.json",
-          height: size.width * AppDimensions.numD25,
-          width: size.width * AppDimensions.numD25));
+  return const Center(
+      child: CircularProgressIndicator(color: AppColorTheme.colorThemePink));
 }
 
 /// Calender

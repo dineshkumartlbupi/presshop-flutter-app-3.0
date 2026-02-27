@@ -252,7 +252,7 @@ class RightMediaChatBubble extends StatelessWidget {
                       SizedBox(width: size.width * AppDimensions.numD02),
                       Text(
                         uploadStatus == 'processing'
-                            ? 'Processing'
+                            ? '${progress.toInt()}% Processing'
                             : '${progress.toInt()}%',
                         style: TextStyle(
                           color: Colors.white,

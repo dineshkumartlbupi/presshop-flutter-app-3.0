@@ -224,13 +224,37 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
       newEmoji = false;
     }
 
-    // Update List
+    // Update List and handle local likesCount mapping backend logic
+    // Backend logic: Heart/Thumbs Up (isLiked) and Clap trigger +1/-1. Sad Emoji ignored.
+    int newLikesCount = currentFeed.likesCount;
+
+    // Handle Like toggle logic
+    if (newLike != currentFeed.isLiked) {
+      if (newLike) {
+        newLikesCount++;
+      } else {
+        newLikesCount--;
+      }
+    }
+
+    // Handle Clap toggle logic (Clap is also treated as a like-type interaction for the counter)
+    if (newClap != currentFeed.isClap) {
+      if (newClap) {
+        newLikesCount++;
+      } else {
+        newLikesCount--;
+      }
+    }
+
+    // Note: isEmoji transitions do not affect likesCount as per backend logic.
+
     List<Feed> updatedFeeds = List.from(state.feeds);
     updatedFeeds[index] = currentFeed.copyWith(
       isFavourite: newFav,
       isLiked: newLike,
       isEmoji: newEmoji,
       isClap: newClap,
+      likesCount: newLikesCount,
     );
 
     emit(state.copyWith(feeds: updatedFeeds));

@@ -33,10 +33,12 @@ class CameraScreen extends StatefulWidget {
     required this.picAgain,
     required this.previousScreen,
     this.autoInitialize = true,
+    this.isActive = true,
   });
   final bool picAgain;
   final ScreenNameEnum previousScreen;
   final bool autoInitialize;
+  final bool isActive;
 
   @override
   State<StatefulWidget> createState() {
@@ -623,6 +625,9 @@ class CameraScreenState extends State<CameraScreen>
 
   Widget _buildCameraPreview(
       BuildContext context, CameraState state, Size size) {
+    if (!widget.isActive) {
+      return const SizedBox.shrink();
+    }
     if (state.status == CameraStatus.failure) {
       return Center(
         child: Column(

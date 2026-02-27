@@ -10,7 +10,6 @@ import '../../domain/usecases/get_admin_contact_info.dart';
 
 class AccountSettingsBloc
     extends Bloc<AccountSettingsEvent, AccountSettingsState> {
-
   AccountSettingsBloc({
     required this.deleteAccount,
     required this.changePassword,

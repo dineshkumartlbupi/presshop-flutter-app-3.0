@@ -229,12 +229,20 @@ class DashboardState extends State<Dashboard>
   void _updateBottomNavigationScreens() {
     bottomNavigationScreens = <Widget>[
       MyContentPage(
-          contentKey: _contentKey, hideLeading: true, showAppBar: false, fromMenu: false),
-      MyTaskScreen(key: _taskKey, hideLeading: true, showAppBar: false),
+          contentKey: _contentKey,
+          hideLeading: true,
+          showAppBar: false,
+          fromMenu: false),
+      MyTaskScreen(
+          key: _taskKey,
+          hideLeading: true,
+          showAppBar: false,
+          isActive: currentIndex == 1),
       CameraScreen(
         key: _cameraKey,
         picAgain: false,
         previousScreen: ScreenNameEnum.dashboardScreen,
+        isActive: currentIndex == 2,
       ),
       BlocProvider(
         create: (context) => sl<NewsBloc>()..add(const GetAllNewsEvent()),
@@ -243,7 +251,11 @@ class DashboardState extends State<Dashboard>
           showAppBar: false,
         ),
       ),
-      MapPage(hideLeading: true, showAppBar: false)
+      MapPage(
+        hideLeading: true,
+        showAppBar: false,
+        isActive: currentIndex == 4,
+      )
     ];
   }
 
@@ -495,6 +507,7 @@ class DashboardState extends State<Dashboard>
                 setState(() {
                   currentIndex = state.index;
                   _loadedIndices.add(currentIndex);
+                  _updateBottomNavigationScreens();
                 });
               } else if (state is DashboardError) {}
             },
@@ -531,7 +544,8 @@ class DashboardState extends State<Dashboard>
                         children: List.generate(bottomNavigationScreens.length,
                             (index) {
                           if (_loadedIndices.contains(index)) {
-                            return bottomNavigationScreens[index];
+                            return RepaintBoundary(
+                                child: bottomNavigationScreens[index]);
                           }
                           return const SizedBox();
                         }),
@@ -619,6 +633,7 @@ class DashboardState extends State<Dashboard>
     setState(() {
       currentIndex = index;
       _loadedIndices.add(currentIndex);
+      _updateBottomNavigationScreens();
     });
   }
 

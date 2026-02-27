@@ -10,7 +10,7 @@ Future<bool?> showLocationPermissionDialogWithImage({
   required Size size,
   String? heading,
   String? description,
-  String imagePath = "assets/location/location_permission.png",
+  String imagePath = "assets/location/image.png",
   bool showCloseIcon = false,
   String privacyPolicyUrl = "https://presshop.news/privacy-policy",
   String? buttonText,
@@ -18,12 +18,12 @@ Future<bool?> showLocationPermissionDialogWithImage({
 }) {
   final String displayHeading = (heading != null && heading.isNotEmpty)
       ? heading
-      : "Allow location access";
+      : "Want More Tasks? Turn on your location 📍";
 
   final String displayDescription = (description != null &&
           description.isNotEmpty)
       ? description
-      : "PressHop collects your precise location, including background location, to:<br><br><ul><li>Show nearby news tasks</li><li>Verify event proximity and task completion</li><li>Enable live reporting and contributor safety</li></ul><br>Location data may be collected even when the app is closed or not in use.<br><br>You can change or disable location access anytime in your device settings.";
+      : "<b>PressShop®</b> uses your location to send you nearby tasks, verify event coverage, and help keep you safe while reporting.<br><br>We only access your location when it’s needed - like when the app is open, or when you're moving. It's never used for ads. You're always in control.<br><br><b>Stay local. Stay ready. Start earning.</b>";
 
   return showDialog<bool>(
     barrierDismissible: false,
@@ -39,16 +39,16 @@ Future<bool?> showLocationPermissionDialogWithImage({
               backgroundColor: Colors.transparent,
               elevation: 0,
               contentPadding: EdgeInsets.zero,
-              insetPadding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+              insetPadding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
               content: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(size.width * 0.045),
+                  borderRadius: BorderRadius.circular(size.width * 0.08),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
+                      color: Colors.black.withOpacity(0.12),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
                     ),
                   ],
                 ),
@@ -57,118 +57,122 @@ Future<bool?> showLocationPermissionDialogWithImage({
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       /// 🔹 Header
-                      SizedBox(height: size.width * 0.06),
+                      SizedBox(height: size.width * 0.08),
                       Padding(
                         padding: EdgeInsets.symmetric(
-                          horizontal: size.width * 0.04,
+                          horizontal: size.width * 0.07,
                         ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                displayHeading,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: size.width * 0.04,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            if (showCloseIcon)
-                              IconButton(
-                                onPressed: () {
-                                  Navigator.pop(context, false);
-                                },
-                                icon: Icon(
-                                  Icons.close,
-                                  color: Colors.black,
-                                  size: size.width * 0.06,
-                                ),
-                              ),
-                          ],
+                        child: Text(
+                          displayHeading,
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: size.width * 0.046,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: -0.2,
+                          ),
                         ),
                       ),
 
                       /// Divider
                       Padding(
                         padding: EdgeInsets.symmetric(
-                          horizontal: size.width * 0.04,
-                          vertical: 10,
+                          vertical: size.width * 0.03,
                         ),
-                        child: const Divider(
-                          color: Colors.grey,
-                          thickness: 0.5,
+                        child: Divider(
+                          color: Colors.grey.shade300,
+                          thickness: 1,
                         ),
                       ),
 
                       /// 🔹 Image + Description
                       Padding(
                         padding: EdgeInsets.symmetric(
-                          horizontal: size.width * 0.04,
+                          horizontal: size.width * 0.06,
                         ),
-                        child: Row(
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            /// Image Box
-                            Container(
-                              width: 120, // fixed width
-                              height: 120, // fixed height
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.grey[300]!),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: imagePath.startsWith('http')
-                                    ? Image.network(
-                                        imagePath,
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) =>
-                                                const Icon(
-                                          Icons.location_on,
-                                          size: 40,
-                                          color: AppColorTheme.colorThemePink,
-                                        ),
-                                      )
-                                    : Image.asset(
-                                        imagePath,
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) =>
-                                                const Icon(
-                                          Icons.location_on,
-                                          size: 40,
-                                          color: AppColorTheme.colorThemePink,
-                                        ),
+                            SizedBox(height: size.width * 0.04),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                /// Mascot Box
+                                Container(
+                                  width: size.width * 0.24,
+                                  height: size.width * 0.24,
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFD9E27D),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(15),
+                                    child: Image.asset(
+                                      "assets/commonImages/rabbitLogo.png",
+                                      fit: BoxFit.contain,
+                                      errorBuilder: (context, error,
+                                              stackTrace) =>
+                                          const Icon(Icons.location_on,
+                                              size: 40,
+                                              color:
+                                                  AppColorTheme.colorThemePink),
+                                    ),
+                                  ),
+                                ),
+
+                                SizedBox(width: size.width * 0.04),
+
+                                /// First Paragraph (Next to Image)
+                                Expanded(
+                                  child: Html(
+                                    data:
+                                        displayDescription.contains("<br><br>")
+                                            ? displayDescription
+                                                .split("<br><br>")[0]
+                                            : displayDescription,
+                                    style: {
+                                      "body": Style(
+                                        textAlign: TextAlign.start,
+                                        color: Colors.black.withOpacity(0.85),
+                                        fontSize: FontSize(size.width * 0.038),
+                                        fontWeight: FontWeight.w500,
+                                        lineHeight: const LineHeight(1.25),
+                                        padding: HtmlPaddings.zero,
+                                        margin: Margins.zero,
                                       ),
-                              ),
+                                      "b": Style(fontWeight: FontWeight.bold),
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
 
-                            SizedBox(width: size.width * 0.04),
-
-                            /// Text
-                            Expanded(
-                              child: Html(
-                                data: displayDescription,
+                            /// Subsequent Paragraphs (Below Row)
+                            if (displayDescription.contains("<br><br>")) ...[
+                              SizedBox(height: size.width * 0.05),
+                              Html(
+                                data: displayDescription.substring(
+                                    displayDescription.indexOf("<br><br>") + 8),
                                 style: {
                                   "body": Style(
-                                    textAlign: TextAlign.justify,
-                                    color: Colors.black87,
-                                    fontSize: FontSize(size.width * 0.035),
+                                    textAlign: TextAlign.start,
+                                    color: Colors.black.withOpacity(0.85),
+                                    fontSize: FontSize(size.width * 0.038),
                                     fontWeight: FontWeight.w500,
-                                    lineHeight: LineHeight(1.2),
+                                    lineHeight: const LineHeight(1.3),
                                     padding: HtmlPaddings.zero,
                                     margin: Margins.zero,
                                   ),
+                                  "b": Style(fontWeight: FontWeight.bold),
                                 },
                               ),
-                            ),
+                            ],
                           ],
                         ),
                       ),
 
-                      SizedBox(height: size.width * 0.04),
+                      SizedBox(height: size.width * 0.05),
 
                       /// Checkbox + Learn More
                       Padding(
@@ -178,13 +182,15 @@ Future<bool?> showLocationPermissionDialogWithImage({
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              width: size.width * 0.08,
-                              height: size.width * 0.06,
-                              color: Colors.white,
+                            Transform.scale(
+                              scale: 0.9,
                               child: Checkbox(
                                 value: isChecked,
                                 activeColor: AppColorTheme.colorThemePink,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4)),
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
                                 onChanged: (val) {
                                   setState(() {
                                     isChecked = val ?? false;
@@ -199,38 +205,40 @@ Future<bool?> showLocationPermissionDialogWithImage({
                                     isChecked = !isChecked;
                                   });
                                 },
-                                child: RichText(
-                                  text: TextSpan(
-                                    style: TextStyle(
-                                      fontSize: size.width * 0.035,
-                                      color: Colors.black87,
-                                    ),
-                                    children: [
-                                      const TextSpan(
-                                        text:
-                                            "I agree to the collection and use of my location data as described. ",
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style: TextStyle(
+                                        fontSize: size.width * 0.036,
+                                        color: Colors.black.withOpacity(0.8),
+                                        height: 1.3,
                                       ),
-                                      TextSpan(
-                                        text: "Learn more",
-                                        style: TextStyle(
-                                          color: AppColorTheme.colorThemePink,
-                                          fontWeight: FontWeight.w500,
+                                      children: [
+                                        const TextSpan(
+                                          text:
+                                              "I agree to the collection and use of my location data as described. ",
                                         ),
-                                        recognizer: TapGestureRecognizer()
-                                          ..onTap = () async {
-                                            const url =
-                                                "https://www.presshop.com/privacypolicy";
-                                            final uri = Uri.parse(url);
-                                            if (await canLaunchUrl(uri)) {
-                                              await launchUrl(
-                                                uri,
-                                                mode: LaunchMode
-                                                    .externalApplication,
-                                              );
-                                            }
-                                          },
-                                      ),
-                                    ],
+                                        TextSpan(
+                                          text: "Learn more",
+                                          style: const TextStyle(
+                                            color: AppColorTheme.colorThemePink,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = () async {
+                                              const url =
+                                                  "https://www.presshop.com/privacypolicy";
+                                              final uri = Uri.parse(url);
+                                              if (await canLaunchUrl(uri)) {
+                                                await launchUrl(uri,
+                                                    mode: LaunchMode
+                                                        .externalApplication);
+                                              }
+                                            },
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -239,76 +247,68 @@ Future<bool?> showLocationPermissionDialogWithImage({
                         ),
                       ),
 
-                      SizedBox(height: size.width * 0.02),
+                      SizedBox(height: size.width * 0.05),
 
                       /// 🔹 Buttons
                       Padding(
                         padding: EdgeInsets.symmetric(
-                          horizontal: size.width * 0.04,
+                          horizontal: size.width * 0.08,
                         ),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
-                              child: TextButton(
-                                onPressed: () async {
-                                  final prefs =
-                                      await SharedPreferences.getInstance();
-                                  await prefs.setBool(
-                                    'location_permission_denied',
-                                    true,
-                                  );
-                                  Navigator.pop(context, false);
-                                },
-                                child: Text(
-                                  cancelText ?? "Don't Allow",
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: size.width * 0.04,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                            TextButton(
+                              onPressed: () async {
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                await prefs.setBool(
+                                    'location_permission_denied', true);
+                                Navigator.pop(context, false);
+                              },
+                              child: Text(
+                                cancelText ?? "Cancel",
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: size.width * 0.048,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: isChecked
-                                      ? AppColorTheme.colorThemePink
-                                      : Colors.grey,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                  ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: isChecked
+                                    ? AppColorTheme.colorThemePink
+                                    : Colors.grey.shade400,
+                                elevation: 0,
+                                fixedSize:
+                                    Size(size.width * 0.42, size.width * 0.12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(size.width * 0.025),
                                 ),
-                                onPressed: isChecked
-                                    ? () async {
-                                        final prefs = await SharedPreferences
-                                            .getInstance();
-                                        await prefs.setBool(
-                                          'location_permission_denied',
-                                          false,
-                                        );
-                                        Navigator.pop(context, true);
-                                      }
-                                    : null,
-                                child: Text(
-                                  buttonText ?? "Allow",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: size.width * 0.04,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              ),
+                              onPressed: isChecked
+                                  ? () async {
+                                      final prefs =
+                                          await SharedPreferences.getInstance();
+                                      await prefs.setBool(
+                                          'location_permission_denied', false);
+                                      Navigator.pop(context, true);
+                                    }
+                                  : null,
+                              child: Text(
+                                buttonText ?? "Okay",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: size.width * 0.048,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(height: size.width * 0.04),
+                      SizedBox(height: size.width * 0.08),
                     ],
                   ),
                 ),

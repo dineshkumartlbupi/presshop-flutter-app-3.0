@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -792,14 +793,18 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                             size: size.width * 0.17,
                                           ))
                                       : item.mediaType == "video"
-                                          ? Image.network(
-                                              getMediaImageUrl(item.media,
-                                                  isVideo: true, isTask: true),
+                                          ? CachedNetworkImage(
+                                              imageUrl: getMediaImageUrl(
+                                                  item.media,
+                                                  isVideo: true,
+                                                  isTask: true),
                                               width: size.width / 2,
                                               height: double.infinity,
                                               fit: BoxFit.cover,
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
+                                              memCacheWidth:
+                                                  (size.width / 2).toInt(),
+                                              errorWidget:
+                                                  (context, url, error) {
                                                 return Image.asset(
                                                   "${commonImagePath}rabbitLogo.png",
                                                   width: size.width / 2,
@@ -808,14 +813,17 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                                 );
                                               },
                                             )
-                                          : Image.network(
-                                              getMediaImageUrl(item.media,
+                                          : CachedNetworkImage(
+                                              imageUrl: getMediaImageUrl(
+                                                  item.media,
                                                   isTask: true),
                                               width: size.width / 2,
                                               height: double.infinity,
                                               fit: BoxFit.cover,
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
+                                              memCacheWidth:
+                                                  (size.width / 2).toInt(),
+                                              errorWidget:
+                                                  (context, url, error) {
                                                 return Image.asset(
                                                   "${commonImagePath}rabbitLogo.png",
                                                   width: size.width / 2,

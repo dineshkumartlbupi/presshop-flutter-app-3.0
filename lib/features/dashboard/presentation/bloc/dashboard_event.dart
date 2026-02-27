@@ -12,7 +12,6 @@ class FetchActiveAdmins extends DashboardEvent {
 }
 
 class UpdateLocationEvent extends DashboardEvent {
-
   const UpdateLocationEvent(this.params);
   final Map<String, dynamic> params;
 
@@ -21,7 +20,6 @@ class UpdateLocationEvent extends DashboardEvent {
 }
 
 class AddDeviceEvent extends DashboardEvent {
-
   const AddDeviceEvent(this.params);
   final Map<String, dynamic> params;
 
@@ -30,7 +28,6 @@ class AddDeviceEvent extends DashboardEvent {
 }
 
 class FetchTaskDetailEvent extends DashboardEvent {
-
   const FetchTaskDetailEvent(this.taskId);
   final String taskId;
 
@@ -39,7 +36,6 @@ class FetchTaskDetailEvent extends DashboardEvent {
 }
 
 class FetchRoomIdEvent extends DashboardEvent {
-
   const FetchRoomIdEvent(this.params);
   final Map<String, dynamic> params;
 
@@ -60,7 +56,6 @@ class FetchMyProfileEvent extends DashboardEvent {
 }
 
 class ChangeDashboardTabEvent extends DashboardEvent {
-
   const ChangeDashboardTabEvent(this.newIndex);
   final int newIndex;
 

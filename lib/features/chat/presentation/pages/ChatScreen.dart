@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cached_network_image/cached_network_image.dart';
 // import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -122,6 +123,7 @@ class _ConversationScreenState extends State<ConversationScreen>
   String collectionId = "";
   DateTime? currentTime;
   bool isFirstTime = true;
+  StreamSubscription? _playerSubscription;
 
   @override
   void initState() {
@@ -152,10 +154,14 @@ class _ConversationScreenState extends State<ConversationScreen>
   @override
   void dispose() {
     _chatBloc.add(LeaveChatRoomEvent());
-    super.dispose();
+    _playerSubscription?.cancel();
     controller.dispose();
     timer?.cancel();
+    _timer?.cancel();
+    _ampTimer?.cancel();
+    _audioRecorder.dispose();
     WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -213,9 +219,27 @@ class _ConversationScreenState extends State<ConversationScreen>
                               "${commonImagePath}rabbitLogo.png",
                             ),
                           )
-                        : CircleAvatar(
-                            radius: size.width * AppDimensions.numD05,
-                            backgroundImage: NetworkImage(_receiverProfilePic),
+                        : CachedNetworkImage(
+                            imageUrl: _receiverProfilePic,
+                            imageBuilder: (context, imageProvider) =>
+                                CircleAvatar(
+                              radius: size.width * AppDimensions.numD05,
+                              backgroundImage: imageProvider,
+                            ),
+                            placeholder: (context, url) => CircleAvatar(
+                              radius: size.width * AppDimensions.numD05,
+                              backgroundColor: Colors.transparent,
+                              child: Image.asset(
+                                  "${commonImagePath}rabbitLogo.png"),
+                            ),
+                            errorWidget: (context, url, error) => CircleAvatar(
+                              radius: size.width * AppDimensions.numD05,
+                              backgroundColor: Colors.transparent,
+                              child: Image.asset(
+                                  "${commonImagePath}rabbitLogo.png"),
+                            ),
+                            memCacheWidth:
+                                (size.width * AppDimensions.numD10).toInt(),
                           ),
                     SizedBox(width: size.width * AppDimensions.numD02),
                     Column(
@@ -2051,9 +2075,17 @@ class _ConversationScreenState extends State<ConversationScreen>
                                 ),
                                 child: ClipOval(
                                   clipBehavior: Clip.antiAlias,
-                                  child: Image.network(
-                                    _senderProfilePic,
+                                  child: CachedNetworkImage(
+                                    imageUrl: _senderProfilePic,
                                     fit: BoxFit.cover,
+                                    memCacheWidth:
+                                        (size.width * AppDimensions.numD12)
+                                            .toInt(),
+                                    errorWidget: (context, url, error) =>
+                                        Image.asset(
+                                      "${commonImagePath}ic_black_rabbit.png",
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               )
@@ -2303,9 +2335,10 @@ class _ConversationScreenState extends State<ConversationScreen>
     } else {
       controller.pausePlayer();
     }
-    controller.onPlayerStateChanged.listen((event) {
+    await _playerSubscription?.cancel();
+    _playerSubscription = controller.onPlayerStateChanged.listen((event) {
       if (event.isPaused) {
-        setState(() {});
+        if (mounted) setState(() {});
       }
     });
   }
@@ -2415,12 +2448,15 @@ class _ConversationScreenState extends State<ConversationScreen>
                                 borderRadius: BorderRadius.circular(
                                   size.width * AppDimensions.numD01,
                                 ),
-                                child: Image.network(
-                                  document['videoThumbnail'],
+                                child: CachedNetworkImage(
+                                  imageUrl: document['videoThumbnail'],
                                   fit: BoxFit.cover,
                                   height: size.width * AppDimensions.numD55,
                                   width: size.width,
-                                  errorBuilder: (context, strace, object) {
+                                  memCacheHeight:
+                                      (size.width * AppDimensions.numD55)
+                                          .toInt(),
+                                  errorWidget: (context, url, error) {
                                     return SizedBox(
                                       height: size.width * AppDimensions.numD55,
                                       width: size.width,
@@ -2614,13 +2650,15 @@ class _ConversationScreenState extends State<ConversationScreen>
                           borderRadius: BorderRadius.circular(
                             size.width * AppDimensions.numD01,
                           ),
-                          child: Image.network(
+                          child: CachedNetworkImage(
                             // document['message_type']["videoThumbnail"],
-                            document['videoThumbnail'],
+                            imageUrl: document['videoThumbnail'],
                             fit: BoxFit.cover,
                             height: size.width * AppDimensions.numD55,
                             width: size.width,
-                            errorBuilder: (context, strace, object) {
+                            memCacheHeight:
+                                (size.width * AppDimensions.numD55).toInt(),
+                            errorWidget: (context, url, error) {
                               return SizedBox(
                                 height: size.width * AppDimensions.numD55,
                                 width: size.width,

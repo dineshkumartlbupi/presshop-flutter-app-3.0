@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:convert';
 import 'package:presshop/core/router/router_constants.dart';
 import 'dart:developer';
@@ -252,8 +253,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
     DashboardState.dashBoardInterface = this;
 
     if (showCelebration) {
-      Timer.periodic(const Duration(seconds: 2), (timer) {
-        showCelebration = false;
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) {
+          setState(() {
+            showCelebration = false;
+          });
+        }
       });
     }
 
@@ -598,8 +603,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 color: Colors
                                                                     .white),
                                                           )
-                                                    : Image.network(
-                                                        widget
+                                                    : CachedNetworkImage(
+                                                        imageUrl: widget
                                                             .myContentData!
                                                             .contentMediaList
                                                             .first
@@ -611,6 +616,16 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             AppDimensions
                                                                 .numD35,
                                                         fit: BoxFit.cover,
+                                                        memCacheWidth: (size
+                                                                    .width *
+                                                                AppDimensions
+                                                                    .numD30)
+                                                            .toInt(),
+                                                        memCacheHeight: (size
+                                                                    .width *
+                                                                AppDimensions
+                                                                    .numD35)
+                                                            .toInt(),
                                                       ),
                                               ),
                                               Visibility(
@@ -644,8 +659,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                     .numD35,
                                                             fit: BoxFit.cover,
                                                           )
-                                                        : Image.network(
-                                                            widget
+                                                        : CachedNetworkImage(
+                                                            imageUrl: widget
                                                                 .myContentData!
                                                                 .contentMediaList
                                                                 .first
@@ -657,6 +672,16 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 AppDimensions
                                                                     .numD35,
                                                             fit: BoxFit.cover,
+                                                            memCacheWidth: (size
+                                                                        .width *
+                                                                    AppDimensions
+                                                                        .numD30)
+                                                                .toInt(),
+                                                            memCacheHeight: (size
+                                                                        .width *
+                                                                    AppDimensions
+                                                                        .numD35)
+                                                                .toInt(),
                                                           ),
                                               ),
 

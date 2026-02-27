@@ -215,14 +215,13 @@ class _NewsPageState extends State<NewsPage>
 
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar:NewHomeAppBar(
-                  size: size,
-                  hideLeading: widget.hideLeading,
-                  showFilter: false,
-                  appBarTitle: widget.appBarTitle,
-                  hideHamburger: widget.appBarTitle != null,
-                ),
-        
+          appBar: NewHomeAppBar(
+            size: size,
+            hideLeading: widget.hideLeading,
+            showFilter: false,
+            appBarTitle: widget.appBarTitle,
+            hideHamburger: widget.appBarTitle != null,
+          ),
           body: Stack(
             children: [
               SmartRefresher(
@@ -231,7 +230,8 @@ class _NewsPageState extends State<NewsPage>
                 enablePullUp: state.hasMoreNews,
                 onRefresh: _onRefresh,
                 onLoading: _onLoading,
-                header: const WaterDropHeader(),
+                header: const MaterialClassicHeader(
+                    color: AppColorTheme.colorThemePink),
                 footer: const CustomFooter(builder: commonRefresherFooter),
                 child: newsList.isEmpty && !state.isLoading
                     ? Center(
@@ -263,7 +263,10 @@ class _NewsPageState extends State<NewsPage>
                         separatorBuilder: (context, index) =>
                             SizedBox(height: size.width * AppDimensions.numD06),
                         itemBuilder: (context, index) {
-                          return _buildNewsCard(context, newsList[index], size);
+                          return RepaintBoundary(
+                            child:
+                                _buildNewsCard(context, newsList[index], size),
+                          );
                         },
                       ),
               ),
@@ -344,7 +347,8 @@ class _NewsPageState extends State<NewsPage>
                 Container(
                   color: Colors.transparent,
                   child: Center(
-                    child: showAnimatedLoader(size),
+                    child: const CircularProgressIndicator(
+                        color: AppColorTheme.colorThemePink),
                   ),
                 ),
             ],
@@ -381,6 +385,8 @@ class _NewsPageState extends State<NewsPage>
                 imageUrl: item.mediaUrl ?? "",
                 height: size.width * AppDimensions.numD50,
                 width: double.infinity,
+                memCacheHeight: (size.width * AppDimensions.numD50 * 2).toInt(),
+                memCacheWidth: (size.width * 2).toInt(),
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Container(
                   height: size.width * AppDimensions.numD50,

@@ -14,7 +14,6 @@ import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.da
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_state.dart';
 
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
-
   DashboardBloc({
     required this.getActiveAdmins,
     required this.updateLocation,

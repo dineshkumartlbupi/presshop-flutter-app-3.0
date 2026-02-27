@@ -1,4 +1,6 @@
 import 'package:presshop/core/services/media_upload_service.dart';
+import 'package:exif/exif.dart' as pure_exif;
+import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
@@ -813,6 +815,86 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     socket.onError((data) => debugPrint("⚠️ SOCKET ERROR: $data"));
   }
 
+  double _convertRatioToDouble(dynamic ratio) {
+    try {
+      if (ratio is List && ratio.length >= 3) {
+        double d = ratio[0].numerator /
+            (ratio[0].denominator == 0 ? 1 : ratio[0].denominator);
+        double m = ratio[1].numerator /
+            (ratio[1].denominator == 0 ? 1 : ratio[1].denominator);
+        double s = ratio[2].numerator /
+            (ratio[2].denominator == 0 ? 1 : ratio[2].denominator);
+        double result = d + (m / 60.0) + (s / 3600.0);
+        if (result.isNaN || result.isInfinite) return 0.0;
+        return result;
+      }
+    } catch (e) {
+      debugPrint("pure_exif convert error: $e");
+    }
+    return 0.0;
+  }
+
+  Future<void> _extractExifForMedia(MediaData media) async {
+    try {
+      final fileBytes = await File(media.mediaPath).readAsBytes();
+      final tags = await pure_exif.readExifFromBytes(fileBytes);
+
+      double extractedLat = 0.0;
+      double extractedLng = 0.0;
+
+      if (tags.containsKey('GPS GPSLatitude') &&
+          tags.containsKey('GPS GPSLongitude')) {
+        final latRatio = tags['GPS GPSLatitude']!.values.toList();
+        final lonRatio = tags['GPS GPSLongitude']!.values.toList();
+        final latRef = tags['GPS GPSLatitudeRef']?.printable;
+        final lonRef = tags['GPS GPSLongitudeRef']?.printable;
+
+        double lat = _convertRatioToDouble(latRatio);
+        double lon = _convertRatioToDouble(lonRatio);
+
+        if (latRef == 'S') lat = -lat;
+        if (lonRef == 'W') lon = -lon;
+
+        extractedLat = lat;
+        extractedLng = lon;
+      }
+
+      if (extractedLat != 0.0 && extractedLng != 0.0) {
+        media.latitude = extractedLat.toString();
+        media.longitude = extractedLng.toString();
+        List<Placemark> placemarks =
+            await placemarkFromCoordinates(extractedLat, extractedLng);
+        if (placemarks.isNotEmpty) {
+          Placemark place = placemarks.first;
+          List<String> addressParts = [];
+          if (place.street != null && place.street!.isNotEmpty) {
+            addressParts.add(place.street!);
+          }
+          if (place.locality != null && place.locality!.isNotEmpty) {
+            addressParts.add(place.locality!);
+          }
+          if (place.administrativeArea != null &&
+              place.administrativeArea!.isNotEmpty) {
+            addressParts.add(place.administrativeArea!);
+          }
+          if (place.country != null && place.country!.isNotEmpty) {
+            addressParts.add(place.country!);
+          }
+
+          String newLocation = addressParts.join(', ');
+          if (newLocation.isNotEmpty) {
+            media.location = newLocation;
+            media.city = place.locality ?? "";
+            media.state = place.administrativeArea ?? "";
+            media.country = place.country ?? "";
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("EXIF extraction error: $e");
+    }
+  }
+
   Future<void> getMultipleImages(String fileType) async {
     try {
       late FilePickerResult? result;
@@ -876,21 +958,27 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
           }
 
           if (validationVideoLenght) {
-            selectMultipleMediaList.add(
-              MediaData(
-                isFromGallery: true,
-                dateTime: "",
-                latitude: latitude.toString(),
-                location: address,
-                longitude: longitude.toString(),
-                country: "",
-                state: "",
-                city: "",
-                mediaPath: filePath,
-                mimeType: mimeType!,
-                thumbnail: "",
-              ),
+            String currentDateTime =
+                DateFormat("HH:mm, dd MMM yyyy").format(DateTime.now());
+            var mediaData = MediaData(
+              isFromGallery: true,
+              dateTime: currentDateTime,
+              latitude: latitude.toString(),
+              location: address,
+              longitude: longitude.toString(),
+              country: "",
+              state: "",
+              city: "",
+              mediaPath: filePath,
+              mimeType: mimeType!,
+              thumbnail: "",
             );
+
+            if (mimeType.contains("image")) {
+              await _extractExifForMedia(mediaData);
+            }
+
+            selectMultipleMediaList.add(mediaData);
           }
         }
         await previewBottomSheet();
@@ -898,10 +986,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
           setState(() {});
         }
       } else {
-        debugPrint("No videos selected.");
+        debugPrint("No files selected.");
       }
     } catch (e) {
-      debugPrint("Error picking videos: $e");
+      debugPrint("Error picking files: $e");
     }
   }
 
@@ -926,9 +1014,26 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   }
 
   void callUploadMediaApi() async {
-    // Ensure location is fetched before uploading
+    // Ensure location is fetched before uploading (as fallback)
     if (address.isEmpty) {
       await getCurrentLocation();
+    }
+
+    String uploadAddress = address;
+    String uploadLat = latitude.toString();
+    String uploadLng = longitude.toString();
+
+    // Use location from the first media item if available
+    if (selectMultipleMediaList.isNotEmpty) {
+      var firstWithLocation = selectMultipleMediaList.firstWhere(
+        (e) => e.location.isNotEmpty && e.latitude.isNotEmpty,
+        orElse: () => selectMultipleMediaList.first,
+      );
+      if (firstWithLocation.location.isNotEmpty) {
+        uploadAddress = firstWithLocation.location;
+        uploadLat = firstWithLocation.latitude;
+        uploadLng = firstWithLocation.longitude;
+      }
     }
 
     List<String> mediaList =
@@ -936,9 +1041,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
 
     Map<String, String> body = {
       'task_id': widget.taskDetail!.task.id,
-      "latitude": latitude.toString(),
-      "longitude": longitude.toString(),
-      "address": address,
+      "latitude": uploadLat,
+      "longitude": uploadLng,
+      "address": uploadAddress,
     };
 
     if (mounted) {
@@ -954,7 +1059,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                 imageVideoUrl: e.mediaPath,
                 type: e.mimeType,
                 thumbnail: e.thumbnail,
-                address: address,
+                address: e.location.isNotEmpty ? e.location : address,
               ),
             )
             .toList(),

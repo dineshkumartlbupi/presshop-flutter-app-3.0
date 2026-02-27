@@ -292,10 +292,10 @@ class MyContentViewState extends State<MyContentView>
         top: false,
         child: Column(
           children: [
-            // SizedBox(height: size.width * AppDimensions.numD04),
             Padding(
               padding: EdgeInsets.symmetric(
-                  horizontal: size.width * AppDimensions.numD04),
+                  horizontal: size.width * AppDimensions.numD04,
+                  vertical: size.width * AppDimensions.numD02),
               child: TabBar(
                 controller: _tabController,
                 physics: const NeverScrollableScrollPhysics(),
@@ -405,7 +405,8 @@ class MyContentViewState extends State<MyContentView>
           enablePullUp: true,
           onRefresh: isAll ? _onAllRefresh : _onMyRefresh,
           onLoading: isAll ? _onAllLoading : _onMyLoading,
-          header: const WaterDropHeader(),
+          header:
+              const MaterialClassicHeader(color: AppColorTheme.colorThemePink),
           footer: const CustomFooter(builder: commonRefresherFooter),
           child: currentList.isEmpty &&
                   (state is ContentLoading ||
@@ -415,7 +416,11 @@ class MyContentViewState extends State<MyContentView>
                   physics: const AlwaysScrollableScrollPhysics(),
                   children: [
                     SizedBox(height: size.height * 0.3),
-                    showLoader(),
+                    const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColorTheme.colorThemePink,
+                      ),
+                    ),
                     // Loader removed - using GlobalLoader from API instead
                   ],
                 )
@@ -441,11 +446,13 @@ class MyContentViewState extends State<MyContentView>
                       itemCount: currentList.length,
                       itemBuilder: (context, index) {
                         final item = currentList[index];
-                        return ContentItemWidget(
-                          key: ValueKey(item.id),
-                          item: item,
-                          size: size,
-                          onTap: () => _onItemTap(item),
+                        return RepaintBoundary(
+                          child: ContentItemWidget(
+                            key: ValueKey(item.id),
+                            item: item,
+                            size: size,
+                            onTap: () => _onItemTap(item),
+                          ),
                         );
                       },
                     ),

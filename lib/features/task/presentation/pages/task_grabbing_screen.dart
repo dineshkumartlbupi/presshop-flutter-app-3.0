@@ -163,7 +163,8 @@ class _TaskGrabbingScreenState extends State<TaskGrabbingScreen> {
         bool started = await BackgroundLocationService.initService(
           context: context,
           showPrePermissionDialog: true, // Always show dialog for manual enable
-          dialogTitle: dialogTitle ?? "Enable Task Grabbing",
+          dialogTitle:
+              dialogTitle ?? "Want More Tasks? Turn on your location 📍",
           dialogContent: dialogContent, // Pass the server-provided description
           dialogImage: dialogImage, // Pass the server-provided image
           dialogButtonText: "Okay",

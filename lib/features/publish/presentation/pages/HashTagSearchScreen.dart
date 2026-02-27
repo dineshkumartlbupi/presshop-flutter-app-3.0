@@ -177,41 +177,48 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                 height: size.width * AppDimensions.numD035,
               ),
               if (selectedHashTagList.isNotEmpty)
-                Wrap(
-                  children: List.generate(selectedHashTagList.length, (index) {
-                    return Container(
-                      margin: EdgeInsets.only(
-                          right: size.width * AppDimensions.numD02),
-                      child: Chip(
-                          label: Text(
-                            "#${selectedHashTagList[index].name}",
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * AppDimensions.numD03,
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                      maxHeight: size.height * AppDimensions.numD30),
+                  child: SingleChildScrollView(
+                    child: Wrap(
+                      children:
+                          List.generate(selectedHashTagList.length, (index) {
+                        return Container(
+                          margin: EdgeInsets.only(
+                              right: size.width * AppDimensions.numD02),
+                          child: Chip(
+                              label: Text(
+                                "#${selectedHashTagList[index].name}",
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * AppDimensions.numD03,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              deleteIcon: Icon(
+                                Icons.close,
                                 color: Colors.white,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          deleteIcon: Icon(
-                            Icons.close,
-                            color: Colors.white,
-                            size: size.width * AppDimensions.numD045,
-                          ),
-                          onDeleted: () {
-                            final removedTag = selectedHashTagList[index];
-                            selectedHashTagList.removeAt(index);
+                                size: size.width * AppDimensions.numD045,
+                              ),
+                              onDeleted: () {
+                                final removedTag = selectedHashTagList[index];
+                                selectedHashTagList.removeAt(index);
 
-                            final searchIdx =
-                                hashtagSearchList.indexOf(removedTag);
-                            if (searchIdx != -1) {
-                              hashtagSearchList[searchIdx] =
-                                  hashtagSearchList[searchIdx]
-                                      .copyWith(selected: false);
-                            }
-                            setState(() {});
-                          },
-                          backgroundColor: Colors.black),
-                    );
-                  }),
+                                final searchIdx =
+                                    hashtagSearchList.indexOf(removedTag);
+                                if (searchIdx != -1) {
+                                  hashtagSearchList[searchIdx] =
+                                      hashtagSearchList[searchIdx]
+                                          .copyWith(selected: false);
+                                }
+                                setState(() {});
+                              },
+                              backgroundColor: Colors.black),
+                        );
+                      }),
+                    ),
+                  ),
                 ),
               SizedBox(
                 height: size.width * AppDimensions.numD04,
@@ -393,13 +400,16 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
   }
 
   Future<void> searchHashTagsApi(String searchParam) async {
-    Map<String, String> params = {};
+    Map<String, String> params = {
+      "type": "hopper",
+    };
     if (searchParam.trim().isNotEmpty) {
       params["tagName"] = searchParam;
-      params["type"] = "hopper";
-      //params["tag_id"] = ;
-      debugPrint("GetHashTagsQueryParams: $params");
     }
+    if (widget.countryTagId.isNotEmpty) {
+      params["tag_id"] = widget.countryTagId;
+    }
+    debugPrint("GetHashTagsQueryParams: $params");
 
     try {
       final response = await sl<ApiClient>()
