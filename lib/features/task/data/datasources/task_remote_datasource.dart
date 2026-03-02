@@ -433,12 +433,12 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         List<Task> list = [];
-        final data = response.data["data"];
+        final rawData = response.data;
         Set<String> seenIds = {};
 
-        if (data != null) {
-          if (data is List) {
-            for (var v in data) {
+        void processTaskMap(Map map) {
+          if (map["data"] is List) {
+            for (var v in map["data"]) {
               final task = MyTaskModel.fromJson(v);
               if (task.taskDetail != null &&
                   !seenIds.contains(task.taskDetail!.id)) {
@@ -446,28 +446,33 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
                 seenIds.add(task.taskDetail!.id);
               }
             }
-          } else if (data is Map) {
-            if (data["data"] != null && data["data"] is List) {
-              for (var v in data["data"]) {
-                final task = MyTaskModel.fromJson(v);
-                if (task.taskDetail != null &&
-                    !seenIds.contains(task.taskDetail!.id)) {
-                  list.add(task);
-                  seenIds.add(task.taskDetail!.id);
-                }
+          }
+          if (map["pending_unaccepted"] is List) {
+            for (var v in map["pending_unaccepted"]) {
+              final task = PendingTask.fromJson(v);
+              if (task.taskDetail != null &&
+                  !seenIds.contains(task.taskDetail!.id)) {
+                list.add(task);
+                seenIds.add(task.taskDetail!.id);
               }
             }
+          }
+        }
 
-            if (data["pending_unaccepted"] != null &&
-                data["pending_unaccepted"] is List) {
-              for (var v in data["pending_unaccepted"]) {
-                final task = PendingTask.fromJson(v);
-                if (task.taskDetail != null &&
-                    !seenIds.contains(task.taskDetail!.id)) {
-                  list.add(task);
-                  seenIds.add(task.taskDetail!.id);
-                }
+        if (rawData != null) {
+          if (rawData is List) {
+            for (var v in rawData) {
+              final task = MyTaskModel.fromJson(v);
+              if (task.taskDetail != null &&
+                  !seenIds.contains(task.taskDetail!.id)) {
+                list.add(task);
+                seenIds.add(task.taskDetail!.id);
               }
+            }
+          } else if (rawData is Map) {
+            processTaskMap(rawData);
+            if (rawData["data"] is Map) {
+              processTaskMap(rawData["data"]);
             }
           }
         }

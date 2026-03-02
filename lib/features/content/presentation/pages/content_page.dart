@@ -392,6 +392,7 @@ class MyContentViewState extends State<MyContentView>
           } else {
             currentList = fetchedList
                 .where((item) =>
+                    item.status.toLowerCase() == 'published' ||
                     item.status.toLowerCase() == 'pending' ||
                     item.status.toLowerCase() == 'rejected')
                 .toList();

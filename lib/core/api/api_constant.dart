@@ -120,7 +120,6 @@ class Content {
   final String addContent = "hopper/addContent";
   final String myContent = "hopper/getHopperContentList";
   // final String myContent = "hopper/getContentList";
-
   final String allContent = "hopper/getAllContent";
   final String draftContent = "hopper/getDraftContentList";
   final String contentDetail = "hopper/getContentById/";
