@@ -1,25 +1,24 @@
 import 'package:flutter/foundation.dart';
 
 dynamic numberFormatting(dynamic number) {
-  String value = number.toString();
+  if (number == null) return 0;
+  String value = number.toString().trim();
+  if (value.isEmpty) return 0;
   try {
     if (value.length == 1) {
-      return int.parse(value);
+      return int.tryParse(value) ?? 0;
     } else {
-      double parseValue = double.parse(value);
+      double? parseValue = double.tryParse(value);
+      if (parseValue == null) return 0;
 
       String decimalFormatting = parseValue
           .toStringAsFixed(parseValue.truncateToDouble() == parseValue ? 0 : 2);
 
       debugPrint("numberFormatting:::: $decimalFormatting");
 
-      if (decimalFormatting.contains(".")) {
-        return double.parse(decimalFormatting);
-      } else {
-        return double.parse(decimalFormatting);
-      }
+      return double.parse(decimalFormatting);
     }
-  } on FormatException catch (e) {
+  } catch (e) {
     debugPrint("Number Exception============>$e");
     return 0;
   }

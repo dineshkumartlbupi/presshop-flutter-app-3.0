@@ -13,7 +13,7 @@ class TaskAssignedResponseModel extends TaskAssignedEntity {
     return TaskAssignedResponseModel(
       success: SafeParser.parseBool(json['success']),
       message: SafeParser.parseString(json['message']),
-      data: TaskAssignedDataModel.fromJson(json['data']),
+      data: TaskAssignedDataModel.fromJson(json['data'] ?? json),
     );
   }
   final bool success;
@@ -51,7 +51,7 @@ class TaskAssignedDataModel {
 
     return TaskAssignedDataModel(
       code: SafeParser.parseInt(json['code']),
-      task: TaskAssignedItemModel.fromJson(json['task']),
+      task: TaskAssignedItemModel.fromJson(json['task'] ?? {}),
       resp: (json['resp'] != null && json['resp'] is Map)
           ? ChatRoomDataModel.fromJson(json['resp'])
           : ChatRoomDataModel(
@@ -130,14 +130,14 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
       addressLocation: (json['address_location'] is String)
           ? AddressLocationDataModel.fromJson(
               jsonDecode(json['address_location']))
-          : AddressLocationDataModel.fromJson(json['address_location']),
+          : AddressLocationDataModel.fromJson(json['address_location'] ?? {}),
       status: SafeParser.parseString(json['status']),
       isDraft: SafeParser.parseBool(json['is_draft']),
       paidStatus: SafeParser.parseString(json['paid_status']),
       createdAt: SafeParser.parseDateTime(json['createdAt']),
       updatedAt: SafeParser.parseDateTime(json['updatedAt']),
       content: SafeParser.parseList<TaskContentDataModel>(
-          json['content'], (e) => TaskContentDataModel.fromJson(e)),
+          json['content'], (e) => TaskContentDataModel.fromJson(e ?? {})),
       isNeedPhoto: SafeParser.parseBool(json['need_photos']),
       isNeedVideo: SafeParser.parseBool(json['need_videos']),
       isNeedInterview: SafeParser.parseBool(json['need_interview']),
@@ -154,7 +154,7 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
       currencySymbol: SafeParser.parseString(
           json['currency_symbol'] ?? json['currencySymbol']),
       hopperInfo: SafeParser.parseList<HopperInfoDataModel>(
-          json['hopperInfo'], (e) => HopperInfoDataModel.fromJson(e)),
+          json['hopperInfo'], (e) => HopperInfoDataModel.fromJson(e ?? {})),
       hopperTaskAmount: SafeParser.parseString(json['hopperTaskAmount']),
       acceptedHoppers: SafeParser.parseList<String>(
           json['accepted_hoppers'], (e) => SafeParser.parseString(e)),

@@ -60,7 +60,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       GetTaskDetailEvent event, Emitter<TaskState> emit) async {
     if (event.showLoader) {
       emit(state.copyWith(
-          taskDetailStatus: TaskStatus.loading, clearErrorMessage: true));
+          taskDetailStatus: TaskStatus.loading,
+          clearTaskDetail: true,
+          clearErrorMessage: true));
     }
     final result = await getTaskDetail(GetTaskDetailParams(
         taskId: event.taskId, showLoader: event.showLoader));
@@ -292,7 +294,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       FetchTaskDetailEvent event, Emitter<TaskState> emit) async {
     if (event.showLoader) {
       emit(state.copyWith(
-          taskDetailStatus: TaskStatus.loading, clearErrorMessage: true));
+          taskDetailStatus: TaskStatus.loading,
+          clearTaskDetail: true,
+          clearErrorMessage: true));
     }
     final result = await getTaskDetail(GetTaskDetailParams(
         taskId: event.taskId, showLoader: event.showLoader));

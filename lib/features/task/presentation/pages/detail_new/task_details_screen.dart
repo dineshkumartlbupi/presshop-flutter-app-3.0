@@ -77,7 +77,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       context
           .read<TaskBloc>()
-          .add(GetTaskDetailEvent(widget.taskId, showLoader: false));
+          .add(GetTaskDetailEvent(widget.taskId, showLoader: true));
     });
     super.initState();
   }
@@ -125,7 +125,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       body: BlocConsumer<TaskBloc, TaskState>(
         listener: (context, state) {
           if (state.taskDetail != null &&
-              state.taskDetailStatus == TaskStatus.success) {
+              state.taskDetailStatus == TaskStatus.success &&
+              state.taskDetail!.task.id == widget.taskId) {
             taskDetail = state.taskDetail;
             roomId = taskDetail!.resp.roomId;
             _updateGoogleMap(LatLng(
@@ -152,7 +153,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
         },
         builder: (context, state) {
           if (state.taskDetail != null &&
-              state.taskDetailStatus == TaskStatus.success) {
+              state.taskDetailStatus == TaskStatus.success &&
+              state.taskDetail!.task.id == widget.taskId) {
             taskDetail = state.taskDetail;
           }
 
@@ -160,7 +162,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             return Center(child: Text(state.errorMessage!));
           }
 
-          if (taskDetail == null) {
+          if (taskDetail == null ||
+              state.taskDetailStatus == TaskStatus.loading) {
             return showLoader();
           }
           return Padding(

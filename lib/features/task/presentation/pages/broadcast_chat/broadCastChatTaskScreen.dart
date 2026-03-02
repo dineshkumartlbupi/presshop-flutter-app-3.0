@@ -546,6 +546,88 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
 
   Widget _buildChatBubble(ManageTaskChatModel item, Size size) {
     if (item.messageType == "media" || item.messageType == "task_content") {
+      if (item.mediaList.isEmpty) {
+        if (item.message.isNotEmpty) {
+          if (item.senderType == "MediaHouse") {
+            return LeftTextChatBubble(item: item);
+          } else {
+            // For hopper messages with text but marked as media
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+                    decoration: BoxDecoration(
+                      color: AppColorTheme.colorThemePink,
+                      borderRadius: BorderRadius.only(
+                        topLeft:
+                            Radius.circular(size.width * AppDimensions.numD04),
+                        bottomLeft:
+                            Radius.circular(size.width * AppDimensions.numD04),
+                        bottomRight:
+                            Radius.circular(size.width * AppDimensions.numD04),
+                      ),
+                    ),
+                    child: Text(
+                      item.message,
+                      textAlign: TextAlign.right,
+                      style: commonTextStyle(
+                        size: size,
+                        fontSize: size.width * AppDimensions.numD036,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: size.width * AppDimensions.numD04),
+                const HopperAvatar(),
+              ],
+            );
+          }
+        }
+        // If entirely empty (no media, no text), maybe show a placeholder "Media uploaded"
+        if (item.senderType == "hopper") {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: size.width * AppDimensions.numD04,
+                  vertical: size.width * AppDimensions.numD02,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(
+                    size.width * AppDimensions.numD04,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.image_outlined,
+                        size: size.width * AppDimensions.numD05),
+                    SizedBox(width: size.width * AppDimensions.numD02),
+                    Text(
+                      "Media Uploaded",
+                      style: TextStyle(
+                        fontSize: size.width * AppDimensions.numD03,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: size.width * AppDimensions.numD04),
+              const HopperAvatar(),
+            ],
+          );
+        }
+        return const SizedBox.shrink();
+      }
+
       return ListView.separated(
         physics: const NeverScrollableScrollPhysics(),
         separatorBuilder: (context, index) =>

@@ -18,16 +18,16 @@ class Config {
   static const int env = 1;
   // "http://localhost:8100/api/";
 
-  // String get baseUrl =>
-  //     "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/";
-
-  // String get socketUrl2 =>
-  //     "wss://lelia-anthracitic-ecclesiologically.ngrok-free.dev";
-
   String get baseUrl =>
-      "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
+      "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/";
 
-  String get socketUrl2 => "wss://funnellike-subangular-sulema.ngrok-free.dev";
+  String get socketUrl2 =>
+      "wss://lelia-anthracitic-ecclesiologically.ngrok-free.dev";
+
+  // String get baseUrl =>
+  //     "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
+
+  // String get socketUrl2 => "wss://funnellike-subangular-sulema.ngrok-free.dev";
 
   String get googleMapURL =>
       "https://maps.googleapis.com/maps/api/place/autocomplete/json";
@@ -117,8 +117,8 @@ class Content {
   final String uploadMedia = "hopper/uploadmedia";
   final String uploadMultipleImages = "hopper/uploadMultipleImg";
   final String addContent = "hopper/addContent";
-  // final String myContent = "hopper/getHopperContentList";
-  final String myContent = "hopper/getContentList";
+  final String myContent = "hopper/getHopperContentList";
+  // final String myContent = "hopper/getContentList";
 
   final String allContent = "hopper/getAllContent";
   final String draftContent = "hopper/getDraftContentList";

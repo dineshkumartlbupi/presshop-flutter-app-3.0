@@ -86,8 +86,10 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
               isCharity: e['is_charity'] ?? false,
               images: List<String>.from(e['images'] ?? []),
               videos: List<dynamic>.from(e['videos'] ?? []),
-              createdAt: (e['created_at'] ?? '').toString(),
-              status: (e['status'] ?? '').toString(),
+              createdAt: (e['created_at'] ?? e['timestamp'] ?? '').toString(),
+              status: (e['status'] ??
+                      (e['is_draft'] == true ? 'draft' : 'published'))
+                  .toString(),
               contentMetadata: (e['content_metadata'] as List? ?? [])
                   .map((m) => m is Map
                       ? ContentMetadata(
