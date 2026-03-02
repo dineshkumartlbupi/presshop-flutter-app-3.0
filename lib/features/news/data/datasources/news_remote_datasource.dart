@@ -68,20 +68,28 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
           throw ProcessingException("News aggregation in progress");
         }
         final data = response.data;
-        if (data['data'] != null && data['data']['news'] != null) {
-          final List<dynamic> newsList = data['data']['news'];
-          if (newsList.isNotEmpty) {
-            // debugPrint("DEBUG: getAggregatedNews first news item: ${newsList[0]}");
-            if (newsList[0] is Map) {
-              debugPrint(
-                  "DEBUG: first news item keys: ${(newsList[0] as Map).keys.toList()}");
-            }
-          } else {
-            debugPrint("DEBUG: getAggregatedNews news list is EMPTY");
+        List<dynamic> newsList = [];
+
+        if (data['data'] != null) {
+          if (data['data'] is Map) {
+            // Priority list of keys for news/incidents
+            newsList = data['data']['news'] ??
+                data['data']['incidents'] ??
+                data['data']['alerts'] ??
+                data['data']['data'] ??
+                [];
+          } else if (data['data'] is List) {
+            newsList = data['data'];
           }
-          return newsList.map((item) => NewsModel.fromJson(item)).toList();
         }
-        return [];
+
+        // Fallback to root level if empty and root has news keys
+        if (newsList.isEmpty) {
+          newsList = data['news'] ?? data['incidents'] ?? data['alerts'] ?? [];
+        }
+
+        debugPrint("DEBUG: getAggregatedNews list length: ${newsList.length}");
+        return newsList.map((item) => NewsModel.fromJson(item)).toList();
       } else {
         throw ServerException("Failed to fetch aggregated news");
       }

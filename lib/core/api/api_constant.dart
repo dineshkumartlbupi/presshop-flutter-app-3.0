@@ -118,8 +118,8 @@ class Content {
   final String uploadMedia = "hopper/uploadmedia";
   final String uploadMultipleImages = "hopper/uploadMultipleImg";
   final String addContent = "hopper/addContent";
-  // final String myContent = "hopper/getHopperContentList";
-  final String myContent = "hopper/getContentList";
+  final String myContent = "hopper/getHopperContentList";
+  // final String myContent = "hopper/getContentList";
 
   final String allContent = "hopper/getAllContent";
   final String draftContent = "hopper/getDraftContentList";

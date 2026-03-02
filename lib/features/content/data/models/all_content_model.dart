@@ -83,8 +83,11 @@ class ContentItemModel extends ContentItem {
       isCharity: json['is_charity'] == "true" || json['is_charity'] == true,
       images: json['images'] != null ? List<String>.from(json['images']) : [],
       videos: json['videos'] != null ? List<dynamic>.from(json['videos']) : [],
-      createdAt: json['created_at'] ?? '',
-      status: json['status'] ?? '',
+      createdAt: json['created_at'] ?? json['timestamp'] ?? '',
+      status: json['status'] ??
+          (json['is_draft'] == "true" || json['is_draft'] == true
+              ? 'draft'
+              : 'published'),
       contentMetadata: json['content_metadata'] != null
           ? (json['content_metadata'] as List)
               .map((e) => ContentMetadataModel.fromJson(e))

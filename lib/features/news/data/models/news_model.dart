@@ -75,13 +75,13 @@ class NewsModel extends News {
         : null;
 
     return NewsModel(
-      id: json['_id'] ?? '',
+      id: (json['_id'] ?? json['id'] ?? json['incident_id'] ?? '').toString(),
       title: json['title'] ?? '',
       description: json['description'] ?? '',
       mediaUrl: mediaUrl,
       mediaType: mediaType,
-      location: json['location'],
-      createdAt: json['createdAt'],
+      location: json['location'] ?? json['address'],
+      createdAt: json['createdAt'] ?? json['timestamp'] ?? json['created_at'],
       likesCount: json['likesCount'] ?? json['likes_count'],
       commentsCount: json['commentsCount'] ?? json['comments_count'],
       sharesCount: json['sharesCount'] ?? json['shares_count'],

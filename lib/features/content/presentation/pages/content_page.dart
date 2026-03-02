@@ -235,14 +235,13 @@ class MyContentViewState extends State<MyContentView>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: NewHomeAppBar(
-                  size: size,
-                  hideLeading: widget.hideLeading,
-                  onFilterTap: () {
-                    showFilterSheet();
-                  },
-                ),
-            
-              
+        size: size,
+        hideLeading: widget.hideLeading,
+        onFilterTap: () {
+          showFilterSheet();
+        },
+      ),
+
       //          CommonAppBar(
       //   elevation: 0,
       //   hideLeading: widget.hideLeading,
@@ -386,7 +385,9 @@ class MyContentViewState extends State<MyContentView>
 
           if (isAll) {
             currentList = fetchedList
-                .where((item) => item.status.toLowerCase() == 'published')
+                .where((item) =>
+                    item.status.toLowerCase() == 'published' ||
+                    item.status.toLowerCase() == 'pending')
                 .toList();
           } else {
             currentList = fetchedList
