@@ -387,7 +387,6 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        // Accept "success": true even if "code" is missing or check both
         if (data['code'] == 200 || data['success'] == true) {
           var offersRaw = data['response'] ?? data['data'];
           List offersList = [];
@@ -397,9 +396,6 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
           } else if (offersRaw is Map && offersRaw.isEmpty) {
             offersList = [];
           } else if (offersRaw is Map) {
-            // If it's a map, maybe the list is inside another key?
-            // Or maybe it's just a single object? For now, if it's a non-empty Map
-            // that isn't expected, we treat it as empty or try to find a list inside.
             if (offersRaw['data'] is List) {
               offersList = offersRaw['data'];
             } else if (offersRaw['offers'] is List) {

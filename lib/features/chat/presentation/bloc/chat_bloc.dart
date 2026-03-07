@@ -383,7 +383,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
     debugPrint(":::: ChatBloc _onSendMessage :::::");
     debugPrint("messageType: ${event.messageType}");
-    debugPrint("roomId: $roomId");
+    debugPrint("  : $roomId");
 
     // Ensure socket is initialized
     _chatSocketService.initSocket(userId: senderId, userType: "hopper");

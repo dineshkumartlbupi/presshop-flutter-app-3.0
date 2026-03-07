@@ -4,6 +4,7 @@ import 'package:app_links/app_links.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:presshop/core/core_export.dart';
@@ -39,6 +40,7 @@ import 'package:presshop/features/dashboard/presentation/widgets/student_beans_d
 import 'package:presshop/features/dashboard/presentation/utils/dashboard_notification_mixin.dart';
 import 'package:presshop/features/dashboard/presentation/utils/dashboard_location_mixin.dart';
 import 'package:presshop/features/dashboard/presentation/utils/dashboard_deeplink_mixin.dart';
+import 'package:presshop/core/services/background_location_service.dart';
 
 // ignore: must_be_immutable
 class Dashboard extends StatefulWidget {
@@ -140,6 +142,7 @@ class DashboardState extends State<Dashboard>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkUpdateAndShowPopup();
     });
+    _handlePermissionSequence();
     _updateBottomNavigationScreens();
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
@@ -229,7 +232,10 @@ class DashboardState extends State<Dashboard>
   void _updateBottomNavigationScreens() {
     bottomNavigationScreens = <Widget>[
       MyContentPage(
-          contentKey: _contentKey, hideLeading: true, showAppBar: false, fromMenu: false),
+          contentKey: _contentKey,
+          hideLeading: true,
+          showAppBar: false,
+          fromMenu: false),
       MyTaskScreen(key: _taskKey, hideLeading: true, showAppBar: false),
       CameraScreen(
         key: _cameraKey,
@@ -426,13 +432,97 @@ class DashboardState extends State<Dashboard>
               } else if (state is DashboardAppVersionChecked) {
                 var map = state.versionData;
                 if (map["code"] == 200) {
-                  var versionData = map["data"];
-                  sharedPreferences!.setInt(SharedPreferencesKeys.videoLimitKey,
-                      (versionData['video_limit'] ?? 2) * 60);
-                  bool shouldUpdate = Platform.isAndroid
-                      ? (versionData['aOSshouldForceUpdate'] ?? false)
-                      : (versionData['iOSshouldForceUpdate'] ?? false);
-                  if (shouldUpdate) forceUpdateCheck();
+                  try {
+                    var versionData = map["data"];
+                    sharedPreferences!.setInt(
+                        SharedPreferencesKeys.videoLimitKey,
+                        (versionData['video_limit'] ?? 2) * 60);
+                    bool shouldUpdate = Platform.isAndroid
+                        ? (versionData['aOSshouldForceUpdate'] ?? false)
+                        : (versionData['iOSshouldForceUpdate'] ?? false);
+                    if (shouldUpdate) forceUpdateCheck();
+
+                    String? liveLocationHeading =
+                        versionData['liveLocationHeading'] as String?;
+                    double? liveLocationDistance =
+                        (versionData['liveLocationDistance'] is int)
+                            ? (versionData['liveLocationDistance'] as int)
+                                .toDouble()
+                            : versionData['liveLocationDistance'] as double?;
+                    String? liveLocationDescription =
+                        versionData['liveLocationDescription'] as String?;
+
+                    bool isCustomLocationPopup =
+                        versionData['is_custom_location_popup'] ?? false;
+                    String customLocationHeading =
+                        versionData['custom_location_heading'] ?? "";
+                    String customLocationDescription =
+                        versionData['custom_location_description'] ?? "";
+                    String customPopupImage =
+                        versionData['custom_popup_image'] ?? "";
+                    String locationSharingDescription =
+                        versionData['location_sharing_description'] ?? "";
+
+                    sharedPreferences?.setString(
+                        SharedPreferencesKeys.customLocationHeadingKey,
+                        customLocationHeading);
+                    sharedPreferences?.setString(
+                        SharedPreferencesKeys.customLocationDescriptionKey,
+                        customLocationDescription);
+                    sharedPreferences?.setString(
+                        SharedPreferencesKeys.customPopupImageKey,
+                        customPopupImage);
+                    sharedPreferences?.setString(
+                        SharedPreferencesKeys.locationSharingDescriptionKey,
+                        locationSharingDescription);
+                    sharedPreferences?.setBool(
+                        SharedPreferencesKeys.isCustomLocationPopupKey,
+                        isCustomLocationPopup);
+
+                    bool isManuallyStopped = sharedPreferences?.getBool(
+                            SharedPreferencesKeys.manuallyStoppedServiceKey) ??
+                        false;
+
+                    BackgroundLocationService.service
+                        .isRunning()
+                        .then((isServiceRunning) {
+                      if (isServiceRunning && !isManuallyStopped) {
+                        sharedPreferences?.setBool(
+                            SharedPreferencesKeys.isTaskGrabbingActiveKey,
+                            true);
+                      }
+
+                      bool isTaskGrabbingActive = sharedPreferences?.getBool(
+                              SharedPreferencesKeys.isTaskGrabbingActiveKey) ??
+                          false;
+
+                      if (!isManuallyStopped) {
+                        BackgroundLocationService.initService(
+                          notificationTitle: liveLocationHeading,
+                          notificationContent: liveLocationDescription,
+                          distanceFilter: liveLocationDistance,
+                          context: context,
+                          showPrePermissionDialog: isCustomLocationPopup &&
+                              !isTaskGrabbingActive &&
+                              !isServiceRunning,
+                          dialogTitle: customLocationHeading,
+                          dialogContent: customLocationDescription,
+                          dialogImage: customPopupImage,
+                        ).then((started) {
+                          if (started) {
+                            sharedPreferences?.setBool(
+                                SharedPreferencesKeys.isTaskGrabbingActiveKey,
+                                true);
+                            sharedPreferences?.setBool(
+                                SharedPreferencesKeys.manuallyStoppedServiceKey,
+                                false);
+                          }
+                        });
+                      }
+                    });
+                  } catch (e) {
+                    debugPrint("Error initializing background service: $e");
+                  }
                 } else {
                   debugPrint("Version check failed: ${map["message"]}");
                 }
@@ -690,5 +780,29 @@ class DashboardState extends State<Dashboard>
 
   void callGetActiveAdmin() {
     _dashboardBloc.add(FetchActiveAdmins());
+  }
+
+  Future<void> _handlePermissionSequence() async {
+    debugPrint("Starting Permission Sequence...");
+
+    await [
+      Permission.camera,
+      Permission.microphone,
+    ].request();
+
+    debugPrint("Camera/Mic Permissions handled.");
+
+    forceUpdateCheck();
+
+    if (widget.initialPosition == 2) {
+      if (mounted) {
+        final delay = Platform.isIOS ? 1200 : 500;
+        await Future.delayed(Duration(milliseconds: delay));
+        if (_cameraKey.currentState != null) {
+          debugPrint("Resuming Camera after permissions...");
+          _cameraKey.currentState!.resumeCamera();
+        }
+      }
+    }
   }
 }

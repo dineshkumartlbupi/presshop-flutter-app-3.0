@@ -1,28 +1,28 @@
 const Map<String, String> markerIcons = {
-  "accident": "assets/markers/marker-icons/accident.png",
-  "crash": "assets/markers/marker-icons/carcrash.png",
-  "fire": "assets/markers/marker-icons/fire.png",
+  "accident": "assets/markers/gifs/accident.webp",
+  "crash": "assets/markers/gifs/car-crash.webp",
+  "fire": "assets/markers/gifs/fire.webp",
 
   ///
-  "medical": "assets/markers/marker-icons/medical.png",
-  "gun": "assets/markers/marker-icons/vandalism.png",
-  "protest": "assets/markers/marker-icons/protest.png",
+  "medical": "assets/markers/gifs/medicine.webp",
+  "gun": "assets/markers/gifs/vandalism.webp",
+  "protest": "assets/markers/gifs/protesters.webp",
   //
-  "knife": "assets/markers/marker-icons/public_safty_alert.png",
-  "fight": "assets/markers/marker-icons/fight.png",
-  "police": "assets/markers/marker-icons/police.png",
+  "knife": "assets/markers/gifs/public_safty_alert.webp",
+  "fight": "assets/markers/gifs/fight.webp",
+  "police": "assets/markers/gifs/police1.webp",
 
   ///
-  "floods": "assets/markers/marker-icons/floods.png",
-  "road-block": "assets/markers/marker-icons/road-block.png",
-  "storm": "assets/markers/marker-icons/storm.png",
+  "floods": "assets/markers/gifs/floods.webp",
+  "road-block": "assets/markers/gifs/road-block.webp",
+  "storm": "assets/markers/gifs/storm.webp",
 
   ///
-  "snow": "assets/markers/marker-icons/snow.png",
-  "earthquake": "assets/markers/marker-icons/earthquake.png",
-  "icon": "assets/markers/marker-icons/earthquake.png",
+  "snow": "assets/markers/gifs/snow.webp",
+  "earthquake": "assets/markers/gifs/earthquake.webp",
+  "icon": "assets/markers/gifs/weather1.webp",
   // "nomarker": "assets/markers/marker-icons/no_marker.png",
-  "nomarker": "assets/markers/marker-icons/carcrash.png",
+  "nomarker": "assets/markers/gifs/car-crash.webp",
 };
 
 final List<Map<String, String>> alertTypes = [
@@ -36,11 +36,7 @@ final List<Map<String, String>> alertTypes = [
     'icon': 'assets/markers/gifs/fire.webp',
     'label': 'Fire',
   },
-  {
-    'type': 'fight',
-    'icon': 'assets/markers/gifs/fight.webp',
-    'label': 'Fight'
-  },
+  {'type': 'fight', 'icon': 'assets/markers/gifs/fight.webp', 'label': 'Fight'},
 
   ///////
   {

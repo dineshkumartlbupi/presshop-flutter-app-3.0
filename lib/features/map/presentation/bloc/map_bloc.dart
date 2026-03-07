@@ -101,7 +101,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   ) async {
     try {
       final incident = Incident.fromJson(event.data);
-      if (state.markers.any((m) => m.markerId.value == incident.id)) {
+      final markerId = _getMarkerId(incident);
+      if (state.markers.any((m) => m.markerId.value == markerId)) {
         return;
       }
 
@@ -120,9 +121,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       }
 
       final marker = Marker(
-        markerId: MarkerId(incident.id),
+        markerId: MarkerId(markerId),
         position: incident.position,
         icon: icon,
+        alpha: 0.0,
         onTap: () {
           add(SetSelectedIncidentEvent(incident));
         },
@@ -148,6 +150,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   ) async {
     try {
       final incident = Incident.fromJson(event.data);
+      final markerId = _getMarkerId(incident);
 
       BitmapDescriptor icon;
       if (incident.markerType == 'content' || incident.markerType == 'news') {
@@ -164,16 +167,17 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       }
 
       final marker = Marker(
-        markerId: MarkerId(incident.id),
+        markerId: MarkerId(markerId),
         position: incident.position,
         icon: icon,
+        alpha: 0.0,
         onTap: () {
           add(SetSelectedIncidentEvent(incident));
         },
       );
 
       final updatedMarkers =
-          state.markers.where((m) => m.markerId.value != incident.id).toSet();
+          state.markers.where((m) => m.markerId.value != markerId).toSet();
       updatedMarkers.add(marker);
 
       emit(state.copyWith(
@@ -182,6 +186,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     } catch (e) {
       debugPrint("Error handling updated incident: $e");
     }
+  }
+
+  String _getMarkerId(Incident incident) {
+    return (incident.markerType == 'content' || incident.markerType == 'news')
+        ? 'news_${incident.id}'
+        : (incident.type?.toLowerCase().contains('weather') ?? false)
+            ? 'weather_${incident.id}'
+            : 'alert_${incident.id}';
   }
 
   String _resolveIconType(String? typeInput) {
@@ -249,14 +261,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         add(FetchNewsEvent(
             lat: location.latitude, lng: location.longitude, km: 10));
 
-        // Create avatar marker in background (non-blocking for camera)
         final profileImage = sharedPreferences
                 .getString(SharedPreferencesKeys.profileImageKey) ??
             '';
         BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
-
-        // Reduce avatar size for better performance (100x100 instead of 150x150)
-        // Updating to 120 to match legacy code as per request
         if (profileImage.isNotEmpty) {
           icon = await markerService.createAvatarMarker(profileImage,
               size: const Size(120, 120));
@@ -281,8 +289,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           (failure) => debugPrint("Failed to get address: ${failure.message}"),
           (addr) => address = addr,
         );
-
-        // Update with avatar marker and address after they're ready
         emit(state.copyWith(
           myLocationAddress: address,
           markers: {...state.markers, meMarker},
@@ -297,7 +303,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     GetRouteEvent event,
     Emitter<MapState> emit,
   ) async {
-    // emit(state.copyWith(isLoading: true));
     final result =
         await getRoute(GetRouteParams(start: event.start, end: event.end));
 
@@ -305,7 +310,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       (failure) async =>
           emit(state.copyWith(errorMessage: "Failed to get route")),
       (routeInfo) async {
-        // Create polyline
         final polyline = Polyline(
           polylineId: const PolylineId('route'),
           points: routeInfo.points,
@@ -468,10 +472,16 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 }
               }
 
+              final markerId = (incident.markerType == 'content' ||
+                      incident.markerType == 'news')
+                  ? 'news_${incident.id}'
+                  : 'alert_${incident.id}';
+
               return Marker(
-                markerId: MarkerId(incident.id),
+                markerId: MarkerId(markerId),
                 position: incident.position,
                 icon: icon,
+                alpha: 0.0,
                 onTap: () {
                   add(SetSelectedIncidentEvent(incident));
                 },
@@ -624,7 +634,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       return;
     }
 
-    // If GetDirectionCard is visible, clicking marker sets destination
     if (state.showGetDirectionCard) {
       add(SetMapSelectedLocationEvent(
         position: event.incident.position,
@@ -796,9 +805,15 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 width: kIncidentMarkerSize);
           }
 
+          final markerId = (incident.markerType == 'content' ||
+                  incident.markerType == 'news')
+              ? 'news_${incident.id}'
+              : 'alert_${incident.id}';
+
           return Marker(
-            markerId: MarkerId(incident.id),
+            markerId: MarkerId(markerId),
             position: incident.position,
+            alpha: 0.0,
             icon: icon,
             onTap: () {
               add(SetSelectedIncidentEvent(incident));

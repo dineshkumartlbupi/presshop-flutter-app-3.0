@@ -5,6 +5,7 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/dashboard/presentation/pages/version_checker.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:presshop/core/utils/current_user.dart';
 
 class ForceUpdateRepository {
   static const String endpoint = "auth/getLatestVersion";
@@ -42,10 +43,45 @@ class ForceUpdateRepository {
 
       if (!updateAvailable) return false;
 
-      if (Platform.isAndroid) return data["aOSshouldForceUpdate"] == true;
-      if (Platform.isIOS) return data["iOSshouldForceUpdate"] == true;
+      bool shouldForce = false;
+      if (Platform.isAndroid) {
+        shouldForce = data["aOSshouldForceUpdate"] == true;
+      }
+      if (Platform.isIOS) {
+        shouldForce = data["iOSshouldForceUpdate"] == true;
+      }
 
-      return false;
+      if (!shouldForce) return false;
+
+      // Extract country list from API data
+      List<String> requiredCountries = [];
+      if (data["country"] != null) {
+        requiredCountries = List<String>.from(data["country"]);
+      }
+
+      // If country is specified, check if user falls into that bucket
+      if (requiredCountries.isNotEmpty) {
+        String? userCountryCode = CurrentUser.user?.countryCode ??
+            sharedPreferences!.getString(SharedPreferencesKeys.countryCodeKey);
+        String? userCountryName =
+            sharedPreferences!.getString(SharedPreferencesKeys.countryKey);
+
+        bool matchFound = false;
+        for (var country in requiredCountries) {
+          String target = country.toLowerCase();
+          if ((userCountryCode != null &&
+                  userCountryCode.toLowerCase().contains(target)) ||
+              (userCountryName != null &&
+                  userCountryName.toLowerCase().contains(target))) {
+            matchFound = true;
+            break;
+          }
+        }
+        return matchFound;
+      }
+
+      // If no targeted countries, apply forced update globally
+      return true;
     } on DioException catch (e) {
       // ------------------------------------------
       // HANDLE 401 → ATTEMPT REFRESH TOKEN

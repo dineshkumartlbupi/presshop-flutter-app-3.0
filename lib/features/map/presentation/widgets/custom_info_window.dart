@@ -76,6 +76,8 @@ class CustomInfoWindow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    final double responsiveWidth = size.width > 600 ? 650 : size.width;
+
     return Transform.translate(
       offset: const Offset(0, 0),
       child: TweenAnimationBuilder<double>(
@@ -103,21 +105,22 @@ class CustomInfoWindow extends StatelessWidget {
               children: [
                 // MAIN CARD
                 Container(
-                  width: size.width * AppDimensions.numD65,
+                  width: responsiveWidth * AppDimensions.numD65,
                   padding: EdgeInsets.only(
-                      left: size.width * AppDimensions.numD04,
-                      right: size.width * AppDimensions.numD04,
-                      top: size.width * AppDimensions.numD02,
-                      bottom: size.width * AppDimensions.numD04),
+                      left: responsiveWidth * AppDimensions.numD04,
+                      right: responsiveWidth * AppDimensions.numD04,
+                      top: responsiveWidth * AppDimensions.numD02,
+                      bottom: responsiveWidth * AppDimensions.numD04),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(
-                        size.width * AppDimensions.numD045),
+                        responsiveWidth * AppDimensions.numD045),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black26,
-                        blurRadius: size.width * AppDimensions.numD02,
-                        offset: Offset(0, size.width * AppDimensions.numD008),
+                        blurRadius: responsiveWidth * AppDimensions.numD02,
+                        offset:
+                            Offset(0, responsiveWidth * AppDimensions.numD008),
                       ),
                     ],
                   ),
@@ -128,7 +131,7 @@ class CustomInfoWindow extends StatelessWidget {
                       // TOP ROW (ICON + CITY)
                       Container(
                         padding: EdgeInsets.only(
-                            bottom: size.width * AppDimensions.numD02),
+                            bottom: responsiveWidth * AppDimensions.numD02),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -136,9 +139,10 @@ class CustomInfoWindow extends StatelessWidget {
                               burstIcons[incident.type] ??
                                   markerIcons[incident.type] ??
                                   markerIcons["nomarker"]!,
-                              height: size.width * AppDimensions.numD10,
+                              height: responsiveWidth * AppDimensions.numD10,
                             ),
-                            SizedBox(width: size.width * AppDimensions.numD015),
+                            SizedBox(
+                                width: responsiveWidth * AppDimensions.numD015),
                             Flexible(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,8 +153,8 @@ class CustomInfoWindow extends StatelessWidget {
                                         _getDisplayTitle(
                                             incident.type, incident.address),
                                     style: TextStyle(
-                                      fontSize:
-                                          size.width * AppDimensions.numD045,
+                                      fontSize: responsiveWidth *
+                                          AppDimensions.numD045,
                                       fontWeight: FontWeight.w600,
                                     ),
                                     maxLines: 1,
@@ -171,8 +175,8 @@ class CustomInfoWindow extends StatelessWidget {
                                               .contains('storm') ??
                                           false)) ...[
                                     SizedBox(
-                                        height:
-                                            size.width * AppDimensions.numD01),
+                                        height: responsiveWidth *
+                                            AppDimensions.numD01),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -180,19 +184,19 @@ class CustomInfoWindow extends StatelessWidget {
                                         Text(
                                           "${incident.temperature ?? '--'}°C",
                                           style: TextStyle(
-                                            fontSize: size.width *
+                                            fontSize: responsiveWidth *
                                                 AppDimensions.numD032,
                                             color: Colors.grey.shade700,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
                                         SizedBox(
-                                            width: size.width *
+                                            width: responsiveWidth *
                                                 AppDimensions.numD02),
                                         Text(
                                           "${incident.wind ?? '--'} km/h Wind",
                                           style: TextStyle(
-                                            fontSize: size.width *
+                                            fontSize: responsiveWidth *
                                                 AppDimensions.numD032,
                                             color: Colors.grey.shade700,
                                             fontWeight: FontWeight.w500,
@@ -211,7 +215,7 @@ class CustomInfoWindow extends StatelessWidget {
                       // DIVIDER
                       Container(height: 1, color: Colors.grey.shade300),
 
-                      SizedBox(height: size.width * AppDimensions.numD025),
+                      SizedBox(height: responsiveWidth * AppDimensions.numD025),
 
                       // FULL ADDRESS
                       if (incident.address != null &&
@@ -222,19 +226,22 @@ class CustomInfoWindow extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.only(top: 4),
                               child: SizedBox(
-                                width: size.width * AppDimensions.numD06,
+                                width: responsiveWidth * AppDimensions.numD06,
                                 child: Image.asset(
                                     "assets/icons/news_location.png",
-                                    height: size.width * AppDimensions.numD04,
+                                    height:
+                                        responsiveWidth * AppDimensions.numD04,
                                     color: Colors.grey[800]),
                               ),
                             ),
-                            SizedBox(width: size.width * AppDimensions.numD02),
+                            SizedBox(
+                                width: responsiveWidth * AppDimensions.numD02),
                             Expanded(
                               child: Text(
                                 incident.address!,
                                 style: TextStyle(
-                                  fontSize: size.width * AppDimensions.numD035,
+                                  fontSize:
+                                      responsiveWidth * AppDimensions.numD035,
                                   color: Colors.grey.shade700,
                                   // height: 1.3,
                                 ),
@@ -248,22 +255,25 @@ class CustomInfoWindow extends StatelessWidget {
 
                       if (incident.description != null &&
                           incident.description!.isNotEmpty) ...[
-                        SizedBox(height: size.width * AppDimensions.numD02),
+                        SizedBox(
+                            height: responsiveWidth * AppDimensions.numD02),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(
-                              width: size.width * AppDimensions.numD06,
+                              width: responsiveWidth * AppDimensions.numD06,
                               child: Icon(Icons.info_outline,
-                                  size: size.width * AppDimensions.numD04,
+                                  size: responsiveWidth * AppDimensions.numD04,
                                   color: Colors.grey[800]),
                             ),
-                            SizedBox(width: size.width * AppDimensions.numD02),
+                            SizedBox(
+                                width: responsiveWidth * AppDimensions.numD02),
                             Expanded(
                               child: Text(
                                 incident.description!,
                                 style: TextStyle(
-                                  fontSize: size.width * AppDimensions.numD032,
+                                  fontSize:
+                                      responsiveWidth * AppDimensions.numD032,
                                   color: Colors.grey.shade600,
                                   fontStyle: FontStyle.italic,
                                   height: 1.3,
@@ -276,7 +286,7 @@ class CustomInfoWindow extends StatelessWidget {
                         ),
                       ],
 
-                      SizedBox(height: size.width * AppDimensions.numD02),
+                      SizedBox(height: responsiveWidth * AppDimensions.numD02),
 
                       // TIME AND VIEW COUNT (ROW)
                       Row(
@@ -285,41 +295,47 @@ class CustomInfoWindow extends StatelessWidget {
                           Row(
                             children: [
                               SizedBox(
-                                width: size.width * AppDimensions.numD06,
+                                width: responsiveWidth * AppDimensions.numD06,
                                 child: Image.asset(
                                   "${iconsPath}ic_clock.png",
-                                  height: size.width * AppDimensions.numD035,
+                                  height:
+                                      responsiveWidth * AppDimensions.numD035,
                                   color: Colors.grey[800],
                                 ),
                               ),
                               SizedBox(
-                                  width: size.width * AppDimensions.numD025),
+                                  width:
+                                      responsiveWidth * AppDimensions.numD025),
                               Text(
                                 _formatTime(incident.time),
                                 style: TextStyle(
-                                  fontSize: size.width * AppDimensions.numD035,
+                                  fontSize:
+                                      responsiveWidth * AppDimensions.numD035,
                                   color: Colors.grey.shade700,
                                 ),
                               ),
                             ],
                           ),
 
-                          SizedBox(width: size.width * AppDimensions.numD03),
+                          SizedBox(
+                              width: responsiveWidth * AppDimensions.numD03),
 
                           // Views (Right)
                           Row(
                             children: [
                               Image.asset(
                                 "assets/icons/news_eye.png",
-                                height: size.width * AppDimensions.numD03,
+                                height: responsiveWidth * AppDimensions.numD03,
                                 color: Colors.grey.shade800,
                               ),
                               SizedBox(
-                                  width: size.width * AppDimensions.numD015),
+                                  width:
+                                      responsiveWidth * AppDimensions.numD015),
                               Text(
                                 "${incident.viewCount ?? 0}",
                                 style: TextStyle(
-                                  fontSize: size.width * AppDimensions.numD035,
+                                  fontSize:
+                                      responsiveWidth * AppDimensions.numD035,
                                   color: Colors.grey.shade700,
                                 ),
                               ),
@@ -328,24 +344,25 @@ class CustomInfoWindow extends StatelessWidget {
                         ],
                       ),
 
-                      SizedBox(height: size.width * AppDimensions.numD02),
+                      SizedBox(height: responsiveWidth * AppDimensions.numD02),
 
                       // DATE
                       Row(
                         children: [
                           SizedBox(
-                            width: size.width * AppDimensions.numD06,
+                            width: responsiveWidth * AppDimensions.numD06,
                             child: Image.asset(
                               "${iconsPath}ic_yearly_calendar.png",
-                              height: size.width * AppDimensions.numD035,
+                              height: responsiveWidth * AppDimensions.numD035,
                               color: Colors.grey.shade700,
                             ),
                           ),
-                          SizedBox(width: size.width * AppDimensions.numD02),
+                          SizedBox(
+                              width: responsiveWidth * AppDimensions.numD02),
                           Text(
                             _formatDate(incident.date, incident.time),
                             style: TextStyle(
-                              fontSize: size.width * AppDimensions.numD035,
+                              fontSize: responsiveWidth * AppDimensions.numD035,
                               color: Colors.grey.shade700,
                             ),
                           ),
@@ -359,8 +376,8 @@ class CustomInfoWindow extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.zero,
                   child: CustomPaint(
-                      size: Size(size.width * AppDimensions.numD06,
-                          size.width * AppDimensions.numD03),
+                      size: Size(responsiveWidth * AppDimensions.numD06,
+                          responsiveWidth * AppDimensions.numD03),
                       painter: _TrianglePainter()),
                 ),
               ],

@@ -52,12 +52,14 @@ void main() {
     forceUpdate: false,
     ios: '1.0.0',
     android: '1.0.0',
+    countries: [],
   );
 
   const tVersionForceParams = Version(
     forceUpdate: true,
     ios: '1.0.0',
     android: '1.0.0',
+    countries: [],
   );
 
   group('SplashBloc', () {

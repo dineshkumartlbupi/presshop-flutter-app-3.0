@@ -14,7 +14,6 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import '../bloc/splash_bloc.dart';
 import '../bloc/splash_event.dart';
@@ -46,7 +45,6 @@ class _SplashScreenState extends State<SplashScreen>
     FirebaseAnalytics.instance.logEvent(name: "splash_opened");
     getFcmToken();
     _checkInitialMessage();
-    // AppStarted is dispatched in BlocProvider create
   }
 
   Future<void> _checkInitialMessage() async {
@@ -96,7 +94,8 @@ class _SplashScreenState extends State<SplashScreen>
           if (state is SplashAuthenticated) {
             context.go(AppRoutes.dashboardPath);
           } else if (state is SplashUnauthenticated) {
-            context.go(AppRoutes.loginPath);
+            // context.go(AppRoutes.loginPath);
+            context.go(AppRoutes.walkthroughPath);
           } else if (state is SplashNavigateToOnboarding) {
             context.go(AppRoutes.walkthroughPath);
           } else if (state is SplashForceUpdate) {
@@ -122,7 +121,6 @@ class _SplashScreenState extends State<SplashScreen>
                     child: Image.asset('assets/logo/cmplogo2.png'),
                   ),
                 ),
-                if (mustForceUpdate) _forceUpdateOverlay(size),
                 if (showError)
                   ConnectionErrorOverlay(
                     message: errorMessage,
@@ -140,104 +138,6 @@ class _SplashScreenState extends State<SplashScreen>
         },
       ),
     );
-  }
-
-  Widget _forceUpdateOverlay(Size size) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Container(
-        color: Colors.black.withOpacity(0.3),
-        child: Center(
-          child: Container(
-            width: size.width * 0.85,
-            padding: EdgeInsets.all(size.width * 0.05),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.95),
-              borderRadius: BorderRadius.circular(size.width * 0.04),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      "Update Required",
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: size.width * 0.05,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Spacer(),
-                  ],
-                ),
-                SizedBox(height: size.width * 0.02),
-                const Divider(color: Colors.black26, thickness: 0.5),
-                SizedBox(height: size.width * 0.03),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(size.width * 0.03),
-                      child: Image.asset(
-                        "${commonImagePath}dog.png",
-                        height: size.width * 0.25,
-                        width: size.width * 0.35,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    SizedBox(width: size.width * 0.04),
-                    Expanded(
-                      child: Text(
-                        "A newer version of PressHop is available. Please update the app to continue using all features smoothly.",
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: size.width * 0.035,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: size.width * 0.08),
-                SizedBox(
-                  width: double.infinity,
-                  child: commonElevatedButton(
-                    "Update Now",
-                    size,
-                    commonButtonTextStyle(size),
-                    commonButtonStyle(size, AppColorTheme.colorThemePink),
-                    _openStore,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _openStore() async {
-    FirebaseCrashlytics.instance.log("User clicked Update Now");
-    FirebaseAnalytics.instance.logEvent(name: "user_update_now_click");
-    final url = Platform.isAndroid
-        ? 'https://play.google.com/store/apps/details?id=com.presshop.app'
-        : 'https://apps.apple.com/app/id6744651614';
-    try {
-      final uri = Uri.parse(url);
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (e) {
-      FirebaseCrashlytics.instance.recordError(e, StackTrace.current);
-      showSnackBar("Error", "Could not open store", Colors.red);
-    }
   }
 
   @override

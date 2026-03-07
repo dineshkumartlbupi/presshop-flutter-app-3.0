@@ -74,6 +74,13 @@ class SharedPreferencesKeys {
   static const sourceDataHeadingKey = "sourceDataHeading";
   static const sourceDataDescriptionKey = "sourceDataDescription";
   static const sourceDataIsClickKey = "isClick";
+  static const isCustomLocationPopupKey = "is_custom_location_popup";
+  static const customLocationHeadingKey = "custom_location_heading";
+  static const customLocationDescriptionKey = "custom_location_description";
+  static const customPopupImageKey = "custom_popup_image";
+  static const locationSharingDescriptionKey = "location_sharing_description";
+  static const manuallyStoppedServiceKey = "manually_stopped_service";
+  static const isTaskGrabbingActiveKey = "is_task_grabbing_active";
 
   // Caching Keys
   static const tutorialCategoriesCacheKey = "tutorial_categories_cache";

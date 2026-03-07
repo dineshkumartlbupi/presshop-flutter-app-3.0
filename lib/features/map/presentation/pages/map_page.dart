@@ -24,6 +24,7 @@ import 'package:presshop/features/map/presentation/widgets/alert_panel.dart';
 import 'package:presshop/features/map/presentation/widgets/burst_animation.dart';
 import 'package:presshop/features/map/presentation/widgets/content_marker_popup.dart';
 import 'package:presshop/features/map/presentation/widgets/custom_info_window.dart';
+import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:presshop/features/map/presentation/widgets/danger_zone_info_window.dart';
 import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
 import 'package:presshop/features/map/presentation/widgets/side_action_panal.dart';
@@ -115,6 +116,10 @@ class _MapPageContentState extends State<_MapPageContent>
   final ciw.CustomInfoWindowController _customInfoWindowController =
       ciw.CustomInfoWindowController();
 
+  final Map<String, ciw.CustomInfoWindowController> _markerControllers = {};
+  final Set<String> _animatedMarkers = {};
+  bool _isDisposed = false;
+
   Offset? _routeInfoOffset;
 
   void _checkPulseAnimation(double zoom) {
@@ -174,7 +179,7 @@ class _MapPageContentState extends State<_MapPageContent>
 
     _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 2),
     )..addListener(() {
         if (!mounted) return;
         final val = Curves.easeOutQuad.transform(_pulseController.value);
@@ -188,13 +193,15 @@ class _MapPageContentState extends State<_MapPageContent>
 
     // Start a timer to detect location acquisition timeout
     _locationTimeout = false;
-    _locationTimer = Timer(const Duration(seconds: 5), () {
+    _locationTimer = Timer(const Duration(seconds: 10), () {
       if (mounted && context.read<MapBloc>().state.myLocation == null) {
         setState(() {
           _locationTimeout = true;
         });
       }
     });
+
+    _syncAnimatedMarkers(context.read<MapBloc>().state);
   }
 
   @override
@@ -202,6 +209,7 @@ class _MapPageContentState extends State<_MapPageContent>
 
   @override
   void dispose() {
+    _isDisposed = true;
     _burstController.stop();
     _pulseController.stop();
     _burstController.dispose();
@@ -209,6 +217,9 @@ class _MapPageContentState extends State<_MapPageContent>
     _searchController.dispose();
     _searchFocusNode.dispose();
     _customInfoWindowController.dispose();
+    for (var controller in _markerControllers.values) {
+      controller.dispose();
+    }
     _locationTimer?.cancel();
     super.dispose();
   }
@@ -586,6 +597,8 @@ class _MapPageContentState extends State<_MapPageContent>
           final type = incident.type ?? incident.alertType ?? "accident";
           _addBurst(incident.position, type);
         }
+        _syncAnimatedMarkers(state);
+        if (mounted && !_isDisposed) setState(() {});
       },
       listenWhen: (previous, current) {
         if (previous.selectedIncident?.id != current.selectedIncident?.id) {
@@ -633,7 +646,6 @@ class _MapPageContentState extends State<_MapPageContent>
         return true;
       },
       builder: (context, state) {
-
         if (state.myLocation == null) {
           if (_locationTimeout) {
             return Scaffold(
@@ -656,7 +668,9 @@ class _MapPageContentState extends State<_MapPageContent>
                         context.read<MapBloc>().add(GetCurrentLocationEvent());
                         _locationTimer?.cancel();
                         _locationTimer = Timer(const Duration(seconds: 5), () {
-                          if (mounted && context.read<MapBloc>().state.myLocation == null) {
+                          if (mounted &&
+                              context.read<MapBloc>().state.myLocation ==
+                                  null) {
                             setState(() {
                               _locationTimeout = true;
                             });
@@ -676,12 +690,11 @@ class _MapPageContentState extends State<_MapPageContent>
         }
 
         return Scaffold(
-          appBar:  NewHomeAppBar(
-                  size: size,
-                  hideLeading: widget.hideLeading,
-                  showFilter: false,
-                ),
-             
+          appBar: NewHomeAppBar(
+            size: size,
+            hideLeading: widget.hideLeading,
+            showFilter: false,
+          ),
           body: Stack(
             children: [
               GoogleMap(
@@ -699,12 +712,18 @@ class _MapPageContentState extends State<_MapPageContent>
                   if (!_isProgrammaticMovement) {
                     _isUserDragging = true;
                   }
-                  _customInfoWindowController.onCameraMove!();
+                  _customInfoWindowController.onCameraMove?.call();
+                  for (var controller in _markerControllers.values) {
+                    controller.onCameraMove?.call();
+                  }
                 },
                 onCameraMove: (pos) {
                   _currentZoom = pos.zoom;
                   _checkPulseAnimation(pos.zoom);
-                  _customInfoWindowController.onCameraMove!();
+                  _customInfoWindowController.onCameraMove?.call();
+                  for (var controller in _markerControllers.values) {
+                    controller.onCameraMove?.call();
+                  }
                   _updateInfoWindow();
 
                   if (_isUserDragging) {
@@ -810,12 +829,22 @@ class _MapPageContentState extends State<_MapPageContent>
                 padding: const EdgeInsets.only(bottom: 220),
               ),
 
+              // Interactive marker overlays
+              ..._markerControllers.values.map((controller) {
+                return ciw.CustomInfoWindow(
+                  controller: controller,
+                  height: responsiveWidth * 0.12,
+                  width: responsiveWidth * 0.12,
+                  offset: 4,
+                );
+              }),
+
               // CustomInfoWindow overlay for popups
               ciw.CustomInfoWindow(
                 controller: _customInfoWindowController,
-                height: responsiveWidth * 0.70,
-                width: responsiveWidth * 0.65,
-                offset: responsiveWidth * 0.12,
+                height: responsiveWidth * 0.85,
+                width: responsiveWidth * 0.75,
+                offset: responsiveWidth * 0.14,
               ),
 
               // Dedicated CustomInfoWindow for Route Details (Smaller)
@@ -1020,5 +1049,138 @@ class _MapPageContentState extends State<_MapPageContent>
         );
       },
     );
+  }
+
+  void _syncAnimatedMarkers(MapState state) {
+    if (_isDisposed) return;
+
+    final currentAnimatedMarkers = state.markers
+        .where((m) =>
+            m.markerId.value.startsWith('alert_') ||
+            m.markerId.value.startsWith('news_') ||
+            m.markerId.value.startsWith('weather_'))
+        .toList();
+
+    // Remove inactive controllers
+    final currentIds =
+        currentAnimatedMarkers.map((m) => m.markerId.value).toSet();
+    _markerControllers.removeWhere((id, controller) {
+      if (!currentIds.contains(id)) {
+        controller.dispose();
+        _animatedMarkers.remove(id);
+        return true;
+      }
+      return false;
+    });
+
+    for (var marker in currentAnimatedMarkers) {
+      if (!mounted || _isDisposed) break;
+      final markerId = marker.markerId.value;
+
+      if (!_markerControllers.containsKey(markerId)) {
+        final controller = ciw.CustomInfoWindowController();
+        _controller.future.then((ctrl) {
+          if (!mounted || _isDisposed) return;
+          controller.googleMapController = ctrl;
+        });
+        _markerControllers[markerId] = controller;
+      }
+
+      if (!_animatedMarkers.contains(markerId)) {
+        _addInfoWindowForMarker(marker, state);
+      }
+    }
+  }
+
+  void _addInfoWindowForMarker(Marker marker, MapState state) {
+    final markerId = marker.markerId.value;
+    final controller = _markerControllers[markerId];
+    if (controller == null) return;
+
+    final String incidentId = markerId
+        .replaceFirst('alert_', '')
+        .replaceFirst('news_', '')
+        .replaceFirst('weather_', '');
+
+    if (state.newsList.isEmpty) return;
+
+    final incident = (state.newsList).firstWhere(
+      (i) => i.id == incidentId,
+      orElse: () => state.newsList.first,
+    );
+
+    if (incident.id == incidentId) {
+      // Small delay to ensure controller is ready
+      Future.delayed(const Duration(milliseconds: 200), () {
+        if (!mounted || _isDisposed) return;
+        _addInfoWindowToController(
+            controller, incident, marker.position, markerId);
+        if (mounted && !_isDisposed) setState(() {});
+      });
+    }
+  }
+
+  void _addInfoWindowToController(
+    ciw.CustomInfoWindowController controller,
+    Incident incident,
+    LatLng position,
+    String markerId,
+  ) {
+    if (controller.addInfoWindow == null ||
+        _animatedMarkers.contains(markerId)) {
+      return;
+    }
+
+    final type = (incident.type ?? incident.alertType ?? "").toLowerCase();
+    String? assetPath = markerIcons[type] ?? markerIcons['accident'];
+
+    try {
+      controller.addInfoWindow!(
+        GestureDetector(
+          onTap: () {
+            context.read<MapBloc>().add(SetSelectedIncidentEvent(incident));
+          },
+          child: Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                )
+              ],
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(0),
+              decoration: const BoxDecoration(
+                color: Color(0xFFD9D9D9),
+                shape: BoxShape.circle,
+              ),
+              child: ClipOval(
+                child: assetPath != null
+                    ? Image.asset(
+                        assetPath,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.error),
+                      )
+                    : const Icon(Icons.location_on),
+              ),
+            ),
+          ),
+        ),
+        position,
+      );
+
+      _animatedMarkers.add(markerId);
+      if (controller.onCameraMove != null) {
+        controller.onCameraMove!();
+      }
+    } catch (e) {
+      debugPrint("Error adding info window for $markerId: $e");
+    }
   }
 }

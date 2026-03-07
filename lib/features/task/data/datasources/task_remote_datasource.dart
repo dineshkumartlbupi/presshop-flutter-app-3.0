@@ -156,6 +156,44 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
     }
   }
 
+  dynamic extractApiData(dynamic rawData) {
+    if (rawData == null) return null;
+
+    // Step 1: detect main container
+    dynamic container = rawData["data"] ??
+        rawData["response"] ??
+        rawData["resposne"] ??
+        rawData;
+
+    // Step 2: if list directly
+    if (container is List) {
+      return container;
+    }
+
+    // Step 3: if map
+    if (container is Map) {
+      // handle chat structure
+      if (container["chat"] is List) {
+        List flattened = [];
+
+        for (var group in container["chat"]) {
+          if (group["publication"] is List) {
+            flattened.addAll(group["publication"]);
+          } else {
+            flattened.add(group);
+          }
+        }
+
+        return flattened;
+      }
+
+      // normal object response (like version API)
+      return container;
+    }
+
+    return null;
+  }
+
   @override
   Future<List<ManageTaskChatModel>> getTaskChat(
       String roomId, String type, String contentId,
@@ -165,6 +203,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           "🚀 getTaskChat: type='$type', contentId='$contentId', roomId='$roomId'");
 
       final bool isTaskContent = type == "task_content";
+
       final String url = isTaskContent
           ? ApiConstantsNew.chat.chatList
           : ApiConstantsNew.chat.getOfferPaymentChat;
@@ -177,31 +216,30 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           await apiClient.post(url, data: body, showLoader: showLoader);
 
       debugPrint("🚀 getTaskChat Response Status: ${response.statusCode}");
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        List<ManageTaskChatModel> chatList = [];
-        final rawData = response.data;
 
-        // Try to find the chat list in various possible locations
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final rawData = response.data;
+        List<ManageTaskChatModel> chatList = [];
+
         dynamic possibleList;
 
-        if (rawData["response"] is List) {
-          possibleList = rawData["response"];
-        } else if (rawData["resposne"] is List) {
-          possibleList = rawData["resposne"];
-        } else if (rawData["data"] != null && rawData["data"] is Map) {
-          final nested = rawData["data"];
-          if (nested["response"] is List) {
-            possibleList = nested["response"];
-          } else if (nested["resposne"] is List) {
-            possibleList = nested["resposne"];
-          } else if (nested["chat"] is List) {
-            possibleList = nested["chat"];
-          } else if (nested["resposne"] != null &&
-              nested["resposne"] is Map &&
-              nested["resposne"]["chat"] is List) {
-            // Flatten grouped response: [{ publication: [...] }]
-            final List groupedList = nested["resposne"]["chat"];
+        /// Step 1: detect main container
+        final container = rawData["data"] ??
+            rawData["response"] ??
+            rawData["resposne"] ??
+            rawData;
+
+        /// Step 2: if container is list
+        if (container is List) {
+          possibleList = container;
+        }
+
+        /// Step 3: if container is map
+        else if (container is Map) {
+          if (container["chat"] is List) {
+            final List groupedList = container["chat"];
             List flattened = [];
+
             for (var group in groupedList) {
               if (group["publication"] is List) {
                 flattened.addAll(group["publication"]);
@@ -209,27 +247,24 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
                 flattened.add(group);
               }
             }
+
             possibleList = flattened;
           }
         }
 
-        if (possibleList != null && possibleList is List) {
+        /// Step 4: map to model
+        if (possibleList is List) {
           debugPrint(
               "🚀 getTaskChat Found List Length: ${possibleList.length}");
-          if (possibleList.isNotEmpty) {
-            debugPrint(
-                "🚀 getTaskChat First item keys: ${(possibleList.first as Map).keys.toList()}");
-            debugPrint("🚀 getTaskChat First item data: ${possibleList.first}");
-          }
+
           for (var v in possibleList) {
-            // Map types for UI consistency
             if (v["message_type"] == "initialoffer" ||
                 v["message_type"] == "Mediahouse_initial_offer") {
               v["message_type"] = "Offered";
             }
+
             chatList.add(ManageTaskChatModel.fromJson(v));
           }
-          return chatList;
         }
 
         return chatList;
@@ -433,46 +468,30 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         List<Task> list = [];
-        final rawData = response.data;
         Set<String> seenIds = {};
 
-        void processTaskMap(Map map) {
-          if (map["data"] is List) {
-            for (var v in map["data"]) {
-              final task = MyTaskModel.fromJson(v);
-              if (task.taskDetail != null &&
-                  !seenIds.contains(task.taskDetail!.id)) {
-                list.add(task);
-                seenIds.add(task.taskDetail!.id);
-              }
-            }
-          }
-          if (map["pending_unaccepted"] is List) {
-            for (var v in map["pending_unaccepted"]) {
-              final task = PendingTask.fromJson(v);
-              if (task.taskDetail != null &&
-                  !seenIds.contains(task.taskDetail!.id)) {
-                list.add(task);
-                seenIds.add(task.taskDetail!.id);
-              }
+        final body = response.data;
+
+        if (body != null && body["data"] is List) {
+          for (var v in body["data"]) {
+            final task = MyTaskModel.fromJson(v);
+
+            if (task.taskDetail != null &&
+                !seenIds.contains(task.taskDetail!.id)) {
+              list.add(task);
+              seenIds.add(task.taskDetail!.id);
             }
           }
         }
 
-        if (rawData != null) {
-          if (rawData is List) {
-            for (var v in rawData) {
-              final task = MyTaskModel.fromJson(v);
-              if (task.taskDetail != null &&
-                  !seenIds.contains(task.taskDetail!.id)) {
-                list.add(task);
-                seenIds.add(task.taskDetail!.id);
-              }
-            }
-          } else if (rawData is Map) {
-            processTaskMap(rawData);
-            if (rawData["data"] is Map) {
-              processTaskMap(rawData["data"]);
+        if (body != null && body["pending_unaccepted"] is List) {
+          for (var v in body["pending_unaccepted"]) {
+            final task = PendingTask.fromJson(v);
+
+            if (task.taskDetail != null &&
+                !seenIds.contains(task.taskDetail!.id)) {
+              list.add(task);
+              seenIds.add(task.taskDetail!.id);
             }
           }
         }

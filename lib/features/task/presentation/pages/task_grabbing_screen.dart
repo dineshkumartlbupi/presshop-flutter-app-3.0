@@ -7,6 +7,7 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/ui_utils.dart';
 import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:presshop/core/theme/app_colors.dart';
+import 'package:presshop/core/utils/shared_preferences.dart';
 
 class TaskGrabbingScreen extends StatefulWidget {
   const TaskGrabbingScreen({Key? key}) : super(key: key);
@@ -18,13 +19,6 @@ class TaskGrabbingScreen extends StatefulWidget {
 class _TaskGrabbingScreenState extends State<TaskGrabbingScreen> {
   bool isServiceRunning = false;
   Timer? _statusCheckTimer;
-
-  // Keys from old CommonSharedPrefrence.dart
-  static const customLocationHeadingKey = "custom_location_heading";
-  static const customLocationDescriptionKey = "custom_location_description";
-  static const customPopupImageKey = "custom_popup_image";
-  static const isCustomLocationPopupKey = "is_custom_location_popup";
-  static const locationSharingDescriptionKey = "location_sharing_description";
 
   @override
   void initState() {
@@ -60,9 +54,11 @@ class _TaskGrabbingScreenState extends State<TaskGrabbingScreen> {
       // Double check with SharedPreferences as fallback or confirmation
       final prefs = await SharedPreferences.getInstance();
       await prefs.reload(); // crucial for isolate sync
-      bool isActivePref = prefs.getBool('is_task_grabbing_active') ?? false;
+      bool isActivePref =
+          prefs.getBool(SharedPreferencesKeys.isTaskGrabbingActiveKey) ?? false;
       bool isManuallyStopped =
-          prefs.getBool('manually_stopped_service') ?? false;
+          prefs.getBool(SharedPreferencesKeys.manuallyStoppedServiceKey) ??
+              false;
 
       debugPrint(
         "TaskGrabbingScreen: Pref is_task_grabbing_active: $isActivePref, manual: $isManuallyStopped",
@@ -87,7 +83,8 @@ class _TaskGrabbingScreenState extends State<TaskGrabbingScreen> {
             isServiceRunning = isRunning;
             if (isRunning) {
               // Sync back to prefs so subsequent checks know it's active
-              prefs.setBool('is_task_grabbing_active', true);
+              prefs.setBool(
+                  SharedPreferencesKeys.isTaskGrabbingActiveKey, true);
             }
           }
           debugPrint(
@@ -117,8 +114,10 @@ class _TaskGrabbingScreenState extends State<TaskGrabbingScreen> {
           await BackgroundLocationService.stopService();
 
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setBool('is_task_grabbing_active', false);
-          await prefs.setBool('manually_stopped_service', true);
+          await prefs.setBool(
+              SharedPreferencesKeys.isTaskGrabbingActiveKey, false);
+          await prefs.setBool(
+              SharedPreferencesKeys.manuallyStoppedServiceKey, true);
           debugPrint(
             "TaskGrabbingScreen: Saved is_task_grabbing_active = false",
           );
@@ -155,10 +154,13 @@ class _TaskGrabbingScreenState extends State<TaskGrabbingScreen> {
           return;
         }
 
-        String? dialogTitle = prefs.getString(customLocationHeadingKey);
-        String? dialogContent = prefs.getString(customLocationDescriptionKey);
-        String? dialogImage = prefs.getString(customPopupImageKey);
-        // bool isCustomPopup = prefs.getBool(isCustomLocationPopupKey) ?? false;
+        String? dialogTitle =
+            prefs.getString(SharedPreferencesKeys.customLocationHeadingKey);
+        String? dialogContent =
+            prefs.getString(SharedPreferencesKeys.customLocationDescriptionKey);
+        String? dialogImage =
+            prefs.getString(SharedPreferencesKeys.customPopupImageKey);
+        // bool isCustomPopup = prefs.getBool(SharedPreferencesKeys.isCustomLocationPopupKey) ?? false;
 
         bool started = await BackgroundLocationService.initService(
           context: context,
@@ -172,8 +174,10 @@ class _TaskGrabbingScreenState extends State<TaskGrabbingScreen> {
 
         if (started) {
           // Save valid state
-          await prefs.setBool('is_task_grabbing_active', true);
-          await prefs.setBool('manually_stopped_service', false);
+          await prefs.setBool(
+              SharedPreferencesKeys.isTaskGrabbingActiveKey, true);
+          await prefs.setBool(
+              SharedPreferencesKeys.manuallyStoppedServiceKey, false);
           debugPrint(
             "TaskGrabbingScreen: Saved is_task_grabbing_active = true",
           );
@@ -235,7 +239,8 @@ class _TaskGrabbingScreenState extends State<TaskGrabbingScreen> {
         actionWidget: [],
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: AppDimensions.commonPaddingSize(size)),
+        padding: EdgeInsets.symmetric(
+            horizontal: AppDimensions.commonPaddingSize(size)),
         child: Column(
           children: [
             Container(
@@ -280,7 +285,7 @@ class _TaskGrabbingScreenState extends State<TaskGrabbingScreen> {
 
                     if (snapshot.hasData) {
                       String? serverDesc = snapshot.data!.getString(
-                        locationSharingDescriptionKey,
+                        SharedPreferencesKeys.locationSharingDescriptionKey,
                       );
                       if (serverDesc != null && serverDesc.isNotEmpty) {
                         description = serverDesc;

@@ -18,8 +18,8 @@ class ContentMarkerPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    print(
-        "ContentMarkerPopup: id=${incident.id} temp=${incident.temperature} wind=${incident.wind} heading=${incident.heading}");
+    final double responsiveWidth = size.width > 600 ? 650 : size.width;
+
     return Transform.translate(
         offset: const Offset(0, 0),
         child: TweenAnimationBuilder<double>(
@@ -46,16 +46,17 @@ class ContentMarkerPopup extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: size.width * AppDimensions.numD50,
+                    width: responsiveWidth * AppDimensions.numD50,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(
-                          size.width * AppDimensions.numD035),
+                          responsiveWidth * AppDimensions.numD035),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black26,
-                          blurRadius: size.width * AppDimensions.numD02,
-                          offset: Offset(0, size.width * AppDimensions.numD008),
+                          blurRadius: responsiveWidth * AppDimensions.numD02,
+                          offset: Offset(
+                              0, responsiveWidth * AppDimensions.numD008),
                         ),
                       ],
                     ),
@@ -67,64 +68,73 @@ class ContentMarkerPopup extends StatelessWidget {
                         ClipRRect(
                           borderRadius: BorderRadius.vertical(
                               top: Radius.circular(
-                                  size.width * AppDimensions.numD035)),
+                                  responsiveWidth * AppDimensions.numD035)),
                           child: incident.image != null
                               ? Padding(
                                   padding: EdgeInsets.all(
-                                      size.width * AppDimensions.numD02),
+                                      responsiveWidth * AppDimensions.numD02),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.all(
-                                        Radius.circular(
-                                            size.width * AppDimensions.numD03)),
+                                        Radius.circular(responsiveWidth *
+                                            AppDimensions.numD03)),
                                     child: CachedNetworkImage(
                                       imageUrl: incident.image!,
-                                      height: size.width * AppDimensions.numD20,
+                                      height: responsiveWidth *
+                                          AppDimensions.numD20,
                                       width: double.infinity,
                                       fit: BoxFit.cover,
                                     ),
                                   ),
                                 )
                               : Container(
-                                  height: size.width * AppDimensions.numD20,
+                                  height:
+                                      responsiveWidth * AppDimensions.numD20,
                                   width: double.infinity,
                                   color: Colors.grey[300],
                                   child: Icon(Icons.image,
-                                      size: size.width * AppDimensions.numD08),
+                                      size: responsiveWidth *
+                                          AppDimensions.numD08),
                                 ),
                         ),
 
                         Padding(
-                          padding:
-                              EdgeInsets.all(size.width * AppDimensions.numD02),
+                          padding: EdgeInsets.only(
+                            left: responsiveWidth * AppDimensions.numD02,
+                            right: responsiveWidth * AppDimensions.numD02,
+                            bottom: responsiveWidth * AppDimensions.numD02,
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 incident.title ?? "No Title",
                                 style: TextStyle(
-                                  fontSize: size.width * AppDimensions.numD035,
+                                  fontSize:
+                                      responsiveWidth * AppDimensions.numD035,
                                   fontWeight: FontWeight.w600,
                                 ),
-                                maxLines: 1,
+                                maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
                               SizedBox(
-                                  height: size.width * AppDimensions.numD01),
+                                  height:
+                                      responsiveWidth * AppDimensions.numD01),
 
                               // Location
                               Row(
                                 children: [
                                   Image.asset("assets/icons/news_location.png",
-                                      height:
-                                          size.width * AppDimensions.numD035,
+                                      height: responsiveWidth *
+                                          AppDimensions.numD035,
                                       color: Colors.grey[600]),
                                   SizedBox(
-                                      width: size.width * AppDimensions.numD01),
+                                      width: responsiveWidth *
+                                          AppDimensions.numD01),
                                   Expanded(
                                     child: Text(
                                       incident.address ?? "Unknown Location",
                                       style: TextStyle(
-                                          fontSize: size.width *
+                                          fontSize: responsiveWidth *
                                               AppDimensions.numD028,
                                           color: Colors.grey[600]),
                                       maxLines: 1,
@@ -134,24 +144,27 @@ class ContentMarkerPopup extends StatelessWidget {
                                 ],
                               ),
                               SizedBox(
-                                  height: size.width * AppDimensions.numD01),
+                                  height:
+                                      responsiveWidth * AppDimensions.numD01),
 
                               // Time and Views
                               Row(
                                 children: [
                                   Image.asset(
                                     "${iconsPath}ic_clock.png",
-                                    height: size.width * AppDimensions.numD03,
+                                    height:
+                                        responsiveWidth * AppDimensions.numD03,
                                     color: Colors.grey[600],
                                   ),
                                   SizedBox(
-                                      width: size.width * AppDimensions.numD01),
+                                      width: responsiveWidth *
+                                          AppDimensions.numD01),
                                   Builder(builder: (context) {
                                     final timeStr = incident.time;
                                     if (timeStr == null) {
                                       return Text("Unknown Time",
                                           style: TextStyle(
-                                              fontSize: size.width *
+                                              fontSize: responsiveWidth *
                                                   AppDimensions.numD028,
                                               color: Colors.grey));
                                     }
@@ -174,42 +187,48 @@ class ContentMarkerPopup extends StatelessWidget {
                                     return Text(
                                       displayTime,
                                       style: TextStyle(
-                                          fontSize: size.width *
+                                          fontSize: responsiveWidth *
                                               AppDimensions.numD028,
                                           color: Colors.grey[600]),
                                     );
                                   }),
                                   SizedBox(
-                                      width: size.width * AppDimensions.numD03),
+                                      width: responsiveWidth *
+                                          AppDimensions.numD03),
                                   Image.asset(
                                     "${iconsPath}news_eye.png",
-                                    height: size.width * AppDimensions.numD025,
+                                    height:
+                                        responsiveWidth * AppDimensions.numD025,
                                     color: Colors.grey[600],
                                   ),
                                   SizedBox(
-                                      width: size.width * AppDimensions.numD01),
+                                      width: responsiveWidth *
+                                          AppDimensions.numD01),
                                   Text(
                                     "${incident.viewCount ?? 0}",
                                     style: TextStyle(
-                                        fontSize:
-                                            size.width * AppDimensions.numD028,
+                                        fontSize: responsiveWidth *
+                                            AppDimensions.numD028,
                                         color: Colors.grey[600]),
                                   )
                                 ],
                               ),
                               SizedBox(
-                                  height: size.width * AppDimensions.numD01),
+                                  height:
+                                      responsiveWidth * AppDimensions.numD01),
 
                               // Date
                               Row(
                                 children: [
                                   Image.asset(
                                     "${iconsPath}ic_yearly_calendar.png",
-                                    height: size.width * AppDimensions.numD03,
+                                    height:
+                                        responsiveWidth * AppDimensions.numD03,
                                     color: Colors.grey[600],
                                   ),
                                   SizedBox(
-                                      width: size.width * AppDimensions.numD01),
+                                      width: responsiveWidth *
+                                          AppDimensions.numD01),
                                   Builder(builder: (context) {
                                     final timeStr = incident.time;
                                     DateTime? parsed =
@@ -225,7 +244,7 @@ class ContentMarkerPopup extends StatelessWidget {
                                     return Text(
                                       displayDate,
                                       style: TextStyle(
-                                          fontSize: size.width *
+                                          fontSize: responsiveWidth *
                                               AppDimensions.numD028,
                                           color: Colors.grey[600]),
                                     );
@@ -234,7 +253,8 @@ class ContentMarkerPopup extends StatelessWidget {
                               ),
 
                               SizedBox(
-                                  height: size.width * AppDimensions.numD015),
+                                  height:
+                                      responsiveWidth * AppDimensions.numD015),
 
                               // Small View Button
                               SizedBox(
@@ -246,13 +266,14 @@ class ContentMarkerPopup extends StatelessWidget {
                                     backgroundColor: const Color(0xFFEF4444),
                                     foregroundColor: Colors.white,
                                     padding: EdgeInsets.symmetric(
-                                        vertical:
-                                            size.width * AppDimensions.numD015),
-                                    minimumSize: Size(
-                                        0, size.width * AppDimensions.numD05),
+                                        vertical: responsiveWidth *
+                                            AppDimensions.numD015),
+                                    minimumSize: Size(0,
+                                        responsiveWidth * AppDimensions.numD05),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(
-                                          size.width * AppDimensions.numD015),
+                                          responsiveWidth *
+                                              AppDimensions.numD015),
                                     ),
                                     tapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
@@ -260,8 +281,8 @@ class ContentMarkerPopup extends StatelessWidget {
                                   child: Text(
                                     "View",
                                     style: TextStyle(
-                                      fontSize:
-                                          size.width * AppDimensions.numD025,
+                                      fontSize: responsiveWidth *
+                                          AppDimensions.numD025,
                                       height: 1,
                                     ),
                                   ),
@@ -276,8 +297,8 @@ class ContentMarkerPopup extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.zero,
                     child: CustomPaint(
-                      size: Size(size.width * AppDimensions.numD06,
-                          size.width * AppDimensions.numD03),
+                      size: Size(responsiveWidth * AppDimensions.numD06,
+                          responsiveWidth * AppDimensions.numD03),
                       painter: _TrianglePainter(),
                     ),
                   ),

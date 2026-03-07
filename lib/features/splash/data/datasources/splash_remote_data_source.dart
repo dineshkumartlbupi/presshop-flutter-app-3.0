@@ -34,6 +34,7 @@ class SplashRemoteDataSourceImpl implements SplashRemoteDataSource {
             ios: appVersionResponse.data?.ios ?? '',
             android: appVersionResponse.data?.android ?? '',
             forceUpdate: appVersionResponse.data?.forceUpdate ?? false,
+            countries: appVersionResponse.data?.countries ?? [],
           );
         }
         throw ServerFailure(
