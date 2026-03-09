@@ -992,14 +992,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     );
   }
 
-  /// Initialize Map icon
   void getAllIcons() async {
     mapIcon = await BitmapDescriptor.fromAssetImage(
         const ImageConfiguration(size: Size(5, 5)),
         "${commonImagePath}ic_cover_radius.png");
   }
 
-  /// Update Map Location
   Future<void> _updateGoogleMap(LatLng latLng) async {
     final GoogleMapController controller = await _controller.future;
     if (!mounted) return;
@@ -1007,9 +1005,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       marker.add(Marker(
         markerId: const MarkerId("1"),
         position: latLng,
-        icon: mapIcon ??
-            BitmapDescriptor
-                .defaultMarker, // Fallback if mapIcon not loaded yet
+        icon: mapIcon ?? BitmapDescriptor.defaultMarker,
       ));
       await controller.animateCamera(CameraUpdate.newLatLngZoom(
           LatLng(latLng.latitude, latLng.longitude), 14));
@@ -1021,7 +1017,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     }
   }
 
-  /// Current Lat Lng
   void getCurrentLocation() async {
     LocationData? loc = await LocationService()
         .getCurrentLocation(context, shouldShowSettingPopup: false);

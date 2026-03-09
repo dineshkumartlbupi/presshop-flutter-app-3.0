@@ -6894,7 +6894,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
         OptionBuilder().setTransports(['websocket']).build());
 
     socket.connect();
-
+  
     socket.onConnect((_) {
       debugPrint("✅ SOCKET CONNECTED: ${socket.id}");
       debugPrint("🔌 Joining Room: ${widget.roomId}");

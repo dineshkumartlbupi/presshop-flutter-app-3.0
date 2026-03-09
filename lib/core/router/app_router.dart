@@ -39,14 +39,14 @@ import 'package:presshop/features/task/presentation/pages/task_screen.dart';
 import 'package:presshop/features/content/presentation/pages/manage_content_chat_screen.dart';
 import 'package:presshop/features/task/presentation/pages/detail_new/task_details_screen.dart';
 import 'package:presshop/features/task/presentation/pages/broadcast/BroardcastScreen.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast_chat/broadCastChatTaskScreen.dart';
+import 'package:presshop/features/task/presentation/pages/broadcast_chat/broadcast_chat_task_screen.dart';
 import 'package:presshop/features/news/presentation/pages/news_page.dart';
 import 'package:presshop/features/news/presentation/pages/news_detail_page.dart';
 import 'package:presshop/features/news/domain/entities/news.dart';
 import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
 import 'package:presshop/features/news/presentation/bloc/news_event.dart';
 import 'package:presshop/features/feed/presentation/pages/FeedScreen.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast_chat/MediaPreviewScreen.dart';
+import 'package:presshop/features/task/presentation/pages/broadcast_chat/media_preview_screen.dart';
 import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
 import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
 import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
@@ -61,8 +61,8 @@ import 'package:presshop/features/chatbot/presentation/pages/chatBotScreen.dart'
 import 'package:presshop/features/rating/presentation/pages/RatingReviewScreen.dart';
 import 'package:presshop/features/publish/presentation/pages/AudioRecorderScreen.dart';
 import 'package:presshop/features/publish/presentation/pages/HashTagSearchScreen.dart';
-import 'package:presshop/features/task/presentation/pages/preview/manageTaskPreviewScreen.dart';
-import 'package:presshop/features/task/presentation/pages/preview_media/manageTaskPreviewMediaScreen.dart';
+import 'package:presshop/features/task/presentation/pages/preview/manage_task_preview_screen.dart';
+import 'package:presshop/features/task/presentation/pages/preview_media/manage_task_preview_media_sreen.dart';
 import 'package:presshop/features/task/presentation/pages/task_grabbing_screen.dart';
 import 'package:presshop/features/publish/presentation/pages/PublishContentScreen.dart';
 import 'package:presshop/features/publish/presentation/pages/ContentSubmittedScreen.dart';
@@ -634,7 +634,9 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.myContentPath,
         name: AppRoutes.myContentName,
-        builder: (context, state) => const MyContentPage(fromMenu: false,),
+        builder: (context, state) => const MyContentPage(
+          fromMenu: false,
+        ),
       ),
       GoRoute(
         path: AppRoutes.contentSubmittedPath,

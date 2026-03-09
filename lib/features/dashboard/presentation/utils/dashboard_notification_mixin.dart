@@ -18,6 +18,7 @@ mixin DashboardNotificationMixin<T extends StatefulWidget> on State<T> {
 
     FirebaseMessaging.onMessage.listen((message) {
       debugPrint("FirebaseMessage: ${message.data}");
+      print("FirebaseMessage for task=====>>>>>: ${message.data}");
 
       if (message.data.isNotEmpty &&
           message.data["notification_type"].toString() == "media_house_tasks") {
