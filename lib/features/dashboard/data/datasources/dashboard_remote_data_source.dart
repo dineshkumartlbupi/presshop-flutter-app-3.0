@@ -20,7 +20,7 @@ abstract class DashboardRemoteDataSource {
   Future<Map<String, dynamic>> checkStudentBeans();
   Future<void> removeDevice(Map<String, dynamic> params);
 }
-
+// ================================= Implementation ================================
 class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   DashboardRemoteDataSourceImpl({required this.apiClient});
   final ApiClient apiClient;
@@ -32,7 +32,6 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
           showLoader: false);
       if (response.statusCode == 200) {
         final data = response.data;
-        debugPrint(":::: Raw Admin List Response: $data");
         if (data is String) {
           final decoded = jsonDecode(data);
           return (decoded['data'] as List)
@@ -108,8 +107,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       debugPrint("📤 Create Room API Request Body: $params");
       final response = await apiClient.post(ApiConstantsNew.chat.createRoom,
           data: params, showLoader: false);
-      debugPrint("📩 Create Room API Response Status: ${response.statusCode}");
-      debugPrint("📦 Create Room API Response Body: ${response.data}");
+      debugPrint("📦 Create Room API Response Status: ${response.statusCode}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
@@ -161,9 +159,8 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       final response = await apiClient.post(
           ApiConstantsNew.profile.studentBeansActivation,
           showLoader: false);
-      print(
+      debugPrint(
           "🚀 Activate Student Beans API Response Status: ${response.statusCode}");
-      print("📦 Activate Student Beans API Response Body: ${response.data}");
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
         final responseMap =

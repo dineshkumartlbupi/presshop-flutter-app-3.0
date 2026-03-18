@@ -355,344 +355,378 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
               notificationCount: state.unreadCount,
               showLogo: false,
             ),
-            body: SafeArea(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: size.width * AppDimensions.numD05),
-                    child: Divider(
-                      color: Colors.grey.shade200,
-                      thickness: 1.5,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: size.width * AppDimensions.numD05,
-                        vertical: size.width * AppDimensions.numD02),
-                    child: InkWell(
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () {
-                        deleteNotificationDialog(
-                            context.read<NotificationBloc>());
-                      },
-                      child: Align(
-                        alignment: Alignment.topRight,
-                        child: Text(
-                          AppStrings.clearAllText,
-                          style: TextStyle(
-                            fontSize: size.width * AppDimensions.numD038,
-                            fontWeight: FontWeight.w500,
-                            color: AppColorTheme.colorThemePink,
+            body: Stack(
+              children: [
+                SafeArea(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * AppDimensions.numD05),
+                        child: Divider(
+                          color: Colors.grey.shade200,
+                          thickness: 1.5,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * AppDimensions.numD05,
+                            vertical: size.width * AppDimensions.numD02),
+                        child: InkWell(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onTap: () {
+                            deleteNotificationDialog(
+                                context.read<NotificationBloc>());
+                          },
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: Text(
+                              AppStrings.clearAllText,
+                              style: TextStyle(
+                                fontSize: size.width * AppDimensions.numD038,
+                                fontWeight: FontWeight.w500,
+                                color: AppColorTheme.colorThemePink,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  Flexible(
-                    child: state.status != NotificationStatus.empty
-                        ? SmartRefresher(
-                            controller: _refreshController,
-                            enablePullDown: true,
-                            enablePullUp: true,
-                            onRefresh: () => _onRefresh(context),
-                            onLoading: () => _onLoading(context),
-                            footer: const CustomFooter(
-                                builder: commonRefresherFooter),
-                            child: ListView.separated(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.vertical,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        size.width * AppDimensions.numD045),
-                                itemBuilder: (context, index) {
-                                  if (index >= state.notifications.length) {
-                                    return Container();
-                                  }
-                                  final item = state.notifications[index];
-                                  return InkWell(
-                                    onTap: () {
-                                      // myProfileApi();
-                                      debugPrint(
-                                          "Notification Type: ${item.messageType}");
-
-                                      /// -- When content is Published or Offer Received --
-                                      if (item.messageType ==
-                                              "publish_content" ||
-                                          item.messageType ==
-                                              "offer_received") {
-                                        context.pushNamed(
-                                          AppRoutes.contentDetailName,
-                                          extra: {
-                                            'paymentStatus': item.paymentStatus,
-                                            'exclusive': item.exclusive,
-                                            'contentId': item.contentId,
-                                            'offerCount': 0,
-                                            'purchasedMediahouseCount': 0,
-                                          },
-                                        );
-                                      } else if (item.messageType ==
-                                          "content_sold") {
-                                        context.pushNamed(
-                                          AppRoutes.transactionDetailName,
-                                          extra: {
-                                            'pageType': PageType.CONTENT,
-                                            'type': "received",
-                                            'transactionData':
-                                                item.transactionDetailData!,
-                                          },
-                                        );
-                                      } else if (item.messageType ==
-                                              "new_task_posted" ||
-                                          item.messageType ==
-                                              "media_house_tasks") {
-                                        debugPrint(
-                                            "Clicked media_house_tasks/new_task_posted");
-                                        debugPrint(
-                                            "BroadcastID: '${item.broadcastId}'");
-                                        if (item.broadcastId.isNotEmpty) {
-                                          context.pushNamed(
-                                            AppRoutes.myTasksName,
-                                            extra: {
-                                              'hideLeading': false,
-                                              'broadCastId': item.broadcastId,
-                                            },
-                                          );
-                                        } else {
-                                          debugPrint("BroadcastID is empty");
-                                        }
-                                      } else if (item.messageType ==
-                                          "task_accepted") {
-                                        if (item.broadcastId.isNotEmpty) {
-                                          context.pushNamed(
-                                            AppRoutes.taskDetailNewName,
-                                            extra: {
-                                              'taskId': item.broadcastId,
-                                              'taskStatus': "accepted",
-                                              'totalEarning': "0",
-                                            },
-                                          );
-                                        }
-                                      } else if (item.messageType ==
-                                          "initiate_admin_chat") {
-                                        context.pushNamed(
-                                          AppRoutes.chatName,
-                                          extra: {
-                                            'hideLeading': false,
-                                            'message': '',
-                                          },
-                                        );
-                                      } else if (item.messageType ==
-                                          "studentbeans") {
-                                        context
-                                            .read<NotificationBloc>()
-                                            .add(CheckStudentBeansEvent());
+                      Flexible(
+                        child: state.status != NotificationStatus.empty
+                            ? SmartRefresher(
+                                controller: _refreshController,
+                                enablePullDown: true,
+                                enablePullUp: true,
+                                onRefresh: () => _onRefresh(context),
+                                onLoading: () => _onLoading(context),
+                                footer: const CustomFooter(
+                                    builder: commonRefresherFooter),
+                                child: ListView.separated(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.vertical,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            size.width * AppDimensions.numD045),
+                                    itemBuilder: (context, index) {
+                                      if (index >= state.notifications.length) {
+                                        return Container();
                                       }
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.only(
-                                          top: size.width *
-                                              AppDimensions.numD02),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(size.width *
-                                              AppDimensions.numD03),
-                                          topRight: Radius.circular(size.width *
-                                              AppDimensions.numD03),
-                                        ),
-                                        color: item.unread
-                                            ? Colors.white
-                                            : AppColorTheme.colorLightGrey,
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                              margin: EdgeInsets.only(
-                                                top: size.width *
-                                                    AppDimensions.numD02,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                  color: Colors.black,
-                                                  shape: BoxShape.circle,
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                        color: Colors
-                                                            .grey.shade300,
-                                                        spreadRadius: 2)
-                                                  ]),
-                                              child: ClipOval(
-                                                clipBehavior: Clip.antiAlias,
-                                                child: Padding(
-                                                  padding: EdgeInsets.all(
-                                                      size.width *
-                                                          AppDimensions.numD01),
-                                                  child: Image.asset(
-                                                    "${commonImagePath}ic_black_rabbit.png",
-                                                    color: Colors.white,
-                                                    width: size.width *
-                                                        AppDimensions.numD07,
-                                                    height: size.width *
-                                                        AppDimensions.numD07,
-                                                  ),
-                                                ),
-                                              )),
-                                          SizedBox(
-                                            width: size.width *
-                                                AppDimensions.numD035,
+                                      final item = state.notifications[index];
+                                      return InkWell(
+                                        onTap: () {
+                                          // myProfileApi();
+                                          debugPrint(
+                                              "Notification Type: ${item.messageType}");
+
+                                          /// -- When content is Published or Offer Received --
+                                          if (item.messageType ==
+                                                  "publish_content" ||
+                                              item.messageType ==
+                                                  "offer_received") {
+                                            context.pushNamed(
+                                              AppRoutes.contentDetailName,
+                                              extra: {
+                                                'paymentStatus':
+                                                    item.paymentStatus,
+                                                'exclusive': item.exclusive,
+                                                'contentId': item.contentId,
+                                                'offerCount': 0,
+                                                'purchasedMediahouseCount': 0,
+                                              },
+                                            );
+                                          } else if (item.messageType ==
+                                              "content_sold") {
+                                            context.pushNamed(
+                                              AppRoutes.transactionDetailName,
+                                              extra: {
+                                                'pageType': PageType.CONTENT,
+                                                'type': "received",
+                                                'transactionData':
+                                                    item.transactionDetailData!,
+                                              },
+                                            );
+                                          } else if (item.messageType ==
+                                                  "new_task_posted" ||
+                                              item.messageType ==
+                                                  "media_house_tasks") {
+                                            debugPrint(
+                                                "Clicked media_house_tasks/new_task_posted");
+                                            debugPrint(
+                                                "BroadcastID: '${item.broadcastId}'");
+                                            if (item.broadcastId.isNotEmpty) {
+                                              context.pushNamed(
+                                                AppRoutes.myTasksName,
+                                                extra: {
+                                                  'hideLeading': false,
+                                                  'broadCastId':
+                                                      item.broadcastId,
+                                                },
+                                              );
+                                            } else {
+                                              debugPrint(
+                                                  "BroadcastID is empty");
+                                            }
+                                          } else if (item.messageType ==
+                                              "task_accepted") {
+                                            if (item.broadcastId.isNotEmpty) {
+                                              context.pushNamed(
+                                                AppRoutes.taskDetailNewName,
+                                                extra: {
+                                                  'taskId': item.broadcastId,
+                                                  'taskStatus': "accepted",
+                                                  'totalEarning': "0",
+                                                },
+                                              );
+                                            }
+                                          } else if (item.messageType ==
+                                              "initiate_admin_chat") {
+                                            context.pushNamed(
+                                              AppRoutes.chatName,
+                                              extra: {
+                                                'hideLeading': false,
+                                                'message': '',
+                                              },
+                                            );
+                                          } else if (item.messageType ==
+                                              "studentbeans") {
+                                            context
+                                                .read<NotificationBloc>()
+                                                .add(CheckStudentBeansEvent());
+                                          }
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.only(
+                                              top: size.width *
+                                                  AppDimensions.numD02),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(
+                                                  size.width *
+                                                      AppDimensions.numD03),
+                                              topRight: Radius.circular(
+                                                  size.width *
+                                                      AppDimensions.numD03),
+                                            ),
+                                            color: item.unread
+                                                ? Colors.white
+                                                : AppColorTheme.colorLightGrey,
                                           ),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Align(
-                                                  alignment: Alignment.topRight,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 10.0),
-                                                    child: Text(
-                                                      dateTimeFormatter(
-                                                          dateTime: item.time,
-                                                          format:
-                                                              "hh:mm a, dd MMM yyyy",
-                                                          utc: false),
-                                                      textAlign:
-                                                          TextAlign.right,
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                  margin: EdgeInsets.only(
+                                                    top: size.width *
+                                                        AppDimensions.numD02,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.black,
+                                                      shape: BoxShape.circle,
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                            color: Colors
+                                                                .grey.shade300,
+                                                            spreadRadius: 2)
+                                                      ]),
+                                                  child: ClipOval(
+                                                    clipBehavior:
+                                                        Clip.antiAlias,
+                                                    child: Padding(
+                                                      padding: EdgeInsets.all(
+                                                          size.width *
+                                                              AppDimensions
+                                                                  .numD01),
+                                                      child: Image.asset(
+                                                        "${commonImagePath}ic_black_rabbit.png",
+                                                        color: Colors.white,
+                                                        width: size.width *
+                                                            AppDimensions
+                                                                .numD07,
+                                                        height: size.width *
+                                                            AppDimensions
+                                                                .numD07,
+                                                      ),
+                                                    ),
+                                                  )),
+                                              SizedBox(
+                                                width: size.width *
+                                                    AppDimensions.numD035,
+                                              ),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topRight,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                right: 10.0),
+                                                        child: Text(
+                                                          dateTimeFormatter(
+                                                              dateTime:
+                                                                  item.time,
+                                                              format:
+                                                                  "hh:mm a, dd MMM yyyy",
+                                                              utc: false),
+                                                          textAlign:
+                                                              TextAlign.right,
+                                                          style: commonTextStyle(
+                                                              size: size,
+                                                              fontSize: size
+                                                                      .width *
+                                                                  AppDimensions
+                                                                      .numD025,
+                                                              color: AppColorTheme
+                                                                  .colorGrey2,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w300),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      item.title.isNotEmpty
+                                                          ? item.title
+                                                          : "No title",
                                                       style: commonTextStyle(
                                                           size: size,
                                                           fontSize: size.width *
                                                               AppDimensions
-                                                                  .numD025,
-                                                          color: AppColorTheme
-                                                              .colorGrey2,
+                                                                  .numD035,
+                                                          color: Colors.black,
                                                           fontWeight:
-                                                              FontWeight.w300),
+                                                              FontWeight.w600),
                                                     ),
-                                                  ),
-                                                ),
-                                                Text(
-                                                  item.title.isNotEmpty
-                                                      ? item.title
-                                                      : "No title",
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize: size.width *
-                                                          AppDimensions.numD035,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                if (item.imageUrl.isNotEmpty &&
-                                                    item.videoUrl.isEmpty) ...[
-                                                  SizedBox(
-                                                    height: size.width *
-                                                        AppDimensions.numD04,
-                                                  ),
-                                                  ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0),
-                                                    child: Image.network(
-                                                      item.imageUrl,
-                                                      width: size.width *
-                                                          AppDimensions.num1,
-                                                      fit: BoxFit.fitHeight,
-                                                      errorBuilder: (context,
-                                                          error, stackTrace) {
-                                                        return Container();
-                                                      },
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: size.width *
-                                                        AppDimensions.numD04,
-                                                  ),
-                                                ],
-                                                if (item.videoUrl.isNotEmpty ==
-                                                    true) ...[
-                                                  SizedBox(
-                                                      height: size.width *
-                                                          AppDimensions.numD02),
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: size
-                                                                    .width *
-                                                                AppDimensions
-                                                                    .numD02),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
-                                                      child: InlineFlickPlayer(
-                                                        videoUrl: item.videoUrl
-                                                                .isNotEmpty
-                                                            ? item.videoUrl
-                                                            : "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-                                                        height: 220,
+                                                    if (item.imageUrl
+                                                            .isNotEmpty &&
+                                                        item.videoUrl
+                                                            .isEmpty) ...[
+                                                      SizedBox(
+                                                        height: size.width *
+                                                            AppDimensions
+                                                                .numD04,
                                                       ),
+                                                      ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                        child: Image.network(
+                                                          item.imageUrl,
+                                                          width: size.width *
+                                                              AppDimensions
+                                                                  .num1,
+                                                          fit: BoxFit.fitHeight,
+                                                          errorBuilder:
+                                                              (context, error,
+                                                                  stackTrace) {
+                                                            return Container();
+                                                          },
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: size.width *
+                                                            AppDimensions
+                                                                .numD04,
+                                                      ),
+                                                    ],
+                                                    if (item.videoUrl
+                                                            .isNotEmpty ==
+                                                        true) ...[
+                                                      SizedBox(
+                                                          height: size.width *
+                                                              AppDimensions
+                                                                  .numD02),
+                                                      Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                vertical: size
+                                                                        .width *
+                                                                    AppDimensions
+                                                                        .numD02),
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          child:
+                                                              InlineFlickPlayer(
+                                                            videoUrl: item
+                                                                    .videoUrl
+                                                                    .isNotEmpty
+                                                                ? item.videoUrl
+                                                                : "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                                                            height: 220,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                          height: size.width *
+                                                              AppDimensions
+                                                                  .numD02),
+                                                    ],
+                                                    Text(
+                                                      item.description
+                                                              .isNotEmpty
+                                                          ? item.description
+                                                          : "No description",
+                                                      style: commonTextStyle(
+                                                          size: size,
+                                                          fontSize: size.width *
+                                                              AppDimensions
+                                                                  .numD03,
+                                                          color: Colors.black,
+                                                          fontWeight: FontWeight
+                                                              .normal),
                                                     ),
-                                                  ),
-                                                  SizedBox(
+                                                    SizedBox(
                                                       height: size.width *
-                                                          AppDimensions.numD02),
-                                                ],
-                                                Text(
-                                                  item.description.isNotEmpty
-                                                      ? item.description
-                                                      : "No description",
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize: size.width *
-                                                          AppDimensions.numD03,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.normal),
+                                                          AppDimensions.numD040,
+                                                    ),
+                                                  ],
                                                 ),
-                                                SizedBox(
-                                                  height: size.width *
-                                                      AppDimensions.numD040,
-                                                ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    separatorBuilder: (context, index) {
+                                      return Column(
+                                        children: [
+                                          Container(
+                                            height: size.width *
+                                                AppDimensions.numD004,
+                                            color: Colors.grey.shade200,
+                                          ),
+                                          SizedBox(
+                                            height: size.width *
+                                                AppDimensions.numD038,
                                           ),
                                         ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                                separatorBuilder: (context, index) {
-                                  return Column(
-                                    children: [
-                                      Container(
-                                        height:
-                                            size.width * AppDimensions.numD004,
-                                        color: Colors.grey.shade200,
-                                      ),
-                                      SizedBox(
-                                        height:
-                                            size.width * AppDimensions.numD038,
-                                      ),
-                                    ],
-                                  );
-                                },
-                                itemCount: state.notifications.length),
-                          )
-                        : (state.status == NotificationStatus.empty ||
-                                state.status == NotificationStatus.success)
-                            ? errorMessageWidget("No new notifications")
-                            : showLoader(),
+                                      );
+                                    },
+                                    itemCount: state.notifications.length),
+                              )
+                            : (state.status == NotificationStatus.empty ||
+                                    state.status == NotificationStatus.success)
+                                ? errorMessageWidget("No new notifications")
+                                : showLoader(),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+             
+              
+              ],
             ),
           );
         },

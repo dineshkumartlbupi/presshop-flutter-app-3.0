@@ -159,26 +159,26 @@ class LocalNotificationService {
           case NotificationResponseType.selectedNotification:
             if (notificationResponse.payload != null &&
                 notificationResponse.payload!.isNotEmpty) {
-              var taskDetail = jsonDecode(notificationResponse.payload!);
-              if (taskDetail["notification_type"].toString() ==
+              var notificationData = jsonDecode(notificationResponse.payload!);
+              if (notificationData["notification_type"].toString() ==
                   "media_house_tasks") {
                 navigatorKey.currentContext!.goNamed(
                   AppRoutes.dashboardName,
                   extra: {'initialPosition': 2},
                 );
-              } else if (taskDetail["notification_type"].toString() ==
+              } else if (notificationData["notification_type"].toString() ==
                   "initiate_admin_chat") {
                 navigatorKey.currentContext!.goNamed(
                   AppRoutes.dashboardName,
                   extra: {'initialPosition': 2, 'openChatScreen': true},
                 );
-              } else if (taskDetail["notification_type"].toString() ==
+              } else if (notificationData["notification_type"].toString() ==
                   "studentbeans") {
                 navigatorKey.currentContext!.goNamed(
                   AppRoutes.dashboardName,
                   extra: {'initialPosition': 2, 'openBeansActivation': true},
                 );
-              } else if (taskDetail["image"].toString().isNotEmpty) {
+              } else if (notificationData["image"].toString().isNotEmpty) {
                 navigatorKey.currentContext!.goNamed(
                   AppRoutes.dashboardName,
                   extra: {

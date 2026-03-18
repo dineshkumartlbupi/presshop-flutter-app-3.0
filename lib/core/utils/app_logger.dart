@@ -17,7 +17,7 @@ class AppLogger {
         "ℹ️ [INFO] $message ${data != null ? data.toString() : ""}";
 
     if (kDebugMode) {
-      print(formattedMessage);
+      debugPrint(formattedMessage);
     }
 
     if (isCrashlyticsEnabled) {
@@ -30,7 +30,7 @@ class AppLogger {
         "⚠️ [WARN] $message ${data != null ? data.toString() : ""}";
 
     if (kDebugMode) {
-      print(formattedMessage);
+      debugPrint(formattedMessage);
     }
 
     if (isCrashlyticsEnabled) {
@@ -43,8 +43,8 @@ class AppLogger {
     final formattedMessage = "❌ [ERROR] $message";
 
     if (kDebugMode) {
-      print(formattedMessage);
-      if (error != null) print("Error detail: $error");
+      debugPrint(formattedMessage);
+      if (error != null) debugPrint("Error detail: $error");
     }
 
     if (isCrashlyticsEnabled) {

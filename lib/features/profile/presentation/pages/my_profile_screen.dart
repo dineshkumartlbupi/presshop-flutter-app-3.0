@@ -21,8 +21,11 @@ import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/widgets/common/avatar_bottom_sheet.dart';
 
 import 'package:presshop/core/di/injection_container.dart';
-
+import 'package:presshop/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:presshop/features/profile/presentation/bloc/profile_event.dart';
+import 'package:presshop/features/profile/presentation/bloc/profile_state.dart';
 import 'package:presshop/features/profile/constants/profile_constants.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
 import 'package:go_router/go_router.dart';
@@ -109,8 +112,6 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   void initState() {
     debugPrint("class:::: $runtimeType");
     super.initState();
-    // Enforce editable state by default
-    widget.editProfileScreen = true;
     debugPrint("editStatus::::::: ${widget.editProfileScreen}");
     _loadCachedData();
     setUserNameListener();
@@ -450,16 +451,20 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                         ),
                       ),
                     ),
-                    errorWidget: (context, url, error) => Padding(
-                      padding:
-                          EdgeInsets.all(size.width * AppDimensions.numD04),
-                      child: Image.asset(
-                        "${commonImagePath}rabbitLogo.png",
-                        fit: BoxFit.contain,
-                        width: size.width * AppDimensions.numD35,
-                        height: size.width * AppDimensions.numD35,
-                      ),
-                    ),
+                    errorWidget: (context, url, error) {
+                      debugPrint(
+                          "Error loading profile avatar from URL: $url \nError: $error");
+                      return Padding(
+                        padding:
+                            EdgeInsets.all(size.width * AppDimensions.numD04),
+                        child: Image.asset(
+                          "${commonImagePath}rabbitLogo.png",
+                          fit: BoxFit.contain,
+                          width: size.width * AppDimensions.numD35,
+                          height: size.width * AppDimensions.numD35,
+                        ),
+                      );
+                    },
                     fit: BoxFit.cover,
                     width: size.width * AppDimensions.numD37,
                     height: size.width * AppDimensions.numD35,

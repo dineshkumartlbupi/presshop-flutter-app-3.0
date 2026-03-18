@@ -18,7 +18,6 @@ class ApiClient {
     _dio.options.connectTimeout = const Duration(minutes: 2);
     _dio.options.receiveTimeout = const Duration(minutes: 2);
 
-    /// Attach interceptors
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: _onRequest,
@@ -27,9 +26,8 @@ class ApiClient {
       ),
     );
 
-    /// Pretty logger (DEBUG ONLY)
     if (kDebugMode) {
-      _dio.interceptors.add(PrettyDioLogger());
+      _dio.interceptors.add(PrettyDioLogger(formatJson: true));
     }
   }
   final Dio _dio;
@@ -104,51 +102,45 @@ class ApiClient {
       debugPrint("🔄 401 Detected - Attempting Token Refresh...");
 
       try {
-        final refreshSuccess = await TokenRefreshManager().refreshToken();
+        final newAccessToken = await TokenRefreshManager().refreshToken();
 
-        if (refreshSuccess) {
+        if (newAccessToken != null && newAccessToken.isNotEmpty) {
           debugPrint("✅ Token Refresh Success - Retrying original request");
 
-          // CRITICAL: Read the NEW token directly after refresh
-          final newAccessToken =
-              _sharedPreferences.getString(SharedPreferencesKeys.tokenKey);
+          final opts = err.requestOptions;
 
-          if (newAccessToken != null && newAccessToken.isNotEmpty) {
-            final opts = err.requestOptions;
+          // Set mandatory headers for retry
+          final Map<String, dynamic> newHeaders =
+              Map<String, dynamic>.from(opts.headers);
+          newHeaders[SharedPreferencesKeys.headerKey] =
+              "Bearer $newAccessToken";
+          newHeaders['x-access-token'] = newAccessToken;
 
-            // Set mandatory headers for retry
-            final Map<String, dynamic> newHeaders =
-                Map<String, dynamic>.from(opts.headers);
-            newHeaders[SharedPreferencesKeys.headerKey] =
-                "Bearer $newAccessToken";
-            newHeaders['x-access-token'] = newAccessToken;
+          // Mark as retry to ensure _onRequest skips it
+          final Map<String, dynamic> newExtra =
+              Map<String, dynamic>.from(opts.extra);
+          newExtra['is_retry'] = true;
 
-            // Mark as retry to ensure _onRequest skips it
-            final Map<String, dynamic> newExtra =
-                Map<String, dynamic>.from(opts.extra);
-            newExtra['is_retry'] = true;
+          debugPrint(
+              "DEBUG: Retrying request with new token (last 4 chars): ${newAccessToken.substring(newAccessToken.length - 4)}");
 
-            debugPrint(
-                "DEBUG: Retrying request with new token (last 4 chars): ${newAccessToken.substring(newAccessToken.length - 4)}");
-
-            final cloneReq = await _dio.request(
-              opts.path,
-              options: Options(
-                method: opts.method,
-                headers: newHeaders,
-                contentType: opts.contentType,
-                responseType: opts.responseType,
-                followRedirects: opts.followRedirects,
-                validateStatus: opts.validateStatus,
-                receiveTimeout: opts.receiveTimeout,
-                sendTimeout: opts.sendTimeout,
-                extra: newExtra,
-              ),
-              data: opts.data,
-              queryParameters: opts.queryParameters,
-            );
-            return handler.resolve(cloneReq);
-          }
+          final cloneReq = await _dio.request(
+            opts.path,
+            options: Options(
+              method: opts.method,
+              headers: newHeaders,
+              contentType: opts.contentType,
+              responseType: opts.responseType,
+              followRedirects: opts.followRedirects,
+              validateStatus: opts.validateStatus,
+              receiveTimeout: opts.receiveTimeout,
+              sendTimeout: opts.sendTimeout,
+              extra: newExtra,
+            ),
+            data: opts.data,
+            queryParameters: opts.queryParameters,
+          );
+          return handler.resolve(cloneReq);
         }
       } catch (e) {
         debugPrint("❌ Token Refresh Exception in ApiClient: $e");

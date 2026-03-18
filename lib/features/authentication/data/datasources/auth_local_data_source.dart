@@ -60,24 +60,56 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<void> cacheUser(Map<String, dynamic> user) async {
-    if (user.containsKey('currency_symbol') &&
-        user['currency_symbol'] != null) {
-      await sharedPreferences.setString(
-          SharedPreferencesKeys.currencySymbolKey, user['currency_symbol']);
+    void updateKey(String key, dynamic value) {
+      if (value != null && value.toString().isNotEmpty) {
+        sharedPreferences.setString(key, value.toString());
+      }
     }
-    if (user.containsKey('referral_code') && user['referral_code'] != null) {
-      await sharedPreferences.setString(
-          SharedPreferencesKeys.referralCode, user['referral_code']);
-    }
-    if (user.containsKey('total_hopper_army') &&
-        user['total_hopper_army'] != null) {
-      await sharedPreferences.setString(
-          SharedPreferencesKeys.totalHopperArmy, user['total_hopper_army']);
-    }
-    // Add logic for other fields if necessary
+
+    updateKey(SharedPreferencesKeys.firstNameKey,
+        user['first_name'] ?? user['firstName']);
+    updateKey(SharedPreferencesKeys.lastNameKey,
+        user['last_name'] ?? user['lastName']);
+    updateKey(SharedPreferencesKeys.userNameKey,
+        user['user_name'] ?? user['userName'] ?? user['username']);
+    updateKey(SharedPreferencesKeys.emailKey, user['email']);
+    updateKey(SharedPreferencesKeys.countryCodeKey,
+        user['country_code'] ?? user['countryCode']);
+    updateKey(SharedPreferencesKeys.phoneKey,
+        user['phone'] ?? user['mobile_number'] ?? user['mobileNumber']);
+    updateKey(SharedPreferencesKeys.addressKey, user['address']);
+    updateKey(SharedPreferencesKeys.cityKey, user['city']);
+    updateKey(SharedPreferencesKeys.countryKey, user['country']);
+    updateKey(SharedPreferencesKeys.postCodeKey,
+        user['post_code'] ?? user['postCode']);
+    updateKey(SharedPreferencesKeys.latitudeKey, user['latitude']);
+    updateKey(SharedPreferencesKeys.longitudeKey, user['longitude']);
+    updateKey(SharedPreferencesKeys.totalIncomeKey,
+        user['totalEarnings'] ?? user['total_earnings']);
+    updateKey(SharedPreferencesKeys.referralCode, user['referral_code']);
+    updateKey(SharedPreferencesKeys.totalHopperArmy, user['total_hopper_army']);
+
     if (user.containsKey('_id') && user['_id'] != null) {
       await sharedPreferences.setString(
           SharedPreferencesKeys.hopperIdKey, user['_id']);
+    }
+
+    // Save profile image and avatar
+    String? profileImg = user["profile_image"]?.toString() ??
+        user["profileImage"]?.toString();
+    if (profileImg != null && profileImg.isNotEmpty) {
+      await sharedPreferences.setString(
+          SharedPreferencesKeys.profileImageKey, profileImg);
+    }
+
+    String? avatar;
+    if (user['avatarData'] is Map) {
+      avatar = user['avatarData']['avatar']?.toString();
+    } else {
+      avatar = user['avatar']?.toString();
+    }
+    if (avatar != null && avatar.isNotEmpty) {
+      await sharedPreferences.setString(SharedPreferencesKeys.avatarKey, avatar);
     }
   }
 

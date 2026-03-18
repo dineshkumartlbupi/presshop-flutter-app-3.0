@@ -1,0 +1,58 @@
+import 'package:flutter/material.dart';
+import 'package:presshop/core/core_export.dart';
+
+class DashboardBottomNavBar extends StatelessWidget {
+  final Size size;
+  final int currentIndex;
+  final Function(int) onTap;
+
+  const DashboardBottomNavBar({
+    super.key,
+    required this.size,
+    required this.currentIndex,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      backgroundColor: Colors.white,
+      currentIndex: currentIndex,
+      showUnselectedLabels: true,
+      showSelectedLabels: true,
+      unselectedItemColor: Colors.black,
+      selectedItemColor: AppColorTheme.colorThemePink,
+      elevation: 0,
+      iconSize: size.width * AppDimensions.numD05,
+      selectedFontSize: size.width * AppDimensions.numD03,
+      unselectedFontSize: size.width * AppDimensions.numD03,
+      type: BottomNavigationBarType.fixed,
+      onTap: onTap,
+      items: [
+        const BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage("assets/icons/ic_content1.png")),
+          label: "Content",
+        ),
+        const BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage("assets/icons/ic_task1.png")),
+          label: "Tasks",
+        ),
+        BottomNavigationBarItem(
+          icon: Transform.scale(
+            scale: 1.3,
+            child: const ImageIcon(AssetImage("assets/icons/ic_camera1.png")),
+          ),
+          label: "Camera",
+        ),
+        const BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage("assets/icons/ic_news1.png")),
+          label: "News",
+        ),
+        const BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage("assets/icons/ic_alert2.png")),
+          label: "Alerts",
+        ),
+      ],
+    );
+  }
+}

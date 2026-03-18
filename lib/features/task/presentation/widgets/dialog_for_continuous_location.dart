@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -10,7 +11,7 @@ Future<bool?> showLocationPermissionDialogWithImage({
   required Size size,
   String? heading,
   String? description,
-  String imagePath = "assets/location/location_permission.png",
+  String imagePath = "assets/rabbits/yellow_rabbit.png",
   bool showCloseIcon = false,
   String privacyPolicyUrl = "https://presshop.news/privacy-policy",
   String? buttonText,
@@ -120,15 +121,14 @@ Future<bool?> showLocationPermissionDialogWithImage({
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
                                 child: imagePath.startsWith('http')
-                                    ? Image.network(
-                                        imagePath,
+                                    ? CachedNetworkImage(
+                                        imageUrl: imagePath,
                                         fit: BoxFit.cover,
-                                        errorBuilder:
+                                        errorWidget:
                                             (context, error, stackTrace) =>
-                                                const Icon(
-                                          Icons.location_on,
-                                          size: 40,
-                                          color: AppColorTheme.colorThemePink,
+                                                Image.asset(
+                                          "assets/rabbits/yellow_rabbit.png",
+                                          fit: BoxFit.cover,
                                         ),
                                       )
                                     : Image.asset(
@@ -136,10 +136,9 @@ Future<bool?> showLocationPermissionDialogWithImage({
                                         fit: BoxFit.cover,
                                         errorBuilder:
                                             (context, error, stackTrace) =>
-                                                const Icon(
-                                          Icons.location_on,
-                                          size: 40,
-                                          color: AppColorTheme.colorThemePink,
+                                                Image.asset(
+                                          "assets/rabbits/yellow_rabbit.png",
+                                          fit: BoxFit.cover,
                                         ),
                                       ),
                               ),

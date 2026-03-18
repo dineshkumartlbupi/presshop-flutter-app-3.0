@@ -10,7 +10,7 @@ import 'package:presshop/features/news/domain/usecases/get_news_detail.dart';
 import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
 import 'package:presshop/features/news/presentation/bloc/news_event.dart';
 import 'package:presshop/features/news/presentation/bloc/news_state.dart';
-import 'package:presshop/features/map/data/services/socket_service.dart';
+import 'package:presshop/features/news/data/datasources/news_socket_datasource.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MockGetAggregatedNews extends Mock implements GetAggregatedNews {}
@@ -19,7 +19,7 @@ class MockGetNewsDetail extends Mock implements GetNewsDetail {}
 
 class MockGetComments extends Mock implements GetComments {}
 
-class MockSocketService extends Mock implements SocketService {}
+class MockSocketService extends Mock implements NewsSocketDataSource {}
 
 class MockSharedPreferences extends Mock implements SharedPreferences {}
 
@@ -48,7 +48,7 @@ void main() {
       getAggregatedNews: mockGetAggregatedNews,
       getNewsDetail: mockGetNewsDetail,
       getComments: mockGetComments,
-      socketService: mockSocketService,
+      newsSocketDataSource: mockSocketService,
       sharedPreferences: mockSharedPreferences,
     );
   });

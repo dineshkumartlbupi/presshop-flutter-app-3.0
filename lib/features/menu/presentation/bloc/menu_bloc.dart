@@ -14,7 +14,6 @@ part 'menu_event.dart';
 part 'menu_state.dart';
 
 class MenuBloc extends Bloc<MenuEvent, MenuState> {
-
   MenuBloc({
     required this.getNotifications,
     required this.removeDevice,
@@ -55,11 +54,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     emit(state.copyWith(logoutStatus: MenuLogoutStatus.loading));
 
     String deviceId = await menuService.getDeviceId();
-
-    // Attempt to remove device token from server
     await removeDevice(RemoveDeviceParams(deviceId: deviceId));
-
-    // Selective Wipe
     try {
       await menuService.clearSession();
       await authLocalDataSource.clearCache();

@@ -7,13 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/features/task/presentation/widgets/dialog_for_continuous_location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-
-import 'package:presshop/core/services/location_permission_dialog.dart';
-
 // URL from old project to maintain API compatibility
-const socketUrl = "https://dev-api.presshop.news:3005";
 
 /// =============================================================
 /// ================= SERVICE ENTRY POINT ========================
@@ -242,7 +240,7 @@ void _registerAndroidServiceEvents(ServiceInstance service) {
 /// =============================================================
 IO.Socket _initializeSocket(String userId) {
   final socket = IO.io(
-    socketUrl,
+    ApiConstantsNew.config.socketUrl2,
     IO.OptionBuilder()
         .setTransports(['websocket'])
         .disableAutoConnect()

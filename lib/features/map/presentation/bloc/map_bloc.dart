@@ -9,7 +9,7 @@ import 'package:presshop/features/map/domain/usecases/get_current_location.dart'
 import 'package:presshop/features/map/domain/usecases/get_route.dart';
 import 'package:presshop/features/map/presentation/bloc/map_event.dart';
 import 'package:presshop/features/map/presentation/bloc/map_state.dart';
-import 'package:presshop/features/map/data/services/socket_service.dart';
+import 'package:presshop/features/map/data/datasources/incident_socket_datasource.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:presshop/features/news/domain/repositories/news_repository.dart';
 import 'package:presshop/features/map/data/services/marker_service.dart';
@@ -22,7 +22,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     required this.getCurrentLocation,
     required this.getRoute,
     required this.repository,
-    required this.socketService,
+    required this.incidentSocketDataSource,
     required this.newsRepository,
     required this.markerService,
     required this.sharedPreferences,
@@ -62,7 +62,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final GetCurrentLocation getCurrentLocation;
   final GetRoute getRoute;
   final MapRepository repository;
-  final SocketService socketService;
+  final IncidentSocketDataSource incidentSocketDataSource;
   final NewsRepository newsRepository;
   final MarkerService markerService;
   final SharedPreferences sharedPreferences;
@@ -81,16 +81,16 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     final userId =
         sharedPreferences.getString(SharedPreferencesKeys.hopperIdKey) ?? '';
     if (userId.isNotEmpty) {
-      socketService.initSocket(userId: userId, joinAs: "hopper");
+      incidentSocketDataSource.initSocket(userId: userId, userType: "hopper");
     }
 
-    socketService.onIncidentNew = (data) {
+    incidentSocketDataSource.onIncidentNew = (data) {
       add(OnIncidentNewEvent(data));
     };
-    socketService.onIncidentUpdated = (data) {
+    incidentSocketDataSource.onIncidentUpdated = (data) {
       add(OnIncidentUpdatedEvent(data));
     };
-    socketService.onIncidentCreated = (data) {
+    incidentSocketDataSource.onIncidentCreated = (data) {
       add(OnIncidentNewEvent(data));
     };
   }
@@ -261,12 +261,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         add(FetchNewsEvent(
             lat: location.latitude, lng: location.longitude, km: 10));
 
-        final profileImage = sharedPreferences
-                .getString(SharedPreferencesKeys.profileImageKey) ??
-            '';
+        final avatarImage =
+            sharedPreferences.getString(SharedPreferencesKeys.avatarIdKey) ??
+                '';
         BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
-        if (profileImage.isNotEmpty) {
-          icon = await markerService.createAvatarMarker(profileImage,
+        if (avatarImage.isNotEmpty) {
+          icon = await markerService.createAvatarMarker(avatarImage,
               size: const Size(120, 120));
         } else {
           icon = await markerService.createCircularAssetMarker(
@@ -597,7 +597,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     }
 
     try {
-      socketService.emitAlert(
+      incidentSocketDataSource.emitAlert(
         alertType: event.type,
         position: event.position,
         address: state.myLocationAddress ?? "",

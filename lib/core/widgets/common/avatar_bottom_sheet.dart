@@ -93,6 +93,8 @@ class AvatarBottomSheet {
                                             item.avatar,
                                             errorBuilder: (context, exception,
                                                 stackTrace) {
+                                              debugPrint(
+                                                  "Error loading avatar from URL: ${item.avatar} \nError: $exception");
                                               return Image.asset(
                                                 "${CommonAssets.commonImagePath}rabbitLogo.png",
                                                 fit: BoxFit.contain,

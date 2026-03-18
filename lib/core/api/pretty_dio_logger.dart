@@ -5,12 +5,28 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 
 class PrettyDioLogger extends Interceptor {
+  /// Set this to true to print formatted JSON (with indentation).
+  /// Set to false to print unformatted raw JSON (compact).
+  final bool formatJson;
+
+  PrettyDioLogger({this.formatJson = true});
+
+  void _printLong(String text) {
+    if (text.isEmpty) return;
+    final pattern = RegExp('.{1,800}');
+    for (var line in text.split('\n')) {
+      for (var match in pattern.allMatches(line)) {
+        debugPrint(match.group(0));
+      }
+    }
+  }
+
   @override
   void onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) {
-    debugPrint(
+    _printLong(
       '''
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ API REQUEST ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️
@@ -31,7 +47,7 @@ BODY   : ${_prettyJson(options.data)}
     Response response,
     ResponseInterceptorHandler handler,
   ) {
-    debugPrint(
+    _printLong(
       '''
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ API RESPONSE ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅
@@ -50,7 +66,7 @@ DATA   : ${_prettyJson(response.data)}
     DioException err,
     ErrorInterceptorHandler handler,
   ) {
-    debugPrint(
+    _printLong(
       '''
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ API ERROR ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌
@@ -65,16 +81,27 @@ DATA   : ${_prettyJson(err.response?.data)}
     super.onError(err, handler);
   }
 
-  /// Mask sensitive headers
+  /// Mask sensitive headers and truncate excessively long values
   Map<String, dynamic> _maskHeaders(Map<String, dynamic> headers) {
-    final masked = Map<String, dynamic>.from(headers);
-    if (masked.containsKey(SharedPreferencesKeys.headerKey)) {
-      debugPrint(
-          "Token coming in headers: ${masked[SharedPreferencesKeys.headerKey]}");
-      masked[SharedPreferencesKeys.headerKey] = "****TOKEN****";
-      debugPrint(
-          "Token masked final: ${masked[SharedPreferencesKeys.headerKey]}");
-    }
+    final masked = <String, dynamic>{};
+
+    headers.forEach((key, value) {
+      if (key == SharedPreferencesKeys.headerKey ||
+          key.toLowerCase() == "authorization" ||
+          key.toLowerCase() == "x-access-token") {
+        masked[key] = "****TOKEN****";
+      } else {
+        // Safeguard: Truncate any extremely long header values (e.g. JWTs, cookies)
+        final stringValue = value.toString();
+        if (stringValue.length > 500) {
+          masked[key] =
+              "${stringValue.substring(0, 500)}... [TRUNCATED ${stringValue.length - 500} chars]";
+        } else {
+          masked[key] = value;
+        }
+      }
+    });
+
     return masked;
   }
 
@@ -105,40 +132,51 @@ DATA   : ${_prettyJson(err.response?.data)}
   String _prettyJson(dynamic data) {
     if (data == null) return "null";
     try {
-      if (data is List && data.length > 500) {
-        return "[LIST of ${data.length} items] (Too large to format safely)";
+      // Avoid processing large datasets synchronously on the main thread
+      if (data is List && data.length > 5000) {
+        return "[LIST of ${data.length} items] (Formatting skipped for performance)";
       }
-      if (data is Map && data.length > 500) {
-        return "[MAP with ${data.length} keys] (Too large to format safely)";
+      if (data is Map && data.length > 5000) {
+        return "[MAP with ${data.length} keys] (Formatting skipped for performance)";
       }
 
-      const encoder = JsonEncoder.withIndent('  ');
       String result = "";
       if (data is String) {
         try {
           final decoded = jsonDecode(data);
-          if (decoded is List && decoded.length > 500) {
+          if (decoded is List && decoded.length > 5000) {
             return "[DECODED LIST of ${decoded.length} items]";
           }
-          if (decoded is Map && decoded.length > 500) {
+          if (decoded is Map && decoded.length > 5000) {
             return "[DECODED MAP with ${decoded.length} keys]";
           }
-          result = encoder.convert(decoded);
+          if (!formatJson) {
+            result = jsonEncode(decoded);
+          } else {
+            result = const JsonEncoder.withIndent('  ').convert(decoded);
+          }
         } catch (_) {
           result = data;
         }
       } else {
-        result = encoder.convert(data);
+        if (!formatJson) {
+          result = jsonEncode(data);
+        } else {
+          result = const JsonEncoder.withIndent('  ').convert(data);
+        }
       }
 
-      if (result.length > 30000) {
-        return "${result.substring(0, 30000)}\n... [TRUNCATED ${result.length - 30000} characters]";
+      // Safeguard: Limit total output length to prevent terminal buffer saturation
+      const int maxLogLength = 1000000;
+      if (result.length > maxLogLength) {
+        return "${result.substring(0, maxLogLength)}\n... [TRUNCATED ${result.length - maxLogLength} characters to prevent IDE freeze]";
       }
       return result;
     } catch (e) {
       final fallback = data.toString();
-      if (fallback.length > 30000) {
-        return "${fallback.substring(0, 30000)}\n... [TRUNCATED ${fallback.length - 30000} characters]";
+      const int maxFallbackLength = 1000;
+      if (fallback.length > maxFallbackLength) {
+        return "${fallback.substring(0, maxFallbackLength)}\n... [TRUNCATED ${fallback.length - maxFallbackLength} characters]";
       }
       return fallback;
     }

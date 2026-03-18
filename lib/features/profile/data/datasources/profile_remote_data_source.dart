@@ -23,15 +23,12 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<UserProfileModel> getProfile(String userId,
       {bool showLoader = true}) async {
-    print("🔍 DEBUG: getProfile called with userId: '$userId'");
     try {
       final response = await apiClient.get(
         ApiConstantsNew.profile.myProfile,
         queryParameters: {"userId": userId},
         showLoader: showLoader,
       );
-      print("🔍 DEBUG: API Response Status: ${response.statusCode}");
-      print("🔍 DEBUG: API Response Data: ${response.data}");
       if (response.statusCode == 200) {
         final data = response.data;
         if (data['code'] == 200 || data['success'] == true) {
@@ -111,9 +108,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         if (data['code'] == 200 || data['success'] == true) {
           final userData = data['userData'] ?? data['data'];
           if (userData != null && userData is Map) {
-            return userData['profile_image']?.toString() ?? '';
+            return userData['profile_image']?.toString() ?? data['profile_image']?.toString() ?? '';
           }
-          return '';
+          return data['profile_image']?.toString() ?? '';
         }
         throw ServerFailure(message: data['message'] ?? 'Upload failed');
       }

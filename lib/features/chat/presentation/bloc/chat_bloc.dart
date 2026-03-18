@@ -5,26 +5,29 @@ import 'package:presshop/core/core_export.dart'; // Constants
 
 import 'package:presshop/features/chat/presentation/bloc/chat_event.dart';
 import 'package:presshop/features/chat/presentation/bloc/chat_state.dart';
+
+import 'package:presshop/features/chat/data/datasources/chat_socket_datasource.dart';
+import 'package:presshop/features/chat/data/datasources/chat_local_data_source.dart';
 import 'package:presshop/main.dart'; // Globals
 import 'package:record/record.dart';
-import 'package:presshop/features/chat/data/services/chat_socket_service.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
-import 'package:presshop/features/chat/data/datasources/chat_local_data_source.dart';
+import 'package:flutter/material.dart'; // For ScrollController
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  final ChatSocketService _chatSocketService;
+  final ChatSocketDataSource _chatSocketDataSource;
   final ChatLocalDataSource _chatLocalDataSource;
   final ApiClient _apiClient = GetIt.I<ApiClient>();
   final AudioRecorder _audioRecorder;
+  final ScrollController scrollController = ScrollController();
 
   ChatBloc({
-    required ChatSocketService chatSocketService,
+    required ChatSocketDataSource chatSocketDataSource,
     required ChatLocalDataSource localDataSource,
     AudioRecorder? audioRecorder,
-  })  : _chatSocketService = chatSocketService,
+  })  : _chatSocketDataSource = chatSocketDataSource,
         _chatLocalDataSource = localDataSource,
         _audioRecorder = audioRecorder ?? AudioRecorder(),
         super(const ChatState()) {
@@ -44,8 +47,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   @override
   Future<void> close() {
-    _chatSocketService.dispose();
+    _chatSocketDataSource.dispose();
     _audioRecorder.dispose();
+    scrollController.dispose();
     return super.close();
   }
 
@@ -135,7 +139,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     // 1. Initialize Socket immediately to prevent race conditions
     debugPrint(":::: ChatBloc _onEnterChatRoom :::::");
     debugPrint("hopperId: $hopperId, roomId: ${event.roomId}");
-    _chatSocketService.initSocket(userId: hopperId, userType: "hopper");
+    _chatSocketDataSource.initSocket(userId: hopperId, userType: "hopper");
 
     emit(
       state.copyWith(
@@ -220,11 +224,16 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         add(ReceiveMessageEvent(currentMessages));
 
         // Mark as read immediately if it's from the other user
-        if (data['sender_id'] != hopperId) {
-          _chatSocketService.markAsRead(
-            state.currentRoomId,
+        final String incomingSenderIdActual =
+            data['sender_id']?.toString() ?? '';
+        final bool isSender = incomingSenderIdActual == hopperId;
+        final String status =
+            data['status']?.toString() ?? data['read_status']?.toString() ?? '';
+        if (!isSender && status != 'read') {
+          _chatSocketDataSource.markAsRead(
+            data['room_id']?.toString() ?? state.currentRoomId,
             hopperId,
-            receiverId: state.receiverId,
+            receiverId: incomingSenderIdActual,
           );
         }
       } else {
@@ -233,31 +242,27 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
 
     // 3. Setup Listeners
-    _chatSocketService.onChatMessage = _handleIncomingMessage;
-    _chatSocketService.onMediaMessage = _handleIncomingMessage;
-    _chatSocketService.onVoiceMessage = _handleIncomingMessage;
+    _chatSocketDataSource.onChatMessage = _handleIncomingMessage;
+    _chatSocketDataSource.onMediaMessage = _handleIncomingMessage;
+    _chatSocketDataSource.onVoiceMessage = _handleIncomingMessage;
 
-    _chatSocketService.onTyping = (data) {
-      debugPrint(":::: ChatBloc onTyping :::::");
-      debugPrint("data: $data");
-      debugPrint("currentRoomId: ${state.currentRoomId}");
-      debugPrint("hopperId: $hopperId, data['user_id']: ${data['user_id']}");
-
-      if (data['room_id'] == state.currentRoomId &&
-          data['user_id'] != hopperId) {
-        debugPrint(":::: Adding OtherUserTypingUpdatedEvent :::::");
-        add(OtherUserTypingUpdatedEvent(data['is_typing'] ?? false));
-      } else {
-        debugPrint(":::: Type event ignored :::::");
+    _chatSocketDataSource.onTyping = (data) {
+      if (data is Map) {
+        final userId = data['user_id']?.toString() ?? '';
+        final typingStatus = data['is_typing'] == true;
+        if (userId.isNotEmpty && userId != hopperId) {
+          add(OtherUserTypingUpdatedEvent(typingStatus));
+        }
       }
     };
 
-    _chatSocketService.onAdminStatus = (data) {
+    _chatSocketDataSource.onAdminStatus = (data) {
+      debugPrint("Admin Status Update: $data");
       final status = data['status'] == 'online';
       add(OtherUserOnlineStatusUpdatedEvent(status));
     };
 
-    _chatSocketService.onReadMessage = (data) async {
+    _chatSocketDataSource.onReadMessage = (data) async {
       debugPrint(":::: ChatBloc onReadMessage :::::");
       if (data['room_id'] == state.currentRoomId) {
         final updatedMessages = state.messages.map((m) {
@@ -270,7 +275,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         await _chatLocalDataSource.saveMessages(updatedMessages);
       }
     };
-    _chatSocketService.joinRoom(event.roomId);
+
+    _chatSocketDataSource.joinRoom(event.roomId);
     try {
       debugPrint("ChatBloc: Fetching room history from API...");
       final response = await _apiClient.post(
@@ -303,7 +309,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         await _chatLocalDataSource.saveMessages(messages);
 
         emit(state.copyWith(status: ChatStatus.loaded, messages: messages));
-        _chatSocketService.markAsRead(
+        _chatSocketDataSource.markAsRead(
           event.roomId,
           hopperId,
           receiverId: state.receiverId,
@@ -315,7 +321,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     } catch (e) {
       debugPrint("ChatBloc: Error fetching chat history: $e");
     }
-
     emit(state.copyWith(status: ChatStatus.loaded));
   }
 
@@ -328,7 +333,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     Emitter<ChatState> emit,
   ) async {
     if (state.currentRoomId.isNotEmpty) {
-      _chatSocketService.leaveRoom(state.currentRoomId);
+      _chatSocketDataSource.leaveRoom(state.currentRoomId);
     }
     emit(state.copyWith(messages: [], currentRoomId: ''));
   }
@@ -386,14 +391,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     debugPrint("  : $roomId");
 
     // Ensure socket is initialized
-    _chatSocketService.initSocket(userId: senderId, userType: "hopper");
+    _chatSocketDataSource.initSocket(userId: senderId, userType: "hopper");
 
     if (event.messageType == 'audio') {
-      _chatSocketService.sendVoiceMessage(messageData);
+      _chatSocketDataSource.sendVoiceMessage(messageData);
     } else if (event.messageType == 'text') {
-      _chatSocketService.sendMessage(messageData);
+      _chatSocketDataSource.sendMessage(messageData);
     } else {
-      _chatSocketService.sendMediaMessage(messageData);
+      _chatSocketDataSource.sendMediaMessage(messageData);
     }
 
     // Also send via HTTP API as fallback for reliability
@@ -415,7 +420,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     final senderId =
         sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
-    _chatSocketService.sendTypingStatus(event.roomId, senderId, event.isTyping);
+    _chatSocketDataSource.sendTypingStatus(
+        event.roomId, senderId, event.isTyping);
   }
 
   Future<void> _onStartAudioRecording(

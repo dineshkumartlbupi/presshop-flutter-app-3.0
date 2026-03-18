@@ -7,7 +7,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/usecases/usecase.dart';
 import 'package:presshop/features/map/data/services/marker_service.dart';
-import 'package:presshop/features/map/data/services/socket_service.dart';
+import 'package:presshop/features/map/data/datasources/incident_socket_datasource.dart';
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 import 'package:presshop/features/map/domain/usecases/get_current_location.dart';
 import 'package:presshop/features/map/domain/usecases/get_route.dart';
@@ -24,7 +24,7 @@ class MockGetRoute extends Mock implements GetRoute {}
 
 class MockMapRepository extends Mock implements MapRepository {}
 
-class MockSocketService extends Mock implements SocketService {}
+class MockSocketService extends Mock implements IncidentSocketDataSource {}
 
 class MockNewsRepository extends Mock implements NewsRepository {}
 
@@ -68,7 +68,7 @@ void main() {
       getCurrentLocation: mockGetCurrentLocation,
       getRoute: mockGetRoute,
       repository: mockMapRepository,
-      socketService: mockSocketService,
+      incidentSocketDataSource: mockSocketService,
       newsRepository: mockNewsRepository,
       markerService: mockMarkerService,
       sharedPreferences: mockSharedPreferences,

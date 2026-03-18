@@ -61,7 +61,10 @@ import 'package:presshop/features/map/domain/usecases/get_route.dart';
 import 'package:presshop/features/map/domain/usecases/search_places.dart';
 import 'package:presshop/features/map/domain/usecases/get_place_details.dart';
 import 'package:presshop/features/map/data/services/marker_service.dart';
-import 'package:presshop/features/map/data/services/socket_service.dart';
+import 'package:presshop/core/api/global_socket_client.dart';
+import 'package:presshop/features/map/data/datasources/incident_socket_datasource.dart';
+import 'package:presshop/features/news/data/datasources/news_socket_datasource.dart';
+import 'package:presshop/features/chat/data/datasources/chat_socket_datasource.dart';
 import 'package:presshop/features/news/data/datasources/news_remote_datasource.dart';
 import 'package:presshop/features/news/data/repositories/news_repository_impl.dart';
 import 'package:presshop/features/news/domain/repositories/news_repository.dart';
@@ -226,7 +229,6 @@ import 'package:presshop/features/publish/domain/repositories/tutorials_reposito
 import 'package:presshop/features/publish/data/repositories/tutorials_repository_impl.dart';
 import 'package:presshop/features/publish/data/datasources/tutorials_remote_datasource.dart';
 
-import 'package:presshop/features/chat/data/services/chat_socket_service.dart';
 import 'package:presshop/core/services/location_service.dart';
 
 final sl = GetIt.instance; // sl = Service Locator
@@ -408,7 +410,7 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerFactory(
+  sl.registerLazySingleton(
     () => ProfileBloc(
       getProfileData: sl(),
       updateProfileData: sl(),
@@ -503,7 +505,7 @@ Future<void> init() async {
   sl.registerFactory(() => AlertBloc(apiClient: sl()));
   sl.registerFactory(() => CameraBloc(sl()));
   sl.registerFactory(
-    () => ChatBloc(chatSocketService: sl(), localDataSource: sl()),
+    () => ChatBloc(chatSocketDataSource: sl(), localDataSource: sl()),
   );
   sl.registerFactory(
     () => FeedBloc(getFeeds: sl(), toggleFeedInteraction: sl()),
@@ -513,7 +515,7 @@ Future<void> init() async {
       getAggregatedNews: sl(),
       getNewsDetail: sl(),
       getComments: sl(),
-      socketService: sl(),
+      newsSocketDataSource: sl(),
       sharedPreferences: sl(),
     ),
   );
@@ -523,7 +525,7 @@ Future<void> init() async {
       getCurrentLocation: sl(),
       getRoute: sl(),
       repository: sl(),
-      socketService: sl(),
+      incidentSocketDataSource: sl(),
       newsRepository: sl(),
       markerService: sl(),
       sharedPreferences: sl(),
@@ -775,7 +777,9 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton(() => MarkerService());
-  sl.registerLazySingleton(() => SocketService());
-  sl.registerLazySingleton(() => ChatSocketService());
+  sl.registerLazySingleton(() => GlobalSocketClient());
+  sl.registerLazySingleton(() => IncidentSocketDataSource(client: sl()));
+  sl.registerLazySingleton(() => NewsSocketDataSource(client: sl()));
+  sl.registerLazySingleton(() => ChatSocketDataSource(client: sl()));
   sl.registerLazySingleton(() => ChatLocalDataSource());
 }

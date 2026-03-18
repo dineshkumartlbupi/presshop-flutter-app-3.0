@@ -17,10 +17,15 @@ class ProfileRepositoryImpl implements ProfileRepository {
   final ProfileRemoteDataSource remoteDataSource;
   final AuthLocalDataSource localDataSource;
   final NetworkInfo networkInfo;
+  ProfileData? _cachedProfile;
 
   @override
   Future<Either<Failure, ProfileData>> getProfile(
       {bool showLoader = true}) async {
+    if (_cachedProfile != null && !showLoader) {
+      return Right(_cachedProfile!);
+    }
+
     if (await networkInfo.isConnected) {
       try {
         final userId = await localDataSource.getUserId();
@@ -29,13 +34,18 @@ class ProfileRepositoryImpl implements ProfileRepository {
         }
         final profile =
             await remoteDataSource.getProfile(userId, showLoader: showLoader);
-        return Right(profile.toEntity());
+        await localDataSource.cacheUser(profile.toJson());
+        _cachedProfile = profile.toEntity();
+        return Right(_cachedProfile!);
       } on Failure catch (failure) {
         return Left(failure);
       } catch (e) {
         return Left(ServerFailure(message: e.toString()));
       }
     } else {
+      if (_cachedProfile != null) {
+        return Right(_cachedProfile!);
+      }
       return const Left(NetworkFailure());
     }
   }

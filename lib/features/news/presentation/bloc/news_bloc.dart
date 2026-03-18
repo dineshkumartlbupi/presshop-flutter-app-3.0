@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/features/map/data/services/socket_service.dart';
 import 'package:presshop/features/news/domain/usecases/get_aggregated_news.dart';
+import 'package:presshop/features/news/data/datasources/news_socket_datasource.dart';
 import 'package:presshop/features/news/domain/usecases/get_comments.dart';
 import 'package:presshop/features/news/domain/usecases/get_news_detail.dart';
 import 'package:presshop/features/news/presentation/bloc/news_event.dart';
@@ -17,37 +17,37 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     required this.getAggregatedNews,
     required this.getNewsDetail,
     required this.getComments,
-    required this.socketService,
+    required this.newsSocketDataSource,
     required this.sharedPreferences,
-  }) : super(const NewsState()) {
+  }) : super(NewsState()) {
     on<GetAggregatedNewsEvent>(_onGetAggregatedNews);
-    on<GetAllNewsEvent>(_onGetAllNews);
     on<GetNewsDetailEvent>(_onGetNewsDetail);
     on<GetCommentsEvent>(_onGetComments);
     on<AddCommentLocalEvent>(_onAddCommentLocal);
     on<UpdateLikeLocalEvent>(_onUpdateLikeLocal);
-    on<ToggleLikeStatusEvent>(_onToggleLikeStatus);
-    on<IncrementViewCountEvent>(_onIncrementViewCount);
-    on<UpdateShareCountEvent>(_onUpdateShareCount);
     on<ToggleNewsLikeEvent>(_onToggleNewsLike);
     on<OnNewsLikeUpdatedEvent>(_onNewsLikeUpdated);
-    on<ToggleCommentLikeEvent>(_onToggleCommentLike);
     on<OnCommentLikeUpdatedEvent>(_onCommentLikeUpdated);
     on<PostCommentEvent>(_onPostComment);
     on<OnCommentNewEvent>(_onCommentNew);
     on<ShareNewsEvent>(_onShareNews);
     on<OnNewsShareUpdatedEvent>(_onNewsShareUpdated);
     on<ViewNewsEvent>(_onViewNews);
+    on<GetAllNewsEvent>(_onGetAllNews);
+    on<ToggleCommentLikeEvent>(_onToggleCommentLike);
+    on<ToggleLikeStatusEvent>(_onToggleLikeStatus);
+    on<IncrementViewCountEvent>(_onIncrementViewCount);
+    on<UpdateShareCountEvent>(_onUpdateShareCount);
 
     _initSocketListener();
   }
 
   void _ensureSocketInitialized() {
-    if (!socketService.isInitialized) {
+    if (!newsSocketDataSource.isInitialized) {
       final userId =
           sharedPreferences.getString(SharedPreferencesKeys.hopperIdKey) ?? '';
       if (userId.isNotEmpty) {
-        socketService.initSocket(userId: userId, joinAs: "hopper");
+        newsSocketDataSource.initSocket(userId: userId, userType: "hopper");
       }
     }
   }
@@ -55,28 +55,28 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
   final GetAggregatedNews getAggregatedNews;
   final GetNewsDetail getNewsDetail;
   final GetComments getComments;
-  final SocketService socketService;
+  final NewsSocketDataSource newsSocketDataSource;
   final SharedPreferences sharedPreferences;
 
   void _initSocketListener() {
     _ensureSocketInitialized();
-    socketService.joinNewsAll();
-    socketService.onNewsLike = (data) {
+    newsSocketDataSource.joinNewsAll();
+    newsSocketDataSource.onNewsLike = (data) {
       if (!isClosed) {
         add(OnNewsLikeUpdatedEvent(likeData: data));
       }
     };
-    socketService.onCommentLike = (data) {
+    newsSocketDataSource.onCommentLike = (data) {
       if (!isClosed) {
         add(OnCommentLikeUpdatedEvent(likeData: data));
       }
     };
-    socketService.onCommentNew = (data) {
+    newsSocketDataSource.onCommentNew = (data) {
       if (!isClosed) {
         add(OnCommentNewEvent(commentData: data));
       }
     };
-    socketService.onNewsShare = (data) {
+    newsSocketDataSource.onNewsShare = (data) {
       if (!isClosed) {
         add(OnNewsShareUpdatedEvent(shareData: data));
       }
@@ -85,10 +85,10 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
 
   @override
   Future<void> close() {
-    socketService.onNewsLike = null;
-    socketService.onCommentLike = null;
-    socketService.onCommentNew = null;
-    socketService.onNewsShare = null;
+    newsSocketDataSource.onNewsLike = null;
+    newsSocketDataSource.onCommentLike = null;
+    newsSocketDataSource.onCommentNew = null;
+    newsSocketDataSource.onNewsShare = null;
     return super.close();
   }
 
@@ -128,7 +128,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
 
     _ensureSocketInitialized();
 
-    socketService.addComment(
+    newsSocketDataSource.addComment(
       contentId: event.contentId,
       text: event.text,
       userId: userId,
@@ -186,7 +186,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
         sharedPreferences.getString(SharedPreferencesKeys.hopperIdKey);
 
     _ensureSocketInitialized();
-    socketService.shareNews(contentId: event.contentId, userId: userId);
+    newsSocketDataSource.shareNews(contentId: event.contentId, userId: userId);
   }
 
   void _onNewsShareUpdated(
@@ -225,7 +225,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     Emitter<NewsState> emit,
   ) {
     _ensureSocketInitialized();
-    socketService.viewNews(contentId: event.contentId);
+    newsSocketDataSource.viewNews(contentId: event.contentId);
   }
 
   Future<void> _onGetAggregatedNews(
@@ -465,7 +465,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
         sharedPreferences.getString(SharedPreferencesKeys.hopperIdKey) ?? '';
     if (userId.isNotEmpty) {
       _ensureSocketInitialized();
-      socketService.likeComment(
+      newsSocketDataSource.likeComment(
         contentId: event.contentId,
         commentId: event.commentId,
         userId: userId,
@@ -524,7 +524,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
         sharedPreferences.getString(SharedPreferencesKeys.hopperIdKey) ?? '';
     if (userId.isNotEmpty) {
       _ensureSocketInitialized();
-      socketService.likeNews(userId: userId, contentId: event.contentId);
+      newsSocketDataSource.likeNews(userId: userId, contentId: event.contentId);
 
       final updatedList = state.newsList.map((news) {
         if (news.id == event.contentId) {

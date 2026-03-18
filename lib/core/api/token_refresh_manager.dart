@@ -19,12 +19,12 @@ class TokenRefreshManager {
 
   bool _isRefreshing = false;
   final List<Future<void> Function()> _pendingRequests = [];
-  Completer<bool>? _refreshCompleter;
+  Completer<String?>? _refreshCompleter;
   static const int _maxRetries = 3;
   static const Duration _initialRetryDelay = Duration(seconds: 2);
 
   bool get isRefreshing => _isRefreshing;
-  Future<bool> refreshToken({int retryAttempt = 0}) async {
+  Future<String?> refreshToken({int retryAttempt = 0}) async {
     if (_isRefreshing && _refreshCompleter != null && retryAttempt == 0) {
       debugPrint("Token refresh already in progress, waiting...");
       return await _refreshCompleter!.future;
@@ -38,12 +38,12 @@ class TokenRefreshManager {
       debugPrint(
           "No refresh token available in storage (TokenRefreshManager) - Logging out");
       _logoutUser();
-      return false;
+      return null;
     }
 
     if (retryAttempt == 0) {
       _isRefreshing = true;
-      _refreshCompleter = Completer<bool>();
+      _refreshCompleter = Completer<String?>();
     }
 
     try {
@@ -81,12 +81,12 @@ class TokenRefreshManager {
             "Refresh token API returned 401 - Session expired - Logging out");
         _logoutUser();
         if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
-          _refreshCompleter!.complete(false);
+          _refreshCompleter!.complete(null);
         }
-        _processPendingRequests(false);
+        _processPendingRequests(null);
         _isRefreshing = false;
         _refreshCompleter = null;
-        return false;
+        return null;
       }
 
       if (response.statusCode <= 201) {
@@ -113,19 +113,19 @@ class TokenRefreshManager {
                 key: SharedPreferencesKeys.refreshtokenKey,
                 value: newRefreshToken);
 
-            sharedPreferences!
+            await sharedPreferences!
                 .setString(SharedPreferencesKeys.tokenKey, newAccessToken);
-            sharedPreferences!.setString(
+            await sharedPreferences!.setString(
                 SharedPreferencesKeys.refreshtokenKey, newRefreshToken);
 
             debugPrint("Token refreshed successfully");
             if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
-              _refreshCompleter!.complete(true);
+              _refreshCompleter!.complete(newAccessToken);
             }
-            _processPendingRequests(true);
+            _processPendingRequests(newAccessToken);
             _isRefreshing = false;
             _refreshCompleter = null;
-            return true;
+            return newAccessToken;
           } else {
             debugPrint("Invalid token refresh response format or data missing");
             if (retryAttempt < _maxRetries) {
@@ -135,7 +135,7 @@ class TokenRefreshManager {
               return await refreshToken(retryAttempt: retryAttempt + 1);
             }
             _logoutUser();
-            return false;
+            return null;
           }
         } catch (e) {
           debugPrint("Error parsing token refresh response: $e");
@@ -145,7 +145,7 @@ class TokenRefreshManager {
             return await refreshToken(retryAttempt: retryAttempt + 1);
           }
           _logoutUser();
-          return false;
+          return null;
         }
       } else {
         debugPrint("Token refresh failed with status: ${response.statusCode}");
@@ -156,12 +156,12 @@ class TokenRefreshManager {
           return await refreshToken(retryAttempt: retryAttempt + 1);
         }
         if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
-          _refreshCompleter!.complete(false);
+          _refreshCompleter!.complete(null);
         }
-        _processPendingRequests(false);
+        _processPendingRequests(null);
         _isRefreshing = false;
         _refreshCompleter = null;
-        return false;
+        return null;
       }
     } catch (e) {
       debugPrint("Token refresh exception: $e");
@@ -172,12 +172,12 @@ class TokenRefreshManager {
       }
 
       if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
-        _refreshCompleter!.complete(false);
+        _refreshCompleter!.complete(null);
       }
-      _processPendingRequests(false);
+      _processPendingRequests(null);
       _isRefreshing = false;
       _refreshCompleter = null;
-      return false;
+      return null;
     }
   }
 
@@ -187,8 +187,8 @@ class TokenRefreshManager {
         "Added pending request. Total pending: ${_pendingRequests.length}");
   }
 
-  void _processPendingRequests(bool success) {
-    if (success) {
+  void _processPendingRequests(String? newToken) {
+    if (newToken != null) {
       debugPrint("Processing ${_pendingRequests.length} pending requests");
       for (var retryFunction in _pendingRequests) {
         try {

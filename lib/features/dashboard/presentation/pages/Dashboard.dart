@@ -17,7 +17,6 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:location/location.dart' as lc;
 import 'package:presshop/features/map/presentation/pages/map_page.dart';
@@ -41,6 +40,7 @@ import 'package:presshop/features/dashboard/presentation/utils/dashboard_notific
 import 'package:presshop/features/dashboard/presentation/utils/dashboard_location_mixin.dart';
 import 'package:presshop/features/dashboard/presentation/utils/dashboard_deeplink_mixin.dart';
 import 'package:presshop/core/services/background_location_service.dart';
+import 'package:presshop/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 
 // ignore: must_be_immutable
 class Dashboard extends StatefulWidget {
@@ -118,6 +118,7 @@ class DashboardState extends State<Dashboard>
   DateTime? currentTime;
   late List<Widget> bottomNavigationScreens;
   final Set<int> _loadedIndices = {};
+  DateTime? _lastLocationUpdateTime;
 
   late AppLinks linkStream;
 
@@ -308,286 +309,13 @@ class DashboardState extends State<Dashboard>
     );
   }
 
-  Widget _buildBottomNavigationBar(Size size) {
-    return BottomNavigationBar(
-      backgroundColor: Colors.white,
-      currentIndex: currentIndex,
-      showUnselectedLabels: true,
-      showSelectedLabels: true,
-      unselectedItemColor: Colors.black,
-      selectedItemColor: AppColorTheme.colorThemePink,
-      elevation: 0,
-      iconSize: size.width * AppDimensions.numD05,
-      selectedFontSize: size.width * AppDimensions.numD03,
-      unselectedFontSize: size.width * AppDimensions.numD03,
-      type: BottomNavigationBarType.fixed,
-      onTap: _onBottomBarItemTapped,
-      items: [
-        BottomNavigationBarItem(
-          icon: ImageIcon(AssetImage("${iconsPath}ic_content1.png")),
-          label: "Content",
-        ),
-        BottomNavigationBarItem(
-          icon: ImageIcon(AssetImage("${iconsPath}ic_task1.png")),
-          label: "Tasks",
-        ),
-        BottomNavigationBarItem(
-          icon: Transform.scale(
-            scale: 1.3,
-            child: ImageIcon(AssetImage("${iconsPath}ic_camera1.png")),
-          ),
-          label: "Camera",
-        ),
-        BottomNavigationBarItem(
-          icon: ImageIcon(AssetImage("${iconsPath}ic_news1.png")),
-          label: "News",
-        ),
-        BottomNavigationBarItem(
-          icon: ImageIcon(const AssetImage("assets/icons/ic_alert2.png")),
-          label: "Alerts",
-        ),
-      ],
-    );
-  }
-
-  // PreferredSizeWidget? _buildDashboardAppBar(Size size) {
-  //   if (currentIndex == 2 || currentIndex == 0 || currentIndex == 1) {
-  //     return null;
-  //   }
-  //   return NewHomeAppBar(
-  //     size: size,
-  //     hideLeading: true,
-  //     showFilter: currentIndex == 0 || currentIndex == 1,
-  //     onFilterTap: () {
-  //       if (currentIndex == 0) {
-  //         _contentKey.currentState?.showFilterSheet();
-  //       } else if (currentIndex == 1) {
-  //         _taskKey.currentState?.showBottomSheet(size);
-  //       }
-  //     },
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return BlocProvider.value(
         value: _dashboardBloc,
         child: BlocListener<DashboardBloc, dynamic>(
-            listener: (context, state) {
-              if (state is DashboardActiveAdminsLoaded) {
-                setState(() {
-                  adminList = state.admins
-                      .map((e) => AdminDetailModel(
-                            id: e.id,
-                            name: e.name,
-                            profilePic: e.profilePic,
-                            lastMessageTime: e.lastMessageTime,
-                            lastMessage: e.lastMessage,
-                            roomId: e.roomId,
-                            senderId: e.senderId,
-                            receiverId: e.receiverId,
-                            roomType: e.roomType,
-                          ))
-                      .toList();
-
-                  debugPrint(":::: DashboardActiveAdminsLoaded :::::");
-                  debugPrint("Admins Count: ${adminList.length}");
-                  if (adminList.isNotEmpty) {
-                    debugPrint(
-                        "First Admin: ${adminList.first.id}, Room: ${adminList.first.roomId}");
-                    sharedPreferences?.setString(
-                        SharedPreferencesKeys.adminIdKey, adminList.first.id);
-                    sharedPreferences?.setString(
-                        SharedPreferencesKeys.adminRoomIdKey,
-                        adminList.first.roomId);
-                    sharedPreferences?.setString(
-                        SharedPreferencesKeys.adminImageKey,
-                        adminList.first.profilePic);
-                    sharedPreferences?.setString(
-                        SharedPreferencesKeys.adminNameKey,
-                        adminList.first.name);
-                  } else {
-                    debugPrint(":::: Admin List is EMPTY! :::::");
-                  }
-                });
-              } else if (state is DashboardRoomIdLoaded) {
-                var data = state.roomData;
-                debugPrint("📦 Dashboard Received Room Data: $data");
-
-                String roomId = "";
-                if (data.containsKey("_id")) {
-                  roomId = data["_id"];
-                } else if (data["details"] != null) {
-                  roomId = data["details"]["room_id"] ?? "";
-                }
-
-                if (roomId.isNotEmpty) {
-                  sharedPreferences!
-                      .setString(SharedPreferencesKeys.adminRoomIdKey, roomId);
-                  debugPrint("✅ Room Id Saved: $roomId");
-                } else {
-                  debugPrint("❌ Room Id NOT found in response");
-                }
-              } else if (state is DashboardAppVersionChecked) {
-                var map = state.versionData;
-                if (map["code"] == 200) {
-                  try {
-                    var versionData = map["data"];
-                    sharedPreferences!.setInt(
-                        SharedPreferencesKeys.videoLimitKey,
-                        (versionData['video_limit'] ?? 2) * 60);
-                    bool shouldUpdate = Platform.isAndroid
-                        ? (versionData['aOSshouldForceUpdate'] ?? false)
-                        : (versionData['iOSshouldForceUpdate'] ?? false);
-                    if (shouldUpdate) forceUpdateCheck();
-
-                    String? liveLocationHeading =
-                        versionData['liveLocationHeading'] as String?;
-                    double? liveLocationDistance =
-                        (versionData['liveLocationDistance'] is int)
-                            ? (versionData['liveLocationDistance'] as int)
-                                .toDouble()
-                            : versionData['liveLocationDistance'] as double?;
-                    String? liveLocationDescription =
-                        versionData['liveLocationDescription'] as String?;
-
-                    bool isCustomLocationPopup =
-                        versionData['is_custom_location_popup'] ?? false;
-                    String customLocationHeading =
-                        versionData['custom_location_heading'] ?? "";
-                    String customLocationDescription =
-                        versionData['custom_location_description'] ?? "";
-                    String customPopupImage =
-                        versionData['custom_popup_image'] ?? "";
-                    String locationSharingDescription =
-                        versionData['location_sharing_description'] ?? "";
-
-                    sharedPreferences?.setString(
-                        SharedPreferencesKeys.customLocationHeadingKey,
-                        customLocationHeading);
-                    sharedPreferences?.setString(
-                        SharedPreferencesKeys.customLocationDescriptionKey,
-                        customLocationDescription);
-                    sharedPreferences?.setString(
-                        SharedPreferencesKeys.customPopupImageKey,
-                        customPopupImage);
-                    sharedPreferences?.setString(
-                        SharedPreferencesKeys.locationSharingDescriptionKey,
-                        locationSharingDescription);
-                    sharedPreferences?.setBool(
-                        SharedPreferencesKeys.isCustomLocationPopupKey,
-                        isCustomLocationPopup);
-
-                    bool isManuallyStopped = sharedPreferences?.getBool(
-                            SharedPreferencesKeys.manuallyStoppedServiceKey) ??
-                        false;
-
-                    BackgroundLocationService.service
-                        .isRunning()
-                        .then((isServiceRunning) {
-                      if (isServiceRunning && !isManuallyStopped) {
-                        sharedPreferences?.setBool(
-                            SharedPreferencesKeys.isTaskGrabbingActiveKey,
-                            true);
-                      }
-
-                      bool isTaskGrabbingActive = sharedPreferences?.getBool(
-                              SharedPreferencesKeys.isTaskGrabbingActiveKey) ??
-                          false;
-
-                      if (!isManuallyStopped) {
-                        BackgroundLocationService.initService(
-                          notificationTitle: liveLocationHeading,
-                          notificationContent: liveLocationDescription,
-                          distanceFilter: liveLocationDistance,
-                          context: context,
-                          showPrePermissionDialog: isCustomLocationPopup &&
-                              !isTaskGrabbingActive &&
-                              !isServiceRunning,
-                          dialogTitle: customLocationHeading,
-                          dialogContent: customLocationDescription,
-                          dialogImage: customPopupImage,
-                        ).then((started) {
-                          if (started) {
-                            sharedPreferences?.setBool(
-                                SharedPreferencesKeys.isTaskGrabbingActiveKey,
-                                true);
-                            sharedPreferences?.setBool(
-                                SharedPreferencesKeys.manuallyStoppedServiceKey,
-                                false);
-                          }
-                        });
-                      }
-                    });
-                  } catch (e) {
-                    debugPrint("Error initializing background service: $e");
-                  }
-                } else {
-                  debugPrint("Version check failed: ${map["message"]}");
-                }
-              } else if (state is DashboardTaskDetailLoaded) {
-                var task = state.taskDetail;
-                player.play(
-                  AssetSource('audio/task_sound.mp3'),
-                  volume: 1,
-                );
-                broadcastDialog(
-                  size: MediaQuery.of(context).size,
-                  taskDetail: task,
-                  onTapViewDetails: () {
-                    if (mounted) {
-                      if (dashBoardInterface != null) {
-                        dashBoardInterface!.saveDraft();
-                      }
-                    }
-                    context.pop();
-                    context.pushNamed(
-                      AppRoutes.broadcastName,
-                      extra: {
-                        'taskId': task.task.id,
-                        'mediaHouseId': task.task.mediaHouse.id,
-                      },
-                    );
-                  },
-                );
-              } else if (state is StudentBeansActivated) {
-                var map = state.data;
-                var studentBeansResponseUrl = map["url"];
-
-                if (studentBeansResponseUrl != null &&
-                    studentBeansResponseUrl.isNotEmpty) {
-                  _launchStudentBeansUrl(studentBeansResponseUrl);
-                }
-
-                if (_studentBeansCompleter != null &&
-                    !_studentBeansCompleter!.isCompleted) {
-                  _studentBeansCompleter!.complete(studentBeansResponseUrl);
-                }
-              } else if (state is DashboardStudentBeansInfoLoaded) {
-                final info = state.info;
-                if (info.shouldShow) {
-                  final size =
-                      MediaQuery.of(navigatorKey.currentState!.context).size;
-                  _showStudentBeansDialog(size,
-                      sourceDataHeading: info.heading,
-                      sourceDataDescription: info.description);
-                }
-              } else if (state is DashboardMarkStudentBeansVisitedLoaded) {
-              } else if (state is DashboardMyProfileLoaded) {
-                var user = state.user;
-                if (user.avatar != null && user.avatar!.isNotEmpty) {
-                  sharedPreferences!
-                      .setString(SharedPreferencesKeys.avatarKey, user.avatar!);
-                }
-                setState(() {});
-              } else if (state is DashboardTabChanged) {
-                setState(() {
-                  currentIndex = state.index;
-                  _loadedIndices.add(currentIndex);
-                });
-              } else if (state is DashboardError) {}
-            },
+            listener: _handleDashboardState,
             child: PopScope(
               canPop: false,
               onPopInvokedWithResult: (didPop, result) async {
@@ -608,7 +336,11 @@ class DashboardState extends State<Dashboard>
               },
               child: Scaffold(
                 // appBar: _buildDashboardAppBar(size),
-                bottomNavigationBar: _buildBottomNavigationBar(size),
+                bottomNavigationBar: DashboardBottomNavBar(
+                  size: size,
+                  currentIndex: currentIndex,
+                  onTap: _onBottomBarItemTapped,
+                ),
                 body: Stack(
                   children: [
                     const Center(
@@ -633,6 +365,210 @@ class DashboardState extends State<Dashboard>
             )));
   }
 
+  void _handleDashboardState(BuildContext context, dynamic state) {
+    if (state is DashboardActiveAdminsLoaded) {
+      setState(() {
+        adminList = state.admins
+            .map((e) => AdminDetailModel(
+                  id: e.id,
+                  name: e.name,
+                  profilePic: e.profilePic,
+                  lastMessageTime: e.lastMessageTime,
+                  lastMessage: e.lastMessage,
+                  roomId: e.roomId,
+                  senderId: e.senderId,
+                  receiverId: e.receiverId,
+                  roomType: e.roomType,
+                ))
+            .toList();
+
+        debugPrint(":::: DashboardActiveAdminsLoaded :::::");
+        debugPrint("Admins Count: ${adminList.length}");
+        if (adminList.isNotEmpty) {
+          debugPrint(
+              "First Admin: ${adminList.first.id}, Room: ${adminList.first.roomId}");
+          sharedPreferences?.setString(
+              SharedPreferencesKeys.adminIdKey, adminList.first.id);
+          sharedPreferences?.setString(
+              SharedPreferencesKeys.adminRoomIdKey, adminList.first.roomId);
+          sharedPreferences?.setString(
+              SharedPreferencesKeys.adminImageKey, adminList.first.profilePic);
+          sharedPreferences?.setString(
+              SharedPreferencesKeys.adminNameKey, adminList.first.name);
+        } else {
+          debugPrint(":::: Admin List is EMPTY! :::::");
+        }
+      });
+    } else if (state is DashboardRoomIdLoaded) {
+      var data = state.roomData;
+      debugPrint("📦 Dashboard Received Room Data: $data");
+
+      String roomId = "";
+      if (data.containsKey("_id")) {
+        roomId = data["_id"];
+      } else if (data["details"] != null) {
+        roomId = data["details"]["room_id"] ?? "";
+      }
+
+      if (roomId.isNotEmpty) {
+        sharedPreferences!
+            .setString(SharedPreferencesKeys.adminRoomIdKey, roomId);
+        debugPrint("✅ Room Id Saved: $roomId");
+      } else {
+        debugPrint("❌ Room Id NOT found in response");
+      }
+    } else if (state is DashboardAppVersionChecked) {
+      var map = state.versionData;
+      if (map["code"] == 200) {
+        try {
+          var versionData = map["data"];
+          sharedPreferences!.setInt(SharedPreferencesKeys.videoLimitKey,
+              (versionData['video_limit'] ?? 2) * 60);
+          bool shouldUpdate = Platform.isAndroid
+              ? (versionData['aOSshouldForceUpdate'] ?? false)
+              : (versionData['iOSshouldForceUpdate'] ?? false);
+          if (shouldUpdate) forceUpdateCheck();
+
+          String? liveLocationHeading =
+              versionData['liveLocationHeading'] as String?;
+          double? liveLocationDistance =
+              (versionData['liveLocationDistance'] is int)
+                  ? (versionData['liveLocationDistance'] as int).toDouble()
+                  : versionData['liveLocationDistance'] as double?;
+          String? liveLocationDescription =
+              versionData['liveLocationDescription'] as String?;
+
+          bool isCustomLocationPopup =
+              versionData['is_custom_location_popup'] ?? false;
+          String customLocationHeading =
+              versionData['custom_location_heading'] ?? "";
+          String customLocationDescription =
+              versionData['custom_location_description'] ?? "";
+          String customPopupImage = versionData['custom_popup_image'] ?? "";
+          String locationSharingDescription =
+              versionData['location_sharing_description'] ?? "";
+
+          sharedPreferences?.setString(
+              SharedPreferencesKeys.customLocationHeadingKey,
+              customLocationHeading);
+          sharedPreferences?.setString(
+              SharedPreferencesKeys.customLocationDescriptionKey,
+              customLocationDescription);
+          sharedPreferences?.setString(
+              SharedPreferencesKeys.customPopupImageKey, customPopupImage);
+          sharedPreferences?.setString(
+              SharedPreferencesKeys.locationSharingDescriptionKey,
+              locationSharingDescription);
+          sharedPreferences?.setBool(
+              SharedPreferencesKeys.isCustomLocationPopupKey,
+              isCustomLocationPopup);
+
+          bool isManuallyStopped = sharedPreferences
+                  ?.getBool(SharedPreferencesKeys.manuallyStoppedServiceKey) ??
+              false;
+
+          BackgroundLocationService.service
+              .isRunning()
+              .then((isServiceRunning) {
+            if (isServiceRunning && !isManuallyStopped) {
+              sharedPreferences?.setBool(
+                  SharedPreferencesKeys.isTaskGrabbingActiveKey, true);
+            }
+
+            bool isTaskGrabbingActive = sharedPreferences
+                    ?.getBool(SharedPreferencesKeys.isTaskGrabbingActiveKey) ??
+                false;
+
+            if (!isManuallyStopped) {
+              BackgroundLocationService.initService(
+                notificationTitle: liveLocationHeading,
+                notificationContent: liveLocationDescription,
+                distanceFilter: liveLocationDistance,
+                context: context,
+                showPrePermissionDialog: isCustomLocationPopup &&
+                    !isTaskGrabbingActive &&
+                    !isServiceRunning,
+                dialogTitle: customLocationHeading,
+                dialogContent: customLocationDescription,
+                dialogImage: customPopupImage,
+              ).then((started) {
+                if (started) {
+                  sharedPreferences?.setBool(
+                      SharedPreferencesKeys.isTaskGrabbingActiveKey, true);
+                  sharedPreferences?.setBool(
+                      SharedPreferencesKeys.manuallyStoppedServiceKey, false);
+                }
+              });
+            }
+          });
+        } catch (e) {
+          debugPrint("Error initializing background service: $e");
+        }
+      } else {
+        debugPrint("Version check failed: ${map["message"]}");
+      }
+    } else if (state is DashboardTaskDetailLoaded) {
+      var task = state.taskDetail;
+      player.play(
+        AssetSource('audio/task_sound.mp3'),
+        volume: 1,
+      );
+      broadcastDialog(
+        size: MediaQuery.of(context).size,
+        taskDetail: task,
+        onTapViewDetails: () {
+          if (mounted) {
+            if (dashBoardInterface != null) {
+              dashBoardInterface!.saveDraft();
+            }
+          }
+          context.pop();
+          context.pushNamed(
+            AppRoutes.broadcastName,
+            extra: {
+              'taskId': task.task.id,
+              'mediaHouseId': task.task.mediaHouse.id,
+            },
+          );
+        },
+      );
+    } else if (state is StudentBeansActivated) {
+      var map = state.data;
+      var studentBeansResponseUrl = map["url"];
+
+      if (studentBeansResponseUrl != null &&
+          studentBeansResponseUrl.isNotEmpty) {
+        _launchStudentBeansUrl(studentBeansResponseUrl);
+      }
+
+      if (_studentBeansCompleter != null &&
+          !_studentBeansCompleter!.isCompleted) {
+        _studentBeansCompleter!.complete(studentBeansResponseUrl);
+      }
+    } else if (state is DashboardStudentBeansInfoLoaded) {
+      final info = state.info;
+      if (info.shouldShow) {
+        final size = MediaQuery.of(navigatorKey.currentState!.context).size;
+        _showStudentBeansDialog(size,
+            sourceDataHeading: info.heading,
+            sourceDataDescription: info.description);
+      }
+    } else if (state is DashboardMarkStudentBeansVisitedLoaded) {
+    } else if (state is DashboardMyProfileLoaded) {
+      var user = state.user;
+      if (user.avatar != null && user.avatar!.isNotEmpty) {
+        sharedPreferences!
+            .setString(SharedPreferencesKeys.avatarKey, user.avatar!);
+      }
+      setState(() {});
+    } else if (state is DashboardTabChanged) {
+      setState(() {
+        currentIndex = state.index;
+        _loadedIndices.add(currentIndex);
+      });
+    } else if (state is DashboardError) {}
+  }
+
   Future<void> getFcmToken() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     fcmToken = await FirebaseMessaging.instance.getToken() ?? "";
@@ -652,6 +588,14 @@ class DashboardState extends State<Dashboard>
   }
 
   Future<void> updateLocationData() async {
+    final now = DateTime.now();
+    if (_lastLocationUpdateTime != null &&
+        now.difference(_lastLocationUpdateTime!).inSeconds < 10) {
+      // Avoid calling location continuously within 10 seconds (debouncing)
+      return;
+    }
+    _lastLocationUpdateTime = now;
+
     locationData = await _locationService.getCurrentLocation(context,
         shouldShowSettingPopup: false);
     if (locationData != null) {

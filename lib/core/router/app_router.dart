@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/splash/presentation/pages/splash_screen.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_helper.dart';
@@ -34,7 +34,7 @@ import 'package:presshop/features/account_settings/presentation/pages/change_pas
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
 import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
-import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
+import 'package:presshop/features/chat/presentation/pages/human_chat_screen.dart';
 import 'package:presshop/features/task/presentation/pages/task_screen.dart';
 import 'package:presshop/features/content/presentation/pages/manage_content_chat_screen.dart';
 import 'package:presshop/features/task/presentation/pages/detail_new/task_details_screen.dart';

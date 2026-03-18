@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/di/injection_container.dart';
 
 /// Service for handling deeplink callbacks to the admin API
 class DeeplinkService {
@@ -10,18 +12,12 @@ class DeeplinkService {
     bool isAppInstallCallback,
   ) async {
     try {
-      Dio dio = Dio(
-        BaseOptions(
-          baseUrl: ApiConstantsNew.config.baseUrl,
-          connectTimeout: const Duration(seconds: 60),
-          receiveTimeout: const Duration(seconds: 60),
-        ),
-      );
+      String path = isAppInstallCallback
+          ? ApiConstantsNew.misc.onAppInstallCallback
+          : ApiConstantsNew.misc.onDeeplinkCallback;
 
-      Response response = await dio.post(
-        isAppInstallCallback
-            ? ApiConstantsNew.misc.onAppInstallCallback
-            : ApiConstantsNew.misc.onDeeplinkCallback,
+      Response response = await sl<ApiClient>().post(
+        path,
         data: {"data": data},
       );
 

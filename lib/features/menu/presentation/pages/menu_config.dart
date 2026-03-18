@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/features/account_settings/presentation/pages/account_delete_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/account_settings.dart';
 import 'package:presshop/features/account_settings/presentation/pages/change_password_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
@@ -8,10 +9,8 @@ import 'package:presshop/features/authentication/presentation/pages/TermCheckScr
 import 'package:presshop/features/authentication/presentation/pages/UploadDocumnetsScreen.dart';
 import 'package:presshop/features/bank/presentation/pages/my_banks_page.dart';
 import 'package:presshop/features/chatbot/presentation/pages/chatBotScreen.dart';
-import 'package:presshop/features/content/presentation/pages/content_page.dart';
 import 'package:presshop/features/content/presentation/pages/my_draft_screen.dart';
 import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
-import 'package:presshop/features/feed/presentation/pages/FeedScreen.dart';
 import 'package:presshop/features/leaderboard/presentation/pages/leaderboard_page.dart';
 import 'package:presshop/features/notification/presentation/pages/MyNotifications.dart';
 import 'package:presshop/features/profile/presentation/pages/digital_id_screen.dart';
@@ -19,7 +18,6 @@ import 'package:presshop/features/profile/presentation/pages/my_profile_screen.d
 import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
 import 'package:presshop/features/rating/presentation/pages/RatingReviewScreen.dart';
 import 'package:presshop/features/referral/presentation/pages/refer_screen.dart';
-import 'package:presshop/features/task/presentation/pages/task_screen.dart';
 
 enum MenuAction {
   digitalId,
@@ -71,6 +69,11 @@ class MenuData {
 }
 
 List<MenuData> buildMenu() => [
+      MenuData(
+        title: "Location sharing",
+        icon: "assets/markers/location1.png",
+        action: MenuAction.locationSharing,
+      ),
       MenuData(
         title: AppStrings.digitalIdText,
         icon: "${iconsPath}ic_id.png",
@@ -129,27 +132,27 @@ List<MenuData> buildMenu() => [
           screenType: '',
         ),
       ),
-      MenuData(
-        title: AppStrings.myContentText,
-        icon: "${iconsPath}ic_content.png",
-        action: MenuAction.myContent,
-        pageBuilder: (context) => const MyContentPage(
-          fromMenu: true,
-          showAppBar: true,
-        ),
-      ),
-      MenuData(
-        title: AppStrings.feedText,
-        icon: "${iconsPath}ic_feed.png",
-        action: MenuAction.feed,
-        pageBuilder: (context) => const FeedScreen(),
-      ),
-      MenuData(
-        title: "My tasks",
-        icon: "${iconsPath}ic_task.png",
-        action: MenuAction.myTasks,
-        pageBuilder: (context) => MyTaskScreen(hideLeading: false),
-      ),
+      // MenuData(
+      //   title: AppStrings.myContentText,
+      //   icon: "${iconsPath}ic_content.png",
+      //   action: MenuAction.myContent,
+      //   pageBuilder: (context) => const MyContentPage(
+      //     fromMenu: true,
+      //     showAppBar: true,
+      //   ),
+      // ),
+      // MenuData(
+      //   title: AppStrings.feedText,
+      //   icon: "${iconsPath}ic_feed.png",
+      //   action: MenuAction.feed,
+      //   pageBuilder: (context) => const FeedScreen(),
+      // ),
+      // MenuData(
+      //   title: "My tasks",
+      //   icon: "${iconsPath}ic_task.png",
+      //   action: MenuAction.myTasks,
+      //   pageBuilder: (context) => MyTaskScreen(hideLeading: false),
+      // ),
       MenuData(
         title: "My earnings",
         icon: "${iconsPath}ic_earning.png",
@@ -237,16 +240,12 @@ List<MenuData> buildMenu() => [
         action: MenuAction.changePassword,
         pageBuilder: (context) => const ChangePasswordScreen(),
       ),
+
       MenuData(
-        title: "Location sharing",
-        icon: "assets/markers/location1.png",
-        action: MenuAction.locationSharing,
-      ),
-      MenuData(
-        title: AppStrings.accountSettingText,
+        title: "Delete account",
         icon: "${iconsPath}ic_my_profile.png",
         action: MenuAction.accountSettings,
-        pageBuilder: (context) => const AccountSetting(),
+        pageBuilder: (context) => const AccountDeleteScreen(),
       ),
       // MenuData(
       //   title: "Choose currency",
@@ -259,3 +258,14 @@ List<MenuData> buildMenu() => [
         action: MenuAction.logout,
       ),
     ];
+
+    
+// Dfsdfsdf wants you to join the PressHop revolution.🤳
+
+// 📱Welcome to the world’s most powerful citizen journalism app where everyday people like us, can earn real money by selling  stories, photos and videos anonymously to the press🛵.
+
+// 👀All you need is your phone and a sharp eye — no degrees, licences, or investment. Just point, shoot, and start earning cash💸.
+
+// 👇 Download the app now and get started: https://presshop.app
+
+//  🪖Use this referral code when signing up: DfsdfsdfsArmy2535

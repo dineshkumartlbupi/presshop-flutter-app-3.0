@@ -30,7 +30,6 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   String userImage = "";
   String userName = "";
   String fullName = "";
-  final bool _isUploading = false;
 
   // File? _imageFile;
   final ImagePicker _picker = ImagePicker();
@@ -103,9 +102,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    return BlocProvider(
-      create: (context) =>
-          sl<ProfileBloc>()..add(const FetchProfileEvent(showLoader: false)),
+    return BlocProvider.value(
+      value: sl<ProfileBloc>()..add(const FetchProfileEvent(showLoader: false)),
       child: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
           if (state is ProfileLoaded) {
@@ -121,7 +119,6 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
           }
         },
         builder: (context, state) {
-      
           bool isLoading = state is ProfileLoading;
 
           return Scaffold(
@@ -130,39 +127,39 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
             //   size: size,
             // ),
             appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: false,
-        title: Text(
-          "${AppStrings.digitalId}",
-          style: TextStyle(
-              color: Colors.black,
-              fontSize: size.width * AppDimensions.appBarHeadingFontSize,
-              fontWeight: FontWeight.w700),
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
-        size: size,
-        showActions: true,
-        leadingFxn: () {
-          context.pop();
-        },
-        actionWidget: [
-          InkWell(
-            onTap: () {
-              context.goNamed(AppRoutes.dashboardName,
-                  extra: {'initialPosition': 2});
-            },
-            child: Image.asset(
-              "${commonImagePath}rabbitLogo.png",
-              height: size.width * AppDimensions.numD07,
-              width: size.width * AppDimensions.numD07,
+              elevation: 0,
+              hideLeading: false,
+              title: Text(
+                "${AppStrings.digitalId}",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: size.width * AppDimensions.appBarHeadingFontSize,
+                    fontWeight: FontWeight.w700),
+              ),
+              centerTitle: false,
+              titleSpacing: 0,
+              size: size,
+              showActions: true,
+              leadingFxn: () {
+                context.pop();
+              },
+              actionWidget: [
+                InkWell(
+                  onTap: () {
+                    context.goNamed(AppRoutes.dashboardName,
+                        extra: {'initialPosition': 2});
+                  },
+                  child: Image.asset(
+                    "${commonImagePath}rabbitLogo.png",
+                    height: size.width * AppDimensions.numD07,
+                    width: size.width * AppDimensions.numD07,
+                  ),
+                ),
+                SizedBox(
+                  width: size.width * AppDimensions.numD04,
+                )
+              ],
             ),
-          ),
-          SizedBox(
-            width: size.width * AppDimensions.numD04,
-          )
-        ],
-      ),
             body: Container(
               margin: EdgeInsets.only(
                 left: size.width * AppDimensions.numD04,
@@ -255,18 +252,14 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                               child: Stack(
                                 alignment: Alignment.center,
                                 children: [
-                                  isLoading &&
-                                          _isUploading // Only show spinner if explicitly uploading or initial load?
-                                      // Actually better to check isLoading generally for profile fetch too if we want.
-                                      // But matching original:
+                                  isLoading
                                       ? Container(
                                           height:
                                               size.width * AppDimensions.numD60,
                                           width:
                                               size.width * AppDimensions.numD70,
                                           alignment: Alignment.center,
-                                          child:
-                                              const CircularProgressIndicator(),
+                                          child: showAnimatedLoader(size),
                                         )
                                       : ClipRRect(
                                           borderRadius: BorderRadius.circular(
@@ -288,10 +281,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                               width: size.width *
                                                   AppDimensions.numD70,
                                               alignment: Alignment.center,
-                                              child:
-                                                  const CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                              ),
+                                              child: showAnimatedLoader(size),
                                             ),
                                             errorWidget:
                                                 (context, url, error) =>

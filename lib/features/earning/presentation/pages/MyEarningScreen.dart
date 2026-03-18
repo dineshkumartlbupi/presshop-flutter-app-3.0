@@ -272,413 +272,503 @@ class _MyEarningScreenState extends State<MyEarningScreen>
               return SingleChildScrollView(
                 child: Padding(
                   padding: EdgeInsets.all(size.width * AppDimensions.numD02),
-                  child: Column(
+                  child: Stack(
                     children: [
-                      /// My Earnings
-                      Container(
-                        padding:
-                            EdgeInsets.all(size.width * AppDimensions.numD05),
-                        decoration: BoxDecoration(
-                            color: AppColorTheme.colorLightGrey,
-                            borderRadius: BorderRadius.circular(
-                                size.width * AppDimensions.numD05)),
-                        child: Column(
-                          children: [
-                            Row(
+                      Column(
+                        children: [
+                          /// My Earnings
+                          Container(
+                            padding: EdgeInsets.all(
+                                size.width * AppDimensions.numD05),
+                            decoration: BoxDecoration(
+                                color: AppColorTheme.colorLightGrey,
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD05)),
+                            child: Column(
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          width: 1.2, color: Colors.black),
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * AppDimensions.numD04)),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * AppDimensions.numD04),
-                                    child: CachedNetworkImage(
-                                      imageUrl: earningData?.avatar ?? "",
-                                      imageBuilder: (context, imageProvider) =>
-                                          Container(
-                                        height:
-                                            size.width * AppDimensions.numD32,
-                                        width:
-                                            size.width * AppDimensions.numD35,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                              image: imageProvider,
-                                              fit: BoxFit.cover),
+                                Row(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 1.2, color: Colors.black),
+                                          borderRadius: BorderRadius.circular(
+                                              size.width *
+                                                  AppDimensions.numD04)),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                            size.width * AppDimensions.numD04),
+                                        child: CachedNetworkImage(
+                                          imageUrl: earningData?.avatar ?? "",
+                                          imageBuilder:
+                                              (context, imageProvider) =>
+                                                  Container(
+                                            height: size.width *
+                                                AppDimensions.numD32,
+                                            width: size.width *
+                                                AppDimensions.numD35,
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                  image: imageProvider,
+                                                  fit: BoxFit.cover),
+                                            ),
+                                          ),
+                                          placeholder: (context, url) =>
+                                              const CircularProgressIndicator(),
+                                          errorWidget: (context, url, error) =>
+                                              Image.asset(
+                                            "${commonImagePath}rabbitLogo.png",
+                                            fit: BoxFit.cover,
+                                            height: size.width *
+                                                AppDimensions.numD32,
+                                            width: size.width *
+                                                AppDimensions.numD35,
+                                          ),
                                         ),
                                       ),
-                                      placeholder: (context, url) =>
-                                          const CircularProgressIndicator(),
-                                      errorWidget: (context, url, error) =>
-                                          Image.asset(
-                                        "${commonImagePath}rabbitLogo.png",
-                                        fit: BoxFit.cover,
-                                        height:
-                                            size.width * AppDimensions.numD32,
-                                        width:
-                                            size.width * AppDimensions.numD35,
-                                      ),
                                     ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      left: size.width * AppDimensions.numD10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Total earnings",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width *
-                                                AppDimensions.numD045,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                      SizedBox(
-                                        height: size.width * AppDimensions.num0,
-                                      ),
-                                      Text(
-                                        earningData != null &&
-                                                earningData
-                                                    .totalEarning.isNotEmpty
-                                            ? '${earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}${formatDouble(double.parse(earningData.totalEarning))}'
-                                            : '${earningData != null && earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}0',
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width *
-                                                AppDimensions.numD075,
-                                            color: AppColorTheme.colorThemePink,
-                                            fontWeight: FontWeight.w800),
-                                      ),
-                                      SizedBox(
-                                        height:
-                                            size.width * AppDimensions.numD02,
-                                      ),
-                                      Text(
-                                        "Monthly earnings",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width *
-                                                AppDimensions.numD045,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                      SizedBox(
-                                        height: size.width * AppDimensions.num0,
-                                      ),
-                                      Text(
-                                        state.monthlyEarnings.isNotEmpty
-                                            ? '${earningData != null && earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}${formatDouble(double.parse(state.monthlyEarnings))}'
-                                            : '${earningData != null && earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}0',
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width *
-                                                AppDimensions.numD075,
-                                            color: AppColorTheme.colorThemePink,
-                                            fontWeight: FontWeight.w800),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: size.width * AppDimensions.numD03,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: InkWell(
-                                    onTap: () async {
-                                      // Year picker
-                                      final now = DateTime.now();
-                                      final picked = await showDialog<int>(
-                                        context: context,
-                                        builder: (context) {
-                                          int selectedYear = fromDate.isNotEmpty
-                                              ? int.parse(fromDate)
-                                              : now.year;
-                                          return AlertDialog(
-                                            title: Text('Select Year'),
-                                            content: SizedBox(
-                                              width: size.width *
-                                                  AppDimensions.numD035,
-                                              height: size.height *
-                                                  AppDimensions.numD30,
-                                              child: YearPicker(
-                                                firstDate: DateTime(2020),
-                                                lastDate: DateTime(now.year),
-                                                selectedDate:
-                                                    DateTime(selectedYear),
-                                                onChanged: (dateTime) {
-                                                  context.pop(dateTime.year);
-                                                },
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                      if (picked != null) {
-                                        fromDate = picked.toString();
-                                        toDate = '';
-                                        context.read<EarningBloc>().add(
-                                            UpdateDateEvent(
-                                                fromDate: fromDate,
-                                                toDate: toDate));
-                                        context.read<EarningBloc>().add(
-                                            FetchEarningDataEvent(
-                                                fromDate: fromDate,
-                                                toDate: toDate));
-                                      }
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical:
-                                            size.width * AppDimensions.numD02,
-                                        horizontal:
-                                            size.width * AppDimensions.numD02,
-                                      ),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              width: 1.2, color: Colors.black),
-                                          borderRadius: BorderRadius.circular(
-                                              size.width *
-                                                  AppDimensions.numD02)),
-                                      child: Row(
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: size.width *
+                                              AppDimensions.numD10),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.start,
                                         children: [
                                           Text(
-                                            fromDate.isNotEmpty
-                                                ? fromDate
-                                                : "Year",
+                                            "Total earnings",
                                             style: commonTextStyle(
                                                 size: size,
                                                 fontSize: size.width *
-                                                    AppDimensions.numD035,
+                                                    AppDimensions.numD045,
                                                 color: Colors.black,
-                                                fontWeight: FontWeight.w600),
+                                                fontWeight: FontWeight.w500),
                                           ),
-                                          const Icon(
-                                            Icons.arrow_drop_down_sharp,
-                                            color: Colors.black,
-                                          )
+                                          SizedBox(
+                                            height:
+                                                size.width * AppDimensions.num0,
+                                          ),
+                                          Text(
+                                            earningData != null &&
+                                                    earningData
+                                                        .totalEarning.isNotEmpty
+                                                ? '${earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}${formatDouble(double.parse(earningData.totalEarning))}'
+                                                : '${earningData != null && earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}0',
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD075,
+                                                color: AppColorTheme
+                                                    .colorThemePink,
+                                                fontWeight: FontWeight.w800),
+                                          ),
+                                          SizedBox(
+                                            height: size.width *
+                                                AppDimensions.numD02,
+                                          ),
+                                          Text(
+                                            "Monthly earnings",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD045,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          SizedBox(
+                                            height:
+                                                size.width * AppDimensions.num0,
+                                          ),
+                                          Text(
+                                            state.monthlyEarnings.isNotEmpty
+                                                ? '${earningData != null && earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}${formatDouble(double.parse(state.monthlyEarnings))}'
+                                                : '${earningData != null && earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}0',
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD075,
+                                                color: AppColorTheme
+                                                    .colorThemePink,
+                                                fontWeight: FontWeight.w800),
+                                          ),
                                         ],
                                       ),
-                                    ),
-                                  ),
+                                    )
+                                  ],
                                 ),
                                 SizedBox(
-                                  width: size.width * AppDimensions.numD05,
+                                  height: size.width * AppDimensions.numD03,
                                 ),
-                                Expanded(
-                                  child: InkWell(
-                                    onTap: fromDate.isEmpty
-                                        ? null
-                                        : () async {
-                                            // Month picker
-                                            final now = DateTime.now();
-                                            final int selectedYear =
-                                                int.parse(fromDate);
-                                            final int lastMonth =
-                                                (selectedYear == now.year)
-                                                    ? now.month
-                                                    : 12;
-                                            final picked =
-                                                await showDialog<int>(
-                                              context: context,
-                                              builder: (context) {
-                                                int selectedMonth =
-                                                    toDate.isNotEmpty
-                                                        ? int.parse(toDate)
-                                                        : 1;
-                                                return AlertDialog(
-                                                  title: Text('Select Month'),
-                                                  content: SizedBox(
-                                                    width: 400,
-                                                    height: 400,
-                                                    child: GridView.builder(
-                                                      gridDelegate:
-                                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                                        crossAxisCount: 2,
-                                                        childAspectRatio: 2.5,
-                                                      ),
-                                                      itemCount: lastMonth,
-                                                      itemBuilder:
-                                                          (context, index) {
-                                                        final month = index + 1;
-                                                        return InkWell(
-                                                          onTap: () {
-                                                            context.pop(month);
-                                                          },
-                                                          child: Container(
-                                                            margin:
-                                                                EdgeInsets.all(
-                                                                    8),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: selectedMonth ==
-                                                                      month
-                                                                  ? AppColorTheme
-                                                                      .colorThemePink
-                                                                  : Colors.grey[
-                                                                      200],
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
-                                                            ),
-                                                            alignment: Alignment
-                                                                .center,
-                                                            child: Text(
-                                                              DateFormat.MMMM()
-                                                                  .format(
-                                                                      DateTime(
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () async {
+                                          // Year picker
+                                          final now = DateTime.now();
+                                          final picked = await showDialog<int>(
+                                            context: context,
+                                            builder: (context) {
+                                              int selectedYear =
+                                                  fromDate.isNotEmpty
+                                                      ? int.parse(fromDate)
+                                                      : now.year;
+                                              return AlertDialog(
+                                                title: Text('Select Year'),
+                                                content: SizedBox(
+                                                  width: size.width *
+                                                      AppDimensions.numD035,
+                                                  height: size.height *
+                                                      AppDimensions.numD30,
+                                                  child: YearPicker(
+                                                    firstDate: DateTime(2020),
+                                                    lastDate:
+                                                        DateTime(now.year),
+                                                    selectedDate:
+                                                        DateTime(selectedYear),
+                                                    onChanged: (dateTime) {
+                                                      context
+                                                          .pop(dateTime.year);
+                                                    },
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                          if (picked != null) {
+                                            fromDate = picked.toString();
+                                            toDate = '';
+                                            context.read<EarningBloc>().add(
+                                                UpdateDateEvent(
+                                                    fromDate: fromDate,
+                                                    toDate: toDate));
+                                            context.read<EarningBloc>().add(
+                                                FetchEarningDataEvent(
+                                                    fromDate: fromDate,
+                                                    toDate: toDate));
+                                          }
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: size.width *
+                                                AppDimensions.numD02,
+                                            horizontal: size.width *
+                                                AppDimensions.numD02,
+                                          ),
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  width: 1.2,
+                                                  color: Colors.black),
+                                              borderRadius:
+                                                  BorderRadius.circular(size
+                                                          .width *
+                                                      AppDimensions.numD02)),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                fromDate.isNotEmpty
+                                                    ? fromDate
+                                                    : "Year",
+                                                style: commonTextStyle(
+                                                    size: size,
+                                                    fontSize: size.width *
+                                                        AppDimensions.numD035,
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                              const Icon(
+                                                Icons.arrow_drop_down_sharp,
+                                                color: Colors.black,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: size.width * AppDimensions.numD05,
+                                    ),
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: fromDate.isEmpty
+                                            ? null
+                                            : () async {
+                                                // Month picker
+                                                final now = DateTime.now();
+                                                final int selectedYear =
+                                                    int.parse(fromDate);
+                                                final int lastMonth =
+                                                    (selectedYear == now.year)
+                                                        ? now.month
+                                                        : 12;
+                                                final picked =
+                                                    await showDialog<int>(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    int selectedMonth =
+                                                        toDate.isNotEmpty
+                                                            ? int.parse(toDate)
+                                                            : 1;
+                                                    return AlertDialog(
+                                                      title:
+                                                          Text('Select Month'),
+                                                      content: SizedBox(
+                                                        width: 400,
+                                                        height: 400,
+                                                        child: GridView.builder(
+                                                          gridDelegate:
+                                                              SliverGridDelegateWithFixedCrossAxisCount(
+                                                            crossAxisCount: 2,
+                                                            childAspectRatio:
+                                                                2.5,
+                                                          ),
+                                                          itemCount: lastMonth,
+                                                          itemBuilder:
+                                                              (context, index) {
+                                                            final month =
+                                                                index + 1;
+                                                            return InkWell(
+                                                              onTap: () {
+                                                                context
+                                                                    .pop(month);
+                                                              },
+                                                              child: Container(
+                                                                margin:
+                                                                    EdgeInsets
+                                                                        .all(8),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: selectedMonth == month
+                                                                      ? AppColorTheme
+                                                                          .colorThemePink
+                                                                      : Colors.grey[
+                                                                          200],
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ),
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                child: Text(
+                                                                  DateFormat
+                                                                          .MMMM()
+                                                                      .format(DateTime(
                                                                           0,
                                                                           month)),
-                                                              style:
-                                                                  commonTextStyle(
-                                                                size: size,
-                                                                fontSize: size
-                                                                        .width *
-                                                                    AppDimensions
-                                                                        .numD035,
-                                                                color: selectedMonth ==
-                                                                        month
-                                                                    ? Colors
-                                                                        .white
-                                                                    : Colors
-                                                                        .black,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
+                                                                  style:
+                                                                      commonTextStyle(
+                                                                    size: size,
+                                                                    fontSize: size
+                                                                            .width *
+                                                                        AppDimensions
+                                                                            .numD035,
+                                                                    color: selectedMonth ==
+                                                                            month
+                                                                        ? Colors
+                                                                            .white
+                                                                        : Colors
+                                                                            .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                  ),
+                                                                ),
                                                               ),
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
-                                                    ),
-                                                  ),
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
                                                 );
+                                                if (picked != null) {
+                                                  toDate = picked
+                                                      .toString()
+                                                      .padLeft(2, '0');
+                                                  final bloc = context
+                                                      .read<EarningBloc>();
+                                                  bloc.add(UpdateDateEvent(
+                                                      fromDate: fromDate,
+                                                      toDate: toDate));
+                                                  bloc.add(
+                                                      FetchEarningDataEvent(
+                                                          fromDate: fromDate,
+                                                          toDate: toDate));
+                                                  if (_selectedTabbar == 0) {
+                                                    _fetchTransactions(bloc);
+                                                  } else {
+                                                    _fetchCommissions(bloc);
+                                                  }
+                                                }
                                               },
-                                            );
-                                            if (picked != null) {
-                                              toDate = picked
-                                                  .toString()
-                                                  .padLeft(2, '0');
-                                              final bloc =
-                                                  context.read<EarningBloc>();
-                                              bloc.add(UpdateDateEvent(
-                                                  fromDate: fromDate,
-                                                  toDate: toDate));
-                                              bloc.add(FetchEarningDataEvent(
-                                                  fromDate: fromDate,
-                                                  toDate: toDate));
-                                              if (_selectedTabbar == 0) {
-                                                _fetchTransactions(bloc);
-                                              } else {
-                                                _fetchCommissions(bloc);
-                                              }
-                                            }
-                                          },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical:
-                                            size.width * AppDimensions.numD02,
-                                        horizontal:
-                                            size.width * AppDimensions.numD02,
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: size.width *
+                                                AppDimensions.numD02,
+                                            horizontal: size.width *
+                                                AppDimensions.numD02,
+                                          ),
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  width: 1.2,
+                                                  color: Colors.black),
+                                              borderRadius:
+                                                  BorderRadius.circular(size
+                                                          .width *
+                                                      AppDimensions.numD02)),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                toDate.isNotEmpty
+                                                    ? DateFormat.MMMM().format(
+                                                        DateTime(0,
+                                                            int.parse(toDate)))
+                                                    : "Month",
+                                                style: commonTextStyle(
+                                                    size: size,
+                                                    fontSize: size.width *
+                                                        AppDimensions.numD035,
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.w700),
+                                              ),
+                                              const Icon(
+                                                Icons.arrow_drop_down_sharp,
+                                                color: Colors.black,
+                                              )
+                                            ],
+                                          ),
+                                        ),
                                       ),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              width: 1.2, color: Colors.black),
-                                          borderRadius: BorderRadius.circular(
-                                              size.width *
-                                                  AppDimensions.numD02)),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            toDate.isNotEmpty
-                                                ? DateFormat.MMMM().format(
-                                                    DateTime(
-                                                        0, int.parse(toDate)))
-                                                : "Month",
-                                            style: commonTextStyle(
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(
+                            height: size.width * AppDimensions.numD04,
+                          ),
+
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TabBar(
+                                physics: const NeverScrollableScrollPhysics(),
+                                controller: _tabController,
+                                labelColor: Colors.white,
+                                dividerColor: AppColorTheme.colorThemePink,
+                                unselectedLabelColor: Colors.black,
+                                indicator: BoxDecoration(
+                                  color: AppColorTheme.colorThemePink,
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * AppDimensions.numD02),
+                                ),
+                                labelStyle: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * AppDimensions.numD038,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                tabs: [
+                                  Tab(
+                                    text: AppStrings.paymentReceivedText,
+                                  ),
+                                  Tab(text: AppStrings.commissionEarnedText),
+                                ],
+                              ),
+                              const Divider(
+                                color: Color(0xFFD8D8D8),
+                                thickness: 1.5,
+                              ),
+                              Column(children: [
+                                if (_selectedTabbar == 0) ...[
+                                  state.transactions.isEmpty &&
+                                          state.transactionStatus !=
+                                              EarningStatus.loading
+                                      ? Center(
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                top: size.height *
+                                                    AppDimensions.numD1),
+                                            child: Text(
+                                              "No payment received",
+                                              style: commonTextStyle(
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD035,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w700),
+                                                color: Colors.grey,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
                                           ),
-                                          const Icon(
-                                            Icons.arrow_drop_down_sharp,
-                                            color: Colors.black,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(
-                        height: size.width * AppDimensions.numD04,
-                      ),
-
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TabBar(
-                            physics: const NeverScrollableScrollPhysics(),
-                            controller: _tabController,
-                            labelColor: Colors.white,
-                            dividerColor: AppColorTheme.colorThemePink,
-                            unselectedLabelColor: Colors.black,
-                            indicator: BoxDecoration(
-                              color: AppColorTheme.colorThemePink,
-                              borderRadius: BorderRadius.circular(
-                                  size.width * AppDimensions.numD02),
-                            ),
-                            labelStyle: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * AppDimensions.numD038,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            tabs: [
-                              Tab(
-                                text: AppStrings.paymentReceivedText,
-                              ),
-                              Tab(text: AppStrings.commissionEarnedText),
-                            ],
-                          ),
-                          const Divider(
-                            color: Color(0xFFD8D8D8),
-                            thickness: 1.5,
-                          ),
-                          Column(children: [
-                            if (_selectedTabbar == 0) ...[
-                              state.transactions.isEmpty &&
-                                      state.transactionStatus !=
-                                          EarningStatus.loading
-                                  ? Center(
+                                        )
+                                      : state.transactionStatus ==
+                                              EarningStatus.loading
+                                          ? const SizedBox.shrink()
+                                          : Column(
+                                              children: [
+                                                SizedBox(
+                                                  height: size.width *
+                                                      AppDimensions.numD025,
+                                                ),
+                                                paymentReceivedWidget(
+                                                    state.transactions),
+                                                if (state.transactions
+                                                        .isNotEmpty &&
+                                                    state.transactions.any(
+                                                        (item) => !item
+                                                            .paidStatus)) ...[
+                                                  Text(
+                                                    AppStrings
+                                                        .paymentPendingText,
+                                                    style: commonTextStyle(
+                                                        size: size,
+                                                        fontSize: size.width *
+                                                            AppDimensions
+                                                                .numD045,
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
+                                                  SizedBox(
+                                                    height: size.width *
+                                                        AppDimensions.numD02,
+                                                  ),
+                                                  const Divider(
+                                                    color: Color(0xFFD8D8D8),
+                                                    thickness: 1.5,
+                                                  ),
+                                                  SizedBox(
+                                                    height: size.width *
+                                                        AppDimensions.numD04,
+                                                  ),
+                                                  paymentPendingWidget(
+                                                      state.transactions),
+                                                ],
+                                              ],
+                                            )
+                                ] else ...[
+                                  if (state.commissions.isEmpty &&
+                                      state.commissionStatus !=
+                                          EarningStatus.loading)
+                                    Center(
                                       child: Padding(
                                         padding: EdgeInsets.only(
                                             top: size.height *
                                                 AppDimensions.numD1),
                                         child: Text(
-                                          "No payment received",
+                                          "No commission earned",
                                           style: commonTextStyle(
                                             size: size,
                                             fontSize: size.width *
@@ -689,203 +779,157 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                         ),
                                       ),
                                     )
-                                  : state.transactionStatus ==
-                                          EarningStatus.loading
-                                      ? const SizedBox.shrink()
-                                      : Column(
-                                          children: [
-                                            SizedBox(
-                                              height: size.width *
-                                                  AppDimensions.numD025,
-                                            ),
-                                            paymentReceivedWidget(
-                                                state.transactions),
-                                            if (state.transactions.isNotEmpty &&
-                                                state.transactions.any((item) =>
-                                                    !item.paidStatus)) ...[
-                                              Text(
-                                                AppStrings.paymentPendingText,
-                                                style: commonTextStyle(
-                                                    size: size,
-                                                    fontSize: size.width *
-                                                        AppDimensions.numD045,
-                                                    color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                              ),
-                                              SizedBox(
-                                                height: size.width *
-                                                    AppDimensions.numD02,
-                                              ),
-                                              const Divider(
-                                                color: Color(0xFFD8D8D8),
-                                                thickness: 1.5,
-                                              ),
-                                              SizedBox(
-                                                height: size.width *
-                                                    AppDimensions.numD04,
-                                              ),
-                                              paymentPendingWidget(
-                                                  state.transactions),
-                                            ],
-                                          ],
-                                        )
-                            ] else ...[
-                              if (state.commissions.isEmpty &&
-                                  state.commissionStatus !=
+                                  else if (state.commissionStatus ==
                                       EarningStatus.loading)
-                                Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        top: size.height * AppDimensions.numD1),
-                                    child: Text(
-                                      "No commission earned",
-                                      style: commonTextStyle(
+                                    const SizedBox.shrink()
+                                  else
+                                    ListView.builder(
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: state.commissions.length,
+                                      itemBuilder: (context, index) {
+                                        return CommissionWidget(
+                                          commissionData:
+                                              state.commissions[index],
+                                        );
+                                      },
+                                    ),
+                                ]
+                              ]),
+                            ],
+                          ),
+                          // Footer logic (Contact/FAQ/Tutorials) preserved conceptually but simplified for length constraint if needed
+                          // Including it properly:
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD06,
+                                bottom: size.width * AppDimensions.numD07),
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text:
+                                        "If you have any questions regarding your earnings or pending payments, please ",
+                                    style: commonTextStyle(
                                         size: size,
                                         fontSize:
-                                            size.width * AppDimensions.numD035,
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
+                                            size.width * AppDimensions.numD03,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.normal),
                                   ),
-                                )
-                              else if (state.commissionStatus ==
-                                  EarningStatus.loading)
-                                const SizedBox.shrink()
-                              else
-                                ListView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: state.commissions.length,
-                                  itemBuilder: (context, index) {
-                                    return CommissionWidget(
-                                      commissionData: state.commissions[index],
-                                    );
-                                  },
-                                ),
-                            ]
-                          ]),
+                                  WidgetSpan(
+                                      alignment: PlaceholderAlignment.middle,
+                                      child: InkWell(
+                                        onTap: () {
+                                          context.pushNamed(
+                                              AppRoutes.contactUsName);
+                                        },
+                                        child: Text(
+                                          "${AppStrings.contactText.toLowerCase()} ",
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD03,
+                                              color:
+                                                  AppColorTheme.colorThemePink,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      )),
+                                  TextSpan(
+                                    text:
+                                        "our helpful team who are available 24 x 7 to assist you. All communication, is completely discreet and secure. \n \n",
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD03,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                  TextSpan(
+                                    text: "Also check our ",
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD03,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                  WidgetSpan(
+                                      alignment: PlaceholderAlignment.middle,
+                                      child: InkWell(
+                                        onTap: () {
+                                          context.pushNamed(
+                                            AppRoutes.faqName,
+                                            extra: {
+                                              'priceTipsSelected': false,
+                                              'type': 'faq',
+                                              'index': 0,
+                                            },
+                                          );
+                                        },
+                                        child: Text(
+                                          "${AppStrings.faqText} ",
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD03,
+                                              color:
+                                                  AppColorTheme.colorThemePink,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      )),
+                                  TextSpan(
+                                    text: "and ",
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD03,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                  WidgetSpan(
+                                      alignment: PlaceholderAlignment.middle,
+                                      child: InkWell(
+                                        onTap: () {
+                                          context.pushNamed(
+                                              AppRoutes.tutorialsName);
+                                        },
+                                        child: Text(
+                                          "${AppStrings.tutorialsText.toLowerCase()} ",
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD03,
+                                              color:
+                                                  AppColorTheme.colorThemePink,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      )),
+                                  TextSpan(
+                                    text:
+                                        "for answers to common payment queries. Thank you ",
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD03,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: size.width * AppDimensions.numD03,
+                                    fontWeight: FontWeight.w300,
+                                    height: 1.5),
+                              ),
+                            ),
+                          )
                         ],
                       ),
-                      // Footer logic (Contact/FAQ/Tutorials) preserved conceptually but simplified for length constraint if needed
-                      // Including it properly:
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: size.width * AppDimensions.numD06,
-                            bottom: size.width * AppDimensions.numD07),
-                        child: RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text:
-                                    "If you have any questions regarding your earnings or pending payments, please ",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * AppDimensions.numD03,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              WidgetSpan(
-                                  alignment: PlaceholderAlignment.middle,
-                                  child: InkWell(
-                                    onTap: () {
-                                      context
-                                          .pushNamed(AppRoutes.contactUsName);
-                                    },
-                                    child: Text(
-                                      "${AppStrings.contactText.toLowerCase()} ",
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize:
-                                              size.width * AppDimensions.numD03,
-                                          color: AppColorTheme.colorThemePink,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  )),
-                              TextSpan(
-                                text:
-                                    "our helpful team who are available 24 x 7 to assist you. All communication, is completely discreet and secure. \n \n",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * AppDimensions.numD03,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              TextSpan(
-                                text: "Also check our ",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * AppDimensions.numD03,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              WidgetSpan(
-                                  alignment: PlaceholderAlignment.middle,
-                                  child: InkWell(
-                                    onTap: () {
-                                      context.pushNamed(
-                                        AppRoutes.faqName,
-                                        extra: {
-                                          'priceTipsSelected': false,
-                                          'type': 'faq',
-                                          'index': 0,
-                                        },
-                                      );
-                                    },
-                                    child: Text(
-                                      "${AppStrings.faqText} ",
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize:
-                                              size.width * AppDimensions.numD03,
-                                          color: AppColorTheme.colorThemePink,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  )),
-                              TextSpan(
-                                text: "and ",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * AppDimensions.numD03,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              WidgetSpan(
-                                  alignment: PlaceholderAlignment.middle,
-                                  child: InkWell(
-                                    onTap: () {
-                                      context
-                                          .pushNamed(AppRoutes.tutorialsName);
-                                    },
-                                    child: Text(
-                                      "${AppStrings.tutorialsText.toLowerCase()} ",
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize:
-                                              size.width * AppDimensions.numD03,
-                                          color: AppColorTheme.colorThemePink,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  )),
-                              TextSpan(
-                                text:
-                                    "for answers to common payment queries. Thank you ",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * AppDimensions.numD03,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                            ],
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: size.width * AppDimensions.numD03,
-                                fontWeight: FontWeight.w300,
-                                height: 1.5),
-                          ),
-                        ),
-                      )
+                      // Center(
+                      //   child: showAnimatedLoader(size),
+                      // )
                     ],
                   ),
                 ),

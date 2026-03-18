@@ -10,12 +10,19 @@ class UserProfileResponse {
   });
 
   factory UserProfileResponse.fromJson(Map<String, dynamic> json) {
-    var userData = json['data'] ?? json['userData'] ?? {};
-    if (userData is Map &&
+    var userData = json['data'] ?? json['userData'];
+    if (userData == null) {
+      if (json.containsKey('email') || json.containsKey('first_name') || json.containsKey('profile_image')) {
+        userData = json;
+      } else {
+        userData = {};
+      }
+    } else if (userData is Map &&
         userData.containsKey('data') &&
         userData['data'] is Map) {
       userData = userData['data'];
     }
+    
     return UserProfileResponse(
       success: json['success'] ?? false,
       message: json['message'] ?? '',

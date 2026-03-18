@@ -341,7 +341,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await apiClient.get(url, showLoader: false);
       if (response.statusCode == 200) {
         final data = response.data;
-        print("Phone check uttar: $data");
 
         // New Logic: Check for nested 'exists' key
         if (data['data'] != null && data['data'] is Map) {
@@ -482,7 +481,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        print("Forgot Password Response: $data");
 
         // Structure check:
         // { "success": true, "message": "...", "data": { "code": 200, "data": "OTP" } }
@@ -540,7 +538,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           data: {"email": email, "otp": otp});
       if (response.statusCode == 200) {
         final data = response.data;
-        print("Verify OTP Response: $data");
 
         bool otpMatch = false;
 
@@ -573,7 +570,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           data: {"email": email, "password": password});
       if (response.statusCode == 200) {
         final data = response.data;
-        print("Reset Password Response: $data");
 
         bool isSuccess = false;
 

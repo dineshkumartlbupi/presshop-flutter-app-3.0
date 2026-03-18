@@ -14,6 +14,8 @@ import 'package:presshop/features/menu/presentation/widgets/currency_selector_sh
 import 'package:presshop/core/extensions/context_extensions.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
+import 'package:presshop/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:presshop/features/profile/presentation/bloc/profile_event.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -33,6 +35,8 @@ class _MenuScreenState extends State<MenuScreen> {
     menuList = buildMenu();
     _menuBloc = sl<MenuBloc>()..add(MenuLoadCounts());
     _uiCubit = MenuUiCubit();
+    // Silent pre-load profile data
+    sl<ProfileBloc>().add(const FetchProfileEvent(showLoader: false));
   }
 
   @override

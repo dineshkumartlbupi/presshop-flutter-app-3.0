@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
+import 'package:presshop/features/chat/presentation/pages/human_chat_screen.dart';
 import 'package:presshop/features/notification/presentation/pages/MyNotifications.dart';
 
 mixin DashboardNotificationMixin<T extends StatefulWidget> on State<T> {

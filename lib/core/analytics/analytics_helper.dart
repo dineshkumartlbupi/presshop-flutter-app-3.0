@@ -65,12 +65,12 @@ class AnalyticsHelper {
       }
 
       if (kDebugMode) {
-        print('📊 Analytics: Page Visit - $pageName');
-        print('📊 Parameters: $eventParams');
+        debugPrint('📊 Analytics: Page Visit - $pageName');
+        debugPrint('📊 Parameters: $eventParams');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Analytics Error (Page Visit): $e');
+        debugPrint('❌ Analytics Error (Page Visit): $e');
       }
     }
   }
@@ -99,12 +99,12 @@ class AnalyticsHelper {
       }
 
       if (kDebugMode) {
-        print('📊 Analytics: User Action - $action');
-        print('📊 Parameters: $eventParams');
+        debugPrint('📊 Analytics: User Action - $action');
+        debugPrint('📊 Parameters: $eventParams');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Analytics Error (User Action): $e');
+        debugPrint('❌ Analytics Error (User Action): $e');
       }
     }
   }
@@ -132,12 +132,12 @@ class AnalyticsHelper {
       }
 
       if (kDebugMode) {
-        print('📊 Analytics: Custom Event - $eventName');
-        print('📊 Parameters: $eventParams');
+        debugPrint('📊 Analytics: Custom Event - $eventName');
+        debugPrint('📊 Parameters: $eventParams');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Analytics Error (Custom Event): $e');
+        debugPrint('❌ Analytics Error (Custom Event): $e');
       }
     }
   }
@@ -169,12 +169,12 @@ class AnalyticsHelper {
       }
 
       if (kDebugMode) {
-        print('📊 Analytics: Content Event - $contentType:$action');
-        print('📊 Parameters: $eventParams');
+        debugPrint('📊 Analytics: Content Event - $contentType:$action');
+        debugPrint('📊 Parameters: $eventParams');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Analytics Error (Content Event): $e');
+        debugPrint('❌ Analytics Error (Content Event): $e');
       }
     }
   }
@@ -206,12 +206,12 @@ class AnalyticsHelper {
       }
 
       if (kDebugMode) {
-        print('📊 Analytics: Task Event - $taskType:$action');
-        print('📊 Parameters: $eventParams');
+        debugPrint('📊 Analytics: Task Event - $taskType:$action');
+        debugPrint('📊 Parameters: $eventParams');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Analytics Error (Task Event): $e');
+        debugPrint('❌ Analytics Error (Task Event): $e');
       }
     }
   }
@@ -240,12 +240,12 @@ class AnalyticsHelper {
       }
 
       if (kDebugMode) {
-        print('📊 Analytics: Chat Event - $action');
-        print('📊 Parameters: $eventParams');
+        debugPrint('📊 Analytics: Chat Event - $action');
+        debugPrint('📊 Parameters: $eventParams');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Analytics Error (Chat Event): $e');
+        debugPrint('❌ Analytics Error (Chat Event): $e');
       }
     }
   }
@@ -279,12 +279,12 @@ class AnalyticsHelper {
       }
 
       if (kDebugMode) {
-        print('📊 Analytics: Navigation - $from → $to ($method)');
-        print('📊 Parameters: $eventParams');
+        debugPrint('📊 Analytics: Navigation - $from → $to ($method)');
+        debugPrint('📊 Parameters: $eventParams');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Analytics Error (Navigation): $e');
+        debugPrint('❌ Analytics Error (Navigation): $e');
       }
     }
   }
@@ -316,13 +316,13 @@ class AnalyticsHelper {
       }
 
       if (kDebugMode) {
-        print(
+        debugPrint(
             '📊 Analytics: Auth Event - $method (${success ? 'Success' : 'Failed'})');
-        print('📊 Parameters: $eventParams');
+        debugPrint('📊 Parameters: $eventParams');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Analytics Error (Auth Event): $e');
+        debugPrint('❌ Analytics Error (Auth Event): $e');
       }
     }
   }
@@ -354,12 +354,12 @@ class AnalyticsHelper {
       }
 
       if (kDebugMode) {
-        print('📊 Analytics: Error Event - $error on $page');
-        print('📊 Parameters: $eventParams');
+        debugPrint('📊 Analytics: Error Event - $error on $page');
+        debugPrint('📊 Parameters: $eventParams');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Analytics Error (Error Tracking): $e');
+        debugPrint('❌ Analytics Error (Error Tracking): $e');
       }
     }
   }
@@ -388,13 +388,13 @@ class AnalyticsHelper {
       }
 
       if (kDebugMode) {
-        print('📊 Analytics: User Properties Set');
-        print('📊 User ID: $userId');
-        print('📊 Properties: $properties');
+        debugPrint('📊 Analytics: User Properties Set');
+        debugPrint('📊 User ID: $userId');
+        debugPrint('📊 Properties: $properties');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Analytics Error (User Properties): $e');
+        debugPrint('❌ Analytics Error (User Properties): $e');
       }
     }
   }
@@ -423,12 +423,12 @@ class AnalyticsHelper {
       }
 
       if (kDebugMode) {
-        print('📊 Analytics: Lifecycle Event - $event');
-        print('📊 Parameters: $eventParams');
+        debugPrint('📊 Analytics: Lifecycle Event - $event');
+        debugPrint('📊 Parameters: $eventParams');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Analytics Error (Lifecycle): $e');
+        debugPrint('❌ Analytics Error (Lifecycle): $e');
       }
     }
   }
