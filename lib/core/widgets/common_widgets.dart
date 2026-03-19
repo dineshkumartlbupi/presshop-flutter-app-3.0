@@ -171,7 +171,7 @@ Container commonFilterIcon(Size size) {
   return Container(
       padding: EdgeInsets.all(size.width * AppDimensions.numD025),
       child: Image.asset(
-        "assets/icons/newfilter.png",
+        "assets/icons/filter_new.png",
         width: size.width * AppDimensions.numD06,
         height: size.width * AppDimensions.numD06,
         fit: BoxFit.contain,

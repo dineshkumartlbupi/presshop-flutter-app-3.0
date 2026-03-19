@@ -70,15 +70,15 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         context.pop();
       },
       actionWidget: [
-        if (showFilter)
-          InkWell(
-            onTap: () {
-              if (onFilterTap != null) {
-                onFilterTap!();
-              }
-            },
-            child: commonFilterIcon(size),
-          ),
+        // if (showFilter)
+        //   InkWell(
+        //     onTap: () {
+        //       if (onFilterTap != null) {
+        //         onFilterTap!();
+        //       }
+        //     },
+        //     child: commonFilterIcon(size),
+        //   ),
         if (showFilter)
           SizedBox(
             width: size.width * AppDimensions.numD02,
@@ -123,6 +123,16 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ),
             ),
+          ),
+
+        if (showFilter)
+          InkWell(
+            onTap: () {
+              if (onFilterTap != null) {
+                onFilterTap!();
+              }
+            },
+            child: commonFilterIcon(size),
           ),
         SizedBox(
           width: size.width * AppDimensions.numD04,
