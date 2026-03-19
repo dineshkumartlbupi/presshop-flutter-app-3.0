@@ -20,6 +20,7 @@ import 'package:presshop/core/router/router_constants.dart';
 
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
+import 'package:presshop/features/feed/presentation/pages/FeedScreen.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({
@@ -31,6 +32,7 @@ class NewsPage extends StatefulWidget {
     this.prioritizedContentId,
     this.appBarTitle,
     this.showAppBar = false,
+    this.fromMap = false,
   }) : super(key: key);
   final bool hideLeading;
   final bool showAppBar;
@@ -39,22 +41,33 @@ class NewsPage extends StatefulWidget {
   final bool hideFilters;
   final String? prioritizedContentId;
   final String? appBarTitle;
+  final bool fromMap;
 
   @override
   State<NewsPage> createState() => _NewsPageState();
 }
 
 class _NewsPageState extends State<NewsPage>
-    with AnalyticsPageMixin, AutomaticKeepAliveClientMixin {
+    with AnalyticsPageMixin, AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
 
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
+  late TabController _tabController;
+  Function()? _showFeedBottomSheet;
+
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        setState(() {});
+      }
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.prioritizedContentId != null &&
           widget.prioritizedContentId!.isNotEmpty) {
@@ -195,6 +208,79 @@ class _NewsPageState extends State<NewsPage>
     super.build(context);
     var size = MediaQuery.of(context).size;
 
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: NewHomeAppBar(
+        size: size,
+        hideLeading: widget.hideLeading,
+        showFilter: !widget.fromMap && _tabController.index == 0,
+        onFilterTap: () {
+          if (_tabController.index == 0 && _showFeedBottomSheet != null) {
+            _showFeedBottomSheet!();
+          }
+        },
+        appBarTitle: widget.appBarTitle,
+        hideHamburger: widget.appBarTitle != null,
+        bottom: widget.fromMap
+            ? null
+            : PreferredSize(
+                preferredSize: const Size.fromHeight(70),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD04),
+                      child: TabBar(
+                        controller: _tabController,
+                        labelColor: Colors.white,
+                        unselectedLabelColor: Colors.black,
+                        indicator: BoxDecoration(
+                          color: AppColorTheme.colorThemePink,
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD02),
+                        ),
+                        labelStyle: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD038,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        unselectedLabelStyle: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD038,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        tabs: const [
+                          Tab(text: "PressHop News"),
+                          Tab(text: "Local News"),
+                        ],
+                      ),
+                    ),
+                    const Divider(
+                      color: Color(0xFFD8D8D8),
+                      thickness: 1.5,
+                    ),
+                  ],
+                ),
+              ),
+      ),
+      body: widget.fromMap
+          ? _buildLocalNewsContent(context, size)
+          : TabBarView(
+              controller: _tabController,
+              children: [
+                FeedScreen(
+                  showAppBar: false,
+                  onShowFilter: (fn) => _showFeedBottomSheet = fn,
+                ),
+                _buildLocalNewsContent(context, size),
+              ],
+            ),
+    );
+  }
+
+  Widget _buildLocalNewsContent(BuildContext context, Size size) {
     return BlocConsumer<NewsBloc, NewsState>(
       listener: (context, state) {
         if (!state.isLoading) {
@@ -212,143 +298,132 @@ class _NewsPageState extends State<NewsPage>
       },
       builder: (context, state) {
         final newsList = state.newsList;
-
-        return Scaffold(
-          backgroundColor: Colors.white,
-          appBar:NewHomeAppBar(
-                  size: size,
-                  hideLeading: widget.hideLeading,
-                  showFilter: false,
-                  appBarTitle: widget.appBarTitle,
-                  hideHamburger: widget.appBarTitle != null,
-                ),
-        
-          body: Stack(
-            children: [
-              SmartRefresher(
-                controller: _refreshController,
-                enablePullDown: true,
-                enablePullUp: state.hasMoreNews,
-                onRefresh: _onRefresh,
-                onLoading: _onLoading,
-                header: const WaterDropHeader(),
-                footer: const CustomFooter(builder: commonRefresherFooter),
-                child: newsList.isEmpty && !state.isLoading
-                    ? Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * AppDimensions.numD05),
-                          child: Text(
-                            state.isProcessing
-                                ? "News is being aggregated for your location. Please pull down to refresh in a few moments."
-                                : "No news found",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: size.width * AppDimensions.numD04,
-                              color: Colors.black,
-                            ),
+        return Stack(
+          children: [
+            SmartRefresher(
+              controller: _refreshController,
+              enablePullDown: true,
+              enablePullUp: state.hasMoreNews,
+              onRefresh: _onRefresh,
+              onLoading: _onLoading,
+              header: const WaterDropHeader(),
+              footer: const CustomFooter(builder: commonRefresherFooter),
+              child: newsList.isEmpty && !state.isLoading
+                  ? Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * AppDimensions.numD05),
+                        child: Text(
+                          state.isProcessing
+                              ? "News is being aggregated for your location. Please pull down to refresh in a few moments."
+                              : "No news found",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: size.width * AppDimensions.numD04,
+                            color: Colors.black,
                           ),
                         ),
-                      )
-                    : ListView.separated(
-                        padding: EdgeInsets.only(
-                          top: widget.hideFilters
-                              ? size.width * AppDimensions.numD04
-                              : 130, // Adjusted for SearchAndFilterBar
-                          left: size.width * AppDimensions.numD04,
-                          right: size.width * AppDimensions.numD04,
-                          bottom: size.width * AppDimensions.numD04,
-                        ),
-                        itemCount: newsList.length,
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: size.width * AppDimensions.numD06),
-                        itemBuilder: (context, index) {
-                          return _buildNewsCard(context, newsList[index], size);
-                        },
                       ),
-              ),
-              if (!widget.hideFilters)
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: SearchAndFilterBar(
-                    searchController: _searchController,
-                    searchFocusNode: _searchFocusNode,
-                    selectedAlertType: selectedAlertType,
-                    selectedDistance: selectedDistance,
-                    selectedCategory: selectedCategory,
-                    onChange: _onSearchChanged,
-                    onAlertTypeChanged: (val) {
-                      if (val != null) {
-                        setState(() => selectedAlertType = val);
-                        _applyFilters();
-                      }
-                    },
-                    onDistanceChanged: (val) {
-                      if (val != null) {
-                        setState(() => selectedDistance = val);
-                        _applyFilters();
-                      }
-                    },
-                    onCategoryChanged: (val) {
-                      if (val != null) {
-                        setState(() => selectedCategory = val);
-                        _applyFilters();
-                      }
-                    },
-                    showNavigationIcon: false,
-                  ),
-                ),
-              if (_predictions.isNotEmpty)
-                Positioned(
-                  top: 60,
-                  left: 12,
-                  right: 60,
-                  child: Container(
-                    constraints: BoxConstraints(
-                      maxHeight: size.height * 0.4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      itemCount: _predictions.length,
+                    )
+                  : ListView.separated(
+                      padding: EdgeInsets.only(
+                        top: widget.hideFilters
+                            ? size.width * AppDimensions.numD04
+                            : 80, // Adjusted for SearchAndFilterBar
+                        left: size.width * AppDimensions.numD04,
+                        right: size.width * AppDimensions.numD04,
+                        bottom: size.width * AppDimensions.numD04,
+                      ),
+                      itemCount: newsList.length,
                       separatorBuilder: (context, index) =>
-                          const Divider(height: 1),
+                          SizedBox(height: size.width * AppDimensions.numD06),
                       itemBuilder: (context, index) {
-                        final p = _predictions[index];
-                        return ListTile(
-                          dense: true,
-                          title: Text(
-                            p['description'],
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                          onTap: () => _selectPrediction(p),
-                        );
+                        return _buildNewsCard(context, newsList[index], size);
                       },
                     ),
+            ),
+            if (!widget.hideFilters)
+              Positioned(
+                top: 5,
+                left: 0,
+                right: 0,
+                child: SearchAndFilterBar(
+                  searchController: _searchController,
+                  searchFocusNode: _searchFocusNode,
+                  selectedAlertType: selectedAlertType,
+                  selectedDistance: selectedDistance,
+                  selectedCategory: selectedCategory,
+                  onChange: _onSearchChanged,
+                  showFilters: false, // "only search" for news tab
+                  onAlertTypeChanged: (val) {
+                    if (val != null) {
+                      setState(() => selectedAlertType = val);
+                      _applyFilters();
+                    }
+                  },
+                  onDistanceChanged: (val) {
+                    if (val != null) {
+                      setState(() => selectedDistance = val);
+                      _applyFilters();
+                    }
+                  },
+                  onCategoryChanged: (val) {
+                    if (val != null) {
+                      setState(() => selectedCategory = val);
+                      _applyFilters();
+                    }
+                  },
+                  showNavigationIcon: false,
+                ),
+              ),
+            if (_predictions.isNotEmpty)
+              Positioned(
+                top: 60,
+                left: 12,
+                right: 60,
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxHeight: size.height * 0.4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    itemCount: _predictions.length,
+                    separatorBuilder: (context, index) =>
+                        const Divider(height: 1),
+                    itemBuilder: (context, index) {
+                      final p = _predictions[index];
+                      return ListTile(
+                        dense: true,
+                        title: Text(
+                          p['description'],
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        onTap: () => _selectPrediction(p),
+                      );
+                    },
                   ),
                 ),
-              if (state.isLoading && newsList.isEmpty)
-                Container(
-                  color: Colors.transparent,
-                  child: Center(
-                    child: showAnimatedLoader(size),
-                  ),
+              ),
+            if (state.isLoading && newsList.isEmpty)
+              Container(
+                color: Colors.transparent,
+                child: Center(
+                  child: showAnimatedLoader(size),
                 ),
-            ],
-          ),
+              ),
+          ],
         );
       },
     );
@@ -770,6 +845,12 @@ class _NewsPageState extends State<NewsPage>
       default:
         return 50.0;
     }
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 }
 

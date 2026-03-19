@@ -5,9 +5,10 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/widgets/logo_widget.dart';
+import 'package:presshop/features/news/presentation/pages/news_page.dart';
 
 class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const   NewHomeAppBar({
+  const NewHomeAppBar({
     super.key,
     required this.size,
     this.hideLeading = false,
@@ -17,6 +18,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.appBarTitle,
     this.hideHamburger = false,
     this.appBarbackgroundColor = Colors.white,
+    this.isFromMap = false,
   });
   final Size size;
   final bool hideLeading;
@@ -26,6 +28,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? appBarTitle;
   final bool hideHamburger;
   final Color appBarbackgroundColor;
+  final bool isFromMap;
 
   @override
   Widget build(BuildContext context) {
@@ -80,21 +83,41 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           SizedBox(
             width: size.width * AppDimensions.numD02,
           ),
+        Center(
+            child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const NewsPage(
+                            hideFilters: true,
+                          )));
+                },
+                child: Text(
+                  "Click to view local news",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                    fontSize: size.width * 0.03,
+                    decoration: TextDecoration.underline,
+                  ),
+                ))),
         if (!hideHamburger)
           Center(
             child: InkWell(
               onTap: () {
-                context.pushNamed(AppRoutes.menuName);
+                // context.pushNamed(AppRoutes.menuName);
+                context.pushNamed(AppRoutes.newsName,
+                    extra: {'fromMap': isFromMap});
               },
               child: Container(
                 padding: EdgeInsets.all(size.width * AppDimensions.numD025),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
+                  // color: Colors.grey.shade200,
                   borderRadius:
                       BorderRadius.circular(size.width * AppDimensions.numD035),
                 ),
                 child: Image.asset(
-                  'assets/icons/menu3.png',
+                  // 'assets/icons/menu3.png',
+                  'assets/icons/ic_news2.png',
                   width: size.width * AppDimensions.numD06,
                   height: size.width * AppDimensions.numD06,
                 ),

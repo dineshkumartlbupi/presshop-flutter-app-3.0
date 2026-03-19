@@ -18,7 +18,14 @@ import '../widgets/feed_filter_bottom_sheet.dart';
 import '../mixins/media_controller_mixin.dart';
 
 class FeedScreen extends StatefulWidget {
-  const FeedScreen({super.key});
+  const FeedScreen({
+    super.key,
+    this.showAppBar = true,
+    this.onShowFilter,
+  });
+
+  final bool showAppBar;
+  final Function(Function())? onShowFilter;
 
   @override
   State<StatefulWidget> createState() {
@@ -51,11 +58,17 @@ class FeedScreenState extends State<FeedScreen>
     _feedBloc = sl<FeedBloc>();
     _feedBloc.add(const FetchFeeds(isRefresh: true));
     initializeFilter();
+    if (widget.onShowFilter != null) {
+      widget.onShowFilter!(showSortedBottomSheet);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    if (!widget.showAppBar) {
+      return _buildBody(size);
+    }
     return Scaffold(
       appBar: CommonAppBar(
         elevation: 0,
@@ -103,76 +116,80 @@ class FeedScreenState extends State<FeedScreen>
         ],
       ),
       body: SafeArea(
-        child: BlocProvider.value(
-          value: _feedBloc,
-          child: BlocConsumer<FeedBloc, FeedState>(
-            listener: (context, state) {
-              if (state.status == FeedStatus.failure) {
-                _refreshController.refreshFailed();
-              } else if (state.status == FeedStatus.success) {
-                _refreshController.refreshCompleted();
-                if (state.hasReachedMax) {
-                  _refreshController.loadNoData();
-                } else {
-                  _refreshController.loadComplete();
-                }
-              }
-            },
-            builder: (context, state) {
-              if (state.status == FeedStatus.initial ||
-                  (state.status == FeedStatus.loading && state.feeds.isEmpty)) {
-                return const SizedBox.shrink();
-              }
+        child: _buildBody(size),
+      ),
+    );
+  }
 
-              return SmartRefresher(
-                controller: _refreshController,
-                enablePullDown: true,
-                enablePullUp: !state.hasReachedMax,
-                onRefresh: _onRefresh,
-                onLoading: _onLoading,
-                footer: const CustomFooter(builder: commonRefresherFooter),
-                child: ListView.separated(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: size.width * AppDimensions.numD04,
-                        vertical: size.width * AppDimensions.numD04),
-                    itemBuilder: (context, index) {
-                      return FeedItemWidget(
-                        feed: state.feeds[index],
-                        size: size,
-                        pageController: pageController,
-                        initialController: initialController,
-                        openUrl: openUrl,
-                        onFavouriteToggle: () {
-                          _feedBloc.add(ToggleFavouriteFeed(
-                              id: state.feeds[index].id,
-                              isFavourite: !state.feeds[index].isFavourite));
-                        },
-                        onLikeToggle: () {
-                          _feedBloc.add(ToggleLikeFeed(
-                              id: state.feeds[index].id,
-                              isLiked: !state.feeds[index].isLiked));
-                        },
-                        onEmojiToggle: () {
-                          _feedBloc.add(ToggleEmojiFeed(
-                              id: state.feeds[index].id,
-                              isEmoji: !state.feeds[index].isEmoji));
-                        },
-                      );
+  Widget _buildBody(Size size) {
+    return BlocProvider.value(
+      value: _feedBloc,
+      child: BlocConsumer<FeedBloc, FeedState>(
+        listener: (context, state) {
+          if (state.status == FeedStatus.failure) {
+            _refreshController.refreshFailed();
+          } else if (state.status == FeedStatus.success) {
+            _refreshController.refreshCompleted();
+            if (state.hasReachedMax) {
+              _refreshController.loadNoData();
+            } else {
+              _refreshController.loadComplete();
+            }
+          }
+        },
+        builder: (context, state) {
+          if (state.status == FeedStatus.initial ||
+              (state.status == FeedStatus.loading && state.feeds.isEmpty)) {
+            return const SizedBox.shrink();
+          }
+
+          return SmartRefresher(
+            controller: _refreshController,
+            enablePullDown: true,
+            enablePullUp: !state.hasReachedMax,
+            onRefresh: _onRefresh,
+            onLoading: _onLoading,
+            footer: const CustomFooter(builder: commonRefresherFooter),
+            child: ListView.separated(
+                padding: EdgeInsets.symmetric(
+                    horizontal: size.width * AppDimensions.numD04,
+                    vertical: size.width * AppDimensions.numD04),
+                itemBuilder: (context, index) {
+                  return FeedItemWidget(
+                    feed: state.feeds[index],
+                    size: size,
+                    pageController: pageController,
+                    initialController: initialController,
+                    openUrl: openUrl,
+                    onFavouriteToggle: () {
+                      _feedBloc.add(ToggleFavouriteFeed(
+                          id: state.feeds[index].id,
+                          isFavourite: !state.feeds[index].isFavourite));
                     },
-                    separatorBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(
-                            bottom: size.width * AppDimensions.numD04),
-                        child: const Divider(
-                          color: AppColorTheme.colorTextFieldIcon,
-                        ),
-                      );
+                    onLikeToggle: () {
+                      _feedBloc.add(ToggleLikeFeed(
+                          id: state.feeds[index].id,
+                          isLiked: !state.feeds[index].isLiked));
                     },
-                    itemCount: state.feeds.length),
-              );
-            },
-          ),
-        ),
+                    onEmojiToggle: () {
+                      _feedBloc.add(ToggleEmojiFeed(
+                          id: state.feeds[index].id,
+                          isEmoji: !state.feeds[index].isEmoji));
+                    },
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                        bottom: size.width * AppDimensions.numD04),
+                    child: const Divider(
+                      color: AppColorTheme.colorTextFieldIcon,
+                    ),
+                  );
+                },
+                itemCount: state.feeds.length),
+          );
+        },
       ),
     );
   }

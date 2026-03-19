@@ -424,6 +424,7 @@ class AppRouter {
               hideLeading: extra['hideLeading'] ?? false,
               latitude: extra['latitude'],
               longitude: extra['longitude'],
+              fromMap: extra['fromMap'] ?? false,
             ),
           );
         },

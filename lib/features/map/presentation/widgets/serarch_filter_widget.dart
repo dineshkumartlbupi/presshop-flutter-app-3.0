@@ -17,6 +17,7 @@ class SearchAndFilterBar extends StatelessWidget {
     this.onDistanceChanged,
     this.onCategoryChanged,
     this.showNavigationIcon = true,
+    this.showFilters = true,
   });
   final VoidCallback? onPressedOnNavigation;
   final Function(String)? onChange;
@@ -29,6 +30,7 @@ class SearchAndFilterBar extends StatelessWidget {
   final Function(String?)? onDistanceChanged;
   final Function(String?)? onCategoryChanged;
   final bool showNavigationIcon;
+  final bool showFilters;
 
   @override
   Widget build(BuildContext context) {
@@ -120,42 +122,44 @@ class SearchAndFilterBar extends StatelessWidget {
                 ),
             ],
           ),
-          SizedBox(
-            height: size.height * 0.01,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _FilterDropdown(
-                        items: alertTypeFilter,
-                        selected: selectedAlertType ?? 'Alert',
-                        onChanged: onAlertTypeChanged,
+          if (showFilters)
+            SizedBox(
+              height: size.height * 0.01,
+            ),
+          if (showFilters)
+            Row(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _FilterDropdown(
+                          items: alertTypeFilter,
+                          selected: selectedAlertType ?? 'Alert',
+                          onChanged: onAlertTypeChanged,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: _FilterDropdown(
-                        items: distanceFilter,
-                        selected: selectedDistance ?? '2 miles',
-                        onChanged: onDistanceChanged,
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: _FilterDropdown(
+                          items: distanceFilter,
+                          selected: selectedDistance ?? '2 miles',
+                          onChanged: onDistanceChanged,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: _FilterDropdown(
-                        items: categoryFilter,
-                        selected: selectedCategory ?? 'Category',
-                        onChanged: onCategoryChanged,
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: _FilterDropdown(
+                          items: categoryFilter,
+                          selected: selectedCategory ?? 'Category',
+                          onChanged: onCategoryChanged,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
         ],
       ),
     );

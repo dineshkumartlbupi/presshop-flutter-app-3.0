@@ -623,6 +623,7 @@ class _MapPageContentState extends State<_MapPageContent>
                               child: NewsPage(
                                 hideFilters: true,
                                 appBarTitle: 'All News',
+                                fromMap: true,
                                 prioritizedContentId:
                                     current.selectedIncident!.id,
                               ),
@@ -694,6 +695,7 @@ class _MapPageContentState extends State<_MapPageContent>
             size: size,
             hideLeading: widget.hideLeading,
             showFilter: false,
+            // isFromMap: true,
           ),
           body: Stack(
             children: [

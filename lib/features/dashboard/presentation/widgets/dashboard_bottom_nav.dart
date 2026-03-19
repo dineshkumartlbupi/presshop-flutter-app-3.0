@@ -45,12 +45,14 @@ class DashboardBottomNavBar extends StatelessWidget {
           label: "Camera",
         ),
         const BottomNavigationBarItem(
-          icon: ImageIcon(AssetImage("assets/icons/ic_news1.png")),
-          label: "News",
-        ),
-        const BottomNavigationBarItem(
           icon: ImageIcon(AssetImage("assets/icons/ic_alert2.png")),
           label: "Alerts",
+        ),
+        BottomNavigationBarItem(
+          icon: Transform.scale(
+              scale: 1.2,
+              child: ImageIcon(AssetImage("assets/icons/menu3.png"))),
+          label: "Menu",
         ),
       ],
     );

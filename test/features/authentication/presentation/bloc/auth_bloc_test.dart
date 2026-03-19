@@ -121,7 +121,6 @@ void main() {
         AuthAuthenticated(user: tUser),
       ],
       verify: (_) {
-        // Verify Analytics tracking
         verify(() => mockAnalytics.logEvent(
               name: EventNames.userLogin,
               parameters: any(named: 'parameters'),

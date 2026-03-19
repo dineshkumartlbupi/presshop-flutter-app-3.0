@@ -9,6 +9,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/features/task/presentation/widgets/dialog_for_continuous_location.dart';
+import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 // URL from old project to maintain API compatibility
@@ -342,6 +343,11 @@ void _startLocationTracking({
 /// =============================================================
 class BackgroundLocationService {
   static final FlutterBackgroundService service = FlutterBackgroundService();
+  static final ValueNotifier<bool> isRunningNotifier = ValueNotifier<bool>(false);
+
+  static Future<void> syncRunningStatus() async {
+    isRunningNotifier.value = await service.isRunning();
+  }
 
   static Future<bool> initService({
     String? notificationTitle,
@@ -429,12 +435,22 @@ class BackgroundLocationService {
     );
 
     await service.startService();
+    isRunningNotifier.value = true;
+
+    await prefs.setBool(SharedPreferencesKeys.isTaskGrabbingActiveKey, true);
+    await prefs.setBool(SharedPreferencesKeys.manuallyStoppedServiceKey, false);
+
     return true;
   }
 
   static Future<void> stopService() async {
     if (await service.isRunning()) {
       service.invoke("stopService");
+      isRunningNotifier.value = false;
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(SharedPreferencesKeys.isTaskGrabbingActiveKey, false);
+      await prefs.setBool(SharedPreferencesKeys.manuallyStoppedServiceKey, true);
     }
   }
 }

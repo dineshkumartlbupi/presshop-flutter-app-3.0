@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/services/background_location_service.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/di/injection_container.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 
 import 'package:presshop/core/analytics/analytics_mixin.dart';
+import 'package:presshop/core/widgets/dialogs.dart';
 import 'package:presshop/features/menu/presentation/bloc/menu_bloc.dart';
 import 'package:presshop/features/menu/presentation/pages/menu_config.dart';
 import 'package:presshop/features/menu/presentation/bloc/menu_ui_cubit.dart';
@@ -32,6 +35,7 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     super.initState();
+    BackgroundLocationService.syncRunningStatus();
     menuList = buildMenu();
     _menuBloc = sl<MenuBloc>()..add(MenuLoadCounts());
     _uiCubit = MenuUiCubit();
@@ -286,6 +290,65 @@ class _MenuScreenState extends State<MenuScreen> {
             color: AppColorTheme.colorLightGrey,
           ),
           itemBuilder: (context, index) {
+            if (index == 0) {
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                    vertical: size.width * AppDimensions.numD02),
+                child: Row(
+                  children: [
+                    ImageIcon(
+                      const AssetImage("assets/markers/location1.webp"),
+                      size: size.width * AppDimensions.numD06,
+                      color: Colors.black,
+                    ),
+                    SizedBox(
+                      width: size.width * AppDimensions.numD03,
+                    ),
+                    Text(
+                      "Enable location",
+                      style: TextStyle(
+                          fontSize: size.width * AppDimensions.numD035,
+                          color: Colors.black,
+                          fontFamily: "AirbnbCereal",
+                          fontWeight: FontWeight.normal),
+                    ),
+                    const Spacer(),
+                    ValueListenableBuilder<bool>(
+                      valueListenable:
+                          BackgroundLocationService.isRunningNotifier,
+                      builder: (context, isRunning, child) {
+                        return FlutterSwitch(
+                          width: 55,
+                          height: 27,
+                          padding: 2,
+                          value: isRunning,
+                          inactiveColor: AppColorTheme.colorThemePink,
+                          activeColor: Colors.green,
+                          onToggle: (val) {
+                            _toggleLocationService(val, size);
+                          },
+                        );
+                      },
+                    )
+                    // SizedBox(
+                    //   height: 30,
+                    //   child: Transform.scale(
+                    //     scale: 0.8,
+                    //     child: Switch.adaptive(
+                    //       value: isTaskGrabbingOn,
+                    //       onChanged: (val) {
+                    //         _toggleLocationService(val);
+                    //       },
+                    //       activeColor: Colors.white,
+                    //       activeTrackColor: const Color(0xFF4BD37B),
+                    //     ),
+                    //   ),
+                    // )
+                  ],
+                ),
+              );
+            }
+
             final item = menuList[index];
             return MenuTile(
               item: item,
@@ -447,6 +510,18 @@ class _MenuScreenState extends State<MenuScreen> {
         );
       },
     );
+  }
+
+  void _toggleLocationService(bool value, Size size) async {
+    if (value) {
+      await BackgroundLocationService.initService(
+        context: context,
+        showPrePermissionDialog: true,
+      );
+    } else {
+      AllDialogs.showStopServiceConfirmationNew(size);
+      // await BackgroundLocationService.stopService();
+    }
   }
 }
 

@@ -11,6 +11,7 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/global_loader.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/content/presentation/pages/content_page.dart';
+import 'package:presshop/features/menu/presentation/pages/menu_screen.dart';
 import 'package:presshop/features/task/presentation/pages/task_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
@@ -243,14 +244,15 @@ class DashboardState extends State<Dashboard>
         picAgain: false,
         previousScreen: ScreenNameEnum.dashboardScreen,
       ),
-      BlocProvider(
-        create: (context) => sl<NewsBloc>()..add(const GetAllNewsEvent()),
-        child: const NewsPage(
-          hideLeading: true,
-          showAppBar: false,
-        ),
-      ),
-      MapPage(hideLeading: true, showAppBar: false)
+      // BlocProvider(
+      //   create: (context) => sl<NewsBloc>()..add(const GetAllNewsEvent()),
+      //   child: const NewsPage(
+      //     hideLeading: true,
+      //     showAppBar: false,
+      //   ),
+      // ),
+      MapPage(hideLeading: true, showAppBar: false),
+      MenuScreen()
     ];
   }
 
