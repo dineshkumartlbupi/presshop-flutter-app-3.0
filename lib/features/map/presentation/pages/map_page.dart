@@ -12,6 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:go_router/go_router.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 import 'package:presshop/features/news/presentation/pages/news_page.dart';
 import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
 
@@ -24,6 +25,7 @@ import 'package:presshop/features/map/presentation/widgets/alert_panel.dart';
 import 'package:presshop/features/map/presentation/widgets/burst_animation.dart';
 import 'package:presshop/features/map/presentation/widgets/content_marker_popup.dart';
 import 'package:presshop/features/map/presentation/widgets/custom_info_window.dart';
+import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:presshop/features/map/presentation/widgets/danger_zone_info_window.dart';
 import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
@@ -84,7 +86,7 @@ class _MapPageContent extends StatefulWidget {
 }
 
 class _MapPageContentState extends State<_MapPageContent>
-    with TickerProviderStateMixin, AnalyticsPageMixin {
+    with TickerProviderStateMixin, AnalyticsPageMixin, AutomaticKeepAliveClientMixin {
   final Completer<GoogleMapController> _controller = Completer();
   bool _locationTimeout = false;
   Timer? _locationTimer;
@@ -119,19 +121,26 @@ class _MapPageContentState extends State<_MapPageContent>
   final Map<String, ciw.CustomInfoWindowController> _markerControllers = {};
   final Set<String> _animatedMarkers = {};
   bool _isDisposed = false;
+  bool _isVisible = true;
+  MapState? _lastState;
+  Circle? _pulseCircle;
 
   Offset? _routeInfoOffset;
+
+  // Stable key for the map to prevent disposal/re-creation
+  final GlobalKey _mapGlobalKey = GlobalKey();
+
+  @override
+  bool get wantKeepAlive => true;
 
   void _checkPulseAnimation(double zoom) {
     if (zoom < 13.0) {
       if (_pulseController.isAnimating) {
         _pulseController.stop();
         // Clear circle
-        context.read<MapBloc>().add(UpdatePulseCircleEvent(
-              radiusMultiplier: 1.0,
-              opacity: 0.0,
-              zoomLevel: zoom,
-            ));
+        setState(() {
+          _pulseCircle = null;
+        });
       }
     } else {
       if (!_pulseController.isAnimating) {
@@ -181,15 +190,35 @@ class _MapPageContentState extends State<_MapPageContent>
       vsync: this,
       duration: const Duration(seconds: 2),
     )..addListener(() {
-        if (!mounted) return;
+        if (!mounted || !_isVisible) return;
         final val = Curves.easeOutQuad.transform(_pulseController.value);
-        context.read<MapBloc>().add(UpdatePulseCircleEvent(
-              radiusMultiplier: 1.0 + val * 0.5,
-              opacity: 1.0 - val,
-              zoomLevel: _currentZoom,
-            ));
+        final state = context.read<MapBloc>().state;
+        if (state.myLocation != null) {
+          final double baseRadiusAtZoom14 = 400.0;
+          final double safeZoom = _currentZoom.roundToDouble();
+          final double scaleFactor = pow(2, 14 - safeZoom).toDouble();
+          final double dynamicRadius = baseRadiusAtZoom14 * scaleFactor;
+          final double radius = dynamicRadius * (1.0 + val * 0.5);
+          final opacity = 1.0 - val;
+
+          setState(() {
+            _pulseCircle = Circle(
+              circleId: const CircleId('my_location_pulse'),
+              center: state.myLocation!,
+              radius: radius,
+              fillColor: const Color.fromARGB(255, 247, 70, 70)
+                  .withOpacity(opacity * 0.5),
+              strokeColor:
+                  const Color.fromARGB(255, 255, 84, 84).withOpacity(opacity),
+              strokeWidth: 1,
+            );
+          });
+        }
       });
-    _pulseController.repeat();
+
+    if (_isVisible) {
+      _pulseController.repeat();
+    }
 
     // Start a timer to detect location acquisition timeout
     _locationTimeout = false;
@@ -516,10 +545,25 @@ class _MapPageContentState extends State<_MapPageContent>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     var size = MediaQuery.of(context).size;
     final double responsiveWidth = size.width > 600 ? 500 : size.width;
 
     return BlocConsumer<MapBloc, MapState>(
+      buildWhen: (previous, current) {
+        // Optimization: Only rebuild if essential map elements have changed
+        return previous.markers != current.markers ||
+            previous.polylines != current.polylines ||
+            previous.circles != current.circles ||
+            previous.myLocation != current.myLocation ||
+            previous.selectedAlertType != current.selectedAlertType ||
+            previous.selectedDistance != current.selectedDistance ||
+            previous.selectedCategory != current.selectedCategory ||
+            previous.showAlertPanel != current.showAlertPanel ||
+            previous.showGetDirectionCard != current.showGetDirectionCard ||
+            previous.isNavigating != current.isNavigating ||
+            previous.isLoadingNews != current.isLoadingNews;
+      },
       listener: (context, state) {
         if (state.errorMessage != null) {
           if (state.errorMessage == "Location permissions are denied" ||
@@ -543,7 +587,6 @@ class _MapPageContentState extends State<_MapPageContent>
           }
         }
 
-        // Listen for selection changes to update info window position
         if (state.selectedPosition == null) {
           _lastSelectedPosition = null;
         } else if (state.selectedPosition != _lastSelectedPosition) {
@@ -592,13 +635,16 @@ class _MapPageContentState extends State<_MapPageContent>
             state.routeInfo!.points.isNotEmpty) {
           _fitBounds(state.routeInfo!.points);
         }
-        if (state.newlyCreatedIncident != null) {
+        if (_lastState?.newlyCreatedIncident != state.newlyCreatedIncident &&
+            state.newlyCreatedIncident != null) {
           final incident = state.newlyCreatedIncident!;
           final type = incident.type ?? incident.alertType ?? "accident";
           _addBurst(incident.position, type);
         }
-        _syncAnimatedMarkers(state);
-        if (mounted && !_isDisposed) setState(() {});
+        if (_isVisible) {
+          _syncAnimatedMarkers(state);
+        }
+        _lastState = state;
       },
       listenWhen: (previous, current) {
         if (previous.selectedIncident?.id != current.selectedIncident?.id) {
@@ -687,392 +733,427 @@ class _MapPageContentState extends State<_MapPageContent>
           }
         }
 
-        return Scaffold(
-          appBar: NewHomeAppBar(
-            size: size,
-            hideLeading: widget.hideLeading,
-            showFilter: false,
-            // isFromMap: true,
-          ),
-          body: Stack(
-            children: [
-              GoogleMap(
-                onMapCreated: (c) async {
-                  if (!_controller.isCompleted) {
-                    _controller.complete(c);
-                    _customInfoWindowController.googleMapController = c;
-                  }
+        return VisibilityDetector(
+          key: const Key('map-visibility-key'),
+          onVisibilityChanged: (visibilityInfo) {
+            final visible = visibilityInfo.visibleFraction > 0.1;
+            if (visible != _isVisible) {
+              setState(() {
+                _isVisible = visible;
+              });
+              if (_isVisible) {
+                if (!_pulseController.isAnimating) {
+                  _pulseController.repeat();
+                }
+              } else {
+                _pulseController.stop();
+              }
+            }
+          },
+          child: Scaffold(
+            appBar: NewHomeAppBar(
+              size: size,
+              hideLeading: widget.hideLeading,
+              showFilter: false,
+              // isFromMap: true,
+            ),
+            body: Stack(
+              children: [
+                RepaintBoundary(
+                  child: GoogleMap(
+                    key: _mapGlobalKey,
+                    onMapCreated: (c) async {
+                    if (!_controller.isCompleted) {
+                      _controller.complete(c);
+                      _customInfoWindowController.googleMapController = c;
+                    }
 
-                  if (mounted) {
-                    unawaited(_updateInfoWindow());
-                  }
-                },
-                onCameraMoveStarted: () {
-                  if (!_isProgrammaticMovement) {
-                    _isUserDragging = true;
-                  }
-                  _customInfoWindowController.onCameraMove?.call();
-                  for (var controller in _markerControllers.values) {
-                    controller.onCameraMove?.call();
-                  }
-                },
-                onCameraMove: (pos) {
-                  _currentZoom = pos.zoom;
-                  _checkPulseAnimation(pos.zoom);
-                  _customInfoWindowController.onCameraMove?.call();
-                  for (var controller in _markerControllers.values) {
-                    controller.onCameraMove?.call();
-                  }
-                  _updateInfoWindow();
-
-                  if (_isUserDragging) {
-                    // _customInfoWindowController.hideInfoWindow!();
-                    context.read<MapBloc>().add(const SetDraggingEvent(true));
-                  }
-                },
-                onCameraIdle: () {
-                  if (mounted) {
+                    if (mounted) {
+                      unawaited(_updateInfoWindow());
+                    }
+                  },
+                  onCameraMoveStarted: () {
+                    if (!_isProgrammaticMovement) {
+                      _isUserDragging = true;
+                    }
+                    _customInfoWindowController.onCameraMove?.call();
+                    for (var controller in _markerControllers.values) {
+                      controller.onCameraMove?.call();
+                    }
+                  },
+                  onCameraMove: (pos) {
+                    _currentZoom = pos.zoom;
+                    _checkPulseAnimation(pos.zoom);
+                    _customInfoWindowController.onCameraMove?.call();
+                    for (var controller in _markerControllers.values) {
+                      controller.onCameraMove?.call();
+                    }
                     _updateInfoWindow();
-                    _isProgrammaticMovement = false;
+
                     if (_isUserDragging) {
+                      // _customInfoWindowController.hideInfoWindow!();
+                      context.read<MapBloc>().add(const SetDraggingEvent(true));
+                    }
+                  },
+                  onCameraIdle: () {
+                    if (mounted) {
+                      _updateInfoWindow();
+                      _isProgrammaticMovement = false;
+                      if (_isUserDragging) {
+                        context
+                            .read<MapBloc>()
+                            .add(const SetDraggingEvent(false));
+                        _isUserDragging = false;
+                      }
+                    }
+                  },
+                  onTap: (pos) async {
+                    _customInfoWindowController.hideInfoWindow!();
+                    context.read<MapBloc>().add(ClearRouteEvent());
+
+                    if (_isSelectingAlertLocation &&
+                        _pendingAlertType != null) {
+                      context.read<MapBloc>().add(SetPreviewAlertMarkerEvent(
+                          type: _pendingAlertType!, position: pos));
+                      setState(() {
+                        _isSelectingAlertLocation = false;
+                        _pendingAlertType = null;
+                      });
+                      return;
+                    }
+
+                    if (state.showAlertPanel) {
+                      context.read<MapBloc>().add(ToggleAlertPanelEvent());
+                      return;
+                    }
+
+                    // Destination Selection Mode
+                    if (state.isDestinationSelectionMode) {
+                      final repo = sl<MapRepository>();
+                      String address = "${pos.latitude}, ${pos.longitude}";
+
+                      final result = await repo.getAddressFromCoordinates(pos);
+                      result.fold(
+                        (failure) => debugPrint(
+                            "Failed to get address: ${failure.message}"),
+                        (addr) => address = addr,
+                      );
+
+                      context.read<MapBloc>().add(SetMapSelectedLocationEvent(
+                            position: pos,
+                            address: address,
+                            isOrigin: state.isSelectingOrigin,
+                          ));
+
                       context
                           .read<MapBloc>()
-                          .add(const SetDraggingEvent(false));
-                      _isUserDragging = false;
+                          .add(SetDestinationSelectionModeEvent(
+                            isSelectionMode: false,
+                          ));
+                      return;
                     }
-                  }
-                },
-                onTap: (pos) async {
-                  _customInfoWindowController.hideInfoWindow!();
-                  context.read<MapBloc>().add(ClearRouteEvent());
 
-                  if (_isSelectingAlertLocation && _pendingAlertType != null) {
-                    context.read<MapBloc>().add(SetPreviewAlertMarkerEvent(
-                        type: _pendingAlertType!, position: pos));
+                    if (state.showGetDirectionCard) {
+                      final repo = sl<MapRepository>();
+                      String address = "${pos.latitude}, ${pos.longitude}";
+
+                      final result = await repo.getAddressFromCoordinates(pos);
+                      result.fold(
+                        (failure) => debugPrint(
+                            "Failed to get address: ${failure.message}"),
+                        (addr) => address = addr,
+                      );
+
+                      context.read<MapBloc>().add(SetMapSelectedLocationEvent(
+                            position: pos,
+                            address: address,
+                            isOrigin: false,
+                          ));
+                      return;
+                    }
+
+                    context.read<MapBloc>().add(ClearSelectedMarkerEvent());
+                    context.read<MapBloc>().add(ClearSelectedPolygonEvent());
                     setState(() {
-                      _isSelectingAlertLocation = false;
-                      _pendingAlertType = null;
+                      _infoOffset = null;
+                      _polygonInfoOffset = null;
                     });
-                    return;
-                  }
+                  },
+                  initialCameraPosition: state.initialCamera ??
+                      const CameraPosition(
+                        target: LatLng(51.5074, -0.1278),
+                        zoom: 14,
+                      ),
+                  markers: state.markers,
+                  polylines: state.polylines,
+                  polygons: state.polygons,
+                  circles: {
+                    ...state.circles
+                        .where((c) => c.circleId.value != 'my_location_pulse'),
+                    if (_pulseCircle != null) _pulseCircle!,
+                  },
+                  myLocationButtonEnabled: false,
+                  myLocationEnabled: true,
+                  zoomControlsEnabled: false,
+                  padding: const EdgeInsets.only(bottom: 220),
+                ),
+                ),
 
-                  if (state.showAlertPanel) {
-                    context.read<MapBloc>().add(ToggleAlertPanelEvent());
-                    return;
-                  }
+                // Interactive marker overlays
+                ..._markerControllers.values.map((controller) {
+                  return ciw.CustomInfoWindow(
+                    controller: controller,
+                    height: responsiveWidth * 0.12,
+                    width: responsiveWidth * 0.12,
+                    offset: 4,
+                  );
+                }),
 
-                  // Destination Selection Mode
-                  if (state.isDestinationSelectionMode) {
-                    final repo = sl<MapRepository>();
-                    String address = "${pos.latitude}, ${pos.longitude}";
+                // CustomInfoWindow overlay for popups
+                ciw.CustomInfoWindow(
+                  controller: _customInfoWindowController,
+                  height: responsiveWidth * 0.85,
+                  width: responsiveWidth * 0.75,
+                  offset: responsiveWidth * 0.14,
+                ),
 
-                    final result = await repo.getAddressFromCoordinates(pos);
-                    result.fold(
-                      (failure) => debugPrint(
-                          "Failed to get address: ${failure.message}"),
-                      (addr) => address = addr,
-                    );
-
-                    context.read<MapBloc>().add(SetMapSelectedLocationEvent(
-                          position: pos,
-                          address: address,
-                          isOrigin: state.isSelectingOrigin,
-                        ));
-
-                    context
-                        .read<MapBloc>()
-                        .add(SetDestinationSelectionModeEvent(
-                          isSelectionMode: false,
-                        ));
-                    return;
-                  }
-
-                  if (state.showGetDirectionCard) {
-                    final repo = sl<MapRepository>();
-                    String address = "${pos.latitude}, ${pos.longitude}";
-
-                    final result = await repo.getAddressFromCoordinates(pos);
-                    result.fold(
-                      (failure) => debugPrint(
-                          "Failed to get address: ${failure.message}"),
-                      (addr) => address = addr,
-                    );
-
-                    context.read<MapBloc>().add(SetMapSelectedLocationEvent(
-                          position: pos,
-                          address: address,
-                          isOrigin: false,
-                        ));
-                    return;
-                  }
-
-                  context.read<MapBloc>().add(ClearSelectedMarkerEvent());
-                  context.read<MapBloc>().add(ClearSelectedPolygonEvent());
-                  setState(() {
-                    _infoOffset = null;
-                    _polygonInfoOffset = null;
-                  });
-                },
-                initialCameraPosition: state.initialCamera ??
-                    const CameraPosition(
-                      target: LatLng(51.5074, -0.1278),
-                      zoom: 14,
+                // Dedicated CustomInfoWindow for Route Details (Smaller)
+                // ======================= Route Info (Positioned) =======================
+                if (_routeInfoOffset != null &&
+                    state.routeInfo != null &&
+                    state.routeMidpoint != null)
+                  Positioned(
+                    left: _routeInfoOffset!.dx -
+                        100, // Center horizontally (width 200/2)
+                    top: _routeInfoOffset!.dy - 130, // Place above marker
+                    child: RouteInfoWindow(
+                      distance:
+                          "${state.routeInfo!.distanceKm.toStringAsFixed(2)} km",
+                      duration: "${state.routeInfo!.durationMinutes} min",
+                      onClose: () {
+                        context.read<MapBloc>().add(ClearRouteEvent());
+                      },
                     ),
-                markers: state.markers,
-                polylines: state.polylines,
-                polygons: state.polygons,
-                circles: state.circles,
-                myLocationButtonEnabled: false,
-                myLocationEnabled: true,
-                zoomControlsEnabled: false,
-                padding: const EdgeInsets.only(bottom: 220),
-              ),
+                  ),
 
-              // Interactive marker overlays
-              ..._markerControllers.values.map((controller) {
-                return ciw.CustomInfoWindow(
-                  controller: controller,
-                  height: responsiveWidth * 0.12,
-                  width: responsiveWidth * 0.12,
-                  offset: 4,
-                );
-              }),
+                // ======================= Polygon Info =======================
+                if (_polygonInfoOffset != null &&
+                    state.selectedPolygonId != null)
+                  Positioned(
+                    left: _polygonInfoOffset!.dx - 110,
+                    top: _polygonInfoOffset!.dy - 140,
+                    child: DangerZoneInfoWindow(
+                      name: "Danger Zone",
+                      description: "High risk area - proceed with caution",
+                      onPressed: () {
+                        context
+                            .read<MapBloc>()
+                            .add(ClearSelectedPolygonEvent());
+                        setState(() => _polygonInfoOffset = null);
+                      },
+                    ),
+                  ),
 
-              // CustomInfoWindow overlay for popups
-              ciw.CustomInfoWindow(
-                controller: _customInfoWindowController,
-                height: responsiveWidth * 0.85,
-                width: responsiveWidth * 0.75,
-                offset: responsiveWidth * 0.14,
-              ),
-
-              // Dedicated CustomInfoWindow for Route Details (Smaller)
-              // ======================= Route Info (Positioned) =======================
-              if (_routeInfoOffset != null &&
-                  state.routeInfo != null &&
-                  state.routeMidpoint != null)
                 Positioned(
-                  left: _routeInfoOffset!.dx -
-                      100, // Center horizontally (width 200/2)
-                  top: _routeInfoOffset!.dy - 130, // Place above marker
-                  child: RouteInfoWindow(
-                    distance:
-                        "${state.routeInfo!.distanceKm.toStringAsFixed(2)} km",
-                    duration: "${state.routeInfo!.durationMinutes} min",
-                    onClose: () {
-                      context.read<MapBloc>().add(ClearRouteEvent());
-                    },
+                  top: 10,
+                  left: 0,
+                  right: 0,
+                  child: RepaintBoundary(
+                    child: SearchAndFilterBar(
+                      searchController: _searchController,
+                      searchFocusNode: _searchFocusNode,
+                      onPressedOnNavigation: () {
+                        context
+                            .read<MapBloc>()
+                            .add(ToggleGetDirectionCardEvent());
+                      },
+                      onChange: (value) {
+                        _searchPlaces(value);
+                      },
+                      selectedAlertType: state.selectedAlertType,
+                      selectedDistance: state.selectedDistance,
+                      selectedCategory: state.selectedCategory,
+                      onAlertTypeChanged: (value) {
+                        context.read<MapBloc>().add(UpdateFiltersEvent(
+                              alertType: value,
+                              distance: state.selectedDistance,
+                              category: state.selectedCategory,
+                            ));
+                      },
+                      onDistanceChanged: (value) {
+                        context.read<MapBloc>().add(UpdateFiltersEvent(
+                              alertType: state.selectedAlertType,
+                              distance: value,
+                              category: state.selectedCategory,
+                            ));
+                      },
+                      onCategoryChanged: (value) {
+                        context.read<MapBloc>().add(UpdateFiltersEvent(
+                              alertType: state.selectedAlertType,
+                              distance: state.selectedDistance,
+                              category: value,
+                            ));
+                      },
+                    ),
                   ),
                 ),
-
-              // ======================= Polygon Info =======================
-              if (_polygonInfoOffset != null && state.selectedPolygonId != null)
-                Positioned(
-                  left: _polygonInfoOffset!.dx - 110,
-                  top: _polygonInfoOffset!.dy - 140,
-                  child: DangerZoneInfoWindow(
-                    name: "Danger Zone",
-                    description: "High risk area - proceed with caution",
-                    onPressed: () {
-                      context.read<MapBloc>().add(ClearSelectedPolygonEvent());
-                      setState(() => _polygonInfoOffset = null);
-                    },
-                  ),
-                ),
-
-              Positioned(
-                top: 10,
-                left: 0,
-                right: 0,
-                child: SearchAndFilterBar(
-                  searchController: _searchController,
-                  searchFocusNode: _searchFocusNode,
-                  onPressedOnNavigation: () {
-                    context.read<MapBloc>().add(ToggleGetDirectionCardEvent());
-                  },
-                  onChange: (value) {
-                    _searchPlaces(value);
-                  },
-                  selectedAlertType: state.selectedAlertType,
-                  selectedDistance: state.selectedDistance,
-                  selectedCategory: state.selectedCategory,
-                  onAlertTypeChanged: (value) {
-                    context.read<MapBloc>().add(UpdateFiltersEvent(
-                          alertType: value,
-                          distance: state.selectedDistance,
-                          category: state.selectedCategory,
-                        ));
-                  },
-                  onDistanceChanged: (value) {
-                    context.read<MapBloc>().add(UpdateFiltersEvent(
-                          alertType: state.selectedAlertType,
-                          distance: value,
-                          category: state.selectedCategory,
-                        ));
-                  },
-                  onCategoryChanged: (value) {
-                    context.read<MapBloc>().add(UpdateFiltersEvent(
-                          alertType: state.selectedAlertType,
-                          distance: state.selectedDistance,
-                          category: value,
-                        ));
-                  },
-                ),
-              ),
-              if (_showDropdown && _predictions.isNotEmpty)
-                Positioned(
-                  left: 12,
-                  right: 55,
-                  top: 60,
-                  child: Material(
-                    elevation: 4,
-                    borderRadius: BorderRadius.circular(8),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxHeight: 200),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        itemCount: _predictions.length,
-                        itemBuilder: (context, index) {
-                          final prediction = _predictions[index];
-                          return InkWell(
-                            onTap: () {
-                              _selectPlace(
-                                prediction['place_id'],
-                                prediction['description'],
-                              );
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
+                if (_showDropdown && _predictions.isNotEmpty)
+                  Positioned(
+                    left: 12,
+                    right: 55,
+                    top: 60,
+                    child: Material(
+                      elevation: 4,
+                      borderRadius: BorderRadius.circular(8),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxHeight: 200),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          itemCount: _predictions.length,
+                          itemBuilder: (context, index) {
+                            final prediction = _predictions[index];
+                            return InkWell(
+                              onTap: () {
+                                _selectPlace(
+                                  prediction['place_id'],
+                                  prediction['description'],
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                                child: Text(prediction['description']),
                               ),
-                              child: Text(prediction['description']),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
-                ),
 
-              // ======================= Get Direction Card =======================
-              Positioned(
-                top: 65,
-                right: 10, // Aligned to the right button
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 300),
-                  opacity: state.showGetDirectionCard ? 1 : 0,
-                  child: AnimatedScale(
-                    duration: const Duration(milliseconds: 450),
-                    curve: Curves.easeOutBack,
-                    alignment: Alignment.topRight,
-                    scale: state.showGetDirectionCard ? 1.0 : 0.0,
-                    child: IgnorePointer(
-                      ignoring: !state.showGetDirectionCard,
-                      child: const GetDirectionCard(),
-                    ),
-                  ),
-                ),
-              ),
-
-              // ======================================> Alert Button
-              Positioned(
-                left: 16,
-                bottom: 15,
-                child: GestureDetector(
-                  onTap: () {
-                    context.read<MapBloc>().add(ToggleAlertPanelEvent());
-                  },
-                  child: const AlertButtonMap(),
-                ),
-              ),
-
-              // ======================= Loading Overlay =======================
-              if (state.myLocation == null || state.isLoadingNews)
+                // ======================= Get Direction Card =======================
                 Positioned(
-                  right: 28,
-                  bottom: 175,
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 2),
-                        )
-                      ],
-                    ),
-                    child: const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Color(0xFFEC4E54),
+                  top: 65,
+                  right: 10, // Aligned to the right button
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 300),
+                    opacity: state.showGetDirectionCard ? 1 : 0,
+                    child: AnimatedScale(
+                      duration: const Duration(milliseconds: 450),
+                      curve: Curves.easeOutBack,
+                      alignment: Alignment.topRight,
+                      scale: state.showGetDirectionCard ? 1.0 : 0.0,
+                      child: IgnorePointer(
+                        ignoring: !state.showGetDirectionCard,
+                        child: const GetDirectionCard(),
                       ),
                     ),
                   ),
                 ),
 
-              // ======================= Side Action Panel =======================
-              Positioned(
-                right: 20,
-                bottom: 20,
-                child: SideActionPanel(
-                  onCurrentLocation: _goToCurrentLocation,
-                  onZoomIn: _zoomIn,
-                  onZoomOut: _zoomOut,
+                // ======================================> Alert Button
+                Positioned(
+                  left: 16,
+                  bottom: 15,
+                  child: GestureDetector(
+                    onTap: () {
+                      context.read<MapBloc>().add(ToggleAlertPanelEvent());
+                    },
+                    child: const AlertButtonMap(),
+                  ),
                 ),
-              ),
 
-              // ======================= Alert Panel =======================
-              Positioned(
-                bottom: 56,
-                left: 0,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 300),
-                  opacity: state.showAlertPanel ? 1 : 0,
-                  child: AnimatedScale(
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeOutBack,
-                    alignment: Alignment.bottomLeft,
-                    scale: state.showAlertPanel ? 1 : 0.0,
-                    child: IgnorePointer(
-                      ignoring: !state.showAlertPanel,
-                      child: AlertPanel(
-                        onClose: () {
-                          context.read<MapBloc>().add(ToggleAlertPanelEvent());
-                        },
-                        onAlertSelected: (type) async {
-                          try {
-                            debugPrint("AlertSelected: $type");
-                            if (state.myLocation != null) {
-                              _addBurst(state.myLocation!, type);
-                              context.read<MapBloc>().add(AddAlertMarkerEvent(
-                                  type: type, position: state.myLocation!));
-                            } else {
-                              debugPrint(
-                                  "AlertSelected: Location not available");
+                // ======================= Loading Overlay =======================
+                if (state.myLocation == null || state.isLoadingNews)
+                  Positioned(
+                    right: 28,
+                    bottom: 175,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          )
+                        ],
+                      ),
+                      child: const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Color(0xFFEC4E54),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                // ======================= Side Action Panel =======================
+                Positioned(
+                  right: 20,
+                  bottom: 20,
+                  child: SideActionPanel(
+                    onCurrentLocation: _goToCurrentLocation,
+                    onZoomIn: _zoomIn,
+                    onZoomOut: _zoomOut,
+                  ),
+                ),
+
+                // ======================= Alert Panel =======================
+                Positioned(
+                  bottom: 56,
+                  left: 0,
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 300),
+                    opacity: state.showAlertPanel ? 1 : 0,
+                    child: AnimatedScale(
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeOutBack,
+                      alignment: Alignment.bottomLeft,
+                      scale: state.showAlertPanel ? 1 : 0.0,
+                      child: IgnorePointer(
+                        ignoring: !state.showAlertPanel,
+                        child: AlertPanel(
+                          onClose: () {
+                            context
+                                .read<MapBloc>()
+                                .add(ToggleAlertPanelEvent());
+                          },
+                          onAlertSelected: (type) async {
+                            try {
+                              debugPrint("AlertSelected: $type");
+                              if (state.myLocation != null) {
+                                _addBurst(state.myLocation!, type);
+                                context.read<MapBloc>().add(AddAlertMarkerEvent(
+                                    type: type, position: state.myLocation!));
+                              } else {
+                                debugPrint(
+                                    "AlertSelected: Location not available");
+                              }
+                            } catch (e) {
+                              debugPrint("Error adding alert marker: $e");
                             }
-                          } catch (e) {
-                            debugPrint("Error adding alert marker: $e");
-                          }
-                        },
+                          },
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              IgnorePointer(
-                child: CustomPaint(
-                  painter: BurstPainter(_particles, _burstImage),
-                  child: Container(),
+                IgnorePointer(
+                  child: CustomPaint(
+                    painter: BurstPainter(_particles, _burstImage),
+                    child: Container(),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -1080,7 +1161,11 @@ class _MapPageContentState extends State<_MapPageContent>
   }
 
   void _syncAnimatedMarkers(MapState state) {
-    if (_isDisposed) return;
+    if (_isDisposed || !_isVisible) return;
+
+    if (_lastState != null && _lastState!.markers == state.markers) {
+      return;
+    }
 
     final currentAnimatedMarkers = state.markers
         .where((m) =>

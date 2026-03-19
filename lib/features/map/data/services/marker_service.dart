@@ -209,6 +209,10 @@ class MarkerService {
     int size = 120,
     String? mediaType,
   }) async {
+    final cacheKey = 'content:$url:$size:$mediaType';
+    if (_bitmapCache.containsKey(cacheKey)) {
+      return _bitmapCache[cacheKey]!;
+    }
     try {
       final response = await http.get(Uri.parse(url));
       final bytes = response.bodyBytes;
@@ -284,10 +288,14 @@ class MarkerService {
       final byteData = await finalImage.toByteData(
         format: ui.ImageByteFormat.png,
       );
-      return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
+      final bitmap = BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
+      _bitmapCache[cacheKey] = bitmap;
+      return bitmap;
     } catch (e) {
       debugPrint("Error creating content marker: $e. Using default.");
-      return bitmapResize("assets/markers/bg-removed-content.png", width: size);
+      final defaultBitmap = await bitmapResize("assets/markers/bg-removed-content.png", width: size);
+      _bitmapCache[cacheKey] = defaultBitmap;
+      return defaultBitmap;
     }
   }
 

@@ -437,7 +437,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           }).toList();
 
           final Set<Marker> newMarkers = {};
-          const int batchSize = 5;
+          const int batchSize = 20; // Increased batch size for better performance
 
           for (int i = 0; i < incidents.length; i += batchSize) {
             final end = (i + batchSize < incidents.length)
@@ -461,12 +461,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 try {
                   icon = await markerService.createContentMarker(
                     incident.image ?? '',
-                    size: kContentMarkerSize, // Align with legacy size
+                    size: kContentMarkerSize,
                     mediaType: incident.mediaType,
                   );
                 } catch (e) {
-                  debugPrint(
-                      "DEBUG: Failed to load image for marker ${incident.id}, using default. Error: $e");
                   icon = BitmapDescriptor.defaultMarkerWithHue(
                       BitmapDescriptor.hueViolet);
                 }
@@ -481,19 +479,23 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 markerId: MarkerId(markerId),
                 position: incident.position,
                 icon: icon,
-                alpha: 0.0,
                 onTap: () {
                   add(SetSelectedIncidentEvent(incident));
                 },
               );
             }).toList();
+
             final batchMarkers = await Future.wait(batchFutures);
             newMarkers.addAll(batchMarkers);
-            emit(state.copyWith(
-              isLoadingNews: i + batchSize >= incidents.length ? false : true,
-              newsList: incidents,
-              markers: {...state.markers, ...newMarkers},
-            ));
+
+            // Only emit updates if we have finished a significant batch or reached the end
+            if (i + batchSize >= incidents.length || (i / batchSize) % 2 == 0) {
+              emit(state.copyWith(
+                isLoadingNews: i + batchSize >= incidents.length ? false : true,
+                newsList: incidents,
+                markers: {...state.markers, ...newMarkers},
+              ));
+            }
           }
 
           debugPrint("DEBUG: Created ${newMarkers.length} markers for news.");

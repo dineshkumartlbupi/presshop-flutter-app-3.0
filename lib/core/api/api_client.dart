@@ -26,9 +26,9 @@ class ApiClient {
       ),
     );
 
-    if (kDebugMode) {
-      _dio.interceptors.add(PrettyDioLogger(formatJson: true));
-    }
+    // if (kDebugMode) {
+    //   _dio.interceptors.add(PrettyDioLogger(formatJson: true));
+    // }
   }
   final Dio _dio;
   final SharedPreferences _sharedPreferences;
@@ -61,7 +61,7 @@ class ApiClient {
         _sharedPreferences.getString(SharedPreferencesKeys.deviceIdKey) ?? "";
 
     if (token != null && token.isNotEmpty) {
-      debugPrint("DEBUG: ApiClient Token: $token");
+      // debugPrint("DEBUG: ApiClient Token: $token");
       options.headers[SharedPreferencesKeys.headerKey] = "Bearer $token";
       options.headers['x-access-token'] = token;
     }

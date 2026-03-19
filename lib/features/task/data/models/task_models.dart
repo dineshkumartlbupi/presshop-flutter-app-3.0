@@ -134,14 +134,14 @@ class TaskDetailModel extends TaskDetail {
 
   factory TaskDetailModel.fromJson(Map<String, dynamic> json,
       {String roomId = ""}) {
-    debugPrint("json aditya::::$json");
+    // debugPrint("json aditya::::$json");
 
     List<TaskMedia> mediaList = [];
     if (json["content"] != null) {
       var uploadedMedia = json["content"] as List;
       mediaList =
           uploadedMedia.map((e) => TaskDetailMediaModel.fromJson(e)).toList();
-      debugPrint("mediaList Length : ${mediaList.length}");
+      // debugPrint("mediaList Length : ${mediaList.length}");
     }
 
     double latitude = 0.0;
@@ -185,8 +185,8 @@ class TaskDetailModel extends TaskDetail {
         (json["status"]?.toString().toLowerCase() == "success");
 
     if (!isSuccess) {
-      debugPrint(
-          "🚀 TaskDetailModel: Attempting to parse despite missing success/code flag");
+      // debugPrint(
+      //     "🚀 TaskDetailModel: Attempting to parse despite missing success/code flag");
     }
 
     return TaskDetailModel(
