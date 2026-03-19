@@ -684,9 +684,6 @@ class _MapPageContentState extends State<_MapPageContent>
                 ),
               ),
             );
-          } else {
-            return const Scaffold(
-                body: Center(child: CircularProgressIndicator()));
           }
         }
 
@@ -990,6 +987,35 @@ class _MapPageContentState extends State<_MapPageContent>
                   child: const AlertButtonMap(),
                 ),
               ),
+
+              // ======================= Loading Overlay =======================
+              if (state.myLocation == null || state.isLoadingNews)
+                Positioned(
+                  right: 28,
+                  bottom: 175,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        )
+                      ],
+                    ),
+                    child: const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Color(0xFFEC4E54),
+                      ),
+                    ),
+                  ),
+                ),
 
               // ======================= Side Action Panel =======================
               Positioned(
