@@ -251,7 +251,8 @@ class DashboardState extends State<Dashboard>
       //     showAppBar: false,
       //   ),
       // ),
-      MapPage(hideLeading: true, showAppBar: false),
+      // MapPage(hideLeading: true, showAppBar: false),
+      MenuScreen(),
       MenuScreen()
     ];
   }
