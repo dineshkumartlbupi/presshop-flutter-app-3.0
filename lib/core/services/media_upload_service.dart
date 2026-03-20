@@ -10,6 +10,7 @@ import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/utils/app_logger.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
+import 'package:presshop/features/media/domain/services/background_upload_service.dart';
 
 /// Service for handling media uploads with progress tracking
 class MediaUploadService {
@@ -31,6 +32,7 @@ class MediaUploadService {
     final apiClient = sl<ApiClient>();
 
     FormData formData = FormData();
+    List<String> backgroundVideos = [];
 
     // Add files to form data
     if (filePathList.isNotEmpty) {
@@ -39,11 +41,15 @@ class MediaUploadService {
         debugPrint("MediaMime: $mimeType");
 
         var mArray = mimeType.split("/");
-        var file = await MultipartFile.fromFile(
-          element.path,
-          contentType: MediaType(mArray.first, mArray.last),
-        );
-        formData.files.add(MapEntry(imageParams, file));
+        if (mArray.first == 'video') {
+           backgroundVideos.add(element.path);
+        } else {
+           var file = await MultipartFile.fromFile(
+             element.path,
+             contentType: MediaType(mArray.first, mArray.last),
+           );
+           formData.files.add(MapEntry(imageParams, file));
+        }
       }
     }
 
@@ -54,11 +60,15 @@ class MediaUploadService {
         debugPrint("AdditionalFile Mime: $mimeType Key: ${entry.key}");
 
         var mArray = mimeType.split("/");
-        var file = await MultipartFile.fromFile(
-          entry.value,
-          contentType: MediaType(mArray.first, mArray.last),
-        );
-        formData.files.add(MapEntry(entry.key, file));
+        if (mArray.first == 'video') {
+            backgroundVideos.add(entry.value);
+        } else {
+            var file = await MultipartFile.fromFile(
+              entry.value,
+              contentType: MediaType(mArray.first, mArray.last),
+            );
+            formData.files.add(MapEntry(entry.key, file));
+        }
       }
     }
 
@@ -106,6 +116,26 @@ class MediaUploadService {
 
       if (response.statusCode! <= 201) {
         debugPrint("Upload successful: ${response.data}");
+
+        // --- Intercept videos for chunked background upload ---
+        if (backgroundVideos.isNotEmpty) {
+           String? contentId;
+           if (response.data is Map) {
+              contentId = response.data['id']?.toString() ?? response.data['_id']?.toString() ?? response.data['contentId']?.toString();
+              if (contentId == null && response.data['data'] != null) {
+                  var data = response.data['data'];
+                  if (data is Map) {
+                     contentId = data['id']?.toString() ?? data['_id']?.toString() ?? data['contentId']?.toString();
+                  }
+              }
+           }
+           
+           for (String videoPath in backgroundVideos) {
+               BackgroundUploadService().createJobAndStart(videoPath, contentId: contentId);
+           }
+        }
+        // ----------------------------------------------------
+
         await localNotificationService.flutterLocalNotificationsPlugin
             .cancel(0);
         _showCompletionNotification(
@@ -261,6 +291,18 @@ class MediaUploadService {
           'Video Upload',
           importance: Importance.max,
           priority: Priority.high,
+          actions: [
+             AndroidNotificationAction(
+               'retry_upload',
+               'Retry',
+               showsUserInterface: true,
+             ),
+             AndroidNotificationAction(
+               'cancel_upload',
+               'Cancel',
+               showsUserInterface: false,
+             )
+          ]
         ),
       ),
     );

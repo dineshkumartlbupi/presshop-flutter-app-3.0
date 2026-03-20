@@ -12,6 +12,8 @@ import 'package:presshop/features/task/presentation/widgets/dialog_for_continuou
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:presshop/features/media/domain/services/background_upload_service.dart';
+import 'package:presshop/core/services/app_initialization_service.dart';
 // URL from old project to maintain API compatibility
 
 /// =============================================================
@@ -54,6 +56,20 @@ void onStart(ServiceInstance service) async {
   }
 
   _registerAndroidServiceEvents(service);
+
+  // --- Video Upload Integration ---
+  try {
+    await AppInitializationService.initializeHive();
+    await BackgroundUploadService().initialize();
+    await BackgroundUploadService().startOrResumeUpload();
+    
+    service.on('startUpload').listen((_) {
+      BackgroundUploadService().startOrResumeUpload();
+    });
+  } catch (e) {
+    debugPrint("Background upload init error: \$e");
+  }
+  // --------------------------------
 
   final userId = prefs.getString('_id') ?? '';
   debugPrint("BackgroundService started for user: $userId");

@@ -20,6 +20,8 @@ import 'package:presshop/main.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:presshop/features/publish/data/models/tutorials_model.dart';
 import 'package:presshop/features/publish/data/models/category_data_model.dart';
+import 'package:presshop/core/models/upload_job.dart';
+import 'package:presshop/core/models/upload_chunk.dart';
 
 class AppInitializationService {
   static Future<void> loadEnvironment() async {
@@ -220,8 +222,11 @@ class AppInitializationService {
       await Hive.initFlutter();
       Hive.registerAdapter(TutorialsModelAdapter());
       Hive.registerAdapter(CategoryDataModelAdapter());
+      Hive.registerAdapter(UploadJobAdapter());
+      Hive.registerAdapter(UploadChunkAdapter());
       await Hive.openBox<TutorialsModel>('tutorials_box');
       await Hive.openBox<CategoryDataModel>('categories_box');
+      await Hive.openBox<UploadJob>('upload_jobs');
       await Hive.openBox('sync_cache');
       debugPrint("✅ Hive initialized and boxes opened");
     } catch (e) {
