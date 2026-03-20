@@ -154,7 +154,6 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
     if (hasConnection) {
       _dismissOfflineDialog();
     } else {
-      _isDialogShowing = false;
       _showOfflineDialog();
     }
   }
@@ -162,8 +161,12 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
   void _dismissOfflineDialog() {
     if (_isDialogShowing) {
       debugPrint("ConnectivityWrapper: Dismissing offline dialog");
-      if (navigatorKey.currentState?.canPop() ?? false) {
-        navigatorKey.currentState?.pop();
+      try {
+        if (navigatorKey.currentContext != null) {
+          Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
+        }
+      } catch (e) {
+        debugPrint("ConnectivityWrapper: Error dismissing dialog: $e");
       }
       _isDialogShowing = false;
     }

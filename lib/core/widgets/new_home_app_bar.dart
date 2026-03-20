@@ -5,7 +5,6 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/widgets/logo_widget.dart';
-import 'package:presshop/features/news/presentation/pages/news_page.dart';
 
 class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const NewHomeAppBar({
@@ -70,15 +69,15 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         context.pop();
       },
       actionWidget: [
-        if (showFilter)
-          InkWell(
-            onTap: () {
-              if (onFilterTap != null) {
-                onFilterTap!();
-              }
-            },
-            child: commonFilterIcon(size),
-          ),
+        // if (showFilter)
+        //   InkWell(
+        //     onTap: () {
+        //       if (onFilterTap != null) {
+        //         onFilterTap!();
+        //       }
+        //     },
+        //     child: commonFilterIcon(size),
+        //   ),
         if (showFilter)
           SizedBox(
             width: size.width * AppDimensions.numD02,
@@ -86,10 +85,8 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         Center(
             child: GestureDetector(
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const NewsPage(
-                            hideFilters: true,
-                          )));
+                  context.pushNamed(AppRoutes.newsName,
+                      extra: {'hideFilters': true, 'fromMap': isFromMap});
                 },
                 child: Text(
                   "Click to view local news",
@@ -123,6 +120,16 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ),
             ),
+          ),
+
+        if (showFilter)
+          InkWell(
+            onTap: () {
+              if (onFilterTap != null) {
+                onFilterTap!();
+              }
+            },
+            child: commonFilterIcon(size),
           ),
         SizedBox(
           width: size.width * AppDimensions.numD04,

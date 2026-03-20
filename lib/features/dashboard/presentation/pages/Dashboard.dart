@@ -11,6 +11,10 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/global_loader.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/content/presentation/pages/content_page.dart';
+import 'package:presshop/features/map/presentation/pages/map_page.dart';
+import 'package:presshop/features/map/presentation/pages/map_page_new%20copy.dart';
+
+import 'package:presshop/features/map/presentation/pages/map_page_new.dart';
 import 'package:presshop/features/menu/presentation/pages/menu_screen.dart';
 import 'package:presshop/features/task/presentation/pages/task_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -20,7 +24,6 @@ import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:location/location.dart' as lc;
-import 'package:presshop/features/map/presentation/pages/map_page.dart';
 import 'package:presshop/features/news/presentation/pages/news_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
@@ -251,8 +254,9 @@ class DashboardState extends State<Dashboard>
       //     showAppBar: false,
       //   ),
       // ),
-      // MapPage(hideLeading: true, showAppBar: false),
-      MenuScreen(),
+      MapPage(hideLeading: true, showAppBar: false),
+      // OptimisedMapPage2(),
+
       MenuScreen()
     ];
   }
