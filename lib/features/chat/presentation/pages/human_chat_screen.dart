@@ -3395,12 +3395,12 @@ String timeParse(String time) {
 }
 */
 String timeParse(String time) {
-  debugPrint("Time Before parse Value : $time");
+  // debugPrint("Time Before parse Value : $time");
 
   var utc = DateTime.parse(time).toLocal();
 
-  debugPrint("Time parse Value : ${utc.toUtc().toLocal()}");
-  debugPrint("Time parse Value : $utc");
+  // debugPrint("Time parse Value : ${utc.toUtc().toLocal()}");
+  // debugPrint("Time parse Value : $utc");
 
   //utc = utc.add(DateTime.parse(time).timeZoneOffset);
 

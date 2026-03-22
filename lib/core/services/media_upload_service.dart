@@ -99,45 +99,34 @@ class MediaUploadService {
 
       // Use ApiClient.post with custom timeouts via Options if needed, though ApiClient has defaults.
       // If stricter timeouts needed, pass Options.
-      Response response = await apiClient.post(
+      final response = await apiClient.multipartPost(
         endUrl,
-        data: formData,
-        onSendProgress: (sent, total) {
-          _handleUploadProgress(sent, total, jsonBody);
+        formData: formData,
+        onSendProgress: (count, total) {
+          int progress = ((count / total) * 100).toInt();
+          debugPrint("Upload progress: $progress%");
+          _showProgressNotification(localNotificationService.flutterLocalNotificationsPlugin, progress);
         },
-        options: Options(
-          sendTimeout: const Duration(minutes: 5),
-          receiveTimeout: const Duration(minutes: 5),
-        ),
-        showLoader: false,
       );
 
-      debugPrint("Upload completed: ${response.data}");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        AppLogger.info("MediaUploadService: Metadata upload successful. EndUrl: $endUrl");
+        
+        final responseData = response.data;
+        String? contentId;
+        if (responseData != null && responseData is Map && responseData['id'] != null) {
+          contentId = responseData['id'].toString();
+          AppLogger.info("MediaUploadService: Extracted ContentId: $contentId");
+        }
 
-      if (response.statusCode! <= 201) {
-        debugPrint("Upload successful: ${response.data}");
-
-        // --- Intercept videos for chunked background upload ---
         if (backgroundVideos.isNotEmpty) {
-           String? contentId;
-           if (response.data is Map) {
-              contentId = response.data['id']?.toString() ?? response.data['_id']?.toString() ?? response.data['contentId']?.toString();
-              if (contentId == null && response.data['data'] != null) {
-                  var data = response.data['data'];
-                  if (data is Map) {
-                     contentId = data['id']?.toString() ?? data['_id']?.toString() ?? data['contentId']?.toString();
-                  }
-              }
-           }
-           
-           for (String videoPath in backgroundVideos) {
-               BackgroundUploadService().createJobAndStart(videoPath, contentId: contentId);
+           AppLogger.info("MediaUploadService: Handing off ${backgroundVideos.length} videos to BackgroundUploadService");
+           for (var videoPath in backgroundVideos) {
+             BackgroundUploadService().createJobAndStart(videoPath, contentId: contentId);
            }
         }
-        // ----------------------------------------------------
-
-        await localNotificationService.flutterLocalNotificationsPlugin
-            .cancel(0);
+        
+        await localNotificationService.flutterLocalNotificationsPlugin.cancel(0);
         _showCompletionNotification(
           localNotificationService.flutterLocalNotificationsPlugin,
           isDraft: jsonBody?['is_draft'] == 'true',
@@ -182,45 +171,7 @@ class MediaUploadService {
     }
   }
 
-  /// Handle upload progress and show notifications
-  static void _handleUploadProgress(
-    int sent,
-    int total,
-    Map<String, String>? jsonBody,
-  ) {
-    if (total <= 0) return;
-    int progress = ((sent / total) * 100).toInt();
 
-    if (progress > _lastProgress) {
-      _lastProgress = progress;
-      debugPrint("Upload progress: $progress%");
-
-      _showProgressNotification(
-        localNotificationService.flutterLocalNotificationsPlugin,
-        progress,
-        isDraft: jsonBody?['is_draft'] == 'true',
-      );
-
-      uploadStatus.value = {
-        'status': 'uploading',
-        'progress': progress,
-        'taskId': jsonBody?['task_id'],
-      };
-    }
-
-    if (progress == 100) {
-      _lastProgress = -1; // Reset for next upload
-      _showProcessingNotification(
-        localNotificationService.flutterLocalNotificationsPlugin,
-        isDraft: jsonBody?['is_draft'] == 'true',
-      );
-      uploadStatus.value = {
-        'status': 'processing',
-        'progress': 100,
-        'taskId': jsonBody?['task_id'],
-      };
-    }
-  }
 
   static void _showProgressNotification(
     FlutterLocalNotificationsPlugin notificationPlugin,
@@ -250,32 +201,7 @@ class MediaUploadService {
     );
   }
 
-  /// Show processing notification
-  static void _showProcessingNotification(
-    FlutterLocalNotificationsPlugin notificationPlugin, {
-    bool isDraft = false,
-  }) {
-    String title = isDraft ? "Saving draft" : 'Processing Content';
-    String body = 'Processing - Finalizing upload...';
 
-    notificationPlugin.show(
-      0,
-      title,
-      body,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          'upload_channel',
-          'Video Upload',
-          importance: Importance.max,
-          priority: Priority.high,
-          showProgress: false,
-          indeterminate: true,
-          onlyAlertOnce: true,
-          ongoing: true,
-        ),
-      ),
-    );
-  }
 
   /// Show upload failed notification
   static void _showFailedNotification(

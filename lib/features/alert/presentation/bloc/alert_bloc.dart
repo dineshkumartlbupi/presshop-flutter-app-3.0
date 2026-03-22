@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -43,6 +44,13 @@ class AlertBloc extends Bloc<AlertEvent, AlertState> {
     await _fetchAlerts(emit, isRefresh: false);
   }
 
+  static List<AlertModel> _parseAlerts(dynamic responseData) {
+    var data = responseData;
+    if (data is String) data = jsonDecode(data);
+    var dataModel = data['data'] as List;
+    return dataModel.map((e) => AlertModel.fromJson(e)).toList();
+  }
+
   Future<void> _fetchAlerts(Emitter<AlertState> emit,
       {required bool isRefresh}) async {
     _isFetching = true;
@@ -57,11 +65,7 @@ class AlertBloc extends Bloc<AlertEvent, AlertState> {
       );
 
       if (response.statusCode == 200) {
-        var data = response.data;
-        if (data is String) data = jsonDecode(data);
-        var dataModel = data['data'] as List;
-        List<AlertModel> newAlerts =
-            dataModel.map((e) => AlertModel.fromJson(e)).toList();
+        List<AlertModel> newAlerts = await compute(_parseAlerts, response.data);
 
         bool hasReachedMax = newAlerts.length < _limit;
 

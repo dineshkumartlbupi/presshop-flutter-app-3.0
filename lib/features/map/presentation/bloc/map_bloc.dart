@@ -279,6 +279,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           position: location,
           icon: icon,
           anchor: const Offset(0.5, 0.5),
+          zIndex: 100,
         );
 
         // Fetch address in background (non-blocking for camera)
@@ -437,7 +438,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           }).toList();
 
           final Set<Marker> newMarkers = {};
-          const int batchSize = 20; // Increased batch size for better performance
+          const int batchSize =
+              20; // Increased batch size for better performance
 
           for (int i = 0; i < incidents.length; i += batchSize) {
             final end = (i + batchSize < incidents.length)
@@ -478,6 +480,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               return Marker(
                 markerId: MarkerId(markerId),
                 position: incident.position,
+                alpha: 0.0,
                 icon: icon,
                 onTap: () {
                   add(SetSelectedIncidentEvent(incident));

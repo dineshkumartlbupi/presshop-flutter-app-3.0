@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:presshop/core/models/upload_job.dart';
 import 'package:presshop/core/models/upload_chunk.dart';
 import 'package:presshop/features/media/data/services/chunked_upload_api_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:presshop/core/utils/app_logger.dart';
 
 class BackgroundUploadService {
   static final BackgroundUploadService _instance = BackgroundUploadService._internal();
@@ -113,7 +113,11 @@ class BackgroundUploadService {
     final uploadBox = Hive.box<UploadJob>('upload_jobs');
     final jobs = uploadBox.values.where((job) => job.status == 'queued' || job.status == 'uploading' || job.status == 'failed').toList();
 
-    if (jobs.isEmpty) return;
+    AppLogger.info("BackgroundUploadService: Found ${jobs.length} jobs to process");
+    if (jobs.isEmpty) {
+      _isUploading = false;
+      return;
+    }
 
     _isUploading = true;
 
@@ -121,11 +125,11 @@ class BackgroundUploadService {
       if (job.status != 'completed') {
         try {
           await _processJob(job);
-        } catch (e) {
+        } catch (e, stack) {
           if (e.toString().contains("Job cancelled") || e.toString().contains("Job no longer active")) {
-             debugPrint("Job was cancelled or removed");
+             AppLogger.info("BackgroundUploadService: Job ${job.jobId} was cancelled or removed");
           } else {
-             debugPrint('Job failed: \${job.jobId}, error: \$e');
+             AppLogger.error("BackgroundUploadService: Job failed: ${job.jobId}", error: e, stackTrace: stack);
              job.status = 'failed';
              job.updateUpdatedAt();
              await job.save();
@@ -145,7 +149,7 @@ class BackgroundUploadService {
 
     final file = File(job.filePath);
     if (!await file.exists()) {
-      throw Exception("File does not exist: \${job.filePath}");
+      throw Exception("File does not exist: ${job.filePath}");
     }
 
     int uploadedChunks = job.chunks.where((c) => c.status == 'uploaded').length;
@@ -193,7 +197,7 @@ class BackgroundUploadService {
               chunkSuccess = true;
               
             } catch (e) {
-               debugPrint('Chunk upload failed: \$e, waiting 10 seconds...');
+               AppLogger.warning("BackgroundUploadService: Chunk \${chunk.partNumber} failed, retrying in 10s. Error: \$e");
                await showNotification(((uploadedChunks / totalChunks) * 100).toInt(), 'Upload Paused', 'Waiting for internet connection...', isError: true);
                await Future.delayed(const Duration(seconds: 10));
             }
@@ -263,6 +267,8 @@ class BackgroundUploadService {
     );
 
     await uploadBox.put(job.jobId, job);
+    
+    AppLogger.info("BackgroundUploadService: Job created for \${file.path} as JobID: \${job.jobId}");
     
     // Start background processor
     startOrResumeUpload();

@@ -20,11 +20,12 @@ class MarkerService {
     final byteData = await rootBundle.load(assetPath);
     final uint8list = byteData.buffer.asUint8List();
 
-    final img = img_pkg.decodeImage(uint8list);
-    if (img == null) return BitmapDescriptor.defaultMarker;
-    final resized = img_pkg.copyResize(img, width: width);
-    final resizedBytes = img_pkg.encodePng(resized);
-    return BitmapDescriptor.bytes(resizedBytes);
+    final codec = await ui.instantiateImageCodec(uint8list, targetWidth: width);
+    final frame = await codec.getNextFrame();
+    final img = frame.image;
+
+    final byteDataImage = await img.toByteData(format: ui.ImageByteFormat.png);
+    return BitmapDescriptor.bytes(byteDataImage!.buffer.asUint8List());
   }
 
   Future<BitmapDescriptor> bitmapFromIncidentAsset(
@@ -34,12 +35,12 @@ class MarkerService {
     final byteData = await rootBundle.load(assetPath);
     final bytes = byteData.buffer.asUint8List();
 
-    final img = img_pkg.decodeImage(bytes)!;
-    final resized = img_pkg.copyResize(img, width: width);
+    final codec = await ui.instantiateImageCodec(bytes, targetWidth: width);
+    final frame = await codec.getNextFrame();
+    final img = frame.image;
 
-    return BitmapDescriptor.fromBytes(
-      Uint8List.fromList(img_pkg.encodePng(resized)),
-    );
+    final byteDataImage = await img.toByteData(format: ui.ImageByteFormat.png);
+    return BitmapDescriptor.fromBytes(byteDataImage!.buffer.asUint8List());
   }
 
   Future<BitmapDescriptor> bitmapFromUrl(
@@ -293,7 +294,9 @@ class MarkerService {
       return bitmap;
     } catch (e) {
       debugPrint("Error creating content marker: $e. Using default.");
-      final defaultBitmap = await bitmapResize("assets/markers/bg-removed-content.png", width: size);
+      final defaultBitmap = await bitmapResize(
+          "assets/markers/bg-removed-content.png",
+          width: size);
       _bitmapCache[cacheKey] = defaultBitmap;
       return defaultBitmap;
     }

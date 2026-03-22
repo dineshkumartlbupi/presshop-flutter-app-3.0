@@ -7,6 +7,7 @@ import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:presshop/core/services/location_service.dart';
 import 'package:presshop/main.dart';
 
@@ -151,6 +152,18 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
     }
   }
 
+  static List<Incident> _parseIncidents(dynamic responseData) {
+    List<dynamic> data = [];
+    if (responseData is Map<String, dynamic> &&
+        responseData.containsKey('data')) {
+      data = responseData['data'];
+    } else if (responseData is List) {
+      data = responseData;
+    }
+
+    return data.map((json) => Incident.fromJson(json)).toList();
+  }
+
   @override
   Future<List<Incident>> getIncidents() async {
     try {
@@ -159,15 +172,7 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
             .chat.getAlertIncidents, // Use Chat class where we added it
       );
 
-      List<dynamic> data = [];
-      if (response.data is Map<String, dynamic> &&
-          response.data.containsKey('data')) {
-        data = response.data['data'];
-      } else if (response.data is List) {
-        data = response.data;
-      }
-
-      return data.map((json) => Incident.fromJson(json)).toList();
+      return await compute(_parseIncidents, response.data);
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }

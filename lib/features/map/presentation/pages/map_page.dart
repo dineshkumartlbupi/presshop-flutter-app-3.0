@@ -86,7 +86,10 @@ class _MapPageContent extends StatefulWidget {
 }
 
 class _MapPageContentState extends State<_MapPageContent>
-    with TickerProviderStateMixin, AnalyticsPageMixin, AutomaticKeepAliveClientMixin {
+    with
+        TickerProviderStateMixin,
+        AnalyticsPageMixin,
+        AutomaticKeepAliveClientMixin {
   final Completer<GoogleMapController> _controller = Completer();
   bool _locationTimeout = false;
   Timer? _locationTimer;
@@ -763,140 +766,144 @@ class _MapPageContentState extends State<_MapPageContent>
                   child: GoogleMap(
                     key: _mapGlobalKey,
                     onMapCreated: (c) async {
-                    if (!_controller.isCompleted) {
-                      _controller.complete(c);
-                      _customInfoWindowController.googleMapController = c;
-                    }
+                      if (!_controller.isCompleted) {
+                        _controller.complete(c);
+                        _customInfoWindowController.googleMapController = c;
+                      }
 
-                    if (mounted) {
-                      unawaited(_updateInfoWindow());
-                    }
-                  },
-                  onCameraMoveStarted: () {
-                    if (!_isProgrammaticMovement) {
-                      _isUserDragging = true;
-                    }
-                    _customInfoWindowController.onCameraMove?.call();
-                    for (var controller in _markerControllers.values) {
-                      controller.onCameraMove?.call();
-                    }
-                  },
-                  onCameraMove: (pos) {
-                    _currentZoom = pos.zoom;
-                    _checkPulseAnimation(pos.zoom);
-                    _customInfoWindowController.onCameraMove?.call();
-                    for (var controller in _markerControllers.values) {
-                      controller.onCameraMove?.call();
-                    }
-                    _updateInfoWindow();
-
-                    if (_isUserDragging) {
-                      // _customInfoWindowController.hideInfoWindow!();
-                      context.read<MapBloc>().add(const SetDraggingEvent(true));
-                    }
-                  },
-                  onCameraIdle: () {
-                    if (mounted) {
+                      if (mounted) {
+                        unawaited(_updateInfoWindow());
+                      }
+                    },
+                    onCameraMoveStarted: () {
+                      if (!_isProgrammaticMovement) {
+                        _isUserDragging = true;
+                      }
+                      _customInfoWindowController.onCameraMove?.call();
+                      for (var controller in _markerControllers.values) {
+                        controller.onCameraMove?.call();
+                      }
+                    },
+                    onCameraMove: (pos) {
+                      _currentZoom = pos.zoom;
+                      _checkPulseAnimation(pos.zoom);
+                      _customInfoWindowController.onCameraMove?.call();
+                      for (var controller in _markerControllers.values) {
+                        controller.onCameraMove?.call();
+                      }
                       _updateInfoWindow();
-                      _isProgrammaticMovement = false;
+
                       if (_isUserDragging) {
+                        // _customInfoWindowController.hideInfoWindow!();
                         context
                             .read<MapBloc>()
-                            .add(const SetDraggingEvent(false));
-                        _isUserDragging = false;
+                            .add(const SetDraggingEvent(true));
                       }
-                    }
-                  },
-                  onTap: (pos) async {
-                    _customInfoWindowController.hideInfoWindow!();
-                    context.read<MapBloc>().add(ClearRouteEvent());
+                    },
+                    onCameraIdle: () {
+                      if (mounted) {
+                        _updateInfoWindow();
+                        _isProgrammaticMovement = false;
+                        if (_isUserDragging) {
+                          context
+                              .read<MapBloc>()
+                              .add(const SetDraggingEvent(false));
+                          _isUserDragging = false;
+                        }
+                      }
+                    },
+                    onTap: (pos) async {
+                      _customInfoWindowController.hideInfoWindow!();
+                      context.read<MapBloc>().add(ClearRouteEvent());
 
-                    if (_isSelectingAlertLocation &&
-                        _pendingAlertType != null) {
-                      context.read<MapBloc>().add(SetPreviewAlertMarkerEvent(
-                          type: _pendingAlertType!, position: pos));
+                      if (_isSelectingAlertLocation &&
+                          _pendingAlertType != null) {
+                        context.read<MapBloc>().add(SetPreviewAlertMarkerEvent(
+                            type: _pendingAlertType!, position: pos));
+                        setState(() {
+                          _isSelectingAlertLocation = false;
+                          _pendingAlertType = null;
+                        });
+                        return;
+                      }
+
+                      if (state.showAlertPanel) {
+                        context.read<MapBloc>().add(ToggleAlertPanelEvent());
+                        return;
+                      }
+
+                      // Destination Selection Mode
+                      if (state.isDestinationSelectionMode) {
+                        final repo = sl<MapRepository>();
+                        String address = "${pos.latitude}, ${pos.longitude}";
+
+                        final result =
+                            await repo.getAddressFromCoordinates(pos);
+                        result.fold(
+                          (failure) => debugPrint(
+                              "Failed to get address: ${failure.message}"),
+                          (addr) => address = addr,
+                        );
+
+                        context.read<MapBloc>().add(SetMapSelectedLocationEvent(
+                              position: pos,
+                              address: address,
+                              isOrigin: state.isSelectingOrigin,
+                            ));
+
+                        context
+                            .read<MapBloc>()
+                            .add(SetDestinationSelectionModeEvent(
+                              isSelectionMode: false,
+                            ));
+                        return;
+                      }
+
+                      if (state.showGetDirectionCard) {
+                        final repo = sl<MapRepository>();
+                        String address = "${pos.latitude}, ${pos.longitude}";
+
+                        final result =
+                            await repo.getAddressFromCoordinates(pos);
+                        result.fold(
+                          (failure) => debugPrint(
+                              "Failed to get address: ${failure.message}"),
+                          (addr) => address = addr,
+                        );
+
+                        context.read<MapBloc>().add(SetMapSelectedLocationEvent(
+                              position: pos,
+                              address: address,
+                              isOrigin: false,
+                            ));
+                        return;
+                      }
+
+                      context.read<MapBloc>().add(ClearSelectedMarkerEvent());
+                      context.read<MapBloc>().add(ClearSelectedPolygonEvent());
                       setState(() {
-                        _isSelectingAlertLocation = false;
-                        _pendingAlertType = null;
+                        _infoOffset = null;
+                        _polygonInfoOffset = null;
                       });
-                      return;
-                    }
-
-                    if (state.showAlertPanel) {
-                      context.read<MapBloc>().add(ToggleAlertPanelEvent());
-                      return;
-                    }
-
-                    // Destination Selection Mode
-                    if (state.isDestinationSelectionMode) {
-                      final repo = sl<MapRepository>();
-                      String address = "${pos.latitude}, ${pos.longitude}";
-
-                      final result = await repo.getAddressFromCoordinates(pos);
-                      result.fold(
-                        (failure) => debugPrint(
-                            "Failed to get address: ${failure.message}"),
-                        (addr) => address = addr,
-                      );
-
-                      context.read<MapBloc>().add(SetMapSelectedLocationEvent(
-                            position: pos,
-                            address: address,
-                            isOrigin: state.isSelectingOrigin,
-                          ));
-
-                      context
-                          .read<MapBloc>()
-                          .add(SetDestinationSelectionModeEvent(
-                            isSelectionMode: false,
-                          ));
-                      return;
-                    }
-
-                    if (state.showGetDirectionCard) {
-                      final repo = sl<MapRepository>();
-                      String address = "${pos.latitude}, ${pos.longitude}";
-
-                      final result = await repo.getAddressFromCoordinates(pos);
-                      result.fold(
-                        (failure) => debugPrint(
-                            "Failed to get address: ${failure.message}"),
-                        (addr) => address = addr,
-                      );
-
-                      context.read<MapBloc>().add(SetMapSelectedLocationEvent(
-                            position: pos,
-                            address: address,
-                            isOrigin: false,
-                          ));
-                      return;
-                    }
-
-                    context.read<MapBloc>().add(ClearSelectedMarkerEvent());
-                    context.read<MapBloc>().add(ClearSelectedPolygonEvent());
-                    setState(() {
-                      _infoOffset = null;
-                      _polygonInfoOffset = null;
-                    });
-                  },
-                  initialCameraPosition: state.initialCamera ??
-                      const CameraPosition(
-                        target: LatLng(51.5074, -0.1278),
-                        zoom: 14,
-                      ),
-                  markers: state.markers,
-                  polylines: state.polylines,
-                  polygons: state.polygons,
-                  circles: {
-                    ...state.circles
-                        .where((c) => c.circleId.value != 'my_location_pulse'),
-                    if (_pulseCircle != null) _pulseCircle!,
-                  },
-                  myLocationButtonEnabled: false,
-                  myLocationEnabled: true,
-                  zoomControlsEnabled: false,
-                  padding: const EdgeInsets.only(bottom: 220),
-                ),
+                    },
+                    initialCameraPosition: state.initialCamera ??
+                        const CameraPosition(
+                          target: LatLng(51.5074, -0.1278),
+                          zoom: 14,
+                        ),
+                    markers: state.markers,
+                    polylines: state.polylines,
+                    polygons: state.polygons,
+                    circles: {
+                      ...state.circles.where(
+                          (c) => c.circleId.value != 'my_location_pulse'),
+                      if (_pulseCircle != null) _pulseCircle!,
+                    },
+                    myLocationButtonEnabled: false,
+                    myLocationEnabled: true,
+                    zoomControlsEnabled: false,
+                    padding: const EdgeInsets.only(bottom: 220),
+                  ),
                 ),
 
                 // Interactive marker overlays

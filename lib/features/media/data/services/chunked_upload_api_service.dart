@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
+import 'package:presshop/core/utils/app_logger.dart';
 
 class ChunkedUploadApiService {
   final Dio _dio = Dio();
@@ -31,9 +32,12 @@ class ChunkedUploadApiService {
     );
     
     if (response.statusCode == 200 || response.statusCode == 201) {
+      AppLogger.info("ChunkedUploadApiService: Initiate successful. UploadId: \${response.data['uploadId']}");
       return response.data;
     } else {
-      throw Exception('Failed to initiate upload: ${response.statusCode}');
+      final errorMsg = "ChunkedUploadApiService: Failed to initiate upload: \${response.statusCode} at \$url. Data: \${response.data}";
+      AppLogger.error(errorMsg);
+      throw Exception(errorMsg);
     }
   }
 
@@ -94,9 +98,12 @@ class ChunkedUploadApiService {
     );
     
     if (response.statusCode == 200 || response.statusCode == 201) {
+      AppLogger.info("ChunkedUploadApiService: Complete successful for ContentId: \$contentId");
       return response.data;
     } else {
-      throw Exception('Failed to complete upload: ${response.statusCode}');
+      final errorMsg = "ChunkedUploadApiService: Failed to complete upload: \${response.statusCode} at \$url. Data: \${response.data}";
+      AppLogger.error(errorMsg);
+      throw Exception(errorMsg);
     }
   }
 

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 class SocketEvents {
   // Authentication & Connection Rooms
   static const String joinWebsite = "joinWebsite";
@@ -38,4 +40,16 @@ class SocketEvents {
   static const String leaveRoom = "leave room";
   static const String adminStatus = "adminStatus";
   static const String readMessage = "read message";
+}
+
+class SocketLogger {
+  /// Log when a socket event is emitted
+  static void logEmit(String eventName, {dynamic data}) {
+    log('🚀 [EMIT] Event: $eventName', name: 'SocketLogger', error: data);
+  }
+
+  /// Log when a socket event is received
+  static void logReceive(String eventName, {dynamic data}) {
+    log('📥 [RECEIVE] Event: $eventName', name: 'SocketLogger', error: data);
+  }
 }
