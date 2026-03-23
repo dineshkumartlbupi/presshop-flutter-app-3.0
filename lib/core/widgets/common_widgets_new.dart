@@ -7,7 +7,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:presshop/core/core_export.dart';
 export 'package:presshop/core/core_export.dart';
 
-class CommonWidgets {
+class CommonWidgetsNew {
   Size globalSize = MediaQuery.of(navigatorKey.currentContext!).size;
 
 // Reusable widget for Price Image and Button
