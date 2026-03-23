@@ -7,6 +7,7 @@ import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/widgets/common_widgets_new.dart';
 import 'package:presshop/core/widgets/global_loader.dart';
 import 'package:presshop/main.dart';
 import '../bloc/leaderboard_bloc.dart';
@@ -150,7 +151,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
         builder: (context, state) {
           debugPrint("DEBUG: LeaderboardView state: $state");
           if (state is LeaderboardLoading) {
-            return const Center(child: GlobalLoader());
+            return Center(child: CommonWidgetsNew.showAnimatedLoader(size));
           } else if (state is LeaderboardError) {
             return Center(child: Text(state.message));
           } else if (state is LeaderboardLoaded) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/splash/presentation/pages/splash_screen.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_helper.dart';

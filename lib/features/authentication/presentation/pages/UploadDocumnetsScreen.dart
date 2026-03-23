@@ -15,6 +15,7 @@ import 'package:presshop/features/authentication/presentation/bloc/upload_docume
 import 'package:presshop/features/authentication/presentation/bloc/upload_documents/upload_documents_state.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:presshop/features/authentication/domain/entities/document_instruction.dart';
 
 const String uploadDocumentsText = "Upload Documents";
 
@@ -37,6 +38,12 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
+    final instructions = [
+      DocumentInstruction(id: "1", name: AppStrings.validDegreeText),
+      DocumentInstruction(id: "2", name: AppStrings.validMembershipText),
+      DocumentInstruction(id: "3", name: AppStrings.validPassportText),
+      DocumentInstruction(id: "4", name: AppStrings.othersText),
+    ];
     return BlocProvider(
       create: (context) => sl<UploadDocumentsBloc>()
         ..add(GetDocumentInstructionsEvent())
@@ -91,7 +98,6 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
             },
             builder: (context, state) {
               if (state.status == UploadDocumentsStatus.loading &&
-                  state.instructions.isEmpty &&
                   state.uploadedDocuments.isEmpty) {
                 return const SizedBox.shrink();
               }
@@ -197,39 +203,16 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                             borderRadius: BorderRadius.circular(
                                 size.width * AppDimensions.numD02),
                             border: Border.all(color: Colors.black)),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: state.instructions.length,
-                          itemBuilder: (context, index) {
-                            return Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      top: size.width * AppDimensions.numD009,
-                                    ),
-                                    child: Icon(
-                                      Icons.circle,
-                                      color: AppColorTheme.colorThemePink,
-                                      size: size.width * AppDimensions.numD035,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: size.width * AppDimensions.numD02,
-                                  ),
-                                  Expanded(
-                                    child: Text(state.instructions[index].name,
-                                        style: TextStyle(
-                                            fontSize: size.width *
-                                                AppDimensions.numD036,
-                                            color: Colors.black,
-                                            fontFamily: "AirbnbCereal",
-                                            fontWeight: FontWeight.w400)),
-                                  ),
-                                ]);
-                          },
+                        child: Column(
+                          children: [
+                            _buildInstructionRow(
+                                size, AppStrings.validDegreeText),
+                            _buildInstructionRow(
+                                size, AppStrings.validMembershipText),
+                            _buildInstructionRow(
+                                size, AppStrings.validPassportText),
+                            _buildInstructionRow(size, AppStrings.othersText),
+                          ],
                         ),
                       ),
 
@@ -351,25 +334,96 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
               );
             },
           ),
+          // bottomNavigationBar: Padding(
+          //   padding: EdgeInsets.all(size.width * AppDimensions.numD05),
+          //   child: Builder(builder: (context) {
+          //     return Container(
+          //       height: size.width * AppDimensions.numD13,
+          //       child: commonElevatedButton(
+          //         "Upload Documents",
+          //         size,
+          //         commonButtonTextStyle(size),
+          //         commonButtonStyle(size, AppColorTheme.colorThemePink),
+          //         () {
+          //           // Open Verification Sheet
+          //           final state = context.read<UploadDocumentsBloc>().state;
+          //           _showVerificationSheet(context, state.instructions);
+          //         },
+          //       ),
+          //     );
+          //   }),
+          // )),
           bottomNavigationBar: Padding(
             padding: EdgeInsets.all(size.width * AppDimensions.numD05),
-            child: Builder(builder: (context) {
-              return Container(
-                height: size.width * AppDimensions.numD13,
-                child: commonElevatedButton(
-                  "Upload Documents",
-                  size,
-                  commonButtonTextStyle(size),
-                  commonButtonStyle(size, AppColorTheme.colorThemePink),
-                  () {
-                    // Open Verification Sheet
-                    final state = context.read<UploadDocumentsBloc>().state;
-                    _showVerificationSheet(context, state.instructions);
-                  },
+            child: Row(
+              children: [
+                Expanded(
+                  child: Builder(builder: (context) {
+                    return Container(
+                      height: size.width * AppDimensions.numD13,
+                      child: commonElevatedButton(
+                        "Upload",
+                        size,
+                        commonButtonTextStyle(size),
+                        commonButtonStyle(size, AppColorTheme.colorThemePink),
+                        () {
+                          // Open Verification Sheet
+                          _showVerificationSheet(context, instructions);
+                        },
+                      ),
+                    );
+                  }),
                 ),
-              );
-            }),
+                SizedBox(width: size.width * AppDimensions.numD04),
+                Expanded(
+                  child: SizedBox(
+                    height: size.width * AppDimensions.numD13,
+                    child: commonElevatedButton(
+                      "Exit",
+                      size,
+                      commonButtonTextStyle(size),
+                      commonButtonStyle(size, Colors.black),
+                      () {
+                        context.pop();
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
           )),
+    );
+  }
+
+  Widget _buildInstructionRow(Size size, String text) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: size.width * AppDimensions.numD02),
+      child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              margin: EdgeInsets.only(
+                top: size.width * AppDimensions.numD012,
+              ),
+              child: Icon(
+                Icons.circle,
+                color: AppColorTheme.colorThemePink,
+                size: size.width * AppDimensions.numD035,
+              ),
+            ),
+            SizedBox(
+              width: size.width * AppDimensions.numD03,
+            ),
+            Expanded(
+              child: Text(text,
+                  style: TextStyle(
+                      fontSize: size.width * AppDimensions.numD036,
+                      color: Colors.black,
+                      fontFamily: "AirbnbCereal",
+                      fontWeight: FontWeight.w400)),
+            ),
+          ]),
     );
   }
 
@@ -489,211 +543,283 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                   color: Colors.black,
                   thickness: 1.3,
                 ),
-                SizedBox(height: size.width * AppDimensions.numD035),
-                Text(
-                  "Kindly upload clear copies of your original documents to complete bank verification.",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "AirbnbCereal",
-                      fontSize: size.width * AppDimensions.numD035),
-                ),
-                SizedBox(height: size.width * AppDimensions.numD04),
                 Expanded(
-                  child: ListView.separated(
-                    itemCount: instructions.length,
-                    itemBuilder: (context, index) {
-                      // Checkmark only if files have been uploaded for this option
-                      bool hasUploadedFiles =
-                          (uploadedFilesPerInstruction[index] ?? []).isNotEmpty;
-                      return InkWell(
-                        onTap: () async {
-                          // Check if already uploaded for this option
-                          if ((uploadedFilesPerInstruction[index] ?? [])
-                              .isNotEmpty) {
-                            _showTopOverlayAlert(contextValue,
-                                "You have already uploaded ${instructions[index].name}.");
-                            return;
-                          }
-                          setModalState(() {
-                            selectedInstructionIndex = index;
-                            selectedDocType = instructions[index].name;
-                          });
-                          // Immediately open file picker for this option
-                          await pickFilesForInstruction(index, setModalState);
-                        },
-                        child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(
-                                    top: size.width * AppDimensions.numD005),
-                                child: hasUploadedFiles
-                                    ? Icon(
-                                        Icons.check_box,
-                                        color: AppColorTheme.colorThemePink,
-                                        size: size.width * AppDimensions.numD05,
-                                      )
-                                    : Icon(
-                                        Icons.circle,
-                                        color: AppColorTheme.colorThemePink,
-                                        size:
-                                            size.width * AppDimensions.numD035,
-                                      ),
-                              ),
-                              SizedBox(
-                                width: size.width * AppDimensions.numD04,
-                              ),
-                              Expanded(
-                                child: Text(instructions[index].name,
-                                    style: TextStyle(
-                                        fontSize:
-                                            size.width * AppDimensions.numD035,
-                                        color: Colors.black,
-                                        fontFamily: "AirbnbCereal",
-                                        fontWeight: FontWeight.w400)),
-                              ),
-                            ]),
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return SizedBox(
-                        height: size.width * AppDimensions.numD025,
-                      );
-                    },
-                  ),
-                ),
-
-                // Dropdown to select document
-                InkWell(
-                  onTap: () async {
-                    // 1. Pick document type
-                    final docType = await _showDocumentTypeSheet(
-                        contextValue, instructions);
-                    if (docType != null) {
-                      final instrIndex =
-                          instructions.indexWhere((e) => e.name == docType);
-
-                      // Check if already uploaded for this option
-                      if (instrIndex >= 0 &&
-                          (uploadedFilesPerInstruction[instrIndex] ?? [])
-                              .isNotEmpty) {
-                        _showTopOverlayAlert(contextValue,
-                            "You have already uploaded $docType.");
-                        return;
-                      }
-
-                      setModalState(() {
-                        selectedDocType = docType;
-                        selectedInstructionIndex = instrIndex;
-                      });
-
-                      // 2. Pick files for the selected instruction
-                      if (instrIndex >= 0) {
-                        await pickFilesForInstruction(
-                            instrIndex, setModalState);
-                      }
-                    }
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(size.width * AppDimensions.numD035),
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: AppColorTheme.colorTextFieldBorder),
-                        borderRadius: BorderRadius.circular(
-                            size.width * AppDimensions.numD03)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                            child: Text(selectedDocType ?? "Select Document",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    color: selectedDocType == null
-                                        ? Colors.grey
-                                        : Colors.black,
-                                    fontSize:
-                                        size.width * AppDimensions.numD035,
-                                    fontFamily: "AirbnbCereal"))),
-                        const Icon(
-                          Icons.keyboard_arrow_down_sharp,
-                          color: Colors.black,
+                        SizedBox(height: size.width * AppDimensions.numD035),
+                        Text(
+                          "Kindly upload clear copies of your original documents to complete bank verification.",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: "AirbnbCereal",
+                              fontSize: size.width * AppDimensions.numD035),
                         ),
+                        SizedBox(height: size.width * AppDimensions.numD04),
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: instructions.length,
+                          itemBuilder: (context, index) {
+                            // Checkmark only if files have been uploaded for this option
+                            bool hasUploadedFiles =
+                                (uploadedFilesPerInstruction[index] ?? [])
+                                    .isNotEmpty;
+                            return InkWell(
+                              onTap: () async {
+                                // Check if already uploaded for this option
+                                if ((uploadedFilesPerInstruction[index] ?? [])
+                                    .isNotEmpty) {
+                                  _showTopOverlayAlert(contextValue,
+                                      "You have already uploaded ${instructions[index].name}.");
+                                  return;
+                                }
+                                setModalState(() {
+                                  selectedInstructionIndex = index;
+                                  selectedDocType = instructions[index].name;
+                                });
+                                // Immediately open file picker for this option
+                                await pickFilesForInstruction(
+                                    index, setModalState);
+                              },
+                              child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          top: size.width *
+                                              AppDimensions.numD005),
+                                      child: hasUploadedFiles
+                                          ? Icon(
+                                              Icons.check_box,
+                                              color:
+                                                  AppColorTheme.colorThemePink,
+                                              size: size.width *
+                                                  AppDimensions.numD05,
+                                            )
+                                          : Icon(
+                                              Icons.circle,
+                                              color:
+                                                  AppColorTheme.colorThemePink,
+                                              size: size.width *
+                                                  AppDimensions.numD035,
+                                            ),
+                                    ),
+                                    SizedBox(
+                                      width: size.width * AppDimensions.numD04,
+                                    ),
+                                    Expanded(
+                                      child: Text(instructions[index].name,
+                                          style: TextStyle(
+                                              fontSize: size.width *
+                                                  AppDimensions.numD035,
+                                              color: Colors.black,
+                                              fontFamily: "AirbnbCereal",
+                                              fontWeight: FontWeight.w400)),
+                                    ),
+                                  ]),
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return SizedBox(
+                              height: size.width * AppDimensions.numD025,
+                            );
+                          },
+                        ),
+
+                        SizedBox(height: size.width * AppDimensions.numD06),
+
+                        // Dropdown to select document
+                        InkWell(
+                          onTap: () async {
+                            // 1. Pick document type
+                            final docType = await _showDocumentTypeSheet(
+                                contextValue, instructions);
+                            if (docType != null) {
+                              final instrIndex = instructions
+                                  .indexWhere((e) => e.name == docType);
+
+                              // Check if already uploaded for this option
+                              if (instrIndex >= 0 &&
+                                  (uploadedFilesPerInstruction[instrIndex] ??
+                                          [])
+                                      .isNotEmpty) {
+                                _showTopOverlayAlert(contextValue,
+                                    "You have already uploaded $docType.");
+                                return;
+                              }
+
+                              setModalState(() {
+                                selectedDocType = docType;
+                                selectedInstructionIndex = instrIndex;
+                              });
+
+                              // 2. Pick files for the selected instruction
+                              if (instrIndex >= 0) {
+                                await pickFilesForInstruction(
+                                    instrIndex, setModalState);
+                              }
+                            }
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(
+                                size.width * AppDimensions.numD035),
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: AppColorTheme.colorTextFieldBorder),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD03)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                    child: Text(
+                                        selectedDocType ?? "Select Document",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            color: selectedDocType == null
+                                                ? Colors.grey
+                                                : Colors.black,
+                                            fontSize: size.width *
+                                                AppDimensions.numD035,
+                                            fontFamily: "AirbnbCereal"))),
+                                const Icon(
+                                  Icons.keyboard_arrow_down_sharp,
+                                  color: Colors.black,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        // Show all uploaded files across all options
+                        if (allUploadedFiles.isNotEmpty) ...[
+                          SizedBox(height: size.width * AppDimensions.numD06),
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing:
+                                  size.width * AppDimensions.numD03,
+                              mainAxisSpacing:
+                                  size.width * AppDimensions.numD03,
+                              childAspectRatio: 0.9,
+                            ),
+                            itemCount: allUploadedFiles.length,
+                            itemBuilder: (context, index) {
+                              final file = allUploadedFiles[index];
+                              bool isImage = file.path.endsWith('.jpg') ||
+                                  file.path.endsWith('.png') ||
+                                  file.path.endsWith('.jpeg');
+                              return Container(
+                                padding: EdgeInsets.all(
+                                    size.width * AppDimensions.numD025),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.black),
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * AppDimensions.numD04),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: Stack(
+                                        alignment: Alignment.topRight,
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                size.width *
+                                                    AppDimensions.numD03),
+                                            child: isImage
+                                                ? Image.file(
+                                                    file,
+                                                    fit: BoxFit.cover,
+                                                    width: double.infinity,
+                                                    height: double.infinity,
+                                                  )
+                                                : Center(
+                                                    child: Icon(
+                                                      Icons.insert_drive_file,
+                                                      color: AppColorTheme
+                                                          .colorThemePink,
+                                                      size: size.width * 0.1,
+                                                    ),
+                                                  ),
+                                          ),
+                                          InkWell(
+                                            onTap: () {
+                                              setModalState(() {
+                                                // Find which instruction this file belongs to and remove it
+                                                for (var key
+                                                    in uploadedFilesPerInstruction
+                                                        .keys
+                                                        .toList()) {
+                                                  if (uploadedFilesPerInstruction[
+                                                              key]
+                                                          ?.contains(file) ==
+                                                      true) {
+                                                    uploadedFilesPerInstruction[
+                                                            key]
+                                                        ?.remove(file);
+                                                    if ((uploadedFilesPerInstruction[
+                                                                key] ??
+                                                            [])
+                                                        .isEmpty) {
+                                                      uploadedFilesPerInstruction
+                                                          .remove(key);
+                                                    }
+                                                    break;
+                                                  }
+                                                }
+                                              });
+                                            },
+                                            child: Align(
+                                              alignment: Alignment.topRight,
+                                              child: Padding(
+                                                padding: EdgeInsets.all(
+                                                    size.width *
+                                                        AppDimensions.numD018),
+                                                child: Image.asset(
+                                                  "${iconsPath}ic_deleteIcon.png",
+                                                  height: size.width *
+                                                      AppDimensions.numD05,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                        height:
+                                            size.width * AppDimensions.numD02),
+                                    Text(
+                                      file.path.split("/").last,
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize:
+                                              size.width * AppDimensions.numD03,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+
+                        SizedBox(height: size.width * AppDimensions.numD06),
                       ],
                     ),
                   ),
                 ),
-
-                // Show all uploaded files across all options
-                if (allUploadedFiles.isNotEmpty) ...[
-                  SizedBox(height: size.width * AppDimensions.numD06),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: allUploadedFiles.map((file) {
-                      bool isImage = file.path.endsWith('.jpg') ||
-                          file.path.endsWith('.png') ||
-                          file.path.endsWith('.jpeg');
-                      return Stack(
-                        children: [
-                          Container(
-                            width: size.width * 0.2,
-                            height: size.width * 0.2,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: Colors.white,
-                                border: Border.all(color: Colors.black)),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: isImage
-                                  ? Image.file(file, fit: BoxFit.cover)
-                                  : Icon(Icons.insert_drive_file,
-                                      color: AppColorTheme.colorThemePink,
-                                      size: size.width * 0.08),
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            right: 0,
-                            child: InkWell(
-                              onTap: () {
-                                setModalState(() {
-                                  // Find which instruction this file belongs to and remove it
-                                  for (var key in uploadedFilesPerInstruction
-                                      .keys
-                                      .toList()) {
-                                    if (uploadedFilesPerInstruction[key]
-                                            ?.contains(file) ==
-                                        true) {
-                                      uploadedFilesPerInstruction[key]
-                                          ?.remove(file);
-                                      if ((uploadedFilesPerInstruction[key] ??
-                                              [])
-                                          .isEmpty) {
-                                        uploadedFilesPerInstruction.remove(key);
-                                      }
-                                      break;
-                                    }
-                                  }
-                                });
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(2),
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(Icons.cancel,
-                                    color: Colors.red, size: 20),
-                              ),
-                            ),
-                          )
-                        ],
-                      );
-                    }).toList(),
-                  ),
-                ],
-
-                SizedBox(height: size.width * AppDimensions.numD06),
 
                 // Submit Button
                 SizedBox(
