@@ -264,13 +264,43 @@ class _MenuScreenState extends State<MenuScreen> {
     return Scaffold(
       appBar: CommonAppBar(
         elevation: 0,
-        hideLeading: false,
-        title: Text(
-          AppStrings.menuText,
-          style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * AppDimensions.appBarHeadingFontSize),
+        hideLeading: true,
+        title: Row(
+          children: [
+            SizedBox(width: size.width * AppDimensions.numD04),
+            Image.asset(
+              "assets/commonImages/ic_black_rabbit.png",
+              width: size.width * AppDimensions.numD10,
+              height: size.width * AppDimensions.numD09,
+              fit: BoxFit.contain,
+            ),
+            const Spacer(),
+            GestureDetector(
+              onTap: () {
+                context.pushNamed(AppRoutes.newsName);
+              },
+              child: Row(
+                children: [
+                  Text(
+                    "Click to view local news",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: size.width * AppDimensions.numD035,
+                      fontWeight: FontWeight.normal,
+                      fontFamily: "AirbnbCereal",
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                  SizedBox(width: size.width * AppDimensions.numD02),
+                  Image.asset(
+                    "assets/icons/ic_news1.png",
+                    width: size.width * AppDimensions.numD07,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: size.width * AppDimensions.numD04),
+          ],
         ),
         centerTitle: false,
         titleSpacing: 0,
