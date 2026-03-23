@@ -25,6 +25,9 @@ class SharedPreferencesKeys {
   static const currencySymbolKey = "preferred_currency_sign";
   static const totalHopperArmy = "totalHopperArmy";
   static const videoLimitKey = "videoLimit";
+  static const referralFriendEarningKey = "referral_friend_earning_amount";
+  static const referralUserEarningKey = "referral_user_earning_amount";
+  static const referralCurrencyKey = "referral_currency_symbol";
 
   static const lastNameKey = "last_name";
   static const userNameKey = "user_name";

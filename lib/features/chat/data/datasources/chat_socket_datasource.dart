@@ -24,89 +24,93 @@ class ChatSocketDataSource {
   void initializeListeners() {
     _client.on(SocketEvents.chatMessage, (data) {
       debugPrint("ChatSocketDataSource received chat message: $data");
-      SocketLogger.logReceive(SocketEvents.chatMessage, data: data);
       onChatMessage?.call(data);
     });
 
     _client.on(SocketEvents.mediaMessage, (data) {
       debugPrint("ChatSocketDataSource received media message: $data");
-      SocketLogger.logReceive(SocketEvents.mediaMessage, data: data);
       onMediaMessage?.call(data);
     });
 
     _client.on(SocketEvents.voiceMessage, (data) {
       debugPrint("ChatSocketDataSource received voice message: $data");
-      SocketLogger.logReceive(SocketEvents.voiceMessage, data: data);
       onVoiceMessage?.call(data);
     });
 
     _client.on(SocketEvents.typing, (data) {
       debugPrint("ChatSocketDataSource received typing: $data");
-      SocketLogger.logReceive(SocketEvents.typing, data: data);
-      onTyping?.call(data);
+      // Add is_typing if missing
+      if (data is Map && !data.containsKey('is_typing')) {
+        final Map<String, dynamic> enrichedData =
+            Map<String, dynamic>.from(data);
+        enrichedData['is_typing'] = true;
+        onTyping?.call(enrichedData);
+      } else {
+        onTyping?.call(data);
+      }
+    });
+
+    _client.on(SocketEvents.stopTyping, (data) {
+      debugPrint("ChatSocketDataSource received stop typing: $data");
+      final Map<String, dynamic> stopData =
+          (data is Map) ? Map<String, dynamic>.from(data) : {};
+      stopData['is_typing'] = false;
+      onTyping?.call(stopData);
     });
 
     _client.on(SocketEvents.roomJoin, (data) {
       debugPrint("ChatSocketDataSource received room join: $data");
-      SocketLogger.logReceive(SocketEvents.roomJoin, data: data);
       onRoomJoin?.call(data);
     });
 
     _client.on(SocketEvents.adminStatus, (data) {
       debugPrint("ChatSocketDataSource received adminStatus: $data");
-      SocketLogger.logReceive(SocketEvents.adminStatus, data: data);
       onAdminStatus?.call(data);
     });
 
     _client.on(SocketEvents.readMessage, (data) {
       debugPrint("ChatSocketDataSource received read message: $data");
-      SocketLogger.logReceive(SocketEvents.readMessage, data: data);
       onReadMessage?.call(data);
     });
   }
 
   void joinRoom(String roomId) {
     debugPrint("ChatSocketDataSource emitting room join for: $roomId");
-    SocketLogger.logEmit(SocketEvents.roomJoin, data: {'room_id': roomId});
     _client.emit(SocketEvents.roomJoin, {'room_id': roomId});
   }
 
   void leaveRoom(String roomId) {
     debugPrint("ChatSocketDataSource emitting leave room for: $roomId");
-    SocketLogger.logEmit(SocketEvents.leaveRoom, data: {'room_id': roomId});
     _client.emit(SocketEvents.leaveRoom, {'room_id': roomId});
   }
 
   void sendMessage(Map<String, dynamic> data) {
     debugPrint("ChatSocketDataSource emitting chat message: $data");
-    SocketLogger.logEmit(SocketEvents.chatMessage, data: data);
     _client.emit(SocketEvents.chatMessage, data);
   }
 
   void sendMediaMessage(Map<String, dynamic> data) {
     debugPrint("ChatSocketDataSource emitting media message: $data");
-    SocketLogger.logEmit(SocketEvents.mediaMessage, data: data);
     _client.emit(SocketEvents.mediaMessage, data);
   }
 
   void sendVoiceMessage(Map<String, dynamic> data) {
     debugPrint("ChatSocketDataSource emitting voice message: $data");
-    SocketLogger.logEmit(SocketEvents.voiceMessage, data: data);
     _client.emit(SocketEvents.voiceMessage, data);
   }
 
   void sendTypingStatus(String roomId, String userId, bool isTyping,
-      {String? receiverId}) {
+      {String? receiverId, String? typedValue}) {
     final data = {
       'room_id': roomId,
       'user_id': userId,
+      'is_typing': isTyping,
+      if (typedValue != null) 'typed_value': typedValue,
       if (receiverId != null) 'receiver_id': receiverId,
     };
     if (isTyping) {
-      SocketLogger.logEmit(SocketEvents.typing, data: data);
       _client.emit(SocketEvents.typing, data);
     } else {
-      SocketLogger.logEmit(SocketEvents.stopTyping, data: data);
       _client.emit(SocketEvents.stopTyping, data);
     }
   }
@@ -118,7 +122,6 @@ class ChatSocketDataSource {
       'user_id': userId,
       if (receiverId != null) 'receiver_id': receiverId,
     };
-    SocketLogger.logEmit(SocketEvents.readMessage, data: data);
     _client.emit(SocketEvents.readMessage, data);
   }
 

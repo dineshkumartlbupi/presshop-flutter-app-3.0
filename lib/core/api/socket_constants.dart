@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'package:flutter/foundation.dart';
 
 class SocketEvents {
   // Authentication & Connection Rooms
@@ -45,11 +45,10 @@ class SocketEvents {
 class SocketLogger {
   /// Log when a socket event is emitted
   static void logEmit(String eventName, {dynamic data}) {
-    log('🚀 [EMIT] Event: $eventName', name: 'SocketLogger', error: data);
+    debugPrint('🚀 [EMIT] Event: $eventName | Data: $data');
   }
-
   /// Log when a socket event is received
   static void logReceive(String eventName, {dynamic data}) {
-    log('📥 [RECEIVE] Event: $eventName', name: 'SocketLogger', error: data);
+    debugPrint('📥 [RECEIVE] Event: $eventName | Data: $data');
   }
 }

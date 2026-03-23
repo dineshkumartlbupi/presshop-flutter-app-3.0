@@ -39,6 +39,11 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
   bool _isLoadingProfile = true;
   bool _isLoadingCommissions = true;
   List<Map<String, dynamic>> _commissionList = [];
+  String _referralCurrency = "£";
+
+  // Representative amounts for referral visualization
+  double _friendsEarnAmount = 100.0;
+  double _youEarnAmount = 5.0;
 
   @override
   void initState() {
@@ -50,6 +55,17 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                 .getString(SharedPreferencesKeys.totalHopperArmy) ??
             "0") ??
         0;
+
+    _friendsEarnAmount = sharedPreferences!
+            .getDouble(SharedPreferencesKeys.referralFriendEarningKey) ??
+        100.0;
+    _youEarnAmount = sharedPreferences!
+            .getDouble(SharedPreferencesKeys.referralUserEarningKey) ??
+        5.0;
+
+    _referralCurrency = sharedPreferences!
+            .getString(SharedPreferencesKeys.referralCurrencyKey) ??
+        currencySymbol;
 
     // Then fetch fresh data from API
     _fetchProfileData();
@@ -271,14 +287,22 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                                             size.width * AppDimensions.numD04,
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold)),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * AppDimensions.numD06),
-                                  child: Image.asset(
-                                    "${iconsPath}amount_100.png",
-                                    height: size.width * AppDimensions.numD40,
-                                    width: size.width * AppDimensions.numD40,
-                                  ),
+                                // ClipRRect(
+                                //   borderRadius: BorderRadius.circular(
+                                //       size.width * AppDimensions.numD06),
+                                //   child: Image.asset(
+                                //     "${iconsPath}amount_100.png",
+                                //     height: size.width * AppDimensions.numD40,
+                                //     width: size.width * AppDimensions.numD40,
+                                //   ),
+                                // ),
+
+                                SizedBox(
+                                    height: size.width * AppDimensions.numD04),
+                                _Referral3DCard(
+                                  amount: _friendsEarnAmount,
+                                  size: size,
+                                  currency: _referralCurrency,
                                 ),
                               ],
                             ),
@@ -294,14 +318,22 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                                             size.width * AppDimensions.numD04,
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold)),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * AppDimensions.numD06),
-                                  child: Image.asset(
-                                    "${iconsPath}amount_5.png",
-                                    height: size.width * AppDimensions.numD40,
-                                    width: size.width * AppDimensions.numD40,
-                                  ),
+                                // ClipRRect(
+                                //   borderRadius: BorderRadius.circular(
+                                //       size.width * AppDimensions.numD06),
+                                //   child: Image.asset(
+                                //     "${iconsPath}amount_5.png",
+                                //     height: size.width * AppDimensions.numD40,
+                                //     width: size.width * AppDimensions.numD40,
+                                //   ),
+                                // ),
+                                SizedBox(
+                                    height: size.width * AppDimensions.numD04),
+                                _Referral3DCard(
+                                  amount: _youEarnAmount,
+                                  size: size,
+                                  isYouEarn: true,
+                                  currency: _referralCurrency,
                                 ),
                               ],
                             ),
@@ -511,22 +543,22 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                           .toList(),
                   ],
 
-                  if (!_isLoadingCommissions && _commissionList.isEmpty) ...[
-                    SizedBox(height: size.width * AppDimensions.numD04),
-                    Divider(color: Colors.grey.shade300, thickness: 1),
-                    SizedBox(height: size.width * AppDimensions.numD03),
-                    Center(
-                      child: Text(
-                        "No hopper army earnings yet.\nInvite friends to start earning!",
-                        textAlign: TextAlign.center,
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * AppDimensions.numD03,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w400),
-                      ),
-                    ),
-                  ],
+                  // if (!_isLoadingCommissions && _commissionList.isEmpty) ...[
+                  //   SizedBox(height: size.width * AppDimensions.numD04),
+                  //   Divider(color: Colors.grey.shade300, thickness: 1),
+                  //   SizedBox(height: size.width * AppDimensions.numD03),
+                  //   Center(
+                  //     child: Text(
+                  //       "No hopper army earnings yet.\nInvite friends to start earning!",
+                  //       textAlign: TextAlign.center,
+                  //       style: commonTextStyle(
+                  //           size: size,
+                  //           fontSize: size.width * AppDimensions.numD03,
+                  //           color: Colors.grey,
+                  //           fontWeight: FontWeight.w400),
+                  //     ),
+                  //   ),
+                  // ],
 
                   SizedBox(height: size.width * AppDimensions.numD06),
                 ],
@@ -704,6 +736,163 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
               fontWeight: FontWeight.w600),
         ),
       ],
+    );
+  }
+}
+
+class _Referral3DCard extends StatelessWidget {
+  final double amount;
+  final Size size;
+  final bool isYouEarn;
+  final String currency;
+
+  const _Referral3DCard({
+    required this.amount,
+    required this.size,
+    this.isYouEarn = false,
+    required this.currency,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final amountText =
+        amount % 1 == 0 ? amount.toInt().toString() : amount.toStringAsFixed(1);
+
+    return Container(
+      height: size.width * AppDimensions.numD40,
+      width: size.width * AppDimensions.numD40,
+      padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD06),
+        gradient: const RadialGradient(
+          colors: [
+            Color(0xFFFDEB71), // Lighter yellow
+            Color(0xFFF8D800), // Vibrant yellow
+          ],
+          center: Alignment.center,
+          radius: 0.8,
+        ),
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.black.withOpacity(0.1),
+        //     blurRadius: 10,
+        //     spreadRadius: 2,
+        //     offset: const Offset(0, 4),
+        //   ),
+        // ],
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Background Rays (Simulated with icons or custom painter if needed, but a simple gradient is often enough)
+          Opacity(
+            opacity: 0.1,
+            child: Icon(
+              Icons.wb_sunny_outlined,
+              size: size.width * AppDimensions.numD30,
+              color: Colors.white,
+            ),
+          ),
+
+          // 3D Text Effect
+          _build3DText(amountText),
+        ],
+      ),
+    );
+  }
+
+  Widget _build3DText(String text) {
+    const depth = 9;
+    const shadowColor = Color(0xFFC0392B); // Dark red for extrusion
+    const currencyColor = Color(0xFFE74C3C); // Vibrant red for £
+
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Extrusion Layers (Shadow Layers)
+          for (int i = 1; i <= depth; i++)
+            Transform.translate(
+              offset: Offset(i.toDouble(), i.toDouble()),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    currency,
+                    style: TextStyle(
+                      fontSize: size.width * AppDimensions.numD14,
+                      fontWeight: FontWeight.w900,
+                      color: shadowColor,
+                      fontFamily: "AirbnbCereal",
+                    ),
+                  ),
+                  SizedBox(width: size.width * AppDimensions.numD01), // spacing
+                  Text(
+                    text,
+                    style: TextStyle(
+                      fontSize: size.width * AppDimensions.numD18,
+                      fontWeight: FontWeight.w900,
+                      color: shadowColor,
+                      fontFamily: "AirbnbCereal",
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+          // Main Foreground Layer
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text(
+                currency,
+                style: TextStyle(
+                  fontSize: size.width * AppDimensions.numD14,
+                  fontWeight: FontWeight.w900,
+                  color: currencyColor,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(0.3),
+                      offset: const Offset(2, 2),
+                      blurRadius: 4,
+                    ),
+                  ],
+                  fontFamily: "AirbnbCereal",
+                ),
+              ),
+              SizedBox(width: size.width * AppDimensions.numD01), // spacing
+              ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  colors: [Colors.white, Color(0xFFE0E0E0)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ).createShader(bounds),
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: size.width * AppDimensions.numD18,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withOpacity(0.3),
+                        offset: const Offset(2, 2),
+                        blurRadius: 4,
+                      ),
+                    ],
+                    fontFamily: "AirbnbCereal",
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

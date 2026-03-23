@@ -434,6 +434,37 @@ class DashboardState extends State<Dashboard>
           bool shouldUpdate = Platform.isAndroid
               ? (versionData['aOSshouldForceUpdate'] ?? false)
               : (versionData['iOSshouldForceUpdate'] ?? false);
+          
+          if (versionData.containsKey('referral_friend_earning_amount')) {
+            sharedPreferences!.setDouble(SharedPreferencesKeys.referralFriendEarningKey,
+                (versionData['referral_friend_earning_amount'] as num).toDouble());
+          }
+          if (versionData.containsKey('referral_user_earning_amount')) {
+            sharedPreferences!.setDouble(SharedPreferencesKeys.referralUserEarningKey,
+                (versionData['referral_user_earning_amount'] as num).toDouble());
+          }
+          if (versionData.containsKey('referral_currency_symbol')) {
+            sharedPreferences!.setString(SharedPreferencesKeys.referralCurrencyKey,
+                versionData['referral_currency_symbol'].toString());
+          }
+
+          // Handle nested referral_data object
+          if (versionData.containsKey('referral_data') && versionData['referral_data'] is Map) {
+            final referralData = versionData['referral_data'] as Map;
+            if (referralData.containsKey('referral_friend_earning_amount')) {
+              sharedPreferences!.setDouble(SharedPreferencesKeys.referralFriendEarningKey,
+                  (referralData['referral_friend_earning_amount'] as num).toDouble());
+            }
+            if (referralData.containsKey('referral_user_earning_amount')) {
+              sharedPreferences!.setDouble(SharedPreferencesKeys.referralUserEarningKey,
+                  (referralData['referral_user_earning_amount'] as num).toDouble());
+            }
+            if (referralData.containsKey('referral_currency_symbol')) {
+              sharedPreferences!.setString(SharedPreferencesKeys.referralCurrencyKey,
+                  referralData['referral_currency_symbol'].toString());
+            }
+          }
+
           if (shouldUpdate) forceUpdateCheck();
 
           String? liveLocationHeading =

@@ -75,12 +75,14 @@ class SendMessageEvent extends ChatEvent {
 }
 
 class UpdateTypingStatusEvent extends ChatEvent {
-  const UpdateTypingStatusEvent({required this.isTyping, required this.roomId});
+  const UpdateTypingStatusEvent(
+      {required this.isTyping, required this.roomId, this.typedValue});
   final bool isTyping;
   final String roomId;
+  final String? typedValue;
 
   @override
-  List<Object> get props => [isTyping, roomId];
+  List<Object> get props => [isTyping, roomId, typedValue ?? ''];
 }
 
 class ReceiveMessageEvent extends ChatEvent {
@@ -137,4 +139,8 @@ class OtherUserOnlineStatusUpdatedEvent extends ChatEvent {
 
   @override
   List<Object> get props => [isOnline];
+}
+
+class FetchMoreMessagesEvent extends ChatEvent {
+  const FetchMoreMessagesEvent();
 }

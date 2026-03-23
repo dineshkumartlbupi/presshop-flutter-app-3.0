@@ -102,7 +102,6 @@ import 'package:presshop/features/task/domain/usecases/get_hopper_accepted_count
 import 'package:presshop/features/task/domain/usecases/get_task_transaction_details.dart';
 import 'package:presshop/features/task/domain/usecases/get_content_transaction_details.dart';
 
-import 'package:presshop/features/chat/data/datasources/chat_local_data_source.dart';
 import 'package:presshop/features/authentication/domain/usecases/login_user.dart';
 import 'package:presshop/features/authentication/domain/usecases/social_login_user.dart';
 import 'package:presshop/features/authentication/domain/usecases/register_user.dart';
@@ -505,7 +504,7 @@ Future<void> init() async {
   sl.registerFactory(() => AlertBloc(apiClient: sl()));
   sl.registerFactory(() => CameraBloc(sl()));
   sl.registerFactory(
-    () => ChatBloc(chatSocketDataSource: sl(), localDataSource: sl()),
+    () => ChatBloc(chatSocketDataSource: sl()),
   );
   sl.registerFactory(
     () => FeedBloc(getFeeds: sl(), toggleFeedInteraction: sl()),
@@ -781,5 +780,4 @@ Future<void> init() async {
   sl.registerLazySingleton(() => IncidentSocketDataSource(client: sl()));
   sl.registerLazySingleton(() => NewsSocketDataSource(client: sl()));
   sl.registerLazySingleton(() => ChatSocketDataSource(client: sl()));
-  sl.registerLazySingleton(() => ChatLocalDataSource());
 }

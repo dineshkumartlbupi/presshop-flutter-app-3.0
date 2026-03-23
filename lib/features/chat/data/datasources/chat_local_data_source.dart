@@ -38,17 +38,30 @@ class ChatLocalDataSource {
   Future<void> saveMessage(Map<String, dynamic> message) async {
     final db = await database;
     final data = _prepareDataForSqlite(message);
+
+    final String? messageId = data['messageId']?.toString();
+    if (messageId != null && messageId.isNotEmpty) {
+      final existing = await db
+          .query('CHAT', where: 'messageId = ?', whereArgs: [messageId]);
+      if (existing.isNotEmpty) {
+        await db.update('CHAT', data,
+            where: 'messageId = ?', whereArgs: [messageId]);
+        return;
+      }
+    }
+
     await db.insert('CHAT', data, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<void> saveMessages(List<Map<String, dynamic>> messages) async {
-    final db = await database;
-    Batch batch = db.batch();
     for (var message in messages) {
-      final data = _prepareDataForSqlite(message);
-      batch.insert('CHAT', data, conflictAlgorithm: ConflictAlgorithm.replace);
+      await saveMessage(message);
     }
-    await batch.commit(noResult: true);
+  }
+
+  Future<void> clearAllMessages() async {
+    final db = await database;
+    await db.delete('CHAT');
   }
 
   Map<String, dynamic> _prepareDataForSqlite(Map<String, dynamic> message) {
@@ -115,12 +128,13 @@ class ChatLocalDataSource {
 
   Future<List<Map<String, dynamic>>> getMessages(String roomId) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'CHAT',
-      where: 'roomId = ?',
-      whereArgs: [roomId],
-      orderBy: 'date DESC, id DESC',
-    );
+    // Use rawQuery to deduplicate by messageId while keeping optimistic messages (where messageId is null/empty)
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+      SELECT * FROM CHAT 
+      WHERE roomId = ? 
+      GROUP BY CASE WHEN messageId IS NULL OR messageId = '' THEN id ELSE messageId END
+      ORDER BY date DESC, id DESC
+    ''', [roomId]);
 
     return maps.map((map) {
       final newMap = Map<String, dynamic>.from(map);
