@@ -137,6 +137,13 @@ class AppStrings {
   static const benefitText = "benefits";
   static const uploadText = "Upload";
   static const finishText = "Finish";
+  static const validDegreeText =
+      "Valid degree in photography from a recognised university in the UK, Europe or the USA";
+  static const validMembershipText =
+      "Valid membership at a professional photographer's association (UK) ";
+  static const validPassportText =
+      "Valid British Passport or a valid UK Work-Permit";
+  static const othersText = "Others";
   static const myAccountText = "My Account";
   static const cameraText = "Camera";
   static const earningsText = "Total earnings";
