@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:presshop/core/core_export.dart';
 import 'package:presshop/main.dart' as app;
 
 void main() {
@@ -11,6 +12,15 @@ void main() {
         (tester) async {
       app.main();
       await tester.pumpAndSettle();
+
+      // --- NEW: Handle Walkthrough/Onboarding ---
+      // We check if we are on the Walkthrough screen by looking for the "Skip" text
+      final skipButton = find.text(AppStrings.skipText);
+      if (skipButton.evaluate().isNotEmpty) {
+        await tester.tap(skipButton);
+        await tester.pumpAndSettle();
+      }
+      // ------------------------------------------
 
       // Find fields by Key
       final emailField = find.byKey(const Key('login_field'));
@@ -27,11 +37,9 @@ void main() {
       await tester.tap(signInButton);
       await tester.pumpAndSettle();
 
-      // 3. Verify error dialog or loading state (depending on app behavior)
-      // Since it's a real integration test, we expect the BLoC to trigger an error dialog.
-      // We can look for the "Error" text or generic error dialog widgets.
-      // expect(find.text('Invalid credentials'), findsOneWidget); // Example
+      // 3. Verify error dialog appears (AuthError state in Bloc leads to commonErrorDialogDialog)
+      // Since it shows a dialog, we look for one of the texts in the dialog (e.g., "Error" or the expected message)
+      expect(find.byType(Dialog), findsOneWidget);
     });
   });
 }
- 

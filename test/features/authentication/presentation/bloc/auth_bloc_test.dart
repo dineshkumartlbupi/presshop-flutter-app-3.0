@@ -121,12 +121,15 @@ void main() {
         AuthAuthenticated(user: tUser),
       ],
       verify: (_) {
+        // AppLogger uses AnalyticsHelper.trackEvent which calls logEvent
         verify(() => mockAnalytics.logEvent(
               name: EventNames.userLogin,
               parameters: any(named: 'parameters'),
             )).called(1);
         verify(() => mockAnalytics.setUserId(id: tUser.id)).called(1);
-        verify(() => mockCrashlytics.setUserIdentifier(tUser.id)).called(1);
+        // AppLogger.setUserIdentity sets user property 'email' and 'full_name'
+        verify(() => mockAnalytics.setUserProperty(
+            name: 'email', value: tUser.email)).called(1);
       },
     );
 
