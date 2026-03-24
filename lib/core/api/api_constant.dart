@@ -115,6 +115,7 @@ class Content {
   const Content();
 
   final String uploadUserMedia = "hopper/uploadUserMedia";
+  final String uploadChatAttachment = "hopper/uploadChatAttachment";
   final String uploadMedia = "hopper/uploadmedia";
   final String uploadMultipleImages = "hopper/uploadMultipleImg";
   final String addContent = "hopper/addContent";

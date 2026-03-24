@@ -17,8 +17,15 @@ class ChatRemoteDataSource {
     if (rawData == null) return null;
 
     // Common keys used in the backend for the main payload
-    final keys = ['response', 'data', 'resposne', 'details', 'resp', 'messages'];
-    
+    final keys = [
+      'response',
+      'data',
+      'resposne',
+      'details',
+      'resp',
+      'messages'
+    ];
+
     if (rawData is Map) {
       for (final key in keys) {
         if (rawData.containsKey(key) && rawData[key] != null) {
@@ -26,13 +33,14 @@ class ChatRemoteDataSource {
         }
       }
     }
-    
+
     // If no common key found, return the raw data itself (it might be the list)
     return rawData;
   }
 
   /// Fetches the list of chat rooms
-  Future<List<ChatRoomModel>> getChatList({int offset = 0, int limit = 50}) async {
+  Future<List<ChatRoomModel>> getChatList(
+      {int offset = 0, int limit = 50}) async {
     try {
       final response = await apiClient.post(
         ApiConstantsNew.chat.chatList,
@@ -41,7 +49,10 @@ class ChatRemoteDataSource {
 
       final extracted = _extractData(response.data);
       if (extracted is List) {
-        return extracted.map((json) => ChatRoomModel.fromJson(Map<String, dynamic>.from(json))).toList();
+        return extracted
+            .map((json) =>
+                ChatRoomModel.fromJson(Map<String, dynamic>.from(json)))
+            .toList();
       }
       return [];
     } catch (e) {
@@ -66,10 +77,14 @@ class ChatRemoteDataSource {
         },
       );
 
-      final hopperId = sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
+      final hopperId =
+          sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
       final extracted = _extractData(response.data);
       if (extracted is List) {
-        return extracted.map((json) => ChatMessageModel.fromJson(Map<String, dynamic>.from(json), hopperId)).toList();
+        return extracted
+            .map((json) => ChatMessageModel.fromJson(
+                Map<String, dynamic>.from(json), hopperId))
+            .toList();
       }
       return [];
     } catch (e) {
@@ -88,7 +103,7 @@ class ChatRemoteDataSource {
       ));
 
       final response = await apiClient.multipartPost(
-        ApiConstantsNew.content.uploadMedia,
+        ApiConstantsNew.content.uploadChatAttachment,
         formData: formData,
       );
 

@@ -509,7 +509,7 @@ Future<void> init() async {
       getCommissions: sl(),
     ),
   );
-  sl.registerFactory(() => AlertBloc(apiClient: sl()));
+  // sl.registerFactory(() => AlertBloc(apiClient: sl()));
   sl.registerFactory(() => CameraBloc(sl()));
   sl.registerFactory(
     () => ChatBloc(
@@ -795,7 +795,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => IncidentSocketDataSource(client: sl()));
   sl.registerLazySingleton(() => NewsSocketDataSource(client: sl()));
   sl.registerLazySingleton(() => ChatSocketDataSource(client: sl()));
-  sl.registerLazySingleton<ChatRemoteDataSource>(() => ChatRemoteDataSource(sl()));
+  sl.registerLazySingleton<ChatRemoteDataSource>(
+      () => ChatRemoteDataSource(sl()));
 
   // Chat Repository
   sl.registerLazySingleton<ChatRepository>(
