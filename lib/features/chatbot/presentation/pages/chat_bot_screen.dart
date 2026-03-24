@@ -64,6 +64,56 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
           isTyping = state.isTyping;
         }
 
+        if (state is ChatbotLoading || state is ChatbotInitial) {
+          return Scaffold(
+            appBar: CommonAppBar(
+              elevation: 0,
+              hideLeading: false,
+              title: Padding(
+                padding: EdgeInsets.only(
+                    left: widget.hideLeading
+                        ? size.width * AppDimensions.numD04
+                        : 0),
+                child: Text(
+                  "Chat",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: size.width * AppDimensions.appBarHeadingFontSize),
+                ),
+              ),
+              centerTitle: false,
+              titleSpacing: 0,
+              size: size,
+              showActions: true,
+              leadingFxn: () {
+                context.pop();
+              },
+              actionWidget: [
+                InkWell(
+                  onTap: () {
+                    context.goNamed(
+                      AppRoutes.dashboardName,
+                      extra: {'initialPosition': 2},
+                    );
+                  },
+                  child: Image.asset(
+                    "${commonImagePath}rabbitLogo.png",
+                    height: size.width * AppDimensions.numD07,
+                    width: size.width * AppDimensions.numD07,
+                  ),
+                ),
+                SizedBox(
+                  width: size.width * AppDimensions.numD04,
+                )
+              ],
+            ),
+            body: Center(
+              child: showAnimatedLoader(size),
+            ),
+          );
+        }
+
         return Scaffold(
           appBar: CommonAppBar(
             elevation: 0,
