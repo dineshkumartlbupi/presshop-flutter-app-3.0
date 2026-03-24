@@ -20,9 +20,9 @@ import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
-import 'package:presshop/features/publish/presentation/pages/HashTagSearchScreen.dart';
+import 'package:presshop/features/publish/presentation/pages/hash_tag_search_screen.dart';
 // import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart'; // Removed
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';

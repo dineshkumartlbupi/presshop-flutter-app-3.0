@@ -5,18 +5,18 @@ import 'package:presshop/features/account_settings/presentation/pages/account_se
 import 'package:presshop/features/account_settings/presentation/pages/change_password_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
-import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
-import 'package:presshop/features/authentication/presentation/pages/UploadDocumnetsScreen.dart';
+import 'package:presshop/features/authentication/presentation/pages/term_check_screen.dart';
+import 'package:presshop/features/authentication/presentation/pages/upload_doc_screen.dart';
 import 'package:presshop/features/bank/presentation/pages/my_banks_page.dart';
-import 'package:presshop/features/chatbot/presentation/pages/chatBotScreen.dart';
+import 'package:presshop/features/chatbot/presentation/pages/chat_bot_screen.dart';
 import 'package:presshop/features/content/presentation/pages/my_draft_screen.dart';
 import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
 import 'package:presshop/features/leaderboard/presentation/pages/leaderboard_page.dart';
-import 'package:presshop/features/notification/presentation/pages/MyNotifications.dart';
+import 'package:presshop/features/notification/presentation/pages/my_notifications.dart';
 import 'package:presshop/features/profile/presentation/pages/digital_id_screen.dart';
 import 'package:presshop/features/profile/presentation/pages/my_profile_screen.dart';
-import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
-import 'package:presshop/features/rating/presentation/pages/RatingReviewScreen.dart';
+import 'package:presshop/features/publish/presentation/pages/tutorials_screen.dart';
+import 'package:presshop/features/rating/presentation/pages/rating_review_screen.dart';
 import 'package:presshop/features/referral/presentation/pages/refer_screen.dart';
 
 enum MenuAction {

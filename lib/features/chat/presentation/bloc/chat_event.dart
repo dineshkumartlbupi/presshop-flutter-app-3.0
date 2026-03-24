@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-// import 'package:image_picker/image_picker.dart';
+import 'package:presshop/features/chat/data/models/chat_models.dart';
 
 abstract class ChatEvent extends Equatable {
   const ChatEvent();
@@ -87,7 +87,7 @@ class UpdateTypingStatusEvent extends ChatEvent {
 
 class ReceiveMessageEvent extends ChatEvent {
   const ReceiveMessageEvent(this.messages);
-  final List<Map<String, dynamic>> messages;
+  final List<ChatMessageModel> messages;
 
   @override
   List<Object> get props => [messages];
@@ -127,7 +127,7 @@ class OtherUserTypingUpdatedEvent extends ChatEvent {
 
 class ChatListUpdatedEvent extends ChatEvent {
   const ChatListUpdatedEvent(this.chatList);
-  final List<Map<String, dynamic>> chatList;
+  final List<ChatRoomModel> chatList;
 
   @override
   List<Object> get props => [chatList];

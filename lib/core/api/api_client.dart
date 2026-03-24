@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:presshop/core/api/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:presshop/core/api/token_refresh_manager.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
@@ -26,9 +25,9 @@ class ApiClient {
       ),
     );
 
-    // if (kDebugMode) {
-    //   _dio.interceptors.add(PrettyDioLogger(formatJson: true));
-    // }
+    if (kDebugMode) {
+      _dio.interceptors.add(PrettyDioLogger(formatJson: true));
+    }
   }
   final Dio _dio;
   final SharedPreferences _sharedPreferences;

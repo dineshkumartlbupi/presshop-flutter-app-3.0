@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:presshop/main.dart' as app;
-import 'package:presshop/features/publish/presentation/pages/PublishContentScreen.dart';
+import 'package:presshop/features/publish/presentation/pages/publish_content_screen.dart';
 import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart'; // For PublishData, MediaData
 import 'package:presshop/core/constants/string_constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

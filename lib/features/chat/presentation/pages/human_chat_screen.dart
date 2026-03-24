@@ -36,6 +36,7 @@ import 'package:presshop/features/chat/presentation/bloc/chat_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
+import 'package:presshop/features/chat/data/models/chat_models.dart';
 
 // ignore: must_be_immutable
 class ConversationScreen extends StatefulWidget {
@@ -298,34 +299,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                                   );
                                 }
                                 var document = state.messages[index];
-                                final String senderIdRaw =
-                                    (document['sender_id'] is Map)
-                                        ? (document['sender_id']['_id']
-                                                ?.toString() ??
-                                            "")
-                                        : (document['sender_id']?.toString() ??
-                                            "");
-                                final String senderDataId =
-                                    (document['sender_data'] != null)
-                                        ? (document['sender_data']['_id']
-                                                ?.toString() ??
-                                            "")
-                                        : "";
-
-                                final String currentHopperIdStr =
-                                    _senderId.trim().toLowerCase();
-                                final isMe = (senderIdRaw.trim().toLowerCase() ==
-                                            currentHopperIdStr ||
-                                        senderDataId.trim().toLowerCase() ==
-                                            currentHopperIdStr) &&
-                                    currentHopperIdStr.isNotEmpty;
-
-                                // Debug log for alignment
-                                if (index == 0 ||
-                                    index == state.messages.length - 1) {
-                                  debugPrint(
-                                      "Msg $index Alignment Debug: senderIdRaw=$senderIdRaw, senderDataId=$senderDataId, currentHopperId=$_senderId, isMe=$isMe");
-                                }
+                                final isMe = document.isSender;
 
                                 try {
                                   return Container(
@@ -411,7 +385,6 @@ class _ConversationScreenState extends State<ConversationScreen>
       ),
     );
   }
-
 
   /*  /// For checking person is Online Or OffLine
   Widget checkOnline(BuildContext context, size) {
@@ -1043,7 +1016,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
   }
 
-  Widget leftChatWidget(Map<String, dynamic> document) {
+  Widget leftChatWidget(ChatMessageModel document) {
     return Padding(
       padding: EdgeInsets.only(right: size.width * AppDimensions.numD20),
       child: Row(
@@ -1107,7 +1080,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                     vertical: size.width * AppDimensions.numD025,
                   ),
                   child: Text(
-                    document["message"].toString(),
+                    document.message,
                     style: TextStyle(
                       fontSize: size.width * AppDimensions.numD035,
                       color: Colors.black,
@@ -1139,7 +1112,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
   }
 
-  Widget rightChatWidget(Map<String, dynamic> document) {
+  Widget rightChatWidget(ChatMessageModel document) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1256,7 +1229,7 @@ class _ConversationScreenState extends State<ConversationScreen>
   }
 
   ///Message widgets-->
-  Widget messageWidget(Map<String, dynamic> document, String type, size) {
+  Widget messageWidget(ChatMessageModel document, String type, size) {
     //callCustomNotificationApi(document['message_type'] == 'text' ?document["message"].toString():document['message_type']);
     return Slidable(
       key: ValueKey(document["messageId"].toString()),
@@ -1297,15 +1270,14 @@ class _ConversationScreenState extends State<ConversationScreen>
             ? CrossAxisAlignment.end
             : CrossAxisAlignment.start,
         children: [
-          document['message_type'] == 'text'
+          document.messageType == 'text'
               ? type == 'sender'
                   ? rightChatWidget(document)
                   : leftChatWidget(document)
               : Container(),
 
           /// To Send Image
-          document['message_type'] == 'image' ||
-                  document['message_type'] == 'imageFile'
+          document.messageType == 'image'
               ? type == 'sender'
                   ? rightImageChatWidget(document)
                   : leftImageChatWidget(document)
@@ -1846,7 +1818,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                 )
               : Container(),
 
-          document['message_type'] == 'recording'
+          document.messageType == 'recording'
               ? type == 'sender'
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -1856,9 +1828,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Container(
-                              width: (document['uploadPercent'] ?? 100) < 100
-                                  ? size.width * AppDimensions.numD60
-                                  : size.width * AppDimensions.numD60,
+                              width: size.width * AppDimensions.numD60,
                               decoration: BoxDecoration(
                                 color: AppColorTheme.colorLightGrey,
                                 borderRadius: BorderRadius.circular(
@@ -1884,7 +1854,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                                               });
                                             } else {
                                               downloadAudioFromUrl(
-                                                document['message'],
+                                                document.message,
                                               ).then((path) {
                                                 initWave(path, true);
                                                 setState(() {
@@ -2177,8 +2147,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                                         height:
                                             size.width * AppDimensions.numD06,
                                         child: Icon(
-                                          (document['isAudioSelected'] ??
-                                                  false)
+                                          (document['isAudioSelected'] ?? false)
                                               ? Icons.pause_circle
                                               : Icons.play_circle,
                                           color: Colors.black,
@@ -2375,7 +2344,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     });
   }
 
-  Widget rightVideoChatWidget(Map<String, dynamic> document) {
+  Widget rightVideoChatWidget(ChatMessageModel document) {
     return Container(
       margin: EdgeInsets.only(left: size.width * AppDimensions.numD20),
       child: Row(
@@ -2557,7 +2526,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
   }
 
-  Widget leftVideoChatWidget(Map<String, dynamic> document) {
+  Widget leftVideoChatWidget(ChatMessageModel document) {
     return Container(
       margin: EdgeInsets.only(right: size.width * AppDimensions.numD20),
       child: Row(
@@ -2681,7 +2650,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
   }
 
-  Widget rightImageChatWidget(Map<String, dynamic> document) {
+  Widget rightImageChatWidget(ChatMessageModel document) {
     return Container(
       margin: EdgeInsets.only(left: size.width * AppDimensions.numD20),
       child: Row(
@@ -2866,7 +2835,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
   }
 
-  Widget leftImageChatWidget(Map<String, dynamic> document) {
+  Widget leftImageChatWidget(ChatMessageModel document) {
     debugPrint("image::::::${document['message'].toString()}");
     return Container(
       margin: EdgeInsets.only(right: size.width * AppDimensions.numD20),
@@ -3174,7 +3143,8 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
 
     // Add scroll listener for pagination
-    chatScrollController.removeListener(_scrollListener); // Remove if already added
+    chatScrollController
+        .removeListener(_scrollListener); // Remove if already added
     chatScrollController.addListener(_scrollListener);
 
     // Check online status

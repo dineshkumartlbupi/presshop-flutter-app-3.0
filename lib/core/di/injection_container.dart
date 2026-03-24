@@ -65,6 +65,14 @@ import 'package:presshop/core/api/global_socket_client.dart';
 import 'package:presshop/features/map/data/datasources/incident_socket_datasource.dart';
 import 'package:presshop/features/news/data/datasources/news_socket_datasource.dart';
 import 'package:presshop/features/chat/data/datasources/chat_socket_datasource.dart';
+import 'package:presshop/features/chat/data/datasources/chat_remote_data_source.dart';
+import 'package:presshop/features/chat/data/repositories/chat_repository_impl.dart';
+import 'package:presshop/features/chat/domain/repositories/chat_repository.dart';
+import 'package:presshop/features/chat/domain/usecases/get_chat_list.dart';
+import 'package:presshop/features/chat/domain/usecases/get_room_chat.dart';
+import 'package:presshop/features/chat/domain/usecases/send_message.dart';
+import 'package:presshop/features/chat/domain/usecases/upload_media.dart';
+import 'package:presshop/features/chat/domain/usecases/update_typing_status.dart';
 import 'package:presshop/features/news/data/datasources/news_remote_datasource.dart';
 import 'package:presshop/features/news/data/repositories/news_repository_impl.dart';
 import 'package:presshop/features/news/domain/repositories/news_repository.dart';
@@ -504,7 +512,14 @@ Future<void> init() async {
   sl.registerFactory(() => AlertBloc(apiClient: sl()));
   sl.registerFactory(() => CameraBloc(sl()));
   sl.registerFactory(
-    () => ChatBloc(chatSocketDataSource: sl()),
+    () => ChatBloc(
+      getChatListUseCase: sl(),
+      getRoomChatUseCase: sl(),
+      sendMessageUseCase: sl(),
+      uploadMediaUseCase: sl(),
+      updateTypingStatusUseCase: sl(),
+      chatSocketDataSource: sl(),
+    ),
   );
   sl.registerFactory(
     () => FeedBloc(getFeeds: sl(), toggleFeedInteraction: sl()),
@@ -780,4 +795,21 @@ Future<void> init() async {
   sl.registerLazySingleton(() => IncidentSocketDataSource(client: sl()));
   sl.registerLazySingleton(() => NewsSocketDataSource(client: sl()));
   sl.registerLazySingleton(() => ChatSocketDataSource(client: sl()));
+  sl.registerLazySingleton<ChatRemoteDataSource>(() => ChatRemoteDataSource(sl()));
+
+  // Chat Repository
+  sl.registerLazySingleton<ChatRepository>(
+    () => ChatRepositoryImpl(
+      remoteDataSource: sl(),
+      socketDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Chat Use Cases
+  sl.registerLazySingleton(() => GetChatListUseCase(sl()));
+  sl.registerLazySingleton(() => GetRoomChatUseCase(sl()));
+  sl.registerLazySingleton(() => SendMessageUseCase(sl()));
+  sl.registerLazySingleton(() => UploadMediaUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateTypingStatusUseCase(sl()));
 }

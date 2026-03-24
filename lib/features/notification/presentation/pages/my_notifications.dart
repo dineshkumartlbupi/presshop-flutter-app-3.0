@@ -11,7 +11,7 @@ import 'package:presshop/core/widgets/common_branded_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/notification/presentation/bloc/notification_bloc.dart';
-import 'package:presshop/features/notification/presentation/pages/InlineFlickPlayer.dart';
+import 'package:presshop/features/notification/presentation/pages/Inline_flick_player.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
 
 class MyNotificationScreen extends StatefulWidget {
@@ -724,8 +724,6 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                     ],
                   ),
                 ),
-             
-              
               ],
             ),
           );

@@ -285,16 +285,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           }
         }
 
-        // Fallback/Legacy: Check code
         if (data['code'] != null) {
           if (data['code'] != 200) {
-            // In legacy, != 200 usually meant error/taken.
-            // If code is present and not 200, assume failure/taken.
             return false;
           }
         }
 
-        return true; // Default to available if 'exists' is not true and no error code
+        return true;
       } else {
         throw ServerFailure(
             message: 'Check UserName failed: ${response.statusCode}');
