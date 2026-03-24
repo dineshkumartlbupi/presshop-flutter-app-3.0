@@ -87,30 +87,66 @@ class _MenuScreenState extends State<MenuScreen> {
         logoutDialog(context.mqSize, context);
         break;
       case MenuAction.digitalId:
-        context.pushNamed(AppRoutes.digitalIdName).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(AppRoutes.digitalIdName).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.myProfile:
-        context.pushNamed(
-          AppRoutes.profileName,
-          extra: {
-            'editProfileScreen': false,
-            'screenType': AppStrings.myProfileText,
-          },
-        ).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(
+              AppRoutes.profileName,
+              extra: {
+                'editProfileScreen': false,
+                'screenType': AppStrings.myProfileText,
+              },
+            ).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.editProfile:
-        context.pushNamed(
-          AppRoutes.profileName,
-          extra: {
-            'editProfileScreen': true,
-            'screenType': AppStrings.editProfileText,
-          },
-        ).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(
+              AppRoutes.profileName,
+              extra: {
+                'editProfileScreen': true,
+                'screenType': AppStrings.editProfileText,
+              },
+            ).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.paymentMethod:
@@ -119,71 +155,179 @@ class _MenuScreenState extends State<MenuScreen> {
         });
         break;
       case MenuAction.accountSettings:
-        context.pushNamed(AppRoutes.accountSettingsName).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(AppRoutes.accountSettingsName).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.changePassword:
-        context.pushNamed(AppRoutes.changePasswordName).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(AppRoutes.changePasswordName).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.contact:
-        context.pushNamed(AppRoutes.contactUsName).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(AppRoutes.contactUsName).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.faq:
-        context.pushNamed(
-          AppRoutes.faqName,
-          extra: {
-            'priceTipsSelected': false,
-            'type': 'faq',
-            'index': 0,
-          },
-        ).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(
+              AppRoutes.faqName,
+              extra: {
+                'priceTipsSelected': false,
+                'type': 'faq',
+                'index': 0,
+              },
+            ).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.priceTips:
-        context.pushNamed(
-          AppRoutes.faqName,
-          extra: {
-            'priceTipsSelected': true,
-            'type': 'price_tips',
-            'index': 0,
-          },
-        ).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(
+              AppRoutes.faqName,
+              extra: {
+                'priceTipsSelected': true,
+                'type': 'price_tips',
+                'index': 0,
+              },
+            ).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.legal:
-        context.pushNamed(
-          AppRoutes.termName,
-          extra: {'type': 'legal'},
-        ).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(
+              AppRoutes.termName,
+              extra: {'type': 'legal'},
+            ).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.privacy:
-        context.pushNamed(
-          AppRoutes.termName,
-          extra: {'type': 'privacy_policy'},
-        ).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(
+              AppRoutes.termName,
+              extra: {'type': 'privacy_policy'},
+            ).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.currency:
         _showCurrencyBottomSheet(context);
         break;
       case MenuAction.chat:
-        context.pushNamed(AppRoutes.chatBotName).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(AppRoutes.chatBotName).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.leaderboard:
-        context.pushNamed(AppRoutes.leaderboardName).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(AppRoutes.leaderboardName).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.myDrafts:
@@ -213,42 +357,114 @@ class _MenuScreenState extends State<MenuScreen> {
         });
         break;
       case MenuAction.myEarnings:
-        context.pushNamed(
-          AppRoutes.myEarningName,
-          extra: {'openDashboard': false, 'initialTapPosition': 0},
-        ).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(
+              AppRoutes.myEarningName,
+              extra: {'openDashboard': false, 'initialTapPosition': 0},
+            ).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.notification:
-        context.pushNamed(
-          AppRoutes.notificationsName,
-          extra: {'count': 0},
-        ).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(
+              AppRoutes.notificationsName,
+              extra: {'count': 0},
+            ).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.ratingReview:
-        context.pushNamed(AppRoutes.ratingReviewName).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(AppRoutes.ratingReviewName).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.referHopper:
-        context.pushNamed(AppRoutes.referName).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(AppRoutes.referName).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.uploadDocs:
-        context.pushNamed(
-          AppRoutes.uploadDocumentsName,
-          extra: {'menuScreen': true, 'hideLeading': false},
-        ).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(
+              AppRoutes.uploadDocumentsName,
+              extra: {'menuScreen': true, 'hideLeading': false},
+            ).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.tutorials:
-        context.pushNamed(AppRoutes.tutorialsName).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => showAnimatedLoader(context.mqSize),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (context.mounted) {
+            context.pop();
+            context.pushNamed(AppRoutes.tutorialsName).then((value) {
+              if (context.mounted) {
+                context.read<MenuBloc>().add(MenuLoadCounts());
+              }
+            });
+          }
         });
         break;
       case MenuAction.locationSharing:
