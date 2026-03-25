@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:presshop/core/widgets/common_widgets_new.dart';
 // import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/earning/presentation/bloc/earning_bloc.dart';
 import 'package:presshop/features/earning/presentation/bloc/earning_event.dart';
@@ -273,6 +274,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                 child: Padding(
                   padding: EdgeInsets.all(size.width * AppDimensions.numD02),
                   child: Stack(
+                    alignment: Alignment.center,
                     children: [
                       Column(
                         children: [
@@ -927,9 +929,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                           )
                         ],
                       ),
-                      // Center(
-                      //   child: showAnimatedLoader(size),
-                      // )
+                      Center(
+                        child: CommonWidgetsNew.showAnimatedLoader(size),
+                      )
                     ],
                   ),
                 ),
@@ -1257,7 +1259,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                       size.width * AppDimensions.numD03),
                                   child: CachedNetworkImage(
                                     imageUrl: getMediaImageUrl(
-                                        item.contentDataList.first['media']),
+                                        item.contentDataList.first.media),
                                     height: size.width * AppDimensions.numD11,
                                     width: size.width * AppDimensions.numD12,
                                     fit: BoxFit.cover,

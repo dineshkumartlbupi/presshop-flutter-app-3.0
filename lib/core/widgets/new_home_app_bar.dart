@@ -82,21 +82,22 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           SizedBox(
             width: size.width * AppDimensions.numD02,
           ),
-        Center(
-            child: GestureDetector(
-                onTap: () {
-                  context.pushNamed(AppRoutes.newsName,
-                      extra: {'hideFilters': true, 'fromMap': isFromMap});
-                },
-                child: Text(
-                  "Click to view local news",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
-                    fontSize: size.width * 0.03,
-                    decoration: TextDecoration.underline,
-                  ),
-                ))),
+        if (!hideHamburger)
+          Center(
+              child: GestureDetector(
+                  onTap: () {
+                    context.pushNamed(AppRoutes.newsName,
+                        extra: {'hideFilters': true, 'fromMap': isFromMap});
+                  },
+                  child: Text(
+                    "Click to view local news",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                      fontSize: size.width * 0.03,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ))),
         if (!hideHamburger)
           Center(
             child: InkWell(

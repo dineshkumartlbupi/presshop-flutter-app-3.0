@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/global_loader.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
+import 'package:presshop/features/camera/presentation/pages/camera_screen.dart';
 import 'package:presshop/features/content/presentation/pages/content_page.dart';
 import 'package:presshop/features/map/presentation/pages/map_page.dart';
 import 'package:presshop/features/map/presentation/pages/map_page_new%20copy.dart';
@@ -22,7 +23,6 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:location/location.dart' as lc;
 import 'package:presshop/features/news/presentation/pages/news_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -434,33 +434,44 @@ class DashboardState extends State<Dashboard>
           bool shouldUpdate = Platform.isAndroid
               ? (versionData['aOSshouldForceUpdate'] ?? false)
               : (versionData['iOSshouldForceUpdate'] ?? false);
-          
+
           if (versionData.containsKey('referral_friend_earning_amount')) {
-            sharedPreferences!.setDouble(SharedPreferencesKeys.referralFriendEarningKey,
-                (versionData['referral_friend_earning_amount'] as num).toDouble());
+            sharedPreferences!.setDouble(
+                SharedPreferencesKeys.referralFriendEarningKey,
+                (versionData['referral_friend_earning_amount'] as num)
+                    .toDouble());
           }
           if (versionData.containsKey('referral_user_earning_amount')) {
-            sharedPreferences!.setDouble(SharedPreferencesKeys.referralUserEarningKey,
-                (versionData['referral_user_earning_amount'] as num).toDouble());
+            sharedPreferences!.setDouble(
+                SharedPreferencesKeys.referralUserEarningKey,
+                (versionData['referral_user_earning_amount'] as num)
+                    .toDouble());
           }
           if (versionData.containsKey('referral_currency_symbol')) {
-            sharedPreferences!.setString(SharedPreferencesKeys.referralCurrencyKey,
+            sharedPreferences!.setString(
+                SharedPreferencesKeys.referralCurrencyKey,
                 versionData['referral_currency_symbol'].toString());
           }
 
           // Handle nested referral_data object
-          if (versionData.containsKey('referral_data') && versionData['referral_data'] is Map) {
+          if (versionData.containsKey('referral_data') &&
+              versionData['referral_data'] is Map) {
             final referralData = versionData['referral_data'] as Map;
             if (referralData.containsKey('referral_friend_earning_amount')) {
-              sharedPreferences!.setDouble(SharedPreferencesKeys.referralFriendEarningKey,
-                  (referralData['referral_friend_earning_amount'] as num).toDouble());
+              sharedPreferences!.setDouble(
+                  SharedPreferencesKeys.referralFriendEarningKey,
+                  (referralData['referral_friend_earning_amount'] as num)
+                      .toDouble());
             }
             if (referralData.containsKey('referral_user_earning_amount')) {
-              sharedPreferences!.setDouble(SharedPreferencesKeys.referralUserEarningKey,
-                  (referralData['referral_user_earning_amount'] as num).toDouble());
+              sharedPreferences!.setDouble(
+                  SharedPreferencesKeys.referralUserEarningKey,
+                  (referralData['referral_user_earning_amount'] as num)
+                      .toDouble());
             }
             if (referralData.containsKey('referral_currency_symbol')) {
-              sharedPreferences!.setString(SharedPreferencesKeys.referralCurrencyKey,
+              sharedPreferences!.setString(
+                  SharedPreferencesKeys.referralCurrencyKey,
                   referralData['referral_currency_symbol'].toString());
             }
           }

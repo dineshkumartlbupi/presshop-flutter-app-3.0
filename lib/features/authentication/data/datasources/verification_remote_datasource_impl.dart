@@ -22,7 +22,14 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
       final dynamic responseData = response.data;
       List data = [];
       if (responseData is Map) {
-        data = (responseData['status'] ?? responseData['data'] ?? []) as List;
+        final innerData = responseData['data'];
+        if (innerData is List) {
+          data = innerData;
+        } else if (innerData is Map) {
+          data = (innerData['status'] ?? innerData['data'] ?? []) as List;
+        } else {
+          data = (responseData['status'] ?? responseData['data'] ?? []) as List;
+        }
       }
       return data.map((e) => DocumentInstructionModel.fromJson(e)).toList();
     } catch (e) {
@@ -41,7 +48,16 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
         queryParameters: {'hopper_id': hopperId},
         options: Options(headers: {"x-user-id": hopperId}),
       );
-      final data = response.data['data'] as List;
+      final dynamic responseData = response.data;
+      List data = [];
+      if (responseData is Map) {
+        final innerData = responseData['data'];
+        if (innerData is List) {
+          data = innerData;
+        } else if (innerData is Map) {
+          data = (innerData['data'] ?? []) as List;
+        }
+      }
       return data.map((e) => DocumentDataModel.fromJson(e)).toList();
     } catch (e) {
       throw ApiErrorHandler.handle(e);

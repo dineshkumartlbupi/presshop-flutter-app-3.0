@@ -92,6 +92,8 @@ class UploadDocumentsBloc
                 id: (e['id'] ?? e['_id'] ?? '').toString(),
                 documentName:
                     (e['document_name'] ?? e['doc_name'] ?? '').toString(),
+                documentUrl:
+                    (e['doc_url'] ?? e['document_url'] ?? '').toString(),
                 isSelected: e['isSelected'] ?? false,
                 status: e['status']?.toString(),
                 reason: e['reason']?.toString(),

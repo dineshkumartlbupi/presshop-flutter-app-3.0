@@ -22,7 +22,9 @@ class LeaderboardBloc extends Bloc<LeaderboardEvent, LeaderboardState> {
     if (cachedData != null) {
       try {
         final data = LeaderboardModel.fromJson(cachedData);
-        emit(LeaderboardLoaded(data));
+        if (data.memberList.isNotEmpty || data.countryList.isNotEmpty) {
+          emit(LeaderboardLoaded(data));
+        }
       } catch (e) {
         debugPrint("Error loading leaderboard from cache: $e");
       }

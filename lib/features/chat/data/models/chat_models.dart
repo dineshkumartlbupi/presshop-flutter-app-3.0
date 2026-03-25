@@ -70,17 +70,38 @@ class ChatMessageModel extends ChatMessageEntity {
                       "${senderDetails['first_name'] ?? ''} ${senderDetails['last_name'] ?? ''}".trim();
     final senderId = (json['sender_id'] ?? '').toString();
 
-    // Handle media list
+    // Handle media list (fallback to 'content' if 'media' is missing)
     List<String> mediaList = [];
     if (json['media'] != null && json['media'] is List) {
       mediaList = List<String>.from(json['media']);
+    } else if (json['content'] != null) {
+      if (json['content'] is List) {
+        mediaList = List<String>.from(json['content']);
+      } else if (json['content'] is String && json['content'].toString().isNotEmpty) {
+        mediaList = [json['content'].toString()];
+      }
+    }
+
+    String mType = (json['message_type'] ?? 'text').toString();
+    
+    // Automatically map generic 'media' type to 'image' or 'video' for UI compatibility
+    if (mType == 'media' && mediaList.isNotEmpty) {
+      final firstMedia = mediaList.first.toLowerCase();
+      if (firstMedia.endsWith('.mp4') || 
+          firstMedia.endsWith('.mov') || 
+          firstMedia.endsWith('.m4v') ||
+          firstMedia.endsWith('.avi')) {
+        mType = 'video';
+      } else {
+        mType = 'image';
+      }
     }
 
     return ChatMessageModel(
       id: (json['_id'] ?? json['id'] ?? '').toString(),
       roomId: (json['room_id'] ?? '').toString(),
       message: (json['message'] ?? '').toString(),
-      messageType: (json['message_type'] ?? 'text').toString(),
+      messageType: mType,
       senderId: senderId,
       senderType: (json['sender_type'] ?? '').toString(),
       senderName: senderName.isNotEmpty ? senderName : "Unknown",

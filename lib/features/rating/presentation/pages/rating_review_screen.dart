@@ -376,30 +376,34 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: size.width * AppDimensions.numD02),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          review.userName.toUpperCase(),
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * AppDimensions.numD04,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        if (review.hopperCreatedAt.isNotEmpty)
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD02),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Text(
-                            "Hopper since ${dateTimeFormatter(dateTime: review.hopperCreatedAt, format: "MMM yyyy")}",
+                            review.userName.toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * AppDimensions.numD028,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w400),
+                                fontSize: size.width * AppDimensions.numD04,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
                           ),
-                      ],
+                          if (review.hopperCreatedAt.isNotEmpty)
+                            Text(
+                              "Hopper since ${dateTimeFormatter(dateTime: review.hopperCreatedAt, format: "MMM yyyy")}",
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * AppDimensions.numD028,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                   const Spacer(),

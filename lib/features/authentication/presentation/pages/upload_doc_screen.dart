@@ -9,12 +9,12 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
+import 'package:presshop/core/widgets/common_widgets_new.dart';
 
 import 'package:presshop/features/authentication/presentation/bloc/upload_documents/upload_documents_bloc.dart';
 import 'package:presshop/features/authentication/presentation/bloc/upload_documents/upload_documents_event.dart';
 import 'package:presshop/features/authentication/presentation/bloc/upload_documents/upload_documents_state.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/authentication/domain/entities/document_instruction.dart';
 
 const String uploadDocumentsText = "Upload Documents";
@@ -97,9 +97,10 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
               }
             },
             builder: (context, state) {
-              if (state.status == UploadDocumentsStatus.loading &&
+              if ((state.status == UploadDocumentsStatus.loading ||
+                      state.status == UploadDocumentsStatus.initial) &&
                   state.uploadedDocuments.isEmpty) {
-                return const SizedBox.shrink();
+                return CommonWidgetsNew.showAnimatedLoader(size);
               }
 
               return SafeArea(
@@ -261,7 +262,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                                                       AppDimensions.numD38,
                                                 )
                                               : Image.network(
-                                                  doc.documentName, // Assuming doc is an image for preview
+                                                  doc.documentUrl, // Use URL for image preview
                                                   fit: BoxFit.cover,
                                                   width: double.infinity,
                                                   height: double.infinity,

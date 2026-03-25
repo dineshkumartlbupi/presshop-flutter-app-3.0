@@ -10,6 +10,7 @@ import 'package:flutter_switch/flutter_switch.dart';
 
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/dialogs.dart';
+import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/menu/presentation/bloc/menu_bloc.dart';
 import 'package:presshop/features/menu/presentation/pages/menu_config.dart';
 import 'package:presshop/features/menu/presentation/bloc/menu_ui_cubit.dart';
@@ -87,51 +88,30 @@ class _MenuScreenState extends State<MenuScreen> {
         logoutDialog(context.mqSize, context);
         break;
       case MenuAction.digitalId:
-        Future.delayed(const Duration(seconds: 1), () {
-          if (context.mounted) {
-            context.pop();
-            context.pushNamed(AppRoutes.digitalIdName).then((value) {
-              if (context.mounted) {
-                context.read<MenuBloc>().add(MenuLoadCounts());
-              }
-            });
-          }
+        context.pushNamed(AppRoutes.digitalIdName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.myProfile:
-        Future.delayed(const Duration(seconds: 1), () {
-          if (context.mounted) {
-            context.pop();
-            context.pushNamed(
-              AppRoutes.profileName,
-              extra: {
-                'editProfileScreen': false,
-                'screenType': AppStrings.myProfileText,
-              },
-            ).then((value) {
-              if (context.mounted) {
-                context.read<MenuBloc>().add(MenuLoadCounts());
-              }
-            });
-          }
+        context.pushNamed(
+          AppRoutes.profileName,
+          extra: {
+            'editProfileScreen': false,
+            'screenType': AppStrings.myProfileText,
+          },
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.editProfile:
-        Future.delayed(const Duration(seconds: 1), () {
-          if (context.mounted) {
-            context.pop();
-            context.pushNamed(
-              AppRoutes.profileName,
-              extra: {
-                'editProfileScreen': true,
-                'screenType': AppStrings.editProfileText,
-              },
-            ).then((value) {
-              if (context.mounted) {
-                context.read<MenuBloc>().add(MenuLoadCounts());
-              }
-            });
-          }
+        context.pushNamed(
+          AppRoutes.profileName,
+          extra: {
+            'editProfileScreen': true,
+            'screenType': AppStrings.editProfileText,
+          },
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.paymentMethod:
@@ -140,134 +120,71 @@ class _MenuScreenState extends State<MenuScreen> {
         });
         break;
       case MenuAction.accountSettings:
-        Future.delayed(const Duration(seconds: 1), () {
-          if (context.mounted) {
-            context.pop();
-            context.pushNamed(AppRoutes.accountSettingsName).then((value) {
-              if (context.mounted) {
-                context.read<MenuBloc>().add(MenuLoadCounts());
-              }
-            });
-          }
+        context.pushNamed(AppRoutes.accountSettingsName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.changePassword:
-        Future.delayed(const Duration(seconds: 1), () {
-          if (context.mounted) {
-            context.pop();
-            context.pushNamed(AppRoutes.changePasswordName).then((value) {
-              if (context.mounted) {
-                context.read<MenuBloc>().add(MenuLoadCounts());
-              }
-            });
-          }
+        context.pushNamed(AppRoutes.changePasswordName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.contact:
-        Future.delayed(const Duration(seconds: 1), () {
-          if (context.mounted) {
-            context.pop();
-            context.pushNamed(AppRoutes.contactUsName).then((value) {
-              if (context.mounted) {
-                context.read<MenuBloc>().add(MenuLoadCounts());
-              }
-            });
-          }
+        context.pushNamed(AppRoutes.contactUsName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.faq:
-        Future.delayed(const Duration(seconds: 1), () {
-          if (context.mounted) {
-            context.pop();
-            context.pushNamed(
-              AppRoutes.faqName,
-              extra: {
-                'priceTipsSelected': false,
-                'type': 'faq',
-                'index': 0,
-              },
-            ).then((value) {
-              if (context.mounted) {
-                context.read<MenuBloc>().add(MenuLoadCounts());
-              }
-            });
-          }
+        context.pushNamed(
+          AppRoutes.faqName,
+          extra: {
+            'priceTipsSelected': false,
+            'type': 'faq',
+            'index': 0,
+          },
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.priceTips:
-        Future.delayed(const Duration(seconds: 1), () {
-          if (context.mounted) {
-            context.pop();
-            context.pushNamed(
-              AppRoutes.faqName,
-              extra: {
-                'priceTipsSelected': true,
-                'type': 'price_tips',
-                'index': 0,
-              },
-            ).then((value) {
-              if (context.mounted) {
-                context.read<MenuBloc>().add(MenuLoadCounts());
-              }
-            });
-          }
+        context.pushNamed(
+          AppRoutes.faqName,
+          extra: {
+            'priceTipsSelected': true,
+            'type': 'price_tips',
+            'index': 0,
+          },
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.legal:
-        Future.delayed(const Duration(seconds: 1), () {
-          if (context.mounted) {
-            context.pop();
-            context.pushNamed(
-              AppRoutes.termName,
-              extra: {'type': 'legal'},
-            ).then((value) {
-              if (context.mounted) {
-                context.read<MenuBloc>().add(MenuLoadCounts());
-              }
-            });
-          }
+        context.pushNamed(
+          AppRoutes.termName,
+          extra: {'type': 'legal'},
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.privacy:
-        Future.delayed(const Duration(seconds: 1), () {
-          if (context.mounted) {
-            context.pop();
-            context.pushNamed(
-              AppRoutes.termName,
-              extra: {'type': 'privacy_policy'},
-            ).then((value) {
-              if (context.mounted) {
-                context.read<MenuBloc>().add(MenuLoadCounts());
-              }
-            });
-          }
+        context.pushNamed(
+          AppRoutes.termName,
+          extra: {'type': 'privacy_policy'},
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.currency:
         _showCurrencyBottomSheet(context);
         break;
       case MenuAction.chat:
-        Future.delayed(const Duration(seconds: 1), () {
-          if (context.mounted) {
-            context.pop();
-            context.pushNamed(AppRoutes.chatBotName).then((value) {
-              if (context.mounted) {
-                context.read<MenuBloc>().add(MenuLoadCounts());
-              }
-            });
-          }
+        context.pushNamed(AppRoutes.chatBotName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.leaderboard:
-        Future.delayed(const Duration(seconds: 1), () {
-          if (context.mounted) {
-            context.pop();
-            context.pushNamed(AppRoutes.leaderboardName).then((value) {
-              if (context.mounted) {
-                context.read<MenuBloc>().add(MenuLoadCounts());
-              }
-            });
-          }
+        context.pushNamed(AppRoutes.leaderboardName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.myDrafts:
@@ -297,77 +214,43 @@ class _MenuScreenState extends State<MenuScreen> {
         });
         break;
       case MenuAction.myEarnings:
-        Future.delayed(const Duration(seconds: 1), () {
-          if (context.mounted) {
-            context.pop();
-            context.pushNamed(
-              AppRoutes.myEarningName,
-              extra: {'openDashboard': false, 'initialTapPosition': 0},
-            ).then((value) {
-              if (context.mounted) {
-                context.read<MenuBloc>().add(MenuLoadCounts());
-              }
-            });
-          }
+        context.pushNamed(
+          AppRoutes.myEarningName,
+          extra: {'openDashboard': false, 'initialTapPosition': 0},
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.notification:
-        Future.delayed(const Duration(seconds: 1), () {
-          if (context.mounted) {
-            context.pop();
-            context.pushNamed(
-              AppRoutes.notificationsName,
-              extra: {'count': 0},
-            ).then((value) {
-              if (context.mounted) {
-                context.read<MenuBloc>().add(MenuLoadCounts());
-              }
-            });
-          }
+        context.pushNamed(
+          AppRoutes.notificationsName,
+          extra: {'count': 0},
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.ratingReview:
         context.pushNamed(AppRoutes.ratingReviewName).then((value) {
-          if (context.mounted) {
-            context.read<MenuBloc>().add(MenuLoadCounts());
-          }
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
-
         break;
       case MenuAction.referHopper:
-        Future.delayed(const Duration(seconds: 1), () {
-          if (context.mounted) {
-            context.pop();
-            context.pushNamed(AppRoutes.referName).then((value) {
-              if (context.mounted) {
-                context.read<MenuBloc>().add(MenuLoadCounts());
-              }
-            });
-          }
+        context.pushNamed(AppRoutes.referName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.uploadDocs:
-        Future.delayed(const Duration(seconds: 1), () {
-          if (context.mounted) {
-            context.pop();
-            context.pushNamed(
-              AppRoutes.uploadDocumentsName,
-              extra: {'menuScreen': true, 'hideLeading': false},
-            ).then((value) {
-              if (context.mounted) {
-                context.read<MenuBloc>().add(MenuLoadCounts());
-              }
-            });
-          }
+        context.pushNamed(
+          AppRoutes.uploadDocumentsName,
+          extra: {'menuScreen': true, 'hideLeading': false},
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.tutorials:
         context.pushNamed(AppRoutes.tutorialsName).then((value) {
-          if (context.mounted) {
-            context.read<MenuBloc>().add(MenuLoadCounts());
-          }
+          context.read<MenuBloc>().add(MenuLoadCounts());
         });
-
         break;
       case MenuAction.locationSharing:
         context.pushNamed(AppRoutes.locationSharingName).then((value) {
@@ -380,53 +263,32 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget _buildContent(BuildContext context) {
     final size = context.mqSize;
     return Scaffold(
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: true,
-        title: Row(
-          children: [
-            SizedBox(width: size.width * AppDimensions.numD04),
-            Image.asset(
-              "assets/commonImages/ic_black_rabbit.png",
-              width: size.width * AppDimensions.numD10,
-              height: size.width * AppDimensions.numD09,
-              fit: BoxFit.contain,
-            ),
-            const Spacer(),
-            GestureDetector(
-              onTap: () {
-                context.pushNamed(AppRoutes.newsName);
-              },
-              child: Row(
-                children: [
-                  Text(
-                    "Click to view local news",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: size.width * AppDimensions.numD035,
-                      fontWeight: FontWeight.normal,
-                      fontFamily: "AirbnbCereal",
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                  SizedBox(width: size.width * AppDimensions.numD02),
-                  Image.asset(
-                    "assets/icons/ic_news1.png",
-                    width: size.width * AppDimensions.numD07,
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: size.width * AppDimensions.numD04),
-          ],
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
+      appBar: NewHomeAppBar(
         size: size,
-        showActions: false,
-        leadingFxn: () => context.pop(),
-        actionWidget: [],
+        hideLeading: true,
+        hideHamburger: true,
+        showFilter: false,
+        onFilterTap: () {
+          // showFilterSheet();
+        },
       ),
+      // appBar: CommonAppBar(
+      //   elevation: 0,
+      //   hideLeading: false,
+      //   title: Text(
+      //     AppStrings.menuText,
+      //     style: TextStyle(
+      //         color: Colors.black,
+      //         fontWeight: FontWeight.bold,
+      //         fontSize: size.width * AppDimensions.appBarHeadingFontSize),
+      //   ),
+      //   centerTitle: false,
+      //   titleSpacing: 0,
+      //   size: size,
+      //   showActions: false,
+      //   leadingFxn: () => context.pop(),
+      //   actionWidget: [],
+      // ),
       body: SafeArea(
         child: ListView.separated(
           padding: EdgeInsets.symmetric(

@@ -4,6 +4,7 @@ class DocumentData extends Equatable {
   const DocumentData({
     required this.id,
     required this.documentName,
+    required this.documentUrl,
     this.isSelected = false,
     this.status,
     this.reason,
@@ -11,6 +12,7 @@ class DocumentData extends Equatable {
   });
   final String id;
   final String documentName;
+  final String documentUrl;
   final String? status;
   final String? reason;
   final DateTime? createdAt;
@@ -18,11 +20,12 @@ class DocumentData extends Equatable {
 
   @override
   List<Object?> get props =>
-      [id, documentName, isSelected, status, reason, createdAt];
+      [id, documentName, documentUrl, isSelected, status, reason, createdAt];
 
   DocumentData copyWith({
     String? id,
     String? documentName,
+    String? documentUrl,
     bool? isSelected,
     String? status,
     String? reason,
@@ -31,6 +34,7 @@ class DocumentData extends Equatable {
     return DocumentData(
       id: id ?? this.id,
       documentName: documentName ?? this.documentName,
+      documentUrl: documentUrl ?? this.documentUrl,
       isSelected: isSelected ?? this.isSelected,
       status: status ?? this.status,
       reason: reason ?? this.reason,
@@ -42,6 +46,7 @@ class DocumentData extends Equatable {
     return {
       'id': id,
       'document_name': documentName,
+      'document_url': documentUrl,
       'isSelected': isSelected,
       'status': status,
       'reason': reason,

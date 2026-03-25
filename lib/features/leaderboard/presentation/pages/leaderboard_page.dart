@@ -150,7 +150,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
       body: BlocBuilder<LeaderboardBloc, LeaderboardState>(
         builder: (context, state) {
           debugPrint("DEBUG: LeaderboardView state: $state");
-          if (state is LeaderboardLoading) {
+          if (state is LeaderboardLoading || state is LeaderboardInitial) {
             return Center(child: CommonWidgetsNew.showAnimatedLoader(size));
           } else if (state is LeaderboardError) {
             return Center(child: Text(state.message));
