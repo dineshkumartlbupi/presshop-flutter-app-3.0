@@ -6,7 +6,7 @@ import 'package:presshop/core/services/media_upload_service.dart';
 import 'package:presshop/main.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
-import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
+import 'package:presshop/features/chat/presentation/pages/full_video_view.dart';
 
 class MediaUploadProgress {
   final double progress;

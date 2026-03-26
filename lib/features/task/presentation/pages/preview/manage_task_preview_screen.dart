@@ -7,10 +7,10 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/widgets/video_widget.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
-import 'package:presshop/features/camera/presentation/pages/AudioWaveFormWidgetScreen.dart';
+import 'package:presshop/features/camera/presentation/pages/audio_waveform_widget_screen.dart';
 
 import 'package:path/path.dart' as path;
-import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
+import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
 

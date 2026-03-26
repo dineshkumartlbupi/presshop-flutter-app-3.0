@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/features/feed/presentation/pages/feedDataModel.dart';
+import 'package:presshop/features/feed/presentation/pages/feed_data_model.dart';
 import '../../domain/entities/earning_transaction.dart';
 
 class EarningProfileDataModel {

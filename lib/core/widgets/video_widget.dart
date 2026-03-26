@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
+import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 import 'package:video_player/video_player.dart';
 
 import 'package:presshop/core/widgets/common_widgets.dart';

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/extensions.dart';
-import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
+import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 // import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart'; // Removed
 // import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart'; // Removed
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';

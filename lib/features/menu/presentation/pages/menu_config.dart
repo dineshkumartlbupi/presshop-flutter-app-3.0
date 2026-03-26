@@ -10,7 +10,7 @@ import 'package:presshop/features/authentication/presentation/pages/upload_doc_s
 import 'package:presshop/features/bank/presentation/pages/my_banks_page.dart';
 import 'package:presshop/features/chatbot/presentation/pages/chat_bot_screen.dart';
 import 'package:presshop/features/content/presentation/pages/my_draft_screen.dart';
-import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
+import 'package:presshop/features/earning/presentation/pages/my_earning_screen.dart';
 import 'package:presshop/features/leaderboard/presentation/pages/leaderboard_page.dart';
 import 'package:presshop/features/notification/presentation/pages/my_notifications.dart';
 import 'package:presshop/features/profile/presentation/pages/digital_id_screen.dart';

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:presshop/core/api/api_constant.dart';
 
 dynamic numberFormatting(dynamic number) {
   if (number == null) return 0;
@@ -68,7 +69,13 @@ String getMediaImageUrl(String? url,
     return fixS3Url(trimmedUrl);
   }
 
-  return fixS3Url(trimmedUrl);
+  // If it's a relative path/filename, prefix it with the base upload URL
+  // Base URL: https://funnellike-subangular-sulema.ngrok-free.dev/api/
+  // Upload URL: https://funnellike-subangular-sulema.ngrok-free.dev/uploads/
+  final String baseUploadUrl =
+      ApiConstantsNew.config.baseUrl.replaceAll('api/', 'uploads/');
+
+  return fixS3Url("$baseUploadUrl$trimmedUrl");
 }
 
 String getCurrencySymbol(String? currencyCode) {

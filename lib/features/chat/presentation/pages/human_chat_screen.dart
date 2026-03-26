@@ -16,7 +16,7 @@ import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:presshop/core/widgets/common_widgets.dart' hide Config;
-import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
+import 'package:presshop/features/chat/presentation/pages/full_video_view.dart';
 import 'package:record/record.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';

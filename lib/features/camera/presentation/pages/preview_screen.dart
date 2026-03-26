@@ -14,7 +14,7 @@ import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'AudioWaveFormWidgetScreen.dart';
+import 'audio_waveform_widget_screen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';

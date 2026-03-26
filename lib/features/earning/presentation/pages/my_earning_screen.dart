@@ -14,8 +14,8 @@ import 'package:presshop/features/earning/presentation/bloc/earning_event.dart';
 import 'package:presshop/features/earning/presentation/bloc/earning_state.dart';
 import '../../domain/entities/earning_transaction.dart';
 
-import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
-import 'TransactionDetailScreen.dart';
+import 'package:presshop/features/chat/presentation/pages/full_video_view.dart';
+import 'tansaction_detail_screen.dart';
 import 'commission_widget.dart';
 import 'package:presshop/main.dart';
 

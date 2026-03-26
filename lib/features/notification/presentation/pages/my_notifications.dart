@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:presshop/core/widgets/common_widgets_new.dart';
 import 'package:presshop/main.dart';
-import 'package:presshop/features/earning/presentation/pages/TransactionDetailScreen.dart';
+import 'package:presshop/features/earning/presentation/pages/tansaction_detail_screen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:go_router/go_router.dart';

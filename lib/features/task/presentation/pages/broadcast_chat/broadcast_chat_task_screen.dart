@@ -7,10 +7,10 @@ import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
-import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
+import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 import 'package:video_player/video_player.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
-import 'package:presshop/features/earning/presentation/pages/TransactionDetailScreen.dart';
+import 'package:presshop/features/earning/presentation/pages/tansaction_detail_screen.dart';
 
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';

@@ -20,7 +20,7 @@ import 'package:presshop/core/router/router_constants.dart';
 
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
-import 'package:presshop/features/feed/presentation/pages/FeedScreen.dart';
+import 'package:presshop/features/feed/presentation/pages/feed_screen.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({
@@ -48,7 +48,10 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage>
-    with AnalyticsPageMixin, AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+    with
+        AnalyticsPageMixin,
+        AutomaticKeepAliveClientMixin,
+        TickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
 

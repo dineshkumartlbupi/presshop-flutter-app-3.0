@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:presshop/features/earning/domain/entities/earning_transaction.dart';
-import 'package:presshop/features/earning/presentation/pages/TransactionDetailScreen.dart';
+import 'package:presshop/features/earning/presentation/pages/tansaction_detail_screen.dart';
 
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';

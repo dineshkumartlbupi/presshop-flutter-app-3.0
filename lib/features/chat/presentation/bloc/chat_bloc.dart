@@ -254,11 +254,32 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         emit(state.copyWith(status: ChatStatus.loaded));
       },
       (messages) {
-        final bool hasMore = messages.length >= 20;
+        List<ChatMessageModel> chatMessages =
+            List<ChatMessageModel>.from(messages);
+
+        // Adaptive sorting: Ensure newest message is at index 0 for the reversed ListView
+        if (chatMessages.length > 1) {
+          try {
+            final firstDate =
+                DateTime.tryParse(chatMessages.first.createdAt) ?? DateTime(0);
+            final lastDate =
+                DateTime.tryParse(chatMessages.last.createdAt) ?? DateTime(0);
+
+            // If first message is older than the last, the list is oldest-first.
+            // We need newest-first for reverse:true ListView (index 0 at bottom).
+            if (firstDate.isBefore(lastDate)) {
+              chatMessages = chatMessages.reversed.toList();
+            }
+          } catch (e) {
+            debugPrint("Error parsing dates for sorting: $e");
+          }
+        }
+
+        final bool hasMore = chatMessages.length >= 20;
         emit(state.copyWith(
           status: ChatStatus.loaded,
-          messages: messages as List<ChatMessageModel>,
-          offset: messages.length,
+          messages: chatMessages,
+          offset: chatMessages.length,
           hasMore: hasMore,
           isFetchingMore: false,
         ));

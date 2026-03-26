@@ -15,7 +15,7 @@ import 'package:lottie/lottie.dart';
 import 'package:path/path.dart' hide Context, context;
 import 'package:path_provider/path_provider.dart';
 import 'package:presshop/core/di/injection_container.dart';
-import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
+import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';

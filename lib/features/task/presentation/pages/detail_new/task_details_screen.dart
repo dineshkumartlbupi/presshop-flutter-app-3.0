@@ -6,7 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:presshop/core/constants/string_constants_new2.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
+import 'package:presshop/features/chat/presentation/pages/full_video_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
 

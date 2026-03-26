@@ -8,8 +8,8 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/widgets/video_widget.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 // import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
-import 'package:presshop/features/camera/presentation/pages/AudioWaveFormWidgetScreen.dart';
-import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
+import 'package:presshop/features/camera/presentation/pages/audio_waveform_widget_screen.dart';
+import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 
 class MediaPreviewScreen extends StatefulWidget {
   const MediaPreviewScreen({
