@@ -25,9 +25,9 @@ class ApiClient {
       ),
     );
 
-    if (kDebugMode) {
-      _dio.interceptors.add(PrettyDioLogger(formatJson: true));
-    }
+    // if (kDebugMode) {
+    //   _dio.interceptors.add(PrettyDioLogger(formatJson: true));
+    // }
   }
   final Dio _dio;
   final SharedPreferences _sharedPreferences;
@@ -68,7 +68,6 @@ class ApiClient {
     options.headers[SharedPreferencesKeys.headerDeviceIdKey] = deviceId;
     options.headers[SharedPreferencesKeys.headerDeviceTypeKey] =
         "mobile-flutter-${Platform.isIOS ? "ios" : "android"}";
-
     handler.next(options);
   }
 

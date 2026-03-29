@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         applicationId = "com.presshop.app"
-        minSdk = 24
+        minSdk = 25
         targetSdk = 35
         versionCode = 53
         versionName = "3.0.0"

@@ -30,7 +30,7 @@ class TaskAssignedDataModel {
 
   factory TaskAssignedDataModel.fromJson(Map<String, dynamic> json) {
     bool isFlattened = json.containsKey('_id') && !json.containsKey('task');
-
+      List<HopperLocationModel> activeHoppersLocations = [];
     if (isFlattened) {
       final String effectiveRoomId =
           SafeParser.parseString(json['room_id'] ?? json['resp']?['room_id']);
@@ -71,98 +71,143 @@ class TaskAssignedDataModel {
 
 class TaskAssignedItemModel extends TaskAssignedDetailEntity {
   const TaskAssignedItemModel({
-    required super.id,
-    required MediaHouseDataModel super.mediaHouse,
-    required super.deadlineDate,
-    required super.heading,
-    required super.description,
-    required super.location,
-    required AddressLocationDataModel super.addressLocation,
-    required super.status,
-    required super.isDraft,
-    required super.paidStatus,
-    required super.createdAt,
-    required super.updatedAt,
-    required List<TaskContentDataModel> super.content,
-    super.isNeedPhoto = false,
-    super.isNeedVideo = false,
-    super.isNeedInterview = false,
-    super.photoPrice = "0",
-    super.videoPrice = "0",
-    super.interviewPrice = "0",
-    super.currency = "",
-    super.currencySymbol = "",
-    super.hopperInfo = const [],
-    super.hopperTaskAmount = "0",
-    super.acceptedHoppers = const [],
-    super.distance = "",
-    super.walkTime = "",
-    super.driveTime = "",
-  });
+    required String id,
+    required MediaHouseDataModel mediaHouse,
+    required DateTime deadlineDate,
+    required String heading,
+    required String description,
+    required String location,
+    required AddressLocationDataModel addressLocation,
+    required String status,
+    required bool isDraft,
+    required String paidStatus,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required List<TaskContentDataModel> content,
+    bool isNeedPhoto = false,
+    bool isNeedVideo = false,
+    bool isNeedInterview = false,
+    String photoPrice = "0",
+    String videoPrice = "0",
+    String interviewPrice = "0",
+    String currency = "",
+    String currencySymbol = "",
+    List<HopperInfoDataModel> hopperInfo = const [],
+    String hopperTaskAmount = "0",
+    HopperLocationModel? hopperLocation,
+    int activeHoppersCount = 0,
+    List<HopperLocationModel> activeHoppersLocations = const [],
+    List<String> acceptedHoppers = const [],
+    String distance = "",
+    String walkTime = "",
+    String driveTime = "",
+  }) : super(
+    id: id,
+    mediaHouse: mediaHouse,
+    deadlineDate: deadlineDate,
+    heading: heading,
+    description: description,
+    location: location,
+    addressLocation: addressLocation,
+    status: status,
+    isDraft: isDraft,
+    paidStatus: paidStatus,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+    content: content,
+    isNeedPhoto: isNeedPhoto,
+    isNeedVideo: isNeedVideo,
+    isNeedInterview: isNeedInterview,
+    photoPrice: photoPrice,
+    videoPrice: videoPrice,
+    interviewPrice: interviewPrice,
+    currency: currency,
+    currencySymbol: currencySymbol,
+    hopperInfo: hopperInfo,
+    hopperTaskAmount: hopperTaskAmount,
+    hopperLocation: hopperLocation,
+    activeHoppersCount: activeHoppersCount,
+    activeHoppersLocations: activeHoppersLocations,
+    acceptedHoppers: acceptedHoppers,
+    distance: distance,
+    walkTime: walkTime,
+    driveTime: driveTime,
+  );
 
   factory TaskAssignedItemModel.fromJson(Map<String, dynamic> json) {
     return TaskAssignedItemModel(
       id: SafeParser.parseString(json['_id']),
       mediaHouse: (json['mediahouse_id'] != null &&
-              (json['mediahouse_id'] is Map || json['mediahouse_id'] is String))
-          ? (json['mediahouse_id'] is String)
-              ? MediaHouseDataModel(
-                  id: SafeParser.parseString(json['mediahouse_id']),
-                  firstName: "",
-                  lastName: "",
-                  email: "",
-                  phone: "",
-                  role: "",
-                  profileImage: "")
-              : MediaHouseDataModel.fromJson(json['mediahouse_id'])
-          : MediaHouseDataModel(
-              id: "",
-              firstName: "",
-              lastName: "",
-              email: "",
-              phone: "",
-              role: "",
-              profileImage: ""),
+          (json['mediahouse_id'] is Map || json['mediahouse_id'] is String))
+        ? (json['mediahouse_id'] is String)
+          ? MediaHouseDataModel(
+            id: SafeParser.parseString(json['mediahouse_id']),
+            firstName: "",
+            lastName: "",
+            email: "",
+            phone: "",
+            role: "",
+            profileImage: "")
+          : MediaHouseDataModel.fromJson(json['mediahouse_id'])
+        : MediaHouseDataModel(
+          id: "",
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          role: "",
+          profileImage: ""),
       deadlineDate: SafeParser.parseDateTime(json['deadline_date']),
       heading: SafeParser.parseString(json['heading']),
       description: SafeParser.parseString(json['description']),
       location: SafeParser.parseString(json['location']),
       addressLocation: (json['address_location'] is String)
-          ? AddressLocationDataModel.fromJson(
-              jsonDecode(json['address_location']))
-          : AddressLocationDataModel.fromJson(json['address_location'] ?? {}),
+        ? AddressLocationDataModel.fromJson(
+          jsonDecode(json['address_location']))
+        : AddressLocationDataModel.fromJson(json['address_location'] ?? {}),
       status: SafeParser.parseString(json['status']),
       isDraft: SafeParser.parseBool(json['is_draft']),
       paidStatus: SafeParser.parseString(json['paid_status']),
       createdAt: SafeParser.parseDateTime(json['createdAt']),
       updatedAt: SafeParser.parseDateTime(json['updatedAt']),
       content: SafeParser.parseList<TaskContentDataModel>(
-          json['content'], (e) => TaskContentDataModel.fromJson(e ?? {})),
+        json['content'], (e) => TaskContentDataModel.fromJson(e ?? {})),
       isNeedPhoto: SafeParser.parseBool(json['need_photos']),
       isNeedVideo: SafeParser.parseBool(json['need_videos']),
       isNeedInterview: SafeParser.parseBool(json['need_interview']),
       photoPrice: SafeParser.parseString(
-          json['hopper_photo_price'] ?? json['photo_price'],
-          defaultValue: "0"),
+        json['hopper_photo_price'] ?? json['photo_price'],
+        defaultValue: "0"),
       videoPrice: SafeParser.parseString(
-          json['hopper_videos_price'] ?? json['hopper_video_price'],
-          defaultValue: "0"),
+        json['hopper_videos_price'] ?? json['hopper_video_price'],
+        defaultValue: "0"),
       interviewPrice: SafeParser.parseString(
-          json['hopper_interview_price'] ?? json['interview_price'],
-          defaultValue: "0"),
+        json['hopper_interview_price'] ?? json['interview_price'],
+        defaultValue: "0"),
       currency: SafeParser.parseString(json['currency']),
       currencySymbol: SafeParser.parseString(
-          json['currency_symbol'] ?? json['currencySymbol']),
+        json['currency_symbol'] ?? json['currencySymbol']),
       hopperInfo: SafeParser.parseList<HopperInfoDataModel>(
-          json['hopperInfo'], (e) => HopperInfoDataModel.fromJson(e ?? {})),
+        json['hopperInfo'], (e) => HopperInfoDataModel.fromJson(e ?? {})),
       hopperTaskAmount: SafeParser.parseString(json['hopperTaskAmount']),
+      // hopperLocation: SafeParser.parseList<HopperLocationModel>(
+      //   json['hopperLocation'],
+      //   (e) => HopperLocationModel.fromJson(e ?? {}),
+      // ),
       acceptedHoppers: SafeParser.parseList<String>(
-          json['accepted_hoppers'], (e) => SafeParser.parseString(e)),
+        json['accepted_hoppers'], (e) => SafeParser.parseString(e)),
       distance: SafeParser.parseString(json['distance'] ?? json['miles'] ?? ""),
       walkTime: SafeParser.parseString(
-          json['timeByWalking'] ?? json['by_feet'] ?? json['walk_time'] ?? ""),
+        json['timeByWalking'] ?? json['by_feet'] ?? json['walk_time'] ?? ""),
       driveTime: SafeParser.parseString(
-          json['timeByDriving'] ?? json['by_car'] ?? json['drive_time'] ?? ""),
+        json['timeByDriving'] ?? json['by_car'] ?? json['drive_time'] ?? ""),
+      hopperLocation: (json['hopperLocation'] is String)
+          ? HopperLocationModel.fromJson(jsonDecode(json['hopperLocation']))
+          : (json['hopperLocation'] != null ? HopperLocationModel.fromJson(json['hopperLocation']) : null),
+      activeHoppersCount: SafeParser.parseInt(json['active_hoppers']),
+      activeHoppersLocations: SafeParser.parseList<HopperLocationModel>(
+          json['active_hoppers_locations'],
+          (e) => HopperLocationModel.fromJson(e ?? {})),
     );
   }
 }
@@ -264,6 +309,35 @@ class TaskContentDataModel extends TaskContentEntity {
     );
   }
 }
+
+class HopperLocationModel {
+  String id = "";
+  double latitude = 0.0;
+  double longitude = 0.0;
+  String avatar = "";
+
+  HopperLocationModel({
+    this.id = "",
+    this.latitude = 0.0,
+    this.longitude = 0.0,
+    this.avatar = "",
+  });
+
+  HopperLocationModel.fromJson(Map<String, dynamic> json) {
+    id = (json["id"] ?? "").toString();
+    latitude = double.tryParse((json["latitude"] ?? "0.0").toString()) ?? 0.0;
+    longitude = double.tryParse((json["longitude"] ?? "0.0").toString()) ?? 0.0;
+    avatar = (json["avatarImage"] ?? json["avatar"] ?? "").toString();
+
+    // Auto-fix for swapped coordinates (Latitude cannot exceed 90 degrees)
+    if (latitude.abs() > 90 && longitude.abs() <= 90) {
+      double temp = latitude;
+      latitude = longitude;
+      longitude = temp;
+    }
+  }
+}
+
 
 class ChatRoomDataModel extends ChatRoomEntity {
   const ChatRoomDataModel({

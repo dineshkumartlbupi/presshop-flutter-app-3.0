@@ -155,8 +155,6 @@ class _LeaderboardViewState extends State<LeaderboardView> {
           } else if (state is LeaderboardError) {
             return Center(child: Text(state.message));
           } else if (state is LeaderboardLoaded) {
-            debugPrint(
-                "DEBUG: LeaderboardLoaded memberCount: ${state.leaderboard.memberList.length}");
             return _buildBody(state.leaderboard);
           }
           return const SizedBox.shrink();
@@ -236,6 +234,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
             SizedBox(height: size.height * AppDimensions.numD04),
             LeadershipTableWidget(
               memberList: leaderboard.memberList.take(3).toList(),
+              currencySymbol: leaderboard.currencySymbol,
             ),
             SizedBox(height: size.height * AppDimensions.numD04),
             Text('${leaderboard.totalMember} total earning members',
@@ -252,13 +251,9 @@ class _LeaderboardViewState extends State<LeaderboardView> {
             Expanded(
               child: ListView.builder(
                 controller: _scrollController,
-                itemCount: leaderboard.memberList.length > 3
-                    ? leaderboard.memberList.length - 3
-                    : 0,
+                itemCount: leaderboard.memberList.length,
                 itemBuilder: (context, index) {
-                  var memberItem = leaderboard.memberList[index + 3];
-                  debugPrint(
-                      "DEBUG: Rendering list item $index: ${memberItem.userName} (${memberItem.country})");
+                  var memberItem = leaderboard.memberList[index];
                   return Padding(
                     padding: EdgeInsets.only(
                         bottom: size.height * AppDimensions.numD02),
@@ -312,7 +307,10 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                         Spacer(),
                         Text(
                           formatCurrency(
-                              memberItem.totalEarnings, currencySymbol),
+                              memberItem.totalEarnings,
+                              leaderboard.currencySymbol.isNotEmpty
+                                  ? leaderboard.currencySymbol
+                                  : currencySymbol),
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD04,

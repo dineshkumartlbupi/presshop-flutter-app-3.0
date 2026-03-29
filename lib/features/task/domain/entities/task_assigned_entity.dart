@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:presshop/features/task/data/models/task_assigned_response_model.dart';
 
 class TaskAssignedEntity extends Equatable {
   const TaskAssignedEntity({
@@ -17,6 +18,9 @@ class TaskAssignedEntity extends Equatable {
 class TaskAssignedDetailEntity extends Equatable {
   final String id;
   final MediaHouseEntity mediaHouse;
+  final HopperLocationModel? hopperLocation;
+  final int activeHoppersCount;
+  final List<HopperLocationModel> activeHoppersLocations;
   final DateTime deadlineDate;
   final String heading;
   final String description;
@@ -42,6 +46,8 @@ class TaskAssignedDetailEntity extends Equatable {
   final String distance;
   final String walkTime;
   final String driveTime;
+  final double? latitude;
+  final double? longitude;
 
   const TaskAssignedDetailEntity({
     required this.id,
@@ -57,6 +63,9 @@ class TaskAssignedDetailEntity extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     required this.content,
+    this.hopperLocation,
+    this.activeHoppersCount = 0,
+    this.activeHoppersLocations = const [],
     this.isNeedPhoto = false,
     this.isNeedVideo = false,
     this.isNeedInterview = false,
@@ -71,6 +80,8 @@ class TaskAssignedDetailEntity extends Equatable {
     this.distance = "",
     this.walkTime = "",
     this.driveTime = "",
+    this.latitude,
+    this.longitude,
   });
 
   @override
@@ -98,6 +109,9 @@ class TaskAssignedDetailEntity extends Equatable {
         currencySymbol,
         hopperInfo,
         hopperTaskAmount,
+        hopperLocation,
+        activeHoppersCount,
+        activeHoppersLocations,
         acceptedHoppers,
         distance,
         walkTime,

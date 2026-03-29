@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:presshop/core/constants/app_dimensions.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
@@ -9,6 +9,8 @@ import 'package:audioplayers/audioplayers.dart';
 
 AlertDialog? alertDialog;
 final Set<String> _shownBroadcastIds = {};
+BitmapDescriptor? popupMapIcon;
+Map<String, BitmapDescriptor> hopperAvatarIcons = {};
 
 void commonDialog(BuildContext context, String message, VoidCallback pressed) {
   var screenWidth = MediaQuery.of(context).size.width;
@@ -89,10 +91,8 @@ void broadcastDialog({
       context: navigatorKey.currentState!.context,
       barrierDismissible: false,
       builder: (context) {
-        return WillPopScope(
-          onWillPop: () {
-            return Future.value(false);
-          },
+        return PopScope(
+          canPop: false,
           child: AlertDialog(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -414,66 +414,227 @@ void broadcastDialog({
                         ),
 
                         SizedBox(height: size.width * AppDimensions.numD02),
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD04),
+                          height: size.width * 0.5,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(
+                                size.width * AppDimensions.numD03),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                size.width * AppDimensions.numD03),
+                            child: Stack(
+                              children: [
+                                GoogleMap(
+                                  initialCameraPosition: CameraPosition(
+                                    target: LatLng(
+                                        taskDetail.task.latitude != 0.0
+                                            ? taskDetail.task.latitude ?? 0.0
+                                            : 51.520412,
+                                        taskDetail.task.longitude != 0.0
+                                            ? taskDetail.task.longitude ?? 0.0
+                                            : -0.158022), // Add default static coords if needed
+                                    zoom: 12,
+                                  ),
+                                  zoomControlsEnabled: false,
+                                  myLocationButtonEnabled: false,
+                                  mapToolbarEnabled: false,
+                                  scrollGesturesEnabled: false,
+                                  zoomGesturesEnabled: false,
+                                  rotateGesturesEnabled: false,
+                                  tiltGesturesEnabled: false,
+                                  markers: {
+                                    if (popupMapIcon != null)
+                                      Marker(
+                                        markerId:
+                                            const MarkerId("task_location"),
+                                        position: LatLng(
+                                            taskDetail.task.latitude != 0.0
+                                                ? taskDetail.task.latitude ??
+                                                    0.0
+                                                : 51.520412,
+                                            taskDetail.task.longitude != 0.0
+                                                ? taskDetail.task.longitude ??
+                                                    0.0
+                                                : -0.158022),
+                                        anchor: const Offset(0.5, 0.5),
+                                        zIndex: 0,
+                                        icon: popupMapIcon!,
+                                      ),
+                                    ...taskDetail.task.activeHoppersLocations
+                                        .where((hopper) => hopperAvatarIcons
+                                            .containsKey(hopper.avatar))
+                                        .map((hopper) {
+                                      return Marker(
+                                        markerId: MarkerId(hopper.id.isNotEmpty
+                                            ? hopper.id
+                                            : "${hopper.latitude}_${hopper.longitude}"),
+                                        position: LatLng(
+                                            hopper.latitude, hopper.longitude),
+                                        anchor: const Offset(0.5, 0.5),
+                                        zIndex: 1,
+                                        icon: hopperAvatarIcons[hopper.avatar]!,
+                                      );
+                                    }).toSet(),
+                                  },
+                                ),
+                                Positioned(
+                                  bottom: size.width * AppDimensions.numD03,
+                                  left: size.width * AppDimensions.numD03,
+                                  right: size.width * AppDimensions.numD03,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            size.width * AppDimensions.numD03,
+                                        vertical:
+                                            size.width * AppDimensions.numD03),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * AppDimensions.numD02),
+                                      // boxShadow: const [
+                                      //   BoxShadow(
+                                      //     color: Colors.black12,
+                                      //     blurRadius: 4,
+                                      //     offset: Offset(0, 2),
+                                      //   ),
+                                      // ],
+                                    ),
+                                    child: RichText(
+                                      textAlign: TextAlign.center,
+                                      text: TextSpan(
+                                        text:
+                                            "${taskDetail.task.activeHoppersCount} active Hoppers nearby. ",
+                                        style: commonTextStyle(
+                                            size: size,
+                                            // fontSize: size.width * numD035,
+                                            // color: Colors.black,
+                                            // fontWeight: FontWeight.bold,
+
+                                            fontSize: size.width *
+                                                AppDimensions.numD03,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500),
+                                        children: [
+                                          TextSpan(
+                                            text: "Grab it before it's gone.",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                // fontSize: size.width * numD035,
+                                                color: AppColorTheme
+                                                    .colorThemePink,
+                                                // fontWeight: FontWeight.bold,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD03,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: size.width * AppDimensions.numD02),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD08,
+                              vertical: size.width * AppDimensions.numD04),
+                          decoration: BoxDecoration(
+                              color: AppColorTheme.colorThemePink,
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD04)),
+                          child: GestureDetector(
+                            onTap: onTapViewDetails,
+                            child: Text(
+                              "View Task $currencySymbol${formatDouble(double.tryParse(taskDetail.task.hopperTaskAmount) ?? 0.0)}",
+                              style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * AppDimensions.numD04,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(
+                          height: size.width * AppDimensions.numD02,
+                        ),
 
                         /// Illustration
-                        Image.asset(
-                          "assets/illustrations/priceimage2.png",
-                          height: size.width * AppDimensions.numD25,
-                          fit: BoxFit.contain,
-                        ),
+                        // Image.asset(
+                        //   "assets/illustrations/priceimage2.png",
+                        //   height: size.width * AppDimensions.numD25,
+                        //   fit: BoxFit.contain,
+                        // ),
 
-                        SizedBox(height: size.width * AppDimensions.numD05),
+                        // SizedBox(height: size.width * AppDimensions.numD05),
 
-                        /// Price and Hours
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text:
-                                    "${taskDetail.task.currencySymbol.isNotEmpty ? taskDetail.task.currencySymbol : currencySymbol}${taskDetail.task.hopperTaskAmount} ",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: size.width * AppDimensions.numD07,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                              TextSpan(
-                                text:
-                                    "for ${taskDetail.task.hopperInfo.isNotEmpty ? taskDetail.task.hopperInfo.first.hours : "0"} hours",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: size.width * AppDimensions.numD04,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        // /// Price and Hours
+                        // RichText(
+                        //   textAlign: TextAlign.center,
+                        //   text: TextSpan(
+                        //     children: [
+                        //       TextSpan(
+                        //         text:
+                        //             "${taskDetail.task.currencySymbol.isNotEmpty ? taskDetail.task.currencySymbol : currencySymbol}${taskDetail.task.hopperTaskAmount} ",
+                        //         style: TextStyle(
+                        //           color: Colors.black,
+                        //           fontSize: size.width * AppDimensions.numD07,
+                        //           fontWeight: FontWeight.w800,
+                        //         ),
+                        //       ),
+                        //       TextSpan(
+                        //         text:
+                        //             "for ${taskDetail.task.hopperInfo.first.hours } hours",
+                        //         style: TextStyle(
+                        //           color: Colors.black,
+                        //           fontSize: size.width * AppDimensions.numD04,
+                        //           fontWeight: FontWeight.w600,
+                        //         ),
+                        //       ),
+                        //       // TextSpan(
+                        //       //   text:
+                        //       //       "for ${taskDetail.task.hopperInfo.isNotEmpty ? taskDetail.task.hopperInfo.first.hours : "0"} hours",
+                        //       //   style: TextStyle(
+                        //       //     color: Colors.black,
+                        //       //     fontSize: size.width * AppDimensions.numD04,
+                        //       //     fontWeight: FontWeight.w600,
+                        //       //   ),
+                        //       // ),
+                        //     ],
+                        //   ),
+                        // ),
 
-                        SizedBox(height: size.width * AppDimensions.numD02),
+                        // SizedBox(height: size.width * AppDimensions.numD02),
 
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * AppDimensions.numD04,
-                              vertical: size.width * AppDimensions.numD04),
-                          child: SizedBox(
-                            width: size.width,
-                            height: size.width * AppDimensions.numD12,
-                            child: commonElevatedButton(
-                                "View Details",
-                                size,
-                                commonTextStyle(
-                                    size: size,
-                                    fontSize:
-                                        size.width * AppDimensions.numD035,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700),
-                                commonButtonStyle(
-                                    size, AppColorTheme.colorThemePink),
-                                onTapViewDetails),
-                          ),
-                        ),
+                        // Padding(
+                        // padding: EdgeInsets.symmetric(
+                        //     horizontal: size.width * AppDimensions.numD04,
+                        //     vertical: size.width * AppDimensions.numD04),
+                        // child: SizedBox(
+                        //   width: size.width,
+                        //   height: size.width * AppDimensions.numD12,
+                        //   child: commonElevatedButton(
+                        //       "View Details",
+                        //       size,
+                        //       commonTextStyle(
+                        //           size: size,
+                        //           fontSize:
+                        //               size.width * AppDimensions.numD035,
+                        //           color: Colors.white,
+                        //           fontWeight: FontWeight.w700),
+                        //       commonButtonStyle(
+                        //           size, AppColorTheme.colorThemePink),
+                        //       onTapViewDetails),
+                        // ),
+                        // ),
                       ],
                     ),
                   );
@@ -755,7 +916,7 @@ void showLoaderDialog(BuildContext context) {
   }
   alertDialog = AlertDialog(
     elevation: 0,
-    backgroundColor: Colors.white.withOpacity(0),
+    backgroundColor: Colors.transparent,
     content: const Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -768,7 +929,7 @@ void showLoaderDialog(BuildContext context) {
   );
   showDialog(
     barrierDismissible: false,
-    barrierColor: Colors.white.withOpacity(0),
+    barrierColor: Colors.transparent,
     context: context,
     builder: (context) {
       return alertDialog!;

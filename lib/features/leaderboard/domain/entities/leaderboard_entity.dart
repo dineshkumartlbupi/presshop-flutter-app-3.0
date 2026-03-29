@@ -5,10 +5,12 @@ class LeaderboardEntity extends Equatable {
     this.totalMember = 0,
     required this.countryList,
     required this.memberList,
+    this.currencySymbol = "",
   });
   final int totalMember;
   final List<LeaderboardCountryEntity> countryList;
   final List<MemberEntity> memberList;
+  final String currencySymbol;
 
   @override
   List<Object?> get props => [totalMember, countryList, memberList];
@@ -17,17 +19,20 @@ class LeaderboardEntity extends Equatable {
     int? totalMember,
     List<LeaderboardCountryEntity>? countryList,
     List<MemberEntity>? memberList,
+    String? currencySymbol,
   }) {
     return LeaderboardEntity(
       totalMember: totalMember ?? this.totalMember,
       countryList: countryList ?? this.countryList,
       memberList: memberList ?? this.memberList,
+      currencySymbol: currencySymbol ?? this.currencySymbol,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'totalMember': totalMember,
+      'currency_symbol': currencySymbol,
       'countryList': countryList.map((e) => e.toJson()).toList(),
       'memberList': memberList.map((e) => e.toJson()).toList(),
     };

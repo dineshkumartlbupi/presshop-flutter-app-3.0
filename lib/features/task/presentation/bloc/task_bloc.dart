@@ -224,8 +224,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       try {
         debugPrint("TaskBloc: Found cached tasks: ${cachedData.length} items");
         final tasks = cachedData
-            .map((e) =>
-                AllTaskModel.fromJson(Map<String, dynamic>.from(e as Map)))
+            .map((e) =>AllTaskModel.fromJson(Map<String, dynamic>.from(e as Map)))
             .toList();
         if (tasks.isNotEmpty) {
           // Verify we don't block loading state emission by setting success here immediately?

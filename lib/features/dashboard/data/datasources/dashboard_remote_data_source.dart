@@ -41,6 +41,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
         return (data['data'] as List)
             .map((e) => AdminDetailModel.fromJson(e))
             .toList();
+
       } else {
         throw ServerFailure(message: '');
       }
