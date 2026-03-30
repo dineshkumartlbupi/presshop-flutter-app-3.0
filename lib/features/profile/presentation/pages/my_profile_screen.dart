@@ -121,47 +121,51 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   void _loadCachedData() {
     userNameController.text =
-      sharedPreferences?.getString(SharedPreferencesKeys.userNameKey) ?? "Hopper";
+        sharedPreferences?.getString(SharedPreferencesKeys.userNameKey) ??
+            "Hopper";
     firstNameController.text =
-      sharedPreferences?.getString(SharedPreferencesKeys.firstNameKey) ?? "Hopper";
+        sharedPreferences?.getString(SharedPreferencesKeys.firstNameKey) ??
+            "Hopper";
     lastNameController.text =
-      sharedPreferences?.getString(SharedPreferencesKeys.lastNameKey) ?? "";
+        sharedPreferences?.getString(SharedPreferencesKeys.lastNameKey) ?? "";
     emailAddressController.text =
-      sharedPreferences?.getString(SharedPreferencesKeys.emailKey) ?? "";
+        sharedPreferences?.getString(SharedPreferencesKeys.emailKey) ?? "";
     phoneNumberController.text =
-      sharedPreferences?.getString(SharedPreferencesKeys.phoneKey) ?? "";
+        sharedPreferences?.getString(SharedPreferencesKeys.phoneKey) ?? "";
     addressController.text =
-      sharedPreferences?.getString(SharedPreferencesKeys.addressKey) ?? "";
+        sharedPreferences?.getString(SharedPreferencesKeys.addressKey) ?? "";
     postCodeController.text =
-      sharedPreferences?.getString(SharedPreferencesKeys.postCodeKey) ?? "";
+        sharedPreferences?.getString(SharedPreferencesKeys.postCodeKey) ?? "";
     selectedCountryCode =
-      sharedPreferences?.getString(SharedPreferencesKeys.countryCodeKey) ?? "+44";
+        sharedPreferences?.getString(SharedPreferencesKeys.countryCodeKey) ??
+            "+44";
     cityNameController.text =
-      sharedPreferences?.getString(SharedPreferencesKeys.cityKey) ?? "";
+        sharedPreferences?.getString(SharedPreferencesKeys.cityKey) ?? "";
     countryNameController.text =
-      sharedPreferences?.getString(SharedPreferencesKeys.countryKey) ?? "";
+        sharedPreferences?.getString(SharedPreferencesKeys.countryKey) ?? "";
     apartmentAndHouseNameController.text =
-      sharedPreferences?.getString(SharedPreferencesKeys.apartmentKey) ?? "";
+        sharedPreferences?.getString(SharedPreferencesKeys.apartmentKey) ?? "";
 
     // Partially initialize myProfileData for the top card
     String cachedAvatar =
-      sharedPreferences?.getString(SharedPreferencesKeys.avatarKey) ?? "";
+        sharedPreferences?.getString(SharedPreferencesKeys.avatarKey) ?? "";
     String cachedUsername =
-      sharedPreferences?.getString(SharedPreferencesKeys.userNameKey) ?? "";
+        sharedPreferences?.getString(SharedPreferencesKeys.userNameKey) ?? "";
     String cachedIncome =
-      sharedPreferences?.getString(SharedPreferencesKeys.totalIncomeKey) ?? "0";
+        sharedPreferences?.getString(SharedPreferencesKeys.totalIncomeKey) ??
+            "0";
     String cachedAddress =
-      sharedPreferences?.getString(SharedPreferencesKeys.addressKey) ?? "";
+        sharedPreferences?.getString(SharedPreferencesKeys.addressKey) ?? "";
 
     myProfileData = MyProfileData();
-    myProfileData!.userName = (cachedUsername.isNotEmpty ? cachedUsername : "Hopper");
+    myProfileData!.userName =
+        cachedUsername.isNotEmpty ? cachedUsername : "Hopper";
     myProfileData!.totalIncome = cachedIncome;
     myProfileData!.address = cachedAddress;
-    // Always set a default avatar image if missing
+
     if (cachedAvatar.isNotEmpty) {
-      myProfileData!.avatarImage = fixS3Url(cachedAvatar);
-    } else {
-      myProfileData!.avatarImage = "assets/commonImages/default_avatar.png";
+      myProfileData!.avatarImage = cachedAvatar;
+      myProfileData!.avatarImage = fixS3Url(myProfileData!.avatarImage);
     }
   }
 
@@ -271,13 +275,52 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    // debugPrint("Building MyProfileScreen with size: $size");
+    debugPrint("Building MyProfileScreen with size: $size");
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CommonBrandedAppBar(
         title: widget.screenType,
         size: size,
       ),
+      // appBar: CommonAppBar(
+      //   elevation: 0,
+      //   hideLeading: false,
+      //   title: Text(
+      //     widget.screenType,
+      //     style: TextStyle(
+      //         color: Colors.black,
+      //         fontWeight: FontWeight.bold,
+      //         fontSize: size.width * AppDimensions.appBarHeadingFontSize),
+      //   ),
+      //   centerTitle: false,
+      //   titleSpacing: 0,
+      //   size: size,
+      //   showActions: true,
+      //   leadingFxn: () {
+      //     /*  if (widget.editProfileScreen) {
+      //         widget.editProfileScreen = false;
+      //       }*/
+      //     context.pop();
+      //   },
+      //   actionWidget: [
+      //     InkWell(
+      //       onTap: () {
+      //         context.goNamed(
+      //           AppRoutes.dashboardName,
+      //           extra: {'initialPosition': 2},
+      //         );
+      //       },
+      //       child: Image.asset(
+      //         "${commonImagePath}rabbitLogo.png",
+      //         height: size.width * AppDimensions.numD07,
+      //         width: size.width * AppDimensions.numD07,
+      //       ),
+      //     ),
+      //     SizedBox(
+      //       width: size.width * AppDimensions.numD04,
+      //     )
+      //   ],
+      // ),
+
       body: Stack(
         children: [
           GestureDetector(
@@ -295,11 +338,10 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        
-                     
-                        SizedBox(height: size.width * AppDimensions.numD06),
-                         topProfileWidget(),
-                         SizedBox(height: size.width * AppDimensions.numD06),
+                        topProfileWidget(),
+                        SizedBox(
+                          height: size.width * AppDimensions.numD06,
+                        ),
                         _buildUserNameField(),
                         SizedBox(height: size.width * AppDimensions.numD06),
                         _buildFirstNameField(),
@@ -369,13 +411,14 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         ],
       ),
     );
+    // );
   }
 
- Widget topProfileWidget() {
+  Widget topProfileWidget() {
     return Container(
       height: size.width * AppDimensions.numD35,
       decoration: BoxDecoration(
-          color: Color(0xFFF3F5F4),
+          color: Colors.black,
           borderRadius:
               BorderRadius.circular(size.width * AppDimensions.numD04)),
       child: Row(
@@ -389,43 +432,39 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                           Radius.circular(size.width * AppDimensions.numD04),
                       bottomLeft:
                           Radius.circular(size.width * AppDimensions.numD04)),
-                  child: (myProfileData != null && myProfileData!.avatarImage != null && myProfileData!.avatarImage.isNotEmpty && myProfileData!.avatarImage.startsWith('http'))
-                      ? CachedNetworkImage(
-                          imageUrl: myProfileData!.avatarImage,
-                          placeholder: (context, url) => Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(size.width * AppDimensions.numD04),
-                              child: Image.asset(
-                                "${commonImagePath}rabbitLogo.png",
-                                fit: BoxFit.contain,
-                                width: size.width * AppDimensions.numD35,
-                                height: size.width * AppDimensions.numD35,
-                              ),
-                            ),
-                          ),
-                          errorWidget: (context, url, error) {
-                            debugPrint("Error loading profile avatar from URL: $url \nError: $error");
-                            return Padding(
-                              padding: EdgeInsets.all(size.width * AppDimensions.numD04),
-                              child: Image.asset(
-                                "${commonImagePath}rabbitLogo.png",
-                                fit: BoxFit.contain,
-                                width: size.width * AppDimensions.numD35,
-                                height: size.width * AppDimensions.numD35,
-                              ),
-                            );
-                          },
-                          fit: BoxFit.cover,
-                          width: size.width * AppDimensions.numD37,
-                          height: size.width * AppDimensions.numD35,
-                        )
-                      : Image.asset(
+                  child: CachedNetworkImage(
+                    imageUrl:
+                        myProfileData != null ? myProfileData!.avatarImage : "",
+                    placeholder: (context, url) => Center(
+                      child: Padding(
+                        padding:
+                            EdgeInsets.all(size.width * AppDimensions.numD04),
+                        child: Image.asset(
                           "${commonImagePath}rabbitLogo.png",
                           fit: BoxFit.contain,
-                          width: size.width * AppDimensions.numD37,
+                          width: size.width * AppDimensions.numD35,
                           height: size.width * AppDimensions.numD35,
                         ),
-                ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) {
+                      debugPrint(
+                          "Error loading profile avatar from URL: $url \nError: $error");
+                      return Padding(
+                        padding:
+                            EdgeInsets.all(size.width * AppDimensions.numD04),
+                        child: Image.asset(
+                          "${commonImagePath}rabbitLogo.png",
+                          fit: BoxFit.contain,
+                          width: size.width * AppDimensions.numD35,
+                          height: size.width * AppDimensions.numD35,
+                        ),
+                      );
+                    },
+                    fit: BoxFit.cover,
+                    width: size.width * AppDimensions.numD37,
+                    height: size.width * AppDimensions.numD35,
+                  )),
               if (isSilentLoading)
                 Positioned.fill(
                   child: Container(
@@ -486,62 +525,15 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                          myProfileData != null
-                              ? myProfileData!.userName.toCapitalized()
-                              : "",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * AppDimensions.numD04,
-                              // color: colorThemePink,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600)),
-                      Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          // if (myProfileData != null &&
-                          //     myProfileData!.stripeStatusActive)
-                          Transform.translate(
-                            offset: const Offset(2, -1),
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  left: size.width * AppDimensions.numD01),
-                              child: Image.asset(
-                                "${iconsPath}verified_badge.png",
-                                height: size.width * AppDimensions.numD04,
-                                width: size.width * AppDimensions.numD04,
-                              ),
-                            ),
-                          ),
-                          // if (myProfileData != null &&
-                          //     myProfileData!.stripeStatusActive)
-                          Positioned(
-                            top: -size.width * AppDimensions.numD02,
-                            left: size.width * AppDimensions.numD06,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * AppDimensions.numD01,
-                                  vertical: size.width * 0.005),
-                              decoration: BoxDecoration(
-                                  color: const Color(0xFF2D7ADE),
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * AppDimensions.numD01)),
-                              child: Text(
-                                "Verified Hopper",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * AppDimensions.numD02,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                  Text(
+                      myProfileData != null
+                          ? myProfileData!.userName.toCapitalized()
+                          : "",
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD04,
+                          color: AppColorTheme.colorThemePink,
+                          fontWeight: FontWeight.w500)),
                   SizedBox(
                     height: size.width * AppDimensions.numD01,
                   ),
@@ -550,7 +542,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.normal)),
                   SizedBox(
                     height: size.width * AppDimensions.numD005,
@@ -560,7 +552,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.normal)),
                   SizedBox(
                     height: size.width * AppDimensions.numD005,
@@ -571,18 +563,16 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.normal))
                 ],
               ),
             ),
-          )
-          )
+          ))
         ],
       ),
     );
   }
-
 
   String _getCurrentAddress() {
     if (myProfileData == null) return '';

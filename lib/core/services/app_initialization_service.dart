@@ -22,6 +22,7 @@ import 'package:presshop/features/publish/data/models/tutorials_model.dart';
 import 'package:presshop/features/publish/data/models/category_data_model.dart';
 import 'package:presshop/core/models/upload_job.dart';
 import 'package:presshop/core/models/upload_chunk.dart';
+import 'package:presshop/features/media/domain/services/background_upload_service.dart';
 
 class AppInitializationService {
   static Future<void> loadEnvironment() async {
@@ -228,6 +229,12 @@ class AppInitializationService {
       await Hive.openBox<CategoryDataModel>('categories_box');
       await Hive.openBox<UploadJob>('upload_jobs');
       await Hive.openBox('sync_cache');
+      
+      // Initialize background upload service so it responds to App actions on launch!
+      await BackgroundUploadService().initialize();
+      // Auto-resume any paused background uploads
+      BackgroundUploadService().startOrResumeUpload();
+      
       debugPrint("✅ Hive initialized and boxes opened");
     } catch (e) {
       debugPrint("❌ Hive initialization error: $e");

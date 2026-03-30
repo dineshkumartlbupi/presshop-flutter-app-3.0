@@ -124,13 +124,13 @@ class MediaUploadService {
            for (var videoPath in backgroundVideos) {
              BackgroundUploadService().createJobAndStart(videoPath, contentId: contentId);
            }
+        } else {
+           await localNotificationService.flutterLocalNotificationsPlugin.cancel(0);
+           _showCompletionNotification(
+             localNotificationService.flutterLocalNotificationsPlugin,
+             isDraft: jsonBody?['is_draft'] == 'true',
+           );
         }
-        
-        await localNotificationService.flutterLocalNotificationsPlugin.cancel(0);
-        _showCompletionNotification(
-          localNotificationService.flutterLocalNotificationsPlugin,
-          isDraft: jsonBody?['is_draft'] == 'true',
-        );
         AppLogger.trackEvent(EventNames.mediaUpload, parameters: {
           'status': 'success',
           'is_draft': (jsonBody?['is_draft'] == 'true').toString(),

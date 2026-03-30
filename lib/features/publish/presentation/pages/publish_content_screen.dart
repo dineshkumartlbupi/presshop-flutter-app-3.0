@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:presshop/core/router/router_constants.dart';
 import 'dart:developer';
 import 'dart:io';
@@ -273,7 +274,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
   String get currencySymbol =>
       getCurrencySymbol(widget.myContentData?.currency ?? 'GBP');
-
+  final FlutterLocalNotificationsPlugin _notificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   @override
   void dispose() {
     descriptionController.dispose();

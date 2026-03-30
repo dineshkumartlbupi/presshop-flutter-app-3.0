@@ -26,7 +26,6 @@ import 'package:presshop/features/map/presentation/widgets/burst_animation.dart'
 import 'package:presshop/features/map/presentation/widgets/content_marker_popup.dart';
 import 'package:presshop/features/map/presentation/widgets/custom_info_window.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
-import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:presshop/features/map/presentation/widgets/danger_zone_info_window.dart';
 import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
 import 'package:presshop/features/map/presentation/widgets/side_action_panal.dart';
@@ -778,6 +777,9 @@ class _MapPageContentState extends State<_MapPageContent>
                     onCameraMoveStarted: () {
                       if (!_isProgrammaticMovement) {
                         _isUserDragging = true;
+                        context
+                            .read<MapBloc>()
+                            .add(const SetDraggingEvent(true));
                       }
                       _customInfoWindowController.onCameraMove?.call();
                       for (var controller in _markerControllers.values) {
@@ -791,14 +793,7 @@ class _MapPageContentState extends State<_MapPageContent>
                       for (var controller in _markerControllers.values) {
                         controller.onCameraMove?.call();
                       }
-                      _updateInfoWindow();
-
-                      if (_isUserDragging) {
-                        // _customInfoWindowController.hideInfoWindow!();
-                        context
-                            .read<MapBloc>()
-                            .add(const SetDraggingEvent(true));
-                      }
+                      // Removed _updateInfoWindow() here as it causes massive setState-induced lag during swipe
                     },
                     onCameraIdle: () {
                       if (mounted) {

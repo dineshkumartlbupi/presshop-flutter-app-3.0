@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'dart:typed_data';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/utils/app_logger.dart';
@@ -51,9 +52,10 @@ class ChunkedUploadApiService {
         headers: {
           'Content-Length': chunkData.length.toString(),
         },
+        contentType: 'application/octet-stream',
         responseType: ResponseType.plain,
       ),
-      data: Stream.fromIterable([chunkData]),
+      data: Uint8List.fromList(chunkData),
     );
     
     if (response.statusCode == 200 || response.statusCode == 201) {
