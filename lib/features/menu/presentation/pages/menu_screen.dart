@@ -8,6 +8,7 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
+import 'package:presshop/core/utils/app_logger.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/dialogs.dart';
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
@@ -85,6 +86,7 @@ class _MenuScreenState extends State<MenuScreen> {
   void _onMenuTap(BuildContext context, MenuData item) {
     switch (item.action) {
       case MenuAction.logout:
+        AppLogger.trackAction(ActionNames.logout);
         logoutDialog(context.mqSize, context);
         break;
       case MenuAction.digitalId:

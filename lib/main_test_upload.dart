@@ -133,7 +133,8 @@ class _UploadTestScreenState extends State<UploadTestScreen> {
           _addLog("ERROR: $e");
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Error creating job for ${video.name}: $e")),
+              SnackBar(
+                  content: Text("Error creating job for ${video.name}: $e")),
             );
           }
         }
@@ -232,7 +233,8 @@ class _UploadTestScreenState extends State<UploadTestScreen> {
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("Status: ${job.status}", style: const TextStyle(fontSize: 10)),
+                                    Text("Status: ${job.status}",
+                                        style: const TextStyle(fontSize: 10)),
                                     const SizedBox(height: 4),
                                     LinearProgressIndicator(
                                         value: progress, minHeight: 4),

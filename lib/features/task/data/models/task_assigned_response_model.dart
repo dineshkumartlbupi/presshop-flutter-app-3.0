@@ -101,6 +101,8 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
     String distance = "",
     String walkTime = "",
     String driveTime = "",
+    String specialRequirements = "",
+    Map<String, dynamic>? preferences,
   }) : super(
     id: id,
     mediaHouse: mediaHouse,
@@ -132,6 +134,8 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
     distance: distance,
     walkTime: walkTime,
     driveTime: driveTime,
+    specialRequirements: specialRequirements,
+    preferences: preferences,
   );
 
   factory TaskAssignedItemModel.fromJson(Map<String, dynamic> json) {
@@ -208,6 +212,11 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
       activeHoppersLocations: SafeParser.parseList<HopperLocationModel>(
           json['active_hoppers_locations'],
           (e) => HopperLocationModel.fromJson(e ?? {})),
+      specialRequirements: SafeParser.parseString(
+          json['special_requirements'] ?? json['specialRequirements']),
+      preferences: (json['preferences'] is Map<String, dynamic>)
+          ? json['preferences']
+          : null,
     );
   }
 }

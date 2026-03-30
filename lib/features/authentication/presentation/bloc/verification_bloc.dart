@@ -5,6 +5,8 @@ import '../../domain/usecases/social_register_user.dart';
 import '../../domain/usecases/send_otp.dart';
 import 'verification_event.dart';
 import 'verification_state.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
+import 'package:presshop/core/utils/app_logger.dart';
 
 class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
 
@@ -71,13 +73,25 @@ class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
           await socialRegisterUser(SocialRegisterParams(data: params));
       result.fold(
         (failure) => emit(VerificationError(failure.message)),
-        (user) => emit(RegistrationSuccess(user)),
+        (user) {
+          AppLogger.trackEvent(EventNames.userRegistered, parameters: {
+            'method': 'social',
+            'user_id': user.id,
+          });
+          emit(RegistrationSuccess(user));
+        },
       );
     } else {
       final result = await registerUser(RegisterParams(data: params));
       result.fold(
         (failure) => emit(VerificationError(failure.message)),
-        (user) => emit(RegistrationSuccess(user)),
+        (user) {
+          AppLogger.trackEvent(EventNames.userRegistered, parameters: {
+            'method': 'email',
+            'user_id': user.id,
+          });
+          emit(RegistrationSuccess(user));
+        },
       );
     }
   }

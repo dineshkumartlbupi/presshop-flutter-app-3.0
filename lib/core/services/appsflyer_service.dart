@@ -51,4 +51,14 @@ class AppsFlyerService {
 
   /// Get the AppsFlyer SDK instance
   static AppsflyerSdk get instance => _appsflyerSdk;
+
+  /// Log an event to AppsFlyer
+  static Future<bool?> logEvent(String eventName, Map<String, dynamic> eventValues) async {
+    try {
+      return await _appsflyerSdk.logEvent(eventName, eventValues);
+    } catch (e) {
+      debugPrint("❌ AppsFlyer logEvent error: $e");
+      return false;
+    }
+  }
 }

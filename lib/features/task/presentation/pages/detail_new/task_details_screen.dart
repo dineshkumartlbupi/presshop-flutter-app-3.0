@@ -635,36 +635,48 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                             color: Colors.black,
                             lineHeight: 2,
                             fontWeight: FontWeight.normal)),
-                    SizedBox(
-                      height: size.width * AppDimensions.numD06,
-                    ),
-                    "".isNotEmpty
-                        ? Text("SPECIAL REQUIREMENTS",
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * AppDimensions.numD035,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500))
-                        : Container(),
-                    SizedBox(
-                      height: "".isNotEmpty
-                          ? size.width * AppDimensions.numD025
-                          : 0,
-                    ),
-                    "".isNotEmpty
-                        ? Text("",
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.black,
-                                lineHeight: 2,
-                                fontWeight: FontWeight.normal))
-                        : Container(),
-                    SizedBox(
-                      height: "".isNotEmpty
-                          ? size.width * AppDimensions.numD025
-                          : 0,
-                    ),
+                    if (taskDetail!.task.specialRequirements.isNotEmpty) ...[
+                      SizedBox(height: size.width * AppDimensions.numD06),
+                      Text("SPECIAL REQUIREMENTS",
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * AppDimensions.numD035,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500)),
+                      SizedBox(height: size.width * AppDimensions.numD018),
+                      Text(taskDetail!.task.specialRequirements,
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * AppDimensions.numD03,
+                              color: Colors.black,
+                              lineHeight: 2,
+                              fontWeight: FontWeight.normal)),
+                    ],
+                    if (taskDetail?.task.preferences != null &&
+                        ((taskDetail?.task.preferences?["pictureStyle"]
+                                    ?.isNotEmpty ==
+                                true) ||
+                            (taskDetail?.task.preferences?["videoLength"]
+                                    ?.isNotEmpty ==
+                                true) ||
+                            (taskDetail?.task.preferences?["distance"]
+                                    ?.isNotEmpty ==
+                                true))) ...[
+                      SizedBox(height: size.width * AppDimensions.numD06),
+                      Text(
+                        "Capture in ${_getPrefText(taskDetail?.task.preferences?["pictureStyle"], "Landscape")} format, "
+                        "record a ${_getPrefText(taskDetail?.task.preferences?["videoLength"], "40-50s")} video, "
+                        "and keep a distance of approximately ${_getPrefText(taskDetail?.task.preferences?["distance"], "15-20m")}.",
+                        style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD03,
+                          color: Colors.black,
+                          lineHeight: 1.8,
+                          fontWeight: FontWeight.normal,
+                        ),
+                        textAlign: TextAlign.justify,
+                      ),
+                    ],
                     const Divider(
                       thickness: 1,
                       color: AppColorTheme.colorGreyChat,
@@ -1148,5 +1160,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       return mins > 0 ? "${hours}h ${mins}m" : "${hours}h";
     }
     return "$driveMinutes mins";
+  }
+
+  String _getPrefText(dynamic value, String defaultValue) {
+    if (value == null || value.toString().isEmpty) {
+      return defaultValue;
+    }
+    return value.toString();
   }
 }

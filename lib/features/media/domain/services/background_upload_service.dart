@@ -147,7 +147,10 @@ class BackgroundUploadService {
       'title': title,
       'body': body,
       'isError': isError,
-      'status': isError ? 'paused_no_internet' : 'uploading',
+      'isCompleted': isCompleted,
+      'status': isError
+          ? (body.contains('internet') ? 'paused_no_internet' : 'paused_error')
+          : (isCompleted ? 'completed' : 'uploading'),
     };
   }
 
@@ -257,12 +260,9 @@ class BackgroundUploadService {
     }
 
     int totalChunks = job.chunks.length;
-    int uploadedBytes = 0;
 
-    // Calculate already uploaded bytes (for resumed jobs)
-    uploadedBytes =
+    int uploadedBytesBefore =
         job.chunks.where((c) => c.status == 'uploaded').length * chunkSize;
-    if (uploadedBytes > job.fileSizeBytes) uploadedBytes = job.fileSizeBytes;
 
     for (int i = 0; i < totalChunks; i++) {
       final chunk = job.chunks[i];
@@ -287,49 +287,54 @@ class BackgroundUploadService {
       }
 
       try {
-        // Upload chunk
+        // Upload chunk with progress callback for smoothness
         final eTag = await _apiService.uploadChunk(
-            presignedUrl: chunk.presignedUrl, chunkData: chunkData);
+          presignedUrl: chunk.presignedUrl,
+          chunkData: chunkData,
+          onProgress: (sent, total) {
+            int currentTotalSent = uploadedBytesBefore + sent;
+            if (currentTotalSent > job.fileSizeBytes) {
+              currentTotalSent = job.fileSizeBytes;
+            }
+            int progress =
+                ((currentTotalSent / job.fileSizeBytes) * 100).toInt();
+
+            // Only update if progress changed to avoid overwhelming
+            if (progress != videoUploadProgress.value?['progress']) {
+              showNotification(
+                  progress, 'Uploading Video...', '$progress% completed');
+            }
+          },
+        );
 
         chunk.eTag = eTag;
         chunk.status = 'uploaded';
+        uploadedBytesBefore += (end - start); // Update for next chunk
         job.updateUpdatedAt();
         await job.save();
 
-        // Update uploaded bytes and progress
-        int uploadedChunks =
-            job.chunks.where((c) => c.status == 'uploaded').length;
-
-// Approx bytes
-        int uploadedBytes = uploadedChunks * BackgroundUploadService.chunkSize;
-
-// Fix overflow
-        if (uploadedBytes > job.fileSizeBytes) {
-          uploadedBytes = job.fileSizeBytes;
-        }
-
-// ✅ Convert to 0–100 percentage
-        int progress = job.fileSizeBytes > 0
-            ? ((uploadedBytes / job.fileSizeBytes) * 100).toInt()
-            : 0;
-
+        int progress =
+            ((uploadedBytesBefore / job.fileSizeBytes) * 100).toInt();
         await showNotification(
-            progress.toInt(), 'Uploading Video...', '${progress}% completed');
+            progress, 'Uploading Video...', '$progress% completed');
       } catch (e) {
         AppLogger.warning(
             "BackgroundUploadService: Chunk ${chunk.partNumber} failed. Error: $e");
+
         bool isNetworkError = e.toString().contains("SocketException") ||
             e.toString().contains("HandshakeException") ||
             e.toString().contains("TimeoutException") ||
             e.toString().contains("connection error") ||
-            e.toString().contains("cancelled");
+            e.toString().contains("cancelled") ||
+            e.toString().contains("Failed host lookup");
+
         String errorMsg = isNetworkError
-            ? 'Waiting for internet connection...'
+            ? 'Paused: Waiting for internet connection...'
             : 'Upload interrupted. Tap Retry to resume.';
-        await showNotification(
-            ((uploadedBytes / job.fileSizeBytes) * 100).toInt(),
-            'Upload Failed',
-            errorMsg,
+
+        int currentProgress =
+            ((uploadedBytesBefore / job.fileSizeBytes) * 100).toInt();
+        await showNotification(currentProgress, 'Upload Paused', errorMsg,
             isError: true);
 
         _isUploading = false;

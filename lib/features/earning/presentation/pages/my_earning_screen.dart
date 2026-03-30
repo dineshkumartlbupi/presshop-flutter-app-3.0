@@ -59,7 +59,6 @@ class _MyEarningScreenState extends State<MyEarningScreen>
       });
       context.read<EarningBloc>().add(ChangeTabEvent(_selectedTabbar));
 
-      // Fetch data for the selected tab if needed or rely on initial load
       if (_selectedTabbar == 0) {
         _fetchTransactions(context.read<EarningBloc>());
       } else {
@@ -929,9 +928,12 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                           )
                         ],
                       ),
-                      Center(
-                        child: CommonWidgetsNew.showAnimatedLoader(size),
-                      )
+                      if (state.status == EarningStatus.loading ||
+                          state.transactionStatus == EarningStatus.loading ||
+                          state.commissionStatus == EarningStatus.loading)
+                        Center(
+                          child: CommonWidgetsNew.showAnimatedLoader(size),
+                        )
                     ],
                   ),
                 ),
@@ -981,7 +983,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   ),
                                   child: Text(
                                     item.amount.isNotEmpty
-                                        ? "$currencySymbol${formatDouble(double.parse(item.payableT0Hopper))}"
+                                        ? "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.payableT0Hopper))}"
                                         : "",
                                     style: commonTextStyle(
                                         size: size,
@@ -1111,11 +1113,11 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                 Text(
                                   item.type == "content"
                                       ? item.totalEarningAmt != "null"
-                                          ? '$currencySymbol${formatDouble(double.parse(item.totalEarningAmt))}'
-                                          : "£0"
+                                          ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.totalEarningAmt))}'
+                                          : "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}0"
                                       : item.totalEarningAmt != "null"
-                                          ? '$currencySymbol${formatDouble(double.parse(item.totalEarningAmt))}'
-                                          : "£0",
+                                          ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.totalEarningAmt))}'
+                                          : "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}0",
                                   style: commonTextStyle(
                                       size: size,
                                       fontSize:
@@ -1221,7 +1223,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             ),
                             child: Text(
                               item.amount.isNotEmpty
-                                  ? "$currencySymbol${formatDouble(double.parse(item.payableT0Hopper))}"
+                                  ? "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.payableT0Hopper))}"
                                   : "",
                               style: commonTextStyle(
                                   size: size,
@@ -1251,8 +1253,6 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               SizedBox(
                                 width: size.width * AppDimensions.numD03,
                               ),
-                              // Assuming contentDataList has media field for thumbnail if mapped
-                              // Using safe fallback if contentDataList is empty or structure mismatch
                               if (item.contentDataList.isNotEmpty)
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(
@@ -1322,10 +1322,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               item.type == "content"
                                   ? item.totalEarningAmt != "null"
                                       ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.totalEarningAmt))}'
-                                      : "£0"
+                                      : "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}0"
                                   : item.totalEarningAmt != "null"
                                       ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.totalEarningAmt))}'
-                                      : "£0",
+                                      : "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}0",
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
@@ -1354,7 +1354,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             Text(
                               item.payableCommission.isNotEmpty
                                   ? "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.payableCommission))}"
-                                  : "£0",
+                                  : "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}0",
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,

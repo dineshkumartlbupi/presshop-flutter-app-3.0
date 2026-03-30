@@ -46,6 +46,7 @@ class TaskDetail extends Equatable {
     this.hopperTaskAmount = "0",
     this.activeHoppersCount = 0,
     this.activeHoppersLocations = const [],
+    this.preferences,
   });
   final String id;
   final bool isNeedPhoto;
@@ -90,6 +91,7 @@ class TaskDetail extends Equatable {
   final String hopperTaskAmount;
   final int activeHoppersCount;
   final List<dynamic> activeHoppersLocations;
+  final Map<String, dynamic>? preferences;
 
   TaskDetail copyWith({
     String? id,
@@ -133,6 +135,7 @@ class TaskDetail extends Equatable {
     String? hopperTaskAmount,
     int? activeHoppersCount,
     List<dynamic>? activeHoppersLocations,
+    Map<String, dynamic>? preferences,
   }) {
     return TaskDetail(
       id: id ?? this.id,
@@ -175,6 +178,7 @@ class TaskDetail extends Equatable {
       hopperTaskAmount: hopperTaskAmount ?? this.hopperTaskAmount,
       activeHoppersCount: activeHoppersCount ?? this.activeHoppersCount,
       activeHoppersLocations: activeHoppersLocations ?? this.activeHoppersLocations,
+      preferences: preferences ?? this.preferences,
     );
   }
 
@@ -203,5 +207,6 @@ class TaskDetail extends Equatable {
         hopperTaskAmount,
         activeHoppersCount,
         activeHoppersLocations,
+        preferences,
       ];
 }

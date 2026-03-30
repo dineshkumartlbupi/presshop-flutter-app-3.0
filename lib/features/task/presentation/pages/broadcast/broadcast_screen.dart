@@ -206,6 +206,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                 .toList(),
             hopperTaskAmount: assignedEntity.task.hopperTaskAmount,
             acceptedBy: assignedEntity.task.acceptedHoppers,
+            specialReq: assignedEntity.task.specialRequirements,
+            preferences: assignedEntity.task.preferences,
           );
           if (taskDetail != null) {
             _updateGoogleMap(
@@ -482,7 +484,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
 
                   /// News Description
                   Text(
-                    "${taskDetail!.description}\n\n${taskDetail!.specialReq}",
+                    taskDetail!.description,
                     style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD03,
@@ -492,6 +494,55 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                     ),
                     textAlign: TextAlign.justify,
                   ),
+
+                  if (taskDetail!.specialReq.isNotEmpty) ...[
+                    SizedBox(height: size.width * AppDimensions.numD05),
+                    Text(
+                      "SPECIAL REQUIREMENTS",
+                      style: commonTextStyle(
+                        size: size,
+                        fontSize: size.width * AppDimensions.numD035,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: size.width * AppDimensions.numD02),
+                    Text(
+                      taskDetail!.specialReq,
+                      style: commonTextStyle(
+                        size: size,
+                        fontSize: size.width * AppDimensions.numD03,
+                        color: Colors.black,
+                        lineHeight: 1.8,
+                        fontWeight: FontWeight.normal,
+                      ),
+                      textAlign: TextAlign.justify,
+                    ),
+                  ],
+
+                  if (taskDetail?.preferences != null &&
+                      ((taskDetail?.preferences?["pictureStyle"]?.isNotEmpty ==
+                              true) ||
+                          (taskDetail
+                                  ?.preferences?["videoLength"]?.isNotEmpty ==
+                              true) ||
+                          (taskDetail?.preferences?["distance"]?.isNotEmpty ==
+                              true))) ...[
+                    SizedBox(height: size.width * AppDimensions.numD05),
+                    Text(
+                      "Capture in ${_getPrefText(taskDetail?.preferences?["pictureStyle"], "Landscape")} format, "
+                      "record a ${_getPrefText(taskDetail?.preferences?["videoLength"], "40-50s")} video, "
+                      "and keep a distance of approximately ${_getPrefText(taskDetail?.preferences?["distance"], "15-20m")}.",
+                      style: commonTextStyle(
+                        size: size,
+                        fontSize: size.width * AppDimensions.numD03,
+                        color: Colors.black,
+                        lineHeight: 1.8,
+                        fontWeight: FontWeight.normal,
+                      ),
+                      textAlign: TextAlign.justify,
+                    ),
+                  ],
 
                   /// Divider
                   const Divider(
@@ -653,108 +704,78 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                   ),
 
                   /// Button
-                  Row(
-                    children: [
-                      Expanded(
-                          child: SizedBox(
-                        height: size.width * AppDimensions.numD15,
-                        child: commonElevatedButton(
-                            AppStrings.declineText.toTitleCase(),
-                            size,
-                            commonTextStyle(
-                                size: size,
-                                fontSize: size.width * AppDimensions.numD04,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700),
-                            commonButtonStyle(size, Colors.black),
-                            state.actionStatus == TaskStatus.loading
-                                ? () {}
-                                : () {
-                                    if (_hasSubmittedAction) {
-                                      showSnackBar(
-                                          "Action already submitted",
-                                          "You have already performed an action on this task.",
-                                          Colors.red);
-                                      return;
-                                    }
-                                    _isAccepted = false;
-                                    if (player.state == PlayerState.playing) {
-                                      player.stop();
-                                    }
-                                    _hasSubmittedAction = true;
-                                    callAcceptRejectApi();
-                                    debugPrint("rejected:::::::");
-                                    setState(() {});
-                                  }),
-                      )),
-                      SizedBox(
-                        width: size.width * AppDimensions.numD03,
-                      ),
-                      Expanded(
-                          child: SizedBox(
-                        height: size.width * AppDimensions.numD15,
-                        child: commonElevatedButton(
-                            "Accept",
-                            size,
-                            commonTextStyle(
-                                size: size,
-                                fontSize: size.width * AppDimensions.numD04,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700),
-                            commonButtonStyle(
-                                size,
-                                taskDetail!.deadLine.isBefore(DateTime.now()) ||
-                                        (sharedPreferences != null &&
-                                            taskDetail!.acceptedBy.contains(
-                                                sharedPreferences!.getString(
-                                                        SharedPreferencesKeys
-                                                            .hopperIdKey) ??
-                                                    ""))
-                                    ? Colors.grey
-                                    : AppColorTheme.colorThemePink),
-                            state.actionStatus == TaskStatus.loading
-                                ? () {}
-                                : () {
-                                    if (_hasSubmittedAction) {
-                                      showSnackBar(
-                                          "Action already submitted",
-                                          "You have already performed an action on this task.",
-                                          Colors.red);
-                                      return;
-                                    }
-                                    if (taskDetail!.deadLine
-                                        .isBefore(DateTime.now())) {
-                                      showSnackBar(
-                                          "Task Expired",
-                                          "The deadline for this task has passed and it can no longer be accepted.",
-                                          Colors.red);
-                                      return;
-                                    }
-                                    if (sharedPreferences != null &&
-                                        taskDetail!.acceptedBy.contains(
-                                            sharedPreferences!.getString(
-                                                    SharedPreferencesKeys
-                                                        .hopperIdKey) ??
-                                                "")) {
-                                      showSnackBar(
-                                          "Already Accepted",
-                                          "You have already accepted this task.",
-                                          Colors.red);
-                                      return;
-                                    }
-                                    _isAccepted = true;
-                                    //isDirection = true;
-                                    if (player.state == PlayerState.playing) {
-                                      player.stop();
-                                    }
-                                    _hasSubmittedAction = true;
-                                    callAcceptRejectApi();
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD08,
+                          vertical: size.width * AppDimensions.numD04),
+                      decoration: BoxDecoration(
+                          color: taskDetail!.deadLine.isBefore(DateTime.now())
+                              ? AppColorTheme.colorLightGrey
+                              : AppColorTheme.colorThemePink,
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD04)),
+                      child: GestureDetector(
+                        onTap: taskDetail!.deadLine.isBefore(DateTime.now())
+                            ? () {
+                                showSnackBar(
+                                    "Task Expired",
+                                    "The deadline for this task has passed and it can no longer be accepted.",
+                                    Colors.red);
+                              }
+                            : () {
+                                if (_hasSubmittedAction) {
+                                  showSnackBar(
+                                      "Action already submitted",
+                                      "You have already performed an action on this task.",
+                                      Colors.red);
+                                  return;
+                                }
 
-                                    debugPrint("accepted====>");
-                                    setState(() {});
-                                  }),
-                      ))
-                    ],
+                                if (state.actionStatus == TaskStatus.loading) {
+                                  return;
+                                }
+
+                                if (sharedPreferences != null &&
+                                    taskDetail!.acceptedBy.contains(
+                                        sharedPreferences!.getString(
+                                                SharedPreferencesKeys
+                                                    .hopperIdKey) ??
+                                            "")) {
+                                  showSnackBar(
+                                      "Already Accepted",
+                                      "You have already accepted this task.",
+                                      Colors.red);
+                                  return;
+                                }
+
+                                _isAccepted = true;
+                                if (player.state == PlayerState.playing) {
+                                  player.stop();
+                                }
+                                _hasSubmittedAction = true;
+                                callAcceptRejectApi();
+
+                                debugPrint("accepted====>");
+                                if (mounted) {
+                                  setState(() {});
+                                }
+                              },
+                        child: Text(
+                          taskDetail!.deadLine.isBefore(DateTime.now())
+                              ? "Too Late!"
+                              : "Accept ${currencySymbol}${formatDouble(double.tryParse(taskDetail!.hopperTaskAmount) ?? 0.0)}",
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * AppDimensions.numD04,
+                              color:
+                                  taskDetail!.deadLine.isBefore(DateTime.now())
+                                      ? Colors.black
+                                      : Colors.white,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ),
                   ),
 
                   SizedBox(
@@ -1574,6 +1595,13 @@ class _BroadCastScreenState extends State<BroadCastScreen>
   /// Get Hopper Accepted List
   void callGetHopperAcceptedCount() {
     // This is now handled via Bloc event in listener or init
+  }
+
+  String _getPrefText(dynamic value, String defaultValue) {
+    if (value == null || value.toString().isEmpty) {
+      return defaultValue;
+    }
+    return value.toString();
   }
 
   @override

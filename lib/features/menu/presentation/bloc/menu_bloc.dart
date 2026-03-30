@@ -9,6 +9,8 @@ import 'package:presshop/features/authentication/data/datasources/auth_local_dat
 import 'package:presshop/features/authentication/domain/usecases/logout_user.dart';
 import '../../domain/services/menu_service.dart';
 import 'package:presshop/core/utils/current_user.dart';
+import 'package:presshop/core/utils/app_logger.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
 
 part 'menu_event.dart';
 part 'menu_state.dart';
@@ -72,6 +74,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         errorMessage: "Logout failed",
       )),
       (_) {
+        AppLogger.trackEvent(EventNames.userLogout);
+        AppLogger.clearUserIdentity();
         CurrentUser.clear();
         emit(state.copyWith(logoutStatus: MenuLogoutStatus.success));
       },

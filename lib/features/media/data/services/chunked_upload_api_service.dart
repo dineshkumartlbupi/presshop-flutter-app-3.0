@@ -45,6 +45,7 @@ class ChunkedUploadApiService {
   Future<String> uploadChunk({
     required String presignedUrl,
     required List<int> chunkData,
+    void Function(int sent, int total)? onProgress,
   }) async {
     final response = await _dio.put(
       presignedUrl,
@@ -56,6 +57,7 @@ class ChunkedUploadApiService {
         responseType: ResponseType.plain,
       ),
       data: Uint8List.fromList(chunkData),
+      onSendProgress: onProgress,
     );
     
     if (response.statusCode == 200 || response.statusCode == 201) {

@@ -152,6 +152,7 @@ class ApiClient {
     AppLogger.error(
       "API Error [${err.requestOptions.method}] ${err.requestOptions.path}: ${failure.message}",
       trackAnalytics: true,
+      eventName: EventNames.apiError,
     );
 
     final sanitizedError = DioException(

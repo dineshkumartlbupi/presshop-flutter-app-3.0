@@ -46,6 +46,8 @@ class TaskAssignedDetailEntity extends Equatable {
   final String distance;
   final String walkTime;
   final String driveTime;
+  final String specialRequirements;
+  final Map<String, dynamic>? preferences;
   final double? latitude;
   final double? longitude;
 
@@ -82,6 +84,8 @@ class TaskAssignedDetailEntity extends Equatable {
     this.driveTime = "",
     this.latitude,
     this.longitude,
+    this.specialRequirements = "",
+    this.preferences,
   });
 
   @override
@@ -116,6 +120,8 @@ class TaskAssignedDetailEntity extends Equatable {
         distance,
         walkTime,
         driveTime,
+        specialRequirements,
+        preferences,
       ];
 }
 

@@ -24,6 +24,7 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
+import 'package:presshop/core/utils/app_logger.dart';
 import 'package:presshop/core/core_export.dart' hide Config;
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
@@ -3231,6 +3232,10 @@ class _ConversationScreenState extends State<ConversationScreen>
     callCustomNotificationApi(
       messageType == "text" ? messageInput : messageType,
     );
+
+    AppLogger.trackEvent(EventNames.messageSent, parameters: {
+      'message_type': messageType,
+    });
   }
 
   /// To get Videos From the Gallery

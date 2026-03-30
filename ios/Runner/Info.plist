@@ -51,7 +51,7 @@
 	<key>CFBundleVersion</key>
 	<string>46</string>
 	<key>FIREBASE_ANALYTICS_COLLECTION_DEACTIVATED</key>
-	<string>YES</string>
+	<string>NO</string>
 	<key>FacebookAppID</key>
 	<string>4098273470461354</string>
 	<key>FacebookClientToken</key>
@@ -59,9 +59,9 @@
 	<key>FacebookDisplayName</key>
 	<string>PressHop</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
-	<false/>
+	<true/>
 	<key>FirebaseScreenReportingEnabled</key>
-	<false/>
+	<true/>
 	<key>FlutterDeepLinkingEnabled</key>
 	<true/>
 	<key>GIDClientID</key>
@@ -134,6 +134,97 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:betazone.promaticstechnologies.com</string>
+	</array>
+	<key>SKAdNetworkItems</key>
+	<array>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>v72qych5uu.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>2fnua5tdw4.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>4468db3w2g.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>4fzdc2ev15.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>9rd848q2sf.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>t38b2kh725.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>7rz58n8ntl.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>f38h382jlk.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>hs6bdukanm.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>v9wttpbfk9.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>8s468mfl3y.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>52fl2v3hgk.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>m8dbw4sv7c.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>cj5566h2ga.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>9t245vhmpl.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>9nlqeag3gk.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>6xz65hcvth.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>7ug5zh24hu.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>5lm9lj6jb7.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>zmvfpc5aq8.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>n38lu8286q.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>prcb7njmu6.skadnetwork</string>
+		</dict>
 	</array>
 </dict>
 </plist>

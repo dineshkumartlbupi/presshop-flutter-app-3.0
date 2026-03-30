@@ -2,6 +2,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:presshop/core/di/injection_container.dart';
+import 'package:presshop/core/services/appsflyer_service.dart';
 
 /// Firebase Analytics Helper Class
 ///
@@ -20,7 +21,12 @@ import 'package:presshop/core/di/injection_container.dart';
 /// AnalyticsHelper.trackEvent('content_published', {'content_type': 'photo'});
 /// ```
 class AnalyticsHelper {
+  /// Global toggle for analytics tracking.
+  /// By default, tracking is DISABLED in debug mode and ENABLED in release mode.
+  static bool isTrackingEnabled = !kDebugMode;
+
   static FirebaseAnalytics? get _analytics {
+    if (!isTrackingEnabled) return null;
     try {
       return sl<FirebaseAnalytics>();
     } catch (_) {
@@ -47,6 +53,7 @@ class AnalyticsHelper {
     String? className,
     Map<String, Object>? parameters,
   }) async {
+    if (!isTrackingEnabled) return;
     try {
       final Map<String, Object> eventParams = {
         'screen_name': pageName,
@@ -63,6 +70,9 @@ class AnalyticsHelper {
           parameters: eventParams,
         );
       }
+
+      // Track in AppsFlyer
+      await AppsFlyerService.logEvent('af_page_visit', eventParams);
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: Page Visit - $pageName');
@@ -83,6 +93,7 @@ class AnalyticsHelper {
     String action, {
     Map<String, Object>? parameters,
   }) async {
+    if (!isTrackingEnabled) return;
     try {
       final Map<String, Object> eventParams = {
         'action_type': action,
@@ -97,6 +108,9 @@ class AnalyticsHelper {
           parameters: eventParams,
         );
       }
+
+      // Track in AppsFlyer
+      await AppsFlyerService.logEvent(action, eventParams);
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: User Action - $action');
@@ -117,6 +131,7 @@ class AnalyticsHelper {
     String eventName, {
     Map<String, Object>? parameters,
   }) async {
+    if (!isTrackingEnabled) return;
     try {
       final Map<String, Object> eventParams = {
         'timestamp': DateTime.now().toIso8601String(),
@@ -130,6 +145,9 @@ class AnalyticsHelper {
           parameters: eventParams,
         );
       }
+
+      // Track in AppsFlyer
+      await AppsFlyerService.logEvent(eventName, eventParams);
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: Custom Event - $eventName');
@@ -152,6 +170,7 @@ class AnalyticsHelper {
     String action, {
     Map<String, Object>? parameters,
   }) async {
+    if (!isTrackingEnabled) return;
     try {
       final Map<String, Object> eventParams = {
         'content_type': contentType,
@@ -167,6 +186,9 @@ class AnalyticsHelper {
           parameters: eventParams,
         );
       }
+
+      // Track in AppsFlyer
+      await AppsFlyerService.logEvent('${contentType}_$action', eventParams);
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: Content Event - $contentType:$action');
@@ -189,6 +211,7 @@ class AnalyticsHelper {
     String action, {
     Map<String, Object>? parameters,
   }) async {
+    if (!isTrackingEnabled) return;
     try {
       final Map<String, Object> eventParams = {
         'task_type': taskType,
@@ -204,6 +227,9 @@ class AnalyticsHelper {
           parameters: eventParams,
         );
       }
+
+      // Track in AppsFlyer
+      await AppsFlyerService.logEvent('${taskType}_$action', eventParams);
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: Task Event - $taskType:$action');
@@ -224,6 +250,7 @@ class AnalyticsHelper {
     String action, {
     Map<String, Object>? parameters,
   }) async {
+    if (!isTrackingEnabled) return;
     try {
       final Map<String, Object> eventParams = {
         'chat_action': action,
@@ -238,6 +265,9 @@ class AnalyticsHelper {
           parameters: eventParams,
         );
       }
+
+      // Track in AppsFlyer
+      await AppsFlyerService.logEvent('chat_$action', eventParams);
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: Chat Event - $action');
@@ -261,6 +291,7 @@ class AnalyticsHelper {
     String method = 'tap',
     Map<String, Object>? parameters,
   }) async {
+    if (!isTrackingEnabled) return;
     try {
       final Map<String, Object> eventParams = {
         'navigation_from': from,
@@ -277,6 +308,9 @@ class AnalyticsHelper {
           parameters: eventParams,
         );
       }
+
+      // Track in AppsFlyer
+      await AppsFlyerService.logEvent('af_navigation', eventParams);
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: Navigation - $from → $to ($method)');
@@ -299,6 +333,7 @@ class AnalyticsHelper {
     bool success, {
     Map<String, Object>? parameters,
   }) async {
+    if (!isTrackingEnabled) return;
     try {
       final Map<String, Object> eventParams = {
         'auth_method': method,
@@ -314,6 +349,12 @@ class AnalyticsHelper {
           parameters: eventParams,
         );
       }
+
+      // Track in AppsFlyer
+      await AppsFlyerService.logEvent(
+        success ? 'af_login_success' : 'af_login_failed',
+        eventParams,
+      );
 
       if (kDebugMode) {
         debugPrint(
@@ -337,6 +378,7 @@ class AnalyticsHelper {
     String page, {
     Map<String, Object>? parameters,
   }) async {
+    if (!isTrackingEnabled) return;
     try {
       final Map<String, Object> eventParams = {
         'error_message': error,
@@ -352,6 +394,9 @@ class AnalyticsHelper {
           parameters: eventParams,
         );
       }
+
+      // Track in AppsFlyer
+      await AppsFlyerService.logEvent('af_app_error', eventParams);
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: Error Event - $error on $page');
@@ -372,6 +417,7 @@ class AnalyticsHelper {
     String? userId,
     Map<String, String>? properties,
   }) async {
+    if (!isTrackingEnabled) return;
     try {
       final analytics = _analytics;
       if (userId != null && analytics != null) {
@@ -407,6 +453,7 @@ class AnalyticsHelper {
     String event, {
     Map<String, Object>? parameters,
   }) async {
+    if (!isTrackingEnabled) return;
     try {
       final Map<String, Object> eventParams = {
         'lifecycle_event': event,
@@ -421,6 +468,9 @@ class AnalyticsHelper {
           parameters: eventParams,
         );
       }
+
+      // Track in AppsFlyer
+      await AppsFlyerService.logEvent('af_app_lifecycle', eventParams);
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: Lifecycle Event - $event');
