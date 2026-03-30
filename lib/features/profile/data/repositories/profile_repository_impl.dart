@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/api/network_info.dart';
+import 'package:presshop/core/utils/common_utils.dart';
 import '../../domain/entities/profile_data.dart';
 import '../../domain/entities/avatar.dart';
 import '../../domain/repositories/profile_repository.dart';
@@ -32,10 +33,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
         if (userId == null) {
           return const Left(CacheFailure(message: "User ID not found"));
         }
-        final profile =
+        final profileModel =
             await remoteDataSource.getProfile(userId, showLoader: showLoader);
-        await localDataSource.cacheUser(profile.toJson());
-        _cachedProfile = profile.toEntity();
+        await localDataSource.cacheUser(profileModel.toJson());
+        
+        _cachedProfile = profileModel.toEntity().copyWith(
+              profileImage: fixS3Url(profileModel.profileImage),
+              avatar: fixS3Url(profileModel.avatar),
+            );
         return Right(_cachedProfile!);
       } on Failure catch (failure) {
         return Left(failure);
@@ -55,8 +60,13 @@ class ProfileRepositoryImpl implements ProfileRepository {
       Map<String, dynamic> data) async {
     if (await networkInfo.isConnected) {
       try {
-        final profile = await remoteDataSource.updateProfile(data);
-        return Right(profile.toEntity());
+        final profileModel = await remoteDataSource.updateProfile(data);
+        final profileEntity = profileModel.toEntity().copyWith(
+              profileImage: fixS3Url(profileModel.profileImage),
+              avatar: fixS3Url(profileModel.avatar),
+            );
+        _cachedProfile = profileEntity;
+        return Right(profileEntity);
       } on Failure catch (failure) {
         return Left(failure);
       } catch (e) {

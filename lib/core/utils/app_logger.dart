@@ -3,6 +3,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:presshop/core/analytics/analytics_helper.dart';
 import 'package:presshop/core/di/injection_container.dart';
+import 'package:presshop/core/services/appsflyer_service.dart';
 
 class AppLogger {
   static FirebaseAnalytics get _analytics => sl<FirebaseAnalytics>();
@@ -39,7 +40,10 @@ class AppLogger {
   }
 
   static void error(String message,
-      {Object? error, StackTrace? stackTrace, bool trackAnalytics = false}) {
+      {Object? error,
+      StackTrace? stackTrace,
+      bool trackAnalytics = false,
+      String? eventName}) {
     final formattedMessage = "❌ [ERROR] $message";
 
     if (kDebugMode) {
@@ -52,7 +56,14 @@ class AppLogger {
     }
 
     if (trackAnalytics) {
-      AnalyticsHelper.trackError(message, 'app_logger');
+      if (eventName != null) {
+        AnalyticsHelper.trackEvent(eventName, parameters: {
+          'message': message,
+          'error': error?.toString() ?? 'N/A',
+        });
+      } else {
+        AnalyticsHelper.trackError(message, 'app_logger');
+      }
     }
   }
 
@@ -82,6 +93,8 @@ class AppLogger {
     info("Setting User Identity: $userId");
 
     _analytics.setUserId(id: userId);
+    AppsFlyerService.instance.setCustomerUserId(userId);
+    
     if (isCrashlyticsEnabled) {
       _crashlytics.setUserIdentifier(userId);
     }
@@ -105,6 +118,7 @@ class AppLogger {
   static void clearUserIdentity() {
     info("Clearing User Identity");
     _analytics.setUserId(id: null);
+    AppsFlyerService.instance.setCustomerUserId("");
     if (isCrashlyticsEnabled) {
       _crashlytics.setUserIdentifier("");
     }

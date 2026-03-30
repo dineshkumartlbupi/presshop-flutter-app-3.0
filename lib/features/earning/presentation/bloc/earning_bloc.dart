@@ -9,6 +9,8 @@ import '../../domain/entities/earning_profile.dart';
 import '../../domain/entities/commission.dart';
 import 'earning_event.dart';
 import 'earning_state.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
+import 'package:presshop/core/utils/app_logger.dart';
 
 class EarningBloc extends Bloc<EarningEvent, EarningState> {
   EarningBloc({
@@ -64,6 +66,10 @@ class EarningBloc extends Bloc<EarningEvent, EarningState> {
       },
       (profile) {
         cacheBox.put(cacheKey, profile.toJson());
+        AppLogger.trackEvent(EventNames.earningGenerated, parameters: {
+          'total_earning': profile.totalEarning,
+          'currency': profile.currency,
+        });
         emit(state.copyWith(
           status: EarningStatus.success,
           earningData: profile,
@@ -157,6 +163,13 @@ class EarningBloc extends Bloc<EarningEvent, EarningState> {
 
         bool hasReachedMax = transactions.length < event.limit;
 
+        if (event.offset == 0 && transactions.isNotEmpty) {
+          AppLogger.trackEvent(EventNames.paymentReceived, parameters: {
+            'count': transactions.length,
+            'total_amount': monthlyEarnings,
+          });
+        }
+
         emit(state.copyWith(
           transactionStatus: EarningStatus.success,
           transactions: event.offset == 0
@@ -229,6 +242,12 @@ class EarningBloc extends Bloc<EarningEvent, EarningState> {
         }
 
         bool hasReachedMax = commissions.length < event.limit;
+
+        if (event.offset == 0 && commissions.isNotEmpty) {
+          AppLogger.trackEvent(EventNames.commissionEarned, parameters: {
+            'count': commissions.length,
+          });
+        }
 
         emit(state.copyWith(
             commissionStatus: EarningStatus.success,

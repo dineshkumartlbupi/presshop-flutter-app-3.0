@@ -16,6 +16,8 @@ import 'package:presshop/features/earning/presentation/bloc/earning_bloc.dart';
 import 'package:presshop/features/content/presentation/bloc/content_bloc.dart';
 import 'package:presshop/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:presshop/core/router/app_router.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
+import 'package:presshop/core/utils/app_logger.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -82,13 +84,14 @@ class ConnectivityWrapper extends StatefulWidget {
   State<ConnectivityWrapper> createState() => _ConnectivityWrapperState();
 }
 
-class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
+class _ConnectivityWrapperState extends State<ConnectivityWrapper> with WidgetsBindingObserver {
   late StreamSubscription<List<ConnectivityResult>> _subscription;
   bool _isDialogShowing = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     Connectivity().checkConnectivity().then((results) {
       debugPrint("ConnectivityWrapper: Initial check: $results");
       _checkConnectivity(results);
@@ -100,6 +103,15 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
     });
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      AppLogger.trackEvent(EventNames.appBackground);
+    } else if (state == AppLifecycleState.resumed) {
+      AppLogger.trackEvent(EventNames.appForeground);
+    }
+  }
+
   Future<void> _checkConnectivity(List<ConnectivityResult> results) async {
     bool isDeviceOffline = results.contains(ConnectivityResult.none);
 
@@ -109,6 +121,7 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
     if (isDeviceOffline) {
       bool hasConnection = await InternetConnectionChecker().hasConnection;
       if (!hasConnection) {
+        AppLogger.trackEvent(EventNames.networkError);
         _showOfflineDialog();
       } else {
         _dismissOfflineDialog();
@@ -174,6 +187,7 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _subscription.cancel();
     super.dispose();
   }

@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:presshop/core/usecases/usecase.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
+import 'package:presshop/core/utils/app_logger.dart';
 import '../../domain/usecases/get_my_content.dart';
 import '../../domain/usecases/publish_content.dart';
 import '../../domain/usecases/save_draft.dart';
@@ -280,17 +282,23 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
         isLoadingAll: currentState.isLoadingAll,
         isLoadingMy: currentState.isLoadingMy,
       )),
-      (content) => emit(ContentDetailLoaded(
-        content,
-        allContent: currentState.allContent,
-        myContent: currentState.myContent,
-        allPage: currentState.allPage,
-        myPage: currentState.myPage,
-        hasMoreAll: currentState.hasMoreAll,
-        hasMoreMy: currentState.hasMoreMy,
-        isLoadingAll: currentState.isLoadingAll,
-        isLoadingMy: currentState.isLoadingMy,
-      )),
+      (content) {
+        AppLogger.trackEvent(EventNames.contentViewed, parameters: {
+          'content_id': event.contentId,
+          'content_type': content.type ?? 'unknown',
+        });
+        emit(ContentDetailLoaded(
+          content,
+          allContent: currentState.allContent,
+          myContent: currentState.myContent,
+          allPage: currentState.allPage,
+          myPage: currentState.myPage,
+          hasMoreAll: currentState.hasMoreAll,
+          hasMoreMy: currentState.hasMoreMy,
+          isLoadingAll: currentState.isLoadingAll,
+          isLoadingMy: currentState.isLoadingMy,
+        ));
+      },
     );
   }
 
@@ -302,7 +310,13 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     final result = await publishContent(PublishContentParams(data: event.data));
     result.fold(
       (failure) => emit(ContentError(failure.message)),
-      (content) => emit(ContentPublished(content)),
+      (content) {
+        AppLogger.trackEvent(EventNames.contentPublished, parameters: {
+          'content_id': content.id,
+          'content_type': content.type ?? 'unknown',
+        });
+        emit(ContentPublished(content));
+      },
     );
   }
 
@@ -338,7 +352,12 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     final result = await deleteContent(event.contentId);
     result.fold(
       (failure) => emit(ContentError(failure.message)),
-      (_) => emit(ContentDeleted(event.contentId)),
+      (_) {
+        AppLogger.trackEvent(EventNames.contentDeleted, parameters: {
+          'content_id': event.contentId,
+        });
+        emit(ContentDeleted(event.contentId));
+      },
     );
   }
 

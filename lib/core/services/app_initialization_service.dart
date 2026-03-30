@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
+import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:presshop/core/services/appsflyer_service.dart';
 import 'package:presshop/core/services/local_notification_service.dart';
@@ -68,6 +70,9 @@ class AppInitializationService {
       // Disable Crashlytics in debug mode
       await FirebaseCrashlytics.instance
           .setCrashlyticsCollectionEnabled(AppLogger.isCrashlyticsEnabled);
+
+      // Explicitly enable Analytics
+      await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
 
       await localNotificationService.setup();
 
@@ -177,12 +182,10 @@ class AppInitializationService {
 
   /// Initialize AppsFlyer if needed
   static Future<void> initializeAppsFlyerIfNeeded() async {
-    if (!rememberMe) {
-      try {
-        await AppsFlyerService.initialize();
-      } catch (e) {
-        debugPrint("❌ AppsFlyer initialization error: $e");
-      }
+    try {
+      await AppsFlyerService.initialize();
+    } catch (e) {
+      debugPrint("❌ AppsFlyer initialization error: $e");
     }
   }
 
@@ -200,20 +203,17 @@ class AppInitializationService {
     debugPrint("✅ Audio player configured");
   }
 
-  /// Log app open event to Facebook
+  /// Log app open event to Analytics
   static void logAppOpenEvent() {
     try {
-      // facebookAppEvents.logEvent(
-      //   name: "app_open",
-      //   parameters: {
-      //     "app_name": "Presshop",
-      //     "platform": Platform.operatingSystem,
-      //     "version": Platform.version,
-      //   },
-      // );
+      AppLogger.trackEvent(EventNames.appOpen, parameters: {
+        "app_name": "Presshop",
+        "platform": Platform.operatingSystem,
+        "version": Platform.version,
+      });
       debugPrint("✅ App open event logged");
     } catch (e) {
-      debugPrint("❌ Facebook event logging error: $e");
+      debugPrint("❌ Analytics event logging error: $e");
     }
   }
 

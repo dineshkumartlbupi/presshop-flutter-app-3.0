@@ -41,6 +41,7 @@ void main() async {
   await AppInitializationService.initializeSharedPreferences(deviceInfo);
   AppInitializationService.setupErrorHandlers();
   AppInitializationService.setupAudioPlayer();
+  await AppInitializationService.initializeAppsFlyerIfNeeded();
 
   final storage = FlutterSecureStorage();
   String? token = await storage.read(key: SharedPreferencesKeys.tokenKey);

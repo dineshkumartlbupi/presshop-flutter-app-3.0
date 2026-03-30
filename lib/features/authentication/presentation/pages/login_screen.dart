@@ -324,6 +324,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                       size, AppColorTheme.colorThemePink),
                                   () async {
                                 if (formKey.currentState!.validate()) {
+                                  AppLogger.trackAction(ActionNames.formSubmit);
                                   FocusScope.of(context)
                                       .requestFocus(FocusNode());
                                   context.read<AuthBloc>().add(LoginRequested(

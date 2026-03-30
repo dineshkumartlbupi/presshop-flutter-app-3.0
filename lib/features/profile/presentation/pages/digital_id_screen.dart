@@ -380,14 +380,50 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                             ),
 
                             /// User name
+                            // Center(
+                            //   child: Text(
+                            //     fullName,
+                            //     style: commonTextStyle(
+                            //         size: size,
+                            //         fontSize: size.width * AppDimensions.numD05,
+                            //         color: Colors.black,
+                            //         fontWeight: FontWeight.bold),
+                            //   ),
+                            // ),
+
                             Center(
-                              child: Text(
-                                fullName,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * AppDimensions.numD05,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    fullName,
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD05,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  // if (state is ProfileLoaded &&
+                                  //     state.profile.stripeStatus
+                                  //         .stripeStatusActive)
+                                  Transform.translate(
+                                    offset: const Offset(2, -1),
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                          left: size.width *
+                                              AppDimensions.numD01),
+                                      child: Image.asset(
+                                        "${iconsPath}verified_badge.png",
+                                        height:
+                                            size.width * AppDimensions.numD04,
+                                        width:
+                                            size.width * AppDimensions.numD04,
+                                        // color: const Color(0xFF2D7ADE),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             SizedBox(

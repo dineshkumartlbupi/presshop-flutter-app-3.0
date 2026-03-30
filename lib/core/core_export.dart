@@ -25,3 +25,7 @@ export 'package:presshop/core/utils/dialog_utils.dart';
 export 'package:presshop/core/widgets/common_widgets.dart';
 export 'package:presshop/core/widgets/common_branded_app_bar.dart';
 export 'package:presshop/core/widgets/error/connection_error_overlay.dart';
+export 'package:presshop/core/analytics/analytics_constants.dart';
+export 'package:presshop/core/analytics/analytics_mixin.dart';
+export 'package:presshop/core/utils/app_logger.dart';
+export 'package:presshop/core/router/router_constants.dart';
