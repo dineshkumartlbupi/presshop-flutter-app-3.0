@@ -9,7 +9,6 @@ import '../datasources/auth_local_data_source.dart';
 import '../datasources/auth_remote_data_source.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-
   AuthRepositoryImpl({
     required this.remoteDataSource,
     required this.localDataSource,
@@ -25,7 +24,7 @@ class AuthRepositoryImpl implements AuthRepository {
       try {
         final remoteUser = await remoteDataSource.login(username, password);
         debugPrint(
-            "✅ AuthRepository: Login Success. Received Token: ${remoteUser.token?.substring(0, (remoteUser.token?.length ?? 0) > 10 ? 10 : (remoteUser.token?.length ?? 0))}...");
+            "✅ AuthReposi tory: Login Success. Received Token: ${remoteUser.token?.substring(0, (remoteUser.token?.length ?? 0) > 10 ? 10 : (remoteUser.token?.length ?? 0))}...");
         await localDataSource.cacheToken(remoteUser.token ?? ""); // Cache token
         if (remoteUser.refreshToken != null) {
           debugPrint(

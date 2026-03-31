@@ -347,6 +347,5 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   @override
   void onTransition(Transition<TaskEvent, TaskState> transition) {
     super.onTransition(transition);
-    // debugPrint("🚀 TaskBloc Transition: ${transition.event} -> ${transition.nextState}");
   }
 }

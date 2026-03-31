@@ -21,6 +21,7 @@ class ProfileData extends Equatable {
     required this.longitude,
     required this.totalEarnings,
     required this.totalHopperArmy,
+    required this.walletAmount,
     required this.location,
     required this.preferredCurrencySign,
     required this.createdAt,
@@ -45,8 +46,9 @@ class ProfileData extends Equatable {
   final bool isDeleted;
   final double latitude;
   final double longitude;
-  final int totalEarnings;
-  final int totalHopperArmy;
+  final double totalEarnings;
+  final double totalHopperArmy;
+  final double walletAmount;
   final Location location;
   final PreferredCurrencySign preferredCurrencySign;
   final DateTime createdAt;
@@ -72,8 +74,9 @@ class ProfileData extends Equatable {
     bool? isDeleted,
     double? latitude,
     double? longitude,
-    int? totalEarnings,
-    int? totalHopperArmy,
+    double? totalEarnings,
+    double? totalHopperArmy,
+    double? walletAmount,
     Location? location,
     PreferredCurrencySign? preferredCurrencySign,
     DateTime? createdAt,
@@ -101,6 +104,7 @@ class ProfileData extends Equatable {
       longitude: longitude ?? this.longitude,
       totalEarnings: totalEarnings ?? this.totalEarnings,
       totalHopperArmy: totalHopperArmy ?? this.totalHopperArmy,
+      walletAmount: walletAmount ?? this.walletAmount,
       location: location ?? this.location,
       preferredCurrencySign:
           preferredCurrencySign ?? this.preferredCurrencySign,
@@ -132,6 +136,7 @@ class ProfileData extends Equatable {
         longitude,
         totalEarnings,
         totalHopperArmy,
+        walletAmount,
         location,
         preferredCurrencySign,
         createdAt,

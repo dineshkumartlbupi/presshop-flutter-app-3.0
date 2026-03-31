@@ -119,8 +119,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
 
   @override
   void dispose() {
-    // Don't close _contentBloc here since it's a singleton from the service locator
-    // Closing it would affect all other screens using the same instance
     controller.dispose();
     if (flickManager != null) {
       flickManager?.dispose();
@@ -1280,11 +1278,11 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
   Future playSound() async {
     debugPrint("PlayTheSound");
 
-    await controller.startPlayer(); // Start audio player
+    await controller.startPlayer();
   }
 
   Future pauseSound() async {
-    await controller.pausePlayer(); // Start audio player
+    await controller.pausePlayer();
   }
 
   String intToTimeLeft(int value) {

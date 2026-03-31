@@ -101,7 +101,6 @@ class TaskState extends Equatable {
       ];
 }
 
-// Keep a few type-safe markers if needed for listener logic, or just use properties
 class TaskInitial extends TaskState {}
 
 class TaskLoading extends TaskState {}

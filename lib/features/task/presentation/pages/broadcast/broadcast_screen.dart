@@ -1157,14 +1157,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                         ? contactSearch[index]
                                         : contactsDataList[index];
                                 return InkWell(
-                                  onTap: () {
-                                    /* contactsDataList[index].isContactSelected = !contactsDataList[index].isContactSelected;
-                                if( contactsDataList[index].isContactSelected){
-                                  isMultipleContact = true;
-                                }*/
-                                    /*stateSetter(() {});
-                                    setState(() {});*/
-                                  },
+                                  onTap: () {},
                                   child: Container(
                                     padding: EdgeInsets.all(
                                         size.width * AppDimensions.numD02),
@@ -1594,20 +1587,3 @@ class ContactListModel {
   Uint8List? avatar;
   bool isContactSelected = false;
 }
-
-/// Show loader dialog
-// Future<void> _showLoaderDialog(BuildContext context) async {
-//   // Show the dialog and wait for it to be fully rendered
-//   showDialog(
-//     barrierDismissible: false,
-//     barrierColor: Colors.white.withOpacity(0),
-//     context: context,
-//     builder: (BuildContext context) {
-//       return AlertDialog(
-//         elevation: 0,
-//         backgroundColor: Colors.white.withOpacity(0),
-//         content: Center(child: showLoader()),
-//       );
-//     },
-//   );
-// }

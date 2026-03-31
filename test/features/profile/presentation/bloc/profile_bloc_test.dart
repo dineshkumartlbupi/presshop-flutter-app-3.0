@@ -122,8 +122,9 @@ void main() {
     isDeleted: false,
     latitude: 0.0,
     longitude: 0.0,
-    totalEarnings: 0,
-    totalHopperArmy: 0,
+    totalEarnings: 0.0,
+    totalHopperArmy: 0.0,
+    walletAmount: 0.0,
     location: const Location(type: "Point", coordinates: [0.0, 0.0]),
     preferredCurrencySign: const PreferredCurrencySign(
         symbol: "\$",
@@ -136,6 +137,10 @@ void main() {
     updatedAt: tDate,
     lastLogin: tDate,
     avatar: '',
+    stripeStatus: const StripeStatus(
+      stripeStatusActive: false,
+      stripeStatusReason: "",
+    ),
   );
 
   group('ProfileBloc', () {

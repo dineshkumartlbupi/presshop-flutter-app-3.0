@@ -4,8 +4,8 @@ import 'upload_chunk.dart';
 class UploadJob extends HiveObject {
   final String jobId;
   final String filePath;
-  final String uploadId;
-  final String s3Key;
+  String uploadId;
+  String s3Key;
   final int fileSizeBytes;
   final int partCount;
   final DateTime createdAt;

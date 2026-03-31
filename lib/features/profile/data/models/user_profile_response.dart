@@ -28,7 +28,9 @@ class UserProfileResponse extends Equatable {
     return UserProfileResponse(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: UserProfileModel.fromJson(userData),
+      data: UserProfileModel.fromJson(
+        (userData != null && userData is Map<String, dynamic>) ? userData : {},
+      ),
     );
   }
   final bool success;
@@ -68,6 +70,7 @@ class UserProfileModel extends Equatable {
     required this.longitude,
     required this.totalEarnings,
     required this.totalHopperArmy,
+    required this.walletAmount,
     required this.location,
     required this.preferredCurrencySign,
     required this.createdAt,
@@ -95,15 +98,27 @@ class UserProfileModel extends Equatable {
       isDeleted: json['is_deleted'] ?? false,
       latitude: (json['latitude'] ?? 0).toDouble(),
       longitude: (json['longitude'] ?? 0).toDouble(),
-      totalEarnings: json['totalEarnings'] ?? 0,
-      totalHopperArmy: json['totalHopperArmy'] ?? 0,
-      location: LocationModel.fromJson(json['location'] ?? {}),
-      preferredCurrencySign: PreferredCurrencySignModel.fromJson(
-          json['preferred_currency_sign'] ?? {}),
+      totalEarnings: (json['totalEarnings'] ?? 0).toDouble(),
+      totalHopperArmy: (json['totalHopperArmy'] ?? 0).toDouble(),
+      walletAmount: (json['walletAmount'] ?? 0).toDouble(),
+      location: (json['location'] is Map<String, dynamic>)
+          ? LocationModel.fromJson(json['location'])
+          : const LocationModel(type: '', coordinates: []),
+      preferredCurrencySign:
+          (json['preferred_currency_sign'] is Map<String, dynamic>)
+              ? PreferredCurrencySignModel.fromJson(
+                  json['preferred_currency_sign'])
+              : const PreferredCurrencySignModel(
+                  symbol: '',
+                  code: '',
+                  name: '',
+                  countryName: '',
+                  countryCode: '',
+                  dialCode: ''),
       createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
       updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
       lastLogin: DateTime.tryParse(json['lastLogin'] ?? '') ?? DateTime.now(),
-      stripeStatus: json['stripeStatus'] != null
+      stripeStatus: (json['stripeStatus'] is Map<String, dynamic>)
           ? StripeStatusModel.fromJson(json['stripeStatus'])
           : const StripeStatusModel(
               stripeStatusActive: false, stripeStatusReason: ""),
@@ -141,8 +156,9 @@ class UserProfileModel extends Equatable {
   final bool isDeleted;
   final double latitude;
   final double longitude;
-  final int totalEarnings;
-  final int totalHopperArmy;
+  final double totalEarnings;
+  final double totalHopperArmy;
+  final double walletAmount;
   final LocationModel location;
   final PreferredCurrencySignModel preferredCurrencySign;
   final DateTime createdAt;
@@ -171,6 +187,7 @@ class UserProfileModel extends Equatable {
       'longitude': longitude,
       'totalEarnings': totalEarnings,
       'totalHopperArmy': totalHopperArmy,
+      'walletAmount': walletAmount,
       'location': location.toJson(),
       'preferred_currency_sign': preferredCurrencySign.toJson(),
       'createdAt': createdAt.toIso8601String(),
@@ -201,6 +218,7 @@ class UserProfileModel extends Equatable {
       longitude: longitude,
       totalEarnings: totalEarnings,
       totalHopperArmy: totalHopperArmy,
+      walletAmount: walletAmount,
       location: location.toEntity(),
       preferredCurrencySign: preferredCurrencySign.toEntity(),
       createdAt: createdAt,
@@ -231,6 +249,7 @@ class UserProfileModel extends Equatable {
         longitude,
         totalEarnings,
         totalHopperArmy,
+        walletAmount,
         location,
         preferredCurrencySign,
         createdAt,
@@ -249,10 +268,11 @@ class LocationModel extends Equatable {
   factory LocationModel.fromJson(Map<String, dynamic> json) {
     return LocationModel(
       type: json['type'] ?? '',
-      coordinates: (json['coordinates'] as List?)
-              ?.map((e) => (e as num).toDouble())
-              .toList() ??
-          [],
+      coordinates: (json['coordinates'] is List)
+          ? (json['coordinates'] as List)
+              .map((e) => (e as num).toDouble())
+              .toList()
+          : [],
     );
   }
   final String type;

@@ -128,8 +128,8 @@ class CameraScreenState extends State<CameraScreen>
           await paths.first.getAssetListRange(start: 0, end: 1);
       if (assets.isEmpty) return null;
 
-      final Uint8List? thumb =
-          await assets.first.thumbnailDataWithSize(const ThumbnailSize(200, 200));
+      final Uint8List? thumb = await assets.first
+          .thumbnailDataWithSize(const ThumbnailSize(200, 200));
       return thumb;
     } catch (e) {
       debugPrint('Error fetching latest gallery image: $e');
@@ -487,33 +487,10 @@ class CameraScreenState extends State<CameraScreen>
                 child: ClipRRect(
                   borderRadius:
                       BorderRadius.circular(size.width * AppDimensions.numD025),
-                    child: state.galleryMedia.isNotEmpty
-                      ? FutureBuilder(
-                        future: state.galleryMedia.first
-                          .thumbnailDataWithSize(
-                            const ThumbnailSize(200, 200)),
-                        builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.done &&
-                          snapshot.data != null) {
-                          return Image.memory(snapshot.data!,
-                            fit: BoxFit.cover);
-                        }
-                        return Container(color: Colors.grey);
-                        })
-                      : FutureBuilder<Uint8List?>(
-                        future: _getLatestGalleryImageBytes(),
-                        builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.done &&
-                          snapshot.data != null) {
-                          return Image.memory(snapshot.data!,
-                            fit: BoxFit.cover);
-                        }
-                        return Image.asset("${dummyImagePath}walk2.png",
-                          fit: BoxFit.cover);
-                        },
-                      ),
+                  child: PersistentGalleryThumbnail(
+                      galleryMedia: state.galleryMedia,
+                      fallbackLoader: _getLatestGalleryImageBytes,
+                  ),
                 ),
               ),
             ),
@@ -868,6 +845,68 @@ class CameraScreenState extends State<CameraScreen>
           )
         ],
       ),
+    );
+  }
+}
+
+class PersistentGalleryThumbnail extends StatefulWidget {
+  final List<dynamic> galleryMedia;
+  final Future<Uint8List?> Function() fallbackLoader;
+
+  const PersistentGalleryThumbnail({
+    Key? key,
+    required this.galleryMedia,
+    required this.fallbackLoader,
+  }) : super(key: key);
+
+  @override
+  State<PersistentGalleryThumbnail> createState() => _PersistentGalleryThumbnailState();
+}
+
+class _PersistentGalleryThumbnailState extends State<PersistentGalleryThumbnail> {
+  Future<Uint8List?>? _thumbFuture;
+  int _mediaCount = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFuture();
+  }
+
+  @override
+  void didUpdateWidget(PersistentGalleryThumbnail oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.galleryMedia.length != _mediaCount || oldWidget.galleryMedia.isNotEmpty != widget.galleryMedia.isNotEmpty) {
+      _loadFuture();
+    }
+  }
+
+  void _loadFuture() {
+    _mediaCount = widget.galleryMedia.length;
+    if (widget.galleryMedia.isNotEmpty) {
+      try {
+        _thumbFuture = widget.galleryMedia.first.thumbnailDataWithSize(const ThumbnailSize(200, 200));
+      } catch(e) {
+        _thumbFuture = widget.fallbackLoader();
+      }
+    } else {
+      _thumbFuture = widget.fallbackLoader();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Uint8List?>(
+      future: _thumbFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+          return Image.memory(snapshot.data!, fit: BoxFit.cover);
+        }
+        if (widget.galleryMedia.isNotEmpty) {
+           return Container(color: Colors.grey);
+        }
+        return Image.asset("\${dummyImagePath}walk2.png", fit: BoxFit.cover);
+      },
     );
   }
 }

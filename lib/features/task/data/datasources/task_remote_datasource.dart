@@ -64,12 +64,10 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         }
       }
 
-      // Handle nested structure: data['data']
       if (responseData != null) {
         if (responseData is Map && responseData.containsKey('data')) {
           debugPrint("✅ Data before inner parsing: $responseData");
           var innerData = responseData['data'];
-          // Check if inner data is string
           if (innerData is String) {
             try {
               innerData = jsonDecode(innerData);
@@ -79,7 +77,6 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
             }
           }
 
-          // Check nested 'task' field
           if (innerData is Map && innerData.containsKey('task')) {
             var taskData = innerData['task'];
             if (taskData is String) {
@@ -91,9 +88,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
             }
           }
 
-          // Check nested 'resp' field logic
           if (innerData is Map) {
-            // Handle "response" key vs "resp" key mismatch
             if (innerData.containsKey('response') &&
                 !innerData.containsKey('resp')) {
               innerData['resp'] = innerData['response'];
@@ -187,7 +182,6 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         return flattened;
       }
 
-      // normal object response (like version API)
       return container;
     }
 
@@ -223,19 +217,14 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
 
         dynamic possibleList;
 
-        /// Step 1: detect main container
         final container = rawData["data"] ??
             rawData["response"] ??
             rawData["resposne"] ??
             rawData;
 
-        /// Step 2: if container is list
         if (container is List) {
           possibleList = container;
-        }
-
-        /// Step 3: if container is map
-        else if (container is Map) {
+        } else if (container is Map) {
           if (container["chat"] is List) {
             final List groupedList = container["chat"];
             List flattened = [];
@@ -252,7 +241,6 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           }
         }
 
-        /// Step 4: map to model
         if (possibleList is List) {
           debugPrint(
               "🚀 getTaskChat Found List Length: ${possibleList.length}");
@@ -418,11 +406,8 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         queryParams.addAll(filterParams);
       }
 
-      // Changed to GET as per Mobile Integration Guide
-      // URL: /api/hopper/tasks/assigned/by/mediaHouse
-      // Query Params: latitude, longitude
       final response = await apiClient.get(
-        ApiConstantsNew.tasks.allTasks, // Base URL for assigned tasks
+        ApiConstantsNew.tasks.allTasks,
         queryParameters: queryParams,
         showLoader: showLoader,
       );

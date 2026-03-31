@@ -50,10 +50,11 @@ void main() {
     isDeleted: false,
     latitude: 0.0,
     longitude: 0.0,
-    totalEarnings: 0,
-    totalHopperArmy: 0,
-    location: LocationModel(type: 'Point', coordinates: [0.0, 0.0]),
-    preferredCurrencySign: PreferredCurrencySignModel(
+    totalEarnings: 0.0,
+    totalHopperArmy: 0.0,
+    walletAmount: 0.0,
+    location: const LocationModel(type: 'Point', coordinates: [0.0, 0.0]),
+    preferredCurrencySign: const PreferredCurrencySignModel(
       symbol: '\$',
       code: 'USD',
       name: 'Dollar',
@@ -65,6 +66,10 @@ void main() {
     updatedAt: DateTime(2023),
     lastLogin: DateTime(2023),
     avatar: '',
+    stripeStatus: const StripeStatusModel(
+      stripeStatusActive: false,
+      stripeStatusReason: "",
+    ),
   );
 
   group('getProfile', () {

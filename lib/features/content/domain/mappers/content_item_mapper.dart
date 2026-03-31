@@ -16,7 +16,7 @@ extension ContentItemMapper on ContentItem {
       amount: price ?? "0",
       originalAmount: price ?? "0",
       status: status,
-      soldStatus: "", // ContentItem doesn't track sale status string directly
+      soldStatus: "",
       paidStatus: paidStatus ? AppStrings.paidText : AppStrings.unPaidText,
       contentType: mediaType ?? "",
       dateTime: createdAt,
@@ -27,11 +27,7 @@ extension ContentItemMapper on ContentItem {
       audioDuration: "",
       contentMediaList: mediaList
           .map((m) => ContentMediaData(
-              "", // id - not available in ContentMetadata
-              m.mediaUrl,
-              m.mediaType,
-              m.thumbnailUrl,
-              m.watermarkUrl))
+              "", m.mediaUrl, m.mediaType, m.thumbnailUrl, m.watermarkUrl))
           .toList(),
       hashTagList: [],
       categoryData: CategoryDataModel(
