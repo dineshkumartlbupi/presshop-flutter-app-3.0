@@ -9,25 +9,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/global_loader.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/camera/presentation/pages/camera_screen.dart';
 import 'package:presshop/features/content/presentation/pages/content_page.dart';
 import 'package:presshop/features/map/presentation/pages/map_page.dart';
-import 'package:presshop/features/map/presentation/pages/map_page_new%20copy.dart';
 
-import 'package:presshop/features/map/presentation/pages/map_page_new.dart';
 import 'package:presshop/features/menu/presentation/pages/menu_screen.dart';
 import 'package:presshop/features/task/presentation/pages/task_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:location/location.dart' as lc;
-import 'package:presshop/features/news/presentation/pages/news_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
-import 'package:presshop/features/news/presentation/bloc/news_event.dart';
 import 'package:presshop/features/content/presentation/bloc/content_bloc.dart';
 import 'package:presshop/features/content/presentation/bloc/content_event.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
@@ -38,7 +30,6 @@ import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.da
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/features/dashboard/presentation/widgets/student_beans_dialog.dart';
 import 'package:presshop/features/dashboard/presentation/utils/dashboard_notification_mixin.dart';
 import 'package:presshop/features/dashboard/presentation/utils/dashboard_location_mixin.dart';
@@ -426,37 +417,23 @@ class DashboardState extends State<Dashboard>
       }
     } else if (state is DashboardAppVersionChecked) {
       var map = state.versionData;
-      if (map["code"] == 200) {
+      // Handle both full response and unwrapped data from CheckAppVersionEvent
+      var versionData = (map["code"] == 200) ? map["data"] : map;
+
+      if (versionData != null) {
         try {
-          var versionData = map["data"];
           sharedPreferences!.setInt(SharedPreferencesKeys.videoLimitKey,
               (versionData['video_limit'] ?? 2) * 60);
+
           bool shouldUpdate = Platform.isAndroid
               ? (versionData['aOSshouldForceUpdate'] ?? false)
               : (versionData['iOSshouldForceUpdate'] ?? false);
 
-          if (versionData.containsKey('referral_friend_earning_amount')) {
-            sharedPreferences!.setDouble(
-                SharedPreferencesKeys.referralFriendEarningKey,
-                (versionData['referral_friend_earning_amount'] as num)
-                    .toDouble());
-          }
-          if (versionData.containsKey('referral_user_earning_amount')) {
-            sharedPreferences!.setDouble(
-                SharedPreferencesKeys.referralUserEarningKey,
-                (versionData['referral_user_earning_amount'] as num)
-                    .toDouble());
-          }
-          if (versionData.containsKey('referral_currency_symbol')) {
-            sharedPreferences!.setString(
-                SharedPreferencesKeys.referralCurrencyKey,
-                versionData['referral_currency_symbol'].toString());
-          }
-
-          // Handle nested referral_data object
+          // Correctly extract and save nested referral data
           if (versionData.containsKey('referral_data') &&
               versionData['referral_data'] is Map) {
             final referralData = versionData['referral_data'] as Map;
+
             if (referralData.containsKey('referral_friend_earning_amount')) {
               sharedPreferences!.setDouble(
                   SharedPreferencesKeys.referralFriendEarningKey,

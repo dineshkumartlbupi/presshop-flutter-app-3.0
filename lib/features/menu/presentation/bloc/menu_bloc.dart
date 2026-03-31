@@ -45,6 +45,9 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
           notificationCount: notificationsResult.unreadCount,
           alertCount: notificationsResult.alertCount,
         ));
+        print('alertCount-------------------${notificationsResult.alertCount}');
+        print(
+            'unreadCount-------------------${notificationsResult.unreadCount}');
       },
     );
   }

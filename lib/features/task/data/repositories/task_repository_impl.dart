@@ -24,11 +24,11 @@ class TaskRepositoryImpl implements TaskRepository {
 
   @override
   Future<Either<Failure, TaskAssignedEntity>> getTaskDetail(String taskId,
-      {bool showLoader = true}) async {
+      {double? latitude, double? longitude, bool showLoader = true}) async {
     if (await networkInfo.isConnected) {
       try {
         final remoteTask = await remoteDataSource.getTaskDetail(taskId,
-            showLoader: showLoader);
+            latitude: latitude, longitude: longitude, showLoader: showLoader);
         return Right(remoteTask.data.toEntity());
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));

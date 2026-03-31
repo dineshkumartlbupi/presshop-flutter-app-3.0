@@ -57,6 +57,7 @@ class AuthRepositoryImpl implements AuthRepository {
       'currency_symbol': user.currencySymbol,
       'referral_code': user.referralCode,
       'total_hopper_army': user.totalHopperArmy,
+      // 'total_earnings': user./s,
       'avatar_id': user.avatarId,
       'avatar': user.avatar,
       '_id': user.id,

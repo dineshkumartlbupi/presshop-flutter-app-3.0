@@ -207,13 +207,12 @@ class MyTaskScreenState extends State<MyTaskScreen>
           child: Builder(builder: (context) {
             return Scaffold(
               appBar: NewHomeAppBar(
-                      size: size,
-                      hideLeading: widget.hideLeading,
-                      onFilterTap: () {
-                        showBottomSheet(size);
-                      },
-                    ),
-                
+                size: size,
+                hideLeading: widget.hideLeading,
+                onFilterTap: () {
+                  showBottomSheet(size);
+                },
+              ),
               body: SafeArea(
                 child: Column(
                   children: [
@@ -1039,6 +1038,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                               'mediaHouseId': item.mediaHouseDetails?.id ?? "",
                             }).then((value) {
                               if (context.mounted) {
+                                _allTaskOffset = 0;
                                 context.read<TaskBloc>().add(FetchAllTasksEvent(
                                     offset: 0,
                                     filterParams: {},
@@ -1053,6 +1053,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                               'totalEarning': "0",
                             }).then((value) {
                               if (context.mounted) {
+                                _allTaskOffset = 0;
                                 context.read<TaskBloc>().add(FetchAllTasksEvent(
                                     offset: 0,
                                     filterParams: {},

@@ -95,8 +95,8 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     }
 
     // Save profile image and avatar
-    String? profileImg = user["profile_image"]?.toString() ??
-        user["profileImage"]?.toString();
+    String? profileImg =
+        user["profile_image"]?.toString() ?? user["profileImage"]?.toString();
     if (profileImg != null && profileImg.isNotEmpty) {
       await sharedPreferences.setString(
           SharedPreferencesKeys.profileImageKey, profileImg);
@@ -109,7 +109,8 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       avatar = user['avatar']?.toString();
     }
     if (avatar != null && avatar.isNotEmpty) {
-      await sharedPreferences.setString(SharedPreferencesKeys.avatarKey, avatar);
+      await sharedPreferences.setString(
+          SharedPreferencesKeys.avatarKey, avatar);
     }
   }
 

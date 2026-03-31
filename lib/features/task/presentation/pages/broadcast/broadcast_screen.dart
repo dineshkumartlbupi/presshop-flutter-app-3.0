@@ -844,16 +844,13 @@ class _BroadCastScreenState extends State<BroadCastScreen>
       children: [
         const Divider(),
         // SizedBox(height: size.width * AppDimensions.numD02),
-
         // /// Illustration
         // Image.asset(
         //   "assets/illustrations/priceimage2.png",
         //   height: size.width * AppDimensions.numD25,
         //   fit: BoxFit.contain,
         // ),
-
         // SizedBox(height: size.width * AppDimensions.numD05),
-
         // /// Price and Hours
         // RichText(
         //   textAlign: TextAlign.center,

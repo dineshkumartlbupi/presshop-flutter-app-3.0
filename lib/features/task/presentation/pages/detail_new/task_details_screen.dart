@@ -75,9 +75,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       }
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      context
-          .read<TaskBloc>()
-          .add(GetTaskDetailEvent(widget.taskId, showLoader: true));
+      _fetchTaskDetail(showLoader: true);
     });
     super.initState();
   }
@@ -900,10 +898,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                     extra: {
                                       'taskDetail': taskDetail!,
                                       'roomId': roomId,
-                                    }).then((value) => context
-                                    .read<TaskBloc>()
-                                    .add(GetTaskDetailEvent(widget.taskId,
-                                        showLoader: false)));
+                                    }).then((value) =>
+                                    _fetchTaskDetail(showLoader: false));
                               },
                               child: AnimatedButtonWidget(
                                 shouldRestartAnimation: shouldRestartAnimation,
@@ -916,9 +912,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                         'roomId': roomId,
                                       }).then((value) {
                                     shouldRestartAnimation = true;
-                                    context.read<TaskBloc>().add(
-                                        GetTaskDetailEvent(widget.taskId,
-                                            showLoader: false));
+                                    _fetchTaskDetail(showLoader: false);
                                   });
                                 },
                               ),
@@ -1032,14 +1026,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   void getCurrentLocation() async {
     LocationData? loc = await LocationService()
         .getCurrentLocation(context, shouldShowSettingPopup: false);
-
     if (!mounted) return;
-
     if (loc != null) {
       setState(() {
         _latLng = LatLng(loc.latitude!, loc.longitude!);
         debugPrint("_longitude: $_latLng");
       });
+      _fetchTaskDetail(showLoader: false);
     } else {
       showSnackBar(
           "Permission Denied", "Please Allow Location permission", Colors.red);
@@ -1083,12 +1076,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   /// Calculate distance between user and task location using Haversine formula
   double _calculateDistanceKm() {
     if (_latLng == null || taskDetail == null) return 0.0;
-
-    final taskLat = taskDetail!.task.addressLocation.coordinates[0];
-    final taskLng = taskDetail!.task.addressLocation.coordinates[1];
+    final taskLat = taskDetail!.task.addressLocation.coordinates[1];
+    final taskLng = taskDetail!.task.addressLocation.coordinates[0];
     final userLat = _latLng!.latitude;
     final userLng = _latLng!.longitude;
-
+    print("taskLat: $taskLat");
+    print("taskLng: $taskLng");
+    print("userLat: $userLat");
+    print("userLng: $userLng");
     const R = 6371.0; // Earth radius in km
     final dLat = _degToRad(taskLat - userLat);
     final dLon = _degToRad(taskLng - userLng);
@@ -1104,13 +1099,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   double _degToRad(double deg) => deg * (math.pi / 180);
 
   String _getDistanceText() {
-    if (taskDetail != null && taskDetail!.task.distance.isNotEmpty) {
-      if (taskDetail!.task.distance.toLowerCase().contains("mile") ||
-          taskDetail!.task.distance.toLowerCase().contains("yard")) {
-        return taskDetail!.task.distance;
-      }
-      return "${taskDetail!.task.distance} miles";
-    }
+    // if (taskDetail != null && taskDetail!.task.distance.isNotEmpty) {
+    //   if (taskDetail!.task.distance.toLowerCase().contains("mile") ||
+    //       taskDetail!.task.distance.toLowerCase().contains("yard")) {
+    //     return taskDetail!.task.distance;
+    //   }
+    //   return "${taskDetail!.task.distance} miles";
+    // }
     if (_latLng == null) return "-- miles";
     final km = _calculateDistanceKm();
     final miles = km * 0.621371;
@@ -1167,5 +1162,15 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       return defaultValue;
     }
     return value.toString();
+  }
+
+  void _fetchTaskDetail({bool showLoader = true}) {
+    if (!mounted) return;
+    context.read<TaskBloc>().add(GetTaskDetailEvent(
+          widget.taskId,
+          latitude: _latLng?.latitude,
+          longitude: _latLng?.longitude,
+          showLoader: showLoader,
+        ));
   }
 }

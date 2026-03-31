@@ -239,18 +239,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     final result = await getCurrentLocation(NoParams());
     await result.fold(
       (failure) async {
-        final defaultLocation = const LatLng(51.5074, -0.1278); // London
-        debugPrint("Using default location due to error: ${failure.message}");
+        debugPrint("Location error: ${failure.message}");
 
         emit(state.copyWith(
           errorMessage: failure.message,
-          myLocation: defaultLocation,
-          initialCamera: CameraPosition(target: defaultLocation, zoom: 14),
+          myLocation: null, // ✅ KEEP NULL
         ));
-        add(FetchNewsEvent(
-            lat: defaultLocation.latitude,
-            lng: defaultLocation.longitude,
-            km: 10));
       },
       (location) async {
         emit(state.copyWith(

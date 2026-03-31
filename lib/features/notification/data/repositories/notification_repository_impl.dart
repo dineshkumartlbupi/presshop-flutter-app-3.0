@@ -30,14 +30,29 @@ class NotificationRepositoryImpl implements NotificationRepository {
               .map((e) => NotificationModel.fromJson(e))
               .toList();
         }
-        unreadCount = nestedData['unreadCount'] ?? 0;
-        alertCount = nestedData['hopperAlertCount'] ?? 0;
       } else if (nestedData is List) {
         notifications = nestedData
             .whereType<Map<String, dynamic>>()
             .map((e) => NotificationModel.fromJson(e))
             .toList();
       }
+
+      // Robust extraction of counts from either root or nested level
+      unreadCount = int.tryParse(
+              (remoteData['unreadCount'] ??
+               remoteData['unread_count'] ??
+               (nestedData is Map ? nestedData['unreadCount'] : null) ??
+               (nestedData is Map ? nestedData['unread_count'] : null) ??
+               '0').toString()) ?? 0;
+
+      alertCount = int.tryParse(
+              (remoteData['hopperAlertCount'] ??
+               remoteData['alert_count'] ??
+               remoteData['hopper_alert_count'] ??
+               (nestedData is Map ? nestedData['hopperAlertCount'] : null) ??
+               (nestedData is Map ? nestedData['alert_count'] : null) ??
+               (nestedData is Map ? nestedData['hopper_alert_count'] : null) ??
+               '0').toString()) ?? 0;
 
       return Right(NotificationsResult(
         notifications: notifications,

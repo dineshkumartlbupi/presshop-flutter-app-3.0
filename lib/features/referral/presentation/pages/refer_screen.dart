@@ -58,10 +58,10 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
 
     _friendsEarnAmount = sharedPreferences!
             .getDouble(SharedPreferencesKeys.referralFriendEarningKey) ??
-        100.0;
+        10.0;
     _youEarnAmount = sharedPreferences!
             .getDouble(SharedPreferencesKeys.referralUserEarningKey) ??
-        5.0;
+        15.0;
 
     _referralCurrency = sharedPreferences!
             .getString(SharedPreferencesKeys.referralCurrencyKey) ??

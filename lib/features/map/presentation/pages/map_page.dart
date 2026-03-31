@@ -696,44 +696,63 @@ class _MapPageContentState extends State<_MapPageContent>
       },
       builder: (context, state) {
         if (state.myLocation == null) {
-          if (_locationTimeout) {
-            return Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.location_off, size: 48, color: Colors.red),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Unable to get your location.',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _locationTimeout = false;
-                        });
-                        context.read<MapBloc>().add(GetCurrentLocationEvent());
-                        _locationTimer?.cancel();
-                        _locationTimer = Timer(const Duration(seconds: 5), () {
-                          if (mounted &&
-                              context.read<MapBloc>().state.myLocation ==
-                                  null) {
-                            setState(() {
-                              _locationTimeout = true;
-                            });
-                          }
-                        });
-                      },
-                      child: const Text('Retry'),
-                    ),
-                  ],
-                ),
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Fetching your location..."),
+                  const SizedBox(height: 10),
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     context.read<MapBloc>().add(GetCurrentLocationEvent());
+                  //   },
+                  //   child: const Text("Retry"),
+                  // )
+                ],
               ),
-            );
-          }
+            ),
+          );
         }
+        // if (state.myLocation == null) {
+        //   if (_locationTimeout) {
+        //     return Scaffold(
+        //       body: Center(
+        //         child: Column(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: [
+        //             const Icon(Icons.location_off, size: 48, color: Colors.red),
+        //             const SizedBox(height: 16),
+        //             const Text(
+        //               'Unable to get your location.',
+        //               style: TextStyle(fontSize: 18),
+        //             ),
+        //             const SizedBox(height: 16),
+        //             ElevatedButton(
+        //               onPressed: () {
+        //                 setState(() {
+        //                   _locationTimeout = false;
+        //                 });
+        //                 context.read<MapBloc>().add(GetCurrentLocationEvent());
+        //                 _locationTimer?.cancel();
+        //                 _locationTimer = Timer(const Duration(seconds: 5), () {
+        //                   if (mounted &&
+        //                       context.read<MapBloc>().state.myLocation ==
+        //                           null) {
+        //                     setState(() {
+        //                       _locationTimeout = true;
+        //                     });
+        //                   }
+        //                 });
+        //               },
+        //               child: const Text('Retry'),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //     );
+        //   }
+        // }
 
         return VisibilityDetector(
           key: const Key('map-visibility-key'),
@@ -881,11 +900,16 @@ class _MapPageContentState extends State<_MapPageContent>
                         _polygonInfoOffset = null;
                       });
                     },
-                    initialCameraPosition: state.initialCamera ??
-                        const CameraPosition(
-                          target: LatLng(51.5074, -0.1278),
-                          zoom: 14,
-                        ),
+                    // initialCameraPosition: state.initialCamera ??
+                    //     const CameraPosition(
+                    //       target: LatLng(51.5074, -0.1278),
+                    //       zoom: 14,
+                    //     ),
+
+                    initialCameraPosition: CameraPosition(
+                      target: state.myLocation ?? LatLng(51.5074, -0.1278),
+                      zoom: 16,
+                    ),
                     markers: state.markers,
                     polylines: state.polylines,
                     polygons: state.polygons,

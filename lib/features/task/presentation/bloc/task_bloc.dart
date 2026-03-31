@@ -65,7 +65,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
           clearErrorMessage: true));
     }
     final result = await getTaskDetail(GetTaskDetailParams(
-        taskId: event.taskId, showLoader: event.showLoader));
+        taskId: event.taskId,
+        latitude: event.latitude,
+        longitude: event.longitude,
+        showLoader: event.showLoader));
     result.fold(
       (failure) => emit(state.copyWith(
           taskDetailStatus: TaskStatus.failure, errorMessage: failure.message)),
@@ -308,7 +311,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
           clearErrorMessage: true));
     }
     final result = await getTaskDetail(GetTaskDetailParams(
-        taskId: event.taskId, showLoader: event.showLoader));
+        taskId: event.taskId,
+        latitude: event.latitude,
+        longitude: event.longitude,
+        showLoader: event.showLoader));
     result.fold(
       (failure) => emit(state.copyWith(
           taskDetailStatus: TaskStatus.failure, errorMessage: failure.message)),

@@ -48,7 +48,6 @@ class CommonBrandedAppBar extends StatelessWidget
           () {
             context.pop();
           },
-          
       actionWidget: [
         if (actionWidgets != null)
           ...actionWidgets!.map((w) => Center(child: w)),
@@ -77,25 +76,20 @@ class CommonBrandedAppBar extends StatelessWidget
                       alignment: Alignment.center,
                       children: [
                         Container(
-                          padding: EdgeInsets.all(size.width * 0.002),
-                          decoration: const BoxDecoration(
-                              color: Colors.white, shape: BoxShape.circle),
-                          child: Icon(
-                            Icons.circle,
-                            color: AppColorTheme.colorThemePink,
-                            size: size.width * AppDimensions.numD04,
-                          ),
-                        ),
-                        Text(
-                          notificationCount.toString(),
-                          style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * AppDimensions.numD025,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          textAlign: TextAlign.center,
-                        )
+                            padding: EdgeInsets.all(3),
+                            decoration: const BoxDecoration(
+                                color: AppColorTheme.colorThemePink,
+                                shape: BoxShape.circle),
+                            child: Text(
+                              notificationCount.toString(),
+                              style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * AppDimensions.numD025,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
+                            )),
                       ],
                     ),
                   ),
@@ -112,8 +106,7 @@ class CommonBrandedAppBar extends StatelessWidget
                   extra: {'initialPosition': 2},
                 );
               },
-              child:  LogoWidget.buildLogo(size),
-              
+              child: LogoWidget.buildLogo(size),
             ),
           ),
         if (showLogo)
