@@ -131,7 +131,7 @@ class AppInitializationService {
             sharedPreferences!.getBool(SharedPreferencesKeys.rememberKey)!;
       }
 
-      // Set currency symbol
+      // get currency symbol
       currencySymbol = sharedPreferences!
               .getString(SharedPreferencesKeys.currencySymbolKey) ??
           "£";
@@ -229,12 +229,12 @@ class AppInitializationService {
       await Hive.openBox<CategoryDataModel>('categories_box');
       await Hive.openBox<UploadJob>('upload_jobs');
       await Hive.openBox('sync_cache');
-      
+
       // Initialize background upload service so it responds to App actions on launch!
       await BackgroundUploadService().initialize();
       // Auto-resume any paused background uploads
       BackgroundUploadService().startOrResumeUpload();
-      
+
       debugPrint("✅ Hive initialized and boxes opened");
     } catch (e) {
       debugPrint("❌ Hive initialization error: $e");

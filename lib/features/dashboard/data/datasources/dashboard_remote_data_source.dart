@@ -20,6 +20,7 @@ abstract class DashboardRemoteDataSource {
   Future<Map<String, dynamic>> checkStudentBeans();
   Future<void> removeDevice(Map<String, dynamic> params);
 }
+
 // ================================= Implementation ================================
 class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   DashboardRemoteDataSourceImpl({required this.apiClient});
@@ -41,7 +42,6 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
         return (data['data'] as List)
             .map((e) => AdminDetailModel.fromJson(e))
             .toList();
-
       } else {
         throw ServerFailure(message: '');
       }

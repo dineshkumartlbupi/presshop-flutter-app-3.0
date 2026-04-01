@@ -6,11 +6,86 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'dart:ui' as ui;
+import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 
 AlertDialog? alertDialog;
 final Set<String> _shownBroadcastIds = {};
 BitmapDescriptor? popupMapIcon;
 Map<String, BitmapDescriptor> hopperAvatarIcons = {};
+void getAllIcons() async {
+  popupMapIcon = await BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(size: Size(5.0, 5.0)),
+      "${commonImagePath}ic_cover_radius.png");
+}
+
+Future<BitmapDescriptor> getMarkerIcon(String url, Size size) async {
+  try {
+    final http.Response response = await http.get(Uri.parse(url));
+    if (response.statusCode != 200) throw Exception("Failed to load image");
+    final Uint8List bytes = response.bodyBytes;
+
+    final ui.Codec codec = await ui.instantiateImageCodec(bytes,
+        targetWidth: size.width.toInt(), targetHeight: size.height.toInt());
+    final ui.FrameInfo fi = await codec.getNextFrame();
+    final ui.Image image = fi.image;
+
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    final Paint paint = Paint()..filterQuality = FilterQuality.high;
+    final double radius = size.width / 2;
+
+    // Draw circle background
+    canvas.drawCircle(
+        Offset(radius, radius), radius, Paint()..color = Colors.white);
+
+    // Clip to circle
+    canvas.clipPath(
+        ui.Path()..addOval(Rect.fromLTWH(0, 0, size.width, size.height)));
+
+    // Draw image
+    canvas.drawImageRect(
+        image,
+        Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+        Rect.fromLTWH(0, 0, size.width, size.height),
+        paint);
+
+    // Draw border
+    final Paint borderPaint = Paint()
+      ..color = AppColorTheme.colorThemePink
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 6.0;
+    canvas.drawCircle(Offset(radius, radius), radius - 3.0, borderPaint);
+
+    final ui.Image finalImage = await pictureRecorder
+        .endRecording()
+        .toImage(size.width.toInt(), size.height.toInt());
+    final ByteData? byteData =
+        await finalImage.toByteData(format: ui.ImageByteFormat.png);
+    return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
+  } catch (e) {
+    debugPrint("Error creating marker icon: $e");
+    return popupMapIcon!;
+  }
+}
+
+Future<void> loadHopperAvatars(
+    List<dynamic> hoppers, Function(void Function()) setState,
+    [Size size = const Size(120, 120)]) async {
+  bool updated = false;
+  for (var hopper in hoppers) {
+    String avatarUrl = hopper.avatar;
+    if (avatarUrl.isNotEmpty && !hopperAvatarIcons.containsKey(avatarUrl)) {
+      final icon = await getMarkerIcon(avatarUrl, size);
+      hopperAvatarIcons[avatarUrl] = icon;
+      updated = true;
+    }
+  }
+  if (updated) {
+    setState(() {});
+  }
+}
 
 void commonDialog(BuildContext context, String message, VoidCallback pressed) {
   var screenWidth = MediaQuery.of(context).size.width;
@@ -77,6 +152,21 @@ void commonDialog(BuildContext context, String message, VoidCallback pressed) {
       });
 }
 
+LatLng getTaskLatLng(TaskAssignedDetailEntity task) {
+  final coords = task.addressLocation.coordinates;
+
+  // GeoJSON format: [longitude, latitude]
+  if (coords.length >= 2) {
+    return LatLng(coords[1], coords[0]);
+  }
+
+  // fallback to direct lat/lng
+  return LatLng(
+    task.latitude ?? 0.0,
+    task.longitude ?? 0.0,
+  );
+}
+
 void broadcastDialog({
   required Size size,
   required TaskAssignedEntity taskDetail,
@@ -101,6 +191,21 @@ void broadcastDialog({
                   horizontal: size.width * AppDimensions.numD04),
               content: StatefulBuilder(
                 builder: (context, setState) {
+                  final coords = taskDetail.task.addressLocation.coordinates;
+                  final latitude = (coords.length >= 2)
+                      ? coords[1]
+                      : (taskDetail.task.latitude ?? 0.0);
+
+                  final longitude = (coords.length >= 2)
+                      ? coords[0]
+                      : (taskDetail.task.longitude ?? 0.0);
+
+                  final LatLng taskLatLng = LatLng(latitude, longitude);
+
+                  // Load hopper avatars for markers
+                  loadHopperAvatars(
+                      taskDetail.task.activeHoppersLocations, setState);
+
                   return Container(
                     width: size.width,
                     decoration: BoxDecoration(
@@ -430,13 +535,7 @@ void broadcastDialog({
                               children: [
                                 GoogleMap(
                                   initialCameraPosition: CameraPosition(
-                                    target: LatLng(
-                                        taskDetail.task.latitude != 0.0
-                                            ? taskDetail.task.latitude ?? 0.0
-                                            : 51.520412,
-                                        taskDetail.task.longitude != 0.0
-                                            ? taskDetail.task.longitude ?? 0.0
-                                            : -0.158022), // Add default static coords if needed
+                                    target: LatLng(coords[1], coords[0]),
                                     zoom: 12,
                                   ),
                                   zoomControlsEnabled: false,
@@ -451,32 +550,23 @@ void broadcastDialog({
                                       Marker(
                                         markerId:
                                             const MarkerId("task_location"),
-                                        position: LatLng(
-                                            taskDetail.task.latitude != 0.0
-                                                ? taskDetail.task.latitude ??
-                                                    0.0
-                                                : 51.520412,
-                                            taskDetail.task.longitude != 0.0
-                                                ? taskDetail.task.longitude ??
-                                                    0.0
-                                                : -0.158022),
+                                        position: LatLng(coords[1], coords[0]),
                                         anchor: const Offset(0.5, 0.5),
                                         zIndex: 0,
                                         icon: popupMapIcon!,
                                       ),
                                     ...taskDetail.task.activeHoppersLocations
-                                        .where((hopper) => hopperAvatarIcons
-                                            .containsKey(hopper.avatar))
                                         .map((hopper) {
                                       return Marker(
                                         markerId: MarkerId(hopper.id.isNotEmpty
                                             ? hopper.id
                                             : "${hopper.latitude}_${hopper.longitude}"),
-                                        position: LatLng(
-                                            hopper.latitude, hopper.longitude),
+                                        position:
+                                            LatLng(hopper.latitude, hopper.longitude),
                                         anchor: const Offset(0.5, 0.5),
                                         zIndex: 1,
-                                        icon: hopperAvatarIcons[hopper.avatar]!,
+                                        icon: hopperAvatarIcons[hopper.avatar] ??
+                                            popupMapIcon!,
                                       );
                                     }).toSet(),
                                   },
@@ -513,7 +603,6 @@ void broadcastDialog({
                                             // fontSize: size.width * numD035,
                                             // color: Colors.black,
                                             // fontWeight: FontWeight.bold,
-
                                             fontSize: size.width *
                                                 AppDimensions.numD03,
                                             color: Colors.black,

@@ -37,16 +37,16 @@ import 'package:presshop/features/publish/presentation/pages/tutorials_screen.da
 import 'package:presshop/features/chat/presentation/pages/human_chat_screen.dart';
 import 'package:presshop/features/task/presentation/pages/task_screen.dart';
 import 'package:presshop/features/content/presentation/pages/manage_content_chat_screen.dart';
-import 'package:presshop/features/task/presentation/pages/detail_new/task_details_screen.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast/broadcast_screen.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast_chat/broadcast_chat_task_screen.dart';
+import 'package:presshop/features/task/presentation/pages/task_details_screen.dart';
+import 'package:presshop/features/task/presentation/pages/task_accept_reject_screen.dart';
+import 'package:presshop/features/task/presentation/pages/broadcast_chat_task_screen.dart';
 import 'package:presshop/features/news/presentation/pages/news_page.dart';
 import 'package:presshop/features/news/presentation/pages/news_detail_page.dart';
 import 'package:presshop/features/news/domain/entities/news.dart';
 import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
 import 'package:presshop/features/news/presentation/bloc/news_event.dart';
 import 'package:presshop/features/feed/presentation/pages/feed_screen.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast_chat/media_preview_screen.dart';
+import 'package:presshop/features/task/presentation/widgets/broadcast_chat/media_preview_screen.dart';
 import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
 import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 import 'package:presshop/features/chat/presentation/pages/full_video_view.dart';
@@ -61,8 +61,8 @@ import 'package:presshop/features/chatbot/presentation/pages/chat_bot_screen.dar
 import 'package:presshop/features/rating/presentation/pages/rating_review_screen.dart';
 import 'package:presshop/features/publish/presentation/pages/audio_recorder_screen.dart';
 import 'package:presshop/features/publish/presentation/pages/hash_tag_search_screen.dart';
-import 'package:presshop/features/task/presentation/pages/preview/manage_task_preview_screen.dart';
-import 'package:presshop/features/task/presentation/pages/preview_media/manage_task_preview_media_sreen.dart';
+import 'package:presshop/features/task/presentation/widgets/preview/manage_task_preview_screen.dart';
+import 'package:presshop/features/task/presentation/widgets/preview_media/manage_task_preview_media_sreen.dart';
 import 'package:presshop/features/task/presentation/pages/task_grabbing_screen.dart';
 import 'package:presshop/features/publish/presentation/pages/publish_content_screen.dart';
 import 'package:presshop/features/publish/presentation/pages/content_submitted_screen.dart';
@@ -676,11 +676,11 @@ class AppRouter {
           );
         },
       ),
-      GoRoute(
-        path: AppRoutes.locationSharingPath,
-        name: AppRoutes.locationSharingName,
-        builder: (context, state) => const TaskGrabbingScreen(),
-      ),
+      // GoRoute(
+      //   path: AppRoutes.locationSharingPath,
+      //   name: AppRoutes.locationSharingName,
+      //   builder: (context, state) => const TaskGrabbingScreen(),
+      // ),
       GoRoute(
         path: AppRoutes.menuPath,
         name: AppRoutes.menuName,

@@ -172,6 +172,7 @@ class DashboardState extends State<Dashboard>
         _dashboardBloc.add(FetchTaskDetailEvent(widget.broadCastId!));
       }
       getFcmToken();
+
       initFirebaseMessaging(
         onTaskAssigned: (broadCastId) {
           if (mounted) {

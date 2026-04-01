@@ -29,10 +29,10 @@ class PublicationRemoteDataSourceImpl implements PublicationRemoteDataSource {
       final earningData = EarningProfileDataModel.fromJson(data);
 
       return PublicationEarningStats(
-        avatar: earningData.avatar,
+        avatar: earningData.hopper.avatar,
         publicationCount:
             "", // This API doesn't seem to return count, transaction API does.
-        totalEarning: earningData.totalEarning,
+        totalEarning: earningData.totalEarning.toString(),
       );
     } catch (e) {
       throw ApiErrorHandler.handle(e);

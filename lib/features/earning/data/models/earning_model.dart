@@ -4,58 +4,301 @@ import 'package:presshop/features/feed/presentation/pages/feed_data_model.dart';
 import '../../domain/entities/earning_transaction.dart';
 
 class EarningProfileDataModel {
+  final String id;
+  final Hopper hopper;
+  final MediaHouse mediaHouse;
+  final double amount;
+  final double presshopCommission;
+  final double payableToHopper;
+  final double stripeFee;
+  final double totalEarning;
+  final double monthlyEarning;
+  final String currency;
+  final String currencySymbol;
+  final PaymentMethod paymentMethod;
+  final String invoiceNumber;
+  final String? dueDate;
+  final bool paidStatusForHopper;
+  final DateTime createdAt;
+
   EarningProfileDataModel({
     required this.id,
-    required this.avatarId,
-    required this.avatar,
+    required this.hopper,
+    required this.mediaHouse,
+    required this.amount,
+    required this.presshopCommission,
+    required this.payableToHopper,
+    required this.stripeFee,
     required this.totalEarning,
+    required this.monthlyEarning,
     required this.currency,
     required this.currencySymbol,
+    required this.paymentMethod,
+    required this.invoiceNumber,
+    this.dueDate,
+    required this.paidStatusForHopper,
+    required this.createdAt,
   });
 
   factory EarningProfileDataModel.fromJson(Map<String, dynamic> json) {
-    var data = json['data'] is Map<String, dynamic>
-        ? json['data'] as Map<String, dynamic>
-        : json;
-
-    // Check for nested data object if total_earnings is missing at first level
-    if (data['data'] is Map<String, dynamic> &&
-        !data.containsKey('total_earnings') &&
-        !data.containsKey('totalEarnings')) {
-      final innerData = data['data'] as Map<String, dynamic>;
-      if (innerData.containsKey('total_earnings') ||
-          innerData.containsKey('totalEarnings')) {
-        data = innerData;
-      }
-    }
-
     return EarningProfileDataModel(
-      id: data['_id']?.toString() ?? data['user_id']?.toString() ?? '',
-      avatarId: data['avatar_details'] != null
-          ? data['avatar_details']['_id']?.toString() ?? ''
-          : '',
-      avatar: data['avatar_details'] != null
-          ? data['avatar_details']['avatar']?.toString() ?? ''
-          : '',
-      totalEarning: double.tryParse(data['total_earnings']?.toString() ??
-                  data['totalEarnings']?.toString() ??
-                  data['total_earning']?.toString() ??
-                  data['totalEarning']?.toString() ??
-                  "")
-              ?.toString() ??
-          "0",
-      currency: data['currency']?.toString() ?? '',
-      currencySymbol: data['currency_symbol']?.toString() ??
-          data['currencySymbol']?.toString() ??
-          '',
+      id: json['_id'] ?? '',
+      hopper: Hopper.fromJson(json['hopper_id'] ?? {}),
+      mediaHouse: MediaHouse.fromJson(json['media_house_id'] ?? {}),
+      amount: (json['amount'] ?? 0).toDouble(),
+      presshopCommission: (json['presshop_commission'] ?? 0).toDouble(),
+      payableToHopper: (json['payable_to_hopper'] ?? 0).toDouble(),
+      stripeFee: (json['stripe_fee'] ?? 0).toDouble(),
+      totalEarning: (json['total_earning'] ?? 0).toDouble(),
+      monthlyEarning: (json['monthly_earning'] ?? 0).toDouble(),
+      currency: json['currency'] ?? '',
+      currencySymbol: json['currency_symbol'] ?? '',
+      paymentMethod: PaymentMethod.fromJson(json['payment_method'] ?? {}),
+      invoiceNumber: json['invoiceNumber'] ?? '',
+      dueDate: json['Due_date'],
+      paidStatusForHopper: json['paid_status_for_hopper'] ?? false,
+      createdAt: DateTime.parse(json['createdAt']),
     );
   }
-  String id = '';
-  String avatarId = '';
-  String avatar = '';
-  String totalEarning = "";
-  String currency = "";
-  String currencySymbol = "";
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'hopper_id': hopper.toJson(),
+      'media_house_id': mediaHouse.toJson(),
+      'amount': amount,
+      'presshop_commission': presshopCommission,
+      'payable_to_hopper': payableToHopper,
+      'stripe_fee': stripeFee,
+      'total_earning': totalEarning,
+      'monthly_earning': monthlyEarning,
+      'currency': currency,
+      'currency_symbol': currencySymbol,
+      'payment_method': paymentMethod.toJson(),
+      'invoiceNumber': invoiceNumber,
+      'Due_date': dueDate,
+      'paid_status_for_hopper': paidStatusForHopper,
+      'createdAt': createdAt.toIso8601String(),
+    };
+  }
+
+  EarningProfileDataModel copyWith({
+    String? id,
+    Hopper? hopper,
+    MediaHouse? mediaHouse,
+    double? amount,
+    double? presshopCommission,
+    double? payableToHopper,
+    double? stripeFee,
+    double? totalEarning,
+    double? monthlyEarning,
+    String? currency,
+    String? currencySymbol,
+    PaymentMethod? paymentMethod,
+    String? invoiceNumber,
+    String? dueDate,
+    bool? paidStatusForHopper,
+    DateTime? createdAt,
+  }) {
+    return EarningProfileDataModel(
+      id: id ?? this.id,
+      hopper: hopper ?? this.hopper,
+      mediaHouse: mediaHouse ?? this.mediaHouse,
+      amount: amount ?? this.amount,
+      presshopCommission: presshopCommission ?? this.presshopCommission,
+      payableToHopper: payableToHopper ?? this.payableToHopper,
+      stripeFee: stripeFee ?? this.stripeFee,
+      totalEarning: totalEarning ?? this.totalEarning,
+      monthlyEarning: monthlyEarning ?? this.monthlyEarning,
+      currency: currency ?? this.currency,
+      currencySymbol: currencySymbol ?? this.currencySymbol,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
+      invoiceNumber: invoiceNumber ?? this.invoiceNumber,
+      dueDate: dueDate ?? this.dueDate,
+      paidStatusForHopper: paidStatusForHopper ?? this.paidStatusForHopper,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+}
+
+class MediaHouse {
+  final String id;
+  final String firstName;
+  final String lastName;
+
+  MediaHouse({
+    required this.id,
+    required this.firstName,
+    required this.lastName,
+  });
+
+  factory MediaHouse.fromJson(Map<String, dynamic> json) {
+    return MediaHouse(
+      id: json['_id'] ?? '',
+      firstName: json['first_name'] ?? '',
+      lastName: json['last_name'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'first_name': firstName,
+      'last_name': lastName,
+    };
+  }
+}
+
+class Hopper {
+  final String id;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String avatar;
+
+  Hopper({
+    required this.id,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    required this.avatar,
+  });
+
+  factory Hopper.fromJson(Map<String, dynamic> json) {
+    return Hopper(
+      id: json['_id'] ?? '',
+      firstName: json['first_name'] ?? '',
+      lastName: json['last_name'] ?? '',
+      email: json['email'] ?? '',
+      avatar: json['avatar'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'first_name': firstName,
+      'last_name': lastName,
+      'email': email,
+      'avatar': avatar,
+    };
+  }
+}
+
+class PaymentMethod {
+  final String id;
+  final CardDetails card;
+  final BillingDetails billingDetails;
+
+  PaymentMethod({
+    required this.id,
+    required this.card,
+    required this.billingDetails,
+  });
+
+  factory PaymentMethod.fromJson(Map<String, dynamic> json) {
+    return PaymentMethod(
+      id: json['id'] ?? '',
+      card: CardDetails.fromJson(json['card'] ?? {}),
+      billingDetails: BillingDetails.fromJson(json['billing_details'] ?? {}),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'card': card.toJson(),
+      'billing_details': billingDetails.toJson(),
+    };
+  }
+}
+
+class CardDetails {
+  final String brand;
+  final String last4;
+  final int expMonth;
+  final int expYear;
+
+  CardDetails({
+    required this.brand,
+    required this.last4,
+    required this.expMonth,
+    required this.expYear,
+  });
+
+  factory CardDetails.fromJson(Map<String, dynamic> json) {
+    return CardDetails(
+      brand: json['brand'] ?? '',
+      last4: json['last4'] ?? '',
+      expMonth: json['exp_month'] ?? 0,
+      expYear: json['exp_year'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'brand': brand,
+      'last4': last4,
+      'exp_month': expMonth,
+      'exp_year': expYear,
+    };
+  }
+}
+
+class BillingDetails {
+  final String name;
+  final String email;
+  final Address address;
+
+  BillingDetails({
+    required this.name,
+    required this.email,
+    required this.address,
+  });
+
+  factory BillingDetails.fromJson(Map<String, dynamic> json) {
+    return BillingDetails(
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      address: Address.fromJson(json['address'] ?? {}),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'email': email,
+      'address': address.toJson(),
+    };
+  }
+}
+
+class Address {
+  final String city;
+  final String country;
+  final String postalCode;
+
+  Address({
+    required this.city,
+    required this.country,
+    required this.postalCode,
+  });
+
+  factory Address.fromJson(Map<String, dynamic> json) {
+    return Address(
+      city: json['city'] ?? '',
+      country: json['country'] ?? '',
+      postalCode: json['postal_code'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'city': city,
+      'country': country,
+      'postal_code': postalCode,
+    };
+  }
 }
 
 class CommissionData {
@@ -205,7 +448,8 @@ class EarningTransactionDetail {
     if (json['Vat'] != null && json['amount'] != null) {
       vatFee = json['Vat'];
       totalAmount = json['amount'];
-      amount = totalAmount - vatFee;
+      amount = (double.tryParse(totalAmount.toString()) ?? 0.0) -
+          (double.tryParse(vatFee.toString()) ?? 0.0);
     } else {
       amount = json['amount'];
     }
@@ -220,7 +464,9 @@ class EarningTransactionDetail {
                   media is Map<String, dynamic> && media["media_type"] != null)
               .toList();
           if (images.isNotEmpty) {
-            contentsImage = images.first["watermark"]?.toString() ?? "";
+            contentsImage = images.first["watermark"]?.toString() ??
+                images.first["thumbnail"]?.toString() ??
+                "";
           }
         }
       }
@@ -296,26 +542,27 @@ class EarningTransactionDetail {
       cId = content?.toString() ?? "";
     }
 
+    String parseAmount(dynamic val) {
+      if (val == null) return "0.0";
+      double? parsed = double.tryParse(val.toString());
+      return parsed?.toString() ?? "0.0";
+    }
+
     return EarningTransactionDetail(
-        id: json['_id'] ?? '',
+        id: json['_id']?.toString() ?? '',
         mediaTypeImage: "",
         totalEarningAmt: json['type'] == 'task_content'
-            ? double.tryParse(json['hopper_price']?.toString() ??
-                        json['payable_to_hopper']?.toString() ??
-                        json['amount']?.toString() ??
-                        "")
-                    ?.toString() ??
-                "0.0"
-            : double.tryParse(json['original_ask_price']?.toString() ??
-                        json['payable_to_hopper']?.toString() ??
-                        json['amount']?.toString() ??
-                        "")
-                    ?.toString() ??
-                "0.0",
+            ? parseAmount(json['hopper_price'] ??
+                json['payable_to_hopper'] ??
+                json['amount'])
+            : parseAmount(json['original_ask_price'] ??
+                json['payable_to_hopper'] ??
+                json['amount']),
         paidStatus: json['paid_status_for_hopper'] ?? false,
         adminFullName: adminName,
         adminProfileImage: adminProfile,
-        adminCountryCode: (mediaHouse is Map ? mediaHouse['country_code'] : '')?.toString() ??
+        adminCountryCode: (mediaHouse is Map ? mediaHouse['country_code'] : '')
+                ?.toString() ??
             '',
         adminPhoneNumber: adminPhone,
         adminEmail: adminEmailAddr,
@@ -339,26 +586,33 @@ class EarningTransactionDetail {
         userAddress: uAddress,
         hopperAvatar: hAvatar,
         hopperBankName: json["received_bank_detail"] != null
-            ? json["received_bank_detail"]["bank_name"] ?? ""
+            ? json["received_bank_detail"]["bank_name"]?.toString() ?? ""
             : "",
-        hopperBankLogo: json["received_bank_detail"] != null ? json["received_bank_detail"]["bank_logo"] ?? "" : "",
-        vat: double.tryParse(vatFee?.toString() ?? "")?.toString() ?? "0.0",
-        allAmount: double.tryParse(totalAmount?.toString() ?? "")?.toString() ?? "0.0",
-        payableT0Hopper: double.tryParse(json['payable_to_hopper']?.toString() ?? "")?.toString() ?? "0.0",
-        payableCommission: double.tryParse(json['presshop_commission']?.toString() ?? "")?.toString() ?? "0.0",
-        stripefee: double.tryParse(json['stripe_fee']?.toString() ?? "")?.toString() ?? "0.0",
-        type: json['type'] ?? '',
-        percentage: double.tryParse(json['percentage']?.toString() ?? "")?.toString() ?? "0.0",
+        hopperBankLogo: json["received_bank_detail"] != null
+            ? json["received_bank_detail"]["bank_logo"]?.toString() ?? ""
+            : "",
+        vat: parseAmount(vatFee),
+        allAmount: parseAmount(totalAmount ?? json['amount']),
+        payableT0Hopper: parseAmount(json['payable_to_hopper']),
+        payableCommission: parseAmount(json['presshop_commission']),
+        stripefee: parseAmount(json['stripe_fee']),
+        type: json['type']?.toString() ?? '',
+        percentage: parseAmount(json['percentage']),
         typesOfContent: json['typeofcontent'] == "shared" ? false : true,
-        createdAT: dateTimeFormatter(dateTime: json['createdAt']),
-        updatedAT: dateTimeFormatter(dateTime: json['updatedAt']),
-        dueDate: json['Due_date'] ?? "",
+        createdAT: dateTimeFormatter(
+            dateTime: json['createdAt']?.toString() ?? ""),
+        updatedAT: dateTimeFormatter(
+            dateTime: json['updatedAt']?.toString() ?? ""),
+        dueDate: json['Due_date']?.toString() ?? "",
         contentId: cId,
-        amount: double.tryParse(amount?.toString() ?? "")?.toString() ?? "0.0",
+        amount: parseAmount(amount),
         contentTitle: cTitle,
         contentImage: contentsImage,
         currency: (json['currency'] ?? '').toString(),
-        currencySymbol: (json['currency_symbol'] != null && json['currency_symbol'].toString().isNotEmpty) ? json['currency_symbol'].toString() : getCurrencySymbol(json['currency']?.toString()),
+        currencySymbol: (json['currency_symbol'] != null &&
+                json['currency_symbol'].toString().isNotEmpty)
+            ? json['currency_symbol'].toString()
+            : getCurrencySymbol(json['currency']?.toString()),
         adminUserName: '');
   }
 
@@ -366,9 +620,15 @@ class EarningTransactionDetail {
     final hopper = json['hopper_id'];
     final bankDetail = json['received_bank_detail'];
 
+    String parseAmount(dynamic val) {
+      if (val == null) return "0.0";
+      double? parsed = double.tryParse(val.toString());
+      return parsed?.toString() ?? "0.0";
+    }
+
     return EarningTransactionDetail(
       contentTitle: "",
-      id: json['_id'] ?? "",
+      id: json['_id']?.toString() ?? "",
       mediaTypeImage: "",
       paidStatus: json['paid_status_for_hopper'] ?? false,
       adminFullName: "",
@@ -384,8 +644,8 @@ class EarningTransactionDetail {
       adminRole: "",
       adminStatus: "",
       saleStatus: "",
-      stripefee: json['stripe_fee']?.toString() ?? "0.0",
-      contentType: json['type'] ?? "",
+      stripefee: parseAmount(json['stripe_fee']),
+      contentType: json['type']?.toString() ?? "",
       contentDataList: (json['purchased_task_content'] as List<dynamic>?)
               ?.map((e) => ContentDataModel.fromJson(e))
               .toList() ??
@@ -407,21 +667,23 @@ class EarningTransactionDetail {
       userEmail: (hopper is Map ? hopper['email'] : "")?.toString() ?? "",
       userPhone: (hopper is Map ? hopper['phone'] : "")?.toString() ?? "",
       userAddress: (hopper is Map ? hopper['address'] : "")?.toString() ?? "",
-      vat: json['Vat']?.toString() ?? "0.0",
-      amount: json['amount']?.toString() ?? "0.0",
-      allAmount: json['total_received_from_stripe']?.toString() ?? "0.0",
-      totalEarningAmt: json['hopper_price']?.toString() ?? "0.0",
-      payableT0Hopper: json['payable_to_hopper']?.toString() ?? "0.0",
-      payableCommission: json['presshop_commission']?.toString() ?? "0.0",
-      type: json['type'] ?? "",
-      percentage: json['presshop_commission']?.toString() ?? "0.0",
+      vat: parseAmount(json['Vat']),
+      amount: parseAmount(json['amount']),
+      allAmount: parseAmount(json['total_received_from_stripe']),
+      totalEarningAmt: parseAmount(json['hopper_price']),
+      payableT0Hopper: parseAmount(json['payable_to_hopper']),
+      payableCommission: parseAmount(json['presshop_commission']),
+      type: json['type']?.toString() ?? "",
+      percentage: parseAmount(json['presshop_commission']),
       typesOfContent: false,
-      createdAT: dateTimeFormatter(dateTime: json['createdAt'] ?? ""),
+      createdAT:
+          dateTimeFormatter(dateTime: json['createdAt']?.toString() ?? ""),
       dueDate: dateTimeFormatter(dateTime: json['Due_date'] ?? ""),
-      updatedAT: dateTimeFormatter(dateTime: json['updatedAt'] ?? ""),
+      updatedAT:
+          dateTimeFormatter(dateTime: json['updatedAt']?.toString() ?? ""),
       companyLogo:
           (bankDetail is Map ? bankDetail['bank_logo'] : "")?.toString() ?? "",
-      contentId: json['task_id'] ?? "",
+      contentId: json['task_id']?.toString() ?? "",
       hopperAvatar:
           (hopper is Map ? hopper['avatar'] ?? hopper['profileImage'] : "")
                   ?.toString() ??
@@ -432,7 +694,7 @@ class EarningTransactionDetail {
           (bankDetail is Map ? bankDetail['bank_logo'] : "")?.toString() ?? "",
       contentImage: json['purchased_task_content'] != null &&
               json['purchased_task_content'].isNotEmpty
-          ? json['purchased_task_content'][0]['videothubnail'] ?? ""
+          ? json['purchased_task_content'][0]['videothubnail']?.toString() ?? ""
           : "",
       currency: (json['currency'] ?? '').toString(),
       currencySymbol: (json['currency_symbol'] ?? '').toString(),

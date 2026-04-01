@@ -173,22 +173,29 @@ class MyTaskScreenState extends State<MyTaskScreen>
             current.taskDetail != null,
         listener: (context, state) {
           debugPrint("🚀 UI: Showing Broadcast Dialog");
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            broadcastDialog(
-              size: size,
-              taskDetail: state.taskDetail!,
-              onTapViewDetails: () {
-                context.pop();
-                context.pushNamed(
-                  AppRoutes.broadcastName,
-                  extra: {
-                    'taskId': state.taskDetail!.task.id,
-                    'mediaHouseId': state.taskDetail!.task.mediaHouse.id,
-                  },
-                );
-              },
-            );
-          });
+          context.pushNamed(
+            AppRoutes.broadcastName,
+            extra: {
+              'taskId': state.taskDetail!.task.id,
+              'mediaHouseId': state.taskDetail!.task.mediaHouse.id,
+            },
+          );
+          // WidgetsBinding.instance.addPostFrameCallback((_) {
+          //   // broadcastDialog(
+          //   //   size: size,
+          //   //   taskDetail: state.taskDetail!,
+          //   //   onTapViewDetails: () {
+          //   //     context.pop();
+          //   //     context.pushNamed(
+          //   //       AppRoutes.broadcastName,
+          //   //       extra: {
+          //   //         'taskId': state.taskDetail!.task.id,
+          //   //         'mediaHouseId': state.taskDetail!.task.mediaHouse.id,
+          //   //       },
+          //   //     );
+          //   //   },
+          //   // );
+          // });
         },
         child: BlocListener<TaskBloc, TaskState>(
           listenWhen: (previous, current) =>

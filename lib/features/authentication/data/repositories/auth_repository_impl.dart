@@ -2,6 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/api/network_info.dart';
+import 'package:presshop/core/utils/shared_preferences.dart';
+import 'package:presshop/main.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/entities/avatar.dart';
@@ -158,6 +160,12 @@ class AuthRepositoryImpl implements AuthRepository {
         }
         final remoteUser = await remoteDataSource.getProfile(userId);
         // optionally update cache
+        print('-----------------${remoteUser.currencySymbol}-----------------');
+
+        sharedPreferences!.setString(SharedPreferencesKeys.currencySymbolKey,
+                remoteUser.currencySymbol ?? "") ??
+            "£";
+
         return Right(remoteUser);
       } on Failure catch (failure) {
         return Left(failure);
