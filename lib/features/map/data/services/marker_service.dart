@@ -105,6 +105,7 @@ class MarkerService {
   Future<BitmapDescriptor> createAvatarMarker(
     String url, {
     Size size = const Size(60, 60),
+    String defaultAsset = "assets/markers/avatar.png",
   }) async {
     try {
       final response = await http.get(Uri.parse(url));
@@ -151,7 +152,7 @@ class MarkerService {
       return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
     } catch (e) {
       print("Error creating avatar marker: $e. Using default.");
-      return createCircularAssetMarker("assets/markers/avatar.png");
+      return createCircularAssetMarker(defaultAsset, size: size);
     }
   }
 

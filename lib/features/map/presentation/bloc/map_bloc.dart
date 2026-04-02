@@ -254,10 +254,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         await Future.delayed(const Duration(milliseconds: 100));
         add(FetchNewsEvent(
             lat: location.latitude, lng: location.longitude, km: 10));
+        String avatarImage = sharedPreferences.getString(SharedPreferencesKeys.avatarKey) ?? '';
+        if (avatarImage.isEmpty) {
+          avatarImage = sharedPreferences.getString(SharedPreferencesKeys.profileImageKey) ?? '';
+        }
+        if (avatarImage.isEmpty) {
+          avatarImage = sharedPreferences.getString(SharedPreferencesKeys.avatarIdKey) ?? '';
+        }
 
-        final avatarImage =
-            sharedPreferences.getString(SharedPreferencesKeys.avatarIdKey) ??
-                '';
         BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
         if (avatarImage.isNotEmpty) {
           icon = await markerService.createAvatarMarker(avatarImage,

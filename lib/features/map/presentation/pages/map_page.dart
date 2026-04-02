@@ -22,7 +22,6 @@ import 'package:presshop/features/map/presentation/bloc/map_event.dart';
 import 'package:presshop/features/map/presentation/bloc/map_state.dart';
 import 'package:presshop/features/map/presentation/widgets/alert_button_map.dart';
 import 'package:presshop/features/map/presentation/widgets/alert_panel.dart';
-import 'package:presshop/features/map/presentation/widgets/burst_animation.dart';
 import 'package:presshop/features/map/presentation/widgets/content_marker_popup.dart';
 import 'package:presshop/features/map/presentation/widgets/custom_info_window.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
@@ -33,6 +32,8 @@ import 'package:presshop/features/map/presentation/widgets/get_direction_card.da
 import 'package:presshop/features/map/presentation/widgets/route_info_window.dart';
 import 'package:custom_info_window/custom_info_window.dart' as ciw;
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
+import 'package:presshop/features/map/presentation/widgets/map_view_widget.dart';
+import 'package:presshop/features/map/presentation/widgets/burst_particles_overlay.dart';
 
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
@@ -125,7 +126,6 @@ class _MapPageContentState extends State<_MapPageContent>
   bool _isDisposed = false;
   bool _isVisible = true;
   MapState? _lastState;
-  Circle? _pulseCircle;
 
   Offset? _routeInfoOffset;
 
@@ -134,22 +134,6 @@ class _MapPageContentState extends State<_MapPageContent>
 
   @override
   bool get wantKeepAlive => true;
-
-  void _checkPulseAnimation(double zoom) {
-    if (zoom < 13.0) {
-      if (_pulseController.isAnimating) {
-        _pulseController.stop();
-        // Clear circle
-        setState(() {
-          _pulseCircle = null;
-        });
-      }
-    } else {
-      if (!_pulseController.isAnimating) {
-        _pulseController.repeat();
-      }
-    }
-  }
 
   void _animateToDistance(String distance) {
     double zoom = 12.0;
@@ -191,32 +175,7 @@ class _MapPageContentState extends State<_MapPageContent>
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
-    )..addListener(() {
-        if (!mounted || !_isVisible) return;
-        final val = Curves.easeOutQuad.transform(_pulseController.value);
-        final state = context.read<MapBloc>().state;
-        if (state.myLocation != null) {
-          final double baseRadiusAtZoom14 = 400.0;
-          final double safeZoom = _currentZoom.roundToDouble();
-          final double scaleFactor = pow(2, 14 - safeZoom).toDouble();
-          final double dynamicRadius = baseRadiusAtZoom14 * scaleFactor;
-          final double radius = dynamicRadius * (1.0 + val * 0.5);
-          final opacity = 1.0 - val;
-
-          setState(() {
-            _pulseCircle = Circle(
-              circleId: const CircleId('my_location_pulse'),
-              center: state.myLocation!,
-              radius: radius,
-              fillColor: const Color.fromARGB(255, 247, 70, 70)
-                  .withOpacity(opacity * 0.5),
-              strokeColor:
-                  const Color.fromARGB(255, 255, 84, 84).withOpacity(opacity),
-              strokeWidth: 1,
-            );
-          });
-        }
-      });
+    );
 
     if (_isVisible) {
       _pulseController.repeat();
@@ -368,21 +327,7 @@ class _MapPageContentState extends State<_MapPageContent>
   }
 
   void _updateParticles() {
-    final t = _burstController.value;
-    final size = MediaQuery.of(context).size;
-
-    for (var p in _particles) {
-      p.scale = 0.6 + t * 0.5;
-      p.opacity = (1 - t).clamp(0.0, 1.0);
-
-      p.position = p.position.translate(
-        (p.position.dx - size.width / 2) * 0.02 * t, // Spread outwards
-        -size.height * 0.01 * p.speed, // Move up based on speed
-      );
-    }
-
-    if (t == 1) _particles.clear();
-    setState(() {});
+    // Moved particle logic into its own widget to prevent full-page rebuilds
   }
 
   Future<ui.Image?> _loadImage(String assetPath) async {
@@ -401,29 +346,12 @@ class _MapPageContentState extends State<_MapPageContent>
   }
 
   Future<void> _addBurst(LatLng position, String type) async {
-    final size = MediaQuery.of(context).size;
-    // _burstType = type;
     _particles.clear();
 
     // Load image
     final assetPath = burstIcons[type] ?? burstIcons['accident']!;
 
     _burstImage = await _loadImage(assetPath);
-
-    for (int i = 0; i < 40; i++) {
-      double randomX = Random().nextDouble() * size.width;
-      double randomY = size.height +
-          Random().nextDouble() * 300; // Staggered start below screen
-
-      _particles.add(
-        BurstParticle(
-          position: Offset(randomX, randomY),
-          scale: 0.4 + Random().nextDouble() * 0.8,
-          opacity: 1.0,
-          speed: 1.0 + Random().nextDouble() * 1.5,
-        ),
-      );
-    }
 
     _burstController.forward(from: 0);
   }
@@ -703,12 +631,6 @@ class _MapPageContentState extends State<_MapPageContent>
                 children: [
                   const Text("Fetching your location..."),
                   const SizedBox(height: 10),
-                  // ElevatedButton(
-                  //   onPressed: () {
-                  //     context.read<MapBloc>().add(GetCurrentLocationEvent());
-                  //   },
-                  //   child: const Text("Retry"),
-                  // )
                 ],
               ),
             ),
@@ -781,14 +703,20 @@ class _MapPageContentState extends State<_MapPageContent>
             body: Stack(
               children: [
                 RepaintBoundary(
-                  child: GoogleMap(
-                    key: _mapGlobalKey,
+                  child: MapViewWidget(
+                    state: state,
+                    mapGlobalKey: _mapGlobalKey,
+                    controller: _controller,
+                    customInfoWindowController: _customInfoWindowController,
+                    markerControllers: _markerControllers,
+                    pulseController: _pulseController,
+                    isProgrammaticMovement: _isProgrammaticMovement,
+                    initialZoom: 16.0,
                     onMapCreated: (c) async {
                       if (!_controller.isCompleted) {
                         _controller.complete(c);
                         _customInfoWindowController.googleMapController = c;
                       }
-
                       if (mounted) {
                         unawaited(_updateInfoWindow());
                       }
@@ -807,12 +735,10 @@ class _MapPageContentState extends State<_MapPageContent>
                     },
                     onCameraMove: (pos) {
                       _currentZoom = pos.zoom;
-                      _checkPulseAnimation(pos.zoom);
                       _customInfoWindowController.onCameraMove?.call();
                       for (var controller in _markerControllers.values) {
                         controller.onCameraMove?.call();
                       }
-                      // Removed _updateInfoWindow() here as it causes massive setState-induced lag during swipe
                     },
                     onCameraIdle: () {
                       if (mounted) {
@@ -846,7 +772,6 @@ class _MapPageContentState extends State<_MapPageContent>
                         return;
                       }
 
-                      // Destination Selection Mode
                       if (state.isDestinationSelectionMode) {
                         final repo = sl<MapRepository>();
                         String address = "${pos.latitude}, ${pos.longitude}";
@@ -900,28 +825,6 @@ class _MapPageContentState extends State<_MapPageContent>
                         _polygonInfoOffset = null;
                       });
                     },
-                    // initialCameraPosition: state.initialCamera ??
-                    //     const CameraPosition(
-                    //       target: LatLng(51.5074, -0.1278),
-                    //       zoom: 14,
-                    //     ),
-
-                    initialCameraPosition: CameraPosition(
-                      target: state.myLocation ?? LatLng(51.5074, -0.1278),
-                      zoom: 16,
-                    ),
-                    markers: state.markers,
-                    polylines: state.polylines,
-                    polygons: state.polygons,
-                    circles: {
-                      ...state.circles.where(
-                          (c) => c.circleId.value != 'my_location_pulse'),
-                      if (_pulseCircle != null) _pulseCircle!,
-                    },
-                    myLocationButtonEnabled: false,
-                    myLocationEnabled: true,
-                    zoomControlsEnabled: false,
-                    padding: const EdgeInsets.only(bottom: 220),
                   ),
                 ),
 
@@ -1172,11 +1075,9 @@ class _MapPageContentState extends State<_MapPageContent>
                     ),
                   ),
                 ),
-                IgnorePointer(
-                  child: CustomPaint(
-                    painter: BurstPainter(_particles, _burstImage),
-                    child: Container(),
-                  ),
+                BurstParticlesOverlay(
+                  controller: _burstController,
+                  burstImage: _burstImage,
                 ),
               ],
             ),

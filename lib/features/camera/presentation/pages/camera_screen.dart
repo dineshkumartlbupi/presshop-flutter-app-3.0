@@ -117,8 +117,8 @@ class CameraScreenState extends State<CameraScreen>
 
   Future<Uint8List?> _getLatestGalleryImageBytes() async {
     try {
-      final perm = await PhotoManager.requestPermissionExtend();
-      if (!perm.isAuth) return null;
+      final PermissionState ps = await PhotoManager.requestPermissionExtend();
+      if (!ps.isAuth && !ps.hasAccess) return null;
 
       final List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
           onlyAll: true, type: RequestType.image);
@@ -357,7 +357,6 @@ class CameraScreenState extends State<CameraScreen>
     return Stack(
       children: [
         _buildCameraPreview(context, state, size),
-
         // Exposure Controls
         Positioned(
           left: 0,
@@ -488,8 +487,8 @@ class CameraScreenState extends State<CameraScreen>
                   borderRadius:
                       BorderRadius.circular(size.width * AppDimensions.numD025),
                   child: PersistentGalleryThumbnail(
-                      galleryMedia: state.galleryMedia,
-                      fallbackLoader: _getLatestGalleryImageBytes,
+                    galleryMedia: state.galleryMedia,
+                    fallbackLoader: _getLatestGalleryImageBytes,
                   ),
                 ),
               ),
@@ -860,10 +859,12 @@ class PersistentGalleryThumbnail extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<PersistentGalleryThumbnail> createState() => _PersistentGalleryThumbnailState();
+  State<PersistentGalleryThumbnail> createState() =>
+      _PersistentGalleryThumbnailState();
 }
 
-class _PersistentGalleryThumbnailState extends State<PersistentGalleryThumbnail> {
+class _PersistentGalleryThumbnailState
+    extends State<PersistentGalleryThumbnail> {
   Future<Uint8List?>? _thumbFuture;
   int _mediaCount = -1;
 
@@ -876,21 +877,32 @@ class _PersistentGalleryThumbnailState extends State<PersistentGalleryThumbnail>
   @override
   void didUpdateWidget(PersistentGalleryThumbnail oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.galleryMedia.length != _mediaCount || oldWidget.galleryMedia.isNotEmpty != widget.galleryMedia.isNotEmpty) {
+    if (widget.galleryMedia.length != _mediaCount ||
+        oldWidget.galleryMedia.isNotEmpty != widget.galleryMedia.isNotEmpty) {
       _loadFuture();
     }
   }
 
-  void _loadFuture() {
+  Future<void> _loadFuture() async {
     _mediaCount = widget.galleryMedia.length;
     if (widget.galleryMedia.isNotEmpty) {
-      try {
-        _thumbFuture = widget.galleryMedia.first.thumbnailDataWithSize(const ThumbnailSize(200, 200));
-      } catch(e) {
-        _thumbFuture = widget.fallbackLoader();
-      }
+      _thumbFuture = _getGalleryFuture();
     } else {
       _thumbFuture = widget.fallbackLoader();
+    }
+    if (mounted) setState(() {});
+  }
+
+  Future<Uint8List?> _getGalleryFuture() async {
+    try {
+      final AssetEntity asset = widget.galleryMedia.first;
+      final Uint8List? data =
+          await asset.thumbnailDataWithSize(const ThumbnailSize(200, 200));
+      if (data == null) return await widget.fallbackLoader();
+      return data;
+    } catch (e) {
+      debugPrint("Error loading gallery thumbnail: $e");
+      return await widget.fallbackLoader();
     }
   }
 
@@ -899,13 +911,13 @@ class _PersistentGalleryThumbnailState extends State<PersistentGalleryThumbnail>
     return FutureBuilder<Uint8List?>(
       future: _thumbFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.data != null) {
           return Image.memory(snapshot.data!, fit: BoxFit.cover);
         }
-        if (widget.galleryMedia.isNotEmpty) {
-           return Container(color: Colors.grey);
-        }
-        return Image.asset("\${dummyImagePath}walk2.png", fit: BoxFit.cover);
+        // Always show the placeholder/dummy image while loading OR if the future returned null
+        return Image.asset("${CommonAssets.dummyImagePath}walk2.png",
+            fit: BoxFit.cover);
       },
     );
   }

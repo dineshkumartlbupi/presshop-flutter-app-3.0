@@ -12,10 +12,10 @@ import 'package:http/http.dart' as http;
 
 AlertDialog? alertDialog;
 final Set<String> _shownBroadcastIds = {};
-BitmapDescriptor? popupMapIcon;
+BitmapDescriptor? mapIcon;
 Map<String, BitmapDescriptor> hopperAvatarIcons = {};
 void getAllIcons() async {
-  popupMapIcon = await BitmapDescriptor.fromAssetImage(
+  mapIcon = await BitmapDescriptor.fromAssetImage(
       const ImageConfiguration(size: Size(5.0, 5.0)),
       "${commonImagePath}ic_cover_radius.png");
 }
@@ -66,16 +66,16 @@ Future<BitmapDescriptor> getMarkerIcon(String url, Size size) async {
     return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
   } catch (e) {
     debugPrint("Error creating marker icon: $e");
-    return popupMapIcon!;
+    return mapIcon ?? BitmapDescriptor.defaultMarker;
   }
 }
 
 Future<void> loadHopperAvatars(
     List<dynamic> hoppers, Function(void Function()) setState,
-    [Size size = const Size(120, 120)]) async {
+    [Size size = const Size(60, 60)]) async {
   bool updated = false;
   for (var hopper in hoppers) {
-    String avatarUrl = hopper.avatar;
+    String avatarUrl = getMediaImageUrl(hopper.avatar);
     if (avatarUrl.isNotEmpty && !hopperAvatarIcons.containsKey(avatarUrl)) {
       final icon = await getMarkerIcon(avatarUrl, size);
       hopperAvatarIcons[avatarUrl] = icon;
@@ -174,6 +174,9 @@ void broadcastDialog({
 }) {
   if (_shownBroadcastIds.contains(taskDetail.task.id)) {
     return;
+  }
+  if (mapIcon == null) {
+    getAllIcons();
   }
   _shownBroadcastIds.add(taskDetail.task.id);
 
@@ -535,7 +538,13 @@ void broadcastDialog({
                               children: [
                                 GoogleMap(
                                   initialCameraPosition: CameraPosition(
-                                    target: LatLng(coords[1], coords[0]),
+                                    target: LatLng(
+                                        (taskDetail.task.latitude ?? 0.0) != 0.0
+                                            ? taskDetail.task.latitude!
+                                            : 51.520412,
+                                        (taskDetail.task.longitude ?? 0.0) != 0.0
+                                            ? taskDetail.task.longitude!
+                                            : -0.158022),
                                     zoom: 12,
                                   ),
                                   zoomControlsEnabled: false,
@@ -546,27 +555,34 @@ void broadcastDialog({
                                   rotateGesturesEnabled: false,
                                   tiltGesturesEnabled: false,
                                   markers: {
-                                    if (popupMapIcon != null)
-                                      Marker(
-                                        markerId:
-                                            const MarkerId("task_location"),
-                                        position: LatLng(coords[1], coords[0]),
-                                        anchor: const Offset(0.5, 0.5),
-                                        zIndex: 0,
-                                        icon: popupMapIcon!,
-                                      ),
+                                    Marker(
+                                      markerId: const MarkerId("task_location"),
+                                      position: LatLng(
+                                          (taskDetail.task.latitude ?? 0.0) != 0.0
+                                              ? taskDetail.task.latitude!
+                                              : 51.520412,
+                                          (taskDetail.task.longitude ?? 0.0) != 0.0
+                                              ? taskDetail.task.longitude!
+                                              : -0.158022),
+                                      anchor: const Offset(0.5, 0.5),
+                                      zIndex: 0,
+                                      icon: mapIcon ??
+                                          BitmapDescriptor.defaultMarker,
+                                    ),
                                     ...taskDetail.task.activeHoppersLocations
                                         .map((hopper) {
                                       return Marker(
                                         markerId: MarkerId(hopper.id.isNotEmpty
                                             ? hopper.id
                                             : "${hopper.latitude}_${hopper.longitude}"),
-                                        position:
-                                            LatLng(hopper.latitude, hopper.longitude),
+                                        position: LatLng(
+                                            hopper.latitude, hopper.longitude),
                                         anchor: const Offset(0.5, 0.5),
                                         zIndex: 1,
-                                        icon: hopperAvatarIcons[hopper.avatar] ??
-                                            popupMapIcon!,
+                                        icon: hopperAvatarIcons[
+                                                getMediaImageUrl(
+                                                    hopper.avatar)] ??
+                                            BitmapDescriptor.defaultMarker,
                                       );
                                     }).toSet(),
                                   },
