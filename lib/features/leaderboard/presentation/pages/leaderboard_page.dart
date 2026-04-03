@@ -193,7 +193,9 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                         horizontal: size.width * AppDimensions.numD03,
                         vertical: size.width * AppDimensions.numD015),
                     decoration: BoxDecoration(
-                      color: selectedCountryCode == countryItem.countryCode
+                      color: (selectedCountryCode == countryItem.countryCode ||
+                              (selectedCountryCode == "" &&
+                                  countryItem.country == "Global"))
                           ? AppColorTheme.colorThemePink
                           : Colors.grey[300],
                       borderRadius: BorderRadius.circular(
@@ -204,10 +206,12 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color:
-                                  selectedCountryCode == countryItem.countryCode
-                                      ? Colors.white
-                                      : Colors.black,
+                              color: (selectedCountryCode ==
+                                          countryItem.countryCode ||
+                                      (selectedCountryCode == "" &&
+                                          countryItem.country == "Global"))
+                                  ? Colors.white
+                                  : Colors.black,
                               fontWeight: FontWeight.w500)),
                     ),
                   ),
