@@ -240,33 +240,30 @@ class MediaThumbnailWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
-      child: Stack(
-        children: [
-          _buildMediaContent(),
-          if (item.mediaUrls.isNotEmpty)
-            Image.asset(
-              "${commonImagePath}watermark1.png",
-              height: size.width * AppDimensions.numD29,
-              width: size.width,
-              fit: BoxFit.cover,
-              // Cache the watermark image for better performance
-              cacheWidth: (size.width * 2).toInt(),
-              cacheHeight: (size.width * AppDimensions.numD29 * 2).toInt(),
-            ),
-          if (item.mediaUrls.length > 1)
-            Positioned(
-              right: size.width * AppDimensions.numD02,
-              top: size.width * AppDimensions.numD02,
-              child: _buildCountBadge(),
-            ),
-          Positioned(
-            right: size.width * AppDimensions.numD02,
-            top: size.width * AppDimensions.numD02,
-            child: _buildCountBadge(),
-          ),
-        ],
+    return AspectRatio(
+      aspectRatio: 1.5, // Standard content aspect ratio
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+        child: Stack(
+          children: [
+            _buildMediaContent(),
+            if (item.mediaUrls.isNotEmpty)
+              Image.asset(
+                "${commonImagePath}watermark1.png",
+                height: double.infinity,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                // Cache the watermark image for better performance
+                cacheWidth: (size.width * 2).toInt(),
+              ),
+            if (item.mediaUrls.length > 1)
+              Positioned(
+                right: size.width * AppDimensions.numD02,
+                top: size.width * AppDimensions.numD02,
+                child: _buildCountBadge(),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -274,14 +271,13 @@ class MediaThumbnailWidget extends StatelessWidget {
   Widget _buildMediaContent() {
     if (item.mediaUrls.isEmpty) {
       return Container(
-        height: size.width * AppDimensions.numD30,
-        width: size.width,
         decoration: const BoxDecoration(color: AppColorTheme.colorLightGrey),
-        padding: EdgeInsets.all(size.width * AppDimensions.numD06),
+        alignment: Alignment.center,
         child: Image.asset(
           "${commonImagePath}rabbitLogo.png",
-          height: size.width * AppDimensions.numD07,
-          width: size.width * AppDimensions.numD07,
+          height: size.width * AppDimensions.numD15,
+          width: size.width * AppDimensions.numD15,
+          fit: BoxFit.contain,
         ),
       );
     }
@@ -297,8 +293,8 @@ class MediaThumbnailWidget extends StatelessWidget {
                 item.mediaList.first.thumbnailUrl.isNotEmpty
             ? fixS3Url(item.mediaList.first.thumbnailUrl)
             : null,
-        width: size.width,
-        height: size.width * AppDimensions.numD30,
+        width: double.infinity,
+        height: double.infinity,
         fit: BoxFit.cover,
       );
     }
@@ -336,8 +332,8 @@ class MediaThumbnailWidget extends StatelessWidget {
       case "video":
         return VideoThumbnailWidget(
           videoUrl: getMediaImageUrl(url, isVideo: true),
-          width: size.width,
-          height: size.height * AppDimensions.numD30,
+          width: double.infinity,
+          height: double.infinity,
           fit: BoxFit.cover,
         );
       case "audio":
@@ -345,7 +341,7 @@ class MediaThumbnailWidget extends StatelessWidget {
           color: AppColorTheme.colorThemePink,
           child: Icon(
             Icons.play_arrow_rounded,
-            size: size.width * AppDimensions.numD18,
+            size: size.width * AppDimensions.numD15,
             color: Colors.white,
           ),
         );
@@ -368,16 +364,12 @@ class MediaThumbnailWidget extends StatelessWidget {
       default:
         return CachedNetworkImage(
           imageUrl: getMediaImageUrl(url, isVideo: type == 'video'),
-          height: size.width * AppDimensions.numD30,
-          width: size.width,
+          width: double.infinity,
+          height: double.infinity,
           fit: BoxFit.cover,
-          // Optimize memory usage by caching at display size
-          memCacheWidth: (size.width * 2).toInt(), // 2x for retina displays
-          memCacheHeight: (size.width * AppDimensions.numD30 * 2).toInt(),
-          // Smooth fade-in transition
+          memCacheWidth: (size.width * 2).toInt(),
           fadeInDuration: const Duration(milliseconds: 200),
           fadeOutDuration: const Duration(milliseconds: 100),
-          // Lightweight placeholder for better performance
           placeholder: (_, __) => _buildLightweightPlaceholder(),
           errorWidget: (_, __, ___) => _buildLightweightPlaceholder(),
         );
@@ -386,9 +378,7 @@ class MediaThumbnailWidget extends StatelessWidget {
 
   Widget _buildPlaceholder({Color? color, required Widget child}) {
     return Container(
-      height: size.width * AppDimensions.numD30,
-      width: size.width,
-      padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+      alignment: Alignment.center,
       decoration: BoxDecoration(
         color: color,
         border: Border.all(color: AppColorTheme.colorHint),
@@ -407,14 +397,14 @@ class MediaThumbnailWidget extends StatelessWidget {
   // Lightweight placeholder using simple Container instead of loading PNG asset
   Widget _buildLightweightPlaceholder() {
     return Container(
-      alignment: Alignment.topCenter,
-      height: size.width * AppDimensions.numD30,
-      width: size.width,
+      alignment: Alignment.center,
+      decoration: const BoxDecoration(color: AppColorTheme.colorLightGrey),
       child: Center(
         child: Image.asset(
           "${commonImagePath}rabbitLogo.png",
           height: size.width * AppDimensions.numD15,
           width: size.width * AppDimensions.numD15,
+          fit: BoxFit.contain,
         ),
       ),
     );

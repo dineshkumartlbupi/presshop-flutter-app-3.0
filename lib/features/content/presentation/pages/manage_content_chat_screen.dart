@@ -58,15 +58,19 @@ class ManageContentChatScreen extends StatefulWidget {
       required this.type,
       this.contentMedia,
       this.myContentData,
-      this.contentHeader});
+      this.contentHeader,
+      this.offerCount,
+      this.purchasedCount});
   final TaskDetail? taskDetail;
-  MyContentData? myContentData;
+  final MyContentData? myContentData;
   final String roomId;
   final Widget? contentMedia;
   final Widget? contentHeader;
   final String? contentId;
   final ManageTaskChatModel? mediaHouseDetail;
   final String type;
+  final int? offerCount;
+  final int? purchasedCount;
 
   @override
   State<StatefulWidget> createState() {
@@ -105,6 +109,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
   String imageId = "";
   String contentView = "0";
   String contentPurchased = "0";
+  String contentOffer = "0";
   FlickManager? flickManager;
   PlayerController controller = PlayerController();
   int _currentMediaIndex = 0;
@@ -162,6 +167,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
     socketConnectionFunc();
     callGetManageTaskListingApi();
     initialController();
+
+    if (widget.offerCount != null) {
+      contentOffer = widget.offerCount.toString();
+    }
+    if (widget.purchasedCount != null) {
+      contentPurchased = widget.purchasedCount.toString();
+    }
   }
 
   void onTextChanged() {
@@ -224,6 +236,29 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
         if (state.chatList.isNotEmpty) {
           chatList = state.chatList;
           isDataLoaded = true;
+
+          // Updating stats dynamically from chat list
+          int purchaseCount = 0;
+          int offerCount = 0;
+          int viewCount = 0;
+
+          for (var item in chatList) {
+            String mType = item.messageType.toLowerCase();
+            if (mType == 'payment' || item.paidStatus) {
+              purchaseCount++;
+            } else if (mType == 'offered' ||
+                mType == 'mediahouse_initial_offer' ||
+                mType == 'hopper_counter_offer' ||
+                mType == 'initial_offer') {
+              offerCount++;
+            } else if (mType == 'view') {
+              viewCount++;
+            }
+          }
+
+          contentPurchased = purchaseCount.toString();
+          contentOffer = offerCount.toString();
+          contentView = viewCount.toString();
         }
 
         if (state.allTasksStatus == TaskStatus.loading ||
@@ -2781,13 +2816,11 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                               size: size.width * AppDimensions.numD042),
                           SizedBox(width: size.width * AppDimensions.numD018),
                           Text(
-                            '${widget.myContentData?.purchasedMediahouseCount} ${AppStringsNew2.sold}',
+                            '$contentPurchased ${AppStringsNew2.sold}',
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD029,
-                                color: widget.myContentData
-                                            ?.purchasedMediahouseCount ==
-                                        0
+                                color: int.parse(contentPurchased) == 0
                                     ? Colors.grey
                                     : AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.normal),
@@ -2809,11 +2842,11 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                               size: size.width * AppDimensions.numD042),
                           SizedBox(width: size.width * AppDimensions.numD018),
                           Text(
-                            '${widget.myContentData?.offerCount} ${widget.myContentData!.offerCount > 1 ? '${AppStringsNew2.offerText}s' : AppStringsNew2.offerText}',
+                            '$contentOffer ${int.parse(contentOffer) > 1 ? '${AppStringsNew2.offerText}s' : AppStringsNew2.offerText}',
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD029,
-                                color: widget.myContentData?.offerCount == 0
+                                color: int.parse(contentOffer) == 0
                                     ? Colors.grey
                                     : AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.normal),
@@ -2821,7 +2854,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                         ],
                       ),
                       SizedBox(
-                          width: widget.myContentData!.offerCount >= 0
+                          width: int.parse(contentOffer) >= 0
                               ? size.width * AppDimensions.numD04
                               : size.width * AppDimensions.numD02),
                       Row(
@@ -2829,21 +2862,17 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ImageIcon(const AssetImage("${iconsPath}ic_view.png"),
-                              color: widget.myContentData!.contentView == 0
+                              color: int.parse(contentView) == 0
                                   ? Colors.grey
                                   : AppColorTheme.colorThemePink,
                               size: size.width * AppDimensions.numD05),
                           SizedBox(width: size.width * AppDimensions.numD018),
                           Text(
-                            '${widget.myContentData!.contentView.toString()} ${widget.myContentData!.contentView > 1 ? '${AppStringsNew2.viewsText}s' : AppStringsNew2.viewsText}',
+                            '$contentView ${int.parse(contentView) > 1 ? '${AppStringsNew2.viewText}s' : AppStringsNew2.viewText}',
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD029,
-                                color: (widget.myContentData!.paidStatus ==
-                                                AppStringsNew2.paidText &&
-                                            widget.myContentData!.contentView ==
-                                                1) ||
-                                        widget.myContentData!.contentView == 0
+                                color: int.parse(contentView) == 0
                                     ? Colors.grey
                                     : AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.normal),

@@ -381,7 +381,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
     try {
       final response = await apiClient.get(
         ApiConstantsNew.tasks.mediaHouseOffer,
-        queryParameters: {'image_id': contentId},
+        queryParameters: {'content_id': contentId},
         showLoader: showLoader,
       );
 

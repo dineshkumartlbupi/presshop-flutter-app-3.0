@@ -279,6 +279,8 @@ class AppRouter {
             contentMedia: extra['contentMedia'],
             myContentData: extra['myContentData'],
             contentHeader: extra['contentHeader'],
+            offerCount: extra['offerCount'],
+            purchasedCount: extra['purchasedCount'],
           );
         },
       ),
