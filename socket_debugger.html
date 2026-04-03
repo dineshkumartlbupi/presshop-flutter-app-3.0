@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PressHop | Socket.io Debugger</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF5A5F;
+            --secondary: #00A699;
+            --bg: #0F172A;
+            --panel: #1E293B;
+            --text: #F8FAFC;
+            --border: #334155;
+            --log-bg: #020617;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            padding: 1.5rem 2rem;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .logo { font-weight: 800; font-size: 1.5rem; letter-spacing: -0.05em; color: var(--primary); }
+        .status { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 0.9rem; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #EF4444; }
+        .status-dot.connected { background: #10B981; box-shadow: 0 0 10px #10B981; }
+
+        /* Main Container */
+        main {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            flex: 1;
+            min-height: 0; /* CRITICAL for flex scrolling */
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding: 1.5rem;
+            background: var(--panel);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            height: 100%;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        label { font-size: 0.8rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; }
+        input, select, textarea {
+            background: var(--log-bg);
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            border-radius: 8px;
+            color: var(--text);
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
+
+        .btn {
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: var(--secondary); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+
+        .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+
+        /* Log Content */
+        .log-container {
+            display: flex;
+            flex-direction: column;
+            background: var(--log-bg);
+            position: relative;
+            overflow: hidden; /* Lock the container */
+            height: 100%;
+        }
+
+        .log-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #log {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .log-entry { margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #1e293b33; }
+        .time { color: #64748B; font-weight: 400; margin-right: 0.5rem; }
+        .event-type { padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 0.75rem; margin-right: 0.5rem; }
+        .type-emit { background: #3b82f633; color: #60a5fa; }
+        .type-recv { background: #10b98133; color: #34d399; }
+        .type-info { background: #f59e0b33; color: #fbbf24; }
+        .log-data { display: block; margin-top: 5px; color: #CBD5E1; white-space: pre-wrap; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--log-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        #payload-editor { min-height: 150px; font-family: 'Fira Code', monospace; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">PressHop Debugger</div>
+    <div class="status">
+        <div id="status-dot" class="status-dot"></div>
+        <span id="status-text">Disconnected</span>
+    </div>
+</header>
+
+<main>
+    <div class="sidebar">
+        <div class="form-group">
+            <label>Server URL</label>
+            <input type="text" id="server-url" value="wss://funnellike-subangular-sulema.ngrok-free.dev">
+        </div>
+        <div class="form-group">
+            <label>User ID</label>
+            <input type="text" id="user-id" value="6991f667184679e0aaf7ad69" placeholder="Enter User ID">
+        </div>
+        
+        <div class="quick-actions">
+            <button class="btn btn-primary" id="connect-btn">Connect</button>
+            <button class="btn btn-outline" id="disconnect-btn">Disconnect</button>
+        </div>
+
+        <hr style="border-color: var(--border); opacity: 0.2;">
+
+        <div class="form-group">
+            <label>Join Room</label>
+            <div class="quick-actions">
+                <button class="btn btn-secondary btn-sm" onclick="joinRoom('joinUser')">joinUser</button>
+                <button class="btn btn-secondary btn-sm" onclick="joinRoom('joinNewsAll')">NewsAll</button>
+            </div>
+        </div>
+
+        <hr style="border-color: var(--border); opacity: 0.2;">
+
+        <div class="form-group">
+            <label>Emit Event</label>
+            <select id="event-dropdown">
+                <optgroup label="Incident">
+                    <option value="incident:create">incident:create</option>
+                    <option value="incident:new">incident:new</option>
+                    <option value="incident:updated">incident:updated</option>
+                </optgroup>
+                <optgroup label="Rooms">
+                    <option value="joinWebsite">joinWebsite</option>
+                    <option value="joinAdmin">joinAdmin</option>
+                    <option value="joinHopper">joinHopper</option>
+                    <option value="joinUser">joinUser</option>
+                </optgroup>
+                <optgroup label="Interactions">
+                    <option value="add:aggregated:comment">add:comment</option>
+                    <option value="add:aggregated:news:like">add:news:like</option>
+                </optgroup>
+                <optgroup label="Chat">
+                    <option value="chat message">chat message</option>
+                    <option value="typing">typing</option>
+                    <option value="room join">room join</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>JSON Data</label>
+            <textarea id="payload-editor">{
+  "userId": "6991f667184679e0aaf7ad69",
+  "type": "fire",
+  "lat": 26.859817,
+  "lng": 81.015007,
+  "severity": "low",
+  "message": "Testing from HTML Debugger"
+}</textarea>
+        </div>
+
+        <button class="btn btn-primary" id="emit-btn">Emit Event 🚀</button>
+    </div>
+
+    <div class="log-container">
+        <div class="log-header">
+            <h2 style="font-size: 1rem; font-weight: 800;">Real-time Event Log</h2>
+            <button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.7rem;" onclick="clearLog()">Clear Log</button>
+        </div>
+        <div id="log">
+            <div class="log-entry"><span class="time">Ready to connect...</span></div>
+        </div>
+    </div>
+</main>
+
+<script>
+    let socket = null;
+    const logEl = document.getElementById('log');
+    const statusDot = document.getElementById('status-dot');
+    const statusText = document.getElementById('status-text');
+    const eventDropdown = document.getElementById('event-dropdown');
+    const payloadEditor = document.getElementById('payload-editor');
+
+    function log(type, event, data) {
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        
+        const timestamp = new Date().toLocaleTimeString();
+        const typeClass = type === 'EMIT' ? 'type-emit' : (type === 'RECV' ? 'type-recv' : 'type-info');
+        
+        entry.innerHTML = `
+            <span class="time">${timestamp}</span>
+            <span class="event-type ${typeClass}">${type}</span>
+            <span style="font-weight: 700; color: #fff;">${event}</span>
+            ${data ? `<pre class="log-data">${JSON.stringify(data, null, 2)}</pre>` : ''}
+        `;
+        
+        logEl.appendChild(entry);
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function clearLog() {
+        logEl.innerHTML = '<div class="log-entry"><span class="time">Log cleared</span></div>';
+    }
+
+    document.getElementById('connect-btn').onclick = () => {
+        const url = document.getElementById('server-url').value;
+        const userId = document.getElementById('user-id').value;
+
+        if (socket) socket.disconnect();
+
+        log('INFO', 'Connecting...', url);
+        
+        socket = io(url, {
+            transports: ['websocket', 'polling'],
+            query: userId ? { userId } : {}
+        });
+
+        socket.on('connect', () => {
+            statusDot.classList.add('connected');
+            statusText.innerText = 'Connected: ' + socket.id;
+            log('INFO', 'Connected', { id: socket.id });
+        });
+
+        socket.on('disconnect', (reason) => {
+            statusDot.classList.remove('connected');
+            statusText.innerText = 'Disconnected';
+            log('INFO', 'Disconnected', { reason });
+        });
+
+        socket.on('connect_error', (error) => {
+            log('INFO', 'Connection Error', error.message);
+        });
+
+        // Auto-subscribe to all events in dropdown
+        document.querySelectorAll('#event-dropdown option').forEach(opt => {
+            const ev = opt.value;
+            socket.on(ev, (data) => {
+                log('RECV', ev, data);
+            });
+        });
+
+        // Specialized listeners
+        socket.on('incident:new', (data) => log('RECV', 'incident:new', data));
+        socket.on('incident:created', (data) => log('RECV', 'incident:created', data));
+        socket.on('chat message', (data) => log('RECV', 'chat message', data));
+        socket.on('aggregated:news:like', (data) => log('RECV', 'aggregated:news:like', data));
+    };
+
+    document.getElementById('disconnect-btn').onclick = () => {
+        if (socket) socket.disconnect();
+    };
+
+    document.getElementById('emit-btn').onclick = () => {
+        if (!socket || !socket.connected) {
+            alert('Please connect first!');
+            return;
+        }
+
+        const event = eventDropdown.value;
+        let data = {};
+        try {
+            data = JSON.parse(payloadEditor.value);
+        } catch (e) {
+            alert('Invalid JSON in payload');
+            return;
+        }
+
+        socket.emit(event, data);
+        log('EMIT', event, data);
+    };
+
+    function joinRoom(roomEvent) {
+        if (!socket || !socket.connected) {
+            alert('Please connect first!');
+            return;
+        }
+        const userId = document.getElementById('user-id').value;
+        const data = { userId: userId };
+        socket.emit(roomEvent, data);
+        log('EMIT', roomEvent, data);
+    }
+
+    // Default template updates on dropdown change
+    eventDropdown.onchange = () => {
+        const ev = eventDropdown.value;
+        const userId = document.getElementById('user-id').value;
+        
+        if (ev === 'incident:create') {
+            payloadEditor.value = JSON.stringify({
+                userId,
+                type: "fire",
+                lat: 26.859817,
+                lng: 81.015007,
+                severity: "low",
+                message: "Testing from HTML Debugger"
+            }, null, 2);
+        } else if (ev === 'chat message') {
+            payloadEditor.value = JSON.stringify({
+                userId,
+                roomId: "TEST_ROOM",
+                message: "Hello world!"
+            }, null, 2);
+        } else if (ev.startsWith('join')) {
+            payloadEditor.value = JSON.stringify({ userId }, null, 2);
+        }
+    };
+</script>
+
+</body>
+</html>

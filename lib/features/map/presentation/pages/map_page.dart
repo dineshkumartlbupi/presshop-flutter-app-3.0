@@ -828,23 +828,42 @@ class _MapPageContentState extends State<_MapPageContent>
                   ),
                 ),
 
-                // Interactive marker overlays
-                ..._markerControllers.values.map((controller) {
-                  return ciw.CustomInfoWindow(
-                    controller: controller,
-                    height: responsiveWidth * 0.12,
-                    width: responsiveWidth * 0.12,
-                    offset: 4,
-                  );
-                }),
+                // ======================= ANIMATED MARKER OVERLAYS =======================
+                // Restoring the multi-overlay system for circular incident icons
+                ..._markerControllers.entries.map((entry) {
+                    final markerId = entry.key;
+                    final controller = entry.value;
 
-                // CustomInfoWindow overlay for popups
+                    // Safety Check: Only render if we have an active incident matching this ID
+                    final String incidentId = markerId
+                        .replaceFirst('alert_', '')
+                        .replaceFirst('news_', '')
+                        .replaceFirst('weather_', '');
+
+                    // Ensure we have data for this marker before rendering the overlay
+                    final hasData =
+                        state.newsList.any((i) => i.id == incidentId);
+                    if (!hasData) return const SizedBox.shrink();
+
+                    return ciw.CustomInfoWindow(
+                      controller: controller,
+                      height:
+                          50, // Standard size for circular icons in old code
+                      width: 50,
+                      offset:
+                          25, // Centered directly on top of the map location
+                    );
+                  }),
+
+                // ======================= SINGLE DETAIL POPUP (Selected State) =======================
+                // Only one of these exists for the deep-dive incident details
                 ciw.CustomInfoWindow(
                   controller: _customInfoWindowController,
                   height: responsiveWidth * 0.85,
                   width: responsiveWidth * 0.75,
                   offset: responsiveWidth * 0.14,
                 ),
+                // ====================================================================================
 
                 // Dedicated CustomInfoWindow for Route Details (Smaller)
                 // ======================= Route Info (Positioned) =======================
@@ -1117,6 +1136,15 @@ class _MapPageContentState extends State<_MapPageContent>
       if (!mounted || _isDisposed) break;
       final markerId = marker.markerId.value;
 
+      // Only sync if we actually have the data to show, otherwise we get white squares
+      final String incidentId = markerId
+          .replaceFirst('alert_', '')
+          .replaceFirst('news_', '')
+          .replaceFirst('weather_', '');
+
+      final hasData = state.newsList.any((i) => i.id == incidentId);
+      if (!hasData) continue;
+
       if (!_markerControllers.containsKey(markerId)) {
         final controller = ciw.CustomInfoWindowController();
         _controller.future.then((ctrl) {
@@ -1187,11 +1215,13 @@ class _MapPageContentState extends State<_MapPageContent>
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 8,
+                  spreadRadius: 1,
                   offset: const Offset(0, 2),
                 )
               ],
+              border: Border.all(color: Colors.white, width: 2),
             ),
             child: Container(
               padding: const EdgeInsets.all(0),

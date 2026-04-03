@@ -42,7 +42,7 @@ class MapViewWidget extends StatefulWidget {
 }
 
 class _MapViewWidgetState extends State<MapViewWidget> {
-  Circle? _pulseCircle;
+  List<Circle> _pulseCircles = [];
   double _currentZoom = 16.0;
 
   @override
@@ -61,41 +61,69 @@ class _MapViewWidgetState extends State<MapViewWidget> {
   void _updatePulseCircle() {
     if (!mounted) return;
     final val = Curves.easeOutQuad.transform(widget.pulseController.value);
+    final opacity = 1.0 - val;
+
+    List<Circle> newCircles = [];
+
+    // 1. Current Location Pulse
     if (widget.state.myLocation != null && _currentZoom >= 13.0) {
       final double baseRadiusAtZoom14 = 400.0;
-      final double safeZoom = _currentZoom.roundToDouble();
-      final double scaleFactor = pow(2, 14 - safeZoom).toDouble();
+      final double scaleFactor = pow(2, 14 - _currentZoom).toDouble();
       final double dynamicRadius = baseRadiusAtZoom14 * scaleFactor;
       final double radius = dynamicRadius * (1.0 + val * 0.5);
-      final opacity = 1.0 - val;
 
-      setState(() {
-        _pulseCircle = Circle(
+      newCircles.add(
+        Circle(
           circleId: const CircleId('my_location_pulse'),
           center: widget.state.myLocation!,
           radius: radius,
-          fillColor: const Color.fromARGB(255, 247, 70, 70)
-              .withOpacity(opacity * 0.5),
-          strokeColor:
-              const Color.fromARGB(255, 255, 84, 84).withOpacity(opacity),
+          fillColor: const Color(0xFFFF5A5F).withOpacity(opacity * 0.3),
+          strokeColor: const Color(0xFFFF5A5F).withOpacity(opacity * 0.5),
           strokeWidth: 1,
+          zIndex: 1,
+        ),
+      );
+    }
+
+    // 2. Animated Markers Pulse (Alerts & News)
+    if (_currentZoom >= 11.0) {
+      final double baseMarkerRadius = 150.0;
+      final double scaleFactor = pow(2, 14 - _currentZoom).toDouble();
+      final double markerRadius = baseMarkerRadius * scaleFactor * (1.0 + val * 0.3);
+
+      final animatedMarkers = widget.state.markers
+          .where((m) =>
+              m.markerId.value.startsWith('alert_') ||
+              m.markerId.value.startsWith('news_'))
+          .toList();
+
+      for (var marker in animatedMarkers) {
+        final isNews = marker.markerId.value.startsWith('news_');
+        final color = isNews ? const Color(0xFFFFB400) : const Color(0xFFFF5A5F);
+
+        newCircles.add(
+          Circle(
+            circleId: CircleId('pulse_${marker.markerId.value}'),
+            center: marker.position,
+            radius: markerRadius,
+            fillColor: color.withOpacity(opacity * 0.2),
+            strokeColor: color.withOpacity(opacity * 0.4),
+            strokeWidth: 1,
+            zIndex: 1,
+          ),
         );
-      });
-    } else {
-      if (_pulseCircle != null) {
-        setState(() {
-          _pulseCircle = null;
-        });
       }
     }
+
+    setState(() {
+      _pulseCircles = newCircles;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     Set<Circle> allCircles = Set.from(widget.state.circles);
-    if (_pulseCircle != null) {
-      allCircles.add(_pulseCircle!);
-    }
+    allCircles.addAll(_pulseCircles);
 
     return GoogleMap(
       key: widget.mapGlobalKey,
@@ -109,7 +137,7 @@ class _MapViewWidgetState extends State<MapViewWidget> {
       polylines: widget.state.polylines,
       polygons: widget.state.polygons,
       circles: allCircles,
-      myLocationEnabled: true,
+      myLocationEnabled: false, // Prevents blue dot overlap with avatar
       myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
       mapToolbarEnabled: false,

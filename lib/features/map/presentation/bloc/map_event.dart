@@ -191,3 +191,7 @@ class SetDraggingEvent extends MapEvent {
   @override
   List<Object> get props => [isDragging];
 }
+
+class ToggleAnimatedMarkersEvent extends MapEvent {
+  const ToggleAnimatedMarkersEvent();
+}

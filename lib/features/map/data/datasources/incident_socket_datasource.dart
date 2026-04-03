@@ -61,6 +61,12 @@ class IncidentSocketDataSource {
     _client.emit(SocketEvents.incidentCreate, data);
   }
 
+  void joinNewsRoom() {
+    _client.emit(SocketEvents.joinNewsAll);
+    debugPrint(
+        ":::: Joined Global News Room :::: event: ${SocketEvents.joinNewsAll}");
+  }
+
   void dispose() {
     _client.off(SocketEvents.incidentNew);
     _client.off(SocketEvents.incidentUpdated);

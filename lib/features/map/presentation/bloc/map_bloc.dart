@@ -56,6 +56,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<SetDestinationSelectionModeEvent>(_onSetDestinationSelectionMode);
     on<ClearRouteEvent>(_onClearRoute);
     on<SetDraggingEvent>(_onSetDragging);
+    on<ToggleAnimatedMarkersEvent>(_onToggleAnimatedMarkers);
 
     _initSocket();
   }
@@ -66,9 +67,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final NewsRepository newsRepository;
   final MarkerService markerService;
   final SharedPreferences sharedPreferences;
+  bool _isReadyForBursts = false;
 
   static const int kContentMarkerSize = 120;
-  static const int kIncidentMarkerSize = 50;
+  static const int kIncidentMarkerSize = 160; // Restored to 160px as per old code
+
+  BitmapDescriptor? _meMarkerIcon;
 
   void _onToggleGetDirectionCard(
     ToggleGetDirectionCardEvent event,
@@ -93,6 +97,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     incidentSocketDataSource.onIncidentCreated = (data) {
       add(OnIncidentNewEvent(data));
     };
+
+    // CRITICAL: Start the listeners on the socket client
+    incidentSocketDataSource.initializeListeners();
+    
+    // Join the global news/incident broadcast room
+    incidentSocketDataSource.joinNewsRoom();
   }
 
   Future<void> _onIncidentNew(
@@ -102,6 +112,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     try {
       final incident = Incident.fromJson(event.data);
       final markerId = _getMarkerId(incident);
+      
       if (state.markers.any((m) => m.markerId.value == markerId)) {
         return;
       }
@@ -124,20 +135,33 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         markerId: MarkerId(markerId),
         position: incident.position,
         icon: icon,
-        alpha: 0.0,
+        alpha: 0.0, // Invisible: only use animated overlay
         onTap: () {
           add(SetSelectedIncidentEvent(incident));
         },
       );
 
+      final bool isRecent = _isIncidentRecent(incident);
+
+      final updatedMarkers = state.markers.where((m) => m.markerId.value != markerId).toSet();
+      updatedMarkers.add(marker);
+
+      final updatedNewsList = List<Incident>.from(state.newsList);
+      if (!updatedNewsList.any((i) => i.id == incident.id)) {
+        updatedNewsList.add(incident);
+      }
+
       emit(state.copyWith(
-        markers: {...state.markers, marker},
-        newlyCreatedIncident: incident,
+        markers: _appendMeMarker(updatedMarkers),
+        newsList: updatedNewsList,
+        newlyCreatedIncident: _isReadyForBursts && isRecent ? incident : null,
       ));
 
-      await Future.delayed(const Duration(milliseconds: 100));
-      if (!emit.isDone) {
-        emit(state.copyWith(clearNewlyCreatedIncident: true));
+      if (_isReadyForBursts && isRecent) {
+        await Future.delayed(const Duration(milliseconds: 100));
+        if (!emit.isDone) {
+          emit(state.copyWith(clearNewlyCreatedIncident: true));
+        }
       }
     } catch (e) {
       debugPrint("Error handling new incident: $e");
@@ -180,8 +204,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           state.markers.where((m) => m.markerId.value != markerId).toSet();
       updatedMarkers.add(marker);
 
+      final updatedNewsList = List<Incident>.from(state.newsList)
+          .where((i) => i.id != incident.id)
+          .toList();
+      updatedNewsList.add(incident);
+
       emit(state.copyWith(
-        markers: updatedMarkers,
+        markers: _appendMeMarker(updatedMarkers),
+        newsList: updatedNewsList,
       ));
     } catch (e) {
       debugPrint("Error handling updated incident: $e");
@@ -254,30 +284,39 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         await Future.delayed(const Duration(milliseconds: 100));
         add(FetchNewsEvent(
             lat: location.latitude, lng: location.longitude, km: 10));
-        String avatarImage = sharedPreferences.getString(SharedPreferencesKeys.avatarKey) ?? '';
+        String avatarImage =
+            sharedPreferences.getString(SharedPreferencesKeys.avatarKey) ?? '';
+        String profileImage = sharedPreferences
+                .getString(SharedPreferencesKeys.profileImageKey) ??
+            '';
+        String avatarId =
+            sharedPreferences.getString(SharedPreferencesKeys.avatarIdKey) ??
+                '';
+
         if (avatarImage.isEmpty) {
-          avatarImage = sharedPreferences.getString(SharedPreferencesKeys.profileImageKey) ?? '';
+          avatarImage = profileImage;
         }
         if (avatarImage.isEmpty) {
-          avatarImage = sharedPreferences.getString(SharedPreferencesKeys.avatarIdKey) ?? '';
+          avatarImage = avatarId;
         }
 
-        BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
-        if (avatarImage.isNotEmpty) {
-          icon = await markerService.createAvatarMarker(avatarImage,
+        if (avatarImage.isNotEmpty && avatarImage.startsWith('http')) {
+          _meMarkerIcon = await markerService.createAvatarMarker(avatarImage,
               size: const Size(120, 120));
         } else {
-          icon = await markerService.createCircularAssetMarker(
-              "assets/markers/avatar.png",
-              size: const Size(120, 120));
+          // Use our robust service instead of standard asset loading
+          _meMarkerIcon = await markerService.createCircularAssetMarker(
+            "assets/markers/avatar.png",
+            size: const Size(120, 120),
+          );
         }
 
         final meMarker = Marker(
           markerId: const MarkerId('my_custom_location'),
           position: location,
-          icon: icon,
+          icon: _meMarkerIcon ?? BitmapDescriptor.defaultMarker,
           anchor: const Offset(0.5, 0.5),
-          zIndex: 100,
+          zIndex: 1000, // Ensure it's always on top
         );
 
         // Fetch address in background (non-blocking for camera)
@@ -290,12 +329,29 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         );
         emit(state.copyWith(
           myLocationAddress: address,
-          markers: {...state.markers, meMarker},
+          markers: _appendMeMarker(state.markers, forceMarker: meMarker),
         ));
 
         await _fetchInitialIncidents(emit);
+        // After initial load, wait a moment before enabling bursts to avoid startup spam
+        Future.delayed(const Duration(seconds: 3), () {
+          _isReadyForBursts = true;
+        });
       },
     );
+  }
+
+  bool _isIncidentRecent(Incident incident) {
+    if (incident.time == null)
+      return true; // Default to showing if no time provided
+    try {
+      final incidentTime = DateTime.parse(incident.time!);
+      final now = DateTime.now();
+      // Only burst if created in the last 30 seconds
+      return now.difference(incidentTime).inSeconds < 30;
+    } catch (e) {
+      return true; // Fallback to showing if parsing fails
+    }
   }
 
   Future<void> _onGetRoute(
@@ -494,7 +550,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               emit(state.copyWith(
                 isLoadingNews: i + batchSize >= incidents.length ? false : true,
                 newsList: incidents,
-                markers: {...state.markers, ...newMarkers},
+                markers: _appendMeMarker({...state.markers, ...newMarkers}),
               ));
             }
           }
@@ -503,7 +559,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           emit(state.copyWith(
             isLoadingNews: false,
             newsList: incidents,
-            markers: {...state.markers, ...newMarkers},
+            markers: _appendMeMarker({...state.markers, ...newMarkers}),
           ));
         } catch (e, stack) {
           debugPrint("Error parsing news for map: $e");
@@ -825,11 +881,68 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         }).toList();
 
         final List<Marker> newMarkersList = await Future.wait(markerFutures);
-        final Set<Marker> newMarkers = newMarkersList.toSet();
-        emit(state.copyWith(
-          markers: {...state.markers, ...newMarkers},
-        ));
+        final Set<Marker> newsMarkers = newMarkersList.toSet();
+        
+        if (!emit.isDone) {
+          emit(state.copyWith(
+            markers: _appendMeMarker({...state.markers, ...newsMarkers}),
+          ));
+        }
       },
     );
+  }
+
+  Set<Marker> _appendMeMarker(Set<Marker> markers, {Marker? forceMarker}) {
+    // 1. Find the "Me" marker in the new set, or the provided forced marker
+    Marker me = forceMarker ??
+        markers.firstWhere(
+          (m) => m.markerId.value == 'my_custom_location',
+          orElse: () => state.markers.firstWhere(
+            (m) => m.markerId.value == 'my_custom_location',
+            orElse: () {
+              if (state.myLocation != null && _meMarkerIcon != null) {
+                return Marker(
+                  markerId: const MarkerId('my_custom_location'),
+                  position: state.myLocation!,
+                  icon: _meMarkerIcon!,
+                  anchor: const Offset(0.5, 0.5),
+                  zIndex: 1000,
+                );
+              }
+              return const Marker(markerId: MarkerId('none'), visible: false);
+            },
+          ),
+        );
+
+    // 2. Remove any existing "my_custom_location" markers to avoid duplicates
+    final filtered =
+        markers.where((m) => m.markerId.value != 'my_custom_location').toSet();
+
+    // 3. Add the "Me" marker back if it's valid
+    if (me.markerId.value != 'none') {
+      filtered.add(me);
+    }
+
+    return filtered;
+  }
+
+  void _onToggleAnimatedMarkers(
+      ToggleAnimatedMarkersEvent event, Emitter<MapState> emit) {
+    final bool newValue = !state.showAnimatedMarkers;
+
+    // We must update all existing markers to flip their alpha
+    final updatedMarkers = state.markers.map((m) {
+      if (m.markerId.value.startsWith('alert_') ||
+          m.markerId.value.startsWith('news_') ||
+          m.markerId.value.startsWith('weather_')) {
+        return m.copyWith(alphaParam: newValue ? 0.0 : 1.0);
+      }
+      return m;
+    }).toSet();
+
+    emit(state.copyWith(
+      showAnimatedMarkers: newValue,
+      markers: updatedMarkers,
+    ));
   }
 }

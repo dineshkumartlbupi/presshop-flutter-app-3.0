@@ -830,7 +830,7 @@ void commonErrorDialogDialog(
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD04),
                                   child: Image.asset(
-                                    "${commonImagePath}dog.png",
+                                    "assets/rabbits/update_rabbit.png",
                                     height: size.width * AppDimensions.numD25,
                                     width: size.width * AppDimensions.numD35,
                                     fit: BoxFit.cover,
