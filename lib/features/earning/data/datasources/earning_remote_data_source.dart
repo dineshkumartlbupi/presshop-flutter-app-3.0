@@ -22,7 +22,7 @@ class EarningRemoteDataSourceImpl implements EarningRemoteDataSource {
         queryParameters: {"year": year, "month": month},
       );
       final data = response.data;
-      return EarningProfileDataModel.fromJson(data);
+      return EarningProfileDataModel.fromJson(data['data'] ?? {});
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }
