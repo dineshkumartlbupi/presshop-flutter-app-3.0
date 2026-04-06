@@ -55,7 +55,11 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
-    _mapBloc = sl<MapBloc>()..add(GetCurrentLocationEvent());
+    _mapBloc = sl<MapBloc>();
+    // Only fetch if we don't have a location yet (i.e., first-time initialization)
+    if (_mapBloc.state.myLocation == null) {
+      _mapBloc.add(const GetCurrentLocationEvent());
+    }
   }
 
   @override

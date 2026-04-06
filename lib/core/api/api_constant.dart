@@ -192,7 +192,7 @@ class Chat {
   final String sendChatInitToAdmin = "hopper/sendChatInitiatedMailToAdmin";
   final String sendChatMessage = "hopper/send/chat/message";
   final String allAlerts = "hopper/getHopperAlertList?";
-  final String getAlertIncidents = "hopper/getAlertIncidentss";
+  final String getAlertIncidents = "hopper/getAlertIncidents";
 }
 
 class Misc {

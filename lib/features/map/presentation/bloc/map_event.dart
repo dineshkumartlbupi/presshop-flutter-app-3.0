@@ -62,6 +62,22 @@ class FetchNewsEvent extends MapEvent {
   List<Object> get props => [lat, lng, km, category, isFeedOnly];
 }
 
+class FetchIncidentsEvent extends MapEvent {
+  const FetchIncidentsEvent({
+    required this.lat,
+    required this.lng,
+    required this.km,
+    this.category = "all",
+  });
+  final double lat;
+  final double lng;
+  final double km;
+  final String category;
+
+  @override
+  List<Object> get props => [lat, lng, km, category];
+}
+
 class SetSearchedLocationEvent extends MapEvent {
   const SetSearchedLocationEvent(this.location);
   final LatLng location;

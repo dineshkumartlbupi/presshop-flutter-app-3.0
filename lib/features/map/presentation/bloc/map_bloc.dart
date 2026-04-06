@@ -38,6 +38,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<OnIncidentNewEvent>(_onIncidentNew);
     on<OnIncidentUpdatedEvent>(_onIncidentUpdated);
     on<FetchNewsEvent>(_onFetchNews);
+    on<FetchIncidentsEvent>(_onFetchIncidents);
     on<SetSearchedLocationEvent>(_onSetSearchedLocation);
     on<SetSelectedPositionEvent>(_onSetSelectedPosition);
     on<ToggleAlertPanelEvent>(_onToggleAlertPanel);
@@ -331,8 +332,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           myLocationAddress: address,
           markers: _appendMeMarker(state.markers, forceMarker: meMarker),
         ));
+        
+        add(FetchIncidentsEvent(
+          lat: location.latitude,
+          lng: location.longitude,
+          km: 10,
+        ));
 
-        await _fetchInitialIncidents(emit);
         // After initial load, wait a moment before enabling bursts to avoid startup spam
         Future.delayed(const Duration(seconds: 3), () {
           _isReadyForBursts = true;
@@ -631,6 +637,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         km: _convertDistanceToKm(event.distance),
         category: event.category ?? 'all',
       ));
+      add(FetchIncidentsEvent(
+        lat: state.searchedLocation?.latitude ?? state.myLocation!.latitude,
+        lng: state.searchedLocation?.longitude ?? state.myLocation!.longitude,
+        km: _convertDistanceToKm(event.distance),
+        category: event.category ?? 'all',
+      ));
     }
   }
 
@@ -836,14 +848,22 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     emit(state.copyWith(isDragging: event.isDragging));
   }
 
-  Future<void> _fetchInitialIncidents(Emitter<MapState> emit) async {
-    final result = await repository.getIncidents();
+  Future<void> _onFetchIncidents(
+    FetchIncidentsEvent event,
+    Emitter<MapState> emit,
+  ) async {
+    final result = await repository.getIncidents(
+      lat: event.lat,
+      lng: event.lng,
+      km: event.km,
+      category: event.category,
+    );
     await result.fold(
       (failure) async {
-        debugPrint("Failed to fetch initial incidents: ${failure.message}");
+        debugPrint("Failed to fetch incidents: ${failure.message}");
       },
       (incidents) async {
-        debugPrint("Fetched ${incidents.length} initial incidents");
+        debugPrint("Fetched ${incidents.length} incidents");
 
         final List<Future<Marker>> markerFutures =
             incidents.map((incident) async {
@@ -882,7 +902,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
         final List<Marker> newMarkersList = await Future.wait(markerFutures);
         final Set<Marker> newsMarkers = newMarkersList.toSet();
-        
+
         if (!emit.isDone) {
           emit(state.copyWith(
             markers: _appendMeMarker({...state.markers, ...newsMarkers}),

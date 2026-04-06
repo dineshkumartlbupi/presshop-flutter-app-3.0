@@ -16,7 +16,12 @@ abstract class MapRemoteDataSource {
   Future<List<Map<String, dynamic>>> getPlaceSuggestions(String input);
   Future<LatLng> getPlaceDetails(String placeId);
   Future<LatLng> getCurrentLocation();
-  Future<List<Incident>> getIncidents();
+  Future<List<Incident>> getIncidents({
+    double? lat,
+    double? lng,
+    double? km,
+    String? category,
+  });
   Future<void> reportIncident(Map<String, dynamic> data);
   Future<String> getAddressFromCoordinates(LatLng position);
 }
@@ -165,11 +170,27 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
   }
 
   @override
-  Future<List<Incident>> getIncidents() async {
+  Future<List<Incident>> getIncidents({
+    double? lat,
+    double? lng,
+    double? km,
+    String? category,
+  }) async {
+    final Map<String, dynamic> body = {};
+    if (lat != null && lng != null) {
+      body['coordinates'] = "$lat,$lng";
+    }
+    if (km != null) {
+      body['km'] = km;
+    }
+    if (category != null) {
+      body['category'] = category;
+    }
+
     try {
       final response = await apiClient.get(
-        ApiConstantsNew
-            .chat.getAlertIncidents, // Use Chat class where we added it
+        ApiConstantsNew.chat.getAlertIncidents,
+        queryParameters: body,
       );
 
       return await compute(_parseIncidents, response.data);

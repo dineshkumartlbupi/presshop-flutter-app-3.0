@@ -28,6 +28,8 @@ import 'package:presshop/features/task/presentation/bloc/task_event.dart'
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_state.dart';
+import 'package:presshop/features/map/presentation/bloc/map_bloc.dart';
+import 'package:presshop/features/map/presentation/bloc/map_event.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/features/dashboard/presentation/widgets/student_beans_dialog.dart';
@@ -153,8 +155,8 @@ class DashboardState extends State<Dashboard>
     };
     _dashboardBloc.add(FetchRoomIdEvent(roomParams));
 
-    currentIndex = 2;
-    _loadedIndices.add(currentIndex);
+    _loadedIndices.addAll([0, 1, 2, 3, 4]);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context
           .read<ContentBloc>()
@@ -165,6 +167,9 @@ class DashboardState extends State<Dashboard>
 
       context.read<TaskBloc>().add(const FetchAllTasksEvent(offset: 0));
       context.read<TaskBloc>().add(const FetchLocalTasksEvent());
+      
+      // Start fetching Map location and markers immediately in the background
+      context.read<MapBloc>().add(const GetCurrentLocationEvent());
     });
 
     if (widget.taskStatus != 'rejected') {
