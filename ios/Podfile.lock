@@ -1200,14 +1200,14 @@ PODS:
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/UserDefaults (~> 8.0)
     - PromisesObjC (~> 2.4)
-  - appsflyer_sdk (6.17.7):
-    - appsflyer_sdk/Core (= 6.17.7)
-  - appsflyer_sdk/Core (6.17.7):
-    - AppsFlyerFramework (= 6.17.7)
+  - appsflyer_sdk (6.17.9):
+    - appsflyer_sdk/Core (= 6.17.9)
+  - appsflyer_sdk/Core (6.17.9):
+    - AppsFlyerFramework (= 6.17.9)
     - Flutter
-  - AppsFlyerFramework (6.17.7):
-    - AppsFlyerFramework/Main (= 6.17.7)
-  - AppsFlyerFramework/Main (6.17.7)
+  - AppsFlyerFramework (6.17.9):
+    - AppsFlyerFramework/Main (= 6.17.9)
+  - AppsFlyerFramework/Main (6.17.9)
   - audio_waveforms (0.0.1):
     - Flutter
   - audioplayers_darwin (0.0.1):
@@ -1919,8 +1919,8 @@ SPEC CHECKSUMS:
   app_links: 3dbc685f76b1693c66a6d9dd1e9ab6f73d97dc0a
   AppAuth: d4f13a8fe0baf391b2108511793e4b479691fb73
   AppCheckCore: cc8fd0a3a230ddd401f326489c99990b013f0c4f
-  appsflyer_sdk: 01d0cd834fe2fffd7f2372ab38690f7483587720
-  AppsFlyerFramework: ae7caf1688348f2d7a742037bd4fc6966d39d362
+  appsflyer_sdk: df7fed59a464949334c9daf4decbdad221ac32d1
+  AppsFlyerFramework: 4f9a8237d40e9093941aef760cd77d606238aedd
   audio_waveforms: a6dde7fe7c0ea05f06ffbdb0f7c1b2b2ba6cedcf
   audioplayers_darwin: 4f9ca89d92d3d21cec7ec580e78ca888e5fb68bd
   BoringSSL-GRPC: dded2a44897e45f28f08ae87a55ee4bcd19bc508

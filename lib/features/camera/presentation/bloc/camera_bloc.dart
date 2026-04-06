@@ -119,12 +119,12 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         ..sampleRate = 44100
         ..bitRate = 48000;
 
-      debugPrint("🚀 CameraBloc: Checking permissions...");
-
       // Parallel permission check
-      final permissions = await [
+      final Map<Permission, PermissionStatus> permissions = await [
         Permission.camera,
         Permission.microphone,
+        if (Platform.isAndroid) Permission.photos,
+        if (Platform.isAndroid) Permission.storage,
       ].request();
 
       final cameraStatus = permissions[Permission.camera]?.isGranted ?? false;
@@ -144,6 +144,16 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
               recorderController: recorderController));
           _isInitializing = false;
           return;
+        }
+      }
+
+      // Pre-authorize PhotoManager in background
+      if (permissions[Permission.photos]?.isGranted == true ||
+          permissions[Permission.storage]?.isGranted == true) {
+        try {
+          await PhotoManager.requestPermissionExtend();
+        } catch (e) {
+          debugPrint("PhotoManager pre-auth error (ignored): $e");
         }
       }
 
@@ -734,25 +744,15 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   Future<void> _onLoadGalleryMedia(
       LoadGalleryMediaEvent event, Emitter<CameraState> emit) async {
     try {
-      // Use the safe request lock even for gallery to avoid concurrent PlatformException
-      // Note: We don't necessarily need to request a specific permission via LocationService
-      // if we just want to wait for other requests to finish.
-      // But PhotoManager has its own logic. Let's just use it safely.
-      final bool status =
-          await _locationService.requestPermission(Permission.photos);
-
-      if (status) {
-        // We still check PhotoManager for actual authorization state if needed,
-        // but requestPermission already handled the UX and settings redirection.
-        final PermissionState ps = await PhotoManager.requestPermissionExtend();
-        if (ps.isAuth) {
-          List<AssetPathEntity> albums =
-              await PhotoManager.getAssetPathList(onlyAll: true);
-          if (albums.isNotEmpty) {
-            List<AssetEntity> media =
-                await albums[0].getAssetListPaged(page: 0, size: 1);
-            emit(state.copyWith(galleryMedia: media));
-          }
+      // Use PhotoManager source of truth for gallery access after initial checks
+      final PermissionState ps = await PhotoManager.requestPermissionExtend();
+      if (ps.isAuth || ps.hasAccess) {
+        List<AssetPathEntity> albums =
+            await PhotoManager.getAssetPathList(onlyAll: true);
+        if (albums.isNotEmpty) {
+          List<AssetEntity> media =
+              await albums[0].getAssetListPaged(page: 0, size: 1);
+          emit(state.copyWith(galleryMedia: media));
         }
       }
     } catch (e) {

@@ -30,11 +30,11 @@ import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
 
 import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast_chat/widgets/task_chat_bubbles.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast_chat/widgets/chat_action_bubbles.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast_chat/widgets/rating_review_bubble.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast_chat/widgets/task_chat_header.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast_chat/widgets/loading_dialog_content.dart';
+import 'package:presshop/features/task/presentation/widgets/broadcast_chat/widgets/task_chat_bubbles.dart';
+import 'package:presshop/features/task/presentation/widgets/broadcast_chat/widgets/chat_action_bubbles.dart';
+import 'package:presshop/features/task/presentation/widgets/broadcast_chat/widgets/rating_review_bubble.dart';
+import 'package:presshop/features/task/presentation/widgets/broadcast_chat/widgets/task_chat_header.dart';
+import 'package:presshop/features/task/presentation/widgets/broadcast_chat/widgets/loading_dialog_content.dart';
 
 class BroadCastChatTaskScreen extends StatefulWidget {
   const BroadCastChatTaskScreen({

@@ -1,7 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Incident {
-
   Incident({
     required this.id,
     required this.markerType,
@@ -91,7 +90,9 @@ class Incident {
       markerType: json['markerType'] ?? 'icon',
       type: json['type'] ?? 'accident',
       position: LatLng(lat, lng),
-      address: json['address'] ?? json['location'],
+      address: json['address'] is String
+          ? json['address'] as String
+          : (json['location'] is String ? json['location'] as String : null),
       time: (json['createdAt'] ?? json['time'] ?? json['date'])?.toString(),
       image: json['image'],
       title: json['title'],
@@ -222,7 +223,6 @@ class Incident {
 }
 
 class DangerZone {
-
   DangerZone({
     required this.id,
     required this.name,
@@ -238,7 +238,6 @@ class DangerZone {
 }
 
 class Listing {
-
   Listing({
     required this.id,
     required this.title,
@@ -254,7 +253,6 @@ class Listing {
 }
 
 class LocationModel {
-
   LocationModel({this.currentPosition, this.targetPosition, this.distance});
   LatLng? currentPosition;
   LatLng? targetPosition;

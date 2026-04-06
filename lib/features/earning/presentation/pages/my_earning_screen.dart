@@ -1,29 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/widgets/common_widgets_new.dart';
-// import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/earning/presentation/bloc/earning_bloc.dart';
 import 'package:presshop/features/earning/presentation/bloc/earning_event.dart';
 import 'package:presshop/features/earning/presentation/bloc/earning_state.dart';
 import '../../domain/entities/earning_transaction.dart';
-
 import 'package:presshop/features/chat/presentation/pages/full_video_view.dart';
 import 'tansaction_detail_screen.dart';
 import 'commission_widget.dart';
 import 'package:presshop/main.dart';
-
-// import '../../../../features/account_settings/presentation/pages/contact_us_screen.dart';
-// import '../../../../features/publish/presentation/pages/TutorialsScreen.dart';
-// import '../../../../core/widgets/video_player_screen.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
 
 class MyEarningScreen extends StatefulWidget {
   const MyEarningScreen(
@@ -67,12 +56,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
     });
 
     initializeFilter();
-
     // Initial Data Fetch
     final now = DateTime.now();
     fromDate = now.year.toString();
     toDate = now.month.toString().padLeft(2, '0');
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final bloc = context.read<EarningBloc>();
       bloc.add(UpdateDateEvent(fromDate: fromDate, toDate: toDate));
@@ -1258,8 +1245,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD03),
                                   child: CachedNetworkImage(
-                                    imageUrl: getMediaImageUrl(
-                                        item.contentDataList.first.media),
+                                    imageUrl:
+                                        getMediaImageUrl(item.hopperAvatar),
                                     height: size.width * AppDimensions.numD11,
                                     width: size.width * AppDimensions.numD12,
                                     fit: BoxFit.cover,

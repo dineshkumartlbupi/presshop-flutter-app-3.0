@@ -13,7 +13,7 @@ class DeeplinkService {
   ) async {
     try {
       String path = isAppInstallCallback
-          ? ApiConstantsNew.misc.onAppInstallCallback
+          ? ApiConstantsNew.misc.onDeeplinkCallback
           : ApiConstantsNew.misc.onDeeplinkCallback;
 
       Response response = await sl<ApiClient>().post(

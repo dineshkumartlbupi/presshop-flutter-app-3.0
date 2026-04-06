@@ -141,7 +141,7 @@ class UserProfileModel extends Equatable {
   final bool isDeleted;
   final double latitude;
   final double longitude;
-  final int totalEarnings;
+  final dynamic totalEarnings;
   final int totalHopperArmy;
   final LocationModel location;
   final PreferredCurrencySignModel preferredCurrencySign;

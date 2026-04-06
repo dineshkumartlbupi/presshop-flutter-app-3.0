@@ -56,7 +56,10 @@ class FeedScreenState extends State<FeedScreen>
     debugPrint("class ====> $runtimeType");
     super.initState();
     _feedBloc = sl<FeedBloc>();
-    _feedBloc.add(const FetchFeeds(isRefresh: true));
+    _feedBloc.add(const FetchFeeds(
+      isRefresh: true,
+      newFilters: {"paid_status": "paid"},
+    ));
     initializeFilter();
     if (widget.onShowFilter != null) {
       widget.onShowFilter!(showSortedBottomSheet);
@@ -225,7 +228,10 @@ class FeedScreenState extends State<FeedScreen>
   }
 
   void _onRefresh() {
-    _feedBloc.add(const FetchFeeds(isRefresh: true));
+    _feedBloc.add(const FetchFeeds(
+      isRefresh: true,
+      newFilters: {"paid_status": "paid"},
+    ));
   }
 
   void _onLoading() {
@@ -277,7 +283,7 @@ class FeedScreenState extends State<FeedScreen>
       FilterModel(
           name: AppStrings.paymentsReceivedText,
           icon: "ic_payment_reviced.png",
-          isSelected: false),
+          isSelected: true),
       FilterModel(
           name: AppStrings.pendingPaymentsText,
           icon: "ic_pending.png",

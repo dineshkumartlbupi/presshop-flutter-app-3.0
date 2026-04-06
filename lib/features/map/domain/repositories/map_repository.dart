@@ -11,7 +11,12 @@ abstract class MapRepository {
       String input);
   Future<Either<Failure, LatLng>> getPlaceDetails(String placeId);
   Future<Either<Failure, LatLng>> getCurrentLocation();
-  Future<Either<Failure, List<Incident>>> getIncidents();
+  Future<Either<Failure, List<Incident>>> getIncidents({
+    double? lat,
+    double? lng,
+    double? km,
+    String? category,
+  });
   Future<Either<Failure, void>> reportIncident(Map<String, dynamic> data);
   Future<Either<Failure, String>> getAddressFromCoordinates(LatLng position);
 }

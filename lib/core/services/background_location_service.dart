@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:presshop/features/media/domain/services/background_upload_service.dart';
 import 'package:presshop/core/services/app_initialization_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 // URL from old project to maintain API compatibility
 
 /// =============================================================
@@ -22,7 +23,9 @@ import 'package:presshop/core/services/app_initialization_service.dart';
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
   DartPluginRegistrant.ensureInitialized();
-
+  if (service is AndroidServiceInstance) {
+    service.setAsForegroundService();
+  }
   final prefs = await SharedPreferences.getInstance();
   final notifications = FlutterLocalNotificationsPlugin();
 
@@ -62,7 +65,7 @@ void onStart(ServiceInstance service) async {
     await AppInitializationService.initializeHive();
     await BackgroundUploadService().initialize();
     await BackgroundUploadService().startOrResumeUpload();
-    
+
     service.on('startUpload').listen((_) {
       BackgroundUploadService().startOrResumeUpload();
     });
@@ -359,7 +362,8 @@ void _startLocationTracking({
 /// =============================================================
 class BackgroundLocationService {
   static final FlutterBackgroundService service = FlutterBackgroundService();
-  static final ValueNotifier<bool> isRunningNotifier = ValueNotifier<bool>(false);
+  static final ValueNotifier<bool> isRunningNotifier =
+      ValueNotifier<bool>(false);
 
   static Future<void> syncRunningStatus() async {
     isRunningNotifier.value = await service.isRunning();
@@ -408,11 +412,12 @@ class BackgroundLocationService {
       }
     }
 
-    LocationPermission permission = await Geolocator.checkPermission();
+    if (Platform.isAndroid) {
+      await Permission.notification.request();
+    }
 
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      // permission = await Geolocator.requestPermission();
+    if (await Permission.location.request().isGranted) {
+      await Permission.locationAlways.request();
     }
 
     if (Platform.isAndroid) {
@@ -466,7 +471,8 @@ class BackgroundLocationService {
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(SharedPreferencesKeys.isTaskGrabbingActiveKey, false);
-      await prefs.setBool(SharedPreferencesKeys.manuallyStoppedServiceKey, true);
+      await prefs.setBool(
+          SharedPreferencesKeys.manuallyStoppedServiceKey, true);
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 // import 'package:contacts_service/contacts_service.dart';
@@ -8,9 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart' as PH;
 import 'package:permission_handler/permission_handler.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
@@ -18,13 +17,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/main.dart';
 import 'package:fast_contacts/fast_contacts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
+import 'package:http/http.dart' as http;
 
 // ignore: must_be_immutable
 class BroadCastScreen extends StatefulWidget {
@@ -46,9 +45,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
   late Size size;
   LatLng? _latLng;
   String _hopperAcceptedCount = "";
-  final String _distance = "";
-  final String _drivingEstTime = "";
-  final String _walkingEstTime = "";
+  String _distance = "";
+  String _drivingEstTime = "";
+  String _walkingEstTime = "";
 
   bool _isAccepted = false;
   bool _hasSubmittedAction = false; // Guard to prevent premature navigation
@@ -208,6 +207,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
             acceptedBy: assignedEntity.task.acceptedHoppers,
             specialReq: assignedEntity.task.specialRequirements,
             preferences: assignedEntity.task.preferences,
+            activeHoppersCount: assignedEntity.task.activeHoppersCount,
+            activeHoppersLocations: assignedEntity.task.activeHoppersLocations,
           );
           if (taskDetail != null) {
             _updateGoogleMap(
@@ -218,6 +219,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
             context
                 .read<TaskBloc>()
                 .add(GetHopperAcceptedCountEvent(taskDetail!.id));
+
+            // Load hopper avatars for markers
+            loadHopperAvatars(taskDetail!.activeHoppersLocations, setState);
 
             if (widget.autoAction != null) {
               if (widget.autoAction == 'accept') {
@@ -268,27 +272,76 @@ class _BroadCastScreenState extends State<BroadCastScreen>
         borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(size.width * AppDimensions.numD06),
             bottomRight: Radius.circular(size.width * AppDimensions.numD06)),
+
         child: GoogleMap(
-          zoomControlsEnabled: false,
-          myLocationEnabled: true,
-          myLocationButtonEnabled: false,
-          mapType: MapType.normal,
           initialCameraPosition: CameraPosition(
-            target: LatLng(taskDetail?.latitude ?? latitude,
-                taskDetail?.longitude ?? longitude),
-            zoom: 14.4746,
+            target: LatLng(
+                taskDetail?.latitude != 0.0 && taskDetail?.latitude != null
+                    ? taskDetail!.latitude
+                    : 51.520412,
+                taskDetail?.longitude != 0.0 && taskDetail?.longitude != null
+                    ? taskDetail!.longitude
+                    : -0.158022),
+            zoom: 12,
           ),
-          onMapCreated: (controller) {
-            if (!_controller.isCompleted) {
-              _controller.complete(controller);
-            }
-            if (taskDetail != null) {
-              _updateGoogleMap(
-                  LatLng(taskDetail!.latitude, taskDetail!.longitude));
-            }
+          zoomControlsEnabled: false,
+          myLocationButtonEnabled: false,
+          mapToolbarEnabled: false,
+          scrollGesturesEnabled: false,
+          zoomGesturesEnabled: false,
+          rotateGesturesEnabled: false,
+          tiltGesturesEnabled: false,
+          markers: {
+            if (mapIcon != null)
+              Marker(
+                markerId: const MarkerId("task_location"),
+                position: LatLng(
+                    taskDetail?.latitude != 0.0 && taskDetail?.latitude != null
+                        ? taskDetail!.latitude
+                        : 51.520412,
+                    taskDetail?.longitude != 0.0 &&
+                            taskDetail?.longitude != null
+                        ? taskDetail!.longitude
+                        : -0.158022),
+                anchor: const Offset(0.5, 0.5),
+                zIndex: 0.0,
+                icon: mapIcon!,
+              ),
+            // if (taskDetail != null)
+            //   ...taskDetail!.activeHoppersLocations.map((hopper) {
+            //     return Marker(
+            //       markerId: MarkerId(hopper.id.isNotEmpty
+            //           ? hopper.id
+            //           : "${hopper.latitude}_${hopper.longitude}"),
+            //       position: LatLng(hopper.latitude, hopper.longitude),
+            //       anchor: const Offset(0.5, 0.5),
+            //       zIndex: 1.0,
+            //       icon: hopperAvatarIcons[hopper.avatar] ?? mapIcon!,
+            //     );
+            //   }).toSet(),
           },
-          markers: Set<Marker>.of(marker),
         ),
+        // child: GoogleMap(
+        //   zoomControlsEnabled: false,
+        //   myLocationEnabled: true,
+        //   myLocationButtonEnabled: false,
+        //   mapType: MapType.normal,
+        //   initialCameraPosition: CameraPosition(
+        //     target: LatLng(taskDetail?.latitude ?? latitude,
+        //         taskDetail?.longitude ?? longitude),
+        //     zoom: 14.4746,
+        //   ),
+        //   onMapCreated: (controller) {
+        //     if (!_controller.isCompleted) {
+        //       _controller.complete(controller);
+        //     }
+        //     if (taskDetail != null) {
+        //       _updateGoogleMap(
+        //           LatLng(taskDetail!.latitude, taskDetail!.longitude));
+        //     }
+        //   },
+        //   markers: Set<Marker>.of(marker),
+        // ),
       ),
     );
   }
@@ -571,66 +624,79 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Icon(
-                                      Icons.access_time,
+                                    Image.asset(
+                                      "${iconsPath}ic_yearly_calendar.png",
+                                      width: size.width * AppDimensions.numD035,
                                       color: Colors.black,
-                                      size: size.width * AppDimensions.numD04,
                                     ),
                                     SizedBox(
-                                      width: size.width * AppDimensions.numD01,
-                                    ),
+                                        width:
+                                            size.width * AppDimensions.numD02),
                                     Text(
-                                      AppStrings.deadlineText,
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize:
-                                              size.width * AppDimensions.numD03,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600),
+                                      dateTimeFormatter(
+                                        dateTime:
+                                            taskDetail?.createdAt.toString() ??
+                                                '',
+                                        format: "dd MMM yyyy",
+                                      ),
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize:
+                                            size.width * AppDimensions.numD03,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ],
                                 ),
                                 SizedBox(
-                                  width: size.width * AppDimensions.numD01,
+                                  height: size.height * AppDimensions.numD005,
                                 ),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: size.width * AppDimensions.numD01,
-                                        top: size.width * AppDimensions.numD01),
-                                    child: TimerCountdown(
-                                      endTime: taskDetail!.deadLine,
-                                      spacerWidth: 3,
-                                      enableDescriptions: false,
-                                      countDownFormatter:
-                                          (day, hour, min, sec) {
-                                        if (taskDetail!.deadLine
-                                                .difference(DateTime.now())
-                                                .inDays >
-                                            0) {
-                                          return "${int.parse(day)}d:${hour}h:${min}m:${sec}s";
-                                        } else {
-                                          return "${hour}h:${min}m:${sec}s";
-                                        }
-                                      },
-                                      format:
-                                          CountDownTimerFormat.customFormats,
-                                      timeTextStyle: commonTextStyle(
-                                          size: size,
-                                          fontSize:
-                                              size.width * AppDimensions.numD03,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.normal),
-                                    ) /*Text(
-                                                    "1h: 21m: 11s",
-                                                    style: commonTextStyle(
-                                                        size: size,
-                                                        fontSize: size.width * AppDimensions.numD03,
-                                                        color: Colors.black,
-                                                        fontWeight: FontWeight.normal),
-                                                  ),*/
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.access_time,
+                                      size: size.width * AppDimensions.numD035,
+                                      color: Colors.black54,
                                     ),
+                                    SizedBox(
+                                        width:
+                                            size.width * AppDimensions.numD02),
+                                    Text(
+                                      "From : ${dateTimeFormatter(dateTime: taskDetail?.createdAt ?? "", format: "hh:mm a")}",
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontSize:
+                                            size.width * AppDimensions.numD028,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: size.height * AppDimensions.numD003,
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.access_time,
+                                      size: size.width * AppDimensions.numD035,
+                                      color: Colors.black54,
+                                    ),
+                                    SizedBox(
+                                        width:
+                                            size.width * AppDimensions.numD02),
+                                    Text(
+                                      "To      : ${dateTimeFormatter(dateTime: taskDetail?.deadLine.toString() ?? '', format: "hh:mm a")}",
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontSize:
+                                            size.width * AppDimensions.numD028,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ),
@@ -930,10 +996,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         icon: mapIcon!,
                       ),
                     if (taskDetail != null)
-                      ...taskDetail!.activeHoppersLocations
-                          .where((hopper) =>
-                              hopperAvatarIcons.containsKey(hopper.avatar))
-                          .map((hopper) {
+                      ...taskDetail!.activeHoppersLocations.map((hopper) {
                         return Marker(
                           markerId: MarkerId(hopper.id.isNotEmpty
                               ? hopper.id
@@ -941,7 +1004,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                           position: LatLng(hopper.latitude, hopper.longitude),
                           anchor: const Offset(0.5, 0.5),
                           zIndex: 1.0,
-                          icon: hopperAvatarIcons[hopper.avatar]!,
+                          icon: hopperAvatarIcons[hopper.avatar] ?? mapIcon!,
                         );
                       }).toSet(),
                   },
@@ -1510,67 +1573,79 @@ class _BroadCastScreenState extends State<BroadCastScreen>
   }
 
   ///--------Apis Section------------
+  Future<void> getEstimateTime() async {
+    if (_latLng == null || taskDetail == null) return;
 
-  void getEstimateTime() {
-    debugPrint("::: Inside estimate Time Fuc ::::");
-    dynamic mapKey;
-    if (Platform.isIOS) {
-      mapKey = ApiConstantsNew.config.appleMapApiKey;
-    } else {
-      mapKey = ApiConstantsNew.config.googleMapApiKey;
+    final origin = "${_latLng!.latitude},${_latLng!.longitude}";
+    final destination = "${taskDetail!.latitude},${taskDetail!.longitude}";
+
+    final apiKey = ApiConstantsNew.config.appleMapApiKey;
+
+    final url = "https://maps.googleapis.com/maps/api/distancematrix/json"
+        "?origins=$origin"
+        "&destinations=$destination"
+        "&key=$apiKey";
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      final data = json.decode(response.body);
+
+      if (data["rows"].isNotEmpty) {
+        final element = data["rows"][0]["elements"][0];
+
+        setState(() {
+          _distance = element["distance"]["text"]; // e.g. "5.2 km"
+          _drivingEstTime = element["duration"]["text"]; // driving
+        });
+      }
+
+      // Walking time API call
+      final walkUrl = "https://maps.googleapis.com/maps/api/distancematrix/json"
+          "?origins=$origin"
+          "&destinations=$destination"
+          "&mode=walking"
+          "&key=$apiKey";
+
+      final walkResponse = await http.get(Uri.parse(walkUrl));
+      final walkData = json.decode(walkResponse.body);
+
+      if (walkData["rows"].isNotEmpty) {
+        final walkElement = walkData["rows"][0]["elements"][0];
+
+        setState(() {
+          _walkingEstTime = walkElement["duration"]["text"];
+        });
+      }
+    } catch (e) {
+      debugPrint("Distance API Error: $e");
     }
-
-    String drivingMode =
-        "https://maps.googleapis.com/maps/api/distancematrix/json?origins="
-        "${_latLng!.latitude},${_latLng!.longitude}&&destinations="
-        "${taskDetail!.latitude},${taskDetail!.longitude}"
-        "&mode=driving&key=$mapKey";
-
-    String walkingMode =
-        "https://maps.googleapis.com/maps/api/distancematrix/json?origins="
-        "${_latLng!.latitude},${_latLng!.longitude}&destinations="
-        "${taskDetail!.latitude},${taskDetail!.longitude}&mode=walking&key=$mapKey";
-
-    debugPrint("drivingMode : $drivingMode");
-    debugPrint("walkingMode : $walkingMode");
-
-    // var res = http.get(Uri.parse(drivingMode)).then((value) {
-    //   debugPrint("Status Code : ${value.statusCode}");
-    //   debugPrint("Body : ${value.body}");
-    //   if (value.statusCode <= 201) {
-    //     var data = jsonDecode(value.body);
-    //     var dataModel = data["rows"] as List;
-    //     if (dataModel.isNotEmpty) {
-    //       var dataModel2 = dataModel.first["elements"] as List;
-    //       if (dataModel2.isNotEmpty) {
-    //         _drivingEstTime = dataModel2.first["duration"]["text"] ?? "";
-    //         _distance = dataModel2.first["distance"]["text"] ?? "";
-    //       }
-    //     }
-    //   }
-    //   setState(() {});
-    // });
-
-    // var res1 = http.get(Uri.parse(walkingMode)).then((value) {
-    //   debugPrint("Status Code : ${value.statusCode}");
-    //   debugPrint("Body : ${value.body}");
-    //   debugPrint("");
-    //   if (value.statusCode <= 201) {
-    //     var data = jsonDecode(value.body);
-    //     var dataModel = data["rows"] as List;
-    //     if (dataModel.isNotEmpty) {
-    //       var dataModel2 = dataModel.first["elements"] as List;
-    //       if (dataModel2.isNotEmpty) {
-    //         _walkingEstTime = dataModel2.first["duration"]["text"] ?? "";
-    //         _distance = dataModel2.first["distance"]["text"] ?? "";
-    //       }
-    //       setState(() {});
-    //     }
-    //   }
-    // });
   }
+  // void getEstimateTime() {
+  //   debugPrint("::: Inside estimate Time Fuc ::::");
+  //   dynamic mapKey;
+  //   if (Platform.isIOS) {
+  //     mapKey = ApiConstantsNew.config.appleMapApiKey;
+  //   } else {
+  //     mapKey = ApiConstantsNew.config.googleMapApiKey;
+  //   }
 
-  /// Accept Reject Api
+  //   String drivingMode =
+  //       "https://maps.googleapis.com/maps/api/distancematrix/json?origins="
+  //       "${_latLng!.latitude},${_latLng!.longitude}&&destinations="
+  //       "${taskDetail!.latitude},${taskDetail!.longitude}"
+  //       "&mode=driving&key=$mapKey";
+
+  //   String walkingMode =
+  //       "https://maps.googleapis.com/maps/api/distancematrix/json?origins="
+  //       "${_latLng!.latitude},${_latLng!.longitude}&destinations="
+  //       "${taskDetail!.latitude},${taskDetail!.longitude}&mode=walking&key=$mapKey";
+
+  //   debugPrint("drivingMode : $drivingMode");
+  //   debugPrint("walkingMode : $walkingMode");
+
+  // }
+
+  // /// Accept Reject Api
   void callAcceptRejectApi() {
     context.read<TaskBloc>().add(AcceptRejectTaskEvent(
           taskId: widget.taskId,

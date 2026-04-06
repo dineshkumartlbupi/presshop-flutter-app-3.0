@@ -41,6 +41,7 @@ class MapState extends Equatable {
     this.placeSuggestions = const [],
     this.errorMessage,
     this.newlyCreatedIncident,
+    this.showAnimatedMarkers = true,
   });
   final LatLng? myLocation;
   final CameraPosition? initialCamera;
@@ -79,6 +80,7 @@ class MapState extends Equatable {
   final List<Map<String, dynamic>> placeSuggestions;
   final String? errorMessage;
   final Incident? newlyCreatedIncident;
+  final bool showAnimatedMarkers;
 
   MapState copyWith({
     LatLng? myLocation,
@@ -117,6 +119,7 @@ class MapState extends Equatable {
     List<Map<String, dynamic>>? placeSuggestions,
     String? errorMessage,
     Incident? newlyCreatedIncident,
+    bool? showAnimatedMarkers,
     bool clearDestination = false,
     bool clearRouteInfo = false,
     bool clearSelectedIncident = false,
@@ -196,6 +199,7 @@ class MapState extends Equatable {
       newlyCreatedIncident: clearNewlyCreatedIncident
           ? null
           : (newlyCreatedIncident ?? this.newlyCreatedIncident),
+      showAnimatedMarkers: showAnimatedMarkers ?? this.showAnimatedMarkers,
     );
   }
 
@@ -237,5 +241,6 @@ class MapState extends Equatable {
         placeSuggestions,
         errorMessage,
         newlyCreatedIncident,
+        showAnimatedMarkers,
       ];
 }
