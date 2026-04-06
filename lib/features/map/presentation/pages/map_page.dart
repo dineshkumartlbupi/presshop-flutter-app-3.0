@@ -24,7 +24,6 @@ import 'package:presshop/features/map/presentation/widgets/alert_button_map.dart
 import 'package:presshop/features/map/presentation/widgets/alert_panel.dart';
 import 'package:presshop/features/map/presentation/widgets/content_marker_popup.dart';
 import 'package:presshop/features/map/presentation/widgets/custom_info_window.dart';
-import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:presshop/features/map/presentation/widgets/danger_zone_info_window.dart';
 import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
 import 'package:presshop/features/map/presentation/widgets/side_action_panal.dart';
@@ -125,8 +124,36 @@ class _MapPageContentState extends State<_MapPageContent>
   final ciw.CustomInfoWindowController _customInfoWindowController =
       ciw.CustomInfoWindowController();
 
-  final Map<String, ciw.CustomInfoWindowController> _markerControllers = {};
-  final Set<String> _animatedMarkers = {};
+  final Map<String, Offset> _markerPositions = {};
+
+  void _updateMarkerPositions(MapState state) async {
+    if (_isDisposed || !mounted) return;
+
+    // Use a slight throttle/debounce if needed, but for now direct is fine
+    final ctrl = await _controller.future;
+    final Map<String, Offset> newPositions = {};
+
+    for (var incident in state.newsList) {
+      if (!mounted) break;
+      try {
+        final screenPos = await ctrl.getScreenCoordinate(incident.position);
+        newPositions[incident.id] = Offset(
+          screenPos.x.toDouble(),
+          screenPos.y.toDouble(),
+        );
+      } catch (e) {
+        // Coordinate projection might fail if map is not fully ready
+      }
+    }
+
+    if (mounted && !_isDisposed) {
+      setState(() {
+        _markerPositions.clear();
+        _markerPositions.addAll(newPositions);
+      });
+    }
+  }
+
   bool _isDisposed = false;
   bool _isVisible = true;
   MapState? _lastState;
@@ -195,7 +222,7 @@ class _MapPageContentState extends State<_MapPageContent>
       }
     });
 
-    _syncAnimatedMarkers(context.read<MapBloc>().state);
+    _updateMarkerPositions(context.read<MapBloc>().state);
   }
 
   @override
@@ -211,9 +238,6 @@ class _MapPageContentState extends State<_MapPageContent>
     _searchController.dispose();
     _searchFocusNode.dispose();
     _customInfoWindowController.dispose();
-    for (var controller in _markerControllers.values) {
-      controller.dispose();
-    }
     _locationTimer?.cancel();
     super.dispose();
   }
@@ -487,6 +511,7 @@ class _MapPageContentState extends State<_MapPageContent>
       buildWhen: (previous, current) {
         // Optimization: Only rebuild if essential map elements have changed
         return previous.markers != current.markers ||
+            previous.newsList != current.newsList ||
             previous.polylines != current.polylines ||
             previous.circles != current.circles ||
             previous.myLocation != current.myLocation ||
@@ -576,7 +601,7 @@ class _MapPageContentState extends State<_MapPageContent>
           _addBurst(incident.position, type);
         }
         if (_isVisible) {
-          _syncAnimatedMarkers(state);
+          _updateMarkerPositions(state);
         }
         _lastState = state;
       },
@@ -712,7 +737,6 @@ class _MapPageContentState extends State<_MapPageContent>
                     mapGlobalKey: _mapGlobalKey,
                     controller: _controller,
                     customInfoWindowController: _customInfoWindowController,
-                    markerControllers: _markerControllers,
                     pulseController: _pulseController,
                     isProgrammaticMovement: _isProgrammaticMovement,
                     initialZoom: 16.0,
@@ -733,16 +757,11 @@ class _MapPageContentState extends State<_MapPageContent>
                             .add(const SetDraggingEvent(true));
                       }
                       _customInfoWindowController.onCameraMove?.call();
-                      for (var controller in _markerControllers.values) {
-                        controller.onCameraMove?.call();
-                      }
                     },
                     onCameraMove: (pos) {
                       _currentZoom = pos.zoom;
+                      _updateMarkerPositions(state);
                       _customInfoWindowController.onCameraMove?.call();
-                      for (var controller in _markerControllers.values) {
-                        controller.onCameraMove?.call();
-                      }
                     },
                     onCameraIdle: () {
                       if (mounted) {
@@ -832,30 +851,44 @@ class _MapPageContentState extends State<_MapPageContent>
                   ),
                 ),
 
-                // ======================= ANIMATED MARKER OVERLAYS =======================
-                // Restoring the multi-overlay system for circular incident icons
-                ..._markerControllers.entries.map((entry) {
-                    final markerId = entry.key;
-                    final controller = entry.value;
+                // ======================= REFACTORED ANIMATED MARKER LAYER =======================
+                // Replaces multiple controllers with a single, high-performance overlay
+                if (state.showAnimatedMarkers)
+                  ...state.newsList.map((incident) {
+                    final position = _markerPositions[incident.id];
+                    if (position == null) return const SizedBox.shrink();
 
-                    // Safety Check: Only render if we have an active incident matching this ID
-                    final String incidentId = markerId
-                        .replaceFirst('alert_', '')
-                        .replaceFirst('news_', '')
-                        .replaceFirst('weather_', '');
+                    final type =
+                        (incident.type ?? incident.alertType ?? "accident")
+                            .toLowerCase();
+                    final assetPath =
+                        markerIcons[type] ?? markerIcons['accident']!;
 
-                    // Ensure we have data for this marker before rendering the overlay
-                    final hasData =
-                        state.newsList.any((i) => i.id == incidentId);
-                    if (!hasData) return const SizedBox.shrink();
-
-                    return ciw.CustomInfoWindow(
-                      controller: controller,
-                      height:
-                          50, // Standard size for circular icons in old code
-                      width: 50,
-                      offset:
-                          25, // Centered directly on top of the map location
+                    return Positioned(
+                      left: position.dx - 25, // Centered (50px / 2)
+                      top: position.dy - 25,
+                      child: GestureDetector(
+                        onTap: () {
+                          context
+                              .read<MapBloc>()
+                              .add(SetSelectedIncidentEvent(incident));
+                        },
+                        child: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFD9D9D9),
+                            shape: BoxShape.circle,
+                          ),
+                          padding: const EdgeInsets.all(0),
+                          child: ClipOval(
+                            child: Image.asset(
+                              assetPath,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
                     );
                   }),
 
@@ -1108,153 +1141,5 @@ class _MapPageContentState extends State<_MapPageContent>
         );
       },
     );
-  }
-
-  void _syncAnimatedMarkers(MapState state) {
-    if (_isDisposed || !_isVisible) return;
-
-    if (_lastState != null && _lastState!.markers == state.markers) {
-      return;
-    }
-
-    final currentAnimatedMarkers = state.markers
-        .where((m) =>
-            m.markerId.value.startsWith('alert_') ||
-            m.markerId.value.startsWith('news_') ||
-            m.markerId.value.startsWith('weather_'))
-        .toList();
-
-    // Remove inactive controllers
-    final currentIds =
-        currentAnimatedMarkers.map((m) => m.markerId.value).toSet();
-    _markerControllers.removeWhere((id, controller) {
-      if (!currentIds.contains(id)) {
-        controller.dispose();
-        _animatedMarkers.remove(id);
-        return true;
-      }
-      return false;
-    });
-
-    for (var marker in currentAnimatedMarkers) {
-      if (!mounted || _isDisposed) break;
-      final markerId = marker.markerId.value;
-
-      // Only sync if we actually have the data to show, otherwise we get white squares
-      final String incidentId = markerId
-          .replaceFirst('alert_', '')
-          .replaceFirst('news_', '')
-          .replaceFirst('weather_', '');
-
-      final hasData = state.newsList.any((i) => i.id == incidentId);
-      if (!hasData) continue;
-
-      if (!_markerControllers.containsKey(markerId)) {
-        final controller = ciw.CustomInfoWindowController();
-        _controller.future.then((ctrl) {
-          if (!mounted || _isDisposed) return;
-          controller.googleMapController = ctrl;
-        });
-        _markerControllers[markerId] = controller;
-      }
-
-      if (!_animatedMarkers.contains(markerId)) {
-        _addInfoWindowForMarker(marker, state);
-      }
-    }
-  }
-
-  void _addInfoWindowForMarker(Marker marker, MapState state) {
-    final markerId = marker.markerId.value;
-    final controller = _markerControllers[markerId];
-    if (controller == null) return;
-
-    final String incidentId = markerId
-        .replaceFirst('alert_', '')
-        .replaceFirst('news_', '')
-        .replaceFirst('weather_', '');
-
-    if (state.newsList.isEmpty) return;
-
-    final incident = (state.newsList).firstWhere(
-      (i) => i.id == incidentId,
-      orElse: () => state.newsList.first,
-    );
-
-    if (incident.id == incidentId) {
-      // Small delay to ensure controller is ready
-      Future.delayed(const Duration(milliseconds: 200), () {
-        if (!mounted || _isDisposed) return;
-        _addInfoWindowToController(
-            controller, incident, marker.position, markerId);
-        if (mounted && !_isDisposed) setState(() {});
-      });
-    }
-  }
-
-  void _addInfoWindowToController(
-    ciw.CustomInfoWindowController controller,
-    Incident incident,
-    LatLng position,
-    String markerId,
-  ) {
-    if (controller.addInfoWindow == null ||
-        _animatedMarkers.contains(markerId)) {
-      return;
-    }
-
-    final type = (incident.type ?? incident.alertType ?? "").toLowerCase();
-    String? assetPath = markerIcons[type] ?? markerIcons['accident'];
-
-    try {
-      controller.addInfoWindow!(
-        GestureDetector(
-          onTap: () {
-            context.read<MapBloc>().add(SetSelectedIncidentEvent(incident));
-          },
-          child: Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 8,
-                  spreadRadius: 1,
-                  offset: const Offset(0, 2),
-                )
-              ],
-              border: Border.all(color: Colors.white, width: 2),
-            ),
-            child: Container(
-              padding: const EdgeInsets.all(0),
-              decoration: const BoxDecoration(
-                color: Color(0xFFD9D9D9),
-                shape: BoxShape.circle,
-              ),
-              child: ClipOval(
-                child: assetPath != null
-                    ? Image.asset(
-                        assetPath,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Icon(Icons.error),
-                      )
-                    : const Icon(Icons.location_on),
-              ),
-            ),
-          ),
-        ),
-        position,
-      );
-
-      _animatedMarkers.add(markerId);
-      if (controller.onCameraMove != null) {
-        controller.onCameraMove!();
-      }
-    } catch (e) {
-      debugPrint("Error adding info window for $markerId: $e");
-    }
   }
 }

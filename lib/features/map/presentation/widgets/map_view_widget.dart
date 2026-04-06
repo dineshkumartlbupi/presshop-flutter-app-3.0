@@ -10,7 +10,6 @@ class MapViewWidget extends StatefulWidget {
   final GlobalKey mapGlobalKey;
   final Completer<GoogleMapController> controller;
   final ciw.CustomInfoWindowController customInfoWindowController;
-  final Map<String, ciw.CustomInfoWindowController> markerControllers;
   final AnimationController pulseController;
   final bool isProgrammaticMovement;
   final double initialZoom;
@@ -26,7 +25,6 @@ class MapViewWidget extends StatefulWidget {
     required this.mapGlobalKey,
     required this.controller,
     required this.customInfoWindowController,
-    required this.markerControllers,
     required this.pulseController,
     required this.isProgrammaticMovement,
     required this.initialZoom,

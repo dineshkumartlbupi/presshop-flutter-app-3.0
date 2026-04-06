@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PressHop | Socket.io Debugger</title>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary: #FF5A5F;
@@ -17,8 +20,12 @@
             --log-bg: #020617;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg);
@@ -41,17 +48,40 @@
             z-index: 100;
         }
 
-        .logo { font-weight: 800; font-size: 1.5rem; letter-spacing: -0.05em; color: var(--primary); }
-        .status { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 0.9rem; }
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #EF4444; }
-        .status-dot.connected { background: #10B981; box-shadow: 0 0 10px #10B981; }
+        .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: -0.05em;
+            color: var(--primary);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #EF4444;
+        }
+
+        .status-dot.connected {
+            background: #10B981;
+            box-shadow: 0 0 10px #10B981;
+        }
 
         /* Main Container */
         main {
             display: grid;
             grid-template-columns: 350px 1fr;
             flex: 1;
-            min-height: 0; /* CRITICAL for flex scrolling */
+            min-height: 0;
+            /* CRITICAL for flex scrolling */
             overflow: hidden;
         }
 
@@ -67,9 +97,22 @@
             height: 100%;
         }
 
-        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
-        label { font-size: 0.8rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; }
-        input, select, textarea {
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #94A3B8;
+            text-transform: uppercase;
+        }
+
+        input,
+        select,
+        textarea {
             background: var(--log-bg);
             border: 1px solid var(--border);
             padding: 0.75rem;
@@ -78,7 +121,13 @@
             font-family: inherit;
             transition: all 0.2s;
         }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
 
         .btn {
             padding: 0.75rem;
@@ -92,12 +141,31 @@
             align-items: center;
         }
 
-        .btn:active { transform: scale(0.98); }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-secondary { background: var(--secondary); color: white; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .btn:active {
+            transform: scale(0.98);
+        }
 
-        .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
 
         /* Log Content */
         .log-container {
@@ -105,7 +173,8 @@
             flex-direction: column;
             background: var(--log-bg);
             position: relative;
-            overflow: hidden; /* Lock the container */
+            overflow: hidden;
+            /* Lock the container */
             height: 100%;
         }
 
@@ -126,245 +195,363 @@
             line-height: 1.6;
         }
 
-        .log-entry { margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #1e293b33; }
-        .time { color: #64748B; font-weight: 400; margin-right: 0.5rem; }
-        .event-type { padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 0.75rem; margin-right: 0.5rem; }
-        .type-emit { background: #3b82f633; color: #60a5fa; }
-        .type-recv { background: #10b98133; color: #34d399; }
-        .type-info { background: #f59e0b33; color: #fbbf24; }
-        .log-data { display: block; margin-top: 5px; color: #CBD5E1; white-space: pre-wrap; }
+        .log-entry {
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #1e293b33;
+        }
+
+        .time {
+            color: #64748B;
+            font-weight: 400;
+            margin-right: 0.5rem;
+        }
+
+        .event-type {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+        }
+
+        .type-emit {
+            background: #3b82f633;
+            color: #60a5fa;
+        }
+
+        .type-recv {
+            background: #10b98133;
+            color: #34d399;
+        }
+
+        .type-info {
+            background: #f59e0b33;
+            color: #fbbf24;
+        }
+
+        .log-data {
+            display: block;
+            margin-top: 5px;
+            color: #CBD5E1;
+            white-space: pre-wrap;
+        }
 
         /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--log-bg); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
 
-        #payload-editor { min-height: 150px; font-family: 'Fira Code', monospace; font-size: 0.8rem; }
+        ::-webkit-scrollbar-track {
+            background: var(--log-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        #payload-editor {
+            min-height: 150px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+        }
     </style>
 </head>
+
 <body>
 
-<header>
-    <div class="logo">PressHop Debugger</div>
-    <div class="status">
-        <div id="status-dot" class="status-dot"></div>
-        <span id="status-text">Disconnected</span>
-    </div>
-</header>
-
-<main>
-    <div class="sidebar">
-        <div class="form-group">
-            <label>Server URL</label>
-            <input type="text" id="server-url" value="wss://funnellike-subangular-sulema.ngrok-free.dev">
+    <header>
+        <div class="logo">PressHop Debugger</div>
+        <div class="status">
+            <div id="status-dot" class="status-dot"></div>
+            <span id="status-text">Disconnected</span>
         </div>
-        <div class="form-group">
-            <label>User ID</label>
-            <input type="text" id="user-id" value="6991f667184679e0aaf7ad69" placeholder="Enter User ID">
-        </div>
-        
-        <div class="quick-actions">
-            <button class="btn btn-primary" id="connect-btn">Connect</button>
-            <button class="btn btn-outline" id="disconnect-btn">Disconnect</button>
-        </div>
+    </header>
 
-        <hr style="border-color: var(--border); opacity: 0.2;">
-
-        <div class="form-group">
-            <label>Join Room</label>
-            <div class="quick-actions">
-                <button class="btn btn-secondary btn-sm" onclick="joinRoom('joinUser')">joinUser</button>
-                <button class="btn btn-secondary btn-sm" onclick="joinRoom('joinNewsAll')">NewsAll</button>
+    <main>
+        <div class="sidebar">
+            <div class="form-group">
+                <label>Server URL</label>
+                <input type="text" id="server-url" value="wss://lelia-anthracitic-ecclesiologically.ngrok-free.dev">
             </div>
-        </div>
+            <div class="form-group">
+                <label>User ID</label>
+                <input type="text" id="user-id" value="69cf50c8d56b63eaa84ea44e" placeholder="Enter User ID">
+            </div>
 
-        <hr style="border-color: var(--border); opacity: 0.2;">
+            <div class="quick-actions">
+                <button class="btn btn-primary" id="connect-btn">Connect</button>
+                <button class="btn btn-outline" id="disconnect-btn">Disconnect</button>
+            </div>
 
-        <div class="form-group">
-            <label>Emit Event</label>
-            <select id="event-dropdown">
-                <optgroup label="Incident">
-                    <option value="incident:create">incident:create</option>
-                    <option value="incident:new">incident:new</option>
-                    <option value="incident:updated">incident:updated</option>
-                </optgroup>
-                <optgroup label="Rooms">
-                    <option value="joinWebsite">joinWebsite</option>
-                    <option value="joinAdmin">joinAdmin</option>
-                    <option value="joinHopper">joinHopper</option>
-                    <option value="joinUser">joinUser</option>
-                </optgroup>
-                <optgroup label="Interactions">
-                    <option value="add:aggregated:comment">add:comment</option>
-                    <option value="add:aggregated:news:like">add:news:like</option>
-                </optgroup>
-                <optgroup label="Chat">
-                    <option value="chat message">chat message</option>
-                    <option value="typing">typing</option>
-                    <option value="room join">room join</option>
-                </optgroup>
-            </select>
-        </div>
+            <hr style="border-color: var(--border); opacity: 0.2;">
 
-        <div class="form-group">
-            <label>JSON Data</label>
-            <textarea id="payload-editor">{
-  "userId": "6991f667184679e0aaf7ad69",
-  "type": "fire",
+            <div class="form-group">
+                <label>Join Room</label>
+                <div class="quick-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="joinRoom('joinUser')">joinUser</button>
+                    <button class="btn btn-secondary btn-sm" onclick="joinRoom('joinNewsAll')">NewsAll</button>
+                </div>
+            </div>
+
+            <hr style="border-color: var(--border); opacity: 0.2;">
+
+            <div class="form-group">
+                <label>Emit Event</label>
+                <select id="event-dropdown">
+                    <optgroup label="Incident">
+                        <option value="incident:create">incident:create</option>
+                        <option value="incident:new">incident:new</option>
+                        <option value="incident:updated">incident:updated</option>
+                    </optgroup>
+                    <optgroup label="Rooms">
+                        <option value="joinWebsite">joinWebsite</option>
+                        <option value="joinAdmin">joinAdmin</option>
+                        <option value="joinHopper">joinHopper</option>
+                        <option value="joinUser">joinUser</option>
+                    </optgroup>
+                    <optgroup label="Interactions">
+                        <option value="add:aggregated:comment">add:comment</option>
+                        <option value="add:aggregated:news:like">add:news:like</option>
+                    </optgroup>
+                    <optgroup label="Chat">
+                        <option value="chat message">chat message</option>
+                        <option value="typing">typing</option>
+                        <option value="room join">room join</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Quick Alert Type</label>
+                <select id="quick-alert-type">
+                    <option value="accident">Accident</option>
+                    <option value="fire">Fire</option>
+                    <option value="fight">Fight</option>
+                    <option value="knife">Public Safety</option>
+                    <option value="gun">Vandalism</option>
+                    <option value="medical">Medical</option>
+                    <option value="protest">Protest</option>
+                    <option value="police">Police</option>
+                    <option value="road-block">Road Block</option>
+                    <option value="floods" selected>Flood</option>
+                    <option value="snow">Snow</option>
+                    <option value="earthquake">Earthquake</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Location Offset</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-size: 0.65rem; color: #64748B;">LAT</span>
+                        <div style="display: flex; gap: 2px;">
+                            <button class="btn btn-outline" style="padding: 2px 8px; flex: 1"
+                                onclick="adjustCoord('lat', 0.0001)">+</button>
+                            <button class="btn btn-outline" style="padding: 2px 8px; flex: 1"
+                                onclick="adjustCoord('lat', -0.0001)">-</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-size: 0.65rem; color: #64748B;">LNG</span>
+                        <div style="display: flex; gap: 2px;">
+                            <button class="btn btn-outline" style="padding: 2px 8px; flex: 1"
+                                onclick="adjustCoord('lng', 0.0001)">+</button>
+                            <button class="btn btn-outline" style="padding: 2px 8px; flex: 1"
+                                onclick="adjustCoord('lng', -0.0001)">-</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>JSON Data</label>
+                <textarea id="payload-editor">{
+  "userId": "69cf50c8d56b63eaa84ea44e",
+  "type": "floods",
   "lat": 26.859817,
   "lng": 81.015007,
   "severity": "low",
-  "message": "Testing from HTML Debugger"
+  "address": "Shiksha Park, Forest Colony, Vibhuti Khand, Gomti Nagar, Lucknow, Uttar Pradesh 226010, India",
+  "message": "Flood alert from Debugger"
 }</textarea>
+            </div>
+
+            <button class="btn btn-primary" id="emit-btn">Emit Event 🚀</button>
         </div>
 
-        <button class="btn btn-primary" id="emit-btn">Emit Event 🚀</button>
-    </div>
-
-    <div class="log-container">
-        <div class="log-header">
-            <h2 style="font-size: 1rem; font-weight: 800;">Real-time Event Log</h2>
-            <button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.7rem;" onclick="clearLog()">Clear Log</button>
+        <div class="log-container">
+            <div class="log-header">
+                <h2 style="font-size: 1rem; font-weight: 800;">Real-time Event Log</h2>
+                <button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.7rem;" onclick="clearLog()">Clear
+                    Log</button>
+            </div>
+            <div id="log">
+                <div class="log-entry"><span class="time">Ready to connect...</span></div>
+            </div>
         </div>
-        <div id="log">
-            <div class="log-entry"><span class="time">Ready to connect...</span></div>
-        </div>
-    </div>
-</main>
+    </main>
 
-<script>
-    let socket = null;
-    const logEl = document.getElementById('log');
-    const statusDot = document.getElementById('status-dot');
-    const statusText = document.getElementById('status-text');
-    const eventDropdown = document.getElementById('event-dropdown');
-    const payloadEditor = document.getElementById('payload-editor');
+    <script>
+        let socket = null;
+        const logEl = document.getElementById('log');
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
+        const eventDropdown = document.getElementById('event-dropdown');
+        const payloadEditor = document.getElementById('payload-editor');
 
-    function log(type, event, data) {
-        const entry = document.createElement('div');
-        entry.className = 'log-entry';
-        
-        const timestamp = new Date().toLocaleTimeString();
-        const typeClass = type === 'EMIT' ? 'type-emit' : (type === 'RECV' ? 'type-recv' : 'type-info');
-        
-        entry.innerHTML = `
+        function log(type, event, data) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+
+            const timestamp = new Date().toLocaleTimeString();
+            const typeClass = type === 'EMIT' ? 'type-emit' : (type === 'RECV' ? 'type-recv' : 'type-info');
+
+            entry.innerHTML = `
             <span class="time">${timestamp}</span>
             <span class="event-type ${typeClass}">${type}</span>
             <span style="font-weight: 700; color: #fff;">${event}</span>
             ${data ? `<pre class="log-data">${JSON.stringify(data, null, 2)}</pre>` : ''}
         `;
-        
-        logEl.appendChild(entry);
-        logEl.scrollTop = logEl.scrollHeight;
-    }
 
-    function clearLog() {
-        logEl.innerHTML = '<div class="log-entry"><span class="time">Log cleared</span></div>';
-    }
+            logEl.appendChild(entry);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
 
-    document.getElementById('connect-btn').onclick = () => {
-        const url = document.getElementById('server-url').value;
-        const userId = document.getElementById('user-id').value;
+        function clearLog() {
+            logEl.innerHTML = '<div class="log-entry"><span class="time">Log cleared</span></div>';
+        }
 
-        if (socket) socket.disconnect();
+        document.getElementById('connect-btn').onclick = () => {
+            const url = document.getElementById('server-url').value;
+            const userId = document.getElementById('user-id').value;
 
-        log('INFO', 'Connecting...', url);
-        
-        socket = io(url, {
-            transports: ['websocket', 'polling'],
-            query: userId ? { userId } : {}
-        });
+            if (socket) socket.disconnect();
 
-        socket.on('connect', () => {
-            statusDot.classList.add('connected');
-            statusText.innerText = 'Connected: ' + socket.id;
-            log('INFO', 'Connected', { id: socket.id });
-        });
+            log('INFO', 'Connecting...', url);
 
-        socket.on('disconnect', (reason) => {
-            statusDot.classList.remove('connected');
-            statusText.innerText = 'Disconnected';
-            log('INFO', 'Disconnected', { reason });
-        });
-
-        socket.on('connect_error', (error) => {
-            log('INFO', 'Connection Error', error.message);
-        });
-
-        // Auto-subscribe to all events in dropdown
-        document.querySelectorAll('#event-dropdown option').forEach(opt => {
-            const ev = opt.value;
-            socket.on(ev, (data) => {
-                log('RECV', ev, data);
+            socket = io(url, {
+                transports: ['websocket', 'polling'],
+                query: userId ? { userId } : {}
             });
-        });
 
-        // Specialized listeners
-        socket.on('incident:new', (data) => log('RECV', 'incident:new', data));
-        socket.on('incident:created', (data) => log('RECV', 'incident:created', data));
-        socket.on('chat message', (data) => log('RECV', 'chat message', data));
-        socket.on('aggregated:news:like', (data) => log('RECV', 'aggregated:news:like', data));
-    };
+            socket.on('connect', () => {
+                statusDot.classList.add('connected');
+                statusText.innerText = 'Connected: ' + socket.id;
+                log('INFO', 'Connected', { id: socket.id });
+            });
 
-    document.getElementById('disconnect-btn').onclick = () => {
-        if (socket) socket.disconnect();
-    };
+            socket.on('disconnect', (reason) => {
+                statusDot.classList.remove('connected');
+                statusText.innerText = 'Disconnected';
+                log('INFO', 'Disconnected', { reason });
+            });
 
-    document.getElementById('emit-btn').onclick = () => {
-        if (!socket || !socket.connected) {
-            alert('Please connect first!');
-            return;
+            socket.on('connect_error', (error) => {
+                log('INFO', 'Connection Error', error.message);
+            });
+
+            // Auto-subscribe to all events in dropdown
+            document.querySelectorAll('#event-dropdown option').forEach(opt => {
+                const ev = opt.value;
+                socket.on(ev, (data) => {
+                    log('RECV', ev, data);
+                });
+            });
+
+            // Specialized listeners
+            socket.on('incident:new', (data) => log('RECV', 'incident:new', data));
+            socket.on('incident:created', (data) => log('RECV', 'incident:created', data));
+            socket.on('chat message', (data) => log('RECV', 'chat message', data));
+            socket.on('aggregated:news:like', (data) => log('RECV', 'aggregated:news:like', data));
+        };
+
+        document.getElementById('disconnect-btn').onclick = () => {
+            if (socket) socket.disconnect();
+        };
+
+        document.getElementById('emit-btn').onclick = () => {
+            if (!socket || !socket.connected) {
+                alert('Please connect first!');
+                return;
+            }
+
+            const event = eventDropdown.value;
+            let data = {};
+            try {
+                data = JSON.parse(payloadEditor.value);
+            } catch (e) {
+                alert('Invalid JSON in payload');
+                return;
+            }
+
+            socket.emit(event, data);
+            log('EMIT', event, data);
+        };
+
+        function joinRoom(roomEvent) {
+            if (!socket || !socket.connected) {
+                alert('Please connect first!');
+                return;
+            }
+            const userId = document.getElementById('user-id').value;
+            const data = { userId: userId };
+            socket.emit(roomEvent, data);
+            log('EMIT', roomEvent, data);
         }
 
-        const event = eventDropdown.value;
-        let data = {};
-        try {
-            data = JSON.parse(payloadEditor.value);
-        } catch (e) {
-            alert('Invalid JSON in payload');
-            return;
+        function adjustCoord(key, amount) {
+            try {
+                let data = JSON.parse(payloadEditor.value);
+                if (data[key] !== undefined) {
+                    data[key] = parseFloat((data[key] + amount).toFixed(6));
+                    payloadEditor.value = JSON.stringify(data, null, 2);
+                }
+            } catch (e) {
+                alert('Invalid JSON in payload');
+            }
         }
 
-        socket.emit(event, data);
-        log('EMIT', event, data);
-    };
+        const quickAlertType = document.getElementById('quick-alert-type');
+        quickAlertType.onchange = () => {
+            try {
+                let data = JSON.parse(payloadEditor.value);
+                data.type = quickAlertType.value;
+                payloadEditor.value = JSON.stringify(data, null, 2);
+            } catch (e) {
+                // Fallback if JSON is corrupt
+            }
+        };
 
-    function joinRoom(roomEvent) {
-        if (!socket || !socket.connected) {
-            alert('Please connect first!');
-            return;
-        }
-        const userId = document.getElementById('user-id').value;
-        const data = { userId: userId };
-        socket.emit(roomEvent, data);
-        log('EMIT', roomEvent, data);
-    }
+        // Default template updates on dropdown change
+        eventDropdown.onchange = () => {
+            const ev = eventDropdown.value;
+            const userId = document.getElementById('user-id').value;
+            const type = quickAlertType.value || "floods";
 
-    // Default template updates on dropdown change
-    eventDropdown.onchange = () => {
-        const ev = eventDropdown.value;
-        const userId = document.getElementById('user-id').value;
-        
-        if (ev === 'incident:create') {
-            payloadEditor.value = JSON.stringify({
-                userId,
-                type: "fire",
-                lat: 26.859817,
-                lng: 81.015007,
-                severity: "low",
-                message: "Testing from HTML Debugger"
-            }, null, 2);
-        } else if (ev === 'chat message') {
-            payloadEditor.value = JSON.stringify({
-                userId,
-                roomId: "TEST_ROOM",
-                message: "Hello world!"
-            }, null, 2);
-        } else if (ev.startsWith('join')) {
-            payloadEditor.value = JSON.stringify({ userId }, null, 2);
-        }
-    };
-</script>
+            if (ev === 'incident:create') {
+                payloadEditor.value = JSON.stringify({
+                    userId,
+                    type: type,
+                    lat: 26.859817,
+                    lng: 81.015007,
+                    severity: "low",
+                    address: "Shiksha Park, Forest Colony, Vibhuti Khand, Gomti Nagar, Lucknow, Uttar Pradesh 226010, India",
+                    message: "Flood alert from Debugger"
+                }, null, 2);
+            } else if (ev === 'chat message') {
+                payloadEditor.value = JSON.stringify({
+                    userId,
+                    roomId: "TEST_ROOM",
+                    message: "Hello world!"
+                }, null, 2);
+            } else if (ev.startsWith('join')) {
+                payloadEditor.value = JSON.stringify({ userId }, null, 2);
+            }
+        };
+    </script>
 
 </body>
+
 </html>
