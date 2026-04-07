@@ -150,7 +150,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           markerId: MarkerId(markerId),
           position: incident.position,
           icon: icon,
-          alpha: 0.0, // Invisible: only use animated overlay
+          alpha: 0.0, // Invisible: favors native pulse and overlay selection
           onTap: () {
             add(SetSelectedIncidentEvent(incident));
           },
@@ -222,7 +222,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         markerId: MarkerId(markerId),
         position: incident.position,
         icon: icon,
-        alpha: 0.0,
+        alpha: 0.0, // Invisible: favors native pulse and overlay selection
         onTap: () {
           add(SetSelectedIncidentEvent(incident));
         },
@@ -569,7 +569,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               return Marker(
                 markerId: MarkerId(markerId),
                 position: incident.position,
-                alpha: 0.0,
+                alpha: 0.0, // Invisible: favors native pulse and overlay selection
                 icon: icon,
                 onTap: () {
                   add(SetSelectedIncidentEvent(incident));
@@ -596,8 +596,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               emit(state.copyWith(
                 isLoadingNews: i + batchSize >= incidents.length ? false : true,
                 newsList: combinedNewsList,
-                markers:
-                    _appendMeMarker({...remainingMarkers, ...newMarkers}),
+                markers: _appendMeMarker({...remainingMarkers, ...newMarkers}),
               ));
             }
           }

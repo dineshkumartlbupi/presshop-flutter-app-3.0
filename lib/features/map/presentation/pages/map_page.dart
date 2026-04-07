@@ -854,7 +854,7 @@ class _MapPageContentState extends State<_MapPageContent>
                 // ======================= REFACTORED ANIMATED MARKER LAYER =======================
                 // Replaces multiple controllers with a single, high-performance overlay
                 if (state.showAnimatedMarkers)
-                  ...state.newsList.map((incident) {
+                  ...state.newsList.where((i) => i.markerType == 'content' || i.markerType == 'news').map((incident) {
                     final position = _markerPositions[incident.id];
                     if (position == null) return const SizedBox.shrink();
 
