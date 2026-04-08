@@ -16,7 +16,6 @@ import '../bloc/publication_event.dart';
 import '../bloc/publication_state.dart';
 import '../../domain/entities/publication_earning_stats.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 // ignore: must_be_immutable
 class PublicationListScreen extends StatefulWidget {
@@ -979,7 +978,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
   Future<void> showBottomSheet(BuildContext context, Size size) async {
     final bloc = context.read<PublicationBloc>();
-    showModalBottomSheet(
+    await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         useSafeArea: true,

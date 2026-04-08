@@ -1,6 +1,5 @@
 import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 import 'package:flutter/foundation.dart';
-import 'package:presshop/main.dart';
 
 /// Service for handling AppsFlyer SDK initialization and callbacks
 class AppsFlyerService {
@@ -14,9 +13,9 @@ class AppsFlyerService {
       showDebug: false,
       timeToWaitForATTUserAuthorization: 40,
     );
-    
+
     _appsflyerSdk = AppsflyerSdk(appsFlyerOptions);
-    
+
     // Listen to install conversion data
     _appsflyerSdk.onInstallConversionData((data) {
       if (data is Map) {
@@ -26,7 +25,7 @@ class AppsFlyerService {
       }
       String dataString = data.toString();
       debugPrint("AppsFlyer Install Data String: $dataString");
-      onDeeplinkCallbackApi(dataString, true);
+      // onDeeplinkCallbackApi(dataString, true);
     });
 
     // Listen to app open attribution
@@ -37,10 +36,10 @@ class AppsFlyerService {
         });
       }
       String dataString = data.toString();
-      onDeeplinkCallbackApi(dataString, false);
+      //  onDeeplinkCallbackApi(dataString, false);
     });
 
-    // Initialize the SDK
+    // Initialize the SDKF
     await _appsflyerSdk.initSdk(
       registerConversionDataCallback: true,
       registerOnAppOpenAttributionCallback: true,
@@ -53,7 +52,8 @@ class AppsFlyerService {
   static AppsflyerSdk get instance => _appsflyerSdk;
 
   /// Log an event to AppsFlyer
-  static Future<bool?> logEvent(String eventName, Map<String, dynamic> eventValues) async {
+  static Future<bool?> logEvent(
+      String eventName, Map<String, dynamic> eventValues) async {
     try {
       return await _appsflyerSdk.logEvent(eventName, eventValues);
     } catch (e) {

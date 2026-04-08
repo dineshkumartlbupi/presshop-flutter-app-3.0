@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -24,14 +23,7 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:presshop/features/publish/presentation/pages/hash_tag_search_screen.dart';
-// import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart'; // Removed
-import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
-
 import 'package:presshop/core/api/api_client.dart';
-// import 'package:presshop/core/di/injection_container.dart';
-// import '../../data/models/category_model.dart';
-// import '../../data/models/charity_model.dart';
 import '../../domain/entities/content_category.dart';
 import '../../domain/entities/charity.dart';
 import '../bloc/publish_bloc.dart';
@@ -253,8 +245,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
     DashboardState.dashBoardInterface = this;
 
     if (showCelebration) {
-      Timer.periodic(const Duration(seconds: 2), (timer) {
-        showCelebration = false;
+      // Fixed timer leak: was never cancelled before. Now uses one-shot Timer instead.
+      Timer(const Duration(seconds: 2), () {
+        if (mounted) {
+          setState(() {
+            showCelebration = false;
+          });
+        }
       });
     }
 
@@ -2166,8 +2163,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                             Expanded(
                               child: InkWell(
                                 onTap: () {
-                                  if (selectedSellType == AppStrings.sharedText)
+                                  if (selectedSellType ==
+                                      AppStrings.sharedText) {
                                     return;
+                                  }
                                   userExclusivePriceValue =
                                       priceController.text;
                                   priceController.text = userSharedPriceValue;
@@ -3595,7 +3594,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
     }
 
     filesPath.addAll(selectMediaList.map((path) => File(path)).toList());
-
+    debugPrint("FILES COUNT: ${filesPath.length}");
+    for (var f in filesPath) {
+      debugPrint("FILE PATH: ${f.path}");
+    }
     debugPrint("LocalMedia: ${filesPath.length}");
     log("AddContent Params: $params");
     log("AddContent URL: ${ApiConstantsNew.content.addContent}");

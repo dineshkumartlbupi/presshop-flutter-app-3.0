@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
@@ -17,8 +16,6 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
 import 'package:presshop/main.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,8 +37,6 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
     clientId: Platform.isIOS
         ? '750460561502-geuno4tt1ic52cor9l2obl1vhuogvsp0.apps.googleusercontent.com'
         : null,
-    serverClientId:
-        '750460561502-fajfc82s14phu6iu767i7qm53qmu2r8f.apps.googleusercontent.com',
     scopes: [
       'email',
     ],
@@ -93,16 +88,19 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
       create: (context) => sl<AuthBloc>(),
       child: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
+          debugPrint("DEBUG: LoginScreen AuthState: $state");
           if (state is AuthError) {
             commonErrorDialogDialog(
                 MediaQuery.of(context).size, state.message, "", () {
               context.pop();
             });
           } else if (state is AuthAuthenticated) {
+            debugPrint("DEBUG: Login success, navigating to dashboard");
             _handleLoginSuccess(state.user.source ?? {});
           } else if (state is AuthSocialSignUpRequired) {
-            context.pushNamed(
-              AppRoutes.socialSignUpName,
+            debugPrint("DEBUG: Social signup required, navigating to SocialSignUp");
+            context.push(
+              AppRoutes.socialSignUpPath,
               extra: {
                 'socialLogin': true,
                 'socialId': state.socialId,
@@ -113,6 +111,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
               },
             );
           }
+
         },
         builder: (context, state) {
           return Scaffold(
@@ -193,39 +192,39 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                             ),
 
                             /// User name controller
-                              CommonTextField(
-                                key: const Key('login_field'),
-                                size: size,
-                                borderColor: AppColorTheme.colorTextFieldBorder,
-                                maxLines: 1,
-                                controller: loginController,
-                                hintText: AppStrings.loginUserHint,
-                                textInputFormatters: null,
-                                prefixIcon: ImageIcon(
-                                  AssetImage(
-                                    "${iconsPath}ic_user.png",
-                                  ),
-                                  size: size.width * AppDimensions.numD04,
+                            CommonTextField(
+                              key: const Key('login_field'),
+                              size: size,
+                              borderColor: AppColorTheme.colorTextFieldBorder,
+                              maxLines: 1,
+                              controller: loginController,
+                              hintText: AppStrings.loginUserHint,
+                              textInputFormatters: null,
+                              prefixIcon: ImageIcon(
+                                AssetImage(
+                                  "${iconsPath}ic_user.png",
                                 ),
-                                prefixIconHeight:
-                                    size.width * AppDimensions.numD05,
-                                suffixIconIconHeight: 0,
-                                suffixIcon: null,
-                                hidePassword: false,
-                                keyboardType: TextInputType.text,
-                                validator: (value) {
-                                  if (value!.trim().isEmpty) {
-                                    return AppStrings.requiredText;
-                                  } else if (value.trim().length < 4) {
-                                    return AppStrings.validUserNameOrPhoneText;
-                                  }
-                                  return null;
-                                },
-                                enableValidations: true,
-                                filled: false,
-                                filledColor: Colors.transparent,
-                                autofocus: false,
+                                size: size.width * AppDimensions.numD04,
                               ),
+                              prefixIconHeight:
+                                  size.width * AppDimensions.numD05,
+                              suffixIconIconHeight: 0,
+                              suffixIcon: null,
+                              hidePassword: false,
+                              keyboardType: TextInputType.text,
+                              validator: (value) {
+                                if (value!.trim().isEmpty) {
+                                  return AppStrings.requiredText;
+                                } else if (value.trim().length < 4) {
+                                  return AppStrings.validUserNameOrPhoneText;
+                                }
+                                return null;
+                              },
+                              enableValidations: true,
+                              filled: false,
+                              filledColor: Colors.transparent,
+                              autofocus: false,
+                            ),
 
                             SizedBox(
                               height: size.width * AppDimensions.numD08,
@@ -415,7 +414,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                               borderRadius: BorderRadius.circular(
                                   size.width * AppDimensions.numD04),
                               onTap: () async {
-                                googleSignIn.signOut();
+                                await googleSignIn.signOut();
                                 googleLogin(context);
                               },
                               child: Container(
@@ -549,8 +548,8 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
-      if (googleAuth.idToken == null || googleAuth.accessToken == null) {
-        throw Exception("Google auth tokens are null");
+      if (googleAuth.idToken == null) {
+        throw Exception("Google auth idToken is null");
       }
 
       // STEP 3: Create Firebase credential
@@ -598,7 +597,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
 
       showSnackBar(
         "Google Sign-In Failed",
-        "Please try again or use another login method.",
+        e.toString(),
         Colors.red,
       );
     }

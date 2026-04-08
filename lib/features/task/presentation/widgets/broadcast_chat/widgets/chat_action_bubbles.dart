@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/main.dart';
 import 'task_chat_bubbles.dart';
 

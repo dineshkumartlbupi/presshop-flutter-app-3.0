@@ -161,7 +161,6 @@ class FeedScreenState extends State<FeedScreen>
                   return FeedItemWidget(
                     feed: state.feeds[index],
                     size: size,
-                    pageController: pageController,
                     initialController: initialController,
                     openUrl: openUrl,
                     onFavouriteToggle: () {

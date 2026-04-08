@@ -160,11 +160,9 @@ class AuthRepositoryImpl implements AuthRepository {
         }
         final remoteUser = await remoteDataSource.getProfile(userId);
         // optionally update cache
-        print('-----------------${remoteUser.currencySymbol}-----------------');
 
         sharedPreferences!.setString(SharedPreferencesKeys.currencySymbolKey,
-                remoteUser.currencySymbol ?? "") ??
-            "£";
+            remoteUser.currencySymbol ?? "");
 
         return Right(remoteUser);
       } on Failure catch (failure) {

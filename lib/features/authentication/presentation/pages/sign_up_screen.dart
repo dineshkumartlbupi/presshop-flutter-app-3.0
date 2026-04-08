@@ -139,6 +139,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
       emailAlreadyExists = false,
       phoneAlreadyExists = false,
       showAvatarError = false,
+      showReferralCodeError = false,
       showAddressError = false,
       showApartmentNumberError = false,
       showDateError = false,
@@ -260,6 +261,11 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
               setState(() {});
             } else if (state is ReferralCodeVerified) {
               isRefferalCodeValid = true;
+              showReferralCodeError = false;
+              setState(() {});
+            } else if (state is ReferralCodeVerificationFailed) {
+              isRefferalCodeValid = false;
+              showReferralCodeError = true;
               setState(() {});
             }
           },
@@ -618,12 +624,13 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                       filledColor: Colors.transparent,
                                       autofocus: false,
                                       onChanged: (v) {
+                                        showReferralCodeError = false;
                                         if (v!.trim().length >= 5) {
                                           verifyReferredCode();
-                                        } else if (v.trim().isEmpty) {
+                                        } else {
                                           isRefferalCodeValid = false;
-                                          setState(() {});
                                         }
+                                        setState(() {});
                                         return null;
                                       },
                                     ),
@@ -1134,16 +1141,19 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
     if (referralCode.isEmpty) {
       return null;
     }
-    if (referralCode.length < 4 || !isRefferalCodeValid) {
+    if (showReferralCodeError) {
       return const Icon(
         Icons.highlight_remove,
         color: Colors.red,
       );
     }
-    return const Icon(
-      Icons.check_circle,
-      color: Colors.green,
-    );
+    if (isRefferalCodeValid) {
+      return const Icon(
+        Icons.check_circle,
+        color: Colors.green,
+      );
+    }
+    return null;
   }
 
   Icon? getEmailSuffixIcon() {

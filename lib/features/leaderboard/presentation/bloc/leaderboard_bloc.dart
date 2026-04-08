@@ -30,9 +30,7 @@ class LeaderboardBloc extends Bloc<LeaderboardEvent, LeaderboardState> {
       }
     }
 
-    if (state is! LeaderboardLoaded) {
-      emit(LeaderboardLoading());
-    }
+    emit(LeaderboardLoading());
 
     final result = await getLeaderboardData(event.countryCode);
     result.fold(

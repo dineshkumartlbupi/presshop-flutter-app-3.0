@@ -50,7 +50,7 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("presshop_jks.jks")  
+            storeFile = file("../presshop_jks.jks")  
             storePassword = "presshop_jks"
             keyAlias = "key"
             keyPassword = "presshop_jks"

@@ -11,8 +11,7 @@ import 'package:presshop/features/news/presentation/bloc/news_state.dart';
 import 'package:presshop/features/news/presentation/widgets/comment_input_widget.dart';
 import 'package:presshop/features/news/presentation/widgets/news_media_widget.dart';
 import 'package:presshop/core/di/injection_container.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -48,8 +47,6 @@ class _NewsDetailPageState extends State<NewsDetailPage>
   bool _hasScrolledToComments = false;
 
   String? _replyingTo;
-  String? _replyingToName;
-  String? _rootParentId;
 
   final Map<String, GlobalKey> _inputKeys = {};
   final Map<String, GlobalKey> _commentKeys = {};
@@ -795,7 +792,6 @@ class _NewsDetailPageState extends State<NewsDetailPage>
               onTap: () {
                 setState(() {
                   _replyingTo = id;
-                  _replyingToName = name;
                 });
                 _scrollToInputField(id);
               },

@@ -122,7 +122,7 @@ class _MyAppState extends State<MyApp> {
 
                         setState(() {});
                       } catch (e) {
-                        showError(e);
+                        await showError(e);
                       }
                     },
                     child: const Text('Update date attribute'),
@@ -181,7 +181,7 @@ class _MyAppState extends State<MyApp> {
 
                         setState(() {});
                       } catch (e) {
-                        showError(e);
+                        await showError(e);
                       }
                     },
                     child: const Text('Update, store and reload attributes'),
@@ -195,7 +195,7 @@ class _MyAppState extends State<MyApp> {
 
                         setState(() {});
                       } catch (e) {
-                        showError(e);
+                        await showError(e);
                       }
                     },
                     child: const Text('Set orientation to 1'),
@@ -216,7 +216,7 @@ class _MyAppState extends State<MyApp> {
 
                         setState(() {});
                       } catch (e) {
-                        showError(e);
+                        await showError(e);
                       }
                     },
                     child: const Text('Update GPS attributes'),
@@ -257,7 +257,7 @@ class _MyAppState extends State<MyApp> {
 
                     setState(() {});
                   } catch (e) {
-                    showError(e);
+                    await showError(e);
                   }
                 },
                 child: const Text("Create file and write exif data"),

@@ -14,7 +14,6 @@ class FeedItemWidget extends StatefulWidget {
     super.key,
     required this.feed,
     required this.size,
-    required this.pageController,
     required this.initialController,
     required this.openUrl,
     required this.onFavouriteToggle,
@@ -23,7 +22,6 @@ class FeedItemWidget extends StatefulWidget {
   });
   final Feed feed;
   final Size size;
-  final PageController pageController;
   final Function(Feed, int) initialController;
   final Function(String) openUrl;
   final VoidCallback onFavouriteToggle;
@@ -37,11 +35,19 @@ class FeedItemWidget extends StatefulWidget {
 class _FeedItemWidgetState extends State<FeedItemWidget> {
   int _currentMediaIndex = 0;
   String _userCurrencySymbol = '';
+  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
+    _pageController = PageController();
     _loadUserCurrency();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadUserCurrency() async {
@@ -66,7 +72,7 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
         SizedBox(
           height: size.width * AppDimensions.numD50,
           child: PageView.builder(
-              controller: widget.pageController,
+              controller: _pageController,
               scrollDirection: Axis.horizontal,
               onPageChanged: (value) {
                 setState(() {
@@ -138,6 +144,8 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                                                     item.mediaType == "video"),
                                             width: size.width,
                                             fit: BoxFit.cover,
+                                            cacheWidth: (size.width * 2).toInt(),
+                                            cacheHeight: (size.width * AppDimensions.numD50 * 2).toInt(),
                                             errorBuilder:
                                                 (context, error, stackTrace) {
                                               return Image.asset(
@@ -198,6 +206,8 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                         width: size.width * AppDimensions.numD09,
                         height: size.width * AppDimensions.numD09,
                         fit: BoxFit.contain,
+                        cacheWidth: (size.width * AppDimensions.numD09 * 2).toInt(),
+                        cacheHeight: (size.width * AppDimensions.numD09 * 2).toInt(),
                         errorBuilder: (context, error, stackTrace) {
                           return Image.asset(
                             "${commonImagePath}rabbitLogo.png",

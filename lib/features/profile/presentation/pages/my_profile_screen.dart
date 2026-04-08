@@ -1694,7 +1694,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           String? profileImg = userData["profile_image"]?.toString() ??
               userData["profileImage"]?.toString();
           if (profileImg != null && profileImg.isNotEmpty) {
-            sharedPreferences!.setString(
+            await sharedPreferences!.setString(
                 SharedPreferencesKeys.profileImageKey, fixS3Url(profileImg));
           }
 
@@ -1795,8 +1795,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           widget.editProfileScreen = false;
           debugPrint("heloooo::::${myProfileData!.avatarId}");
 
-          myProfileApi();
-          sharedPreferences!.setString(
+          await myProfileApi();
+          await sharedPreferences!.setString(
               SharedPreferencesKeys.avatarKey, myProfileData!.avatarImage);
         }
         setState(() {});
@@ -1973,11 +1973,11 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                                         mode: LaunchMode.externalApplication,
                                       );
 
-                                      sharedPreferences!.setBool(
+                                      await sharedPreferences!.setBool(
                                           SharedPreferencesKeys
                                               .sourceDataIsClickKey,
                                           true);
-                                      sharedPreferences!.setBool(
+                                      await sharedPreferences!.setBool(
                                           SharedPreferencesKeys
                                               .sourceDataIsOpenedKey,
                                           true);

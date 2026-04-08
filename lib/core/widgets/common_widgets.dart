@@ -264,7 +264,6 @@ List<Widget> getMediaCount(List<ContentMediaData> contentMediaList, Size size) {
   return widgetList;
 }
 
-/// Takes List<dynamic> which can be List<FeedContent> or List<ContentDataModel>
 List<Widget> getMediaCount2(List<dynamic> contentMediaList, Size size) {
   final imageCount =
       contentMediaList.where((item) => item.mediaType == "image").length;

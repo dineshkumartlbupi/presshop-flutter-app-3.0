@@ -2,13 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets_new.dart';
-import 'package:presshop/core/widgets/global_loader.dart';
 import 'package:presshop/main.dart';
 import '../bloc/leaderboard_bloc.dart';
 import '../bloc/leaderboard_event.dart';
@@ -16,7 +12,6 @@ import '../bloc/leaderboard_state.dart';
 import '../widgets/leadership_table_widget.dart';
 import 'package:presshop/features/leaderboard/domain/entities/leaderboard_entity.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 class LeaderboardPage extends StatelessWidget {
   const LeaderboardPage({super.key});
@@ -41,6 +36,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
   late Size size;
   String selectedCountryCode = "";
   final ScrollController _scrollController = ScrollController();
+  LeaderboardEntity? _cachedLeaderboard;
 
   @override
   void initState() {
@@ -150,20 +146,26 @@ class _LeaderboardViewState extends State<LeaderboardView> {
       body: BlocBuilder<LeaderboardBloc, LeaderboardState>(
         builder: (context, state) {
           debugPrint("DEBUG: LeaderboardView state: $state");
-          if (state is LeaderboardLoading || state is LeaderboardInitial) {
-            return Center(child: CommonWidgetsNew.showAnimatedLoader(size));
-          } else if (state is LeaderboardError) {
-            return Center(child: Text(state.message));
-          } else if (state is LeaderboardLoaded) {
-            return _buildBody(state.leaderboard);
+          if (state is LeaderboardLoaded) {
+            _cachedLeaderboard = state.leaderboard;
           }
-          return const SizedBox.shrink();
+
+          if (_cachedLeaderboard == null) {
+            if (state is LeaderboardLoading || state is LeaderboardInitial) {
+              return Center(child: CommonWidgetsNew.showAnimatedLoader(size));
+            } else if (state is LeaderboardError) {
+              return Center(child: Text(state.message));
+            }
+            return const SizedBox.shrink();
+          }
+
+          return _buildBody(_cachedLeaderboard!, state is LeaderboardLoading);
         },
       ),
     );
   }
 
-  Widget _buildBody(LeaderboardEntity leaderboard) {
+  Widget _buildBody(LeaderboardEntity leaderboard, bool isLoading) {
     return Padding(
       padding: EdgeInsets.all(size.width * AppDimensions.numD04),
       child: Column(
@@ -219,115 +221,144 @@ class _LeaderboardViewState extends State<LeaderboardView> {
               },
             ),
           ),
-          if (leaderboard.memberList.isEmpty) ...[
-            Padding(
-              padding: EdgeInsets.only(top: size.height * AppDimensions.numD30),
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  "No Member available in this Country",
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * AppDimensions.numD035,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500),
-                ),
-              ),
-            )
-          ] else ...[
-            SizedBox(height: size.height * AppDimensions.numD04),
-            LeadershipTableWidget(
-              memberList: leaderboard.memberList.take(3).toList(),
-              currencySymbol: leaderboard.currencySymbol,
-            ),
-            SizedBox(height: size.height * AppDimensions.numD04),
-            Text('${leaderboard.totalMember} total earning members',
-                style: commonTextStyle(
-                    size: size,
-                    fontSize: size.width * AppDimensions.numD035,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500)),
-            Divider(
-              height: size.height * AppDimensions.numD02,
-              thickness: 0.5,
-              color: Colors.black,
-            ),
-            Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                itemCount: leaderboard.memberList.length,
-                itemBuilder: (context, index) {
-                  var memberItem = leaderboard.memberList[index];
-                  return Padding(
-                    padding: EdgeInsets.only(
-                        bottom: size.height * AppDimensions.numD02),
-                    child: Row(
-                      children: [
-                        Container(
-                            padding: EdgeInsets.all(
-                              size.width * AppDimensions.numD01,
-                            ),
-                            height: size.width * AppDimensions.numD15,
-                            width: size.width * AppDimensions.numD15,
-                            child: ClipOval(
-                              clipBehavior: Clip.antiAlias,
-                              child: CachedNetworkImage(
-                                imageUrl: memberItem.avatar,
-                                errorWidget: (context, url, error) {
-                                  return Image.asset(
-                                    "${commonImagePath}rabbitLogo.png",
-                                    height: size.width * AppDimensions.numD06,
-                                    width: size.width * AppDimensions.numD06,
-                                    fit: BoxFit.cover,
-                                  );
-                                },
-                                fit: BoxFit.cover,
-                              ),
-                            )),
-                        SizedBox(width: size.width * AppDimensions.numD03),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              memberItem.userName.toTitleCase(),
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * AppDimensions.numD04,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            SizedBox(
-                                height: size.height * AppDimensions.numD005),
-                            Text(
-                              "Hopper since ${getFormattedDate(memberItem.createdAt)}",
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * AppDimensions.numD032,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w400),
-                            ),
-                          ],
+          Expanded(
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (leaderboard.memberList.isEmpty) ...[
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: size.height * AppDimensions.numD30),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "No Member available in this Country",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * AppDimensions.numD035,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500),
+                          ),
                         ),
-                        Spacer(),
-                        Text(
-                          formatCurrency(
-                              memberItem.totalEarnings,
-                              leaderboard.currencySymbol.isNotEmpty
-                                  ? leaderboard.currencySymbol
-                                  : currencySymbol),
+                      )
+                    ] else ...[
+                      SizedBox(height: size.height * AppDimensions.numD04),
+                      LeadershipTableWidget(
+                        memberList: leaderboard.memberList.take(3).toList(),
+                        currencySymbol: leaderboard.currencySymbol,
+                      ),
+                      SizedBox(height: size.height * AppDimensions.numD04),
+                      Text('${leaderboard.totalMember} total earning members',
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * AppDimensions.numD04,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
+                              fontWeight: FontWeight.w500)),
+                      Divider(
+                        height: size.height * AppDimensions.numD02,
+                        thickness: 0.5,
+                        color: Colors.black,
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          itemCount: leaderboard.memberList.length,
+                          itemBuilder: (context, index) {
+                            var memberItem = leaderboard.memberList[index];
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  bottom: size.height * AppDimensions.numD02),
+                              child: Row(
+                                children: [
+                                  Container(
+                                      padding: EdgeInsets.all(
+                                        size.width * AppDimensions.numD01,
+                                      ),
+                                      height: size.width * AppDimensions.numD15,
+                                      width: size.width * AppDimensions.numD15,
+                                      child: ClipOval(
+                                        clipBehavior: Clip.antiAlias,
+                                        child: CachedNetworkImage(
+                                          imageUrl: memberItem.avatar,
+                                          errorWidget: (context, url, error) {
+                                            return Image.asset(
+                                              "${commonImagePath}rabbitLogo.png",
+                                              height: size.width *
+                                                  AppDimensions.numD06,
+                                              width: size.width *
+                                                  AppDimensions.numD06,
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )),
+                                  SizedBox(
+                                      width: size.width * AppDimensions.numD03),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        memberItem.userName.toTitleCase(),
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width *
+                                                AppDimensions.numD04,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      SizedBox(
+                                          height: size.height *
+                                              AppDimensions.numD005),
+                                      Text(
+                                        "Hopper since ${getFormattedDate(memberItem.createdAt)}",
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width *
+                                                AppDimensions.numD032,
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                    ],
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    formatCurrency(
+                                        memberItem.totalEarnings,
+                                        leaderboard.currencySymbol.isNotEmpty
+                                            ? leaderboard.currencySymbol
+                                            : currencySymbol),
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width *
+                                            AppDimensions.numD04,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ]
+                  ],
+                ),
+                if (isLoading)
+                  Positioned.fill(
+                    child: Container(
+                      color: Colors.white.withOpacity(0.4),
+                      child: Center(
+                        child: CommonWidgetsNew.showAnimatedLoader(size),
+                      ),
                     ),
-                  );
-                },
-              ),
+                  ),
+              ],
             ),
-          ]
+          ),
         ],
       ),
     );

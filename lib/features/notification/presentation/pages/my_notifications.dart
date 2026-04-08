@@ -5,11 +5,6 @@ import 'package:presshop/features/earning/presentation/pages/tansaction_detail_s
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
-
-import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/widgets/common_branded_app_bar.dart';
-import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/notification/presentation/bloc/notification_bloc.dart';
 import 'package:presshop/features/notification/presentation/pages/Inline_flick_player.dart';

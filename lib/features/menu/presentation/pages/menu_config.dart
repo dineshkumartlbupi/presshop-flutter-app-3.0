@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/account_settings/presentation/pages/account_delete_screen.dart';
-import 'package:presshop/features/account_settings/presentation/pages/account_settings.dart';
+
 import 'package:presshop/features/account_settings/presentation/pages/change_password_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';

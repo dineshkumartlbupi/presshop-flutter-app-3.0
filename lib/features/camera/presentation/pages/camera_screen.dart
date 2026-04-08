@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
-
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +16,6 @@ import 'package:presshop/features/camera/presentation/bloc/camera_event.dart';
 import 'package:presshop/features/camera/presentation/bloc/camera_state.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 // Constants (Keep if not in common)
 const String photoText = "Photo";
@@ -224,6 +222,9 @@ class CameraScreenState extends State<CameraScreen>
                   },
                 ).then((value) {
                   // On return
+                  if (_bloc?.state.selectedMode == AppStrings.scanText) {
+                    _bloc?.add(const CameraModeChangeEvent(AppStrings.photoText));
+                  }
                   resumeCamera();
                 });
               }
@@ -309,7 +310,11 @@ class CameraScreenState extends State<CameraScreen>
     final isSelected = state.selectedMode == mode;
     return InkWell(
       onTap: () {
-        context.read<CameraBloc>().add(CameraModeChangeEvent(mode));
+        if (mode == AppStrings.scanText) {
+          context.read<CameraBloc>().add(const CameraScanDocEvent());
+        } else {
+          context.read<CameraBloc>().add(CameraModeChangeEvent(mode));
+        }
       },
       child: Center(
         child: FittedBox(

@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
+
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/services/background_location_service.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/widgets/common_app_bar.dart';
+
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:flutter_switch/flutter_switch.dart';
-
-import 'package:presshop/core/utils/app_logger.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/dialogs.dart';
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/menu/presentation/bloc/menu_bloc.dart';
@@ -18,7 +15,7 @@ import 'package:presshop/features/menu/presentation/bloc/menu_ui_cubit.dart';
 import 'package:presshop/features/menu/presentation/widgets/currency_selector_sheet.dart';
 import 'package:presshop/core/extensions/context_extensions.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
+
 import 'package:presshop/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:presshop/features/profile/presentation/bloc/profile_event.dart';
 
@@ -91,6 +88,7 @@ class _MenuScreenState extends State<MenuScreen> {
         break;
       case MenuAction.digitalId:
         context.pushNamed(AppRoutes.digitalIdName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
@@ -123,6 +121,7 @@ class _MenuScreenState extends State<MenuScreen> {
         break;
       case MenuAction.accountSettings:
         context.pushNamed(AppRoutes.accountSettingsName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
@@ -133,6 +132,7 @@ class _MenuScreenState extends State<MenuScreen> {
         break;
       case MenuAction.contact:
         context.pushNamed(AppRoutes.contactUsName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
@@ -157,6 +157,7 @@ class _MenuScreenState extends State<MenuScreen> {
             'index': 0,
           },
         ).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
@@ -194,16 +195,19 @@ class _MenuScreenState extends State<MenuScreen> {
           AppRoutes.myDraftName,
           extra: {'publishedContent': false, 'screenType': ''},
         ).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.myContent:
         context.pushNamed(AppRoutes.myContentName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.feed:
         context.pushNamed(AppRoutes.feedName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
@@ -212,6 +216,7 @@ class _MenuScreenState extends State<MenuScreen> {
           AppRoutes.myTasksName,
           extra: {'hideLeading': false},
         ).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
@@ -220,6 +225,7 @@ class _MenuScreenState extends State<MenuScreen> {
           AppRoutes.myEarningName,
           extra: {'openDashboard': false, 'initialTapPosition': 0},
         ).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
@@ -228,16 +234,19 @@ class _MenuScreenState extends State<MenuScreen> {
           AppRoutes.notificationsName,
           extra: {'count': 0},
         ).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.ratingReview:
         context.pushNamed(AppRoutes.ratingReviewName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.referHopper:
         context.pushNamed(AppRoutes.referName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
@@ -246,16 +255,19 @@ class _MenuScreenState extends State<MenuScreen> {
           AppRoutes.uploadDocumentsName,
           extra: {'menuScreen': true, 'hideLeading': false},
         ).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.tutorials:
         context.pushNamed(AppRoutes.tutorialsName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.locationSharing:
         context.pushNamed(AppRoutes.locationSharingName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;

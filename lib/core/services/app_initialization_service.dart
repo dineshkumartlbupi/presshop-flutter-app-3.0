@@ -212,7 +212,7 @@ class AppInitializationService {
         "platform": Platform.operatingSystem,
         "version": Platform.version,
       });
-      debugPrint("✅ App open event logged");
+      //  debugPrint("✅ App open event logged");
     } catch (e) {
       debugPrint("❌ Analytics event logging error: $e");
     }
