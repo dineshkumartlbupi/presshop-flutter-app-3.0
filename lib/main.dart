@@ -55,12 +55,12 @@ void main() async {
   runApp(const MyApp());
 }
 
-Future<void> onDeeplinkCallbackApi(
-  String data,
-  bool isAppInstallCallback,
-) async {
-  await DeeplinkService.sendCallback(data, isAppInstallCallback);
-}
+// Future<void> onDeeplinkCallbackApi(
+//   String data,
+//   bool isAppInstallCallback,
+// ) async {
+//   await DeeplinkService.sendCallback(data, isAppInstallCallback);
+// }
 
 Future<bool> uploadMediaUsingDio(
   String endUrl,

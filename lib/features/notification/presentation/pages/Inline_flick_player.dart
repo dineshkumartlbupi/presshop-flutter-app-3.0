@@ -66,13 +66,13 @@ class _InlineFlickPlayerState extends State<InlineFlickPlayer> {
 
       // THIS IS THE KEY LINE: Unmute the video
       await videoPlayerController.setVolume(1.0);
-      flickManager?.flickControlManager?.unmute();
+      await flickManager?.flickControlManager?.unmute();
 
       // Optional: Ensure playback starts
-      flickManager!.flickControlManager?.play();
+      await flickManager!.flickControlManager?.play();
 
       // Extra safety: force unmute again after play
-      videoPlayerController.setVolume(1.0);
+      await videoPlayerController.setVolume(1.0);
     } catch (e) {
       debugPrint('Video init error: $e');
     } finally {

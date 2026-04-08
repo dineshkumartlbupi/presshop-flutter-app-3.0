@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/widgets/common_app_bar.dart';
+
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
+
 import 'package:presshop/core/di/injection_container.dart';
 import '../bloc/account_settings_bloc.dart';
 import '../bloc/account_settings_event.dart';

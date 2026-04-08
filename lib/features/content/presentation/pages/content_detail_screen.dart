@@ -708,7 +708,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                 fontSize: size.width * AppDimensions.numD029,
                                 color: (_mediaHouseList.isNotEmpty
                                             ? localPurchasedCount
-                                            : widget.purchasedMediahouseCount) ==
+                                            : widget
+                                                .purchasedMediahouseCount) ==
                                         0
                                     ? Colors.grey
                                     : AppColorTheme.colorThemePink,
@@ -1125,7 +1126,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                 fontWeight: FontWeight.w400),
                           ),
                           Text(
-                            "${(contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency))}${numberFormatting(item.initialOfferAmount)}",
+                            "${contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency)}${numberFormatting(item.initialOfferAmount)}",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: commonTextStyle(

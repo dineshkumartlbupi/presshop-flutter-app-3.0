@@ -88,7 +88,7 @@ import 'package:presshop/features/earning/domain/usecases/get_earning_profile.da
 import 'package:presshop/features/earning/domain/usecases/get_transactions.dart';
 import 'package:presshop/features/earning/domain/usecases/get_commissions.dart';
 import 'package:presshop/features/earning/presentation/bloc/earning_bloc.dart';
-import 'package:presshop/features/alert/presentation/bloc/alert_bloc.dart';
+
 import 'package:presshop/features/camera/presentation/bloc/camera_bloc.dart';
 import 'package:presshop/features/chat/presentation/bloc/chat_bloc.dart';
 import 'package:presshop/features/feed/domain/repositories/feed_repository.dart';
@@ -256,8 +256,6 @@ Future<void> init() async {
         clientId: Platform.isIOS
             ? '750460561502-geuno4tt1ic52cor9l2obl1vhuogvsp0.apps.googleusercontent.com'
             : null,
-        serverClientId:
-            '750460561502-fajfc82s14phu6iu767i7qm53qmu2r8f.apps.googleusercontent.com',
         scopes: ['email'],
       ));
 
@@ -343,6 +341,7 @@ Future<void> init() async {
     () => AuthBloc(
       loginUser: sl(),
       socialLoginUser: sl(),
+      checkEmail: sl(),
       forgotPassword: sl(),
       verifyForgotPasswordOtp: sl(),
       resetPassword: sl(),

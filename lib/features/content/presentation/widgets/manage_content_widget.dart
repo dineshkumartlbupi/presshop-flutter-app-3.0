@@ -39,6 +39,8 @@ class ManageContentWidget extends StatelessWidget {
                   fit: BoxFit.cover,
                   height: size.width * AppDimensions.numD20,
                   width: size.width * AppDimensions.numD20,
+                  cacheWidth: (size.width * AppDimensions.numD20 * 2).toInt(),
+                  cacheHeight: (size.width * AppDimensions.numD20 * 2).toInt(),
                   errorBuilder: (BuildContext context, Object exception,
                       StackTrace? stackTrace) {
                     return Image.asset(

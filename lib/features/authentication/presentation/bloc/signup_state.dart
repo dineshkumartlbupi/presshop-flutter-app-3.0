@@ -85,6 +85,14 @@ class ReferralCodeVerified extends SignUpState {
   List<Object> get props => [data];
 }
 
+class ReferralCodeVerificationFailed extends SignUpState {
+  const ReferralCodeVerificationFailed(this.message);
+  final String message;
+
+  @override
+  List<Object> get props => [message];
+}
+
 class SocialExistsChecked extends SignUpState {
 
   const SocialExistsChecked(this.exists);

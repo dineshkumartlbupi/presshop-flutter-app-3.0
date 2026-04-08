@@ -539,8 +539,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                       )
                     else
                       ..._commissionList
-                          .map((item) => _buildCommissionCard(size, item))
-                          .toList(),
+                          .map((item) => _buildCommissionCard(size, item)),
                   ],
 
                   // if (!_isLoadingCommissions && _commissionList.isEmpty) ...[
@@ -674,11 +673,11 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
             children: [
               Expanded(
                 child: _earningInfoTile(size, "Total Earning",
-                    "${currencySymbol}${totalEarning.toStringAsFixed(2)}"),
+                    "$currencySymbol${totalEarning.toStringAsFixed(2)}"),
               ),
               Expanded(
                 child: _earningInfoTile(size, "Your Commission",
-                    "${currencySymbol}${commission.toStringAsFixed(2)}"),
+                    "$currencySymbol${commission.toStringAsFixed(2)}"),
               ),
             ],
           ),

@@ -193,7 +193,7 @@ class _MapPageContentState extends State<_MapPageContent>
     _burstController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 3000),
-    )..addListener(_updateParticles);
+    ); // No listener — _updateParticles was empty; burst is one-shot via forward()
 
     _searchFocusNode.addListener(() {
       if (!_searchFocusNode.hasFocus) {
@@ -354,9 +354,7 @@ class _MapPageContentState extends State<_MapPageContent>
     }
   }
 
-  void _updateParticles() {
-    // Moved particle logic into its own widget to prevent full-page rebuilds
-  }
+  // _updateParticles removed — burst particle logic is handled inside BurstParticlesOverlay widget
 
   Future<ui.Image?> _loadImage(String assetPath) async {
     try {

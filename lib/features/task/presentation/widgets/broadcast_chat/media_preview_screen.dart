@@ -1,13 +1,11 @@
 import 'dart:io';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/widgets/video_widget.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
-// import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:presshop/features/camera/presentation/pages/audio_waveform_widget_screen.dart';
 import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 

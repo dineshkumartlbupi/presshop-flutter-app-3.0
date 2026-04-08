@@ -42,11 +42,13 @@ class MapViewWidget extends StatefulWidget {
 class _MapViewWidgetState extends State<MapViewWidget> {
   List<Circle> _pulseCircles = [];
   double _currentZoom = 16.0;
+  double _lastPulseVal = -1.0; // tracks last animation value to throttle setState
 
   @override
   void initState() {
     super.initState();
     _currentZoom = widget.initialZoom;
+    _lastPulseVal = -1.0; // initialize to impossible value to force first update
     widget.pulseController.addListener(_updatePulseCircle);
   }
 
@@ -58,7 +60,13 @@ class _MapViewWidgetState extends State<MapViewWidget> {
 
   void _updatePulseCircle() {
     if (!mounted) return;
-    final val = Curves.easeOutQuad.transform(widget.pulseController.value);
+
+    final rawVal = widget.pulseController.value;
+    // Throttle: only rebuild if value changed by more than 2% — reduces from 60fps to ~20fps
+    if ((rawVal - _lastPulseVal).abs() < 0.02) return;
+    _lastPulseVal = rawVal;
+
+    final val = Curves.easeOutQuad.transform(rawVal);
     final opacity = 1.0 - val;
 
     List<Circle> newCircles = [];

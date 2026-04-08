@@ -157,7 +157,8 @@ void _pollStopFlag(
   ServiceInstance service,
   FlutterLocalNotificationsPlugin notifications,
 ) {
-  Timer.periodic(const Duration(seconds: 1), (timer) async {
+  // Reduced from 1s to 5s — minimizes disk I/O to prevent overheating
+  Timer.periodic(const Duration(seconds: 5), (timer) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.reload();
     if (prefs.getBool('stop_service_flag') == true) {
@@ -287,25 +288,28 @@ Future<LocationSettings> _buildLocationSettings(SharedPreferences prefs) async {
 
   if (Platform.isAndroid) {
     return AndroidSettings(
-      accuracy: LocationAccuracy.bestForNavigation,
+      // Changed from bestForNavigation (uses all sensors) to high — reduces heat significantly
+      accuracy: LocationAccuracy.high,
       distanceFilter: distanceFilter.toInt(),
-      intervalDuration: const Duration(seconds: 1),
+      // Reduced from 1s to 3s — fewer GPS updates = less CPU & battery drain
+      intervalDuration: const Duration(seconds: 3),
       forceLocationManager: true,
     );
   }
 
   if (Platform.isIOS) {
     return AppleSettings(
-      accuracy: LocationAccuracy.bestForNavigation,
+      // Changed from bestForNavigation to high — saves battery on iOS
+      accuracy: LocationAccuracy.high,
       activityType: ActivityType.other,
       distanceFilter: distanceFilter.toInt(),
-      pauseLocationUpdatesAutomatically: false,
+      pauseLocationUpdatesAutomatically: true, // Allow iOS to pause when stationary
       showBackgroundLocationIndicator: true,
     );
   }
 
   return LocationSettings(
-    accuracy: LocationAccuracy.bestForNavigation,
+    accuracy: LocationAccuracy.high,
     distanceFilter: distanceFilter.toInt(),
   );
 }

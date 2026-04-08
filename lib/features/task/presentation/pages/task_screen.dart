@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/main.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/services/media_upload_service.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';

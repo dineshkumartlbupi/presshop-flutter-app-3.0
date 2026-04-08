@@ -4,20 +4,12 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
-// import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart'; // Removed
-// import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart'; // Removed
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
-// import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/main.dart';
-// import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart' as main;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 // ignore: must_be_immutable
 class ContentSubmittedScreen extends StatefulWidget {
@@ -89,14 +81,6 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
     bool isUserOutSideOfUnitedKingdom = widget.publishData?.country !=
             "United Kingdom" ||
         sharedPreferences!.getString(SharedPreferencesKeys.contryCode) != "GB";
-
-    print(
-        "from content submitted isUserOutSideOfUnitedKingdom screen ==>>> $isUserOutSideOfUnitedKingdom");
-    print("from content submitted screen ==>>> ${widget.isBeta}");
-    print("from content submitted screen ==>>> ${widget.publishData?.country}");
-    print(
-        "from content submitted screen ==>>> ${sharedPreferences!.getString(SharedPreferencesKeys.contryCode)}");
-
     return WillPopScope(
       onWillPop: () async {
         context.goNamed(AppRoutes.dashboardName, extra: {'initialPosition': 2});

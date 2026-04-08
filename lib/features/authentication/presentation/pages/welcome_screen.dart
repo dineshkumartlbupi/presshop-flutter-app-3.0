@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
-
-import 'package:presshop/core/analytics/analytics_constants.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:go_router/go_router.dart';
 
 // ignore: must_be_immutable
@@ -43,12 +38,6 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-
-    print("Data for source2343243423423 ");
-    print(widget.sourceDataType ?? "");
-    print(widget.sourceDataIsOpened ?? "");
-    print(widget.sourceDataUrl ?? "");
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,

@@ -5,9 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/di/injection_container.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets_new.dart';
 
@@ -103,235 +101,260 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                 return CommonWidgetsNew.showAnimatedLoader(size);
               }
 
-              return SafeArea(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: size.width * AppDimensions.numD04),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: size.width * AppDimensions.numD06),
-                      Text(
-                        AppStrings.uploadDocsHeadingText,
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: "AirbnbCereal",
-                            fontSize: size.width * AppDimensions.numD07),
-                      ),
-                      SizedBox(height: size.width * AppDimensions.numD02),
-                      RichText(
-                        text: TextSpan(children: [
-                          TextSpan(
-                              text: "${AppStrings.uploadDocsSubHeading1Text} ",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "AirbnbCereal",
-                                  height: 1.5,
-                                  fontSize:
-                                      size.width * AppDimensions.numD035)),
-                          WidgetSpan(
-                              alignment: PlaceholderAlignment.middle,
-                              child: Image.asset("${iconsPath}ic_pro.png",
-                                  height: size.width * AppDimensions.numD06)),
-                          TextSpan(
-                              text: " ${AppStrings.uploadDocsSubHeading2Text}",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "AirbnbCereal",
-                                  height: 1.5,
-                                  fontSize:
-                                      size.width * AppDimensions.numD035)),
-                        ]),
-                      ),
-                      SizedBox(height: size.width * AppDimensions.numD04),
-                      RichText(
-                        text: TextSpan(children: [
-                          TextSpan(
-                              text:
-                                  "Once your docs are approved, you will qualify as a ",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "AirbnbCereal",
-                                  height: 1.5,
-                                  fontSize:
-                                      size.width * AppDimensions.numD035)),
-                          WidgetSpan(
-                              alignment: PlaceholderAlignment.middle,
-                              child: Image.asset("${iconsPath}ic_pro.png",
-                                  height: size.width * AppDimensions.numD06)),
-                          TextSpan(
-                              text: "\nand be eligible for attractive ",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "AirbnbCereal",
-                                  height: 1.5,
-                                  fontSize:
-                                      size.width * AppDimensions.numD035)),
-                          TextSpan(
-                              text: "benefits",
-                              style: TextStyle(
-                                  color: AppColorTheme.colorThemePink,
-                                  fontFamily: "AirbnbCereal",
-                                  height: 1.5,
-                                  fontSize: size.width * AppDimensions.numD035,
-                                  fontWeight: FontWeight.w600),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  context.pushNamed(
-                                    AppRoutes.faqName,
-                                    extra: {"type": "faq"},
-                                  );
-                                }),
-                        ]),
-                      ),
-
-                      SizedBox(height: size.width * AppDimensions.numD06),
-
-                      // Instructions List (Checklist style from screenshot 1)
-                      Text("Upload your documents for verification (any 2)",
-                          style: TextStyle(
-                              fontSize: size.width * AppDimensions.numD038,
-                              color: Colors.black,
-                              fontFamily: "AirbnbCereal",
-                              fontWeight: FontWeight.w400)),
-                      SizedBox(height: size.width * AppDimensions.numD04),
-                      Container(
-                        padding:
-                            EdgeInsets.all(size.width * AppDimensions.numD04),
-                        decoration: BoxDecoration(
-                            color: const Color(0xFFF2F2F2),
-                            borderRadius: BorderRadius.circular(
-                                size.width * AppDimensions.numD02),
-                            border: Border.all(color: Colors.black)),
-                        child: Column(
-                          children: [
-                            _buildInstructionRow(
-                                size, AppStrings.validDegreeText),
-                            _buildInstructionRow(
-                                size, AppStrings.validMembershipText),
-                            _buildInstructionRow(
-                                size, AppStrings.validPassportText),
-                            _buildInstructionRow(size, AppStrings.othersText),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(height: size.width * AppDimensions.numD05),
-
-                      // Uploaded Documents Grid/List
-                      if (state.uploadedDocuments.isNotEmpty)
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: size.width * AppDimensions.numD03,
-                            mainAxisSpacing: size.width * AppDimensions.numD03,
-                            childAspectRatio: 1,
+              return Stack(
+                children: [
+                  SafeArea(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD04),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: size.width * AppDimensions.numD06),
+                          Text(
+                            AppStrings.uploadDocsHeadingText,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: "AirbnbCereal",
+                                fontSize: size.width * AppDimensions.numD07),
                           ),
-                          itemCount: state.uploadedDocuments.length,
-                          itemBuilder: (context, index) {
-                            final doc = state.uploadedDocuments[index];
-                            return Container(
-                              padding: EdgeInsets.all(
-                                  size.width * AppDimensions.numD025),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black),
-                                borderRadius: BorderRadius.circular(
-                                    size.width * AppDimensions.numD04),
-                              ),
-                              child: Column(
-                                children: [
-                                  Expanded(
-                                    child: Stack(
-                                      alignment: Alignment.topRight,
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                              size.width *
-                                                  AppDimensions.numD03),
-                                          child: doc.documentName
-                                                  .endsWith(".pdf")
-                                              ? Image.asset(
-                                                  "${iconsPath}pdfIcon.png",
-                                                  height: size.width *
-                                                      AppDimensions.numD28,
-                                                  width: size.width *
-                                                      AppDimensions.numD38,
-                                                )
-                                              : Image.network(
-                                                  doc.documentUrl, // Use URL for image preview
-                                                  fit: BoxFit.cover,
-                                                  width: double.infinity,
-                                                  height: double.infinity,
-                                                  errorBuilder: (context, error,
-                                                          stackTrace) =>
-                                                      Center(
-                                                          child: Icon(
-                                                              Icons
-                                                                  .insert_drive_file,
-                                                              size: 40,
-                                                              color:
-                                                                  Colors.grey)),
-                                                ),
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            context
-                                                .read<UploadDocumentsBloc>()
-                                                .add(DeleteDocumentEvent(
-                                                    doc.id));
-                                          },
-                                          child: Align(
-                                            alignment: Alignment.topRight,
-                                            child: Padding(
-                                              padding: EdgeInsets.all(
-                                                  size.width *
-                                                      AppDimensions.numD018),
-                                              child: Image.asset(
-                                                  "${iconsPath}ic_deleteIcon.png",
-                                                  height: size.width *
-                                                      AppDimensions.numD05),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: size.width * AppDimensions.numD02,
-                                  ),
-                                  Text(
-                                    doc.documentName.split("/").last,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD03,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400),
-                                  ),
-                                  SizedBox(
-                                    height: Platform.isIOS
-                                        ? size.width * AppDimensions.numD02
-                                        : 0,
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
+                          SizedBox(height: size.width * AppDimensions.numD02),
+                          RichText(
+                            text: TextSpan(children: [
+                              TextSpan(
+                                  text:
+                                      "${AppStrings.uploadDocsSubHeading1Text} ",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: "AirbnbCereal",
+                                      height: 1.5,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035)),
+                              WidgetSpan(
+                                  alignment: PlaceholderAlignment.middle,
+                                  child: Image.asset("${iconsPath}ic_pro.png",
+                                      height:
+                                          size.width * AppDimensions.numD06)),
+                              TextSpan(
+                                  text:
+                                      " ${AppStrings.uploadDocsSubHeading2Text}",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: "AirbnbCereal",
+                                      height: 1.5,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035)),
+                            ]),
+                          ),
+                          SizedBox(height: size.width * AppDimensions.numD04),
+                          RichText(
+                            text: TextSpan(children: [
+                              TextSpan(
+                                  text:
+                                      "Once your docs are approved, you will qualify as a ",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: "AirbnbCereal",
+                                      height: 1.5,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035)),
+                              WidgetSpan(
+                                  alignment: PlaceholderAlignment.middle,
+                                  child: Image.asset("${iconsPath}ic_pro.png",
+                                      height:
+                                          size.width * AppDimensions.numD06)),
+                              TextSpan(
+                                  text: "\nand be eligible for attractive ",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: "AirbnbCereal",
+                                      height: 1.5,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035)),
+                              TextSpan(
+                                  text: "benefits",
+                                  style: TextStyle(
+                                      color: AppColorTheme.colorThemePink,
+                                      fontFamily: "AirbnbCereal",
+                                      height: 1.5,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      fontWeight: FontWeight.w600),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      context.pushNamed(
+                                        AppRoutes.faqName,
+                                        extra: {"type": "faq"},
+                                      );
+                                    }),
+                            ]),
+                          ),
 
-                      SizedBox(
-                          height: size.width *
-                              AppDimensions.numD20), // Spacer for bottom button
-                    ],
+                          SizedBox(height: size.width * AppDimensions.numD06),
+
+                          // Instructions List (Checklist style from screenshot 1)
+                          Text("Upload your documents for verification (any 2)",
+                              style: TextStyle(
+                                  fontSize: size.width * AppDimensions.numD038,
+                                  color: Colors.black,
+                                  fontFamily: "AirbnbCereal",
+                                  fontWeight: FontWeight.w400)),
+                          SizedBox(height: size.width * AppDimensions.numD04),
+                          Container(
+                            padding: EdgeInsets.all(
+                                size.width * AppDimensions.numD04),
+                            decoration: BoxDecoration(
+                                color: const Color(0xFFF2F2F2),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD02),
+                                border: Border.all(color: Colors.black)),
+                            child: Column(
+                              children: [
+                                _buildInstructionRow(
+                                    size, AppStrings.validDegreeText),
+                                _buildInstructionRow(
+                                    size, AppStrings.validMembershipText),
+                                _buildInstructionRow(
+                                    size, AppStrings.validPassportText),
+                                _buildInstructionRow(
+                                    size, AppStrings.othersText),
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(height: size.width * AppDimensions.numD05),
+
+                          // Uploaded Documents Grid/List
+                          if (state.uploadedDocuments.isNotEmpty)
+                            GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing:
+                                    size.width * AppDimensions.numD03,
+                                mainAxisSpacing:
+                                    size.width * AppDimensions.numD03,
+                                childAspectRatio: 1,
+                              ),
+                              itemCount: state.uploadedDocuments.length,
+                              itemBuilder: (context, index) {
+                                final doc = state.uploadedDocuments[index];
+                                return Container(
+                                  padding: EdgeInsets.all(
+                                      size.width * AppDimensions.numD025),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black),
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * AppDimensions.numD04),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: Stack(
+                                          alignment: Alignment.topRight,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      size.width *
+                                                          AppDimensions.numD03),
+                                              child: doc.documentName
+                                                      .endsWith(".pdf")
+                                                  ? Image.asset(
+                                                      "${iconsPath}pdfIcon.png",
+                                                      height: size.width *
+                                                          AppDimensions.numD28,
+                                                      width: size.width *
+                                                          AppDimensions.numD38,
+                                                    )
+                                                  : Image.network(
+                                                      doc.documentUrl, // Use URL for image preview
+                                                      fit: BoxFit.cover,
+                                                      width: double.infinity,
+                                                      height: double.infinity,
+                                                      errorBuilder: (context,
+                                                              error,
+                                                              stackTrace) =>
+                                                          Center(
+                                                              child: Icon(
+                                                                  Icons
+                                                                      .insert_drive_file,
+                                                                  size: 40,
+                                                                  color: Colors
+                                                                      .grey)),
+                                                    ),
+                                            ),
+                                            InkWell(
+                                              onTap: () {
+                                                context
+                                                    .read<UploadDocumentsBloc>()
+                                                    .add(DeleteDocumentEvent(
+                                                        doc.id));
+                                              },
+                                              child: Align(
+                                                alignment: Alignment.topRight,
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(
+                                                      size.width *
+                                                          AppDimensions
+                                                              .numD018),
+                                                  child: Image.asset(
+                                                      "${iconsPath}ic_deleteIcon.png",
+                                                      height: size.width *
+                                                          AppDimensions.numD05),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height:
+                                            size.width * AppDimensions.numD02,
+                                      ),
+                                      Text(
+                                        doc.documentName.split("/").last,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width *
+                                                AppDimensions.numD03,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                      SizedBox(
+                                        height: Platform.isIOS
+                                            ? size.width * AppDimensions.numD02
+                                            : 0,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+
+                          SizedBox(
+                              height: size.width *
+                                  AppDimensions
+                                      .numD20), // Spacer for bottom button
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                  if (state.status == UploadDocumentsStatus.loading)
+                    Positioned.fill(
+                      child: Container(
+                        color: Colors.white.withOpacity(0.5),
+                        child:
+                            Center(child: CommonWidgetsNew.showAnimatedLoader(size)),
+                      ),
+                    ),
+                ],
               );
             },
           ),
@@ -356,41 +379,43 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
           // )),
           bottomNavigationBar: Padding(
             padding: EdgeInsets.all(size.width * AppDimensions.numD05),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Builder(builder: (context) {
-                    return Container(
+            child: SafeArea(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Builder(builder: (context) {
+                      return Container(
+                        height: size.width * AppDimensions.numD13,
+                        child: commonElevatedButton(
+                          "Upload",
+                          size,
+                          commonButtonTextStyle(size),
+                          commonButtonStyle(size, AppColorTheme.colorThemePink),
+                          () {
+                            // Open Verification Sheet
+                            _showVerificationSheet(context, instructions);
+                          },
+                        ),
+                      );
+                    }),
+                  ),
+                  SizedBox(width: size.width * AppDimensions.numD04),
+                  Expanded(
+                    child: SizedBox(
                       height: size.width * AppDimensions.numD13,
                       child: commonElevatedButton(
-                        "Upload",
+                        "Exit",
                         size,
                         commonButtonTextStyle(size),
-                        commonButtonStyle(size, AppColorTheme.colorThemePink),
+                        commonButtonStyle(size, Colors.black),
                         () {
-                          // Open Verification Sheet
-                          _showVerificationSheet(context, instructions);
+                          context.pop();
                         },
                       ),
-                    );
-                  }),
-                ),
-                SizedBox(width: size.width * AppDimensions.numD04),
-                Expanded(
-                  child: SizedBox(
-                    height: size.width * AppDimensions.numD13,
-                    child: commonElevatedButton(
-                      "Exit",
-                      size,
-                      commonButtonTextStyle(size),
-                      commonButtonStyle(size, Colors.black),
-                      () {
-                        context.pop();
-                      },
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           )),
     );
@@ -472,7 +497,6 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
       BuildContext contextValue, List<dynamic> instructions) {
     // Track uploaded files per instruction index
     Map<int, List<File>> uploadedFilesPerInstruction = {};
-    int selectedInstructionIndex = -1;
 
     // Helper to get all files across all instructions
     List<File> getAllFiles() {
@@ -577,7 +601,6 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                                   return;
                                 }
                                 setModalState(() {
-                                  selectedInstructionIndex = index;
                                   selectedDocType = instructions[index].name;
                                 });
                                 // Immediately open file picker for this option
@@ -654,7 +677,6 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
 
                               setModalState(() {
                                 selectedDocType = docType;
-                                selectedInstructionIndex = instrIndex;
                               });
 
                               // 2. Pick files for the selected instruction
@@ -823,33 +845,45 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                 ),
 
                 // Submit Button
-                SizedBox(
-                  width: size.width,
-                  height: size.width * AppDimensions.numD13,
-                  child: commonElevatedButton(
-                      AppStrings.submitText,
-                      size,
-                      commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700),
-                      commonButtonStyle(size, AppColorTheme.colorThemePink),
-                      () {
-                    final allFiles = getAllFiles();
-                    if (allFiles.isEmpty) {
-                      ScaffoldMessenger.of(contextValue).showSnackBar(
-                          const SnackBar(
-                              content:
-                                  Text("Please upload at least one document")));
-                      return;
-                    }
+                SafeArea(
+                  child: BlocBuilder<UploadDocumentsBloc, UploadDocumentsState>(
+                    bloc: contextValue.read<UploadDocumentsBloc>(),
+                    builder: (context, state) {
+                      return SizedBox(
+                        width: size.width,
+                        height: size.width * AppDimensions.numD13,
+                        child: state.status == UploadDocumentsStatus.loading
+                            ? Center(
+                                child:
+                                    CommonWidgetsNew.showAnimatedLoader(size))
+                            : commonElevatedButton(
+                                AppStrings.submitText,
+                                size,
+                                commonTextStyle(
+                                    size: size,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700),
+                                commonButtonStyle(
+                                    size, AppColorTheme.colorThemePink), () {
+                                final allFiles = getAllFiles();
+                                if (allFiles.isEmpty) {
+                                  ScaffoldMessenger.of(contextValue)
+                                      .showSnackBar(const SnackBar(
+                                          content: Text(
+                                              "Please upload at least one document")));
+                                  return;
+                                }
 
-                    // Dispatch upload event with all files
-                    contextValue
-                        .read<UploadDocumentsBloc>()
-                        .add(UploadFilesEvent(allFiles));
-                  }),
+                                // Dispatch upload event with all files
+                                contextValue
+                                    .read<UploadDocumentsBloc>()
+                                    .add(UploadFilesEvent(allFiles));
+                              }),
+                      );
+                    },
+                  ),
                 ),
                 SizedBox(height: size.width * AppDimensions.numD04),
               ],
@@ -930,137 +964,140 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (bc) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(size.width * AppDimensions.numD05),
-              topRight: Radius.circular(size.width * AppDimensions.numD05),
+        return SafeArea(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(size.width * AppDimensions.numD05),
+                topRight: Radius.circular(size.width * AppDimensions.numD05),
+              ),
             ),
-          ),
-          padding: EdgeInsets.all(size.width * AppDimensions.numD05),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Select Option",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: size.width * AppDimensions.numD048,
-                        fontFamily: "AirbnbCereal",
-                        fontWeight: FontWeight.w700),
-                    textAlign: TextAlign.center,
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        context.pop();
-                      },
-                      icon: Icon(Icons.close_rounded,
-                          color: Colors.black,
-                          size: size.width * AppDimensions.numD08)),
-                ],
-              ),
-              const Divider(color: Colors.black, thickness: 1.2),
-              SizedBox(
-                height: size.width * AppDimensions.numD04,
-              ),
-              Container(
-                margin: EdgeInsets.only(
-                    left: size.width * AppDimensions.numD06,
-                    right: size.width * AppDimensions.numD06),
-                child: Row(
+            padding: EdgeInsets.all(size.width * AppDimensions.numD05),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          context.pop(true);
+                   
+                    Text(
+                      "Select Option",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: size.width * AppDimensions.numD048,
+                          fontFamily: "AirbnbCereal",
+                          fontWeight: FontWeight.w700),
+                      textAlign: TextAlign.center,
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          context.pop();
                         },
-                        child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(color: Colors.black),
-                              borderRadius: BorderRadius.circular(
-                                  size.width * AppDimensions.numD04),
-                            ),
-                            height: size.width * AppDimensions.numD25,
-                            padding: EdgeInsets.all(
-                                size.width * AppDimensions.numD02),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.file_upload_outlined,
-                                    size: size.width * AppDimensions.numD08),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD03,
-                                ),
-                                Text(
-                                  "My Gallery",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize:
-                                          size.width * AppDimensions.numD035,
-                                      fontFamily: "AirbnbCereal",
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            )),
-                      ),
-                    ),
-                    SizedBox(
-                      width: size.width * 0.05,
-                    ),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          context.pop(false);
-                        },
-                        child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(color: Colors.black),
-                              borderRadius: BorderRadius.circular(
-                                  size.width * AppDimensions.numD04),
-                            ),
-                            height: size.width * AppDimensions.numD25,
-                            padding: EdgeInsets.all(
-                                size.width * AppDimensions.numD04),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.file_copy_outlined,
-                                  size: size.width * AppDimensions.numD08,
-                                ),
-                                SizedBox(
-                                  height: size.width * AppDimensions.numD03,
-                                ),
-                                Text(
-                                  "My Files",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize:
-                                          size.width * AppDimensions.numD035,
-                                      fontFamily: "AirbnbCereal",
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            )),
-                      ),
-                    ),
+                        icon: Icon(Icons.close_rounded,
+                            color: Colors.black,
+                            size: size.width * AppDimensions.numD08)),
                   ],
                 ),
-              ),
-              SizedBox(
-                height: size.width * AppDimensions.numD06,
-              ),
-            ],
+                const Divider(color: Colors.black, thickness: 1.2),
+                SizedBox(
+                  height: size.width * AppDimensions.numD04,
+                ),
+                Container(
+                  margin: EdgeInsets.only(
+                      left: size.width * AppDimensions.numD06,
+                      right: size.width * AppDimensions.numD06),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            context.pop(true);
+                          },
+                          child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: Colors.black),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
+                              ),
+                              height: size.width * AppDimensions.numD25,
+                              padding: EdgeInsets.all(
+                                  size.width * AppDimensions.numD02),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.file_upload_outlined,
+                                      size: size.width * AppDimensions.numD08),
+                                  SizedBox(
+                                    height: size.width * AppDimensions.numD03,
+                                  ),
+                                  Text(
+                                    "My Gallery",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
+                                        fontFamily: "AirbnbCereal",
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              )),
+                        ),
+                      ),
+                      SizedBox(
+                        width: size.width * 0.05,
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            context.pop(false);
+                          },
+                          child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: Colors.black),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
+                              ),
+                              height: size.width * AppDimensions.numD25,
+                              padding: EdgeInsets.all(
+                                  size.width * AppDimensions.numD04),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.file_copy_outlined,
+                                    size: size.width * AppDimensions.numD08,
+                                  ),
+                                  SizedBox(
+                                    height: size.width * AppDimensions.numD03,
+                                  ),
+                                  Text(
+                                    "My Files",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
+                                        fontFamily: "AirbnbCereal",
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              )),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: size.width * AppDimensions.numD06,
+                ),
+              ],
+            ),
           ),
         );
       },

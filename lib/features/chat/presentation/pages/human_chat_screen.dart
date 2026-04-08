@@ -22,13 +22,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 import 'package:presshop/main.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/utils/app_logger.dart';
-import 'package:presshop/core/core_export.dart' hide Config;
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/chat/presentation/bloc/chat_bloc.dart';
@@ -36,7 +31,6 @@ import 'package:presshop/features/chat/presentation/bloc/chat_event.dart';
 import 'package:presshop/features/chat/presentation/bloc/chat_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/features/chat/data/models/chat_models.dart';
 
 // ignore: must_be_immutable
@@ -2285,7 +2279,7 @@ class _ConversationScreenState extends State<ConversationScreen>
       controller.startPlayer();
       debugPrint("Play=======>");
     } else {
-      controller.pausePlayer();
+      await controller.pausePlayer();
     }
     controller.onPlayerStateChanged.listen((event) {
       if (event.isPaused) {
@@ -2338,10 +2332,11 @@ class _ConversationScreenState extends State<ConversationScreen>
     _ampTimer?.cancel();
 
     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
-      setState(() => _recordDuration++);
+      if (mounted) setState(() => _recordDuration++);
     });
-    _ampTimer = Timer.periodic(const Duration(milliseconds: 200), (t) async {
-      setState(() {});
+    // Increased from 200ms to 500ms — reduces from 5 to 2 rebuilds/sec of the entire chat widget tree
+    _ampTimer = Timer.periodic(const Duration(milliseconds: 500), (t) async {
+      if (mounted) setState(() {});
     });
   }
 

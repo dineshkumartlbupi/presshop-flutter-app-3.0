@@ -119,16 +119,26 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         ..sampleRate = 44100
         ..bitRate = 48000;
 
-      // Parallel permission check
-      final Map<Permission, PermissionStatus> permissions = await [
-        Permission.camera,
-        Permission.microphone,
-        if (Platform.isAndroid) Permission.photos,
-        if (Platform.isAndroid) Permission.storage,
-      ].request();
+      // Check permission status first before calling .request() to avoid OS lifecycle interruptions
+      bool cameraGranted = await Permission.camera.isGranted;
+      bool micGranted = await Permission.microphone.isGranted;
+      bool photosGranted = Platform.isAndroid ? await Permission.photos.isGranted : true;
+      bool storageGranted = Platform.isAndroid ? await Permission.storage.isGranted : true;
 
-      final cameraStatus = permissions[Permission.camera]?.isGranted ?? false;
-      final micStatus = permissions[Permission.microphone]?.isGranted ?? false;
+      List<Permission> toRequest = [];
+      if (!cameraGranted) toRequest.add(Permission.camera);
+      if (!micGranted) toRequest.add(Permission.microphone);
+      if (Platform.isAndroid && !photosGranted) toRequest.add(Permission.photos);
+      if (Platform.isAndroid && !storageGranted) toRequest.add(Permission.storage);
+
+      if (toRequest.isNotEmpty) {
+        await toRequest.request();
+        cameraGranted = await Permission.camera.isGranted;
+        micGranted = await Permission.microphone.isGranted;
+      }
+
+      final cameraStatus = cameraGranted;
+      final micStatus = micGranted;
 
       debugPrint("🚀 CameraBloc: Camera: $cameraStatus, Mic: $micStatus");
 
@@ -147,9 +157,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         }
       }
 
-      // Pre-authorize PhotoManager in background
-      if (permissions[Permission.photos]?.isGranted == true ||
-          permissions[Permission.storage]?.isGranted == true) {
+      // Pre-authorize PhotoManager in background only if needed and granted
+      if (photosGranted || storageGranted) {
         try {
           await PhotoManager.requestPermissionExtend();
         } catch (e) {
@@ -200,8 +209,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       debugPrint("🚀 CameraBloc: Initializing controller...");
 
       try {
-        // Add timeout to controller initialization to prevent infinite hang
-        await controller.initialize().timeout(const Duration(seconds: 5),
+        await controller.initialize().timeout(const Duration(seconds: 15),
             onTimeout: () {
           throw TimeoutException("Camera controller initialization timed out");
         });
@@ -267,6 +275,11 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     if (event.state == AppLifecycleState.inactive ||
         event.state == AppLifecycleState.paused ||
         event.state == AppLifecycleState.detached) {
+      
+      // IGNORING lifecycle dispose if we are actively initializing.
+      // This prevents permission dialogs from triggering destructive disposal cycles.
+      if (_isInitializing) return;
+
       // Avoid redundant disposal cycles
       if (state.status == CameraStatus.disposing) return;
 
@@ -689,6 +702,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         List<CameraData> newList = List.from(state.capturedMedia)
           ..addAll(newMedia);
         emit(state.copyWith(
+            selectedMode: "Scan",
             capturedMedia: newList, status: CameraStatus.success));
       }
     } catch (e) {
