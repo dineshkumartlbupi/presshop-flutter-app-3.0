@@ -42,13 +42,15 @@ class MapViewWidget extends StatefulWidget {
 class _MapViewWidgetState extends State<MapViewWidget> {
   List<Circle> _pulseCircles = [];
   double _currentZoom = 16.0;
-  double _lastPulseVal = -1.0; // tracks last animation value to throttle setState
+  double _lastPulseVal =
+      -1.0; // tracks last animation value to throttle setState
 
   @override
   void initState() {
     super.initState();
     _currentZoom = widget.initialZoom;
-    _lastPulseVal = -1.0; // initialize to impossible value to force first update
+    _lastPulseVal =
+        -1.0; // initialize to impossible value to force first update
     widget.pulseController.addListener(_updatePulseCircle);
   }
 
@@ -95,7 +97,8 @@ class _MapViewWidgetState extends State<MapViewWidget> {
     if (_currentZoom >= 11.0) {
       final double baseMarkerRadius = 150.0;
       final double scaleFactor = pow(2, 14 - _currentZoom).toDouble();
-      final double markerRadius = baseMarkerRadius * scaleFactor * (1.0 + val * 0.3);
+      final double markerRadius =
+          baseMarkerRadius * scaleFactor * (1.0 + val * 0.3);
 
       final animatedMarkers = widget.state.markers
           .where((m) =>
@@ -105,7 +108,8 @@ class _MapViewWidgetState extends State<MapViewWidget> {
 
       for (var marker in animatedMarkers) {
         final isNews = marker.markerId.value.startsWith('news_');
-        final color = isNews ? const Color(0xFFFFB400) : const Color(0xFFFF5A5F);
+        final color =
+            isNews ? const Color(0xFFFFB400) : const Color(0xFFFF5A5F);
 
         newCircles.add(
           Circle(

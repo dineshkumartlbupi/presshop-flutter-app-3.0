@@ -140,7 +140,9 @@ class DashboardState extends State<Dashboard>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkUpdateAndShowPopup();
     });
-    _handlePermissionSequence();
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) _handlePermissionSequence();
+    });
     _updateBottomNavigationScreens();
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
@@ -155,21 +157,22 @@ class DashboardState extends State<Dashboard>
     };
     _dashboardBloc.add(FetchRoomIdEvent(roomParams));
 
-    _loadedIndices.addAll([0, 1, 2, 3, 4]);
+    _loadedIndices.add(widget.initialPosition); // Only load the starting tab
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context
-          .read<ContentBloc>()
-          .add(const FetchMyContentEvent(type: 'all', page: 1, limit: 10));
-      context
-          .read<ContentBloc>()
-          .add(const FetchMyContentEvent(type: 'my', page: 1, limit: 10));
-
-      context.read<TaskBloc>().add(const FetchAllTasksEvent(offset: 0));
-      context.read<TaskBloc>().add(const FetchLocalTasksEvent());
-      
-      // Start fetching Map location and markers immediately in the background
-      context.read<MapBloc>().add(const GetCurrentLocationEvent());
+      // Only trigger APIs for the actively visible starting tab
+      if (widget.initialPosition == 0) {
+        context
+            .read<ContentBloc>()
+            .add(const FetchMyContentEvent(type: 'all', page: 1, limit: 10));
+        context
+            .read<ContentBloc>()
+            .add(const FetchMyContentEvent(type: 'my', page: 1, limit: 10));
+      } else if (widget.initialPosition == 1) {
+        context.read<TaskBloc>().add(const FetchAllTasksEvent(offset: 0));
+        context.read<TaskBloc>().add(const FetchLocalTasksEvent());
+      }
+      // Map and Camera will initialize themselves when their tabs are first visited
     });
 
     if (widget.taskStatus != 'rejected') {
@@ -665,11 +668,36 @@ class DashboardState extends State<Dashboard>
   void _onBottomBarItemTapped(int index) {
     if (currentIndex == index) return;
 
+    // Pause camera when leaving camera tab
     if (currentIndex == 2 && index != 2) {
       _cameraKey.currentState?.closeCamera();
-    } else if (currentIndex != 2 && index == 2) {
+    }
+    // Resume/clear camera when returning to camera tab
+    else if (currentIndex != 2 && index == 2) {
       _cameraKey.currentState?.clearCapturedMedia();
       _cameraKey.currentState?.resumeCamera();
+    }
+
+    // Trigger data fetch on FIRST visit to a tab
+    final isFirstVisit = !_loadedIndices.contains(index);
+    if (isFirstVisit) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (index == 0) {
+          context
+              .read<ContentBloc>()
+              .add(const FetchMyContentEvent(type: 'all', page: 1, limit: 10));
+          context
+              .read<ContentBloc>()
+              .add(const FetchMyContentEvent(type: 'my', page: 1, limit: 10));
+        } else if (index == 1) {
+          context.read<TaskBloc>().add(const FetchAllTasksEvent(offset: 0));
+          context.read<TaskBloc>().add(const FetchLocalTasksEvent());
+        } else if (index == 3) {
+          // Map tab: trigger location fetch only on first visit
+          context.read<MapBloc>().add(const GetCurrentLocationEvent());
+        }
+      });
     }
 
     trackAction(ActionNames.tabSwitch, parameters: {
@@ -678,7 +706,9 @@ class DashboardState extends State<Dashboard>
       'tab_name': _getTabName(index),
     });
 
-    if (index != 2) {
+    if (index == 2) {
+      _handlePermissionSequence();
+    } else {
       updateLocationData();
     }
 
@@ -759,14 +789,20 @@ class DashboardState extends State<Dashboard>
   }
 
   Future<void> _handlePermissionSequence() async {
-    debugPrint("Starting Permission Sequence...");
+    debugPrint("Starting Comprehensive Permission Sequence...");
 
-    await [
-      Permission.camera,
-      Permission.microphone,
-    ].request();
+    final locService = LocationService();
+    
+    // Ordered sequence to prevent OS-level overlap crashes
+    await locService.requestPermission(Permission.camera);
+    await locService.requestPermission(Permission.microphone);
+    await locService.requestPermission(Permission.location);
+    if (Platform.isAndroid) {
+      // Notification permission is runtime on Android 13+
+      await locService.requestPermission(Permission.notification);
+    }
 
-    debugPrint("Camera/Mic Permissions handled.");
+    debugPrint("All high-level permissions handled.");
 
     forceUpdateCheck();
 

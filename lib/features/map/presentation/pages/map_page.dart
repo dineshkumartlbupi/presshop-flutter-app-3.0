@@ -94,7 +94,6 @@ class _MapPageContentState extends State<_MapPageContent>
         AnalyticsPageMixin,
         AutomaticKeepAliveClientMixin {
   final Completer<GoogleMapController> _controller = Completer();
-  bool _locationTimeout = false;
   Timer? _locationTimer;
   double _currentZoom = 14.0;
   final TextEditingController _searchController = TextEditingController();
@@ -109,12 +108,7 @@ class _MapPageContentState extends State<_MapPageContent>
   final List<BurstParticle> _particles = [];
 
   ui.Image? _burstImage;
-
   List<dynamic> _predictions = [];
-  bool _showDropdown = false;
-
-  bool _isSelectingAlertLocation = false;
-  String? _pendingAlertType;
 
   bool _isUserDragging = false;
   bool _isProgrammaticMovement = false;
@@ -126,36 +120,9 @@ class _MapPageContentState extends State<_MapPageContent>
 
   final Map<String, Offset> _markerPositions = {};
 
-  void _updateMarkerPositions(MapState state) async {
-    if (_isDisposed || !mounted) return;
-
-    // Use a slight throttle/debounce if needed, but for now direct is fine
-    final ctrl = await _controller.future;
-    final Map<String, Offset> newPositions = {};
-
-    for (var incident in state.newsList) {
-      if (!mounted) break;
-      try {
-        final screenPos = await ctrl.getScreenCoordinate(incident.position);
-        newPositions[incident.id] = Offset(
-          screenPos.x.toDouble(),
-          screenPos.y.toDouble(),
-        );
-      } catch (e) {
-        // Coordinate projection might fail if map is not fully ready
-      }
-    }
-
-    if (mounted && !_isDisposed) {
-      setState(() {
-        _markerPositions.clear();
-        _markerPositions.addAll(newPositions);
-      });
-    }
-  }
+  // Removed _updateMarkerPositions manually projected markers — now handled natively by alpha: 1.0 in MapBloc
 
   bool _isDisposed = false;
-  bool _isVisible = true;
   MapState? _lastState;
 
   Offset? _routeInfoOffset;
@@ -197,9 +164,7 @@ class _MapPageContentState extends State<_MapPageContent>
 
     _searchFocusNode.addListener(() {
       if (!_searchFocusNode.hasFocus) {
-        setState(() {
-          _showDropdown = false;
-        });
+        context.read<MapBloc>().add(const SetShowDropdownEvent(false));
       }
     });
 
@@ -208,21 +173,19 @@ class _MapPageContentState extends State<_MapPageContent>
       duration: const Duration(seconds: 2),
     );
 
-    if (_isVisible) {
+    if (context.read<MapBloc>().state.isVisible) {
       _pulseController.repeat();
     }
 
     // Start a timer to detect location acquisition timeout
-    _locationTimeout = false;
+    context.read<MapBloc>().add(const SetLocationTimeoutEvent(false));
     _locationTimer = Timer(const Duration(seconds: 10), () {
       if (mounted && context.read<MapBloc>().state.myLocation == null) {
-        setState(() {
-          _locationTimeout = true;
-        });
+        context.read<MapBloc>().add(const SetLocationTimeoutEvent(true));
       }
     });
 
-    _updateMarkerPositions(context.read<MapBloc>().state);
+    // _updateMarkerPositions removed - markers are now handled natively
   }
 
   @override
@@ -266,8 +229,8 @@ class _MapPageContentState extends State<_MapPageContent>
     if (input.isEmpty) {
       setState(() {
         _predictions = [];
-        _showDropdown = false;
       });
+      context.read<MapBloc>().add(const SetShowDropdownEvent(false));
       return;
     }
 
@@ -287,13 +250,13 @@ class _MapPageContentState extends State<_MapPageContent>
 
       setState(() {
         _predictions = preds;
-        _showDropdown = preds.isNotEmpty;
       });
+      context.read<MapBloc>().add(SetShowDropdownEvent(preds.isNotEmpty));
     } else {
       setState(() {
         _predictions = [];
-        _showDropdown = false;
       });
+      context.read<MapBloc>().add(const SetShowDropdownEvent(false));
     }
   }
 
@@ -319,8 +282,8 @@ class _MapPageContentState extends State<_MapPageContent>
         _isProgrammaticMovement = false;
       });
 
+      context.read<MapBloc>().add(const SetShowDropdownEvent(false));
       setState(() {
-        _showDropdown = false;
         _predictions = [];
         _searchController.text = description;
       });
@@ -354,8 +317,6 @@ class _MapPageContentState extends State<_MapPageContent>
     }
   }
 
-  // _updateParticles removed — burst particle logic is handled inside BurstParticlesOverlay widget
-
   Future<ui.Image?> _loadImage(String assetPath) async {
     try {
       final data = await rootBundle.load(assetPath);
@@ -374,7 +335,6 @@ class _MapPageContentState extends State<_MapPageContent>
   Future<void> _addBurst(LatLng position, String type) async {
     _particles.clear();
 
-    // Load image
     final assetPath = burstIcons[type] ?? burstIcons['accident']!;
 
     _burstImage = await _loadImage(assetPath);
@@ -507,7 +467,6 @@ class _MapPageContentState extends State<_MapPageContent>
 
     return BlocConsumer<MapBloc, MapState>(
       buildWhen: (previous, current) {
-        // Optimization: Only rebuild if essential map elements have changed
         return previous.markers != current.markers ||
             previous.newsList != current.newsList ||
             previous.polylines != current.polylines ||
@@ -519,22 +478,21 @@ class _MapPageContentState extends State<_MapPageContent>
             previous.showAlertPanel != current.showAlertPanel ||
             previous.showGetDirectionCard != current.showGetDirectionCard ||
             previous.isNavigating != current.isNavigating ||
-            previous.isLoadingNews != current.isLoadingNews;
+            previous.isLoadingNews != current.isLoadingNews ||
+            previous.showDropdown != current.showDropdown ||
+            previous.isVisible != current.isVisible;
       },
       listener: (context, state) {
         if (state.errorMessage != null) {
-          if (state.errorMessage == "Location permissions are denied" ||
-              state.errorMessage ==
-                  "Location permissions are permanently denied") {
+          final msg = state.errorMessage!;
+          if (msg.contains("Location permissions are denied") ||
+              msg.contains("Location permissions are permanently denied")) {
             _showLocationPermissionDialog();
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.errorMessage!)),
-            );
           }
         }
-        if (state.myLocation != null && !_controller.isCompleted) {
-          // Initial location set
+        if (state.myLocation != null && _lastState?.myLocation == null) {
+          // Auto-navigate to location when first acquired
+          _goToCurrentLocation();
         }
 
         if (state.selectedDistance != _lastDistanceFilter) {
@@ -597,9 +555,6 @@ class _MapPageContentState extends State<_MapPageContent>
           final incident = state.newlyCreatedIncident!;
           final type = incident.type ?? incident.alertType ?? "accident";
           _addBurst(incident.position, type);
-        }
-        if (_isVisible) {
-          _updateMarkerPositions(state);
         }
         _lastState = state;
       },
@@ -705,19 +660,15 @@ class _MapPageContentState extends State<_MapPageContent>
 
         return VisibilityDetector(
           key: const Key('map-visibility-key'),
-          onVisibilityChanged: (visibilityInfo) {
-            final visible = visibilityInfo.visibleFraction > 0.1;
-            if (visible != _isVisible) {
-              setState(() {
-                _isVisible = visible;
-              });
-              if (_isVisible) {
-                if (!_pulseController.isAnimating) {
-                  _pulseController.repeat();
-                }
-              } else {
-                _pulseController.stop();
+          onVisibilityChanged: (info) {
+            final isVisible = info.visibleFraction > 0;
+            context.read<MapBloc>().add(SetVisibilityEvent(isVisible));
+            if (isVisible) {
+              if (!_pulseController.isAnimating) {
+                _pulseController.repeat();
               }
+            } else {
+              _pulseController.stop();
             }
           },
           child: Scaffold(
@@ -725,7 +676,6 @@ class _MapPageContentState extends State<_MapPageContent>
               size: size,
               hideLeading: widget.hideLeading,
               showFilter: false,
-              // isFromMap: true,
             ),
             body: Stack(
               children: [
@@ -758,7 +708,6 @@ class _MapPageContentState extends State<_MapPageContent>
                     },
                     onCameraMove: (pos) {
                       _currentZoom = pos.zoom;
-                      _updateMarkerPositions(state);
                       _customInfoWindowController.onCameraMove?.call();
                     },
                     onCameraIdle: () {
@@ -777,14 +726,13 @@ class _MapPageContentState extends State<_MapPageContent>
                       _customInfoWindowController.hideInfoWindow!();
                       context.read<MapBloc>().add(ClearRouteEvent());
 
-                      if (_isSelectingAlertLocation &&
-                          _pendingAlertType != null) {
+                      if (state.isSelectingAlertLocation &&
+                          state.pendingAlertType != null) {
                         context.read<MapBloc>().add(SetPreviewAlertMarkerEvent(
-                            type: _pendingAlertType!, position: pos));
-                        setState(() {
-                          _isSelectingAlertLocation = false;
-                          _pendingAlertType = null;
-                        });
+                            type: state.pendingAlertType!, position: pos));
+                        context.read<MapBloc>().add(
+                            const SetSelectingAlertLocationEvent(
+                                isSelecting: false));
                         return;
                       }
 
@@ -848,67 +796,18 @@ class _MapPageContentState extends State<_MapPageContent>
                     },
                   ),
                 ),
-
-                // ======================= REFACTORED ANIMATED MARKER LAYER =======================
-                // Replaces multiple controllers with a single, high-performance overlay
-                if (state.showAnimatedMarkers)
-                  ...state.newsList.map((incident) {
-                    final position = _markerPositions[incident.id];
-                    if (position == null) return const SizedBox.shrink();
-
-                    final type =
-                        (incident.type ?? incident.alertType ?? "accident")
-                            .toLowerCase();
-                    final assetPath =
-                        markerIcons[type] ?? markerIcons['accident']!;
-
-                    return Positioned(
-                      left: position.dx - 25, // Centered (50px / 2)
-                      top: position.dy - 25,
-                      child: GestureDetector(
-                        onTap: () {
-                          context
-                              .read<MapBloc>()
-                              .add(SetSelectedIncidentEvent(incident));
-                        },
-                        child: Container(
-                          width: 50,
-                          height: 50,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFD9D9D9),
-                            shape: BoxShape.circle,
-                          ),
-                          padding: const EdgeInsets.all(0),
-                          child: ClipOval(
-                            child: Image.asset(
-                              assetPath,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-
-                // ======================= SINGLE DETAIL POPUP (Selected State) =======================
-                // Only one of these exists for the deep-dive incident details
                 ciw.CustomInfoWindow(
                   controller: _customInfoWindowController,
                   height: responsiveWidth * 0.85,
                   width: responsiveWidth * 0.75,
                   offset: responsiveWidth * 0.14,
                 ),
-                // ====================================================================================
-
-                // Dedicated CustomInfoWindow for Route Details (Smaller)
-                // ======================= Route Info (Positioned) =======================
                 if (_routeInfoOffset != null &&
                     state.routeInfo != null &&
                     state.routeMidpoint != null)
                   Positioned(
-                    left: _routeInfoOffset!.dx -
-                        100, // Center horizontally (width 200/2)
-                    top: _routeInfoOffset!.dy - 130, // Place above marker
+                    left: _routeInfoOffset!.dx - 100,
+                    top: _routeInfoOffset!.dy - 130,
                     child: RouteInfoWindow(
                       distance:
                           "${state.routeInfo!.distanceKm.toStringAsFixed(2)} km",
@@ -918,8 +817,6 @@ class _MapPageContentState extends State<_MapPageContent>
                       },
                     ),
                   ),
-
-                // ======================= Polygon Info =======================
                 if (_polygonInfoOffset != null &&
                     state.selectedPolygonId != null)
                   Positioned(
@@ -936,7 +833,6 @@ class _MapPageContentState extends State<_MapPageContent>
                       },
                     ),
                   ),
-
                 Positioned(
                   top: 10,
                   left: 0,
@@ -980,7 +876,7 @@ class _MapPageContentState extends State<_MapPageContent>
                     ),
                   ),
                 ),
-                if (_showDropdown && _predictions.isNotEmpty)
+                if (state.showDropdown && _predictions.isNotEmpty)
                   Positioned(
                     left: 12,
                     right: 55,
@@ -998,6 +894,9 @@ class _MapPageContentState extends State<_MapPageContent>
                             final prediction = _predictions[index];
                             return InkWell(
                               onTap: () {
+                                context.read<MapBloc>().add(
+                                    const SetSelectingAlertLocationEvent(
+                                        isSelecting: false));
                                 _selectPlace(
                                   prediction['place_id'],
                                   prediction['description'],
@@ -1016,11 +915,9 @@ class _MapPageContentState extends State<_MapPageContent>
                       ),
                     ),
                   ),
-
-                // ======================= Get Direction Card =======================
                 Positioned(
                   top: 65,
-                  right: 10, // Aligned to the right button
+                  right: 10,
                   child: AnimatedOpacity(
                     duration: const Duration(milliseconds: 300),
                     opacity: state.showGetDirectionCard ? 1 : 0,
@@ -1036,8 +933,6 @@ class _MapPageContentState extends State<_MapPageContent>
                     ),
                   ),
                 ),
-
-                // ======================================> Alert Button
                 Positioned(
                   left: 16,
                   bottom: 15,
@@ -1048,9 +943,8 @@ class _MapPageContentState extends State<_MapPageContent>
                     child: const AlertButtonMap(),
                   ),
                 ),
-
-                // ======================= Loading Overlay =======================
-                if (state.myLocation == null || state.isLoadingNews)
+                if (state.isLoadingNews)
+                  // Loading animation
                   Positioned(
                     right: 28,
                     bottom: 175,
@@ -1077,8 +971,6 @@ class _MapPageContentState extends State<_MapPageContent>
                       ),
                     ),
                   ),
-
-                // ======================= Side Action Panel =======================
                 Positioned(
                   right: 20,
                   bottom: 20,
@@ -1088,8 +980,6 @@ class _MapPageContentState extends State<_MapPageContent>
                     onZoomOut: _zoomOut,
                   ),
                 ),
-
-                // ======================= Alert Panel =======================
                 Positioned(
                   bottom: 56,
                   left: 0,
@@ -1111,14 +1001,28 @@ class _MapPageContentState extends State<_MapPageContent>
                           },
                           onAlertSelected: (type) async {
                             try {
+                              if (!state.isSelectingAlertLocation) {
+                                context.read<MapBloc>().add(
+                                    SetSelectingAlertLocationEvent(
+                                        isSelecting: true, type: type));
+                                _customInfoWindowController.hideInfoWindow
+                                    ?.call();
+                              }
                               debugPrint("AlertSelected: $type");
-                              if (state.myLocation != null) {
-                                _addBurst(state.myLocation!, type);
+                              final myLoc =
+                                  context.read<MapBloc>().state.myLocation;
+                              if (myLoc != null) {
+                                _addBurst(myLoc, type);
                                 context.read<MapBloc>().add(AddAlertMarkerEvent(
-                                    type: type, position: state.myLocation!));
+                                    type: type, position: myLoc));
                               } else {
                                 debugPrint(
                                     "AlertSelected: Location not available");
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          "Location not available. Please try again.")),
+                                );
                               }
                             } catch (e) {
                               debugPrint("Error adding alert marker: $e");
@@ -1133,6 +1037,24 @@ class _MapPageContentState extends State<_MapPageContent>
                   controller: _burstController,
                   burstImage: _burstImage,
                 ),
+
+                // ======================= Locate Me / Retry Button =======================
+                if (state.myLocation == null)
+                  Positioned(
+                    bottom: 120,
+                    right: 16,
+                    child: FloatingActionButton(
+                      backgroundColor: Colors.white,
+                      mini: true,
+                      onPressed: () {
+                        context
+                            .read<MapBloc>()
+                            .add(const GetCurrentLocationEvent());
+                      },
+                      child: const Icon(Icons.my_location,
+                          color: Color(0xffEC4E54)),
+                    ),
+                  ),
               ],
             ),
           ),

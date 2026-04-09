@@ -132,7 +132,10 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       if (Platform.isAndroid && !storageGranted) toRequest.add(Permission.storage);
 
       if (toRequest.isNotEmpty) {
-        await toRequest.request();
+        final locService = LocationService();
+        for (final p in toRequest) {
+          await locService.requestPermission(p);
+        }
         cameraGranted = await Permission.camera.isGranted;
         micGranted = await Permission.microphone.isGranted;
       }

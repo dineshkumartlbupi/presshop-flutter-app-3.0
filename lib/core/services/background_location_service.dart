@@ -15,6 +15,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:presshop/features/media/domain/services/background_upload_service.dart';
 import 'package:presshop/core/services/app_initialization_service.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:presshop/core/services/location_service.dart';
 // URL from old project to maintain API compatibility
 
 /// =============================================================
@@ -416,12 +417,13 @@ class BackgroundLocationService {
       }
     }
 
+    final locService = LocationService();
     if (Platform.isAndroid) {
-      await Permission.notification.request();
+      await locService.requestPermission(Permission.notification);
     }
 
-    if (await Permission.location.request().isGranted) {
-      await Permission.locationAlways.request();
+    if (await locService.requestPermission(Permission.location)) {
+      await locService.requestPermission(Permission.locationAlways);
     }
 
     if (Platform.isAndroid) {

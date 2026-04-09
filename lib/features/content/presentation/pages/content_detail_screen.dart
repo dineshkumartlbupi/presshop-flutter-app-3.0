@@ -937,7 +937,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             right: size.width * AppDimensions.numD02,
                           ),
                           child: Text(
-                            "${(contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency))}${formatDouble(double.tryParse(contentItem!.totalSold) ?? 0.0)}",
+                            "${contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency)}${formatDouble(double.tryParse(contentItem!.totalSold) ?? 0.0)}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD05,
@@ -1019,6 +1019,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 /// Title
+
                                 Text(
                                   item.mediaHouseName.isEmpty
                                       ? "Reuters News"
