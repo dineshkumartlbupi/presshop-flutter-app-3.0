@@ -453,12 +453,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await apiClient.post(ApiConstantsNew.auth.verifyReferral,
           data: {"referral_code": code});
       if (response.statusCode == 200) {
-        return response.data;
+        final data = response.data;
+        if (data['success'] == true) {
+          return data;
+        } else {
+          throw ServerFailure(
+              message: data['message'] ?? 'Referral code verification failed');
+        }
       }
       throw ServerFailure(
           message: 'Referral code verification failed: ${response.statusCode}');
     } catch (e) {
-      throw ServerFailure(message: 'Referral code verification failed');
+      if (e is Failure) rethrow;
+      throw ServerFailure(message: e.toString());
     }
   }
 

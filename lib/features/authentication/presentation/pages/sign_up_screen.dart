@@ -56,6 +56,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
   Timer? _phoneDebounce;
   Timer? _emailDebounce;
   Timer? _userDebounce;
+  Timer? _referralDebounce;
 
   String? _onUserNameChanged(String? value) {
     if (value == null || value.trim().isEmpty) return null;
@@ -155,6 +156,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
   bool validUserName = false;
   String userNameApiError = "";
   String phoneApiError = "";
+  String referralCodeApiError = "";
 
   List<AvatarData> avatarList = [];
 
@@ -188,6 +190,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
     _emailDebounce?.cancel();
     _phoneDebounce?.cancel();
     _userDebounce?.cancel();
+    _referralDebounce?.cancel();
     _avatarsNotifier.dispose();
     super.dispose();
   }
@@ -262,10 +265,12 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
             } else if (state is ReferralCodeVerified) {
               isRefferalCodeValid = true;
               showReferralCodeError = false;
+              referralCodeApiError = "";
               setState(() {});
             } else if (state is ReferralCodeVerificationFailed) {
               isRefferalCodeValid = false;
               showReferralCodeError = true;
+              referralCodeApiError = state.message;
               setState(() {});
             }
           },
@@ -625,10 +630,17 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                       autofocus: false,
                                       onChanged: (v) {
                                         showReferralCodeError = false;
-                                        if (v!.trim().length >= 5) {
-                                          verifyReferredCode();
-                                        } else {
-                                          isRefferalCodeValid = false;
+                                        referralCodeApiError = "";
+                                        isRefferalCodeValid = false;
+
+                                        _referralDebounce?.cancel();
+
+                                        if (v != null && v.trim().length >= 5) {
+                                          _referralDebounce = Timer(
+                                              const Duration(milliseconds: 600),
+                                              () {
+                                            verifyReferredCode();
+                                          });
                                         }
                                         setState(() {});
                                         return null;
@@ -637,6 +649,22 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                     SizedBox(
                                       height: size.width * AppDimensions.numD01,
                                     ),
+                                    if (showReferralCodeError &&
+                                        referralCodeApiError.isNotEmpty)
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            bottom: size.width *
+                                                AppDimensions.numD01),
+                                        child: Text(
+                                          referralCodeApiError,
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD03,
+                                              color: Colors.red.shade700,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                      ),
                                     Text(
                                       AppStrings.referralcodeNoteText,
                                       style: TextStyle(
