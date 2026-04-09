@@ -179,8 +179,7 @@ class MyContentViewState extends State<MyContentView>
   void _loadMyContent(bool isRefresh) {
     if (isRefresh) myPage = 1;
     Map<String, dynamic> params = _buildFilterParams();
-    params['status'] =
-        'pending,rejected'; // "Under Review" maps to pending/rejected
+    params['status'] = 'published,pending,rejected';
 
     context.read<ContentBloc>().add(FetchMyContentEvent(
           page: myPage,
