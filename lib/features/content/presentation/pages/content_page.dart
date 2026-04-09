@@ -78,8 +78,8 @@ class MyContentViewState extends State<MyContentView>
   static const String allText = "All";
   static const String sharedText = "Shared";
   static const String exclusiveText = "Exclusive";
-  static const String noAllContentFound = "No Content Found";
-  static const String noMyContentFound = "No Content Published";
+  static const String noAllContentFound = "No Content Published";
+  static const String noMyContentFound = "No Content Under Review";
 
   @override
   void initState() {
@@ -390,7 +390,6 @@ class MyContentViewState extends State<MyContentView>
           } else {
             currentList = fetchedList
                 .where((item) =>
-                    item.status.toLowerCase() == 'published' ||
                     item.status.toLowerCase() == 'pending' ||
                     item.status.toLowerCase() == 'rejected')
                 .toList();

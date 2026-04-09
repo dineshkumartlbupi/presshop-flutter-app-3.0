@@ -213,11 +213,11 @@ class StripeStatus extends Equatable {
     required this.stripeStatusActive,
     required this.stripeStatusReason,
   });
-  final bool stripeStatusActive;
+  final String stripeStatusActive;
   final String stripeStatusReason;
 
   StripeStatus copyWith({
-    bool? stripeStatusActive,
+    String? stripeStatusActive,
     String? stripeStatusReason,
   }) {
     return StripeStatus(

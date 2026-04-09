@@ -402,25 +402,26 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  // if (state is ProfileLoaded &&
-                                  //     state.profile.stripeStatus
-                                  //         .stripeStatusActive)
-                                  Transform.translate(
-                                    offset: const Offset(2, -1),
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          left: size.width *
-                                              AppDimensions.numD01),
-                                      child: Image.asset(
-                                        "${iconsPath}verified_badge.png",
-                                        height:
-                                            size.width * AppDimensions.numD04,
-                                        width:
-                                            size.width * AppDimensions.numD04,
-                                        // color: const Color(0xFF2D7ADE),
+                                  if (state is ProfileLoaded &&
+                                      state.profile.stripeStatus
+                                              .stripeStatusActive ==
+                                          '1')
+                                    Transform.translate(
+                                      offset: const Offset(2, -1),
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            left: size.width *
+                                                AppDimensions.numD01),
+                                        child: Image.asset(
+                                          "${iconsPath}verified_badge.png",
+                                          height:
+                                              size.width * AppDimensions.numD04,
+                                          width:
+                                              size.width * AppDimensions.numD04,
+                                          // color: const Color(0xFF2D7ADE),
+                                        ),
                                       ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),

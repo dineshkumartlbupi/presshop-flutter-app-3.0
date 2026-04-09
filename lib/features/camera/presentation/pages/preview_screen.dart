@@ -333,15 +333,15 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                                           File(mediaList[index]
                                                               .mediaPath),
                                                           fit: widget.type ==
-                                                                  "gallery"
+                                                                  "gallery" || widget.type == "scan"
                                                               ? BoxFit.contain
-                                                              : BoxFit.fill,
+                                                              : BoxFit.contain,
                                                           gaplessPlayback: true,
                                                         )
                                                       : Image.network(
                                                           mediaList[index]
                                                               .mediaPath,
-                                                          fit: BoxFit.fill,
+                                                          fit: BoxFit.contain,
                                                           gaplessPlayback: true,
                                                         ),
                                             ),

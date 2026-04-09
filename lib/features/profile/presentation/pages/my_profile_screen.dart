@@ -109,7 +109,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     setUserNameListener();
     setPhoneListener();
     setEmailListener();
-    myProfileApi(showLoader: false);
+    myProfileApi(showLoader: true);
     if (widget.editProfileScreen) {
       getAvatarsApi(showLoader: false);
     }

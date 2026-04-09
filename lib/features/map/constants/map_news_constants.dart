@@ -100,7 +100,7 @@ final Map<String, String> burstIcons = {
   //
   "gun": "assets/markers/bg-removed/bg-removed-vandalism.png",
   "protest": "assets/markers/bg-removed/bg-removed-protest.png",
-  "knife": "assets/markers/bg-removed/bg-removed-public_safety_alert.png",
+  "knife": "assets/markers/bg-removed/bg-removed-public_safty_alert.png",
   "fight": "assets/markers/bg-removed/bg-removed-fight.png",
   //
   "content": "assets/markers/bg-removed/bg-removed-content.png",

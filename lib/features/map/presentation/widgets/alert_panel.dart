@@ -17,11 +17,11 @@ class AlertPanel extends StatelessWidget {
         Align(
           alignment: Alignment.bottomCenter,
           child: Container(
-            margin: EdgeInsets.all(size.width * AppDimensions.numD042),
+            margin: EdgeInsets.only(left: 10, right: 100, bottom: 10),
             padding: EdgeInsets.symmetric(
-                horizontal: size.width * AppDimensions.numD026,
-                vertical: size.width * AppDimensions.numD026),
-            width: size.width * AppDimensions.numD47,
+                horizontal: size.width * AppDimensions.numD012,
+                vertical: size.width * AppDimensions.numD015),
+            // width: size.width * AppDimensions.numD60,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius:
@@ -80,7 +80,8 @@ class AlertPanel extends StatelessWidget {
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     childAspectRatio: 1,
-                    crossAxisSpacing: size.width * AppDimensions.numD016,
+                    mainAxisExtent: size.width / 5,
+                    crossAxisSpacing: size.width * AppDimensions.numD019,
                     mainAxisSpacing: size.width * AppDimensions.numD016,
                   ),
                   itemBuilder: (context, i) {
@@ -103,8 +104,8 @@ class AlertPanel extends StatelessWidget {
                           children: [
                             Image.asset(
                               item['icon']!,
-                              width: size.width * AppDimensions.numD065,
-                              height: size.width * AppDimensions.numD065,
+                              width: size.width / 7,
+                              height: size.height * AppDimensions.numD065,
                               fit: BoxFit.contain,
                             ),
                             SizedBox(
@@ -129,8 +130,8 @@ class AlertPanel extends StatelessWidget {
                   children: [
                     Image.asset(
                       'assets/icons/mapalert.png',
-                      width: size.width * AppDimensions.numD04,
-                      height: size.width * AppDimensions.numD04,
+                      width: size.width * AppDimensions.numD06,
+                      height: size.width * AppDimensions.numD046,
                       fit: BoxFit.contain,
                     ),
                     SizedBox(width: size.width * AppDimensions.numD016),

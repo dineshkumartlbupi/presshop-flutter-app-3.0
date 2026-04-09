@@ -54,7 +54,7 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                               File(item.mediaPath),
                               fit: item.isFromGallery
                                   ? BoxFit.contain
-                                  : BoxFit.fill,
+                                  : BoxFit.contain,
                               gaplessPlayback: true,
                             ),
                           );

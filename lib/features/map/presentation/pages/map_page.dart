@@ -34,6 +34,7 @@ import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 import 'package:presshop/features/map/presentation/widgets/map_view_widget.dart';
 import 'package:presshop/features/map/presentation/widgets/burst_particles_overlay.dart';
 
+import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
@@ -54,23 +55,17 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
-    _mapBloc = sl<MapBloc>();
-    // Only fetch if we don't have a location yet (i.e., first-time initialization)
-    if (_mapBloc.state.myLocation == null) {
-      _mapBloc.add(const GetCurrentLocationEvent());
-    }
   }
 
   @override
   void dispose() {
-    _mapBloc.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _mapBloc,
+    return BlocProvider(
+      create: (context) => sl<MapBloc>()..add(const GetCurrentLocationEvent()),
       child: _MapPageContent(
           hideLeading: widget.hideLeading, showAppBar: widget.showAppBar),
     );
@@ -533,8 +528,9 @@ class _MapPageContentState extends State<_MapPageContent>
             );
           }
         }
-        if (state.myLocation != null && !_controller.isCompleted) {
-          // Initial location set
+        if (state.myLocation != null && _lastState?.myLocation == null) {
+          // Auto-navigate to location when first acquired
+          _goToCurrentLocation();
         }
 
         if (state.selectedDistance != _lastDistanceFilter) {
@@ -607,8 +603,8 @@ class _MapPageContentState extends State<_MapPageContent>
         if (previous.selectedIncident?.id != current.selectedIncident?.id) {
           if (current.selectedIncident != null &&
               current.selectedPosition != null) {
-            _customInfoWindowController.hideInfoWindow!();
-            _customInfoWindowController.addInfoWindow!(
+            _customInfoWindowController.hideInfoWindow?.call();
+            _customInfoWindowController.addInfoWindow?.call(
               current.selectedIncident!.markerType == 'content' ||
                       current.selectedIncident!.markerType == 'news' ||
                       (current.selectedIncident!.markerType == 'icon' &&
@@ -643,66 +639,13 @@ class _MapPageContentState extends State<_MapPageContent>
               current.selectedPosition!,
             );
           } else {
-            _customInfoWindowController.hideInfoWindow!();
+            _customInfoWindowController.hideInfoWindow?.call();
           }
         }
 
         return true;
       },
       builder: (context, state) {
-        if (state.myLocation == null) {
-          return Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Fetching your location..."),
-                  const SizedBox(height: 10),
-                ],
-              ),
-            ),
-          );
-        }
-        // if (state.myLocation == null) {
-        //   if (_locationTimeout) {
-        //     return Scaffold(
-        //       body: Center(
-        //         child: Column(
-        //           mainAxisAlignment: MainAxisAlignment.center,
-        //           children: [
-        //             const Icon(Icons.location_off, size: 48, color: Colors.red),
-        //             const SizedBox(height: 16),
-        //             const Text(
-        //               'Unable to get your location.',
-        //               style: TextStyle(fontSize: 18),
-        //             ),
-        //             const SizedBox(height: 16),
-        //             ElevatedButton(
-        //               onPressed: () {
-        //                 setState(() {
-        //                   _locationTimeout = false;
-        //                 });
-        //                 context.read<MapBloc>().add(GetCurrentLocationEvent());
-        //                 _locationTimer?.cancel();
-        //                 _locationTimer = Timer(const Duration(seconds: 5), () {
-        //                   if (mounted &&
-        //                       context.read<MapBloc>().state.myLocation ==
-        //                           null) {
-        //                     setState(() {
-        //                       _locationTimeout = true;
-        //                     });
-        //                   }
-        //                 });
-        //               },
-        //               child: const Text('Retry'),
-        //             ),
-        //           ],
-        //         ),
-        //       ),
-        //     );
-        //   }
-        // }
-
         return VisibilityDetector(
           key: const Key('map-visibility-key'),
           onVisibilityChanged: (visibilityInfo) {
@@ -774,7 +717,7 @@ class _MapPageContentState extends State<_MapPageContent>
                       }
                     },
                     onTap: (pos) async {
-                      _customInfoWindowController.hideInfoWindow!();
+                      _customInfoWindowController.hideInfoWindow?.call();
                       context.read<MapBloc>().add(ClearRouteEvent());
 
                       if (_isSelectingAlertLocation &&
@@ -1093,6 +1036,7 @@ class _MapPageContentState extends State<_MapPageContent>
                 Positioned(
                   bottom: 56,
                   left: 0,
+                  right: 0,
                   child: AnimatedOpacity(
                     duration: const Duration(milliseconds: 300),
                     opacity: state.showAlertPanel ? 1 : 0,
@@ -1112,13 +1056,17 @@ class _MapPageContentState extends State<_MapPageContent>
                           onAlertSelected: (type) async {
                             try {
                               debugPrint("AlertSelected: $type");
-                              if (state.myLocation != null) {
-                                _addBurst(state.myLocation!, type);
+                              final myLoc = context.read<MapBloc>().state.myLocation;
+                              if (myLoc != null) {
+                                _addBurst(myLoc, type);
                                 context.read<MapBloc>().add(AddAlertMarkerEvent(
-                                    type: type, position: state.myLocation!));
+                                    type: type, position: myLoc));
                               } else {
                                 debugPrint(
                                     "AlertSelected: Location not available");
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Location not available. Please try again.")),
+                                );
                               }
                             } catch (e) {
                               debugPrint("Error adding alert marker: $e");
@@ -1133,6 +1081,21 @@ class _MapPageContentState extends State<_MapPageContent>
                   controller: _burstController,
                   burstImage: _burstImage,
                 ),
+                
+                // ======================= Locate Me / Retry Button =======================
+                if (state.myLocation == null)
+                  Positioned(
+                    bottom: 120,
+                    right: 16,
+                    child: FloatingActionButton(
+                      backgroundColor: Colors.white,
+                      mini: true,
+                      onPressed: () {
+                        context.read<MapBloc>().add(const GetCurrentLocationEvent());
+                      },
+                      child: const Icon(Icons.my_location, color: Color(0xffEC4E54)),
+                    ),
+                  ),
               ],
             ),
           ),

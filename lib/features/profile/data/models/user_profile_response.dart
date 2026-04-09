@@ -106,7 +106,7 @@ class UserProfileModel extends Equatable {
       stripeStatus: json['stripeStatus'] != null
           ? StripeStatusModel.fromJson(json['stripeStatus'])
           : const StripeStatusModel(
-              stripeStatusActive: false, stripeStatusReason: ""),
+              stripeStatusActive: '0', stripeStatusReason: ""),
     );
   }
 
@@ -277,7 +277,7 @@ class LocationModel extends Equatable {
 }
 
 class StripeStatusModel extends Equatable {
-  final bool stripeStatusActive;
+  final String stripeStatusActive;
   final String stripeStatusReason;
 
   const StripeStatusModel({

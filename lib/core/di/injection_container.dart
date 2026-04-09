@@ -533,7 +533,7 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerLazySingleton(
+  sl.registerFactory(
     () => MapBloc(
       getCurrentLocation: sl(),
       getRoute: sl(),
