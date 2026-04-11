@@ -6,7 +6,7 @@ part 'category_data_model.g.dart';
 @HiveType(typeId: 1)
 class CategoryDataModel extends ContentCategory {
 
-  CategoryDataModel({
+  const CategoryDataModel({
     required this.id,
     required this.name,
     required this.type,

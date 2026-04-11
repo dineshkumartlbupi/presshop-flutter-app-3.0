@@ -12,7 +12,6 @@ import 'package:presshop/features/authentication/presentation/bloc/term_state.da
 import 'package:presshop/features/authentication/data/repositories/term_repository.dart';
 import 'package:presshop/core/di/injection_container.dart'; // For sl
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable

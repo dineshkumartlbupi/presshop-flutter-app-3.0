@@ -12,7 +12,7 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:go_router/go_router.dart';
 
 class HashTagSearchScreen extends StatefulWidget {
-  HashTagSearchScreen(
+  const HashTagSearchScreen(
       {super.key,
       required this.country,
       required this.tagData,
@@ -499,7 +499,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
 }
 
 class HashTagData extends Equatable {
-  HashTagData({
+  const HashTagData({
     required this.id,
     required this.name,
     required this.selected,

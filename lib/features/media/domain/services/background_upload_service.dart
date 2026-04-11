@@ -10,14 +10,14 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:presshop/core/utils/app_logger.dart';
 
 class BackgroundUploadService {
-  static final BackgroundUploadService _instance =
-      BackgroundUploadService._internal();
 
   factory BackgroundUploadService() {
     return _instance;
   }
 
   BackgroundUploadService._internal();
+  static final BackgroundUploadService _instance =
+      BackgroundUploadService._internal();
 
   final ChunkedUploadApiService _apiService = ChunkedUploadApiService();
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
@@ -42,7 +42,7 @@ class BackgroundUploadService {
     );
     await _notificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse: (NotificationResponse response) {
+      onDidReceiveNotificationResponse: (response) {
         if (response.payload == 'retry' ||
             response.actionId == 'retry_upload') {
           Connectivity().checkConnectivity().then((results) {
@@ -70,7 +70,7 @@ class BackgroundUploadService {
 
     Connectivity()
         .onConnectivityChanged
-        .listen((List<ConnectivityResult> results) {
+        .listen((results) {
       if (!results.contains(ConnectivityResult.none)) {
         // Internet is back, auto resume!
         BackgroundUploadService().startOrResumeUpload();
@@ -309,7 +309,7 @@ class BackgroundUploadService {
 
         chunk.eTag = eTag;
         chunk.status = 'uploaded';
-        uploadedBytesBefore += (end - start); // Update for next chunk
+        uploadedBytesBefore += end - start; // Update for next chunk
         job.updateUpdatedAt();
         await job.save();
 

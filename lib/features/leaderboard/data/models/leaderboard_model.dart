@@ -95,6 +95,7 @@ class LeaderboardModel extends LeaderboardEntity {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'totalMember': totalMember,
@@ -120,6 +121,7 @@ class LeaderboardCountryModel extends LeaderboardCountryEntity {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'country': country,
@@ -197,6 +199,7 @@ class MemberModel extends MemberEntity {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,

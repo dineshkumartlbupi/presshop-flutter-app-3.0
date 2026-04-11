@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 
 class DashboardBottomNavBar extends StatelessWidget {
-  final Size size;
-  final int currentIndex;
-  final Function(int) onTap;
 
   const DashboardBottomNavBar({
     super.key,
@@ -12,6 +9,9 @@ class DashboardBottomNavBar extends StatelessWidget {
     required this.currentIndex,
     required this.onTap,
   });
+  final Size size;
+  final int currentIndex;
+  final Function(int) onTap;
 
   @override
   Widget build(BuildContext context) {

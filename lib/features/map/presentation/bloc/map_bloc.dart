@@ -96,7 +96,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   bool _isReadyForBursts = false;
 
   static const int kContentMarkerSize = 120;
-  static const int kIncidentMarkerSize = 90;
+  static const int kIncidentMarkerSize = 120;
 
   BitmapDescriptor? _meMarkerIcon;
 
@@ -344,11 +344,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       return null;
     });
 
-    if (result == null) {
-      emit(state.copyWith(errorMessage: 'Location unavailable'));
-      return;
-    }
-
     await result.fold(
       (failure) async {
         debugPrint("Location error: ${failure.message}");
@@ -447,8 +442,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   bool _isIncidentRecent(Incident incident) {
-    if (incident.time == null)
+    if (incident.time == null) {
       return true; // Default to showing if no time provided
+    }
     try {
       final incidentTime = DateTime.parse(incident.time!);
       final now = DateTime.now();

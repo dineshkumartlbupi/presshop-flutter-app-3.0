@@ -232,7 +232,7 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
                     //   lastName: sharedPreferences!.getString(lastNameKey),
                     // );
                     // );
-                    context.goNamed(AppRoutes.dashboardName, extra: {
+                    context.goNamed(AppRoutes.permissionName, extra: {
                       'initialPosition': 2,
                       'sourceDataIsOpened': widget.sourceDataIsOpened,
                       'sourceDataType': widget.sourceDataType,

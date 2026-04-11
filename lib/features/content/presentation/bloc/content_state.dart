@@ -76,7 +76,6 @@ class MyContentLoaded extends ContentState {
 }
 
 class ContentDetailLoaded extends MyContentLoaded {
-  final ContentItem content;
 
   const ContentDetailLoaded(
     this.content, {
@@ -89,6 +88,7 @@ class ContentDetailLoaded extends MyContentLoaded {
     super.isLoadingAll,
     super.isLoadingMy,
   });
+  final ContentItem content;
 
   @override
   List<Object> get props => [
@@ -153,7 +153,6 @@ class TrendingHashtagsLoaded extends ContentState {
 }
 
 class MediaHouseOffersLoaded extends MyContentLoaded {
-  final List<ManageTaskChatModel> offers;
 
   const MediaHouseOffersLoaded(
     this.offers, {
@@ -166,6 +165,7 @@ class MediaHouseOffersLoaded extends MyContentLoaded {
     super.isLoadingAll,
     super.isLoadingMy,
   });
+  final List<ManageTaskChatModel> offers;
 
   @override
   List<Object> get props => [
@@ -182,7 +182,6 @@ class MediaHouseOffersLoaded extends MyContentLoaded {
 }
 
 class ContentTransactionsLoaded extends MyContentLoaded {
-  final List<EarningTransactionDetail> transactions;
 
   const ContentTransactionsLoaded(
     this.transactions, {
@@ -195,6 +194,7 @@ class ContentTransactionsLoaded extends MyContentLoaded {
     super.isLoadingAll,
     super.isLoadingMy,
   });
+  final List<EarningTransactionDetail> transactions;
 
   @override
   List<Object> get props => [
@@ -211,7 +211,6 @@ class ContentTransactionsLoaded extends MyContentLoaded {
 }
 
 class ContentError extends MyContentLoaded {
-  final String message;
 
   const ContentError(
     this.message, {
@@ -224,6 +223,7 @@ class ContentError extends MyContentLoaded {
     super.isLoadingAll,
     super.isLoadingMy,
   });
+  final String message;
 
   @override
   List<Object> get props => [

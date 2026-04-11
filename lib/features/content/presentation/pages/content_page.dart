@@ -10,16 +10,11 @@ import 'package:presshop/features/content/presentation/bloc/content_event.dart';
 import 'package:presshop/features/content/presentation/bloc/content_state.dart';
 import 'package:presshop/features/content/presentation/widgets/content_filter_bottom_sheet.dart';
 import 'package:presshop/features/content/presentation/widgets/content_item_widget.dart';
+import 'package:presshop/core/services/media_upload_service.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 class MyContentPage extends StatelessWidget {
-  final bool hideLeading;
-  final bool fromMenu;
-  final Key? contentKey;
-  final bool showAppBar;
-
   const MyContentPage({
     super.key,
     this.contentKey,
@@ -27,6 +22,10 @@ class MyContentPage extends StatelessWidget {
     this.hideLeading = false,
     this.fromMenu = false,
   });
+  final bool hideLeading;
+  final bool fromMenu;
+  final Key? contentKey;
+  final bool showAppBar;
 
   @override
   Widget build(BuildContext context) {
@@ -40,16 +39,15 @@ class MyContentPage extends StatelessWidget {
 }
 
 class MyContentView extends StatefulWidget {
-  final bool hideLeading;
-  final bool fromMenu;
-  final bool showAppBar;
-
   const MyContentView({
     super.key,
     this.showAppBar = false,
     this.hideLeading = false,
     this.fromMenu = false,
   });
+  final bool hideLeading;
+  final bool fromMenu;
+  final bool showAppBar;
 
   @override
   State<MyContentView> createState() => MyContentViewState();
@@ -88,6 +86,26 @@ class MyContentViewState extends State<MyContentView>
     initializeFilter();
     _loadAllContent(false);
     _loadMyContent(false);
+    MediaUploadService.uploadStatus.addListener(_onUploadStatusChanged);
+  }
+
+  void _onUploadStatusChanged() {
+    final status = MediaUploadService.uploadStatus.value;
+    if (status != null && status['status'] == 'success') {
+      debugPrint(
+          "ContentPage: Media upload success detected. Refreshing content...");
+      _loadAllContent(true);
+      _loadMyContent(true);
+    }
+  }
+
+  @override
+  void dispose() {
+    MediaUploadService.uploadStatus.removeListener(_onUploadStatusChanged);
+    _tabController.dispose();
+    _allController.dispose();
+    _myController.dispose();
+    super.dispose();
   }
 
   void initializeFilter() {

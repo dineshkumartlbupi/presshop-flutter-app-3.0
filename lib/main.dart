@@ -7,7 +7,6 @@ import 'package:presshop/features/camera/presentation/pages/preview_screen.dart'
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/services/app_initialization_service.dart';
-import 'package:presshop/core/services/deeplink_service.dart';
 import 'package:presshop/core/services/media_upload_service.dart';
 import 'package:presshop/app.dart';
 import 'dart:io';

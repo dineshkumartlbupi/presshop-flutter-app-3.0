@@ -5,10 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:hive/hive.dart';
@@ -299,7 +297,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                                             AppColorTheme.colorLightGrey,
                                         activeColor:
                                             AppColorTheme.colorThemePink,
-                                        onChanged: (double newValue) {},
+                                        onChanged: (newValue) {},
                                       ),
                                     ),
                                     SizedBox(

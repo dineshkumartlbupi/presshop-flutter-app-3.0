@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 // import 'package:contacts_service/contacts_service.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -830,7 +829,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         child: Text(
                           taskDetail!.deadLine.isBefore(DateTime.now())
                               ? "Too Late!"
-                              : "Accept ${currencySymbol}${formatDouble(double.tryParse(taskDetail!.hopperTaskAmount) ?? 0.0)}",
+                              : "Accept $currencySymbol${formatDouble(double.tryParse(taskDetail!.hopperTaskAmount) ?? 0.0)}",
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD04,

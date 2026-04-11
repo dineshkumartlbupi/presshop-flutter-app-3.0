@@ -119,8 +119,8 @@ class _MenuScreenState extends State<MenuScreen> {
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
-      case MenuAction.accountSettings:
-        context.pushNamed(AppRoutes.accountSettingsName).then((value) {
+      case MenuAction.accountDelete:
+        context.pushNamed(AppRoutes.accountDeleteName).then((value) {
           // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });

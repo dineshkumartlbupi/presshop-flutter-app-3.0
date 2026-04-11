@@ -14,7 +14,6 @@ import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 // import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/rating/domain/entities/review.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 class FilterRatingData {
   FilterRatingData({required this.ratingValue, required this.selected});
@@ -460,7 +459,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                     horizontal: size.width * AppDimensions.numD02),
                 child: Wrap(
                     children: List<Widget>.generate(review.featureList.length,
-                        (int idx) {
+                        (idx) {
                   return Container(
                       margin: EdgeInsets.only(
                           right: size.width * 0.04, top: size.width * 0.014),
@@ -714,7 +713,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                   Padding(
                     padding: EdgeInsets.symmetric(
                         vertical: size.width * AppDimensions.numD02),
-                    child: Container(
+                    child: SizedBox(
                       width: double.infinity,
                       height: size.width * AppDimensions.numD14,
                       child: ElevatedButton(

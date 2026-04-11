@@ -6,6 +6,21 @@ import 'package:presshop/features/map/presentation/bloc/map_state.dart';
 import 'package:custom_info_window/custom_info_window.dart' as ciw;
 
 class MapViewWidget extends StatefulWidget {
+  const MapViewWidget({
+    super.key,
+    required this.state,
+    required this.mapGlobalKey,
+    required this.controller,
+    required this.customInfoWindowController,
+    required this.pulseController,
+    required this.isProgrammaticMovement,
+    required this.initialZoom,
+    required this.onMapCreated,
+    required this.onCameraMoveStarted,
+    required this.onCameraMove,
+    required this.onCameraIdle,
+    required this.onTap,
+  });
   final MapState state;
   final GlobalKey mapGlobalKey;
   final Completer<GoogleMapController> controller;
@@ -19,22 +34,6 @@ class MapViewWidget extends StatefulWidget {
   final VoidCallback onCameraIdle;
   final Future<void> Function(LatLng) onTap;
 
-  const MapViewWidget({
-    Key? key,
-    required this.state,
-    required this.mapGlobalKey,
-    required this.controller,
-    required this.customInfoWindowController,
-    required this.pulseController,
-    required this.isProgrammaticMovement,
-    required this.initialZoom,
-    required this.onMapCreated,
-    required this.onCameraMoveStarted,
-    required this.onCameraMove,
-    required this.onCameraIdle,
-    required this.onTap,
-  }) : super(key: key);
-
   @override
   State<MapViewWidget> createState() => _MapViewWidgetState();
 }
@@ -42,16 +41,19 @@ class MapViewWidget extends StatefulWidget {
 class _MapViewWidgetState extends State<MapViewWidget> {
   List<Circle> _pulseCircles = [];
   double _currentZoom = 16.0;
-  double _lastPulseVal =
-      -1.0; // tracks last animation value to throttle setState
+  double _lastPulseVal = -1.0;
 
   @override
   void initState() {
     super.initState();
     _currentZoom = widget.initialZoom;
-    _lastPulseVal =
-        -1.0; // initialize to impossible value to force first update
+    _lastPulseVal = -1.0;
     widget.pulseController.addListener(_updatePulseCircle);
+  }
+
+  @override
+  void didUpdateWidget(MapViewWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -61,11 +63,11 @@ class _MapViewWidgetState extends State<MapViewWidget> {
   }
 
   void _updatePulseCircle() {
-    if (!mounted) return;
+    if (!mounted || !widget.state.isVisible) return;
 
     final rawVal = widget.pulseController.value;
-    // Throttle: only rebuild if value changed by more than 2% — reduces from 60fps to ~20fps
-    if ((rawVal - _lastPulseVal).abs() < 0.02) return;
+    // Throttle: only rebuild if value changed by more than 5% — significantly reduces rebuild frequency
+    if ((rawVal - _lastPulseVal).abs() < 0.05) return;
     _lastPulseVal = rawVal;
 
     final val = Curves.easeOutQuad.transform(rawVal);
@@ -75,7 +77,7 @@ class _MapViewWidgetState extends State<MapViewWidget> {
 
     // 1. Current Location Pulse
     if (widget.state.myLocation != null && _currentZoom >= 13.0) {
-      final double baseRadiusAtZoom14 = 400.0;
+      const double baseRadiusAtZoom14 = 400.0;
       final double scaleFactor = pow(2, 14 - _currentZoom).toDouble();
       final double dynamicRadius = baseRadiusAtZoom14 * scaleFactor;
       final double radius = dynamicRadius * (1.0 + val * 0.5);
@@ -91,38 +93,6 @@ class _MapViewWidgetState extends State<MapViewWidget> {
           zIndex: 1,
         ),
       );
-    }
-
-    // 2. Animated Markers Pulse (Alerts & News)
-    if (_currentZoom >= 11.0) {
-      final double baseMarkerRadius = 150.0;
-      final double scaleFactor = pow(2, 14 - _currentZoom).toDouble();
-      final double markerRadius =
-          baseMarkerRadius * scaleFactor * (1.0 + val * 0.3);
-
-      final animatedMarkers = widget.state.markers
-          .where((m) =>
-              m.markerId.value.startsWith('alert_') ||
-              m.markerId.value.startsWith('news_'))
-          .toList();
-
-      for (var marker in animatedMarkers) {
-        final isNews = marker.markerId.value.startsWith('news_');
-        final color =
-            isNews ? const Color(0xFFFFB400) : const Color(0xFFFF5A5F);
-
-        newCircles.add(
-          Circle(
-            circleId: CircleId('pulse_${marker.markerId.value}'),
-            center: marker.position,
-            radius: markerRadius,
-            fillColor: color.withOpacity(opacity * 0.2),
-            strokeColor: color.withOpacity(opacity * 0.4),
-            strokeWidth: 1,
-            zIndex: 1,
-          ),
-        );
-      }
     }
 
     setState(() {

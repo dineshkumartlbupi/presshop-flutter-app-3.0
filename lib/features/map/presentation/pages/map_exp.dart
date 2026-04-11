@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class SimpleMapPage extends StatefulWidget {
-  const SimpleMapPage({Key? key}) : super(key: key);
+  const SimpleMapPage({super.key});
 
   @override
   State<SimpleMapPage> createState() => _SimpleMapPageState();

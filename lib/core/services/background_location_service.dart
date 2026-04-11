@@ -45,7 +45,7 @@ void onStart(ServiceInstance service) async {
     onDidReceiveBackgroundNotificationResponse:
         internalNotificationTapBackground,
     onDidReceiveNotificationResponse:
-        (NotificationResponse notificationResponse) async {
+        (notificationResponse) async {
       // Forward foreground taps to the same handler
       internalNotificationTapBackground(notificationResponse);
     },

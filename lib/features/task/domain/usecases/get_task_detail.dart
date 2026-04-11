@@ -20,10 +20,6 @@ class GetTaskDetail
 }
 
 class GetTaskDetailParams {
-  final String taskId;
-  final double? latitude;
-  final double? longitude;
-  final bool showLoader;
 
   GetTaskDetailParams({
     required this.taskId,
@@ -31,4 +27,8 @@ class GetTaskDetailParams {
     this.longitude,
     this.showLoader = true,
   });
+  final String taskId;
+  final double? latitude;
+  final double? longitude;
+  final bool showLoader;
 }

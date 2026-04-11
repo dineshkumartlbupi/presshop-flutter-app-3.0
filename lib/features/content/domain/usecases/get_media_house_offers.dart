@@ -7,9 +7,9 @@ import '../repositories/content_repository.dart';
 
 class GetMediaHouseOffers
     implements UseCase<List<ManageTaskChatModel>, GetMediaHouseOffersParams> {
-  final ContentRepository repository;
 
   GetMediaHouseOffers(this.repository);
+  final ContentRepository repository;
 
   @override
   Future<Either<Failure, List<ManageTaskChatModel>>> call(
@@ -20,10 +20,10 @@ class GetMediaHouseOffers
 }
 
 class GetMediaHouseOffersParams extends Equatable {
-  final String contentId;
-  final bool showLoader;
 
   const GetMediaHouseOffersParams(this.contentId, {this.showLoader = true});
+  final String contentId;
+  final bool showLoader;
 
   @override
   List<Object?> get props => [contentId, showLoader];

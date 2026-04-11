@@ -16,6 +16,7 @@ import 'package:presshop/features/authentication/presentation/pages/social_sign_
 import 'package:presshop/features/authentication/presentation/pages/upload_doc_screen.dart';
 import 'package:presshop/features/authentication/presentation/pages/verify_account_screen.dart';
 import 'package:presshop/features/onboarding/presentation/pages/walk_through.dart';
+import 'package:presshop/features/onboarding/presentation/pages/permission_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/authentication/presentation/bloc/signup_bloc.dart';
@@ -25,7 +26,6 @@ import 'package:presshop/features/authentication/presentation/bloc/signup_event.
 import 'package:presshop/features/bank/presentation/pages/my_banks_page.dart';
 import 'package:presshop/features/profile/presentation/pages/digital_id_screen.dart';
 import 'package:presshop/features/profile/presentation/pages/my_profile_screen.dart';
-import 'package:presshop/features/account_settings/presentation/pages/account_settings.dart';
 import 'package:presshop/features/account_settings/presentation/pages/account_delete_screen.dart';
 import 'package:presshop/features/content/presentation/pages/content_detail_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
@@ -115,6 +115,11 @@ class AppRouter {
         builder: (context, state) => const Walkthrough(),
       ),
       GoRoute(
+        path: AppRoutes.permissionPath,
+        name: AppRoutes.permissionName,
+        builder: (context, state) => const PermissionPage(),
+      ),
+      GoRoute(
         path: AppRoutes.loginPath,
         name: AppRoutes.loginName,
         builder: (context, state) => const LoginScreen(),
@@ -177,11 +182,6 @@ class AppRouter {
         path: AppRoutes.digitalIdPath,
         name: AppRoutes.digitalIdName,
         builder: (context, state) => const DigitalIdScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.accountSettingsPath,
-        name: AppRoutes.accountSettingsName,
-        builder: (context, state) => const AccountSetting(),
       ),
       GoRoute(
         path: AppRoutes.accountDeletePath,

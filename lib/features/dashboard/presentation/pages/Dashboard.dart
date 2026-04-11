@@ -639,7 +639,7 @@ class DashboardState extends State<Dashboard>
   }
 
   void goToLocationErrorScreen() {
-    handleGoToLocationErrorScreen((lc.LocationData data) {
+    handleGoToLocationErrorScreen((data) {
       proceedWithLocation(data);
     });
   }

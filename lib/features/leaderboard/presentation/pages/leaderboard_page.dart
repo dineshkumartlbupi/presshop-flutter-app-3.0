@@ -57,6 +57,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
     super.dispose();
   }
 
+  bool showOverlayLoader = false;
   String getFormattedDate(DateTime dateTime) {
     try {
       const months = [
@@ -145,27 +146,41 @@ class _LeaderboardViewState extends State<LeaderboardView> {
       ),
       body: BlocBuilder<LeaderboardBloc, LeaderboardState>(
         builder: (context, state) {
-          debugPrint("DEBUG: LeaderboardView state: $state");
           if (state is LeaderboardLoaded) {
             _cachedLeaderboard = state.leaderboard;
           }
 
-          if (_cachedLeaderboard == null) {
-            if (state is LeaderboardLoading || state is LeaderboardInitial) {
-              return Center(child: CommonWidgetsNew.showAnimatedLoader(size));
-            } else if (state is LeaderboardError) {
-              return Center(child: Text(state.message));
-            }
-            return const SizedBox.shrink();
+          final bool showMainLoader = _cachedLeaderboard == null &&
+              (state is LeaderboardLoading || state is LeaderboardInitial);
+          showOverlayLoader =
+              _cachedLeaderboard != null && state is LeaderboardLoading;
+
+          if (showOverlayLoader) {
+            return Container(
+              color: Colors.white.withOpacity(0.5),
+              child: Center(
+                child: CommonWidgetsNew.showAnimatedLoader(size),
+              ),
+            );
           }
 
-          return _buildBody(_cachedLeaderboard!, state is LeaderboardLoading);
+          return Stack(
+            children: [
+              if (_cachedLeaderboard != null) _buildBody(_cachedLeaderboard!),
+              if (showMainLoader)
+                Center(
+                    child: Center(
+                        child: CommonWidgetsNew.showAnimatedLoader(size))),
+              if (_cachedLeaderboard == null && state is LeaderboardError)
+                Center(child: Text(state.message)),
+            ],
+          );
         },
       ),
     );
   }
 
-  Widget _buildBody(LeaderboardEntity leaderboard, bool isLoading) {
+  Widget _buildBody(LeaderboardEntity leaderboard) {
     return Padding(
       padding: EdgeInsets.all(size.width * AppDimensions.numD04),
       child: Column(
@@ -222,140 +237,125 @@ class _LeaderboardViewState extends State<LeaderboardView> {
             ),
           ),
           Expanded(
-            child: Stack(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (leaderboard.memberList.isEmpty) ...[
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: size.height * AppDimensions.numD30),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            "No Member available in this Country",
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * AppDimensions.numD035,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                      )
-                    ] else ...[
-                      SizedBox(height: size.height * AppDimensions.numD04),
-                      LeadershipTableWidget(
-                        memberList: leaderboard.memberList.take(3).toList(),
-                        currencySymbol: leaderboard.currencySymbol,
-                      ),
-                      SizedBox(height: size.height * AppDimensions.numD04),
-                      Text('${leaderboard.totalMember} total earning members',
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500)),
-                      Divider(
-                        height: size.height * AppDimensions.numD02,
-                        thickness: 0.5,
-                        color: Colors.black,
-                      ),
-                      Expanded(
-                        child: ListView.builder(
-                          controller: _scrollController,
-                          itemCount: leaderboard.memberList.length,
-                          itemBuilder: (context, index) {
-                            var memberItem = leaderboard.memberList[index];
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                  bottom: size.height * AppDimensions.numD02),
-                              child: Row(
-                                children: [
-                                  Container(
-                                      padding: EdgeInsets.all(
-                                        size.width * AppDimensions.numD01,
-                                      ),
-                                      height: size.width * AppDimensions.numD15,
-                                      width: size.width * AppDimensions.numD15,
-                                      child: ClipOval(
-                                        clipBehavior: Clip.antiAlias,
-                                        child: CachedNetworkImage(
-                                          imageUrl: memberItem.avatar,
-                                          errorWidget: (context, url, error) {
-                                            return Image.asset(
-                                              "${commonImagePath}rabbitLogo.png",
-                                              height: size.width *
-                                                  AppDimensions.numD06,
-                                              width: size.width *
-                                                  AppDimensions.numD06,
-                                              fit: BoxFit.cover,
-                                            );
-                                          },
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )),
-                                  SizedBox(
-                                      width: size.width * AppDimensions.numD03),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        memberItem.userName.toTitleCase(),
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width *
-                                                AppDimensions.numD04,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                      SizedBox(
-                                          height: size.height *
-                                              AppDimensions.numD005),
-                                      Text(
-                                        "Hopper since ${getFormattedDate(memberItem.createdAt)}",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width *
-                                                AppDimensions.numD032,
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.w400),
-                                      ),
-                                    ],
-                                  ),
-                                  Spacer(),
-                                  Text(
-                                    formatCurrency(
-                                        memberItem.totalEarnings,
-                                        leaderboard.currencySymbol.isNotEmpty
-                                            ? leaderboard.currencySymbol
-                                            : currencySymbol),
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width *
-                                            AppDimensions.numD04,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ]
-                  ],
-                ),
-                if (isLoading)
-                  Positioned.fill(
-                    child: Container(
-                      color: Colors.white.withOpacity(0.4),
-                      child: Center(
-                        child: CommonWidgetsNew.showAnimatedLoader(size),
+                if (leaderboard.memberList.isEmpty) ...[
+                  Padding(
+                    padding: EdgeInsets.only(
+                        top: size.height * AppDimensions.numD30),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "No Member available in this Country",
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * AppDimensions.numD035,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
+                  )
+                ] else ...[
+                  SizedBox(height: size.height * AppDimensions.numD04),
+                  LeadershipTableWidget(
+                    memberList: leaderboard.memberList.take(3).toList(),
+                    currencySymbol: leaderboard.currencySymbol,
                   ),
+                  SizedBox(height: size.height * AppDimensions.numD04),
+                  Text('${leaderboard.totalMember} total earning members',
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD035,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500)),
+                  Divider(
+                    height: size.height * AppDimensions.numD02,
+                    thickness: 0.5,
+                    color: Colors.black,
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      itemCount: leaderboard.memberList.length,
+                      itemBuilder: (context, index) {
+                        var memberItem = leaderboard.memberList[index];
+                        return Padding(
+                          padding: EdgeInsets.only(
+                              bottom: size.height * AppDimensions.numD02),
+                          child: Row(
+                            children: [
+                              Container(
+                                  padding: EdgeInsets.all(
+                                    size.width * AppDimensions.numD01,
+                                  ),
+                                  height: size.width * AppDimensions.numD15,
+                                  width: size.width * AppDimensions.numD15,
+                                  child: ClipOval(
+                                    clipBehavior: Clip.antiAlias,
+                                    child: CachedNetworkImage(
+                                      imageUrl: memberItem.avatar,
+                                      errorWidget: (context, url, error) {
+                                        return Image.asset(
+                                          "${commonImagePath}rabbitLogo.png",
+                                          height:
+                                              size.width * AppDimensions.numD06,
+                                          width:
+                                              size.width * AppDimensions.numD06,
+                                          fit: BoxFit.cover,
+                                        );
+                                      },
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )),
+                              SizedBox(
+                                  width: size.width * AppDimensions.numD03),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    memberItem.userName.toTitleCase(),
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD04,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  SizedBox(
+                                      height:
+                                          size.height * AppDimensions.numD005),
+                                  Text(
+                                    "Hopper since ${getFormattedDate(memberItem.createdAt)}",
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD032,
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                ],
+                              ),
+                              Spacer(),
+                              Text(
+                                formatCurrency(
+                                    memberItem.totalEarnings,
+                                    leaderboard.currencySymbol.isNotEmpty
+                                        ? leaderboard.currencySymbol
+                                        : currencySymbol),
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * AppDimensions.numD04,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ]
               ],
             ),
           ),

@@ -15,19 +15,10 @@ import 'package:presshop/features/chat/data/datasources/chat_socket_datasource.d
 import 'package:presshop/features/chat/data/models/chat_models.dart';
 import 'package:presshop/main.dart';
 import 'package:record/record.dart';
-import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  final GetChatListUseCase _getChatListUseCase;
-  final GetRoomChatUseCase _getRoomChatUseCase;
-  final SendMessageUseCase _sendMessageUseCase;
-  final UploadMediaUseCase _uploadMediaUseCase;
-  final UpdateTypingStatusUseCase _updateTypingStatusUseCase;
-  final ChatSocketDataSource _chatSocketDataSource;
-  final AudioRecorder _audioRecorder;
-  final ScrollController scrollController = ScrollController();
 
   ChatBloc({
     required GetChatListUseCase getChatListUseCase,
@@ -59,6 +50,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ReceiveMessageEvent>(_onReceiveMessage);
     on<FetchMoreMessagesEvent>(_onFetchMoreMessages);
   }
+  final GetChatListUseCase _getChatListUseCase;
+  final GetRoomChatUseCase _getRoomChatUseCase;
+  final SendMessageUseCase _sendMessageUseCase;
+  final UploadMediaUseCase _uploadMediaUseCase;
+  final UpdateTypingStatusUseCase _updateTypingStatusUseCase;
+  final ChatSocketDataSource _chatSocketDataSource;
+  final AudioRecorder _audioRecorder;
+  final ScrollController scrollController = ScrollController();
 
   @override
   Future<void> close() {
@@ -148,7 +147,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     );
 
     // Socket message handler
-    void _handleIncomingMessage(dynamic data) async {
+    void handleIncomingMessage(dynamic data) async {
       if (data is! Map) return;
       final Map<String, dynamic> mappedData = Map<String, dynamic>.from(data);
       final incomingMessage = ChatMessageModel.fromJson(mappedData, hopperId);
@@ -199,9 +198,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       }
     }
 
-    _chatSocketDataSource.onChatMessage = _handleIncomingMessage;
-    _chatSocketDataSource.onMediaMessage = _handleIncomingMessage;
-    _chatSocketDataSource.onVoiceMessage = _handleIncomingMessage;
+    _chatSocketDataSource.onChatMessage = handleIncomingMessage;
+    _chatSocketDataSource.onMediaMessage = handleIncomingMessage;
+    _chatSocketDataSource.onVoiceMessage = handleIncomingMessage;
 
     _chatSocketDataSource.onTyping = (data) {
       if (data is Map) {

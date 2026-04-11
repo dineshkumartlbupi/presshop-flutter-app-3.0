@@ -168,9 +168,6 @@ class AvatarBottomSheet {
 }
 
 class AvatarData {
-  String id;
-  String avatar;
-  bool selected;
 
   AvatarData({
     required this.id,
@@ -185,6 +182,9 @@ class AvatarData {
       selected: false,
     );
   }
+  String id;
+  String avatar;
+  bool selected;
 
   Map<String, dynamic> toJson() {
     return {

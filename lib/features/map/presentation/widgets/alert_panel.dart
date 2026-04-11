@@ -17,11 +17,14 @@ class AlertPanel extends StatelessWidget {
         Align(
           alignment: Alignment.bottomCenter,
           child: Container(
-            margin: EdgeInsets.all(size.width * AppDimensions.numD042),
+            margin: EdgeInsets.only(
+                bottom: size.width * AppDimensions.numD042,
+                left: 10,
+                right: 100),
             padding: EdgeInsets.symmetric(
                 horizontal: size.width * AppDimensions.numD026,
                 vertical: size.width * AppDimensions.numD026),
-            width: size.width * AppDimensions.numD47,
+            width: size.width / 1.5,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius:
@@ -43,12 +46,12 @@ class AlertPanel extends StatelessWidget {
                       "Send Alerts",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: size.width * AppDimensions.numD026,
+                        fontSize: size.width * AppDimensions.numD031,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: size.width * AppDimensions.numD026),
+                SizedBox(height: size.width * AppDimensions.numD022),
                 Container(
                   height: size.width * AppDimensions.numD005,
                   width: double.infinity,
@@ -60,7 +63,7 @@ class AlertPanel extends StatelessWidget {
                         size.width * AppDimensions.numD005),
                   ),
                 ),
-                SizedBox(height: size.width * AppDimensions.numD01),
+                SizedBox(height: size.height * AppDimensions.numD002),
                 Row(
                   children: [
                     Text(
@@ -80,6 +83,7 @@ class AlertPanel extends StatelessWidget {
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     childAspectRatio: 1,
+                    mainAxisExtent: 70,
                     crossAxisSpacing: size.width * AppDimensions.numD016,
                     mainAxisSpacing: size.width * AppDimensions.numD016,
                   ),
@@ -103,8 +107,8 @@ class AlertPanel extends StatelessWidget {
                           children: [
                             Image.asset(
                               item['icon']!,
-                              width: size.width * AppDimensions.numD065,
-                              height: size.width * AppDimensions.numD065,
+                              width: size.width * AppDimensions.numD095,
+                              height: size.width * AppDimensions.numD095,
                               fit: BoxFit.contain,
                             ),
                             SizedBox(
@@ -129,8 +133,8 @@ class AlertPanel extends StatelessWidget {
                   children: [
                     Image.asset(
                       'assets/icons/mapalert.png',
-                      width: size.width * AppDimensions.numD04,
-                      height: size.width * AppDimensions.numD04,
+                      width: size.width * AppDimensions.numD095,
+                      height: size.width * AppDimensions.numD095,
                       fit: BoxFit.contain,
                     ),
                     SizedBox(width: size.width * AppDimensions.numD016),

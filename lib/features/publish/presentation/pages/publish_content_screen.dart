@@ -2318,7 +2318,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               child: InkWell(
                                 onTap: () {
                                   if (selectedSellType ==
-                                      AppStrings.exclusiveText) return;
+                                      AppStrings.exclusiveText) {
+                                    return;
+                                  }
                                   userSharedPriceValue = priceController.text;
                                   priceController.text =
                                       userExclusivePriceValue;

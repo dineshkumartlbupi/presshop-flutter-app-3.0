@@ -109,9 +109,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     setUserNameListener();
     setPhoneListener();
     setEmailListener();
-    myProfileApi(showLoader: false);
+    myProfileApi(showLoader: true);
     if (widget.editProfileScreen) {
-      getAvatarsApi(showLoader: false);
+      getAvatarsApi(showLoader: true);
     }
   }
 
@@ -2006,6 +2006,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 }
 
 class MyProfileData {
+  MyProfileData();
   MyProfileData.fromJson(json) {
     firstName =
         json[SharedPreferencesKeys.firstNameKey] ?? json['firstName'] ?? "";
@@ -2078,7 +2079,6 @@ class MyProfileData {
             .toString()
         : "";
   }
-  MyProfileData();
   String firstName = "";
   String lastName = "";
   String userName = "";

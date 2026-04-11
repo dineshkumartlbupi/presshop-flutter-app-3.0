@@ -149,6 +149,7 @@ class ContentItemModel extends ContentItem {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() => {
         'id': id,
         'description': description,

@@ -4,7 +4,6 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 
 import 'package:presshop/core/core_export.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 class LocationErrorScreen extends StatefulWidget {
   const LocationErrorScreen({super.key});

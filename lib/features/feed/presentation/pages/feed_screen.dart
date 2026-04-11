@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import '../../../../core/di/injection_container.dart';
 import '../bloc/feed_bloc.dart';
 import '../bloc/feed_event.dart';
@@ -153,43 +150,58 @@ class FeedScreenState extends State<FeedScreen>
             onRefresh: _onRefresh,
             onLoading: _onLoading,
             footer: const CustomFooter(builder: commonRefresherFooter),
-            child: ListView.separated(
-                padding: EdgeInsets.symmetric(
-                    horizontal: size.width * AppDimensions.numD04,
-                    vertical: size.width * AppDimensions.numD04),
-                itemBuilder: (context, index) {
-                  return FeedItemWidget(
-                    feed: state.feeds[index],
-                    size: size,
-                    initialController: initialController,
-                    openUrl: openUrl,
-                    onFavouriteToggle: () {
-                      _feedBloc.add(ToggleFavouriteFeed(
-                          id: state.feeds[index].id,
-                          isFavourite: !state.feeds[index].isFavourite));
-                    },
-                    onLikeToggle: () {
-                      _feedBloc.add(ToggleLikeFeed(
-                          id: state.feeds[index].id,
-                          isLiked: !state.feeds[index].isLiked));
-                    },
-                    onEmojiToggle: () {
-                      _feedBloc.add(ToggleEmojiFeed(
-                          id: state.feeds[index].id,
-                          isEmoji: !state.feeds[index].isEmoji));
-                    },
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.only(
-                        bottom: size.width * AppDimensions.numD04),
-                    child: const Divider(
-                      color: AppColorTheme.colorTextFieldIcon,
+            child: state.feeds.isEmpty && state.status == FeedStatus.success
+                ? Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD05),
+                      child: Text(
+                        "No data found",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: size.width * AppDimensions.numD04,
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
-                  );
-                },
-                itemCount: state.feeds.length),
+                  )
+                : ListView.separated(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * AppDimensions.numD04,
+                        vertical: size.width * AppDimensions.numD04),
+                    itemBuilder: (context, index) {
+                      return FeedItemWidget(
+                        feed: state.feeds[index],
+                        size: size,
+                        initialController: initialController,
+                        openUrl: openUrl,
+                        onFavouriteToggle: () {
+                          _feedBloc.add(ToggleFavouriteFeed(
+                              id: state.feeds[index].id,
+                              isFavourite: !state.feeds[index].isFavourite));
+                        },
+                        onLikeToggle: () {
+                          _feedBloc.add(ToggleLikeFeed(
+                              id: state.feeds[index].id,
+                              isLiked: !state.feeds[index].isLiked));
+                        },
+                        onEmojiToggle: () {
+                          _feedBloc.add(ToggleEmojiFeed(
+                              id: state.feeds[index].id,
+                              isEmoji: !state.feeds[index].isEmoji));
+                        },
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.only(
+                            bottom: size.width * AppDimensions.numD04),
+                        child: const Divider(
+                          color: AppColorTheme.colorTextFieldIcon,
+                        ),
+                      );
+                    },
+                    itemCount: state.feeds.length),
           );
         },
       ),

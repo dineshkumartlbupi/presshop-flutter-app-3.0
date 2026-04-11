@@ -8,9 +8,9 @@ import 'package:presshop/main.dart';
 import 'task_chat_bubbles.dart';
 
 class UploadInfoBubble extends StatelessWidget {
-  final String uploadTextType;
 
   const UploadInfoBubble({super.key, required this.uploadTextType});
+  final String uploadTextType;
 
   @override
   Widget build(BuildContext context) {
@@ -70,11 +70,6 @@ class UploadInfoBubble extends StatelessWidget {
 }
 
 class CongratulationsBubble extends StatelessWidget {
-  final String roomId;
-  final String mediaHouseName;
-  final String mediaCount;
-  final String amount;
-  final String transactionId;
 
   const CongratulationsBubble({
     super.key,
@@ -84,6 +79,11 @@ class CongratulationsBubble extends StatelessWidget {
     required this.amount,
     required this.transactionId,
   });
+  final String roomId;
+  final String mediaHouseName;
+  final String mediaCount;
+  final String amount;
+  final String transactionId;
 
   @override
   Widget build(BuildContext context) {
@@ -193,14 +193,14 @@ class CongratulationsBubble extends StatelessWidget {
 }
 
 class MoreContentRequestBubble extends StatelessWidget {
-  final ManageTaskChatModel item;
-  final Function(String event, String type, Map<String, dynamic>? data) onEmit;
 
   const MoreContentRequestBubble({
     super.key,
     required this.item,
     required this.onEmit,
   });
+  final ManageTaskChatModel item;
+  final Function(String event, String type, Map<String, dynamic>? data) onEmit;
 
   @override
   Widget build(BuildContext context) {
@@ -300,9 +300,9 @@ class MoreContentRequestBubble extends StatelessWidget {
 }
 
 class EarningBubble extends StatelessWidget {
-  final String amount;
 
   const EarningBubble({super.key, required this.amount});
+  final String amount;
 
   @override
   Widget build(BuildContext context) {
@@ -411,9 +411,6 @@ class EarningBubble extends StatelessWidget {
 }
 
 class MediaUploadSuccessBubble extends StatelessWidget {
-  final String imgCount;
-  final String vidCount;
-  final String audioCount;
 
   const MediaUploadSuccessBubble({
     super.key,
@@ -421,6 +418,9 @@ class MediaUploadSuccessBubble extends StatelessWidget {
     required this.vidCount,
     required this.audioCount,
   });
+  final String imgCount;
+  final String vidCount;
+  final String audioCount;
 
   @override
   Widget build(BuildContext context) {
@@ -489,9 +489,9 @@ class MediaUploadSuccessBubble extends StatelessWidget {
 }
 
 class ActionResponseBubble extends StatelessWidget {
-  final String message;
 
   const ActionResponseBubble({super.key, required this.message});
+  final String message;
 
   @override
   Widget build(BuildContext context) {
@@ -592,14 +592,14 @@ class UploadNoContentBubble extends StatelessWidget {
 }
 
 class MediaHouseOfferBubble extends StatelessWidget {
-  final ManageTaskChatModel item;
-  final bool isMakeCounter;
 
   const MediaHouseOfferBubble({
     super.key,
     required this.item,
     required this.isMakeCounter,
   });
+  final ManageTaskChatModel item;
+  final bool isMakeCounter;
 
   @override
   Widget build(BuildContext context) {
@@ -673,14 +673,14 @@ class MediaHouseOfferBubble extends StatelessWidget {
 }
 
 class ActionRequiredBubble extends StatelessWidget {
-  final ManageTaskChatModel item;
-  final Function(String event, String type, Map<String, dynamic> data) onEmit;
 
   const ActionRequiredBubble({
     super.key,
     required this.item,
     required this.onEmit,
   });
+  final ManageTaskChatModel item;
+  final Function(String event, String type, Map<String, dynamic> data) onEmit;
 
   @override
   Widget build(BuildContext context) {

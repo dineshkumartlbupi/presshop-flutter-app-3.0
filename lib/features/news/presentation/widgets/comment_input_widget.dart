@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class CommentInputWidget extends StatelessWidget {
 
   const CommentInputWidget({
-    Key? key,
+    super.key,
     required this.controller,
     required this.onSend,
     this.hintText,
     this.height,
     this.autofocus = false,
-  }) : super(key: key);
+  });
   final TextEditingController controller;
   final VoidCallback onSend;
   final String? hintText;

@@ -9,15 +9,15 @@ import '../datasources/chat_socket_datasource.dart';
 import '../models/chat_models.dart';
 
 class ChatRepositoryImpl implements ChatRepository {
-  final ChatRemoteDataSource remoteDataSource;
-  final ChatSocketDataSource socketDataSource;
-  final NetworkInfo networkInfo;
 
   ChatRepositoryImpl({
     required this.remoteDataSource,
     required this.socketDataSource,
     required this.networkInfo,
   });
+  final ChatRemoteDataSource remoteDataSource;
+  final ChatSocketDataSource socketDataSource;
+  final NetworkInfo networkInfo;
 
   @override
   Future<Either<Failure, List<ChatRoomEntity>>> getChatList() async {

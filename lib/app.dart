@@ -14,8 +14,6 @@ import 'package:presshop/features/earning/presentation/bloc/earning_bloc.dart';
 import 'package:presshop/features/content/presentation/bloc/content_bloc.dart';
 import 'package:presshop/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:presshop/core/router/app_router.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
-import 'package:presshop/core/utils/app_logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class MyApp extends StatelessWidget {

@@ -20,17 +20,17 @@ class GetTaskChat
 }
 
 class GetTaskChatParams extends Equatable {
-  final String roomId;
-  final String type;
-  final String contentId;
-
-  final bool showLoader;
 
   const GetTaskChatParams(
       {required this.roomId,
       required this.type,
       required this.contentId,
       this.showLoader = true});
+  final String roomId;
+  final String type;
+  final String contentId;
+
+  final bool showLoader;
 
   @override
   List<Object> get props => [roomId, type, contentId, showLoader];

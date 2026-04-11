@@ -129,8 +129,9 @@ class MarkerService {
 
       final response =
           await http.get(Uri.parse(url)).timeout(const Duration(seconds: 5));
-      if (response.statusCode != 200)
+      if (response.statusCode != 200) {
         throw Exception('HTTP ${response.statusCode}');
+      }
 
       final Uint8List bytes = response.bodyBytes;
       if (bytes.isEmpty) throw Exception('Empty image bytes');

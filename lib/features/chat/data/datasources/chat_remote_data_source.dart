@@ -1,16 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/features/chat/data/models/chat_models.dart';
 import 'package:presshop/main.dart';
 
 class ChatRemoteDataSource {
-  final ApiClient apiClient;
 
   ChatRemoteDataSource(this.apiClient);
+  final ApiClient apiClient;
 
   /// Helper to robustly extract data from various response structures
   dynamic _extractData(dynamic rawData) {

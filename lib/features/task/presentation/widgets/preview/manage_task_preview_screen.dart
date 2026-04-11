@@ -12,7 +12,6 @@ import 'package:presshop/features/camera/presentation/pages/audio_waveform_widge
 import 'package:path/path.dart' as path;
 import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 class ManageTaskPreviewScreen extends StatefulWidget {
   const ManageTaskPreviewScreen({super.key, required this.cameraListData});

@@ -384,7 +384,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                 children: [
                   Expanded(
                     child: Builder(builder: (context) {
-                      return Container(
+                      return SizedBox(
                         height: size.width * AppDimensions.numD13,
                         child: commonElevatedButton(
                           "Upload",
@@ -951,7 +951,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                                       fontWeight: FontWeight.w400)),
                             ),
                           ))
-                      .toList(),
+                      ,
                   SizedBox(height: size.width * AppDimensions.numD05),
                 ],
               ));

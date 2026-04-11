@@ -9,7 +9,7 @@ class AllDialogs {
     final prefs = await SharedPreferences.getInstance();
     showDialog(
         context: navigatorKey.currentState!.context,
-        builder: (BuildContext context) {
+        builder: (context) {
           return AlertDialog(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -17,7 +17,7 @@ class AllDialogs {
               insetPadding: EdgeInsets.symmetric(
                   horizontal: size.width * AppDimensions.numD04),
               content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
+                builder: (context, setState) {
                   return Container(
                     decoration: BoxDecoration(
                         color: Colors.white,

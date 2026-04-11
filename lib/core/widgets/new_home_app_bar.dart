@@ -3,7 +3,6 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/widgets/logo_widget.dart';
 
 class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {

@@ -3,18 +3,18 @@ import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 
 class NewsMediaWidget extends StatefulWidget {
-  final String mediaUrl;
-  final String imageUrl;
-  final bool isVideo;
-  final Size size;
 
   const NewsMediaWidget({
-    Key? key,
+    super.key,
     required this.mediaUrl,
     required this.imageUrl,
     required this.isVideo,
     required this.size,
-  }) : super(key: key);
+  });
+  final String mediaUrl;
+  final String imageUrl;
+  final bool isVideo;
+  final Size size;
 
   @override
   State<NewsMediaWidget> createState() => _NewsMediaWidgetState();

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/widgets/common_filter_sheet.dart';
 
 class FeedFilterBottomSheet extends StatefulWidget {
   const FeedFilterBottomSheet({

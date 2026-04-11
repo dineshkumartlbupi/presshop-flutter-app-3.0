@@ -12,6 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:go_router/go_router.dart';
+import 'package:presshop/core/widgets/common_widgets.dart' as CommonWidgetsNew;
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:presshop/features/news/presentation/pages/news_page.dart';
 import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
@@ -39,8 +40,7 @@ import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 
 class MapPage extends StatefulWidget {
-  const MapPage({Key? key, this.hideLeading = false, this.showAppBar = false})
-      : super(key: key);
+  const MapPage({super.key, this.hideLeading = false, this.showAppBar = false});
   final bool hideLeading;
   final bool showAppBar;
 
@@ -79,8 +79,7 @@ class _MapPageState extends State<MapPage> {
 
 class _MapPageContent extends StatefulWidget {
   const _MapPageContent(
-      {Key? key, this.hideLeading = false, this.showAppBar = false})
-      : super(key: key);
+      {this.hideLeading = false, this.showAppBar = false});
   final bool hideLeading;
   final bool showAppBar;
 
@@ -491,7 +490,6 @@ class _MapPageContentState extends State<_MapPageContent>
           }
         }
         if (state.myLocation != null && _lastState?.myLocation == null) {
-          // Auto-navigate to location when first acquired
           _goToCurrentLocation();
         }
 
@@ -499,6 +497,50 @@ class _MapPageContentState extends State<_MapPageContent>
           _lastDistanceFilter = state.selectedDistance;
           if (_lastDistanceFilter != null) {
             _animateToDistance(_lastDistanceFilter!);
+          }
+        }
+
+        // Handle Info Window updates
+        if (_lastState?.selectedIncident?.id != state.selectedIncident?.id) {
+          if (state.selectedIncident != null &&
+              state.selectedPosition != null) {
+            _customInfoWindowController.hideInfoWindow?.call();
+            _customInfoWindowController.addInfoWindow?.call(
+              state.selectedIncident!.markerType == 'content' ||
+                      state.selectedIncident!.markerType == 'news' ||
+                      (state.selectedIncident!.markerType == 'icon' &&
+                          state.selectedIncident!.title != null &&
+                          state.selectedIncident!.title!.isNotEmpty)
+                  ? ContentMarkerPopup(
+                      key: ValueKey('popup_${state.selectedIncident!.id}'),
+                      incident: state.selectedIncident!,
+                      onViewPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BlocProvider(
+                              create: (context) => sl<NewsBloc>(),
+                              child: NewsPage(
+                                hideFilters: true,
+                                appBarTitle: 'All News',
+                                fromMap: true,
+                                prioritizedContentId:
+                                    state.selectedIncident!.id,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : CustomInfoWindow(
+                      key: ValueKey('popup_${state.selectedIncident!.id}'),
+                      incident: state.selectedIncident!,
+                      onPressed: () {},
+                    ),
+              state.selectedPosition!,
+            );
+          } else {
+            _customInfoWindowController.hideInfoWindow?.call();
           }
         }
 
@@ -510,10 +552,8 @@ class _MapPageContentState extends State<_MapPageContent>
             try {
               if (mounted) {
                 _isProgrammaticMovement = true;
-
                 LatLng adjusted = _adjustPositionForInfoWindow(
                     state.selectedPosition!, _currentZoom);
-
                 await ctrl.animateCamera(CameraUpdate.newLatLng(adjusted));
                 _isProgrammaticMovement = false;
                 _updateInfoWindow();
@@ -529,7 +569,6 @@ class _MapPageContentState extends State<_MapPageContent>
             try {
               if (mounted) {
                 _isProgrammaticMovement = true;
-
                 await ctrl.animateCamera(CameraUpdate.newCameraPosition(
                   CameraPosition(
                     target: state.myLocation!,
@@ -547,7 +586,8 @@ class _MapPageContentState extends State<_MapPageContent>
         }
         if (state.routeInfo != null &&
             !state.isNavigating &&
-            state.routeInfo!.points.isNotEmpty) {
+            state.routeInfo!.points.isNotEmpty &&
+            _lastState?.routeInfo != state.routeInfo) {
           _fitBounds(state.routeInfo!.points);
         }
         if (_lastState?.newlyCreatedIncident != state.newlyCreatedIncident &&
@@ -558,65 +598,16 @@ class _MapPageContentState extends State<_MapPageContent>
         }
         _lastState = state;
       },
-      listenWhen: (previous, current) {
-        if (previous.selectedIncident?.id != current.selectedIncident?.id) {
-          if (current.selectedIncident != null &&
-              current.selectedPosition != null) {
-            _customInfoWindowController.hideInfoWindow!();
-            _customInfoWindowController.addInfoWindow!(
-              current.selectedIncident!.markerType == 'content' ||
-                      current.selectedIncident!.markerType == 'news' ||
-                      (current.selectedIncident!.markerType == 'icon' &&
-                          current.selectedIncident!.title != null &&
-                          current.selectedIncident!.title!.isNotEmpty)
-                  ? ContentMarkerPopup(
-                      key: ValueKey('popup_${current.selectedIncident!.id}'),
-                      incident: current.selectedIncident!,
-                      onViewPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BlocProvider(
-                              create: (context) => sl<NewsBloc>(),
-                              child: NewsPage(
-                                hideFilters: true,
-                                appBarTitle: 'All News',
-                                fromMap: true,
-                                prioritizedContentId:
-                                    current.selectedIncident!.id,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    )
-                  : CustomInfoWindow(
-                      key: ValueKey('popup_${current.selectedIncident!.id}'),
-                      incident: current.selectedIncident!,
-                      onPressed: () {},
-                    ),
-              current.selectedPosition!,
-            );
-          } else {
-            _customInfoWindowController.hideInfoWindow!();
-          }
-        }
-
-        return true;
-      },
+      listenWhen: (previous, current) => true,
       builder: (context, state) {
         if (state.myLocation == null) {
           return Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Fetching your location..."),
-                  const SizedBox(height: 10),
-                ],
-              ),
+              body: Container(
+            color: Colors.white.withOpacity(0.5),
+            child: Center(
+              child: CommonWidgetsNew.showAnimatedLoader(size),
             ),
-          );
+          ));
         }
         // if (state.myLocation == null) {
         //   if (_locationTimeout) {
@@ -680,119 +671,140 @@ class _MapPageContentState extends State<_MapPageContent>
             body: Stack(
               children: [
                 RepaintBoundary(
-                  child: MapViewWidget(
-                    state: state,
-                    mapGlobalKey: _mapGlobalKey,
-                    controller: _controller,
-                    customInfoWindowController: _customInfoWindowController,
-                    pulseController: _pulseController,
-                    isProgrammaticMovement: _isProgrammaticMovement,
-                    initialZoom: 16.0,
-                    onMapCreated: (c) async {
-                      if (!_controller.isCompleted) {
-                        _controller.complete(c);
-                        _customInfoWindowController.googleMapController = c;
-                      }
-                      if (mounted) {
-                        unawaited(_updateInfoWindow());
-                      }
+                  child: BlocBuilder<MapBloc, MapState>(
+                    buildWhen: (previous, current) {
+                      return previous.markers != current.markers ||
+                          previous.polylines != current.polylines ||
+                          previous.circles != current.circles ||
+                          previous.myLocation != current.myLocation ||
+                          previous.isVisible != current.isVisible ||
+                          previous.isSelectingAlertLocation !=
+                              current.isSelectingAlertLocation;
                     },
-                    onCameraMoveStarted: () {
-                      if (!_isProgrammaticMovement) {
-                        _isUserDragging = true;
-                        context
-                            .read<MapBloc>()
-                            .add(const SetDraggingEvent(true));
-                      }
-                      _customInfoWindowController.onCameraMove?.call();
-                    },
-                    onCameraMove: (pos) {
-                      _currentZoom = pos.zoom;
-                      _customInfoWindowController.onCameraMove?.call();
-                    },
-                    onCameraIdle: () {
-                      if (mounted) {
-                        _updateInfoWindow();
-                        _isProgrammaticMovement = false;
-                        if (_isUserDragging) {
+                    builder: (context, mapState) {
+                      return MapViewWidget(
+                        state: mapState,
+                        mapGlobalKey: _mapGlobalKey,
+                        controller: _controller,
+                        customInfoWindowController: _customInfoWindowController,
+                        pulseController: _pulseController,
+                        isProgrammaticMovement: _isProgrammaticMovement,
+                        initialZoom: 16.0,
+                        onMapCreated: (c) async {
+                          if (!_controller.isCompleted) {
+                            _controller.complete(c);
+                            _customInfoWindowController.googleMapController = c;
+                          }
+                          if (mounted) {
+                            unawaited(_updateInfoWindow());
+                          }
+                        },
+                        onCameraMoveStarted: () {
+                          if (!_isProgrammaticMovement) {
+                            _isUserDragging = true;
+                            context
+                                .read<MapBloc>()
+                                .add(const SetDraggingEvent(true));
+                          }
+                          _customInfoWindowController.onCameraMove?.call();
+                        },
+                        onCameraMove: (pos) {
+                          _currentZoom = pos.zoom;
+                          _customInfoWindowController.onCameraMove?.call();
+                        },
+                        onCameraIdle: () {
+                          if (mounted) {
+                            _updateInfoWindow();
+                            _isProgrammaticMovement = false;
+                            if (_isUserDragging) {
+                              context
+                                  .read<MapBloc>()
+                                  .add(const SetDraggingEvent(false));
+                              _isUserDragging = false;
+                            }
+                          }
+                        },
+                        onTap: (pos) async {
+                          _customInfoWindowController.hideInfoWindow?.call();
+                          context.read<MapBloc>().add(ClearRouteEvent());
+
+                          if (mapState.isSelectingAlertLocation &&
+                              mapState.pendingAlertType != null) {
+                            context.read<MapBloc>().add(
+                                SetPreviewAlertMarkerEvent(
+                                    type: mapState.pendingAlertType!,
+                                    position: pos));
+                            context.read<MapBloc>().add(
+                                const SetSelectingAlertLocationEvent(
+                                    isSelecting: false));
+                            return;
+                          }
+
+                          if (mapState.showAlertPanel) {
+                            context
+                                .read<MapBloc>()
+                                .add(ToggleAlertPanelEvent());
+                            return;
+                          }
+
+                          if (mapState.isDestinationSelectionMode) {
+                            final repo = sl<MapRepository>();
+                            String address =
+                                "${pos.latitude}, ${pos.longitude}";
+
+                            final result =
+                                await repo.getAddressFromCoordinates(pos);
+                            result.fold(
+                              (failure) => debugPrint(
+                                  "Failed to get address: ${failure.message}"),
+                              (addr) => address = addr,
+                            );
+
+                            context.read<MapBloc>().add(
+                                SetMapSelectedLocationEvent(
+                                    position: pos,
+                                    address: address,
+                                    isOrigin: mapState.isSelectingOrigin));
+
+                            context.read<MapBloc>().add(
+                                SetDestinationSelectionModeEvent(
+                                    isSelectionMode: false));
+                            return;
+                          }
+
+                          if (mapState.showGetDirectionCard) {
+                            final repo = sl<MapRepository>();
+                            String address =
+                                "${pos.latitude}, ${pos.longitude}";
+
+                            final result =
+                                await repo.getAddressFromCoordinates(pos);
+                            result.fold(
+                              (failure) => debugPrint(
+                                  "Failed to get address: ${failure.message}"),
+                              (addr) => address = addr,
+                            );
+
+                            context.read<MapBloc>().add(
+                                SetMapSelectedLocationEvent(
+                                    position: pos,
+                                    address: address,
+                                    isOrigin: false));
+                            return;
+                          }
+
                           context
                               .read<MapBloc>()
-                              .add(const SetDraggingEvent(false));
-                          _isUserDragging = false;
-                        }
-                      }
-                    },
-                    onTap: (pos) async {
-                      _customInfoWindowController.hideInfoWindow!();
-                      context.read<MapBloc>().add(ClearRouteEvent());
-
-                      if (state.isSelectingAlertLocation &&
-                          state.pendingAlertType != null) {
-                        context.read<MapBloc>().add(SetPreviewAlertMarkerEvent(
-                            type: state.pendingAlertType!, position: pos));
-                        context.read<MapBloc>().add(
-                            const SetSelectingAlertLocationEvent(
-                                isSelecting: false));
-                        return;
-                      }
-
-                      if (state.showAlertPanel) {
-                        context.read<MapBloc>().add(ToggleAlertPanelEvent());
-                        return;
-                      }
-
-                      if (state.isDestinationSelectionMode) {
-                        final repo = sl<MapRepository>();
-                        String address = "${pos.latitude}, ${pos.longitude}";
-
-                        final result =
-                            await repo.getAddressFromCoordinates(pos);
-                        result.fold(
-                          (failure) => debugPrint(
-                              "Failed to get address: ${failure.message}"),
-                          (addr) => address = addr,
-                        );
-
-                        context.read<MapBloc>().add(SetMapSelectedLocationEvent(
-                              position: pos,
-                              address: address,
-                              isOrigin: state.isSelectingOrigin,
-                            ));
-
-                        context
-                            .read<MapBloc>()
-                            .add(SetDestinationSelectionModeEvent(
-                              isSelectionMode: false,
-                            ));
-                        return;
-                      }
-
-                      if (state.showGetDirectionCard) {
-                        final repo = sl<MapRepository>();
-                        String address = "${pos.latitude}, ${pos.longitude}";
-
-                        final result =
-                            await repo.getAddressFromCoordinates(pos);
-                        result.fold(
-                          (failure) => debugPrint(
-                              "Failed to get address: ${failure.message}"),
-                          (addr) => address = addr,
-                        );
-
-                        context.read<MapBloc>().add(SetMapSelectedLocationEvent(
-                              position: pos,
-                              address: address,
-                              isOrigin: false,
-                            ));
-                        return;
-                      }
-
-                      context.read<MapBloc>().add(ClearSelectedMarkerEvent());
-                      context.read<MapBloc>().add(ClearSelectedPolygonEvent());
-                      setState(() {
-                        _infoOffset = null;
-                        _polygonInfoOffset = null;
-                      });
+                              .add(ClearSelectedMarkerEvent());
+                          context
+                              .read<MapBloc>()
+                              .add(ClearSelectedPolygonEvent());
+                          setState(() {
+                            _infoOffset = null;
+                            _polygonInfoOffset = null;
+                          });
+                        },
+                      );
                     },
                   ),
                 ),
@@ -945,32 +957,39 @@ class _MapPageContentState extends State<_MapPageContent>
                 ),
                 if (state.isLoadingNews)
                   // Loading animation
-                  Positioned(
-                    right: 28,
-                    bottom: 175,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 2),
-                          )
-                        ],
-                      ),
-                      child: const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Color(0xFFEC4E54),
-                        ),
-                      ),
+                  Container(
+                    color: Colors.white.withOpacity(0.5),
+                    child: Center(
+                      child: CommonWidgetsNew.showAnimatedLoader(size),
                     ),
                   ),
+                // Positioned(
+                //   right: 28,
+                //   bottom: 175,
+                //   child: Container(
+                //     padding: const EdgeInsets.all(8),
+                //     decoration: BoxDecoration(
+                //       color: Colors.white,
+                //       shape: BoxShape.circle,
+                //       boxShadow: [
+                //         BoxShadow(
+                //           color: Colors.black.withOpacity(0.1),
+                //           blurRadius: 10,
+                //           offset: const Offset(0, 2),
+                //         )
+                //       ],
+                //     ),
+                //     child: const SizedBox(
+                //       width: 20,
+                //       height: 20,
+                //       child: CircularProgressIndicator(
+                //         strokeWidth: 2,
+                //         color: Color(0xFFEC4E54),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+
                 Positioned(
                   right: 20,
                   bottom: 20,

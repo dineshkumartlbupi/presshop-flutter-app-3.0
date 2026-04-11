@@ -1,21 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/logo_widget.dart';
 import 'package:presshop/main.dart';
 
 class CommonBrandedAppBar extends StatelessWidget
     implements PreferredSizeWidget {
-  final String title;
-  final Size size;
-  final List<Widget>? actionWidgets;
-  final VoidCallback? leadingFxn;
-  final double elevation;
-  final bool hideLeading;
-  final int? notificationCount;
-  final bool showLogo;
 
   const CommonBrandedAppBar({
     super.key,
@@ -28,6 +19,14 @@ class CommonBrandedAppBar extends StatelessWidget
     this.notificationCount,
     this.showLogo = true,
   });
+  final String title;
+  final Size size;
+  final List<Widget>? actionWidgets;
+  final VoidCallback? leadingFxn;
+  final double elevation;
+  final bool hideLeading;
+  final int? notificationCount;
+  final bool showLogo;
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +119,7 @@ class CommonBrandedAppBar extends StatelessWidget
 
   @override
   Size get preferredSize =>
-      Size.fromHeight((sharedPreferences?.getBool('isIpad') ?? false
+      Size.fromHeight(sharedPreferences?.getBool('isIpad') ?? false
           ? kToolbarHeightIpad
-          : kToolbarHeight));
+          : kToolbarHeight);
 }

@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:presshop/core/api/token_refresh_manager.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
-import 'package:presshop/core/utils/app_logger.dart';
 
 class ApiClient {
   ApiClient(this._dio, this._sharedPreferences, this._secureStorage) {

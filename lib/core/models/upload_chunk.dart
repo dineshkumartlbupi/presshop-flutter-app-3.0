@@ -1,10 +1,6 @@
 import 'package:hive/hive.dart';
 
-class UploadChunk {
-  final int partNumber;
-  final String presignedUrl;
-  String? eTag;
-  String status; // 'pending', 'uploaded', 'failed'
+class UploadChunk { // 'pending', 'uploaded', 'failed'
 
   UploadChunk({
     required this.partNumber,
@@ -12,6 +8,10 @@ class UploadChunk {
     this.eTag,
     this.status = 'pending',
   });
+  final int partNumber;
+  final String presignedUrl;
+  String? eTag;
+  String status;
 }
 
 class UploadChunkAdapter extends TypeAdapter<UploadChunk> {

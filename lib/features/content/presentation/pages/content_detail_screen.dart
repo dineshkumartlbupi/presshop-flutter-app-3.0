@@ -18,7 +18,6 @@ import 'package:presshop/core/widgets/animated_button.dart';
 import 'package:presshop/core/widgets/video_thumbnail_widget.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -28,7 +27,6 @@ import '../bloc/content_state.dart';
 import '../../domain/entities/content_item.dart';
 import '../../domain/entities/content_metadata.dart';
 import '../../../../core/di/injection_container.dart';
-import '../widgets/manage_content_widget.dart';
 
 import '../../domain/mappers/content_item_mapper.dart';
 
@@ -999,8 +997,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                 fit: BoxFit.contain,
                                 height: size.width * AppDimensions.numD20,
                                 width: size.width * AppDimensions.numD20,
-                                errorBuilder: (BuildContext context,
-                                    Object exception, StackTrace? stackTrace) {
+                                errorBuilder: (context,
+                                    exception, stackTrace) {
                                   return Image.asset(
                                     "${commonImagePath}rabbitLogo.png",
                                     fit: BoxFit.contain,

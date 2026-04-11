@@ -5,9 +5,9 @@ import '../entities/chat_entities.dart';
 import '../repositories/chat_repository.dart';
 
 class GetChatListUseCase implements UseCase<List<ChatRoomEntity>, NoParams> {
-  final ChatRepository repository;
 
   GetChatListUseCase(this.repository);
+  final ChatRepository repository;
 
   @override
   Future<Either<Failure, List<ChatRoomEntity>>> call(NoParams params) async {

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -8,13 +7,10 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/utils/app_logger.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
-import 'package:presshop/features/media/domain/services/background_upload_service.dart';
 
 /// Service for handling media uploads with progress tracking
 class MediaUploadService {
-  static int _lastProgress = -1;
+  static final int _lastProgress = -1;
   static final ValueNotifier<Map<String, dynamic>?> uploadStatus =
       ValueNotifier(null);
 
@@ -184,6 +180,11 @@ class MediaUploadService {
     FormData formData = FormData();
 
     try {
+      uploadStatus.value = {
+        'status': 'starting',
+        'progress': 0,
+        'endUrl': endUrl,
+      };
       // ✅ ADD MEDIA FILES (IMAGE + VIDEO BOTH)
       if (filePathList.isNotEmpty) {
         for (var element in filePathList) {
@@ -263,6 +264,11 @@ class MediaUploadService {
           debugPrint("Upload progress: $progress%");
 
           // ✅ ADD THIS LINE (YOU MISSED THIS)
+          uploadStatus.value = {
+            'status': 'uploading',
+            'progress': progress,
+            'endUrl': endUrl,
+          };
           _showProgressNotification(
             localNotificationService.flutterLocalNotificationsPlugin,
             progress,
@@ -288,13 +294,29 @@ class MediaUploadService {
           isDraft: jsonBody?['is_draft'] == 'true',
         );
 
+        uploadStatus.value = {
+          'status': 'success',
+          'progress': 100,
+          'endUrl': endUrl,
+        };
         return true;
       } else {
         debugPrint("❌ Upload Failed: ${response.statusCode}");
+        uploadStatus.value = {
+          'status': 'failed',
+          'progress': -1,
+          'endUrl': endUrl,
+        };
         return false;
       }
     } catch (e) {
       debugPrint("❌ Upload Error: $e");
+      uploadStatus.value = {
+        'status': 'failed',
+        'progress': -1,
+        'endUrl': endUrl,
+        'error': e.toString(),
+      };
       return false;
     } finally {
       await WakelockPlus.disable();

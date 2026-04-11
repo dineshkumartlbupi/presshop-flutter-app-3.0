@@ -122,7 +122,7 @@ class _UploadTestScreenState extends State<UploadTestScreen> {
       _addLog("ERROR: $e");
       return;
     }
-    if (videos != null && videos.isNotEmpty) {
+    if (videos.isNotEmpty) {
       _addLog("Selected: ${videos.length} video(s)");
       for (final video in videos) {
         _addLog("Selected: ${video.name} (${video.path})");

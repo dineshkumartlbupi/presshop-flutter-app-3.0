@@ -10,14 +10,10 @@ import 'package:presshop/core/widgets/video_widget.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:video_player/video_player.dart';
 import 'package:location/location.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'audio_waveform_widget_screen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 // ignore: must_be_immutable
 class PreviewScreen extends StatefulWidget {
@@ -1011,15 +1007,19 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
           Placemark place = placemarks.first;
 
           List<String> addressParts = [];
-          if (place.street != null && place.street!.isNotEmpty)
+          if (place.street != null && place.street!.isNotEmpty) {
             addressParts.add(place.street!);
-          if (place.locality != null && place.locality!.isNotEmpty)
+          }
+          if (place.locality != null && place.locality!.isNotEmpty) {
             addressParts.add(place.locality!);
+          }
           if (place.administrativeArea != null &&
-              place.administrativeArea!.isNotEmpty)
+              place.administrativeArea!.isNotEmpty) {
             addressParts.add(place.administrativeArea!);
-          if (place.country != null && place.country!.isNotEmpty)
+          }
+          if (place.country != null && place.country!.isNotEmpty) {
             addressParts.add(place.country!);
+          }
 
           String newLocation = addressParts.join(', ');
 

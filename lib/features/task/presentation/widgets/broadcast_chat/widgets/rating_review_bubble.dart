@@ -3,14 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/constants/string_constants_new2.dart';
 import 'task_chat_bubbles.dart';
 
 class RatingReviewBubble extends StatefulWidget {
-  final List<String> likedFeatures;
-  final Function(double rating, String review, List<String> features) onSubmit;
-  final bool isAlreadyRated;
 
   const RatingReviewBubble({
     super.key,
@@ -18,6 +14,9 @@ class RatingReviewBubble extends StatefulWidget {
     required this.onSubmit,
     this.isAlreadyRated = false,
   });
+  final List<String> likedFeatures;
+  final Function(double rating, String review, List<String> features) onSubmit;
+  final bool isAlreadyRated;
 
   @override
   State<RatingReviewBubble> createState() => _RatingReviewBubbleState();

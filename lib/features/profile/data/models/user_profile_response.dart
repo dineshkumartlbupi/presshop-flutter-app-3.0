@@ -277,8 +277,6 @@ class LocationModel extends Equatable {
 }
 
 class StripeStatusModel extends Equatable {
-  final bool stripeStatusActive;
-  final String stripeStatusReason;
 
   const StripeStatusModel({
     required this.stripeStatusActive,
@@ -291,6 +289,8 @@ class StripeStatusModel extends Equatable {
       stripeStatusReason: json['reason'] ?? "",
     );
   }
+  final bool stripeStatusActive;
+  final String stripeStatusReason;
 
   Map<String, dynamic> toJson() {
     return {

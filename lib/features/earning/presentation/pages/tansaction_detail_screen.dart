@@ -21,7 +21,6 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import '../../domain/entities/earning_transaction.dart';
 
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 import '../../../feed/presentation/pages/feed_data_model.dart';
 

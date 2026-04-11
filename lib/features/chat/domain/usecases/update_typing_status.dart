@@ -5,9 +5,9 @@ import 'package:presshop/core/usecases/usecase.dart';
 import '../repositories/chat_repository.dart';
 
 class UpdateTypingStatusUseCase implements UseCase<void, TypingStatusParams> {
-  final ChatRepository repository;
 
   UpdateTypingStatusUseCase(this.repository);
+  final ChatRepository repository;
 
   @override
   Future<Either<Failure, void>> call(TypingStatusParams params) async {
@@ -21,10 +21,6 @@ class UpdateTypingStatusUseCase implements UseCase<void, TypingStatusParams> {
 }
 
 class TypingStatusParams extends Equatable {
-  final String roomId;
-  final bool isTyping;
-  final String receiverId;
-  final String userId;
 
   const TypingStatusParams({
     required this.roomId,
@@ -32,6 +28,10 @@ class TypingStatusParams extends Equatable {
     required this.receiverId,
     required this.userId,
   });
+  final String roomId;
+  final bool isTyping;
+  final String receiverId;
+  final String userId;
 
   @override
   List<Object?> get props => [roomId, isTyping, receiverId, userId];

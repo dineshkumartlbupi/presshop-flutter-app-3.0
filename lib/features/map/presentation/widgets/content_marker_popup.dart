@@ -1,19 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:presshop/core/constants/app_assets.dart';
-import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
 
 class ContentMarkerPopup extends StatelessWidget {
-  final Incident incident;
-  final VoidCallback onViewPressed;
 
   const ContentMarkerPopup({
-    Key? key,
+    super.key,
     required this.incident,
     required this.onViewPressed,
-  }) : super(key: key);
+  });
+  final Incident incident;
+  final VoidCallback onViewPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +23,7 @@ class ContentMarkerPopup extends StatelessWidget {
         child: TweenAnimationBuilder<double>(
           tween: Tween(begin: 0.0, end: 1.0),
           duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOutQuart,
+          curve: Curves.easeOutBack,
           builder: (context, value, child) {
             return Transform.scale(
               scale: value,
@@ -46,17 +44,16 @@ class ContentMarkerPopup extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: responsiveWidth * AppDimensions.numD50,
+                    width: responsiveWidth *
+                        0.75, // Increased width to match screenshot
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(
-                          responsiveWidth * AppDimensions.numD035),
+                      borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: responsiveWidth * AppDimensions.numD02,
-                          offset: Offset(
-                              0, responsiveWidth * AppDimensions.numD008),
+                          color: Colors.black.withOpacity(0.15),
+                          blurRadius: 15,
+                          offset: const Offset(0, 8),
                         ),
                       ],
                     ),
@@ -64,226 +61,169 @@ class ContentMarkerPopup extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Image
-                        ClipRRect(
-                          borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(
-                                  responsiveWidth * AppDimensions.numD035)),
-                          child: incident.image != null
-                              ? Padding(
-                                  padding: EdgeInsets.all(
-                                      responsiveWidth * AppDimensions.numD02),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(responsiveWidth *
-                                            AppDimensions.numD03)),
-                                    child: CachedNetworkImage(
-                                      imageUrl: incident.image!,
-                                      height: responsiveWidth *
-                                          AppDimensions.numD20,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover,
+                        // Image with Padding
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(top: 8, left: 8, right: 8),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: incident.image != null
+                                ? CachedNetworkImage(
+                                    imageUrl: incident.image!,
+                                    height: responsiveWidth * 0.35,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Container(
+                                      height: responsiveWidth * 0.35,
+                                      color: Colors.grey[100],
+                                      child: const Center(
+                                          child: CircularProgressIndicator(
+                                              strokeWidth: 2)),
                                     ),
+                                    errorWidget: (context, url, error) =>
+                                        Container(
+                                      height: responsiveWidth * 0.35,
+                                      color: Colors.grey[100],
+                                      child: const Icon(Icons.error_outline,
+                                          color: Colors.grey),
+                                    ),
+                                  )
+                                : Container(
+                                    height: responsiveWidth * 0.35,
+                                    width: double.infinity,
+                                    color: Colors.grey[200],
+                                    child: const Icon(Icons.image,
+                                        size: 40, color: Colors.grey),
                                   ),
-                                )
-                              : Container(
-                                  height:
-                                      responsiveWidth * AppDimensions.numD20,
-                                  width: double.infinity,
-                                  color: Colors.grey[300],
-                                  child: Icon(Icons.image,
-                                      size: responsiveWidth *
-                                          AppDimensions.numD08),
-                                ),
+                          ),
                         ),
 
                         Padding(
-                          padding: EdgeInsets.only(
-                            left: responsiveWidth * AppDimensions.numD02,
-                            right: responsiveWidth * AppDimensions.numD02,
-                            bottom: responsiveWidth * AppDimensions.numD02,
-                          ),
+                          padding: const EdgeInsets.all(12),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 incident.title ?? "No Title",
-                                style: TextStyle(
-                                  fontSize:
-                                      responsiveWidth * AppDimensions.numD035,
-                                  fontWeight: FontWeight.w600,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  height: 1.3,
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              SizedBox(
-                                  height:
-                                      responsiveWidth * AppDimensions.numD01),
+                              const SizedBox(height: 8),
 
                               // Location
                               Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Image.asset("assets/icons/news_location.png",
-                                      height: responsiveWidth *
-                                          AppDimensions.numD035,
-                                      color: Colors.grey[600]),
-                                  SizedBox(
-                                      width: responsiveWidth *
-                                          AppDimensions.numD01),
+                                  Icon(Icons.location_on_outlined,
+                                      size: 18, color: Colors.grey[600]),
+                                  const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
                                       incident.address ?? "Unknown Location",
                                       style: TextStyle(
-                                          fontSize: responsiveWidth *
-                                              AppDimensions.numD028,
-                                          color: Colors.grey[600]),
+                                        fontSize: 12.5,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],
                               ),
-                              SizedBox(
-                                  height:
-                                      responsiveWidth * AppDimensions.numD01),
+                              const SizedBox(height: 6),
 
                               // Time and Views
                               Row(
                                 children: [
-                                  Image.asset(
-                                    "${iconsPath}ic_clock.png",
-                                    height:
-                                        responsiveWidth * AppDimensions.numD03,
-                                    color: Colors.grey[600],
-                                  ),
-                                  SizedBox(
-                                      width: responsiveWidth *
-                                          AppDimensions.numD01),
+                                  Icon(Icons.access_time,
+                                      size: 18, color: Colors.grey[600]),
+                                  const SizedBox(width: 4),
                                   Builder(builder: (context) {
                                     final timeStr = incident.time;
                                     if (timeStr == null) {
                                       return Text("Unknown Time",
                                           style: TextStyle(
-                                              fontSize: responsiveWidth *
-                                                  AppDimensions.numD028,
-                                              color: Colors.grey));
+                                              fontSize: 12,
+                                              color: Colors.grey[600]));
                                     }
-
                                     DateTime? parsed =
                                         DateTime.tryParse(timeStr);
                                     String displayTime = timeStr;
-
                                     if (parsed != null) {
                                       displayTime =
                                           DateFormat('hh:mm a').format(parsed);
-                                    } else {
-                                      try {
-                                        displayTime = DateFormat('hh:mm a')
-                                            .format(DateFormat("HH:mm")
-                                                .parse(timeStr));
-                                      } catch (_) {}
                                     }
-
-                                    return Text(
-                                      displayTime,
-                                      style: TextStyle(
-                                          fontSize: responsiveWidth *
-                                              AppDimensions.numD028,
-                                          color: Colors.grey[600]),
-                                    );
+                                    return Text(displayTime,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey[600]));
                                   }),
-                                  SizedBox(
-                                      width: responsiveWidth *
-                                          AppDimensions.numD03),
-                                  Image.asset(
-                                    "${iconsPath}news_eye.png",
-                                    height:
-                                        responsiveWidth * AppDimensions.numD025,
-                                    color: Colors.grey[600],
-                                  ),
-                                  SizedBox(
-                                      width: responsiveWidth *
-                                          AppDimensions.numD01),
+                                  const SizedBox(width: 16),
+                                  Icon(Icons.visibility_outlined,
+                                      size: 18, color: Colors.grey[600]),
+                                  const SizedBox(width: 4),
                                   Text(
                                     "${incident.viewCount ?? 0}",
                                     style: TextStyle(
-                                        fontSize: responsiveWidth *
-                                            AppDimensions.numD028,
-                                        color: Colors.grey[600]),
+                                        fontSize: 12, color: Colors.grey[600]),
                                   )
                                 ],
                               ),
-                              SizedBox(
-                                  height:
-                                      responsiveWidth * AppDimensions.numD01),
+                              const SizedBox(height: 6),
 
                               // Date
                               Row(
                                 children: [
-                                  Image.asset(
-                                    "${iconsPath}ic_yearly_calendar.png",
-                                    height:
-                                        responsiveWidth * AppDimensions.numD03,
-                                    color: Colors.grey[600],
-                                  ),
-                                  SizedBox(
-                                      width: responsiveWidth *
-                                          AppDimensions.numD01),
+                                  Icon(Icons.calendar_today_outlined,
+                                      size: 16, color: Colors.grey[600]),
+                                  const SizedBox(width: 6),
                                   Builder(builder: (context) {
                                     final timeStr = incident.time;
                                     DateTime? parsed =
                                         DateTime.tryParse(timeStr ?? "");
-                                    String displayDate = "";
+                                    String displayDate =
+                                        incident.date ?? "Unknown Date";
                                     if (parsed != null) {
                                       displayDate = DateFormat("dd MMM yyyy")
                                           .format(parsed);
-                                    } else {
-                                      displayDate = incident.date ?? "";
                                     }
-
-                                    return Text(
-                                      displayDate,
-                                      style: TextStyle(
-                                          fontSize: responsiveWidth *
-                                              AppDimensions.numD028,
-                                          color: Colors.grey[600]),
-                                    );
+                                    return Text(displayDate,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey[600]));
                                   }),
                                 ],
                               ),
 
-                              SizedBox(
-                                  height:
-                                      responsiveWidth * AppDimensions.numD015),
+                              const SizedBox(height: 12),
 
-                              // Small View Button
+                              // View Button
                               SizedBox(
                                 width: double.infinity,
+                                height: 44,
                                 child: ElevatedButton(
                                   onPressed: onViewPressed,
                                   style: ElevatedButton.styleFrom(
                                     elevation: 0,
-                                    backgroundColor: const Color(0xFFEF4444),
+                                    backgroundColor: const Color(0xFFEC4E54),
                                     foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: responsiveWidth *
-                                            AppDimensions.numD015),
-                                    minimumSize: Size(0,
-                                        responsiveWidth * AppDimensions.numD05),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          responsiveWidth *
-                                              AppDimensions.numD015),
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
                                   ),
-                                  child: Text(
+                                  child: const Text(
                                     "View",
                                     style: TextStyle(
-                                      fontSize: responsiveWidth *
-                                          AppDimensions.numD025,
-                                      height: 1,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.5,
                                     ),
                                   ),
                                 ),
@@ -294,13 +234,10 @@ class ContentMarkerPopup extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.zero,
-                    child: CustomPaint(
-                      size: Size(responsiveWidth * AppDimensions.numD06,
-                          responsiveWidth * AppDimensions.numD03),
-                      painter: _TrianglePainter(),
-                    ),
+                  // Pointer
+                  CustomPaint(
+                    size: const Size(20, 10),
+                    painter: _TrianglePainter(),
                   ),
                 ],
               ),

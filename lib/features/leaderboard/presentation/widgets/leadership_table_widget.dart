@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:presshop/main.dart'; // Check if needed, maybe for global vars like iconsPath?
+// Check if needed, maybe for global vars like iconsPath?
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart'; // Check path
 // for avatarImageUrl

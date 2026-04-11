@@ -854,14 +854,14 @@ class CameraScreenState extends State<CameraScreen>
 }
 
 class PersistentGalleryThumbnail extends StatefulWidget {
-  final List<dynamic> galleryMedia;
-  final Future<Uint8List?> Function() fallbackLoader;
 
   const PersistentGalleryThumbnail({
-    Key? key,
+    super.key,
     required this.galleryMedia,
     required this.fallbackLoader,
-  }) : super(key: key);
+  });
+  final List<dynamic> galleryMedia;
+  final Future<Uint8List?> Function() fallbackLoader;
 
   @override
   State<PersistentGalleryThumbnail> createState() =>

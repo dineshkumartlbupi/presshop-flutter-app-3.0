@@ -4,10 +4,10 @@ import 'package:presshop/core/api/global_socket_client.dart';
 import 'package:presshop/core/api/socket_constants.dart';
 
 class IncidentSocketDataSource {
-  final GlobalSocketClient _client;
 
   IncidentSocketDataSource({required GlobalSocketClient client})
       : _client = client;
+  final GlobalSocketClient _client;
 
   Function(dynamic)? onIncidentNew;
   Function(dynamic)? onIncidentUpdated;

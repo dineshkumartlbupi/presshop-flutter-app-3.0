@@ -9,7 +9,6 @@ class AppRoutes {
   static const String bankPath = '/bank';
   static const String profilePath = '/profile';
   static const String digitalIdPath = '/digitalId';
-  static const String accountSettingsPath = '/accountSettings';
   static const String accountDeletePath = '/accountDelete';
   static const String faqPath = '/faq';
   static const String changePasswordPath = '/changePassword';
@@ -59,6 +58,7 @@ class AppRoutes {
   static const String customGalleryPath = '/customGallery';
   static const String menuPath = '/menu';
   static const String locationSharingPath = '/locationSharing';
+  static const String permissionPath = '/permission';
 
   // Names
   static const String splashName = 'splash';
@@ -73,7 +73,6 @@ class AppRoutes {
   static const String feedName = 'feed';
   static const String profileName = 'profile';
   static const String digitalIdName = 'digitalId';
-  static const String accountSettingsName = 'accountSettings';
   static const String accountDeleteName = 'accountDelete';
   static const String faqName = 'faq';
   static const String changePasswordName = 'changePassword';
@@ -120,4 +119,5 @@ class AppRoutes {
   static const String customGalleryName = 'customGallery';
   static const String menuName = 'menu';
   static const String locationSharingName = 'locationSharing';
+  static const String permissionName = 'permission';
 }

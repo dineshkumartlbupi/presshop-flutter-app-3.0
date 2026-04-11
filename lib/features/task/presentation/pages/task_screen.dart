@@ -286,7 +286,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                         List<Task> currentLocalTasks =
                             state.localTasks.where((item) {
                           if (item.status == "accepted" ||
-                              item.status == "completed") return true;
+                              item.status == "completed") {
+                            return true;
+                          }
                           if (item is TaskPending && item.taskDetail != null) {
                             return !item.taskDetail!.deadLine
                                 .isBefore(DateTime.now());
@@ -301,7 +303,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                         List<TaskAll> currentAllTasks =
                             state.allTasks.where((item) {
                           if (item.status == "accepted" ||
-                              item.status == "completed") return true;
+                              item.status == "completed") {
+                            return true;
+                          }
                           if (item.deadlineDate != null) {
                             return !item.deadlineDate!.isBefore(DateTime.now());
                           }
@@ -451,7 +455,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
   Widget showLocalTasksDataWidget(List<Task> taskList, BuildContext context) {
     final localTasksStatus =
-        context.select((TaskBloc bloc) => bloc.state.localTasksStatus);
+        context.select((TaskBloc bloc) => bloc.state.allTasksStatus);
     return LayoutBuilder(
       builder: (context, constraints) {
         return SmartRefresher(
@@ -539,8 +543,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                 fit: BoxFit.cover,
                                                 loadingBuilder: (context, child,
                                                     loadingProgress) {
-                                                  if (loadingProgress == null)
+                                                  if (loadingProgress == null) {
                                                     return child;
+                                                  }
                                                   return Container(
                                                     alignment:
                                                         Alignment.topCenter,
@@ -763,8 +768,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           fit: BoxFit.cover,
                                           loadingBuilder: (context, child,
                                               loadingProgress) {
-                                            if (loadingProgress == null)
+                                            if (loadingProgress == null) {
                                               return child;
+                                            }
                                             return Container(
                                               alignment: Alignment.topCenter,
                                               child: Image.asset(
@@ -1098,8 +1104,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       fit: BoxFit.cover,
                                       loadingBuilder:
                                           (context, child, loadingProgress) {
-                                        if (loadingProgress == null)
+                                        if (loadingProgress == null) {
                                           return child;
+                                        }
                                         return Container(
                                           alignment: Alignment.topCenter,
                                           child: Image.asset(

@@ -3,9 +3,9 @@ import 'package:presshop/core/api/socket_constants.dart';
 import 'package:presshop/core/api/global_socket_client.dart';
 
 class ChatSocketDataSource {
-  final GlobalSocketClient _client;
 
   ChatSocketDataSource({required GlobalSocketClient client}) : _client = client;
+  final GlobalSocketClient _client;
 
   Function(dynamic)? onChatMessage;
   Function(dynamic)? onMediaMessage;

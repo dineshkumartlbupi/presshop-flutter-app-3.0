@@ -1,18 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class ChatMessageEntity extends Equatable {
-  final String id;
-  final String roomId;
-  final String message;
-  final String messageType;
-  final String senderId;
-  final String senderType;
-  final String senderName;
-  final String senderImage;
-  final String createdAt;
-  final String readStatus;
-  final List<String> media;
-  final bool isSender;
 
   const ChatMessageEntity({
     required this.id,
@@ -28,6 +16,18 @@ class ChatMessageEntity extends Equatable {
     required this.media,
     required this.isSender,
   });
+  final String id;
+  final String roomId;
+  final String message;
+  final String messageType;
+  final String senderId;
+  final String senderType;
+  final String senderName;
+  final String senderImage;
+  final String createdAt;
+  final String readStatus;
+  final List<String> media;
+  final bool isSender;
 
   @override
   List<Object?> get props => [
@@ -47,15 +47,6 @@ class ChatMessageEntity extends Equatable {
 }
 
 class ChatRoomEntity extends Equatable {
-  final String roomId;
-  final String receiverId;
-  final String receiverName;
-  final String receiverImage;
-  final String lastMessage;
-  final String lastMessageType;
-  final String lastMessageTime;
-  final int unreadCount;
-  final bool isOnline;
 
   const ChatRoomEntity({
     required this.roomId,
@@ -68,6 +59,15 @@ class ChatRoomEntity extends Equatable {
     required this.unreadCount,
     this.isOnline = false,
   });
+  final String roomId;
+  final String receiverId;
+  final String receiverName;
+  final String receiverImage;
+  final String lastMessage;
+  final String lastMessageType;
+  final String lastMessageTime;
+  final int unreadCount;
+  final bool isOnline;
 
   @override
   List<Object?> get props => [

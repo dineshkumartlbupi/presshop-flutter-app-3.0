@@ -4,9 +4,9 @@ import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart
 import 'package:presshop/main.dart';
 
 class TaskChatHeader extends StatelessWidget {
-  final TaskAssignedEntity taskDetail;
 
   const TaskChatHeader({super.key, required this.taskDetail});
+  final TaskAssignedEntity taskDetail;
 
   @override
   Widget build(BuildContext context) {

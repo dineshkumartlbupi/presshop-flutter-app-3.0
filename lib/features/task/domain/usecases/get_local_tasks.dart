@@ -18,11 +18,11 @@ class GetLocalTasks implements UseCase<List<Task>, GetLocalTasksParams> {
 }
 
 class GetLocalTasksParams extends Equatable {
-  final Map<String, dynamic> filterParams;
-  final bool showLoader;
 
   const GetLocalTasksParams(
       {required this.filterParams, this.showLoader = true});
+  final Map<String, dynamic> filterParams;
+  final bool showLoader;
 
   @override
   List<Object?> get props => [filterParams, showLoader];

@@ -69,20 +69,23 @@ class AppLogger {
 
   /// Track a user event (Analytics + Crashlytics log)
   static void trackEvent(String eventName, {Map<String, Object>? parameters}) {
-    info("Tracking Event: $eventName", data: parameters);
+    info("Tracking Event: $eventName",
+        data: parameters != null ? Map<String, dynamic>.from(parameters) : null);
     AnalyticsHelper.trackEvent(eventName, parameters: parameters);
   }
 
   /// Track a user action (Analytics + Crashlytics log)
   static void trackAction(String action, {Map<String, Object>? parameters}) {
-    info("Tracking Action: $action", data: parameters);
+    info("Tracking Action: $action",
+        data: parameters != null ? Map<String, dynamic>.from(parameters) : null);
     AnalyticsHelper.trackUserAction(action, parameters: parameters);
   }
 
   /// Track a page visit (Analytics + Crashlytics log)
   static void trackPage(String pageName,
       {String? className, Map<String, Object>? parameters}) {
-    info("Tracking Page: $pageName", data: parameters);
+    info("Tracking Page: $pageName",
+        data: parameters != null ? Map<String, dynamic>.from(parameters) : null);
     AnalyticsHelper.trackPageVisit(pageName,
         className: className, parameters: parameters);
   }

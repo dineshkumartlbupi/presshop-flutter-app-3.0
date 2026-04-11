@@ -3,10 +3,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 class BurstParticle {
-  Offset position;
-  double scale;
-  double opacity;
-  double speed;
 
   BurstParticle({
     required this.position,
@@ -14,19 +10,23 @@ class BurstParticle {
     required this.opacity,
     required this.speed,
   });
+  Offset position;
+  double scale;
+  double opacity;
+  double speed;
 }
 
 class BurstParticlesOverlay extends StatefulWidget {
-  final AnimationController controller;
-  final ui.Image? burstImage;
-  final String? burstType;
 
   const BurstParticlesOverlay({
-    Key? key,
+    super.key,
     required this.controller,
     this.burstImage,
     this.burstType,
-  }) : super(key: key);
+  });
+  final AnimationController controller;
+  final ui.Image? burstImage;
+  final String? burstType;
 
   @override
   State<BurstParticlesOverlay> createState() => _BurstParticlesOverlayState();
@@ -99,10 +99,10 @@ class _BurstParticlesOverlayState extends State<BurstParticlesOverlay> {
 }
 
 class BurstPainter extends CustomPainter {
-  final List<BurstParticle> particles;
-  final ui.Image? burstImage;
 
   BurstPainter(this.particles, this.burstImage);
+  final List<BurstParticle> particles;
+  final ui.Image? burstImage;
 
   @override
   void paint(Canvas canvas, Size size) {

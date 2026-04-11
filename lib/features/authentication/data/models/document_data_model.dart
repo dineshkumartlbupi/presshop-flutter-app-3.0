@@ -26,6 +26,7 @@ class DocumentDataModel extends DocumentData {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,

@@ -3,7 +3,6 @@ import 'package:presshop/core/utils/common_utils.dart';
 import '../../domain/entities/chat_entities.dart';
 
 class ChatMessageModel extends ChatMessageEntity {
-  final Map<String, dynamic> _uiState = {};
 
   ChatMessageModel({
     required super.id,
@@ -19,6 +18,82 @@ class ChatMessageModel extends ChatMessageEntity {
     required super.media,
     required super.isSender,
   });
+
+  factory ChatMessageModel.fromJson(
+      Map<String, dynamic> json, String currentUserId) {
+    final senderDetails = json['sender_details'] ?? json['sender_data'] ?? {};
+    final senderName = (senderDetails['name'] ??
+            senderDetails['full_name'] ??
+            "${senderDetails['first_name'] ?? ''} ${senderDetails['last_name'] ?? ''}")
+        .toString()
+        .trim();
+    String senderId = (json['sender_id'] ?? json['user_id'] ?? '').toString();
+    if (senderId.isEmpty && json['status'] == 'send') {
+      senderId = currentUserId;
+    }
+
+    // Handle media list (fallback to 'content' if 'media' is missing)
+    List<String> mediaList = [];
+    final rawMedia = json['media'] ?? json['content'];
+
+    if (rawMedia != null) {
+      if (rawMedia is List) {
+        mediaList = rawMedia
+            .map((item) {
+              if (item is Map) {
+                return (item['media'] ?? item['url'] ?? item['content'] ?? '')
+                    .toString();
+              }
+              return item.toString();
+            })
+            .where((s) => s.isNotEmpty)
+            .toList();
+      } else if (rawMedia is String && rawMedia.isNotEmpty) {
+        mediaList = [rawMedia];
+      }
+    }
+
+    String mType = (json['message_type'] ?? 'text').toString();
+    if (mType == 'chat') {
+      mType = 'text'; // Map API 'chat' type to UI 'text' type
+    }
+
+    // Automatically map generic 'media' type to 'image' or 'video' for UI compatibility
+    if (mType == 'media' && mediaList.isNotEmpty) {
+      final firstMedia = mediaList.first.toLowerCase();
+      if (firstMedia.contains('.mp4') ||
+          firstMedia.contains('.mov') ||
+          firstMedia.contains('.m4v') ||
+          firstMedia.contains('.avi')) {
+        mType = 'video';
+      } else {
+        mType = 'image';
+      }
+    }
+
+    return ChatMessageModel(
+      id: (json['_id'] ?? json['id'] ?? '').toString(),
+      roomId: (json['room_id'] ?? '').toString(),
+      message: (json['message'] ?? '').toString().isNotEmpty
+          ? (json['message'] ?? '').toString()
+          : (mType == 'image' || mType == 'video' || mType == 'media') &&
+                  mediaList.isNotEmpty
+              ? mediaList.first
+              : (json['message'] ?? '').toString(),
+      messageType: mType,
+      senderId: senderId,
+      senderType: (json['sender_type'] ?? '').toString(),
+      senderName: senderName.isNotEmpty ? senderName : "Unknown",
+      senderImage:
+          getMediaImageUrl((senderDetails['profile_image'] ?? '').toString()),
+      createdAt: (json['createdAt'] ?? '').toString(),
+      readStatus:
+          (json['read_status'] ?? json['readStatus'] ?? 'unread').toString(),
+      media: mediaList.map((e) => getMediaImageUrl(e)).toList(),
+      isSender: senderId == currentUserId,
+    );
+  }
+  final Map<String, dynamic> _uiState = {};
 
   /// Temporary compatibility for UI that still uses map-like access
   dynamic operator [](String key) {
@@ -66,80 +141,6 @@ class ChatMessageModel extends ChatMessageEntity {
     _uiState[key] = value;
   }
 
-  factory ChatMessageModel.fromJson(
-      Map<String, dynamic> json, String currentUserId) {
-    final senderDetails = json['sender_details'] ?? json['sender_data'] ?? {};
-    final senderName = (senderDetails['name'] ??
-            senderDetails['full_name'] ??
-            "${senderDetails['first_name'] ?? ''} ${senderDetails['last_name'] ?? ''}")
-        .toString()
-        .trim();
-    String senderId = (json['sender_id'] ?? json['user_id'] ?? '').toString();
-    if (senderId.isEmpty && json['status'] == 'send') {
-      senderId = currentUserId;
-    }
-
-    // Handle media list (fallback to 'content' if 'media' is missing)
-    List<String> mediaList = [];
-    final rawMedia = json['media'] ?? json['content'];
-
-    if (rawMedia != null) {
-      if (rawMedia is List) {
-        mediaList = rawMedia
-            .map((item) {
-              if (item is Map) {
-                return (item['media'] ?? item['url'] ?? item['content'] ?? '')
-                    .toString();
-              }
-              return item.toString();
-            })
-            .where((s) => s.isNotEmpty)
-            .toList();
-      } else if (rawMedia is String && rawMedia.isNotEmpty) {
-        mediaList = [rawMedia];
-      }
-    }
-
-    String mType = (json['message_type'] ?? 'text').toString();
-    if (mType == 'chat')
-      mType = 'text'; // Map API 'chat' type to UI 'text' type
-
-    // Automatically map generic 'media' type to 'image' or 'video' for UI compatibility
-    if (mType == 'media' && mediaList.isNotEmpty) {
-      final firstMedia = mediaList.first.toLowerCase();
-      if (firstMedia.contains('.mp4') ||
-          firstMedia.contains('.mov') ||
-          firstMedia.contains('.m4v') ||
-          firstMedia.contains('.avi')) {
-        mType = 'video';
-      } else {
-        mType = 'image';
-      }
-    }
-
-    return ChatMessageModel(
-      id: (json['_id'] ?? json['id'] ?? '').toString(),
-      roomId: (json['room_id'] ?? '').toString(),
-      message: (json['message'] ?? '').toString().isNotEmpty
-          ? (json['message'] ?? '').toString()
-          : (mType == 'image' || mType == 'video' || mType == 'media') &&
-                  mediaList.isNotEmpty
-              ? mediaList.first
-              : (json['message'] ?? '').toString(),
-      messageType: mType,
-      senderId: senderId,
-      senderType: (json['sender_type'] ?? '').toString(),
-      senderName: senderName.isNotEmpty ? senderName : "Unknown",
-      senderImage:
-          getMediaImageUrl((senderDetails['profile_image'] ?? '').toString()),
-      createdAt: (json['createdAt'] ?? '').toString(),
-      readStatus:
-          (json['read_status'] ?? json['readStatus'] ?? 'unread').toString(),
-      media: mediaList.map((e) => getMediaImageUrl(e)).toList(),
-      isSender: senderId == currentUserId,
-    );
-  }
-
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
@@ -156,7 +157,7 @@ class ChatMessageModel extends ChatMessageEntity {
 }
 
 class ChatRoomModel extends ChatRoomEntity {
-  ChatRoomModel({
+  const ChatRoomModel({
     required super.roomId,
     required super.receiverId,
     required super.receiverName,
@@ -167,6 +168,29 @@ class ChatRoomModel extends ChatRoomEntity {
     required super.unreadCount,
     super.isOnline = false,
   });
+
+  factory ChatRoomModel.fromJson(Map<String, dynamic> json) {
+    final receiver = json['receiver_details'] ?? json['user_details'] ?? {};
+    final receiverName = (receiver['name'] ??
+            receiver['full_name'] ??
+            "${receiver['first_name'] ?? ''} ${receiver['last_name'] ?? ''}")
+        .toString()
+        .trim();
+
+    return ChatRoomModel(
+      roomId: (json['room_id'] ?? '').toString(),
+      receiverId: (receiver['_id'] ?? '').toString(),
+      receiverName: receiverName.isNotEmpty ? receiverName : "Unknown",
+      receiverImage:
+          getMediaImageUrl((receiver['profile_image'] ?? '').toString()),
+      lastMessage: (json['last_message'] ?? '').toString(),
+      lastMessageType: (json['last_message_type'] ?? 'text').toString(),
+      lastMessageTime:
+          (json['updatedAt'] ?? json['createdAt'] ?? '').toString(),
+      unreadCount: int.tryParse(json['unread_count']?.toString() ?? '0') ?? 0,
+      isOnline: json['is_online'] == true,
+    );
+  }
 
   /// Temporary compatibility for UI that still uses map-like access
   dynamic operator [](String key) {
@@ -196,28 +220,5 @@ class ChatRoomModel extends ChatRoomEntity {
       default:
         return null;
     }
-  }
-
-  factory ChatRoomModel.fromJson(Map<String, dynamic> json) {
-    final receiver = json['receiver_details'] ?? json['user_details'] ?? {};
-    final receiverName = (receiver['name'] ??
-            receiver['full_name'] ??
-            "${receiver['first_name'] ?? ''} ${receiver['last_name'] ?? ''}")
-        .toString()
-        .trim();
-
-    return ChatRoomModel(
-      roomId: (json['room_id'] ?? '').toString(),
-      receiverId: (receiver['_id'] ?? '').toString(),
-      receiverName: receiverName.isNotEmpty ? receiverName : "Unknown",
-      receiverImage:
-          getMediaImageUrl((receiver['profile_image'] ?? '').toString()),
-      lastMessage: (json['last_message'] ?? '').toString(),
-      lastMessageType: (json['last_message_type'] ?? 'text').toString(),
-      lastMessageTime:
-          (json['updatedAt'] ?? json['createdAt'] ?? '').toString(),
-      unreadCount: int.tryParse(json['unread_count']?.toString() ?? '0') ?? 0,
-      isOnline: json['is_online'] == true,
-    );
   }
 }

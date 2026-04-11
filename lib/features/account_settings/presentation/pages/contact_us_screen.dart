@@ -7,10 +7,8 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 import '../bloc/account_settings_bloc.dart';
 import '../bloc/account_settings_event.dart';

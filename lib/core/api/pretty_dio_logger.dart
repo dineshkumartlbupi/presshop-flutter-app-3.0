@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 
 class PrettyDioLogger extends Interceptor {
+
+  PrettyDioLogger({this.formatJson = true});
   /// Set this to true to print formatted JSON (with indentation).
   /// Set to false to print unformatted raw JSON (compact).
   final bool formatJson;
-
-  PrettyDioLogger({this.formatJson = true});
 
   void _printLong(String text) {
     if (text.isEmpty) return;

@@ -3,9 +3,9 @@ import 'package:presshop/core/api/global_socket_client.dart';
 import 'package:presshop/core/api/socket_constants.dart';
 
 class NewsSocketDataSource {
-  final GlobalSocketClient _client;
 
   NewsSocketDataSource({required GlobalSocketClient client}) : _client = client;
+  final GlobalSocketClient _client;
 
   Function(dynamic)? onCommentNew;
   Function(dynamic)? onCommentLike;

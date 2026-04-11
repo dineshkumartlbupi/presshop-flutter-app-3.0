@@ -16,18 +16,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 
 class NewsDetailPage extends StatefulWidget {
-  final String newsId;
-  final News? initialNews;
-  final bool scrollToComments;
-  final String? initialCommentId;
 
   const NewsDetailPage({
-    Key? key,
+    super.key,
     required this.newsId,
     this.initialNews,
     this.scrollToComments = false,
     this.initialCommentId,
-  }) : super(key: key);
+  });
+  final String newsId;
+  final News? initialNews;
+  final bool scrollToComments;
+  final String? initialCommentId;
 
   @override
   State<NewsDetailPage> createState() => _NewsDetailPageState();
@@ -703,7 +703,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                                   .map((reply) => _buildThreadedReplyItem(
                                       reply, size,
                                       isLast: false))
-                                  .toList(),
+                                  ,
                               _buildThreadedReplyItem(
                                 GestureDetector(
                                   onTap: onToggleExpand,

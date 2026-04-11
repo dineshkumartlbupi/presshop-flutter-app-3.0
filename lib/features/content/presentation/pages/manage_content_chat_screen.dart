@@ -34,22 +34,18 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
 
 // ignore: must_be_immutable
 class ManageContentChatScreen extends StatefulWidget {
-  ManageContentChatScreen(
+  const ManageContentChatScreen(
       {super.key,
       this.mediaHouseDetail,
       this.contentId,
@@ -1001,7 +997,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                               child: ChoiceChip(
                                                                                 label: Text(intList[index]),
                                                                                 labelStyle: TextStyle(color: dataList.contains(intList[index]) ? Colors.white : AppColorTheme.colorGrey6),
-                                                                                onSelected: (bool selected) {
+                                                                                onSelected: (selected) {
                                                                                   if (selected) {
                                                                                     for (int i = 0; i < intList.length; i++) {
                                                                                       if (intList[i] == intList[index] && !dataList.contains(intList[i])) {

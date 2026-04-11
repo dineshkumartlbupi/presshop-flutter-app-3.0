@@ -6,7 +6,6 @@ import '../bloc/onboarding_bloc.dart';
 import '../bloc/onboarding_event.dart';
 import '../bloc/onboarding_state.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 class Walkthrough extends StatefulWidget {
   const Walkthrough({super.key});

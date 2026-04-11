@@ -6,9 +6,9 @@ import '../entities/chat_entities.dart';
 import '../repositories/chat_repository.dart';
 
 class SendMessageUseCase implements UseCase<ChatMessageEntity, SendMessageParams> {
-  final ChatRepository repository;
 
   SendMessageUseCase(this.repository);
+  final ChatRepository repository;
 
   @override
   Future<Either<Failure, ChatMessageEntity>> call(SendMessageParams params) async {
@@ -24,12 +24,6 @@ class SendMessageUseCase implements UseCase<ChatMessageEntity, SendMessageParams
 }
 
 class SendMessageParams extends Equatable {
-  final String roomId;
-  final String message;
-  final String receiverId;
-  final String messageType;
-  final String userId;
-  final List<String>? media;
 
   const SendMessageParams({
     required this.roomId,
@@ -39,6 +33,12 @@ class SendMessageParams extends Equatable {
     required this.userId,
     this.media,
   });
+  final String roomId;
+  final String message;
+  final String receiverId;
+  final String messageType;
+  final String userId;
+  final List<String>? media;
 
   @override
   List<Object?> get props => [roomId, message, receiverId, messageType, userId, media];

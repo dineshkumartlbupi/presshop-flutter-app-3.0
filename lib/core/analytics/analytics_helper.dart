@@ -72,7 +72,8 @@ class AnalyticsHelper {
       }
 
       // Track in AppsFlyer
-      await AppsFlyerService.logEvent('af_page_visit', eventParams);
+      await AppsFlyerService.logEvent(
+          'af_page_visit', Map<String, dynamic>.from(eventParams));
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: Page Visit - $pageName');
@@ -110,7 +111,8 @@ class AnalyticsHelper {
       }
 
       // Track in AppsFlyer
-      await AppsFlyerService.logEvent(action, eventParams);
+      await AppsFlyerService.logEvent(
+          action, Map<String, dynamic>.from(eventParams));
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: User Action - $action');
@@ -147,7 +149,8 @@ class AnalyticsHelper {
       }
 
       // Track in AppsFlyer
-      await AppsFlyerService.logEvent(eventName, eventParams);
+      await AppsFlyerService.logEvent(
+          eventName, Map<String, dynamic>.from(eventParams));
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: Custom Event - $eventName');
@@ -188,7 +191,8 @@ class AnalyticsHelper {
       }
 
       // Track in AppsFlyer
-      await AppsFlyerService.logEvent('${contentType}_$action', eventParams);
+      await AppsFlyerService.logEvent(
+          '${contentType}_$action', Map<String, dynamic>.from(eventParams));
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: Content Event - $contentType:$action');
@@ -229,7 +233,8 @@ class AnalyticsHelper {
       }
 
       // Track in AppsFlyer
-      await AppsFlyerService.logEvent('${taskType}_$action', eventParams);
+      await AppsFlyerService.logEvent(
+          '${taskType}_$action', Map<String, dynamic>.from(eventParams));
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: Task Event - $taskType:$action');
@@ -267,7 +272,8 @@ class AnalyticsHelper {
       }
 
       // Track in AppsFlyer
-      await AppsFlyerService.logEvent('chat_$action', eventParams);
+      await AppsFlyerService.logEvent(
+          'chat_$action', Map<String, dynamic>.from(eventParams));
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: Chat Event - $action');
@@ -310,7 +316,8 @@ class AnalyticsHelper {
       }
 
       // Track in AppsFlyer
-      await AppsFlyerService.logEvent('af_navigation', eventParams);
+      await AppsFlyerService.logEvent(
+          'af_navigation', Map<String, dynamic>.from(eventParams));
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: Navigation - $from → $to ($method)');
@@ -353,7 +360,7 @@ class AnalyticsHelper {
       // Track in AppsFlyer
       await AppsFlyerService.logEvent(
         success ? 'af_login_success' : 'af_login_failed',
-        eventParams,
+        Map<String, dynamic>.from(eventParams),
       );
 
       if (kDebugMode) {
@@ -396,7 +403,8 @@ class AnalyticsHelper {
       }
 
       // Track in AppsFlyer
-      await AppsFlyerService.logEvent('af_app_error', eventParams);
+      await AppsFlyerService.logEvent(
+          'af_app_error', Map<String, dynamic>.from(eventParams));
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: Error Event - $error on $page');
@@ -470,7 +478,8 @@ class AnalyticsHelper {
       }
 
       // Track in AppsFlyer
-      await AppsFlyerService.logEvent('af_app_lifecycle', eventParams);
+      await AppsFlyerService.logEvent(
+          'af_app_lifecycle', Map<String, dynamic>.from(eventParams));
 
       if (kDebugMode) {
         debugPrint('📊 Analytics: Lifecycle Event - $event');

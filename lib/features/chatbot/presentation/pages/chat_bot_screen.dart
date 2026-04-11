@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 // import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
 import 'package:presshop/main.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 // import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
@@ -15,7 +12,6 @@ import 'package:presshop/features/chatbot/presentation/bloc/chatbot_bloc.dart';
 import 'package:presshop/features/chatbot/data/models/chat_model.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 class ChatBotScreen extends StatefulWidget {
   const ChatBotScreen({this.hideLeading = true, super.key});

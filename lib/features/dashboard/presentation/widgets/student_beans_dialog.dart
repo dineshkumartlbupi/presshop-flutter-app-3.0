@@ -3,10 +3,6 @@ import 'package:presshop/core/core_export.dart';
 import 'package:go_router/go_router.dart';
 
 class StudentBeansDialog extends StatelessWidget {
-  final Size size;
-  final String? heading;
-  final String? description;
-  final VoidCallback onConfirm;
 
   const StudentBeansDialog({
     super.key,
@@ -15,6 +11,10 @@ class StudentBeansDialog extends StatelessWidget {
     this.description,
     required this.onConfirm,
   });
+  final Size size;
+  final String? heading;
+  final String? description;
+  final VoidCallback onConfirm;
 
   @override
   Widget build(BuildContext context) {

@@ -1,25 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/feed/presentation/pages/feed_data_model.dart';
 import '../../domain/entities/earning_transaction.dart';
 
 class EarningProfileDataModel {
-  final String id;
-  final Hopper hopper;
-  final MediaHouse mediaHouse;
-  final double amount;
-  final double presshopCommission;
-  final double payableToHopper;
-  final double stripeFee;
-  final double totalEarning;
-  final double monthlyEarning;
-  final String currency;
-  final String currencySymbol;
-  final PaymentMethod paymentMethod;
-  final String invoiceNumber;
-  final String? dueDate;
-  final bool paidStatusForHopper;
-  final DateTime createdAt;
 
   EarningProfileDataModel({
     required this.id,
@@ -60,6 +43,22 @@ class EarningProfileDataModel {
       createdAt: DateTime.parse(json['createdAt']),
     );
   }
+  final String id;
+  final Hopper hopper;
+  final MediaHouse mediaHouse;
+  final double amount;
+  final double presshopCommission;
+  final double payableToHopper;
+  final double stripeFee;
+  final double totalEarning;
+  final double monthlyEarning;
+  final String currency;
+  final String currencySymbol;
+  final PaymentMethod paymentMethod;
+  final String invoiceNumber;
+  final String? dueDate;
+  final bool paidStatusForHopper;
+  final DateTime createdAt;
 
   Map<String, dynamic> toJson() {
     return {
@@ -122,9 +121,6 @@ class EarningProfileDataModel {
 }
 
 class MediaHouse {
-  final String id;
-  final String firstName;
-  final String lastName;
 
   MediaHouse({
     required this.id,
@@ -139,6 +135,9 @@ class MediaHouse {
       lastName: json['last_name'] ?? '',
     );
   }
+  final String id;
+  final String firstName;
+  final String lastName;
 
   Map<String, dynamic> toJson() {
     return {
@@ -150,11 +149,6 @@ class MediaHouse {
 }
 
 class Hopper {
-  final String id;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String avatar;
 
   Hopper({
     required this.id,
@@ -173,6 +167,11 @@ class Hopper {
       avatar: json['avatar'] ?? '',
     );
   }
+  final String id;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String avatar;
 
   Map<String, dynamic> toJson() {
     return {
@@ -186,9 +185,6 @@ class Hopper {
 }
 
 class PaymentMethod {
-  final String id;
-  final CardDetails card;
-  final BillingDetails billingDetails;
 
   PaymentMethod({
     required this.id,
@@ -203,6 +199,9 @@ class PaymentMethod {
       billingDetails: BillingDetails.fromJson(json['billing_details'] ?? {}),
     );
   }
+  final String id;
+  final CardDetails card;
+  final BillingDetails billingDetails;
 
   Map<String, dynamic> toJson() {
     return {
@@ -214,10 +213,6 @@ class PaymentMethod {
 }
 
 class CardDetails {
-  final String brand;
-  final String last4;
-  final int expMonth;
-  final int expYear;
 
   CardDetails({
     required this.brand,
@@ -234,6 +229,10 @@ class CardDetails {
       expYear: json['exp_year'] ?? 0,
     );
   }
+  final String brand;
+  final String last4;
+  final int expMonth;
+  final int expYear;
 
   Map<String, dynamic> toJson() {
     return {
@@ -246,9 +245,6 @@ class CardDetails {
 }
 
 class BillingDetails {
-  final String name;
-  final String email;
-  final Address address;
 
   BillingDetails({
     required this.name,
@@ -263,6 +259,9 @@ class BillingDetails {
       address: Address.fromJson(json['address'] ?? {}),
     );
   }
+  final String name;
+  final String email;
+  final Address address;
 
   Map<String, dynamic> toJson() {
     return {
@@ -274,9 +273,6 @@ class BillingDetails {
 }
 
 class Address {
-  final String city;
-  final String country;
-  final String postalCode;
 
   Address({
     required this.city,
@@ -291,6 +287,9 @@ class Address {
       postalCode: json['postal_code'] ?? '',
     );
   }
+  final String city;
+  final String country;
+  final String postalCode;
 
   Map<String, dynamic> toJson() {
     return {
@@ -302,6 +301,19 @@ class Address {
 }
 
 class CommissionData {
+  CommissionData({
+    required this.totalEarning,
+    required this.commission,
+    required this.commissionReceived,
+    required this.commissionPending,
+    required this.paidOn,
+    required this.firstName,
+    required this.lastName,
+    required this.dateOfJoining,
+    required this.avatar,
+    this.currency = "",
+    this.currencySymbol = "",
+  });
   factory CommissionData.fromJson(Map<String, dynamic> json) {
     double parseDouble(String key1, [String? key2, String? key3]) {
       return double.tryParse(json[key1]?.toString() ??
@@ -337,19 +349,6 @@ class CommissionData {
       currencySymbol: (json['currency_symbol'] ?? '').toString(),
     );
   }
-  CommissionData({
-    required this.totalEarning,
-    required this.commission,
-    required this.commissionReceived,
-    required this.commissionPending,
-    required this.paidOn,
-    required this.firstName,
-    required this.lastName,
-    required this.dateOfJoining,
-    required this.avatar,
-    this.currency = "",
-    this.currencySymbol = "",
-  });
 
   double totalEarning;
   double commission;

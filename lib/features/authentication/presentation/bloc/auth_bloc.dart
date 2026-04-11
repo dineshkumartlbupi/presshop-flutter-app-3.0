@@ -41,7 +41,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           AppLogger.setUserIdentity(
             userId: user.id,
             email: user.email,
-            name: user.firstName + " " + user.lastName,
+            name: "${user.firstName} ${user.lastName}",
           );
           AppLogger.trackEvent(EventNames.userLogin, parameters: {
             'method': 'email',
@@ -114,7 +114,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           AppLogger.setUserIdentity(
             userId: user.id,
             email: user.email,
-            name: user.firstName + " " + user.lastName,
+            name: "${user.firstName} ${user.lastName}",
           );
           AppLogger.trackEvent(EventNames.userLogin, parameters: {
             'method': event.socialType,

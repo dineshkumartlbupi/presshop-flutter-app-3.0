@@ -224,7 +224,7 @@ class _MyAppState extends State<MyApp> {
                   ElevatedButton(
                     onPressed: closeImage,
                     style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.red)),
+                        backgroundColor: WidgetStateProperty.all(Colors.red)),
                     child: const Text('Close image'),
                   )
                 ],
@@ -243,13 +243,13 @@ class _MyAppState extends State<MyApp> {
                     final imageBytes = await pickedFile!.readAsBytes();
                     await file.create();
                     await file.writeAsBytes(imageBytes);
-                    final _attributes = await exif?.getAttributes() ?? {};
+                    final attrs = Map<String, Object>.from(await exif?.getAttributes() ?? {});
                     final newExif = await Exif.fromPath(file.path);
 
-                    _attributes['DateTimeOriginal'] = '2021:05:15 13:00:00';
-                    _attributes['UserComment'] = "This file is user generated!";
+                    attrs['DateTimeOriginal'] = '2021:05:15 13:00:00';
+                    attrs['UserComment'] = "This file is user generated!";
 
-                    await newExif.writeAttributes(_attributes);
+                    await newExif.writeAttributes(attrs);
 
                     shootingDate = await newExif.getOriginalDate();
                     attributes = await newExif.getAttributes();

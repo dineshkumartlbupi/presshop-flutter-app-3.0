@@ -16,40 +16,6 @@ class TaskAssignedEntity extends Equatable {
 }
 
 class TaskAssignedDetailEntity extends Equatable {
-  final String id;
-  final MediaHouseEntity mediaHouse;
-  final HopperLocationModel? hopperLocation;
-  final int activeHoppersCount;
-  final List<HopperLocationModel> activeHoppersLocations;
-  final DateTime deadlineDate;
-  final String heading;
-  final String description;
-  final String location;
-  final AddressLocationEntity addressLocation;
-  final String status;
-  final bool isDraft;
-  final String paidStatus;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final List<TaskContentEntity> content;
-  final bool isNeedPhoto;
-  final bool isNeedVideo;
-  final bool isNeedInterview;
-  final String photoPrice;
-  final String videoPrice;
-  final String interviewPrice;
-  final String currency;
-  final String currencySymbol;
-  final List<HopperInfoEntity> hopperInfo;
-  final String hopperTaskAmount;
-  final List<String> acceptedHoppers;
-  final String distance;
-  final String walkTime;
-  final String driveTime;
-  final String specialRequirements;
-  final Map<String, dynamic>? preferences;
-  final double? latitude;
-  final double? longitude;
 
   const TaskAssignedDetailEntity({
     required this.id,
@@ -87,6 +53,40 @@ class TaskAssignedDetailEntity extends Equatable {
     this.specialRequirements = "",
     this.preferences,
   });
+  final String id;
+  final MediaHouseEntity mediaHouse;
+  final HopperLocationModel? hopperLocation;
+  final int activeHoppersCount;
+  final List<HopperLocationModel> activeHoppersLocations;
+  final DateTime deadlineDate;
+  final String heading;
+  final String description;
+  final String location;
+  final AddressLocationEntity addressLocation;
+  final String status;
+  final bool isDraft;
+  final String paidStatus;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final List<TaskContentEntity> content;
+  final bool isNeedPhoto;
+  final bool isNeedVideo;
+  final bool isNeedInterview;
+  final String photoPrice;
+  final String videoPrice;
+  final String interviewPrice;
+  final String currency;
+  final String currencySymbol;
+  final List<HopperInfoEntity> hopperInfo;
+  final String hopperTaskAmount;
+  final List<String> acceptedHoppers;
+  final String distance;
+  final String walkTime;
+  final String driveTime;
+  final String specialRequirements;
+  final Map<String, dynamic>? preferences;
+  final double? latitude;
+  final double? longitude;
 
   @override
   List<Object?> get props => [

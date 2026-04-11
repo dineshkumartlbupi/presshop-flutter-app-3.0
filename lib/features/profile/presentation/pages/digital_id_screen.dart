@@ -128,7 +128,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
               elevation: 0,
               hideLeading: false,
               title: Text(
-                "${AppStrings.digitalId}",
+                AppStrings.digitalId,
                 style: TextStyle(
                     color: Colors.black,
                     fontSize: size.width * AppDimensions.appBarHeadingFontSize,
@@ -652,7 +652,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
         if (profile.profileImage.startsWith("http")) {
           userImage = fixS3Url(profile.profileImage);
         } else {
-          userImage = fixS3Url("${profile.profileImage}");
+          userImage = fixS3Url(profile.profileImage);
         }
         sharedPreferences!
             .setString(SharedPreferencesKeys.profileImageKey, userImage);
@@ -665,7 +665,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
       if (imageUrl.startsWith("http")) {
         userImage = fixS3Url(imageUrl);
       } else {
-        userImage = fixS3Url("$imageUrl");
+        userImage = fixS3Url(imageUrl);
       }
       sharedPreferences!
           .setString(SharedPreferencesKeys.profileImageKey, userImage);

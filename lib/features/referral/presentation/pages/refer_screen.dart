@@ -7,14 +7,10 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:share_plus/share_plus.dart';
 
-import 'package:presshop/core/analytics/analytics_constants.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
 
 class ReferScreen extends StatefulWidget {
@@ -405,7 +401,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                     child: SizedBox(
                       height: size.width * AppDimensions.numD14,
                       width: size.width * AppDimensions.numD70,
-                      child: Builder(builder: (BuildContext buttonContext) {
+                      child: Builder(builder: (buttonContext) {
                         return commonElevatedButton(
                           "Invite Your Friends",
                           size,
@@ -686,12 +682,12 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
             children: [
               Expanded(
                 child: _earningInfoTile(size, "Received",
-                    "${currencySymbol}${commissionReceived.toStringAsFixed(2)}",
+                    "$currencySymbol${commissionReceived.toStringAsFixed(2)}",
                     valueColor: Colors.green),
               ),
               Expanded(
                 child: _earningInfoTile(size, "Pending",
-                    "${currencySymbol}${commissionPending.toStringAsFixed(2)}",
+                    "$currencySymbol${commissionPending.toStringAsFixed(2)}",
                     valueColor: Colors.orange),
               ),
             ],
@@ -740,10 +736,6 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
 }
 
 class _Referral3DCard extends StatelessWidget {
-  final double amount;
-  final Size size;
-  final bool isYouEarn;
-  final String currency;
 
   const _Referral3DCard({
     required this.amount,
@@ -751,6 +743,10 @@ class _Referral3DCard extends StatelessWidget {
     this.isYouEarn = false,
     required this.currency,
   });
+  final double amount;
+  final Size size;
+  final bool isYouEarn;
+  final String currency;
 
   @override
   Widget build(BuildContext context) {

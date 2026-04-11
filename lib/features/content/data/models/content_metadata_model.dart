@@ -25,6 +25,7 @@ class ContentMetadataModel extends ContentMetadata {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() => {
         'media': media,
         'is_nsfw': isNsfw,

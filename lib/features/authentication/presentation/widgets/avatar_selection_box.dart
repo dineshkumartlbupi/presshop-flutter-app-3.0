@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 
 class AvatarSelectionBox extends StatelessWidget {
-  final Size size;
-  final String selectedAvatar;
-  final VoidCallback onTap;
-  final VoidCallback onClear;
 
   const AvatarSelectionBox({
     super.key,
@@ -14,6 +10,10 @@ class AvatarSelectionBox extends StatelessWidget {
     required this.onTap,
     required this.onClear,
   });
+  final Size size;
+  final String selectedAvatar;
+  final VoidCallback onTap;
+  final VoidCallback onClear;
 
   @override
   Widget build(BuildContext context) {

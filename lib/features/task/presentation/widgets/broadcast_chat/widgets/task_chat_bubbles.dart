@@ -1,18 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
 import 'package:presshop/core/services/media_upload_service.dart';
 import 'package:presshop/main.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/features/chat/presentation/pages/full_video_view.dart';
 
 class MediaUploadProgress {
-  final double progress;
-  final String status;
 
   MediaUploadProgress({required this.progress, required this.status});
+  final double progress;
+  final String status;
 }
 
 class MediaHouseAvatar extends StatelessWidget {
@@ -82,9 +80,9 @@ class HopperAvatar extends StatelessWidget {
 }
 
 class LeftTextChatBubble extends StatelessWidget {
-  final ManageTaskChatModel item;
 
   const LeftTextChatBubble({super.key, required this.item});
+  final ManageTaskChatModel item;
 
   @override
   Widget build(BuildContext context) {
@@ -123,9 +121,6 @@ class LeftTextChatBubble extends StatelessWidget {
 }
 
 class RightMediaChatBubble extends StatelessWidget {
-  final ManageTaskChatModel item;
-  final String address;
-  final String? currentUploadingLocalTaskId;
 
   const RightMediaChatBubble({
     super.key,
@@ -133,6 +128,9 @@ class RightMediaChatBubble extends StatelessWidget {
     required this.address,
     this.currentUploadingLocalTaskId,
   });
+  final ManageTaskChatModel item;
+  final String address;
+  final String? currentUploadingLocalTaskId;
 
   @override
   Widget build(BuildContext context) {
@@ -546,14 +544,14 @@ class RightMediaChatBubble extends StatelessWidget {
 }
 
 class UploadingCircleWithPercentageWidget extends StatelessWidget {
-  final double progress;
-  final Size size;
 
   const UploadingCircleWithPercentageWidget({
     super.key,
     required this.progress,
     required this.size,
   });
+  final double progress;
+  final Size size;
 
   @override
   Widget build(BuildContext context) {

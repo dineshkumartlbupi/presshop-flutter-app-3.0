@@ -71,72 +71,39 @@ class TaskAssignedDataModel {
 
 class TaskAssignedItemModel extends TaskAssignedDetailEntity {
   const TaskAssignedItemModel({
-    required String id,
-    required MediaHouseDataModel mediaHouse,
-    required DateTime deadlineDate,
-    required String heading,
-    required String description,
-    required String location,
-    required AddressLocationDataModel addressLocation,
-    required String status,
-    required bool isDraft,
-    required String paidStatus,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-    required List<TaskContentDataModel> content,
-    bool isNeedPhoto = false,
-    bool isNeedVideo = false,
-    bool isNeedInterview = false,
-    String photoPrice = "0",
-    String videoPrice = "0",
-    String interviewPrice = "0",
-    String currency = "",
-    String currencySymbol = "",
-    List<HopperInfoDataModel> hopperInfo = const [],
-    String hopperTaskAmount = "0",
-    HopperLocationModel? hopperLocation,
-    int activeHoppersCount = 0,
-    List<HopperLocationModel> activeHoppersLocations = const [],
-    List<String> acceptedHoppers = const [],
-    String distance = "",
-    String walkTime = "",
-    String driveTime = "",
-    String specialRequirements = "",
-    Map<String, dynamic>? preferences,
-  }) : super(
-          id: id,
-          mediaHouse: mediaHouse,
-          deadlineDate: deadlineDate,
-          heading: heading,
-          description: description,
-          location: location,
-          addressLocation: addressLocation,
-          status: status,
-          isDraft: isDraft,
-          paidStatus: paidStatus,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
-          content: content,
-          isNeedPhoto: isNeedPhoto,
-          isNeedVideo: isNeedVideo,
-          isNeedInterview: isNeedInterview,
-          photoPrice: photoPrice,
-          videoPrice: videoPrice,
-          interviewPrice: interviewPrice,
-          currency: currency,
-          currencySymbol: currencySymbol,
-          hopperInfo: hopperInfo,
-          hopperTaskAmount: hopperTaskAmount,
-          hopperLocation: hopperLocation,
-          activeHoppersCount: activeHoppersCount,
-          activeHoppersLocations: activeHoppersLocations,
-          acceptedHoppers: acceptedHoppers,
-          distance: distance,
-          walkTime: walkTime,
-          driveTime: driveTime,
-          specialRequirements: specialRequirements,
-          preferences: preferences,
-        );
+    required super.id,
+    required MediaHouseDataModel super.mediaHouse,
+    required super.deadlineDate,
+    required super.heading,
+    required super.description,
+    required super.location,
+    required AddressLocationDataModel super.addressLocation,
+    required super.status,
+    required super.isDraft,
+    required super.paidStatus,
+    required super.createdAt,
+    required super.updatedAt,
+    required List<TaskContentDataModel> super.content,
+    super.isNeedPhoto,
+    super.isNeedVideo,
+    super.isNeedInterview,
+    super.photoPrice,
+    super.videoPrice,
+    super.interviewPrice,
+    super.currency,
+    super.currencySymbol,
+    List<HopperInfoDataModel> super.hopperInfo = const [],
+    super.hopperTaskAmount,
+    super.hopperLocation,
+    super.activeHoppersCount,
+    super.activeHoppersLocations,
+    super.acceptedHoppers,
+    super.distance,
+    super.walkTime,
+    super.driveTime,
+    super.specialRequirements,
+    super.preferences,
+  });
 
   factory TaskAssignedItemModel.fromJson(Map<String, dynamic> json) {
     return TaskAssignedItemModel(
@@ -218,11 +185,11 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
       activeHoppersCount: SafeParser.parseInt(json['active_hoppers'] ??
           json['hopperCount'] ??
           json['assignedHoppers'] ??
-          (SafeParser.parseList<HopperLocationModel>(
+          SafeParser.parseList<HopperLocationModel>(
               json['active_hopper_locations'] ??
                   json['active_hoppers_location'] ??
                   json['active_hoppers_locations'],
-              (e) => HopperLocationModel.fromJson(e ?? {}))).length),
+              (e) => HopperLocationModel.fromJson(e ?? {})).length),
       specialRequirements: SafeParser.parseString(
           json['special_requirements'] ?? json['specialRequirements']),
       preferences: (json['preferences'] is Map<String, dynamic>)
@@ -331,10 +298,6 @@ class TaskContentDataModel extends TaskContentEntity {
 }
 
 class HopperLocationModel {
-  String id = "";
-  double latitude = 0.0;
-  double longitude = 0.0;
-  String avatar = "";
 
   HopperLocationModel({
     this.id = "",
@@ -356,6 +319,10 @@ class HopperLocationModel {
       longitude = temp;
     }
   }
+  String id = "";
+  double latitude = 0.0;
+  double longitude = 0.0;
+  String avatar = "";
 }
 
 class ChatRoomDataModel extends ChatRoomEntity {

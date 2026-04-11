@@ -2,18 +2,6 @@ import 'package:hive/hive.dart';
 import 'upload_chunk.dart';
 
 class UploadJob extends HiveObject {
-  final String jobId;
-  final String filePath;
-  String uploadId;
-  String s3Key;
-  final int fileSizeBytes;
-  final int partCount;
-  final DateTime createdAt;
-  DateTime updatedAt;
-  String status; // 'queued', 'uploading', 'paused', 'completed', 'failed'
-  String? videoId;
-  String? contentId;
-  List<UploadChunk> chunks;
 
   UploadJob({
     required this.jobId,
@@ -30,6 +18,18 @@ class UploadJob extends HiveObject {
     List<UploadChunk>? chunks,
   })  : chunks = chunks ?? [],
         updatedAt = updatedAt ?? DateTime.now();
+  final String jobId;
+  final String filePath;
+  String uploadId;
+  String s3Key;
+  final int fileSizeBytes;
+  final int partCount;
+  final DateTime createdAt;
+  DateTime updatedAt;
+  String status; // 'queued', 'uploading', 'paused', 'completed', 'failed'
+  String? videoId;
+  String? contentId;
+  List<UploadChunk> chunks;
         
   void updateUpdatedAt() {
     updatedAt = DateTime.now();

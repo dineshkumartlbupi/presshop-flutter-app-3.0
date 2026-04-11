@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 
 class PasswordRequirementRow extends StatelessWidget {
-  final bool isValid;
-  final String text;
-  final Size size;
 
   const PasswordRequirementRow({
     super.key,
@@ -12,6 +9,9 @@ class PasswordRequirementRow extends StatelessWidget {
     required this.text,
     required this.size,
   });
+  final bool isValid;
+  final String text;
+  final Size size;
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +38,6 @@ class PasswordRequirementRow extends StatelessWidget {
 }
 
 class PasswordRequirementsList extends StatelessWidget {
-  final bool showLowercase;
-  final bool showUppercase;
-  final bool showNumber;
-  final bool showSpecial;
-  final bool showMinLength;
-  final Size size;
 
   const PasswordRequirementsList({
     super.key,
@@ -54,6 +48,12 @@ class PasswordRequirementsList extends StatelessWidget {
     required this.showMinLength,
     required this.size,
   });
+  final bool showLowercase;
+  final bool showUppercase;
+  final bool showNumber;
+  final bool showSpecial;
+  final bool showMinLength;
+  final Size size;
 
   @override
   Widget build(BuildContext context) {

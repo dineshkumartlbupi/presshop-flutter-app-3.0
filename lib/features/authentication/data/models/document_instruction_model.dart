@@ -16,6 +16,7 @@ class DocumentInstructionModel extends DocumentInstruction {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,

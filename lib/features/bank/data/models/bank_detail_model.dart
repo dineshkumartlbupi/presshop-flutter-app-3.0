@@ -71,6 +71,7 @@ class BankDetailModel extends BankDetail {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,

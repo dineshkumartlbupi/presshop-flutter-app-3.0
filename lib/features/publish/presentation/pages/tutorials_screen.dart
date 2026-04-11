@@ -6,7 +6,6 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/chat/presentation/pages/full_video_view.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/features/publish/presentation/bloc/tutorials/tutorials_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart';
 

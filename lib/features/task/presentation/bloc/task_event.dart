@@ -37,24 +37,24 @@ class AcceptRejectTaskEvent extends TaskEvent {
 }
 
 class GetTaskChatEvent extends TaskEvent {
-  final String roomId;
-  final String type;
-  final String contentId;
-  final bool showLoader;
   const GetTaskChatEvent({
     required this.roomId,
     required this.type,
     required this.contentId,
     this.showLoader = true,
   });
+  final String roomId;
+  final String type;
+  final String contentId;
+  final bool showLoader;
   @override
   List<Object> get props => [roomId, type, contentId, showLoader];
 }
 
 class UploadTaskMediaEvent extends TaskEvent {
+  const UploadTaskMediaEvent(this.data, {this.showLoader = true});
   final FormData data;
   final bool showLoader;
-  const UploadTaskMediaEvent(this.data, {this.showLoader = true});
 }
 
 class GetRoomIdEvent extends TaskEvent {
@@ -147,14 +147,14 @@ class AddLocalTaskEvent extends TaskEvent {
 }
 
 class UpdateLocalTaskProgressEvent extends TaskEvent {
-  final String taskId;
-  final int progress;
-  final String status;
   const UpdateLocalTaskProgressEvent({
     required this.taskId,
     required this.progress,
     required this.status,
   });
+  final String taskId;
+  final int progress;
+  final String status;
   @override
   List<Object> get props => [taskId, progress, status];
 }

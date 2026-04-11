@@ -10,7 +10,6 @@ import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/authentication/constants/auth_constants.dart';
@@ -21,8 +20,6 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import 'package:presshop/main.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
@@ -203,7 +200,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
     return BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthAuthenticated) {
-            context.go(AppRoutes.dashboardPath, extra: {'initialPosition': 2});
+            context.goNamed(AppRoutes.permissionName);
           } else if (state is AuthSocialSignUpRequired) {
             setState(() {
               widget.socialLogin = true;
@@ -242,8 +239,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                 'emailAddressValue': emailController.text.trim(),
               });
             } else if (state is SignUpSuccess) {
-              context
-                  .go(AppRoutes.dashboardPath, extra: {'initialPosition': 2});
+              context.goNamed(AppRoutes.permissionName);
             } else if (state is AvatarsLoaded) {
               avatarList = state.avatars
                   .map((e) =>

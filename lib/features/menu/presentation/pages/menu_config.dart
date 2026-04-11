@@ -43,7 +43,7 @@ enum MenuAction {
   priceTips,
   tutorials,
   changePassword,
-  accountSettings,
+  accountDelete,
   logout,
   currency,
   locationSharing,
@@ -244,7 +244,7 @@ List<MenuData> buildMenu() => [
       MenuData(
         title: "Delete account",
         icon: "${iconsPath}ic_my_profile.png",
-        action: MenuAction.accountSettings,
+        action: MenuAction.accountDelete,
         pageBuilder: (context) => const AccountDeleteScreen(),
       ),
       // MenuData(
