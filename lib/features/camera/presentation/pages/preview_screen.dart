@@ -146,13 +146,15 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
           });
         } catch (e) {
           debugPrint("Error fetching location data: $e");
+/*
           showSnackBar(
               "Location Error", "Unable to fetch address", Colors.black);
+              */
         }
       }
     } else {
       debugPrint("Null-ll");
-      showSnackBar("Location Error", "nullLocationText", Colors.black);
+//       showSnackBar("Location Error", "nullLocationText", Colors.black);
     }
   }
 
@@ -593,10 +595,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                 if (mediaList.length == 10) {
                                   isMoreDisable = true;
                                   setState(() {});
-                                  showSnackBar(
-                                      "PressHop",
-                                      "Only 10 contents allowed!",
-                                      AppColorTheme.colorThemePink);
+//                                   showSnackBar("PressHop", "Only 10 contents allowed!", AppColorTheme.colorThemePink);
                                 } else {
                                   context.pushNamed(
                                     AppRoutes.cameraName,
@@ -752,10 +751,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                 if (mediaList.length == 10) {
                                   isMoreDisable = true;
                                   setState(() {});
-                                  showSnackBar(
-                                      "PressHop",
-                                      "Only 10 contents allowed!",
-                                      AppColorTheme.colorThemePink);
+//                                   showSnackBar("PressHop", "Only 10 contents allowed!", AppColorTheme.colorThemePink);
                                 } else {
                                   context.pushNamed(
                                     AppRoutes.cameraName,

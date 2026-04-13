@@ -113,10 +113,9 @@ class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
         width: widget.width,
         height: widget.height,
         fit: widget.fit ?? BoxFit.cover,
-        memCacheWidth:
-            (widget.width != null && widget.width != double.infinity)
-                ? (widget.width! * 2).toInt()
-                : 800,
+        memCacheWidth: (widget.width != null && widget.width != double.infinity)
+            ? (widget.width! * 2).toInt()
+            : 800,
         memCacheHeight:
             (widget.height != null && widget.height != double.infinity)
                 ? (widget.height! * 2).toInt()

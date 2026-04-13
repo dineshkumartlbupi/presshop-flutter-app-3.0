@@ -18,6 +18,7 @@ import 'package:presshop/features/news/presentation/pages/news_page.dart';
 import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
 
 import 'package:presshop/features/map/constants/map_news_constants.dart';
+import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:presshop/features/map/presentation/bloc/map_bloc.dart';
 import 'package:presshop/features/map/presentation/bloc/map_event.dart';
 import 'package:presshop/features/map/presentation/bloc/map_state.dart';
@@ -78,8 +79,7 @@ class _MapPageState extends State<MapPage> {
 }
 
 class _MapPageContent extends StatefulWidget {
-  const _MapPageContent(
-      {this.hideLeading = false, this.showAppBar = false});
+  const _MapPageContent({this.hideLeading = false, this.showAppBar = false});
   final bool hideLeading;
   final bool showAppBar;
 
@@ -118,6 +118,8 @@ class _MapPageContentState extends State<_MapPageContent>
       ciw.CustomInfoWindowController();
 
   final Map<String, Offset> _markerPositions = {};
+  final Map<String, ciw.CustomInfoWindowController> _markerControllers = {};
+  final Set<String> _initializedMarkerIds = {};
 
   // Removed _updateMarkerPositions manually projected markers — now handled natively by alpha: 1.0 in MapBloc
 
@@ -183,7 +185,6 @@ class _MapPageContentState extends State<_MapPageContent>
         context.read<MapBloc>().add(const SetLocationTimeoutEvent(true));
       }
     });
-
     // _updateMarkerPositions removed - markers are now handled natively
   }
 
@@ -200,6 +201,10 @@ class _MapPageContentState extends State<_MapPageContent>
     _searchController.dispose();
     _searchFocusNode.dispose();
     _customInfoWindowController.dispose();
+    for (var ctrl in _markerControllers.values) {
+      ctrl.dispose();
+    }
+    _markerControllers.clear();
     _locationTimer?.cancel();
     super.dispose();
   }
@@ -387,8 +392,177 @@ class _MapPageContentState extends State<_MapPageContent>
           });
         }
       }
+
     } catch (e) {
       debugPrint("Error updating info window: $e");
+    }
+  }
+
+  String _getResolvedIconPath(String? type) {
+    if (type == null) return markerIcons['accident']!;
+    final lowerType = type.toLowerCase();
+
+    if (lowerType.contains('accident') || lowerType.contains('crash')) {
+      return markerIcons['accident']!;
+    } else if (lowerType.contains('fire')) {
+      return markerIcons['fire']!;
+    } else if (lowerType.contains('gun')) {
+      return markerIcons['gun']!;
+    } else if (lowerType.contains('knife') ||
+        lowerType.contains('safety') ||
+        lowerType.contains('safty')) {
+      return markerIcons['knife']!;
+    } else if (lowerType.contains('fight')) {
+      return markerIcons['fight']!;
+    } else if (lowerType.contains('protest')) {
+      return markerIcons['protest']!;
+    } else if (lowerType.contains('medicine') ||
+        lowerType.contains('medical')) {
+      return markerIcons['medical']!;
+    } else if (lowerType.contains('police')) {
+      return markerIcons['police']!;
+    } else if (lowerType.contains('flood')) {
+      return markerIcons['floods']!;
+    } else if (lowerType.contains('road') || lowerType.contains('block')) {
+      return markerIcons['road-block']!;
+    } else if (lowerType.contains('snow')) {
+      return markerIcons['snow']!;
+    } else if (lowerType.contains('storm')) {
+      return markerIcons['storm']!;
+    } else if (lowerType.contains('earthquake')) {
+      return markerIcons['earthquake']!;
+    }
+    return markerIcons['nomarker'] ?? markerIcons['accident']!;
+  }
+
+  void _syncAnimatedMarkers(MapState state) {
+    if (_isDisposed || !mounted) return;
+
+    final currentAnimatedMarkers = state.newsList
+        .where((incident) => incident.markerType == 'icon')
+        .toList();
+
+    final currentIds = currentAnimatedMarkers.map((m) => m.id).toSet();
+
+    // 1. Remove controllers for icons no longer in the list
+    _markerControllers.removeWhere((id, controller) {
+      if (!currentIds.contains(id)) {
+        controller.onCameraMove = null;
+        controller.addInfoWindow = null;
+        controller.hideInfoWindow = null;
+        controller.googleMapController = null;
+        try {
+          controller.dispose();
+        } catch (e) {
+          debugPrint("Error disposing marker controller $id: $e");
+        }
+        _initializedMarkerIds.remove(id);
+        return true;
+      }
+      return false;
+    });
+
+    // 2. Add/Sync controllers for current icons
+    _controller.future.then((mapCtrl) {
+      if (_isDisposed || !mounted) return;
+      for (var incident in currentAnimatedMarkers) {
+        final markerId = incident.id;
+        if (!_markerControllers.containsKey(markerId)) {
+          final ctrl = ciw.CustomInfoWindowController();
+          ctrl.googleMapController = mapCtrl;
+          _markerControllers[markerId] = ctrl;
+        }
+
+        final ctrl = _markerControllers[markerId]!;
+        if (ctrl.googleMapController == null) {
+          ctrl.googleMapController = mapCtrl;
+        }
+
+        if (!_initializedMarkerIds.contains(markerId)) {
+          _tryAddInfoWindow(ctrl, incident, incident.position, markerId, 0);
+        }
+      }
+    });
+
+    if (mounted) setState(() {});
+  }
+
+  void _tryAddInfoWindow(ciw.CustomInfoWindowController controller,
+      Incident incident, LatLng position, String markerId, int retryCount) {
+    if (_isDisposed || !mounted || _initializedMarkerIds.contains(markerId)) {
+      return;
+    }
+
+    if (controller.addInfoWindow != null) {
+      _addInfoWindowToController(controller, incident, position, markerId);
+      return;
+    }
+
+    if (retryCount < 15) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted && !_isDisposed) {
+          _tryAddInfoWindow(
+              controller, incident, position, markerId, retryCount + 1);
+        }
+      });
+    }
+  }
+
+  void _addInfoWindowToController(ciw.CustomInfoWindowController controller,
+      Incident incident, LatLng position, String markerId) {
+    if (controller.addInfoWindow == null ||
+        _initializedMarkerIds.contains(markerId)) {
+      return;
+    }
+
+    final assetPath = _getResolvedIconPath(incident.type ?? incident.alertType);
+
+    try {
+      controller.addInfoWindow!(
+        GestureDetector(
+          onTap: () {
+            // Select marker and show detail
+            context.read<MapBloc>().add(SetSelectedIncidentEvent(incident));
+          },
+          child: Container(
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: const Color(0xFFD9D9D9),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                )
+              ],
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(2),
+              clipBehavior: Clip.antiAlias,
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(255, 255, 255, 255),
+                shape: BoxShape.circle,
+              ),
+              child: Image.asset(
+                assetPath,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(Icons.error);
+                },
+              ),
+            ),
+          ),
+        ),
+        position,
+      );
+
+      _initializedMarkerIds.add(markerId);
+      if (controller.onCameraMove != null) {
+        controller.onCameraMove!();
+      }
+    } catch (e) {
+      debugPrint("Error adding info window for $markerId: $e");
     }
   }
 
@@ -580,10 +754,18 @@ class _MapPageContentState extends State<_MapPageContent>
                 _isProgrammaticMovement = false;
               }
             } catch (e) {
-              debugPrint("Error moving camera for navigation: $e");
+              debugPrint("Error moving camera to navigation: $e");
             }
           });
         }
+
+        // Trigger overlay update when icons change
+        if (_lastState?.newsList != state.newsList) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _syncAnimatedMarkers(state);
+          });
+        }
+
         if (state.routeInfo != null &&
             !state.isNavigating &&
             state.routeInfo!.points.isNotEmpty &&
@@ -695,6 +877,10 @@ class _MapPageContentState extends State<_MapPageContent>
                             _controller.complete(c);
                             _customInfoWindowController.googleMapController = c;
                           }
+                          for (var ctrl in _markerControllers.values) {
+                            ctrl.googleMapController = c;
+                          }
+                          _syncAnimatedMarkers(mapState);
                           if (mounted) {
                             unawaited(_updateInfoWindow());
                           }
@@ -711,6 +897,9 @@ class _MapPageContentState extends State<_MapPageContent>
                         onCameraMove: (pos) {
                           _currentZoom = pos.zoom;
                           _customInfoWindowController.onCameraMove?.call();
+                          for (var ctrl in _markerControllers.values) {
+                            ctrl.onCameraMove?.call();
+                          }
                         },
                         onCameraIdle: () {
                           if (mounted) {
@@ -808,43 +997,71 @@ class _MapPageContentState extends State<_MapPageContent>
                     },
                   ),
                 ),
-                ciw.CustomInfoWindow(
-                  controller: _customInfoWindowController,
-                  height: responsiveWidth * 0.85,
-                  width: responsiveWidth * 0.75,
-                  offset: responsiveWidth * 0.14,
+
+                // Consolidate all overlays inside a BlocBuilder to ensure access to MapState
+                BlocBuilder<MapBloc, MapState>(
+                  builder: (context, state) {
+                    return Stack(
+                      children: [
+                        // perfectly pinned animated markers from reference code
+                        ..._markerControllers.entries.map((entry) {
+                          return KeyedSubtree(
+                            key: ValueKey('animated_marker_${entry.key}'),
+                            child: ciw.CustomInfoWindow(
+                              controller: entry.value,
+                              height: 48,
+                              width: 48,
+                              offset: 0,
+                            ),
+                          );
+                        }),
+
+                        // Main info window for popups
+                        ciw.CustomInfoWindow(
+                          controller: _customInfoWindowController,
+                          height: responsiveWidth * 0.85,
+                          width: responsiveWidth * 0.75,
+                          offset: responsiveWidth * 0.14,
+                        ),
+
+                        if (_routeInfoOffset != null &&
+                            state.routeInfo != null &&
+                            state.routeMidpoint != null)
+                          Positioned(
+                            left: _routeInfoOffset!.dx - 100,
+                            top: _routeInfoOffset!.dy - 130,
+                            child: RouteInfoWindow(
+                              distance:
+                                  "${state.routeInfo!.distanceKm.toStringAsFixed(2)} km",
+                              duration:
+                                  "${state.routeInfo!.durationMinutes} min",
+                              onClose: () {
+                                context.read<MapBloc>().add(ClearRouteEvent());
+                              },
+                            ),
+                          ),
+
+                        if (_polygonInfoOffset != null &&
+                            state.selectedPolygonId != null)
+                          Positioned(
+                            left: _polygonInfoOffset!.dx - 110,
+                            top: _polygonInfoOffset!.dy - 140,
+                            child: DangerZoneInfoWindow(
+                              name: "Danger Zone",
+                              description:
+                                  "High risk area - proceed with caution",
+                              onPressed: () {
+                                context
+                                    .read<MapBloc>()
+                                    .add(ClearSelectedPolygonEvent());
+                                setState(() => _polygonInfoOffset = null);
+                              },
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
-                if (_routeInfoOffset != null &&
-                    state.routeInfo != null &&
-                    state.routeMidpoint != null)
-                  Positioned(
-                    left: _routeInfoOffset!.dx - 100,
-                    top: _routeInfoOffset!.dy - 130,
-                    child: RouteInfoWindow(
-                      distance:
-                          "${state.routeInfo!.distanceKm.toStringAsFixed(2)} km",
-                      duration: "${state.routeInfo!.durationMinutes} min",
-                      onClose: () {
-                        context.read<MapBloc>().add(ClearRouteEvent());
-                      },
-                    ),
-                  ),
-                if (_polygonInfoOffset != null &&
-                    state.selectedPolygonId != null)
-                  Positioned(
-                    left: _polygonInfoOffset!.dx - 110,
-                    top: _polygonInfoOffset!.dy - 140,
-                    child: DangerZoneInfoWindow(
-                      name: "Danger Zone",
-                      description: "High risk area - proceed with caution",
-                      onPressed: () {
-                        context
-                            .read<MapBloc>()
-                            .add(ClearSelectedPolygonEvent());
-                        setState(() => _polygonInfoOffset = null);
-                      },
-                    ),
-                  ),
                 Positioned(
                   top: 10,
                   left: 0,
@@ -1037,11 +1254,11 @@ class _MapPageContentState extends State<_MapPageContent>
                               } else {
                                 debugPrint(
                                     "AlertSelected: Location not available");
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          "Location not available. Please try again.")),
-                                );
+                                // ScaffoldMessenger.of(context).showSnackBar(
+                                //   const SnackBar(
+                                //       content: Text(
+                                //           "Location not available. Please try again.")),
+                                // );
                               }
                             } catch (e) {
                               debugPrint("Error adding alert marker: $e");
@@ -1052,6 +1269,7 @@ class _MapPageContentState extends State<_MapPageContent>
                     ),
                   ),
                 ),
+
                 BurstParticlesOverlay(
                   controller: _burstController,
                   burstImage: _burstImage,

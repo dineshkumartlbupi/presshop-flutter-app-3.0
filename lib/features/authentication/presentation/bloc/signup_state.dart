@@ -69,6 +69,8 @@ class PhoneCheckResult extends SignUpState {
   List<Object> get props => [isAvailable, errorMessage, timestamp];
 }
 
+class AvatarsLoading extends SignUpState {}
+
 class AvatarsLoaded extends SignUpState {
 
   const AvatarsLoaded(this.avatars);

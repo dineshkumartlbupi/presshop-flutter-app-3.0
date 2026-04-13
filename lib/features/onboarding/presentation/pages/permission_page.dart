@@ -68,7 +68,8 @@ class _PermissionPageState extends State<PermissionPage>
   }
 
   bool get _allRequiredGranted {
-    return _permissions.every((p) => statuses[p.permission]?.isGranted ?? false);
+    return _permissions
+        .every((p) => statuses[p.permission]?.isGranted ?? false);
   }
 
   Future<void> _checkPermissions() async {
@@ -138,7 +139,6 @@ class _PermissionPageState extends State<PermissionPage>
                     final item = _permissions[index];
                     final status = statuses[item.permission];
                     final isGranted = status?.isGranted ?? false;
-
                     return Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: size.width * 0.04,
@@ -249,12 +249,12 @@ class _PermissionPageState extends State<PermissionPage>
                       if (_allRequiredGranted) {
                         context.goNamed(AppRoutes.dashboardName);
                       } else {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          content: Text(
-                              "Please allow Location and Camera permissions to proceed."),
-                          backgroundColor: Colors.redAccent,
-                        ));
+                        // ScaffoldMessenger.of(context)
+                        //     .showSnackBar(const SnackBar(
+                        //   content: Text(
+                        //       "Please allow Location and Camera permissions to proceed."),
+                        //   backgroundColor: Colors.redAccent,
+                        // ));
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -287,7 +287,6 @@ class _PermissionPageState extends State<PermissionPage>
 }
 
 class PermissionInfo {
-
   PermissionInfo({
     required this.permission,
     required this.title,

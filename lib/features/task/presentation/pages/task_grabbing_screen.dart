@@ -139,13 +139,13 @@
 //         if (!serviceEnabled) {
 //           debugPrint("TaskGrabbingScreen: Location services are disabled.");
 //           if (mounted) {
-//             ScaffoldMessenger.of(context).showSnackBar(
-//               const SnackBar(
-//                 content: Text(
-//                     "Location services are disabled.\nPlease enable them."),
-//                 backgroundColor: Colors.red,
-//               ),
-//             );
+//             // ScaffoldMessenger.of(context).showSnackBar(
+//             //   const SnackBar(
+//             //     content: Text(
+//             //         "Location services are disabled.\nPlease enable them."),
+//             //     backgroundColor: Colors.red,
+//             //   ),
+//             // );
 
 //             // Optionally open settings
 //             await Geolocator.openLocationSettings();
@@ -197,9 +197,9 @@
 //       }
 //     } catch (e) {
 //       debugPrint("TaskGrabbingScreen: Error toggling service: $e");
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(content: Text("Error: $e"), backgroundColor: Colors.red),
-//       );
+//       // ScaffoldMessenger.of(context).showSnackBar(
+//       //   SnackBar(content: Text("Error: $e"), backgroundColor: Colors.red),
+//       // );
 //       if (mounted) {
 //         setState(() {
 //           isServiceRunning = false;

@@ -65,7 +65,7 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
       child: BlocConsumer<TutorialsBloc, TutorialsState>(
         listener: (context, state) {
           if (state.status == TutorialsStatus.failure) {
-            showSnackBar("Error", state.errorMessage, Colors.red);
+//           showSnackBar("Error", state.errorMessage, Colors.red);
             _refreshController.refreshFailed();
             _refreshController.loadFailed();
           } else if (state.status == TutorialsStatus.success) {

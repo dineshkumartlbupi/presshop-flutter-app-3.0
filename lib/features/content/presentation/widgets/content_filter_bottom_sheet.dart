@@ -196,8 +196,7 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
                       item.toDate = pickedDate;
                       setState(() {});
                     } else {
-                      showSnackBar("Date Error",
-                          "Please select to date above from date", Colors.red);
+//                       showSnackBar("Date Error", "Please select to date above from date", Colors.red);
                     }
                   }
                 }

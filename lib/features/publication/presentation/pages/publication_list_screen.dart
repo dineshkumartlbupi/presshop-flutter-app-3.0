@@ -112,7 +112,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                       .toList();
                 }
               } else if (state is PublicationError) {
-                showSnackBar("Error", state.message, Colors.red);
+//                 showSnackBar("Error", state.message, Colors.red);
               }
             },
             builder: (context, state) {
@@ -317,10 +317,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                               sortList[4].isSelected = true;
                                               _applyFilter(context);
                                             } else {
-                                              showSnackBar(
-                                                  "Date Error",
-                                                  "Please select to date above from date",
-                                                  Colors.red);
+//                                               showSnackBar("Date Error", "Please select to date above from date", Colors.red);
                                             }
                                           }
                                           if (mounted) {

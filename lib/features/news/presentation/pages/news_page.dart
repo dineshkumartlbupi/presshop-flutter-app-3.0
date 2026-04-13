@@ -289,9 +289,9 @@ class _NewsPageState extends State<NewsPage>
           _refreshController.loadNoData();
         }
         if (state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.errorMessage!)),
-          );
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(content: Text(state.errorMessage!)),
+          // );
         }
       },
       builder: (context, state) {

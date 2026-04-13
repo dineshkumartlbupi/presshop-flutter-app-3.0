@@ -82,10 +82,10 @@ class _ManageTaskPreviewMediaScreenState
                         if (mediaList.length == 10) {
                           isMoreDisable = true;
                           setState(() {});
-                          showSnackBar(
-                              "PRESSHOP",
-                              "Only 10 contents allowed!",
-                              AppColorTheme.colorThemePink);
+                          // showSnackBar(
+                          //     "PRESSHOP",
+                          //     "Only 10 contents allowed!",
+                          //     AppColorTheme.colorThemePink);
                         } else {
                           context
                               .pushNamed(AppRoutes.cameraName, extra: {

@@ -322,7 +322,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
         listener: (context, state) async {
           if (state.status == NotificationStatus.failure &&
               state.errorMessage.isNotEmpty) {
-            showSnackBar("Error", state.errorMessage, Colors.red);
+//             showSnackBar("Error", state.errorMessage, Colors.red);
           }
           if (state.shouldShowStudentBeansDialog) {
             _showForceUpdateDialog(size,

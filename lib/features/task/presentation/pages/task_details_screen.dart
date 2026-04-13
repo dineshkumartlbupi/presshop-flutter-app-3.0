@@ -143,7 +143,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               }
             }
           } else if (state.errorMessage != null) {
-            showSnackBar("Error", state.errorMessage!, Colors.red);
+            // showSnackBar("Error", state.errorMessage!, Colors.red);
           }
         },
         builder: (context, state) {
@@ -1031,8 +1031,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       });
       _fetchTaskDetail(showLoader: false);
     } else {
-      showSnackBar(
-          "Permission Denied", "Please Allow Location permission", Colors.red);
+      // showSnackBar(
+      //     "Permission Denied", "Please Allow Location permission", Colors.red);
     }
   }
 

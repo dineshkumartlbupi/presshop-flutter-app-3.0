@@ -3,7 +3,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 class BurstParticle {
-
   BurstParticle({
     required this.position,
     required this.scale,
@@ -17,7 +16,6 @@ class BurstParticle {
 }
 
 class BurstParticlesOverlay extends StatefulWidget {
-
   const BurstParticlesOverlay({
     super.key,
     required this.controller,
@@ -99,7 +97,6 @@ class _BurstParticlesOverlayState extends State<BurstParticlesOverlay> {
 }
 
 class BurstPainter extends CustomPainter {
-
   BurstPainter(this.particles, this.burstImage);
   final List<BurstParticle> particles;
   final ui.Image? burstImage;
@@ -117,7 +114,8 @@ class BurstPainter extends CustomPainter {
       );
       canvas.drawImageRect(
         burstImage!,
-        Rect.fromLTWH(0, 0, burstImage!.width.toDouble(), burstImage!.height.toDouble()),
+        Rect.fromLTWH(
+            0, 0, burstImage!.width.toDouble(), burstImage!.height.toDouble()),
         destRect,
         paint,
       );

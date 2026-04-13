@@ -65,9 +65,9 @@ class _MenuScreenState extends State<MenuScreen> {
             if (state.logoutStatus == MenuLogoutStatus.success) {
               _navigateToLogin(context);
             } else if (state.logoutStatus == MenuLogoutStatus.failure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.errorMessage ?? "Logout failed")),
-              );
+              // ScaffoldMessenger.of(context).showSnackBar(
+              //   SnackBar(content: Text(state.errorMessage ?? "Logout failed")),
+              // );
             }
           },
           child: Builder(builder: (context) => _buildContent(context)),

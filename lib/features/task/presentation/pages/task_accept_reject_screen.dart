@@ -253,7 +253,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
           if (state.actionStatus == TaskStatus.failure) {
             _hasSubmittedAction = false;
           }
-          showSnackBar("Error", state.errorMessage!, Colors.red);
+          // showSnackBar("Error", state.errorMessage!, Colors.red);
         }
       },
       builder: (context, state) {
@@ -783,17 +783,17 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                       child: GestureDetector(
                         onTap: taskDetail!.deadLine.isBefore(DateTime.now())
                             ? () {
-                                showSnackBar(
-                                    "Task Expired",
-                                    "The deadline for this task has passed and it can no longer be accepted.",
-                                    Colors.red);
+                                // showSnackBar(
+                                //     "Task Expired",
+                                //     "The deadline for this task has passed and it can no longer be accepted.",
+                                //     Colors.red);
                               }
                             : () {
                                 if (_hasSubmittedAction) {
-                                  showSnackBar(
-                                      "Action already submitted",
-                                      "You have already performed an action on this task.",
-                                      Colors.red);
+                                  // showSnackBar(
+                                  //     "Action already submitted",
+                                  //     "You have already performed an action on this task.",
+                                  //     Colors.red);
                                   return;
                                 }
 
@@ -807,10 +807,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                 SharedPreferencesKeys
                                                     .hopperIdKey) ??
                                             "")) {
-                                  showSnackBar(
-                                      "Already Accepted",
-                                      "You have already accepted this task.",
-                                      Colors.red);
+                                  // showSnackBar(
+                                  //     "Already Accepted",
+                                  //     "You have already accepted this task.",
+                                  //     Colors.red);
                                   return;
                                 }
 
@@ -1379,10 +1379,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                   if (await canLaunchUrl(uri)) {
                                                     await launchUrl(uri);
                                                   } else {
-                                                    showSnackBar(
-                                                        'PressHop',
-                                                        AppStrings.errorOpenSMS,
-                                                        Colors.black);
+                                                    // showSnackBar(
+                                                    //     'PressHop',
+                                                    //     AppStrings.errorOpenSMS,
+                                                    //     Colors.black);
                                                     // Handle the case when the URL can't be launched.
                                                     throw 'Error launching Sms';
                                                   }
@@ -1497,8 +1497,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
         debugPrint("_longitude: $_latLng");
       });
     } else {
-      showSnackBar(
-          "Permission Denied", "Please Allow Loction permission", Colors.red);
+      // showSnackBar(
+      //     "Permission Denied", "Please Allow Loction permission", Colors.red);
     }
     taskDetail!.id.isNotEmpty
         ? context.read<TaskBloc>().add(GetTaskDetailEvent(widget.taskId))

@@ -120,6 +120,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     FetchAvatarsEvent event,
     Emitter<SignUpState> emit,
   ) async {
+    emit(AvatarsLoading());
     final result = await getAvatars(NoParams());
     result.fold(
       (failure) => emit(SignUpError(message: failure.message)),

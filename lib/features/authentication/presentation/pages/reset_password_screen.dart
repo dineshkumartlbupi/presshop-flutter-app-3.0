@@ -63,7 +63,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 "Your password has been changed successfully!",
                 AppColorTheme.colorOnlineGreen);
           } else if (state is AuthError) {
-            showSnackBar("Error", state.message, Colors.red);
+            // showSnackBar("Error", state.message, Colors.red);
           }
         },
         child: Scaffold(
@@ -471,11 +471,11 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                   password: passwordController.text.trim(),
                                 ));
                           } else if (passwordController.text.isEmpty) {
-                            showSnackBar('Error', "Please enter new password",
-                                Colors.red);
+                            // showSnackBar('Error', "Please enter new password",
+                            //     Colors.red);
                           } else if (confirmPasswordController.text.isEmpty) {
-                            showSnackBar('Error', "Please confirm new password",
-                                Colors.red);
+                            // showSnackBar('Error', "Please confirm new password",
+                            //     Colors.red);
                           }
                         });
                       },

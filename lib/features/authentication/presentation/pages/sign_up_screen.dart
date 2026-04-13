@@ -225,6 +225,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
         child: BlocConsumer<SignUpBloc, SignUpState>(
           listener: (context, state) {
             if (state is SignUpError) {
+              _avatarsNotifier.value = false;
               commonErrorDialogDialog(
                   MediaQuery.of(context).size, state.message, "", () {
                 context.pop();
@@ -240,13 +241,15 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
               });
             } else if (state is SignUpSuccess) {
               context.goNamed(AppRoutes.permissionName);
+            } else if (state is AvatarsLoading) {
+               _avatarsNotifier.value = true;
             } else if (state is AvatarsLoaded) {
               avatarList = state.avatars
                   .map((e) =>
                       AvatarData.fromJson({'_id': e.id, 'avatar': e.avatar}))
                   .toList();
 
-              _avatarsNotifier.value = !_avatarsNotifier.value;
+              _avatarsNotifier.value = false;
             } else if (state is UserNameCheckResult) {
               userNameAlreadyExists = !state.isAvailable;
               userNameApiError = state.errorMessage;
@@ -1344,7 +1347,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
       return placeMarkList;
     } on Exception catch (e) {
       debugPrint("PEx: $e");
-      showSnackBar("Exception", e.toString(), Colors.red);
+      // showSnackBar("Exception", e.toString(), Colors.red);
     }
     return [];
   }
@@ -1520,8 +1523,8 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
 
       if (pickedDate.isAfter(eighteenYearsAgo)) {
         debugPrint("You must be at least 18 years old.");
-        showSnackBar("For safety reasons",
-            "You need to be at least 18 years old to use the app.", Colors.red);
+        // showSnackBar("For safety reasons",
+        //     "You need to be at least 18 years old to use the app.", Colors.red);
         showDateError = true;
         setState(() {});
         return null;

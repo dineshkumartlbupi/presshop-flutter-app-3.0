@@ -306,7 +306,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
       child: BlocConsumer<PublishBloc, PublishState>(
         listener: (context, state) {
           if (state.status == PublishStatus.failure) {
-            showSnackBar("Error", state.errorMessage, Colors.red);
+//             showSnackBar("Error", state.errorMessage, Colors.red);
           }
           if (state.status == PublishStatus.loaded ||
               state.categories.isNotEmpty) {
@@ -2812,10 +2812,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                 debugPrint("HideDraft-> ${widget.hideDraft}");
                                 if (descriptionController.text.trim().isEmpty &&
                                     audioPath.isEmpty) {
+/*
                                   showSnackBar(
                                       "Description",
                                       "Please type or record what you saw",
                                       Colors.red);
+                                      */
                                 } else if (priceController.text
                                         .replaceAll(RegExp(r'[^0-9.]'), '')
                                         .trim()
@@ -2824,8 +2826,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                             .replaceAll(RegExp(r'[^0-9.]'), '')
                                             .trim() ==
                                         '0') {
-                                  showSnackBar("Price",
-                                      "Please enter your price", Colors.red);
+//                                   showSnackBar("Price", "Please enter your price", Colors.red);
                                 } else {
                                   if (widget.hideDraft) {
                                     await updateDraftListAPI(
@@ -3282,8 +3283,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     setState(() {});
                                     stateSetter(() {});
                                   } else {
-                                    showSnackBar("Charity",
-                                        "Please select a charity!", Colors.red);
+//                                     showSnackBar("Charity", "Please select a charity!", Colors.red);
                                   }
                                 },
                                 child: Text(
@@ -3501,7 +3501,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
       } else {
         debugPrint(
             "DEBUG: Category list empty and none selected. Returning false.");
-        showSnackBar("Error", "Please select a category", Colors.red);
+//         showSnackBar("Error", "Please select a category", Colors.red);
         return false;
       }
     }

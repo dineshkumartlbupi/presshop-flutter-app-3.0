@@ -395,11 +395,11 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                           ? null
                           : () async {
                               if (_destinationController.text.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Please enter a destination'),
-                                  ),
-                                );
+                                // ScaffoldMessenger.of(context).showSnackBar(
+                                //   const SnackBar(
+                                //     content: Text('Please enter a destination'),
+                                //   ),
+                                // );
                                 return;
                               }
 
@@ -416,13 +416,13 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                       .add(StartNavigationEvent());
                                 }
                               } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Please select a destination from the suggestions or map',
-                                    ),
-                                  ),
-                                );
+                                // ScaffoldMessenger.of(context).showSnackBar(
+                                //   const SnackBar(
+                                //     content: Text(
+                                //       'Please select a destination from the suggestions or map',
+                                //     ),
+                                //   ),
+                                // );
                               }
                             },
                       style: ElevatedButton.styleFrom(

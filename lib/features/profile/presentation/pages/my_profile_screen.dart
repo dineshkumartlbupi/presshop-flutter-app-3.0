@@ -1451,7 +1451,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       return placeMarkList;
     } on Exception catch (e) {
       debugPrint("PEx: $e");
-      showSnackBar("Exception", e.toString(), Colors.red);
+//       showSnackBar("Exception", e.toString(), Colors.red);
     }
     return [];
   }

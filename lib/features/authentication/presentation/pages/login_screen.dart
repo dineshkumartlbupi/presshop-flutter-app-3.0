@@ -595,11 +595,11 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
       debugPrint("❌ Google Login Error: $e");
       debugPrintStack(stackTrace: s);
 
-      showSnackBar(
-        "Google Sign-In Failed",
-        e.toString(),
-        Colors.red,
-      );
+      // showSnackBar(
+      //   "Google Sign-In Failed",
+      //   e.toString(),
+      //   Colors.red,
+      // );
     }
   }
 
@@ -699,11 +699,11 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
         return;
       } else {
         debugPrint("Apple Sign-In failed: ${e.code} - ${e.message}");
-        showSnackBar(
-          "Sign in with Apple failed",
-          "Please try again or use another method.",
-          Colors.red,
-        );
+        // showSnackBar(
+        //   "Sign in with Apple failed",
+        //   "Please try again or use another method.",
+        //   Colors.red,
+        // );
       }
     } catch (e) {
       debugPrint("❌ Apple Sign-In Error: $e");
@@ -724,11 +724,11 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
               photoUrl: "",
             ));
       } else {
-        showSnackBar(
-          "Apple Sign-In Failed",
-          "We couldn’t complete your sign-in. Please try again.",
-          Colors.red,
-        );
+        // showSnackBar(
+        //   "Apple Sign-In Failed",
+        //   "We couldn’t complete your sign-in. Please try again.",
+        //   Colors.red,
+        // );
       }
     }
   }

@@ -16,7 +16,7 @@ class AvatarBottomSheet {
       context: context,
       isScrollControlled: true,
       builder: (context) {
-        Widget buildContent() {
+        Widget buildContent(bool isLoading) {
           return StatefulBuilder(
             builder: (context, setState) {
               return Container(
@@ -58,92 +58,100 @@ class AvatarBottomSheet {
                       child: SingleChildScrollView(
                         child: Padding(
                           padding: const EdgeInsets.all(4.0),
-                          child: avatarList.isEmpty
-                              ? const SizedBox.shrink()
-                              : StaggeredGrid.count(
-                                  crossAxisCount: 6,
-                                  mainAxisSpacing: 3.0,
-                                  crossAxisSpacing: 4.0,
-                                  axisDirection: AxisDirection.down,
-                                  children: avatarList.map<Widget>((item) {
-                                    return InkWell(
-                                      onTap: () {
-                                        // Deselect previously selected avatar
-                                        int pos = avatarList.indexWhere(
-                                          (element) => element.selected,
-                                        );
-                                        if (pos >= 0) {
-                                          avatarList[pos].selected = false;
-                                        }
+                          child: isLoading
+                              ? Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical:
+                                          size.height * AppDimensions.numD05),
+                                  child: showAnimatedLoader(size),
+                                )
+                              : avatarList.isEmpty
+                                  ? const SizedBox.shrink()
+                                  : StaggeredGrid.count(
+                                      crossAxisCount: 6,
+                                      mainAxisSpacing: 3.0,
+                                      crossAxisSpacing: 4.0,
+                                      axisDirection: AxisDirection.down,
+                                      children: avatarList.map<Widget>((item) {
+                                        return InkWell(
+                                          onTap: () {
+                                            // Deselect previously selected avatar
+                                            int pos = avatarList.indexWhere(
+                                              (element) => element.selected,
+                                            );
+                                            if (pos >= 0) {
+                                              avatarList[pos].selected = false;
+                                            }
 
-                                        // Select new avatar
-                                        item.selected = true;
-                                        setState(() {});
+                                            // Select new avatar
+                                            item.selected = true;
+                                            setState(() {});
 
-                                        // Callback with selected avatar
-                                        onAvatarSelected(item);
+                                            // Callback with selected avatar
+                                            onAvatarSelected(item);
 
-                                        // Close bottom sheet
-                                        context.pop();
-                                      },
-                                      child: Stack(
-                                        children: [
-                                          // Avatar image with shimmer loading
-                                          Image.network(
-                                            item.avatar,
-                                            errorBuilder: (context, exception,
-                                                stackTrace) {
-                                              debugPrint(
-                                                  "Error loading avatar from URL: ${item.avatar} \nError: $exception");
-                                              return Image.asset(
-                                                "${CommonAssets.commonImagePath}rabbitLogo.png",
-                                                fit: BoxFit.contain,
-                                                width: size.width *
-                                                    AppDimensions.numD20,
-                                                height: size.width *
-                                                    AppDimensions.numD20,
-                                              );
-                                            },
-                                            loadingBuilder: (context, child,
-                                                loadingProgress) {
-                                              if (loadingProgress == null) {
-                                                return child;
-                                              }
-                                              return Shimmer.fromColors(
-                                                baseColor: Colors.grey[300]!,
-                                                highlightColor:
-                                                    Colors.grey[100]!,
-                                                child: Container(
-                                                  width: size.width *
-                                                      AppDimensions.numD20,
-                                                  height: size.width *
-                                                      AppDimensions.numD20,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
+                                            // Close bottom sheet
+                                            context.pop();
+                                          },
+                                          child: Stack(
+                                            children: [
+                                              // Avatar image with shimmer loading
+                                              Image.network(
+                                                item.avatar,
+                                                errorBuilder: (context,
+                                                    exception, stackTrace) {
+                                                  debugPrint(
+                                                      "Error loading avatar from URL: ${item.avatar} \nError: $exception");
+                                                  return Image.asset(
+                                                    "${CommonAssets.commonImagePath}rabbitLogo.png",
+                                                    fit: BoxFit.contain,
+                                                    width: size.width *
+                                                        AppDimensions.numD20,
+                                                    height: size.width *
+                                                        AppDimensions.numD20,
+                                                  );
+                                                },
+                                                loadingBuilder: (context, child,
+                                                    loadingProgress) {
+                                                  if (loadingProgress == null) {
+                                                    return child;
+                                                  }
+                                                  return Shimmer.fromColors(
+                                                    baseColor:
+                                                        Colors.grey[300]!,
+                                                    highlightColor:
+                                                        Colors.grey[100]!,
+                                                    child: Container(
+                                                      width: size.width *
+                                                          AppDimensions.numD20,
+                                                      height: size.width *
+                                                          AppDimensions.numD20,
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                8),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                              // Selection indicator
+                                              if (item.selected)
+                                                Align(
+                                                  alignment: Alignment.topRight,
+                                                  child: Icon(
+                                                    Icons.check,
+                                                    color: Colors.black,
+                                                    size: size.width *
+                                                        AppDimensions.numD06,
                                                   ),
                                                 ),
-                                              );
-                                            },
+                                            ],
                                           ),
-                                          // Selection indicator
-                                          if (item.selected)
-                                            Align(
-                                              alignment: Alignment.topRight,
-                                              child: Icon(
-                                                Icons.check,
-                                                color: Colors.black,
-                                                size: size.width *
-                                                    AppDimensions.numD06,
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
+                                        );
+                                      }).toList(),
+                                    ),
                         ),
                       ),
                     ),
@@ -157,11 +165,11 @@ class AvatarBottomSheet {
         if (notifier != null) {
           return ValueListenableBuilder<bool>(
             valueListenable: notifier,
-            builder: (context, value, child) => buildContent(),
+            builder: (context, value, child) => buildContent(value),
           );
         }
 
-        return buildContent();
+        return buildContent(false);
       },
     );
   }

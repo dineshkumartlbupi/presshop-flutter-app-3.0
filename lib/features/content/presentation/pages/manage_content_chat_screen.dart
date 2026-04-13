@@ -290,7 +290,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
           }
         } else if (state.errorMessage != null) {
           isDataLoaded = true;
-          showSnackBar("Error", state.errorMessage!, Colors.red);
+//           showSnackBar("Error", state.errorMessage!, Colors.red);
         }
 
         setState(() {});
@@ -1120,7 +1120,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                                       });
                                                                                       setState(() {});
                                                                                     } else {
+/*
                                                                                       showSnackBar("Required *", "Please enter some review for mediahouse", Colors.red);
+                                                                                      */
                                                                                     }
                                                                                   }
                                                                                 : () {

@@ -1074,34 +1074,38 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   Set<Marker> _appendMeMarker(Set<Marker> markers, {Marker? forceMarker}) {
-    // 1. Find the "Me" marker in the new set, or the provided forced marker
-    Marker me = forceMarker ??
-        markers.firstWhere(
-          (m) => m.markerId.value == 'my_custom_location',
-          orElse: () => state.markers.firstWhere(
-            (m) => m.markerId.value == 'my_custom_location',
-            orElse: () {
-              if (state.myLocation != null && _meMarkerIcon != null) {
-                return Marker(
-                  markerId: const MarkerId('my_custom_location'),
-                  position: state.myLocation!,
-                  icon: _meMarkerIcon!,
-                  anchor: const Offset(0.5, 0.5),
-                  zIndex: 1000,
-                );
-              }
-              return const Marker(markerId: MarkerId('none'), visible: false);
-            },
-          ),
-        );
-
-    // 2. Remove any existing "my_custom_location" markers to avoid duplicates
+    // 1. Remove any existing "Me" marker to ensure we don't have duplicates with same ID but different fields
     final filtered =
         markers.where((m) => m.markerId.value != 'my_custom_location').toSet();
 
-    // 3. Add the "Me" marker back if it's valid
-    if (me.markerId.value != 'none') {
-      filtered.add(me);
+    // 2. If we have a forced marker, use it
+    if (forceMarker != null) {
+      filtered.add(forceMarker);
+      return filtered;
+    }
+
+    // 3. Look for it in the current state
+    final stateMe = state.markers.firstWhere(
+      (m) => m.markerId.value == 'my_custom_location',
+      orElse: () => const Marker(markerId: MarkerId('none'), visible: false),
+    );
+
+    if (stateMe.markerId.value != 'none') {
+      filtered.add(stateMe);
+      return filtered;
+    }
+
+    // 4. Fallback: create it if we have location and icon
+    if (state.myLocation != null && _meMarkerIcon != null) {
+      final newMe = Marker(
+        markerId: const MarkerId('my_custom_location'),
+        position: state.myLocation!,
+        icon: _meMarkerIcon!,
+        anchor: const Offset(0.5, 0.5),
+        zIndex: 1000,
+      );
+      filtered.add(newMe);
+      return filtered;
     }
 
     return filtered;

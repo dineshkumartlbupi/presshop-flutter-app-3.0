@@ -1588,10 +1588,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         .isAtSameMomentAs(parseFromDate)) {
                                   item.toDate = pickedDate;
                                 } else {
-                                  showSnackBar(
-                                      "Date Error",
-                                      "Please select to date above from date",
-                                      Colors.red);
+                                  // showSnackBar(
+                                  //     "Date Error",
+                                  //     "Please select to date above from date",
+                                  //     Colors.red);
                                 }
                               }
 

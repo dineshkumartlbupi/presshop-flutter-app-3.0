@@ -155,6 +155,7 @@ class _SocialSignUpState extends State<SocialSignUp>
       child: BlocConsumer<SignUpBloc, SignUpState>(
         listener: (context, state) {
           if (state is SignUpError) {
+            _avatarsNotifier.value = false;
             debugPrint("❌ SocialSignUp Error: ${state.message}");
             commonErrorDialogDialog(
                 MediaQuery.of(context).size, state.message, "", () {
@@ -163,6 +164,8 @@ class _SocialSignUpState extends State<SocialSignUp>
           } else if (state is SignUpSuccess) {
             debugPrint("✅ SocialSignUp Success: ${state.user}");
             _handleLoginSuccess(state.user);
+          } else if (state is AvatarsLoading) {
+            _avatarsNotifier.value = true;
           } else if (state is AvatarsLoaded) {
             if (state.avatars.isNotEmpty) {}
             avatarList = state.avatars
@@ -170,7 +173,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                     AvatarData.fromJson({'_id': e.id, 'avatar': e.avatar}))
                 .toList();
 
-            _avatarsNotifier.value = !_avatarsNotifier.value;
+            _avatarsNotifier.value = false;
           } else if (state is UserNameCheckResult) {
             userNameAlreadyExists = !state.isAvailable;
             setState(() {});
@@ -668,20 +671,20 @@ class _SocialSignUpState extends State<SocialSignUp>
                                             AppColorTheme.colorThemePink), () {
                                       if (formKey.currentState!.validate()) {
                                         if (!isSelectCheck) {
-                                          showSnackBar(
-                                              "Error",
-                                              AppStrings.enableNotificationText,
-                                              Colors.red);
+                                          // showSnackBar(
+                                          //     "Error",
+                                          //     AppStrings.enableNotificationText,
+                                          //     Colors.red);
                                         } else if (!termConditionsChecked) {
-                                          showSnackBar(
-                                              "Privacy Policy",
-                                              "Please accept our T&Cs and Privacy Policy",
-                                              Colors.red);
+                                          // showSnackBar(
+                                          //     "Privacy Policy",
+                                          //     "Please accept our T&Cs and Privacy Policy",
+                                          //     Colors.red);
                                         } else if (selectedAvatar.isEmpty) {
-                                          showSnackBar(
-                                              "Avatar",
-                                              "Please select an Avatar",
-                                              Colors.red);
+                                          // showSnackBar(
+                                          //     "Avatar",
+                                          //     "Please select an Avatar",
+                                          //     Colors.red);
                                         } else {
                                           Map<String, dynamic> params = {};
                                           params[SharedPreferencesKeys

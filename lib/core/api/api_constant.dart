@@ -25,8 +25,11 @@ class Config {
   // String get socketUrl2 =>
   //     "wss://lelia-anthracitic-ecclesiologically.ngrok-free.dev";
 
-  String get baseUrl =>
-      "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
+// curl -X POST http://18.130.179.54:8100/api/auth/login \
+// -H "Content-Type: application/json" \
+// -d '{"userNameOrPhone": "test@gmail.com", "password": "Test@123"}'
+
+  String get baseUrl => "http://13.40.180.160:8100/api/";
 
   String get socketUrl2 => "wss://funnellike-subangular-sulema.ngrok-free.dev";
 

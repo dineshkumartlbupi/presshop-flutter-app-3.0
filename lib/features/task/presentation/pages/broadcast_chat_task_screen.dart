@@ -302,7 +302,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                 );
           }
         } else if (state.errorMessage != null) {
-          showSnackBar("Error", state.errorMessage!, Colors.red);
+          // showSnackBar("Error", state.errorMessage!, Colors.red);
         }
       },
       builder: (context, state) {
@@ -534,11 +534,13 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
         }
       });
     } else {
+/*
       showSnackBar(
         "Required *",
         "Please enter some review for mediahouse",
         Colors.red,
       );
+      */
     }
   }
 
