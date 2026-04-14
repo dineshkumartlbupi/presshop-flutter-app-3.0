@@ -24,6 +24,7 @@ abstract class MapRemoteDataSource {
   });
   Future<void> reportIncident(Map<String, dynamic> data);
   Future<String> getAddressFromCoordinates(LatLng position);
+  Future<void> incrementIncidentView(String incidentId);
 }
 
 class MapRemoteDataSourceImpl implements MapRemoteDataSource {
@@ -217,5 +218,17 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
       }
     }
     return "${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}";
+  }
+
+  @override
+  Future<void> incrementIncidentView(String incidentId) async {
+    try {
+      await apiClient.post(
+        ApiConstantsNew.chat.updateAlertView,
+        data: {"incidentId": incidentId},
+      );
+    } catch (e) {
+      debugPrint("Failed to increment incident view: $e");
+    }
   }
 }

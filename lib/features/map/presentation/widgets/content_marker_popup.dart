@@ -29,7 +29,7 @@ class ContentMarkerPopup extends StatelessWidget {
               scale: value,
               alignment: Alignment.bottomCenter,
               child: Opacity(
-                opacity: value,
+                opacity: value.clamp(0.0, 1.0),
                 child: child,
               ),
             );

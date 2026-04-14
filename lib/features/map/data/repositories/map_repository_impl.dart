@@ -97,4 +97,14 @@ class MapRepositoryImpl implements MapRepository {
       return Left(ServerFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> incrementIncidentView(String incidentId) async {
+    try {
+      await remoteDataSource.incrementIncidentView(incidentId);
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
 }

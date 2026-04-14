@@ -72,4 +72,8 @@ class IncidentSocketDataSource {
     _client.off(SocketEvents.incidentUpdated);
     _client.off(SocketEvents.incidentCreated);
   }
+
+  void emitIncidentView({required String incidentId}) {
+    _client.emit('incident:view', {"incidentId": incidentId});
+  }
 }

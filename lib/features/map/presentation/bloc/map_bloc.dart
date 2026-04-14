@@ -604,6 +604,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                   image: news.mediaUrl,
                   description: news.description,
                   title: news.title,
+                  avatar: news.userImage,
+                  username: news.userName,
                   mediaType: news.mediaType);
             }).toList();
 
@@ -846,6 +848,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       clearSelectedPolygonId: true,
       clearSelectedPolygonPosition: true,
     ));
+
+    // Increment View through both Socket and REST
+    repository.incrementIncidentView(event.incident.id);
+    incidentSocketDataSource.emitIncidentView(incidentId: event.incident.id);
   }
 
   Future<void> _onSetMapSelectedLocation(

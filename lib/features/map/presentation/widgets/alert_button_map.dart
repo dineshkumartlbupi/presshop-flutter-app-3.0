@@ -9,55 +9,46 @@ class AlertButtonMap extends StatelessWidget {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Container(
-      padding: EdgeInsets.only(right: size.width * AppDimensions.numD04),
+      padding: EdgeInsets.symmetric(
+          horizontal: size.width * AppDimensions.numD016,
+          vertical: size.width * AppDimensions.numD01),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xffEC4E54),
         borderRadius: BorderRadius.all(
             Radius.circular(size.width * AppDimensions.numD53)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: size.width * AppDimensions.numD01,
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: size.width * AppDimensions.numD02,
             offset: Offset(0.0, size.width * AppDimensions.numD005),
           ),
         ],
       ),
       child: Row(
-        spacing: size.width * AppDimensions.numD026,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            margin: EdgeInsets.only(
-              left: size.width * AppDimensions.numD016,
-              top: size.width * AppDimensions.numD016,
-              bottom: size.width * AppDimensions.numD016,
-            ),
-            padding: EdgeInsets.all(size.width * AppDimensions.numD024),
-            decoration: BoxDecoration(
-              color: Color(0xffEC4E54),
-              borderRadius:
-                  BorderRadius.circular(size.width * AppDimensions.numD26),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: size.width * AppDimensions.numD01,
-                  offset: Offset(0.0, size.width * AppDimensions.numD005),
-                ),
-              ],
+            padding: EdgeInsets.all(size.width * AppDimensions.numD018),
+            decoration: const BoxDecoration(
+              color: Colors.white24,
+              shape: BoxShape.circle,
             ),
             child: Icon(
               LucideIcons.triangle_alert,
               color: Colors.white,
-              size: size.width * AppDimensions.numD042,
+              size: size.width * AppDimensions.numD04,
             ),
           ),
+          SizedBox(width: size.width * AppDimensions.numD02),
           Text(
             "Share Alerts",
             style: TextStyle(
-              color: Colors.black87,
-              fontSize: size.width * AppDimensions.numD032,
-              fontWeight: FontWeight.w500,
+              color: Colors.white,
+              fontSize: size.width * AppDimensions.numD035,
+              fontWeight: FontWeight.bold,
             ),
           ),
+          SizedBox(width: size.width * AppDimensions.numD02),
         ],
       ),
     );

@@ -19,4 +19,5 @@ abstract class MapRepository {
   });
   Future<Either<Failure, void>> reportIncident(Map<String, dynamic> data);
   Future<Either<Failure, String>> getAddressFromCoordinates(LatLng position);
+  Future<Either<Failure, void>> incrementIncidentView(String incidentId);
 }

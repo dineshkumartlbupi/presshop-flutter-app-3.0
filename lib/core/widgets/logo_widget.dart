@@ -10,8 +10,8 @@ class LogoWidget {
   static Widget buildLogo(Size size) {
     return Image.asset(
       "${commonImagePath}rabbitLogo.png",
-      height: size.width * AppDimensions.numD10,
-      width: size.width * AppDimensions.numD10,
+      height: size.width * AppDimensions.numD15,
+      width: size.width * AppDimensions.numD15,
     );
   }
 }

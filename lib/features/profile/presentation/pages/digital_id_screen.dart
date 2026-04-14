@@ -15,6 +15,9 @@ import '../../presentation/bloc/profile_event.dart';
 import '../../presentation/bloc/profile_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import '../../domain/entities/profile_data.dart';
+import 'package:presshop/core/widgets/common/avatar_bottom_sheet.dart';
+import 'dart:convert';
+import 'package:presshop/core/api/api_client.dart';
 
 class DigitalIdScreen extends StatefulWidget {
   const DigitalIdScreen({super.key});
@@ -28,6 +31,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   String userImage = "";
   String userName = "";
   String fullName = "";
+  List<AvatarData> avatarList = [];
+  ValueNotifier<bool> avatarLoaderNotifier = ValueNotifier(false);
 
   // File? _imageFile;
   final ImagePicker _picker = ImagePicker();
@@ -46,11 +51,46 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
             "Hopper";
     // Setup initial image from prefs if available
     String sessionAvatar =
-        sharedPreferences!.getString(SharedPreferencesKeys.profileImageKey) ??
+        sharedPreferences!.getString(SharedPreferencesKeys.avatarKey) ??
+            sharedPreferences!.getString(SharedPreferencesKeys.profileImageKey) ??
             "";
     if (sessionAvatar.isNotEmpty) {
       userImage = sessionAvatar;
     }
+    getAvatarsApi();
+  }
+
+  Future<void> getAvatarsApi() async {
+    avatarLoaderNotifier.value = true;
+    try {
+      final response = await sl<ApiClient>()
+          .get(ApiConstantsNew.profile.getAvatars, showLoader: false);
+      if (response.statusCode == 200) {
+        var map = response.data;
+        if (map is String) map = jsonDecode(map);
+        var list = map["data"] as List;
+        avatarList = list.map((e) => AvatarData.fromJson(e)).toList();
+        debugPrint("AvatarList in DigitalID: ${avatarList.length}");
+      }
+    } catch (e) {
+      debugPrint("Error fetching avatars in DigitalID: $e");
+    } finally {
+      avatarLoaderNotifier.value = false;
+    }
+  }
+
+  void avatarBottomSheet(Size size) {
+    AvatarBottomSheet.show(
+      context: context,
+      size: size,
+      avatarList: avatarList,
+      notifier: avatarLoaderNotifier,
+      onAvatarSelected: (avatar) {
+        context
+            .read<ProfileBloc>()
+            .add(UpdateProfileEvent({SharedPreferencesKeys.avatarIdKey: avatar.id}));
+      },
+    );
   }
 
   void _showImagePicker(BuildContext context) {
@@ -342,7 +382,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                     right: size.width * AppDimensions.numD02,
                                     bottom: size.width * AppDimensions.numD02,
                                     child: InkWell(
-                                      onTap: () => _showImagePicker(context),
+                                      onTap: () => avatarBottomSheet(size),
                                       child: Container(
                                         padding:
                                             EdgeInsets.all(size.width * 0.007),
@@ -370,6 +410,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                       ),
                                     ),
                                   ),
+
                                 ],
                               ),
                             ),
@@ -648,13 +689,15 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
             .setString(SharedPreferencesKeys.lastNameKey, lastName);
       }
 
-      if (profile.profileImage.isNotEmpty) {
-        if (profile.profileImage.startsWith("http")) {
-          userImage = fixS3Url(profile.profileImage);
-        } else {
-          userImage = fixS3Url(profile.profileImage);
-        }
+      if (profile.avatar.isNotEmpty) {
+        userImage = fixS3Url(profile.avatar);
         sharedPreferences!
+            .setString(SharedPreferencesKeys.avatarKey, userImage);
+        sharedPreferences!
+            .setString(SharedPreferencesKeys.avatarIdKey, profile.avatar);
+      } else if (profile.profileImage.isNotEmpty) {
+        userImage = fixS3Url(profile.profileImage);
+         sharedPreferences!
             .setString(SharedPreferencesKeys.profileImageKey, userImage);
       }
     });
@@ -662,11 +705,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
 
   void _updateUserImage(String imageUrl) {
     setState(() {
-      if (imageUrl.startsWith("http")) {
-        userImage = fixS3Url(imageUrl);
-      } else {
-        userImage = fixS3Url(imageUrl);
-      }
+      userImage = fixS3Url(imageUrl);
       sharedPreferences!
           .setString(SharedPreferencesKeys.profileImageKey, userImage);
     });

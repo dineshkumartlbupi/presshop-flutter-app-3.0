@@ -92,6 +92,8 @@ Widget commonRefresherFooter(BuildContext context, LoadStatus? mode) {
     body = const Text("Load Failed!Click retry!");
   } else if (mode == LoadStatus.canLoading) {
     body = const Text("release to load more");
+  } else if (mode == LoadStatus.noMore) {
+    body = const Text("No item available");
   } else {
     body = const Text("");
   }

@@ -1216,6 +1216,19 @@ class _MapPageContentState extends State<_MapPageContent>
                     onZoomOut: _zoomOut,
                   ),
                 ),
+                
+                // Dimmer and tap-to-close for AlertPanel
+                if (state.showAlertPanel)
+                  Positioned.fill(
+                    child: GestureDetector(
+                      onTap: () {
+                        context.read<MapBloc>().add(ToggleAlertPanelEvent());
+                      },
+                      child: Container(
+                        color: Colors.black.withOpacity(0.05), // Subtle dim
+                      ),
+                    ),
+                  ),
                 Positioned(
                   bottom: 56,
                   left: 0,

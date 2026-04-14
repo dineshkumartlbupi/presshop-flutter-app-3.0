@@ -100,10 +100,10 @@ final Map<String, String> burstIcons = {
   //
   "gun": "assets/markers/bg-removed/bg-removed-vandalism.png",
   "protest": "assets/markers/bg-removed/bg-removed-protest.png",
-  "knife": "assets/markers/bg-removed/bg-removed-public_safety_alert.png",
+  "knife": "assets/markers/bg-removed/bg-removed-vandalism.png",
   "fight": "assets/markers/bg-removed/bg-removed-fight.png",
   //
-  "content": "assets/markers/bg-removed/bg-removed-content.png",
+  "content": "assets/markers/bg-removed/bg-removed-crash.png",
   "police": "assets/markers/bg-removed/bg-removed-police.png",
   "floods": "assets/markers/bg-removed/bg-removed-flood.png",
   "storm": "assets/markers/bg-removed/bg-removed-storm.png",
@@ -113,6 +113,7 @@ final Map<String, String> burstIcons = {
 };
 
 const List<String> alertTypeFilter = [
+  'Latest',
   'Alert',
   'Accident',
   'Crash',

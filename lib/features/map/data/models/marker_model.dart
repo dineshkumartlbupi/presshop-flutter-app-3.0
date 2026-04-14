@@ -33,6 +33,8 @@ class Incident {
     this.temperature,
     this.wind,
     this.heading,
+    this.avatar,
+    this.username,
   });
 
   factory Incident.fromMap(Map<String, dynamic> map) {
@@ -69,6 +71,8 @@ class Incident {
       temperature: map['temperature'],
       wind: map['wind'],
       heading: map['heading'],
+      avatar: map['avatar'],
+      username: map['username'],
     );
   }
 
@@ -119,6 +123,8 @@ class Incident {
       temperature: json['temperature']?.toString(),
       wind: json['wind']?.toString(),
       heading: json['heading']?.toString(),
+      avatar: json['avatar'] ?? json['user_avatar'] ?? json['user_image'],
+      username: json['username'] ?? json['user_name'] ?? json['author_name'] ?? json['author'],
     );
   }
   final String id;
@@ -152,6 +158,8 @@ class Incident {
   final String? temperature;
   final String? wind;
   final String? heading;
+  final String? avatar;
+  final String? username;
 
   Incident copyWith({
     String? id,
@@ -185,6 +193,8 @@ class Incident {
     String? temperature,
     String? wind,
     String? heading,
+    String? avatar,
+    String? username,
   }) {
     return Incident(
       id: id ?? this.id,
@@ -218,6 +228,8 @@ class Incident {
       temperature: temperature ?? this.temperature,
       wind: wind ?? this.wind,
       heading: heading ?? this.heading,
+      avatar: avatar ?? this.avatar,
+      username: username ?? this.username,
     );
   }
 }

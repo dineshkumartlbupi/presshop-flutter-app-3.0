@@ -412,7 +412,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   Widget topProfileWidget() {
     return Container(
-      height: size.width * AppDimensions.numD35,
+      padding: EdgeInsets.all(size.width * AppDimensions.numD04),
       decoration: BoxDecoration(
           color: Colors.black,
           borderRadius:
@@ -420,150 +420,137 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       child: Row(
         children: [
           Stack(
-            fit: StackFit.loose,
             children: [
               ClipRRect(
-                  borderRadius: BorderRadius.only(
-                      topLeft:
-                          Radius.circular(size.width * AppDimensions.numD04),
-                      bottomLeft:
-                          Radius.circular(size.width * AppDimensions.numD04)),
-                  child: CachedNetworkImage(
-                    imageUrl:
-                        myProfileData != null ? myProfileData!.avatarImage : "",
-                    placeholder: (context, url) => Center(
-                      child: Padding(
-                        padding:
-                            EdgeInsets.all(size.width * AppDimensions.numD04),
-                        child: Image.asset(
-                          "${commonImagePath}rabbitLogo.png",
-                          fit: BoxFit.contain,
-                          width: size.width * AppDimensions.numD35,
-                          height: size.width * AppDimensions.numD35,
-                        ),
+                borderRadius:
+                    BorderRadius.circular(size.width * AppDimensions.numD04),
+                child: CachedNetworkImage(
+                  imageUrl:
+                      myProfileData != null ? myProfileData!.avatarImage : "",
+                  placeholder: (context, url) => Center(
+                    child: Padding(
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD04),
+                      child: Image.asset(
+                        "${commonImagePath}rabbitLogo.png",
+                        fit: BoxFit.contain,
+                        width: size.width * AppDimensions.numD20,
+                        height: size.width * AppDimensions.numD20,
                       ),
                     ),
-                    errorWidget: (context, url, error) {
-                      debugPrint(
-                          "Error loading profile avatar from URL: $url \nError: $error");
-                      return Padding(
-                        padding:
-                            EdgeInsets.all(size.width * AppDimensions.numD04),
-                        child: Image.asset(
-                          "${commonImagePath}rabbitLogo.png",
-                          fit: BoxFit.contain,
-                          width: size.width * AppDimensions.numD35,
-                          height: size.width * AppDimensions.numD35,
-                        ),
-                      );
-                    },
-                    fit: BoxFit.cover,
-                    width: size.width * AppDimensions.numD37,
-                    height: size.width * AppDimensions.numD35,
-                  )),
+                  ),
+                  errorWidget: (context, url, error) {
+                    debugPrint(
+                        "Error loading profile avatar from URL: $url \nError: $error");
+                    return Padding(
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD04),
+                      child: Image.asset(
+                        "${commonImagePath}rabbitLogo.png",
+                        fit: BoxFit.contain,
+                        width: size.width * AppDimensions.numD20,
+                        height: size.width * AppDimensions.numD20,
+                      ),
+                    );
+                  },
+                  fit: BoxFit.cover,
+                  width: size.width * AppDimensions.numD25,
+                  height: size.width * AppDimensions.numD25,
+                ),
+              ),
               if (isSilentLoading)
                 Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(
-                              size.width * AppDimensions.numD04),
-                          bottomLeft: Radius.circular(
-                              size.width * AppDimensions.numD04)),
+                      color: Colors.black26,
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD04),
                     ),
                     child: Center(
                       child: Lottie.asset(
                         "assets/lottieFiles/loader_new.json",
-                        height: size.width * 0.15,
-                        width: size.width * 0.15,
+                        height: size.width * 0.1,
+                        width: size.width * 0.1,
                       ),
                     ),
                   ),
                 ),
-              widget.editProfileScreen
-                  ? Positioned(
-                      bottom: size.width * AppDimensions.numD01,
-                      right: size.width * AppDimensions.numD01,
-                      child: InkWell(
-                        onTap: () {
-                          avatarBottomSheet(size);
-                        },
-                        child: Container(
+              if (widget.editProfileScreen)
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: InkWell(
+                    onTap: () {
+                      avatarBottomSheet(size);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(size.width * 0.005),
+                      decoration: const BoxDecoration(
+                          color: Colors.white, shape: BoxShape.circle),
+                      child: Container(
                           padding: EdgeInsets.all(size.width * 0.005),
                           decoration: const BoxDecoration(
-                              color: Colors.white, shape: BoxShape.circle),
-                          child: Container(
-                              padding: EdgeInsets.all(size.width * 0.005),
-                              decoration: const BoxDecoration(
-                                  color: AppColorTheme.colorThemePink,
-                                  shape: BoxShape.circle),
-                              child: Icon(
-                                Icons.edit_outlined,
-                                color: Colors.white,
-                                size: size.width * AppDimensions.numD04,
-                              )),
-                        ),
-                      ),
-                    )
-                  : Container()
+                              color: AppColorTheme.colorThemePink,
+                              shape: BoxShape.circle),
+                          child: Icon(
+                            Icons.edit_outlined,
+                            color: Colors.white,
+                            size: size.width * AppDimensions.numD04,
+                          )),
+                    ),
+                  ),
+                )
             ],
           ),
           SizedBox(
             width: size.width * AppDimensions.numD04,
           ),
           Expanded(
-              child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: size.width * AppDimensions.numD02),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                      myProfileData != null
-                          ? myProfileData!.userName.toCapitalized()
-                          : "",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD04,
-                          color: AppColorTheme.colorThemePink,
-                          fontWeight: FontWeight.w500)),
-                  SizedBox(
-                    height: size.width * AppDimensions.numD01,
-                  ),
-                  Text(
-                      "${AppStrings.joinedText} - ${myProfileData != null ? myProfileData!.joinedDate : ""}",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.white,
-                          fontWeight: FontWeight.normal)),
-                  SizedBox(
-                    height: size.width * AppDimensions.numD005,
-                  ),
-                  Text(
-                      "${AppStrings.earningsText} - $currencySymbol${myProfileData != null ? formatDouble(double.parse(myProfileData!.totalIncome)) : "0"}",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.white,
-                          fontWeight: FontWeight.normal)),
-                  SizedBox(
-                    height: size.width * AppDimensions.numD005,
-                  ),
-                  Text(_getCurrentAddress(),
-                      maxLines: 10,
-                      overflow: TextOverflow.ellipsis,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.white,
-                          fontWeight: FontWeight.normal))
-                ],
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                  myProfileData != null
+                      ? myProfileData!.userName.toCapitalized()
+                      : "",
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * AppDimensions.numD045,
+                      color: AppColorTheme.colorThemePink,
+                      fontWeight: FontWeight.w600)),
+              SizedBox(
+                height: size.width * AppDimensions.numD01,
               ),
-            ),
+              Text(
+                  "${AppStrings.joinedText} - ${myProfileData != null ? myProfileData!.joinedDate : ""}",
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * AppDimensions.numD035,
+                      color: Colors.white70,
+                      fontWeight: FontWeight.normal)),
+              SizedBox(
+                height: size.width * AppDimensions.numD005,
+              ),
+              Text(
+                  "${AppStrings.earningsText} - $currencySymbol${myProfileData != null ? formatDouble(double.parse(myProfileData!.totalIncome)) : "0"}",
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * AppDimensions.numD035,
+                      color: Colors.white70,
+                      fontWeight: FontWeight.normal)),
+              SizedBox(
+                height: size.width * AppDimensions.numD01,
+              ),
+              Text(_getCurrentAddress(),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * AppDimensions.numD03,
+                      color: Colors.white70,
+                      fontWeight: FontWeight.normal))
+            ],
           ))
         ],
       ),

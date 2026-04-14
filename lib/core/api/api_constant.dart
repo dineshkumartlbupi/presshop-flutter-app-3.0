@@ -29,7 +29,7 @@ class Config {
 // -H "Content-Type: application/json" \
 // -d '{"userNameOrPhone": "test@gmail.com", "password": "Test@123"}'
 
-  String get baseUrl => "http://13.40.180.160:8100/api/";
+  String get baseUrl => "http://18.170.92.207:8100/api/";
 
   String get socketUrl2 => "wss://funnellike-subangular-sulema.ngrok-free.dev";
 
@@ -196,6 +196,7 @@ class Chat {
   final String sendChatMessage = "hopper/send/chat/message";
   final String allAlerts = "hopper/getHopperAlertList?";
   final String getAlertIncidents = "hopper/getAlertIncidents";
+  final String updateAlertView = "hopper/updateAlertView";
 }
 
 class Misc {

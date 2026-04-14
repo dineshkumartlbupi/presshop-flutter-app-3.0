@@ -70,11 +70,11 @@ class Dashboard extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return DashboardState();
+    return DashboardPageState();
   }
 }
 
-class DashboardState extends State<Dashboard>
+class DashboardPageState extends State<Dashboard>
     with
         AnalyticsPageMixin,
         WidgetsBindingObserver,
@@ -159,22 +159,6 @@ class DashboardState extends State<Dashboard>
 
     _loadedIndices.add(widget.initialPosition); // Only load the starting tab
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Only trigger APIs for the actively visible starting tab
-      if (widget.initialPosition == 0) {
-        context
-            .read<ContentBloc>()
-            .add(const FetchMyContentEvent(type: 'all', page: 1, limit: 10));
-        context
-            .read<ContentBloc>()
-            .add(const FetchMyContentEvent(type: 'my', page: 1, limit: 10));
-      } else if (widget.initialPosition == 1) {
-        context.read<TaskBloc>().add(const FetchAllTasksEvent(offset: 0));
-        context.read<TaskBloc>().add(const FetchLocalTasksEvent());
-      }
-      // Map and Camera will initialize themselves when their tabs are first visited
-    });
-
     if (widget.taskStatus != 'rejected') {
       if (widget.broadCastId != null) {
         _dashboardBloc.add(FetchTaskDetailEvent(widget.broadCastId!));
@@ -223,7 +207,7 @@ class DashboardState extends State<Dashboard>
     } else {
       _dashboardBloc.add(DashboardCheckStudentBeansEvent());
     }
-    initDeepLinks(sl<AppLinks>());
+    initializeDeepLinks(sl<AppLinks>());
     super.initState();
   }
 
@@ -678,27 +662,6 @@ class DashboardState extends State<Dashboard>
       _cameraKey.currentState?.resumeCamera();
     }
 
-    // Trigger data fetch on FIRST visit to a tab
-    final isFirstVisit = !_loadedIndices.contains(index);
-    if (isFirstVisit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        if (index == 0) {
-          context
-              .read<ContentBloc>()
-              .add(const FetchMyContentEvent(type: 'all', page: 1, limit: 10));
-          context
-              .read<ContentBloc>()
-              .add(const FetchMyContentEvent(type: 'my', page: 1, limit: 10));
-        } else if (index == 1) {
-          context.read<TaskBloc>().add(const FetchAllTasksEvent(offset: 0));
-          context.read<TaskBloc>().add(const FetchLocalTasksEvent());
-        } else if (index == 3) {
-          // Map tab: trigger location fetch only on first visit
-          context.read<MapBloc>().add(const GetCurrentLocationEvent());
-        }
-      });
-    }
 
     trackAction(ActionNames.tabSwitch, parameters: {
       'from_tab': currentIndex.toString(),

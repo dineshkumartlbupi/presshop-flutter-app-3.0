@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:lottie/lottie.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,6 +35,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
   List<HashTagData> hashtagSearchList = [];
   List<HashTagData> selectedHashTagList = [];
   bool addNew = false;
+  bool isLoading = false;
   Timer? debounce;
 
   @override
@@ -234,7 +236,16 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                 height: size.width * AppDimensions.numD04,
               ),
               Expanded(
-                  child: ListView.separated(
+                  child: isLoading
+                      ? Center(
+                          child: SizedBox(
+                            width: size.width * AppDimensions.numD30,
+                            height: size.width * AppDimensions.numD30,
+                            child: Lottie.asset(
+                                "assets/lottieFiles/emily_loader.json"),
+                          ),
+                        )
+                      : ListView.separated(
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () {
@@ -365,6 +376,9 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
     }
 
     try {
+      setState(() {
+        isLoading = true;
+      });
       final response = await sl<ApiClient>()
           .get(ApiConstantsNew.content.getTags, queryParameters: params);
 
@@ -389,6 +403,12 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
       }
     } catch (e) {
       debugPrint("$e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -401,6 +421,9 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
       debugPrint("GetHashTagsQueryParams: $params");
     }
 
+    setState(() {
+      isLoading = true;
+    });
     try {
       final response = await sl<ApiClient>()
           .get(ApiConstantsNew.content.getTags, queryParameters: params);
@@ -443,6 +466,12 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
       }
     } catch (e) {
       debugPrint("$e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 

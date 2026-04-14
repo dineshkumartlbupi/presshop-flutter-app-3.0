@@ -369,6 +369,7 @@ class BackgroundLocationService {
   static final FlutterBackgroundService service = FlutterBackgroundService();
   static final ValueNotifier<bool> isRunningNotifier =
       ValueNotifier<bool>(false);
+  static bool _isDialogShowing = false;
 
   static Future<void> syncRunningStatus() async {
     isRunningNotifier.value = await service.isRunning();
@@ -401,6 +402,12 @@ class BackgroundLocationService {
     }
 
     if (showPrePermissionDialog && context != null) {
+      if (_isDialogShowing) {
+        debugPrint("DEBUG: Location dialog already showing, skipping duplicate.");
+        return false;
+      }
+      _isDialogShowing = true;
+
       final size = MediaQuery.of(context).size;
       final confirmed = await showLocationPermissionDialogWithImage(
         context: context,
@@ -411,6 +418,8 @@ class BackgroundLocationService {
         buttonText: dialogButtonText,
         cancelText: dialogCancelText,
       );
+
+      _isDialogShowing = false;
 
       if (confirmed != true) {
         return false; // User cancelled the custom dialog

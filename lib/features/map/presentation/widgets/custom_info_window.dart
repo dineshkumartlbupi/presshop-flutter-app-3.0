@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:presshop/features/map/constants/map_news_constants.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:intl/intl.dart';
@@ -71,6 +72,24 @@ class CustomInfoWindow extends StatelessWidget {
     return "No Date";
   }
 
+  String _formatRelativeTime(String? timeStr) {
+    if (timeStr == null || timeStr.isEmpty) return "some time ago";
+    try {
+      DateTime? parsed = DateTime.tryParse(timeStr);
+      if (parsed == null) return "some time ago";
+      
+      final diff = DateTime.now().difference(parsed);
+      if (diff.inDays > 365) return "${(diff.inDays / 365).floor()} years ago";
+      if (diff.inDays > 30) return "${(diff.inDays / 30).floor()} months ago";
+      if (diff.inDays > 0) return "${diff.inDays} days ago";
+      if (diff.inHours > 0) return "${diff.inHours} hours ago";
+      if (diff.inMinutes > 0) return "${diff.inMinutes} minutes ago";
+      return "just now";
+    } catch (_) {
+      return "some time ago";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -87,7 +106,7 @@ class CustomInfoWindow extends StatelessWidget {
             scale: value,
             alignment: Alignment.bottomCenter,
             child: Opacity(
-              opacity: value,
+              opacity: value.clamp(0.0, 1.0),
               child: child,
             ),
           );
@@ -119,6 +138,53 @@ class CustomInfoWindow extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Poster Info
+                      Row(
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: (incident.avatar != null && incident.avatar!.isNotEmpty)
+                                    ? CachedNetworkImageProvider(incident.avatar!)
+                                    : const AssetImage('assets/markers/avatar.png') as ImageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  incident.username ?? "Anonymous",
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                Text(
+                                  "posted an alert : ${_formatRelativeTime(incident.time)}",
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Divider(height: 1, thickness: 1),
+                      ),
+
                       // Header Row
                       Row(
                         children: [
@@ -126,6 +192,7 @@ class CustomInfoWindow extends StatelessWidget {
                             burstIcons[incident.type] ?? markerIcons[incident.type] ?? markerIcons["nomarker"]!,
                             height: 36,
                             width: 36,
+                            errorBuilder: (context, error, stackTrace) => const Icon(Icons.warning_amber_rounded, size: 36, color: Colors.orange),
                           ),
                           const SizedBox(width: 12),
                           Expanded(

@@ -172,7 +172,72 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                     child: Center(
                         child: CommonWidgetsNew.showAnimatedLoader(size))),
               if (_cachedLeaderboard == null && state is LeaderboardError)
-                Center(child: Text(state.message)),
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        "${commonImagePath}rabbitLogo.png",
+                        height: size.width * 0.2,
+                        width: size.width * 0.2,
+                        color: Colors.grey.withOpacity(0.5),
+                      ),
+                      SizedBox(height: size.width * AppDimensions.numD04),
+                      Text(
+                        "Oops! Failed to load leaderboard",
+                        style: commonTextStyle(
+                          color: Colors.black,
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD045,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: size.width * AppDimensions.numD02),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * AppDimensions.numD10),
+                        child: Text(
+                          "We're having trouble connecting to the server. Please check your connection and try again.",
+                          textAlign: TextAlign.center,
+                          style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * AppDimensions.numD035,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: size.width * AppDimensions.numD06),
+                      ElevatedButton(
+                        onPressed: () {
+                          context
+                              .read<LeaderboardBloc>()
+                              .add(const GetLeaderboard(""));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColorTheme.colorThemePink,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: size.width * AppDimensions.numD08,
+                            vertical: size.width * AppDimensions.numD03,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                size.width * AppDimensions.numD02),
+                          ),
+                        ),
+                        child: Text(
+                          "Try Again",
+                          style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * AppDimensions.numD035,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
             ],
           );
         },

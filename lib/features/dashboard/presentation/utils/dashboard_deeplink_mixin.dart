@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
 
 mixin DashboardDeepLinkMixin<T extends StatefulWidget> on State<T> {
-  void initDeepLinks(AppLinks linkStream) {
+  void initializeDeepLinks(AppLinks linkStream) {
     linkStream.uriLinkStream.listen((link) {
       debugPrint('linkStream index got? link: $link');
       jump2Screen(link.path);
