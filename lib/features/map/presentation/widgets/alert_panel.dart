@@ -52,7 +52,8 @@ class AlertPanel extends StatelessWidget {
                     ),
                     TextButton.icon(
                       onPressed: () {},
-                      icon: const Icon(Icons.videocam_outlined, color: Color(0xFFEC4E54), size: 20),
+                      icon: const Icon(Icons.videocam_outlined,
+                          color: Color(0xFFEC4E54), size: 20),
                       label: Text(
                         "Share Video",
                         style: TextStyle(
@@ -70,6 +71,7 @@ class AlertPanel extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: size.width * AppDimensions.numD022),
+
                 Container(
                   height: size.width * AppDimensions.numD005,
                   width: double.infinity,
@@ -131,7 +133,8 @@ class AlertPanel extends StatelessWidget {
                             Text(
                               item['label']!,
                               style: TextStyle(
-                                fontSize: size.width * AppDimensions.numD021 * 1.25,
+                                fontSize:
+                                    size.width * AppDimensions.numD021 * 1.25,
                                 color: Colors.grey.shade700,
                                 fontWeight: FontWeight.normal,
                               ),
@@ -155,7 +158,8 @@ class AlertPanel extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.error_rounded, color: Color(0xFFFBBC05), size: 24),
+                      const Icon(Icons.error_rounded,
+                          color: Color(0xFFFBBC05), size: 24),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(

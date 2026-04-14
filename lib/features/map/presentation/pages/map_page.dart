@@ -392,7 +392,6 @@ class _MapPageContentState extends State<_MapPageContent>
           });
         }
       }
-
     } catch (e) {
       debugPrint("Error updating info window: $e");
     }
@@ -1216,7 +1215,7 @@ class _MapPageContentState extends State<_MapPageContent>
                     onZoomOut: _zoomOut,
                   ),
                 ),
-                
+
                 // Dimmer and tap-to-close for AlertPanel
                 if (state.showAlertPanel)
                   Positioned.fill(
@@ -1235,48 +1234,61 @@ class _MapPageContentState extends State<_MapPageContent>
                   child: AnimatedOpacity(
                     duration: const Duration(milliseconds: 300),
                     opacity: state.showAlertPanel ? 1 : 0,
-                    child: AnimatedScale(
-                      duration: const Duration(milliseconds: 400),
+                    child: AnimatedRotation(
+                      turns: state.showAlertPanel ? 0 : -0.05,
+                      duration: const Duration(milliseconds: 500),
                       curve: Curves.easeOutBack,
-                      alignment: Alignment.bottomLeft,
-                      scale: state.showAlertPanel ? 1 : 0.0,
-                      child: IgnorePointer(
-                        ignoring: !state.showAlertPanel,
-                        child: AlertPanel(
-                          onClose: () {
-                            context
-                                .read<MapBloc>()
-                                .add(ToggleAlertPanelEvent());
-                          },
-                          onAlertSelected: (type) async {
-                            try {
-                              if (!state.isSelectingAlertLocation) {
-                                context.read<MapBloc>().add(
-                                    SetSelectingAlertLocationEvent(
-                                        isSelecting: true, type: type));
-                                _customInfoWindowController.hideInfoWindow
-                                    ?.call();
-                              }
-                              debugPrint("AlertSelected: $type");
-                              final myLoc =
-                                  context.read<MapBloc>().state.myLocation;
-                              if (myLoc != null) {
-                                _addBurst(myLoc, type);
-                                context.read<MapBloc>().add(AddAlertMarkerEvent(
-                                    type: type, position: myLoc));
-                              } else {
-                                debugPrint(
-                                    "AlertSelected: Location not available");
-                                // ScaffoldMessenger.of(context).showSnackBar(
-                                //   const SnackBar(
-                                //       content: Text(
-                                //           "Location not available. Please try again.")),
-                                // );
-                              }
-                            } catch (e) {
-                              debugPrint("Error adding alert marker: $e");
-                            }
-                          },
+                      child: AnimatedSlide(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeOutBack,
+                        offset: state.showAlertPanel
+                            ? Offset.zero
+                            : const Offset(0.08, 0.15),
+                        child: AnimatedScale(
+                          duration: const Duration(milliseconds: 600),
+                          curve: Curves.bounceOut,
+                          alignment: Alignment.bottomLeft,
+                          scale: state.showAlertPanel ? 1 : 0.0,
+                          child: IgnorePointer(
+                            ignoring: !state.showAlertPanel,
+                            child: AlertPanel(
+                              onClose: () {
+                                context
+                                    .read<MapBloc>()
+                                    .add(ToggleAlertPanelEvent());
+                              },
+                              onAlertSelected: (type) async {
+                                try {
+                                  if (!state.isSelectingAlertLocation) {
+                                    context.read<MapBloc>().add(
+                                        SetSelectingAlertLocationEvent(
+                                            isSelecting: true, type: type));
+                                    _customInfoWindowController.hideInfoWindow
+                                        ?.call();
+                                  }
+                                  debugPrint("AlertSelected: $type");
+                                  final myLoc =
+                                      context.read<MapBloc>().state.myLocation;
+                                  if (myLoc != null) {
+                                    _addBurst(myLoc, type);
+                                    context.read<MapBloc>().add(
+                                        AddAlertMarkerEvent(
+                                            type: type, position: myLoc));
+                                  } else {
+                                    debugPrint(
+                                        "AlertSelected: Location not available");
+                                    // ScaffoldMessenger.of(context).showSnackBar(
+                                    //   const SnackBar(
+                                    //       content: Text(
+                                    //           "Location not available. Please try again.")),
+                                    // );
+                                  }
+                                } catch (e) {
+                                  debugPrint("Error adding alert marker: $e");
+                                }
+                              },
+                            ),
+                          ),
                         ),
                       ),
                     ),
