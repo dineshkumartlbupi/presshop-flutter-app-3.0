@@ -36,9 +36,10 @@ import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 import 'package:presshop/features/map/presentation/widgets/map_view_widget.dart';
 import 'package:presshop/features/map/presentation/widgets/burst_particles_overlay.dart';
 
+import 'package:presshop/main.dart';
+import 'package:presshop/core/widgets/dialogs.dart';
+import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key, this.hideLeading = false, this.showAppBar = false});
@@ -839,6 +840,16 @@ class _MapPageContentState extends State<_MapPageContent>
               if (!_pulseController.isAnimating) {
                 _pulseController.repeat();
               }
+
+              // Show alert popup if not shown yet
+              bool isShown = sharedPreferences
+                      ?.getBool(SharedPreferencesKeys.alertInfoPopupShownKey) ??
+                  false;
+              if (!isShown) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  AllDialogs.showAlertInfoPopupForMap(size);
+                });
+              }
             } else {
               _pulseController.stop();
             }
@@ -1229,7 +1240,7 @@ class _MapPageContentState extends State<_MapPageContent>
                     ),
                   ),
                 Positioned(
-                  bottom: 56,
+                  bottom: 63,
                   left: 0,
                   child: AnimatedOpacity(
                     duration: const Duration(milliseconds: 300),

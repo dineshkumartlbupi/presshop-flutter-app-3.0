@@ -84,6 +84,7 @@ class SharedPreferencesKeys {
   static const locationSharingDescriptionKey = "location_sharing_description";
   static const manuallyStoppedServiceKey = "manually_stopped_service";
   static const isTaskGrabbingActiveKey = "is_task_grabbing_active";
+  static const alertInfoPopupShownKey = "alert_info_popup_shown";
 
   // Caching Keys
   static const tutorialCategoriesCacheKey = "tutorial_categories_cache";

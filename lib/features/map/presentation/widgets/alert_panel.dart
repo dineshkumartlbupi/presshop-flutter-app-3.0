@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:presshop/core/constants/app_dimensions.dart';
+import 'package:presshop/core/theme/app_colors.dart';
 import 'package:presshop/features/map/constants/map_news_constants.dart';
 
 class AlertPanel extends StatelessWidget {
@@ -24,7 +25,7 @@ class AlertPanel extends StatelessWidget {
             padding: EdgeInsets.symmetric(
                 horizontal: size.width * AppDimensions.numD026,
                 vertical: size.width * AppDimensions.numD026),
-            width: size.width * 0.8,
+            width: size.width * AppDimensions.numD65,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius:
@@ -46,27 +47,28 @@ class AlertPanel extends StatelessWidget {
                     Text(
                       "Send Alerts",
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: size.width * AppDimensions.numD031 * 1.2,
+                        fontSize: size.width * AppDimensions.numD032,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    TextButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.videocam_outlined,
-                          color: Color(0xFFEC4E54), size: 20),
-                      label: Text(
-                        "Share Video",
-                        style: TextStyle(
-                          color: const Color(0xFFEC4E54),
-                          fontWeight: FontWeight.bold,
-                          fontSize: size.width * AppDimensions.numD031,
+                    Row(
+                      children: [
+                        Image.asset(
+                          "assets/icons/ic_v_cam.png",
+                          height: size.width * AppDimensions.numD05,
+                          width: size.width * AppDimensions.numD05,
+                          color: AppColorTheme.colorThemePink,
                         ),
-                      ),
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
+                        SizedBox(width: size.width * AppDimensions.numD01),
+                        Text(
+                          "Share Video",
+                          style: TextStyle(
+                            fontSize: size.width * AppDimensions.numD032,
+                            fontWeight: FontWeight.w500,
+                            color: AppColorTheme.colorThemePink,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -88,8 +90,9 @@ class AlertPanel extends StatelessWidget {
                     Text(
                       "Tap to instantly alert the community",
                       style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: size.width * AppDimensions.numD021 * 1.1,
+                        color: Color(0xFF4F4F4F),
+                        fontSize: size.width * AppDimensions.numD028,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -101,9 +104,9 @@ class AlertPanel extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
-                    childAspectRatio: 1.1,
-                    crossAxisSpacing: size.width * AppDimensions.numD016,
-                    mainAxisSpacing: size.width * AppDimensions.numD016,
+                    childAspectRatio: 1,
+                    crossAxisSpacing: size.width * AppDimensions.numD012,
+                    mainAxisSpacing: size.width * AppDimensions.numD012,
                   ),
                   itemBuilder: (context, i) {
                     final item = alertTypes[i];
@@ -118,25 +121,24 @@ class AlertPanel extends StatelessWidget {
                           borderRadius: BorderRadius.circular(
                             size.width * AppDimensions.numD021,
                           ),
-                          border: Border.all(color: Colors.grey.shade200),
+                          border: Border.all(color: Colors.grey.shade300),
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Image.asset(
                               item['icon']!,
-                              width: size.width * AppDimensions.numD095 * 0.9,
-                              height: size.width * AppDimensions.numD095 * 0.9,
+                              width: size.width * AppDimensions.numD09,
+                              height: size.width * AppDimensions.numD09,
                               fit: BoxFit.contain,
                             ),
-                            const SizedBox(height: 4),
+                            SizedBox(
+                                height: size.width * AppDimensions.numD016),
                             Text(
                               item['label']!,
                               style: TextStyle(
-                                fontSize:
-                                    size.width * AppDimensions.numD021 * 1.25,
+                                fontSize: size.width * AppDimensions.numD029,
                                 color: Colors.grey.shade700,
-                                fontWeight: FontWeight.normal,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -146,34 +148,80 @@ class AlertPanel extends StatelessWidget {
                     );
                   },
                 ),
+                // GridView.builder(
+                //   shrinkWrap: true,
+                //   itemCount: alertTypes.length,
+                //   physics: const NeverScrollableScrollPhysics(),
+                //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                //     crossAxisCount: 3,
+                //     childAspectRatio: 1.1,
+                //     crossAxisSpacing: size.width * AppDimensions.numD016,
+                //     mainAxisSpacing: size.width * AppDimensions.numD016,
+                //   ),
+                //   itemBuilder: (context, i) {
+                //     final item = alertTypes[i];
+                //     return GestureDetector(
+                //       onTap: () {
+                //         onAlertSelected?.call(item['type']!);
+                //         onClose();
+                //       },
+                //       child: Container(
+                //         decoration: BoxDecoration(
+                //           color: Colors.white,
+                //           borderRadius: BorderRadius.circular(
+                //             size.width * AppDimensions.numD021,
+                //           ),
+                //           border: Border.all(color: Colors.grey.shade200),
+                //         ),
+                //         child: Column(
+                //           mainAxisAlignment: MainAxisAlignment.center,
+                //           children: [
+                //             Image.asset(
+                //               item['icon']!,
+                //               width: size.width * AppDimensions.numD095 * 0.9,
+                //               height: size.width * AppDimensions.numD095 * 0.9,
+                //               fit: BoxFit.contain,
+                //             ),
+                //             const SizedBox(height: 4),
+                //             Text(
+                //               item['label']!,
+                //               style: TextStyle(
+                //                 fontSize:
+                //                     size.width * AppDimensions.numD021 * 1.25,
+                //                 color: Colors.grey.shade700,
+                //                 fontWeight: FontWeight.normal,
+                //               ),
+                //               textAlign: TextAlign.center,
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //     );
+                //   },
+                // ),
                 SizedBox(height: size.width * AppDimensions.numD042),
                 // Warning section
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade200),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(Icons.error_rounded,
-                          color: Color(0xFFFBBC05), size: 24),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          "False or misleading reports may lead to account suspension.",
-                          style: TextStyle(
-                            color: const Color(0xFF4F4F4F),
-                            fontSize: size.width * AppDimensions.numD021 * 1.1,
-                            fontWeight: FontWeight.w500,
-                            height: 1.3,
-                          ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Image.asset(
+                      'assets/icons/mapalert.png',
+                      width: size.width * AppDimensions.numD04,
+                      height: size.width * AppDimensions.numD04,
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(width: size.width * AppDimensions.numD016),
+                    Expanded(
+                      child: Text(
+                        "False or misleading reports may lead to account suspension.",
+                        style: TextStyle(
+                          color: Color(0xFF4F4F4F),
+                          fontSize: size.width * AppDimensions.numD028,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),

@@ -132,7 +132,7 @@ class Content {
   final String likeFeed = "hopper/updatefeed";
   final String getAllRating = "hopper/getallrating";
   final String mostViewed = "hopper/mostviewed";
-  final String aggregatedNews = "hopper/getAggregatedNews";
+  final String aggregatedNews = "hopper/getAggregatedNewss";
   final String aggregatedNewsDetail = "hopper/getAggregatedNewsDetail";
   final String aggregatedNewsComments = "hopper/getAggregatedNewsComments";
   final String getTags = "users/getTags";
