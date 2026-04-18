@@ -16,22 +16,28 @@ class ApiConstantsNew {
 class Config {
   const Config();
   static const int env = 1;
-// difmo8
-  // "http://localhost:8100/api/";
 
+  // ====================== Ngrok Url =====================
   // String get baseUrl =>
   //     "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/";
 
   // String get socketUrl2 =>
   //     "wss://lelia-anthracitic-ecclesiologically.ngrok-free.dev";
 
-  // String get baseUrl => "http://18.170.92.207:8100/api/";
-
-  // String get socketUrl2 => "wss://funnellike-subangular-sulema.ngrok-free.dev";
-
+  // ====================== Ngrok Url =====================
   String get baseUrl =>
       "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
   String get socketUrl2 => "wss://funnellike-subangular-sulema.ngrok-free.dev";
+
+// ====================== Localhost Url =====================
+
+  // String get baseUrl => "http://localhost:8100/api/";
+  // String get socketUrl2 => "http://localhost:8100";
+
+  // ====================== AWS Url =====================
+  // String get baseUrl => "http://18.170.92.207:8100/api/";
+
+  // String get socketUrl2 => "wss://18.170.92.207:8100/api/";
 
   String get googleMapURL =>
       "https://maps.googleapis.com/maps/api/place/autocomplete/json";
@@ -104,7 +110,7 @@ class Profile {
   final String getUploadedDocs = "hopper/getuploadedDocumentList";
   final String deleteDocument = "hopper/deleteDocument";
   final String deleteCertificate = "hopper/deleteuploadDocToBecomePro";
-  final String getAvatars = "admin/getAvatars";
+  final String getAvatars = "users/getAvatars";
   final String updateLocation = "hopper/updatelocation";
   final String addDevice = "hopper/add/fcm/token";
   final String removeDevice = "hopper/remove/fcm/token";

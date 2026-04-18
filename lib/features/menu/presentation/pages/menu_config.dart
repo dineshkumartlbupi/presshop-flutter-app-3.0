@@ -75,6 +75,13 @@ List<MenuData> buildMenu() => [
         action: MenuAction.locationSharing,
       ),
       MenuData(
+        title: AppStrings.notificationText,
+        icon: "${iconsPath}ic_feed.png",
+        action: MenuAction.notification,
+        pageBuilder: (context) => const MyNotificationScreen(
+            count: 0), // Count now handled by BlocSelector
+      ),
+      MenuData(
         title: AppStrings.digitalIdText,
         icon: "${iconsPath}ic_id.png",
         action: MenuAction.digitalId,
@@ -98,31 +105,7 @@ List<MenuData> buildMenu() => [
           screenType: AppStrings.editProfileText,
         ),
       ),
-      MenuData(
-        title: "Chat",
-        icon: "${iconsPath}ic_chat.png",
-        action: MenuAction.chat,
-        pageBuilder: (context) => ChatBotScreen(),
-      ),
-      MenuData(
-        title: "${AppStrings.contactText} PressHop",
-        icon: "${iconsPath}ic_contact_us.png",
-        action: MenuAction.contact,
-        pageBuilder: (context) => const ContactUsScreen(),
-        isContactBrand: true,
-      ),
-      MenuData(
-        title: AppStrings.leaderboardText,
-        icon: "${iconsPath}ic_ranking.png",
-        action: MenuAction.leaderboard,
-        pageBuilder: (context) => const LeaderboardPage(),
-      ),
-      MenuData(
-        title: AppStrings.paymentMethodText,
-        icon: "${iconsPath}ic_payment_method.png",
-        action: MenuAction.paymentMethod,
-        pageBuilder: (context) => const MyBanksPage(),
-      ),
+
       MenuData(
         title: AppStrings.myDraftText,
         icon: "${iconsPath}ic_my_draft.png",
@@ -153,6 +136,7 @@ List<MenuData> buildMenu() => [
       //   action: MenuAction.myTasks,
       //   pageBuilder: (context) => MyTaskScreen(hideLeading: false),
       // ),
+
       MenuData(
         title: "My earnings",
         icon: "${iconsPath}ic_earning.png",
@@ -163,11 +147,22 @@ List<MenuData> buildMenu() => [
         ),
       ),
       MenuData(
-        title: AppStrings.notificationText,
-        icon: "${iconsPath}ic_feed.png",
-        action: MenuAction.notification,
-        pageBuilder: (context) => const MyNotificationScreen(
-            count: 0), // Count now handled by BlocSelector
+        title: "Manage payments",
+        icon: "${iconsPath}ic_payment_method.png",
+        action: MenuAction.paymentMethod,
+        pageBuilder: (context) => const MyBanksPage(),
+      ),
+      MenuData(
+        title: "Refer a Hopper",
+        icon: "${iconsPath}gift.png",
+        action: MenuAction.referHopper,
+        pageBuilder: (context) => const ReferScreen(),
+      ),
+      MenuData(
+        title: AppStrings.leaderboardText,
+        icon: "${iconsPath}ic_ranking.png",
+        action: MenuAction.leaderboard,
+        pageBuilder: (context) => const LeaderboardPage(),
       ),
       MenuData(
         title:
@@ -178,12 +173,6 @@ List<MenuData> buildMenu() => [
         showAlertBadge: true,
       ),
       MenuData(
-        title: "Refer a Hopper",
-        icon: "${iconsPath}gift.png",
-        action: MenuAction.referHopper,
-        pageBuilder: (context) => const ReferScreen(),
-      ),
-      MenuData(
         title: AppStrings.uploadDocsHeadingText,
         icon: "${iconsPath}ic_upload_documents.png",
         action: MenuAction.uploadDocs,
@@ -191,6 +180,23 @@ List<MenuData> buildMenu() => [
           menuScreen: true,
           hideLeading: false,
         ),
+      ),
+
+      MenuData(
+        title: "Price tips",
+        icon: "${iconsPath}ic_price_tips.png",
+        action: MenuAction.priceTips,
+        pageBuilder: (context) => FAQScreen(
+          priceTipsSelected: true,
+          type: 'price_tips',
+          index: 0,
+        ),
+      ),
+      MenuData(
+        title: AppStrings.tutorialsText,
+        icon: "${iconsPath}ic_tutorials.png",
+        action: MenuAction.tutorials,
+        pageBuilder: (context) => const TutorialsScreen(),
       ),
       MenuData(
         title: AppStrings.faqText,
@@ -201,6 +207,19 @@ List<MenuData> buildMenu() => [
           type: 'faq',
           index: 0,
         ),
+      ),
+      MenuData(
+        title: "Chat",
+        icon: "${iconsPath}ic_chat.png",
+        action: MenuAction.chat,
+        pageBuilder: (context) => ChatBotScreen(),
+      ),
+      MenuData(
+        title: "${AppStrings.contactText} PressHop",
+        icon: "${iconsPath}ic_contact_us.png",
+        action: MenuAction.contact,
+        pageBuilder: (context) => const ContactUsScreen(),
+        isContactBrand: true,
       ),
       MenuData(
         title: "${AppStrings.legalText} ${AppStrings.tcText}",
@@ -217,22 +236,6 @@ List<MenuData> buildMenu() => [
         pageBuilder: (context) => TermCheckScreen(
           type: 'privacy_policy',
         ),
-      ),
-      MenuData(
-        title: "Price tips",
-        icon: "${iconsPath}ic_price_tips.png",
-        action: MenuAction.priceTips,
-        pageBuilder: (context) => FAQScreen(
-          priceTipsSelected: true,
-          type: 'price_tips',
-          index: 0,
-        ),
-      ),
-      MenuData(
-        title: AppStrings.tutorialsText,
-        icon: "${iconsPath}ic_tutorials.png",
-        action: MenuAction.tutorials,
-        pageBuilder: (context) => const TutorialsScreen(),
       ),
       MenuData(
         title: AppStrings.changePasswordText,

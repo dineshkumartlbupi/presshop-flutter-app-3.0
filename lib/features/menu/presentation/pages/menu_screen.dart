@@ -86,6 +86,16 @@ class _MenuScreenState extends State<MenuScreen> {
         AppLogger.trackAction(ActionNames.logout);
         logoutDialog(context.mqSize, context);
         break;
+
+      case MenuAction.notification:
+        context.pushNamed(
+          AppRoutes.notificationsName,
+          extra: {'count': 0},
+        ).then((value) {
+          // ignore: use_build_context_synchronously
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
       case MenuAction.digitalId:
         context.pushNamed(AppRoutes.digitalIdName).then((value) {
           // ignore: use_build_context_synchronously
@@ -229,15 +239,7 @@ class _MenuScreenState extends State<MenuScreen> {
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
-      case MenuAction.notification:
-        context.pushNamed(
-          AppRoutes.notificationsName,
-          extra: {'count': 0},
-        ).then((value) {
-          // ignore: use_build_context_synchronously
-          context.read<MenuBloc>().add(MenuLoadCounts());
-        });
-        break;
+
       case MenuAction.ratingReview:
         context.pushNamed(AppRoutes.ratingReviewName).then((value) {
           // ignore: use_build_context_synchronously

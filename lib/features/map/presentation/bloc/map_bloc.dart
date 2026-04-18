@@ -270,9 +270,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         updatedNewsList[existingIndex] = incident;
       }
 
+      final isSelected = state.selectedIncident?.id == incident.id;
+
       emit(state.copyWith(
         markers: _appendMeMarker(updatedMarkers),
         newsList: updatedNewsList,
+        selectedIncident: isSelected ? incident : null, // If null, copyWith won't replace current one unless clearSelectedIncident is true. Wait, copyWith usually keeps old value if new is null.
       ));
     } catch (e, stack) {
       debugPrint("Error handling updated incident: $e");
@@ -842,9 +845,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       return;
     }
 
+    final updatedIncident = event.incident.copyWith(viewCount: (event.incident.viewCount ?? 0) + 1);
+
+    final updatedNewsList = state.newsList.map((i) => i.id == updatedIncident.id ? updatedIncident : i).toList();
+
     emit(state.copyWith(
-      selectedIncident: event.incident,
-      selectedPosition: event.incident.position,
+      selectedIncident: updatedIncident,
+      selectedPosition: updatedIncident.position,
+      newsList: updatedNewsList,
       clearSelectedPolygonId: true,
       clearSelectedPolygonPosition: true,
     ));

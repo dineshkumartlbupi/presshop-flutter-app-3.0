@@ -55,8 +55,8 @@ class AlertButtonMap extends StatelessWidget {
           Text(
             "Share Alerts",
             style: TextStyle(
-              color: Colors.black,
-              fontSize: size.width * AppDimensions.numD035,
+              color: Colors.black87,
+              fontSize: size.width * AppDimensions.numD032,
               fontWeight: FontWeight.w500,
             ),
           ),

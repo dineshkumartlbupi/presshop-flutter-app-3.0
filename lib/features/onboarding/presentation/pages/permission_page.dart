@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:presshop/core/core_export.dart';
@@ -68,13 +70,33 @@ class _PermissionPageState extends State<PermissionPage>
   }
 
   bool get _allRequiredGranted {
-    return _permissions
-        .every((p) => statuses[p.permission]?.isGranted ?? false);
+    return _permissions.every((p) {
+      final status = statuses[p.permission];
+      if (status == null) return false;
+      if (p.permission == Permission.photos && Platform.isIOS) {
+        return status.isGranted || status.isLimited;
+      }
+      return status.isGranted;
+    });
+  }
+
+  Future<void> _checkAndroidGalleryStatus() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    if (androidInfo.version.sdkInt >= 33) {
+      statuses[Permission.photos] = await Permission.photos.status;
+    } else {
+      statuses[Permission.photos] = await Permission.storage.status;
+    }
   }
 
   Future<void> _checkPermissions() async {
     for (var p in _permissions) {
-      statuses[p.permission] = await p.permission.status;
+      if (Platform.isAndroid && p.permission == Permission.photos) {
+        await _checkAndroidGalleryStatus();
+      } else {
+        statuses[p.permission] = await p.permission.status;
+      }
     }
     if (mounted) {
       if (_allRequiredGranted) {
@@ -138,7 +160,12 @@ class _PermissionPageState extends State<PermissionPage>
                   itemBuilder: (context, index) {
                     final item = _permissions[index];
                     final status = statuses[item.permission];
-                    final isGranted = status?.isGranted ?? false;
+                    bool isGranted = status?.isGranted ?? false;
+                    if (item.permission == Permission.photos &&
+                        Platform.isIOS) {
+                      isGranted =
+                          status?.isGranted ?? status?.isLimited ?? false;
+                    }
                     return Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: size.width * 0.04,
@@ -207,10 +234,26 @@ class _PermissionPageState extends State<PermissionPage>
                           else
                             InkWell(
                               onTap: () async {
-                                final result = await item.permission.request();
+                                PermissionStatus result;
+                                if (Platform.isAndroid &&
+                                    item.permission == Permission.photos) {
+                                  DeviceInfoPlugin deviceInfo =
+                                      DeviceInfoPlugin();
+                                  AndroidDeviceInfo androidInfo =
+                                      await deviceInfo.androidInfo;
+                                  if (androidInfo.version.sdkInt >= 33) {
+                                    result = await Permission.photos.request();
+                                  } else {
+                                    result = await Permission.storage.request();
+                                  }
+                                } else {
+                                  result = await item.permission.request();
+                                }
+
                                 setState(() {
                                   statuses[item.permission] = result;
                                 });
+
                                 if (result.isPermanentlyDenied) {
                                   openAppSettings();
                                 }

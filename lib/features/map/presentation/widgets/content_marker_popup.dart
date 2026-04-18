@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
 
 class ContentMarkerPopup extends StatelessWidget {
-
   const ContentMarkerPopup({
     super.key,
     required this.incident,
@@ -169,10 +168,22 @@ class ContentMarkerPopup extends StatelessWidget {
                                   Icon(Icons.visibility_outlined,
                                       size: 18, color: Colors.grey[600]),
                                   const SizedBox(width: 4),
-                                  Text(
-                                    "${incident.viewCount ?? 0}",
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.grey[600]),
+                                  TweenAnimationBuilder<double>(
+                                    duration:
+                                        const Duration(milliseconds: 1500),
+                                    curve: Curves.easeOut,
+                                    tween: Tween<double>(
+                                      begin: 0,
+                                      end: (incident.viewCount ?? 0).toDouble(),
+                                    ),
+                                    builder: (context, value, child) {
+                                      return Text(
+                                        "${value.toInt()}",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey[600]),
+                                      );
+                                    },
                                   )
                                 ],
                               ),
