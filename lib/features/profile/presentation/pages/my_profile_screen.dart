@@ -542,7 +542,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                                   fontSize: size.width * AppDimensions.numD045,
                                   color: Colors.black,
                                   fontWeight: FontWeight.w600)),
-                          if (myProfileData?.stripeStatusActive == true) ...[
+                          if (myProfileData?.stripeStatusActive == '1' ||
+                              myProfileData?.stripeStatusActive == 'true' ||
+                              myProfileData?.isVerified == true) ...[
                             SizedBox(width: size.width * AppDimensions.numD02),
                             Image.asset(
                               "${iconsPath}verified_badge.png",
@@ -2077,9 +2079,21 @@ class MyProfileData {
     profileCountry = json['profile_country'] ?? "";
     profilePostCode = json['profile_post_code'] ?? "";
     isVerified = json['isVerified'] ?? json['is_verified'] ?? false;
-    stripeStatusActive = json['stripeStatus'] != null
-        ? (json['stripeStatus']['status'] ?? false)
-        : false;
+    stripeStatusActive = (() {
+      var stripe = json['stripeStatus'];
+      if (stripe == null) {
+        // Fallback to checking a top-level 'status' field if stripeStatus is missing
+        if (json['status'] == 1 || json['status'] == '1' || json['status'] == true) {
+          return '1';
+        }
+        return '0';
+      }
+      if (stripe is Map) {
+        return (stripe['status'] ?? '0').toString();
+      }
+      return stripe.toString();
+    })();
+    debugPrint("MyProfile parsed stripeStatusActive: $stripeStatusActive");
 
     latitude = (json[SharedPreferencesKeys.latitudeKey] ?? "").toString();
     longitude = (json[SharedPreferencesKeys.longitudeKey] ?? "").toString();
@@ -2138,7 +2152,7 @@ class MyProfileData {
   String profileCountry = "";
   String profilePostCode = "";
   bool isVerified = false;
-  bool stripeStatusActive = false;
+  String? stripeStatusActive;
 
   String latitude = "";
   String longitude = "";
