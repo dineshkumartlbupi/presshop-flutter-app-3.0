@@ -104,7 +104,12 @@ class UserProfileModel extends Equatable {
       updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
       lastLogin: DateTime.tryParse(json['lastLogin'] ?? '') ?? DateTime.now(),
       stripeStatus: json['stripeStatus'] != null
-          ? StripeStatusModel.fromJson(json['stripeStatus'])
+          ? (json['stripeStatus'] is Map
+              ? StripeStatusModel.fromJson(json['stripeStatus'])
+              : StripeStatusModel(
+                  stripeStatusActive:
+                      ['1', 'true'].contains(json['stripeStatus'].toString()),
+                  stripeStatusReason: ""))
           : const StripeStatusModel(
               stripeStatusActive: false, stripeStatusReason: ""),
     );
@@ -285,7 +290,10 @@ class StripeStatusModel extends Equatable {
 
   factory StripeStatusModel.fromJson(Map<String, dynamic> json) {
     return StripeStatusModel(
-      stripeStatusActive: json['status'] ?? false,
+      stripeStatusActive: json['status'] == true ||
+          json['status'] == 1 ||
+          json['status'] == '1' ||
+          json['status'] == 'true',
       stripeStatusReason: json['reason'] ?? "",
     );
   }

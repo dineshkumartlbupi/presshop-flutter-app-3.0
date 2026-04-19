@@ -466,6 +466,8 @@ class DashboardPageState extends State<Dashboard>
           String customPopupImage = versionData['custom_popup_image'] ?? "";
           String locationSharingDescription =
               versionData['location_sharing_description'] ?? "";
+          bool isLocationPopupEnabled =
+              versionData['is_location_popup_enabled'] ?? true;
 
           sharedPreferences?.setString(
               SharedPreferencesKeys.customLocationHeadingKey,
@@ -481,6 +483,9 @@ class DashboardPageState extends State<Dashboard>
           sharedPreferences?.setBool(
               SharedPreferencesKeys.isCustomLocationPopupKey,
               isCustomLocationPopup);
+          sharedPreferences?.setBool(
+              SharedPreferencesKeys.isLocationPopupEnabledKey,
+              isLocationPopupEnabled);
 
           bool isManuallyStopped = sharedPreferences
                   ?.getBool(SharedPreferencesKeys.manuallyStoppedServiceKey) ??
@@ -506,7 +511,8 @@ class DashboardPageState extends State<Dashboard>
                 context: context,
                 showPrePermissionDialog: isCustomLocationPopup &&
                     !isTaskGrabbingActive &&
-                    !isServiceRunning,
+                    !isServiceRunning &&
+                    isLocationPopupEnabled,
                 dialogTitle: customLocationHeading,
                 dialogContent: customLocationDescription,
                 dialogImage: customPopupImage,

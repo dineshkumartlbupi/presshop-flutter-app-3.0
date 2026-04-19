@@ -69,7 +69,7 @@ class SearchAndFilterBar extends StatelessWidget {
                           focusNode: searchFocusNode,
                           onChanged: onChange,
                           decoration: const InputDecoration(
-                            hintText: "Search this area",
+                            hintText: "Search any location",
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.symmetric(
                               vertical: 8,
@@ -135,7 +135,7 @@ class SearchAndFilterBar extends StatelessWidget {
                       Expanded(
                         child: _FilterDropdown(
                           items: alertTypeFilter,
-                          selected: selectedAlertType ?? 'Alert',
+                          selected: selectedAlertType ?? 'Alerts',
                           onChanged: onAlertTypeChanged,
                         ),
                       ),

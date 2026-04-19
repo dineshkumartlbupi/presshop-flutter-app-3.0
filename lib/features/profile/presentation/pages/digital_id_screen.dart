@@ -51,11 +51,11 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
             "Hopper";
     // Setup initial image from prefs if available
     String sessionAvatar =
-        sharedPreferences!.getString(SharedPreferencesKeys.avatarKey) ??
-            sharedPreferences!.getString(SharedPreferencesKeys.profileImageKey) ??
+        sharedPreferences!.getString(SharedPreferencesKeys.profileImageKey) ??
+            sharedPreferences!.getString(SharedPreferencesKeys.avatarKey) ??
             "";
     if (sessionAvatar.isNotEmpty) {
-      userImage = sessionAvatar;
+      userImage = fixS3Url(sessionAvatar);
     }
     getAvatarsApi();
   }
@@ -689,16 +689,16 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
             .setString(SharedPreferencesKeys.lastNameKey, lastName);
       }
 
-      if (profile.avatar.isNotEmpty) {
+      if (profile.profileImage.isNotEmpty) {
+        userImage = fixS3Url(profile.profileImage);
+        sharedPreferences!
+            .setString(SharedPreferencesKeys.profileImageKey, userImage);
+      } else if (profile.avatar.isNotEmpty) {
         userImage = fixS3Url(profile.avatar);
         sharedPreferences!
             .setString(SharedPreferencesKeys.avatarKey, userImage);
         sharedPreferences!
             .setString(SharedPreferencesKeys.avatarIdKey, profile.avatar);
-      } else if (profile.profileImage.isNotEmpty) {
-        userImage = fixS3Url(profile.profileImage);
-         sharedPreferences!
-            .setString(SharedPreferencesKeys.profileImageKey, userImage);
       }
     });
   }

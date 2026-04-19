@@ -538,13 +538,7 @@ void broadcastDialog({
                               children: [
                                 GoogleMap(
                                   initialCameraPosition: CameraPosition(
-                                    target: LatLng(
-                                        (taskDetail.task.latitude ?? 0.0) != 0.0
-                                            ? taskDetail.task.latitude!
-                                            : 51.520412,
-                                        (taskDetail.task.longitude ?? 0.0) != 0.0
-                                            ? taskDetail.task.longitude!
-                                            : -0.158022),
+                                    target: taskLatLng,
                                     zoom: 12,
                                   ),
                                   zoomControlsEnabled: false,
@@ -557,13 +551,7 @@ void broadcastDialog({
                                   markers: {
                                     Marker(
                                       markerId: const MarkerId("task_location"),
-                                      position: LatLng(
-                                          (taskDetail.task.latitude ?? 0.0) != 0.0
-                                              ? taskDetail.task.latitude!
-                                              : 51.520412,
-                                          (taskDetail.task.longitude ?? 0.0) != 0.0
-                                              ? taskDetail.task.longitude!
-                                              : -0.158022),
+                                      position: taskLatLng,
                                       anchor: const Offset(0.5, 0.5),
                                       zIndex: 0,
                                       icon: mapIcon ??

@@ -164,45 +164,42 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
 
   Widget _buildDateRow(FilterModel item, List<FilterModel> list) {
     return Expanded(
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: _buildDatePicker(
-              label: item.fromDate != null
-                  ? dateTimeFormatter(dateTime: item.fromDate.toString())
-                  : 'From Date',
-              onTap: () async {
-                item.fromDate = await commonDatePicker();
-                item.toDate = null;
-                _selectOnly(list, item);
-              },
-            ),
+          _buildDatePicker(
+            label: item.fromDate != null
+                ? dateTimeFormatter(dateTime: item.fromDate.toString())
+                : 'From Date',
+            onTap: () async {
+              item.fromDate = await commonDatePicker();
+              item.toDate = null;
+              _selectOnly(list, item);
+            },
           ),
-          SizedBox(width: widget.size.width * AppDimensions.numD03),
-          Expanded(
-            child: _buildDatePicker(
-              label: item.toDate != null
-                  ? dateTimeFormatter(dateTime: item.toDate.toString())
-                  : 'To Date',
-              onTap: () async {
-                if (item.fromDate != null) {
-                  String? pickedDate = await commonDatePicker();
-                  if (pickedDate != null) {
-                    DateTime parseFromDate = DateTime.parse(item.fromDate!);
-                    DateTime parseToDate = DateTime.parse(pickedDate);
-                    if (parseToDate.isAfter(parseFromDate) ||
-                        parseToDate.isAtSameMomentAs(parseFromDate)) {
-                      item.toDate = pickedDate;
-                      setState(() {});
-                    } else {
+          SizedBox(height: widget.size.width * AppDimensions.numD03),
+          _buildDatePicker(
+            label: item.toDate != null
+                ? dateTimeFormatter(dateTime: item.toDate.toString())
+                : 'To Date',
+            onTap: () async {
+              if (item.fromDate != null) {
+                String? pickedDate = await commonDatePicker();
+                if (pickedDate != null) {
+                  DateTime parseFromDate = DateTime.parse(item.fromDate!);
+                  DateTime parseToDate = DateTime.parse(pickedDate);
+                  if (parseToDate.isAfter(parseFromDate) ||
+                      parseToDate.isAtSameMomentAs(parseFromDate)) {
+                    item.toDate = pickedDate;
+                    setState(() {});
+                  } else {
 //                       showSnackBar("Date Error", "Please select to date above from date", Colors.red);
-                    }
                   }
                 }
-              },
-            ),
+              }
+            },
           ),
+          SizedBox(height: widget.size.width * AppDimensions.numD02),
         ],
       ),
     );

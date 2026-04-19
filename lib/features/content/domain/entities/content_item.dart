@@ -94,9 +94,12 @@ class ContentItem extends Equatable {
   int get totalView => contentViewCount;
   List<ContentMetadata> get mediaList => contentMetadata;
   String? get mediaType => type;
-  List<String> get mediaUrls => images.isNotEmpty
-      ? images
-      : (videos.isNotEmpty ? videos.map((e) => e.toString()).toList() : []);
+  int get totalMediaCount => imageCount + videoCount;
+  List<String> get mediaUrls {
+    List<String> urls = [...images];
+    urls.addAll(videos.map((e) => e.toString()));
+    return urls;
+  }
   String get totalSold => totalEarnings;
   String get title => description.isNotEmpty ? description : "No Title";
   String? get price => askPrice.isNotEmpty ? askPrice : priceOriginal;
