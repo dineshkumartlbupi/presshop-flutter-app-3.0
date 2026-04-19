@@ -81,7 +81,7 @@ class CommonTextFieldState extends State<CommonTextField> {
       onTap: widget.callback,
       maxLength: widget.maxLength,
       minLines: 1,
-      autofocus: widget.autofocus ?? true,
+      autofocus: widget.autofocus ?? false,
       readOnly: widget.readOnly ?? false,
       decoration: InputDecoration(
           counterText: "",

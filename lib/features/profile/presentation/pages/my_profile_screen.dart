@@ -412,18 +412,28 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   Widget topProfileWidget() {
     return Container(
-      padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+      padding: EdgeInsets.zero,
       decoration: BoxDecoration(
-          color: Colors.black,
+          color: Colors.white,
           borderRadius:
-              BorderRadius.circular(size.width * AppDimensions.numD04)),
+              BorderRadius.circular(size.width * AppDimensions.numD04),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ]),
       child: Row(
         children: [
           Stack(
             children: [
               ClipRRect(
-                borderRadius:
-                    BorderRadius.circular(size.width * AppDimensions.numD04),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(size.width * AppDimensions.numD04),
+                  bottomLeft:
+                      Radius.circular(size.width * AppDimensions.numD04),
+                ),
                 child: CachedNetworkImage(
                   imageUrl:
                       myProfileData != null ? myProfileData!.avatarImage : "",
@@ -454,8 +464,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                     );
                   },
                   fit: BoxFit.cover,
-                  width: size.width * AppDimensions.numD25,
-                  height: size.width * AppDimensions.numD25,
+                  width: size.width * 0.38,
+                  height: size.width * 0.38,
                 ),
               ),
               if (isSilentLoading)
@@ -463,22 +473,26 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.black26,
-                      borderRadius: BorderRadius.circular(
-                          size.width * AppDimensions.numD04),
+                      borderRadius: BorderRadius.only(
+                        topLeft:
+                            Radius.circular(size.width * AppDimensions.numD04),
+                        bottomLeft:
+                            Radius.circular(size.width * AppDimensions.numD04),
+                      ),
                     ),
                     child: Center(
                       child: Lottie.asset(
                         "assets/lottieFiles/loader_new.json",
-                        height: size.width * 0.1,
-                        width: size.width * 0.1,
+                        height: size.width * 0.08,
+                        width: size.width * 0.08,
                       ),
                     ),
                   ),
                 ),
               if (widget.editProfileScreen)
                 Positioned(
-                  bottom: 0,
-                  right: 0,
+                  bottom: size.width * 0.02,
+                  right: size.width * 0.02,
                   child: InkWell(
                     onTap: () {
                       avatarBottomSheet(size);
@@ -503,55 +517,95 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             ],
           ),
           SizedBox(
-            width: size.width * AppDimensions.numD04,
+            width: size.width * AppDimensions.numD03,
           ),
           Expanded(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                  myProfileData != null
-                      ? myProfileData!.userName.toCapitalized()
-                      : "",
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * AppDimensions.numD045,
-                      color: AppColorTheme.colorThemePink,
-                      fontWeight: FontWeight.w600)),
-              SizedBox(
-                height: size.width * AppDimensions.numD01,
-              ),
-              Text(
-                  "${AppStrings.joinedText} - ${myProfileData != null ? myProfileData!.joinedDate : ""}",
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * AppDimensions.numD035,
-                      color: Colors.white70,
-                      fontWeight: FontWeight.normal)),
-              SizedBox(
-                height: size.width * AppDimensions.numD005,
-              ),
-              Text(
-                  "${AppStrings.earningsText} - $currencySymbol${myProfileData != null ? formatDouble(double.parse(myProfileData!.totalIncome)) : "0"}",
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * AppDimensions.numD035,
-                      color: Colors.white70,
-                      fontWeight: FontWeight.normal)),
-              SizedBox(
-                height: size.width * AppDimensions.numD01,
-              ),
-              Text(_getCurrentAddress(),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * AppDimensions.numD03,
-                      color: Colors.white70,
-                      fontWeight: FontWeight.normal))
-            ],
-          ))
+              child: Padding(
+                  padding: EdgeInsets.only(
+                    left: size.width * AppDimensions.numD04,
+                    right: size.width * AppDimensions.numD02,
+                    top: size.width * AppDimensions.numD02,
+                    bottom: size.width * AppDimensions.numD02,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                              myProfileData != null
+                                  ? myProfileData!.userName.toCapitalized()
+                                  : "",
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * AppDimensions.numD045,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600)),
+                          if (myProfileData?.stripeStatusActive == true) ...[
+                            SizedBox(width: size.width * AppDimensions.numD02),
+                            Image.asset(
+                              "${iconsPath}verified_badge.png",
+                              height: size.width * AppDimensions.numD04,
+                              width: size.width * AppDimensions.numD04,
+                            ),
+                            SizedBox(width: size.width * AppDimensions.numD02),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: size.width * AppDimensions.numD015,
+                                vertical: size.width * 0.005,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF2D7ADE),
+                                borderRadius:
+                                    BorderRadius.circular(size.width * 0.01),
+                              ),
+                              child: Text(
+                                "Verified Hopper",
+                                style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * 0.02,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      SizedBox(
+                        height: size.width * AppDimensions.numD01,
+                      ),
+                      Text(
+                          "${AppStrings.joinedText} - ${myProfileData != null ? myProfileData!.joinedDate : ""}",
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * AppDimensions.numD035,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.normal)),
+                      SizedBox(
+                        height: size.width * AppDimensions.numD005,
+                      ),
+                      Text(
+                          "${AppStrings.earningsText} - $currencySymbol${myProfileData != null ? formatDouble(double.parse(myProfileData!.totalIncome)) : "0"}",
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * AppDimensions.numD035,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.normal)),
+                      SizedBox(
+                        height: size.width * AppDimensions.numD01,
+                      ),
+                      Text(_getCurrentAddress(),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * AppDimensions.numD03,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.normal))
+                    ],
+                  )))
         ],
       ),
     );
@@ -2022,6 +2076,10 @@ class MyProfileData {
     profileCity = json['profile_city'] ?? "";
     profileCountry = json['profile_country'] ?? "";
     profilePostCode = json['profile_post_code'] ?? "";
+    isVerified = json['isVerified'] ?? json['is_verified'] ?? false;
+    stripeStatusActive = json['stripeStatus'] != null
+        ? (json['stripeStatus']['status'] ?? false)
+        : false;
 
     latitude = (json[SharedPreferencesKeys.latitudeKey] ?? "").toString();
     longitude = (json[SharedPreferencesKeys.longitudeKey] ?? "").toString();
@@ -2079,6 +2137,8 @@ class MyProfileData {
   String profileCity = "";
   String profileCountry = "";
   String profilePostCode = "";
+  bool isVerified = false;
+  bool stripeStatusActive = false;
 
   String latitude = "";
   String longitude = "";

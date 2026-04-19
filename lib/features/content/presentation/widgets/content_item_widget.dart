@@ -256,7 +256,7 @@ class MediaThumbnailWidget extends StatelessWidget {
                 // Cache the watermark image for better performance
                 cacheWidth: (size.width * 2).toInt(),
               ),
-            if (item.mediaUrls.length > 1)
+            if (item.totalMediaCount > 1)
               Positioned(
                 right: size.width * AppDimensions.numD02,
                 top: size.width * AppDimensions.numD02,
@@ -314,7 +314,7 @@ class MediaThumbnailWidget extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          "${item.mediaUrls.length} ",
+          "${item.totalMediaCount} ",
           textAlign: TextAlign.center,
           style: commonTextStyle(
             size: size,
