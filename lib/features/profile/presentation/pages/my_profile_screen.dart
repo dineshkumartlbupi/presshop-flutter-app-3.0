@@ -498,7 +498,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   right: size.width * 0.02,
                   child: InkWell(
                     onTap: () {
-                      _showImagePicker(context);
+                      avatarBottomSheet(size);
                     },
                     child: Container(
                       padding: EdgeInsets.all(size.width * 0.005),
@@ -535,6 +535,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                               myProfileData != null
@@ -555,23 +556,27 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                               width: size.width * AppDimensions.numD04,
                             ),
                             SizedBox(width: size.width * AppDimensions.numD02),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: size.width * AppDimensions.numD015,
-                                vertical: size.width * 0.005,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF2D7ADE),
-                                borderRadius:
-                                    BorderRadius.circular(size.width * 0.01),
-                              ),
-                              child: Text(
-                                "Verified Hopper",
-                                style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * 0.02,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                            Transform.translate(
+                              offset: const Offset(0, -5),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      size.width * AppDimensions.numD015,
+                                  vertical: size.width * 0.005,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF2D7ADE),
+                                  borderRadius:
+                                      BorderRadius.circular(size.width * 0.04),
+                                ),
+                                child: Text(
+                                  "Verified Hopper",
+                                  style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * 0.02,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),

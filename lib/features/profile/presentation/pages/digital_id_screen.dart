@@ -86,9 +86,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
       avatarList: avatarList,
       notifier: avatarLoaderNotifier,
       onAvatarSelected: (avatar) {
-        context
-            .read<ProfileBloc>()
-            .add(UpdateProfileEvent({SharedPreferencesKeys.avatarIdKey: avatar.id}));
+        context.read<ProfileBloc>().add(
+            UpdateProfileEvent({SharedPreferencesKeys.avatarIdKey: avatar.id}));
       },
     );
   }
@@ -236,7 +235,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                               children: [
                                 Image.asset(
                                   "${commonImagePath}rabbitLogo.png",
-                                  height: size.width * AppDimensions.numD28,
+                                  height: size.width * AppDimensions.numD18,
                                   // width: size.width * AppDimensions.numD1,
                                 ),
                                 Expanded(
@@ -250,16 +249,16 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                           "press",
                                           style: TextStyle(
                                               fontSize: size.width *
-                                                  AppDimensions.numD065,
+                                                  AppDimensions.numD072,
                                               color: Colors.black,
                                               fontFamily: "AirbnbCereal",
                                               fontWeight: FontWeight.normal),
                                         ),
                                         Text(
-                                          "hop",
+                                          "Hop",
                                           style: TextStyle(
                                               fontSize: size.width *
-                                                  AppDimensions.numD065,
+                                                  AppDimensions.numD075,
                                               color: Colors.black,
                                               letterSpacing: 0,
                                               fontFamily: "AirbnbCereal",
@@ -268,15 +267,15 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                         ),
                                       ],
                                     ),
-                                    Text(
-                                      "news delivered",
-                                      style: TextStyle(
-                                          fontSize:
-                                              size.width * AppDimensions.numD04,
-                                          color: Colors.black,
-                                          fontFamily: "AirbnbCereal",
-                                          fontWeight: FontWeight.normal),
-                                    ),
+                                    // Text(
+                                    //   "news delivered",
+                                    //   style: TextStyle(
+                                    //       fontSize:
+                                    //           size.width * AppDimensions.numD04,
+                                    //       color: Colors.black,
+                                    //       fontFamily: "AirbnbCereal",
+                                    //       fontWeight: FontWeight.normal),
+                                    // ),
                                     SizedBox(height: 8)
                                   ],
                                 ))
@@ -410,7 +409,6 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                       ),
                                     ),
                                   ),
-
                                 ],
                               ),
                             ),
@@ -430,40 +428,60 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                             //   ),
                             // ),
 
-                            Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    fullName,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD05,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  // if (state is ProfileLoaded &&
-                                  //     state.profile.stripeStatus
-                                  //         .stripeStatusActive)
-                                  Transform.translate(
-                                    offset: const Offset(2, -1),
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          left: size.width *
-                                              AppDimensions.numD01),
-                                      child: Image.asset(
-                                        "${iconsPath}verified_badge.png",
-                                        height:
-                                            size.width * AppDimensions.numD04,
-                                        width:
-                                            size.width * AppDimensions.numD04,
-                                        // color: const Color(0xFF2D7ADE),
+                            BlocBuilder<ProfileBloc, ProfileState>(
+                              builder: (context, state) {
+                                bool isVerified = false;
+                                if (state is ProfileLoaded) {
+                                  isVerified = state.profile.isVerified || state.profile.stripeStatus.stripeStatusActive;
+                                }
+                                return Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        fullName,
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * AppDimensions.numD05,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                    ),
+                                      if (isVerified) ...[
+                                        SizedBox(width: size.width * AppDimensions.numD02),
+                                        Image.asset(
+                                          "${iconsPath}verified_badge.png",
+                                          height: size.width * AppDimensions.numD04,
+                                          width: size.width * AppDimensions.numD04,
+                                        ),
+                                        SizedBox(width: size.width * AppDimensions.numD02),
+                                        Transform.translate(
+                                          offset: const Offset(0, -2),
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: size.width * AppDimensions.numD015,
+                                              vertical: size.width * 0.005,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFF2D7ADE),
+                                              borderRadius: BorderRadius.circular(size.width * 0.04),
+                                            ),
+                                            child: Text(
+                                              "Verified Hopper",
+                                              style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * 0.02,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
                                   ),
-                                ],
-                              ),
+                                );
+                              },
                             ),
                             SizedBox(
                               height: size.width * AppDimensions.numD04,
@@ -711,14 +729,4 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
     });
     showSnackBar("Success", "Profile image updated successfully", Colors.green);
   }
-
-  // void _launchURL() async {
-  //   const url = 'https://www.presshop.co.uk';
-  //   final uri = Uri.parse(url);
-  //   if (await canLaunchUrl(uri)) {
-  //     await launchUrl(uri, mode: LaunchMode.externalApplication);
-  //   } else {
-  //     throw 'Could not launch $url';
-  //   }
-  // }
 }
