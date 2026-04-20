@@ -256,12 +256,12 @@ class MediaThumbnailWidget extends StatelessWidget {
                 // Cache the watermark image for better performance
                 cacheWidth: (size.width * 2).toInt(),
               ),
-            if (item.totalMediaCount > 1)
-              Positioned(
-                right: size.width * AppDimensions.numD02,
-                top: size.width * AppDimensions.numD02,
-                child: _buildCountBadge(),
-              ),
+            // if (item.totalMediaCount > 1)
+            Positioned(
+              right: size.width * AppDimensions.numD02,
+              top: size.width * AppDimensions.numD02,
+              child: _buildCountBadge(),
+            ),
           ],
         ),
       ),

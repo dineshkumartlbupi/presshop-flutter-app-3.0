@@ -2106,7 +2106,7 @@ class MyProfileData {
     } else if (json["avatarData"] is String &&
         json["avatarData"].toString().startsWith("http")) {
       tempAvatar = json["avatarData"];
-    }
+    } 
 
     if (tempAvatar.isEmpty) {
       tempAvatar = json["avatar"]?.toString() ??
