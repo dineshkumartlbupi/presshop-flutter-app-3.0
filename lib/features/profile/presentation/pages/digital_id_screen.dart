@@ -33,6 +33,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   String fullName = "";
   List<AvatarData> avatarList = [];
   ValueNotifier<bool> avatarLoaderNotifier = ValueNotifier(false);
+  MyProfileData? myProfileData;
+  bool isLoading = false;
 
   // File? _imageFile;
   final ImagePicker _picker = ImagePicker();
@@ -58,6 +60,59 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
       userImage = fixS3Url(sessionAvatar);
     }
     getAvatarsApi();
+    myProfileApi();
+  }
+
+  Future<void> myProfileApi({bool showLoader = true}) async {
+    String userId =
+        sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
+    if (showLoader) {
+      setState(() {
+        isLoading = true;
+      });
+    }
+    try {
+      final response = await sl<ApiClient>().get(
+        ApiConstantsNew.profile.myProfile,
+        queryParameters: {"userId": userId},
+        showLoader: false,
+      );
+
+      if (response.statusCode == 200) {
+        var map = response.data;
+        if (map is String) map = jsonDecode(map);
+        debugPrint("DigitalIdProfileSuccess:$map");
+
+        if (map["code"] == 200 || map["success"] == true) {
+          var userData = map["userData"] ?? map["data"];
+          if (userData is Map &&
+              userData.containsKey('data') &&
+              userData['data'] is Map) {
+            userData = userData['data'];
+          }
+          setState(() {
+            myProfileData = MyProfileData.fromJson(userData);
+            if (myProfileData != null) {
+              fullName =
+                  "${myProfileData!.firstName} ${myProfileData!.lastName}";
+              userName = myProfileData!.userName;
+              // Prioritize real profile_image for Digital ID
+              userImage = myProfileData!.realProfileImage.isNotEmpty
+                  ? myProfileData!.realProfileImage
+                  : myProfileData!.avatarImage;
+            }
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching profile in DigitalID: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
   }
 
   Future<void> getAvatarsApi() async {
@@ -140,15 +195,13 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return BlocProvider.value(
-      value: sl<ProfileBloc>()..add(const FetchProfileEvent(showLoader: false)),
+      value: sl<ProfileBloc>(),
       child: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
-          if (state is ProfileLoaded) {
-            _updateUserProfile(state.profile);
-          } else if (state is ProfileImageUploaded) {
-            _updateUserImage(state.imageUrl);
+          if (state is ProfileImageUploaded) {
+            myProfileApi(showLoader: false);
           } else if (state is ProfileUpdated) {
-            _updateUserProfile(state.profile);
+            myProfileApi(showLoader: false);
             showSnackBar(
                 "Success", "Profile updated successfully", Colors.green);
           } else if (state is ProfileError) {
@@ -156,13 +209,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
           }
         },
         builder: (context, state) {
-          bool isLoading = state is ProfileLoading;
-
           return Scaffold(
-            // appBar: CommonBrandedAppBar(
-            //   title: AppStrings.digitalId,
-            //   size: size,
-            // ),
             appBar: CommonAppBar(
               elevation: 0,
               hideLeading: false,
@@ -267,15 +314,6 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                         ),
                                       ],
                                     ),
-                                    // Text(
-                                    //   "news delivered",
-                                    //   style: TextStyle(
-                                    //       fontSize:
-                                    //           size.width * AppDimensions.numD04,
-                                    //       color: Colors.black,
-                                    //       fontFamily: "AirbnbCereal",
-                                    //       fontWeight: FontWeight.normal),
-                                    // ),
                                     SizedBox(height: 8)
                                   ],
                                 ))
@@ -416,72 +454,37 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                               height: size.width * AppDimensions.numD04,
                             ),
 
-                            /// User name
-                            // Center(
-                            //   child: Text(
-                            //     fullName,
-                            //     style: commonTextStyle(
-                            //         size: size,
-                            //         fontSize: size.width * AppDimensions.numD05,
-                            //         color: Colors.black,
-                            //         fontWeight: FontWeight.bold),
-                            //   ),
-                            // ),
-
-                            BlocBuilder<ProfileBloc, ProfileState>(
-                              builder: (context, state) {
-                                bool isVerified = false;
-                                if (state is ProfileLoaded) {
-                                  isVerified = state.profile.isVerified || state.profile.stripeStatus.stripeStatusActive;
-                                }
-                                return Center(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        fullName,
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * AppDimensions.numD05,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      if (isVerified) ...[
-                                        SizedBox(width: size.width * AppDimensions.numD02),
-                                        Image.asset(
-                                          "${iconsPath}verified_badge.png",
-                                          height: size.width * AppDimensions.numD04,
-                                          width: size.width * AppDimensions.numD04,
-                                        ),
-                                        SizedBox(width: size.width * AppDimensions.numD02),
-                                        Transform.translate(
-                                          offset: const Offset(0, -2),
-                                          child: Container(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: size.width * AppDimensions.numD015,
-                                              vertical: size.width * 0.005,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFF2D7ADE),
-                                              borderRadius: BorderRadius.circular(size.width * 0.04),
-                                            ),
-                                            child: Text(
-                                              "Verified Hopper",
-                                              style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * 0.02,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ],
+                            Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    fullName,
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD05,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                );
-                              },
+                                  if (myProfileData?.stripeStatusActive ==
+                                          "1" ||
+                                      myProfileData?.isVerified == true) ...[
+                                    SizedBox(
+                                        width:
+                                            size.width * AppDimensions.numD02),
+                                    Image.asset(
+                                      "${iconsPath}verified_badge.png",
+                                      height: size.width * AppDimensions.numD04,
+                                      width: size.width * AppDimensions.numD04,
+                                    ),
+                                    SizedBox(
+                                        width:
+                                            size.width * AppDimensions.numD02),
+                                  ],
+                                ],
+                              ),
                             ),
                             SizedBox(
                               height: size.width * AppDimensions.numD04,
@@ -555,8 +558,9 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                         height: 1.5),
                                     children: [
                                       TextSpan(
-                                        text: DateFormat("dd MMM yyyy")
-                                            .format(DateTime.now()),
+                                        text: DateFormat("dd MMM yyyy").format(
+                                            DateTime.now().add(
+                                                const Duration(days: 365))),
                                         style: TextStyle(
                                             fontSize: size.width *
                                                 AppDimensions.numD036,
@@ -688,45 +692,119 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
       ),
     );
   }
+}
 
-  void _updateUserProfile(ProfileData profile) {
-    setState(() {
-      if (profile.userName.isNotEmpty || profile.firstName.isNotEmpty) {
-        userName =
-            profile.userName.isNotEmpty ? profile.userName : profile.firstName;
-        sharedPreferences!
-            .setString(SharedPreferencesKeys.userNameKey, profile.userName);
-      }
-      if (profile.firstName.isNotEmpty) {
-        String firstName = profile.firstName;
-        String lastName = profile.lastName;
-        fullName = firstName + (lastName.isNotEmpty ? " $lastName" : "");
-        sharedPreferences!
-            .setString(SharedPreferencesKeys.firstNameKey, firstName);
-        sharedPreferences!
-            .setString(SharedPreferencesKeys.lastNameKey, lastName);
-      }
+class MyProfileData {
+  MyProfileData();
+  MyProfileData.fromJson(json) {
+    firstName =
+        json[SharedPreferencesKeys.firstNameKey] ?? json['firstName'] ?? "";
+    lastName =
+        json[SharedPreferencesKeys.lastNameKey] ?? json['lastName'] ?? "";
+    userName = json[SharedPreferencesKeys.userNameKey] ??
+        json['username'] ??
+        json['userName'] ??
+        "";
+    countryCode =
+        json[SharedPreferencesKeys.countryCodeKey] ?? json['countryCode'] ?? "";
+    phoneNumber = (json[SharedPreferencesKeys.phoneKey] ?? "").toString();
 
-      if (profile.profileImage.isNotEmpty) {
-        userImage = fixS3Url(profile.profileImage);
-        sharedPreferences!
-            .setString(SharedPreferencesKeys.profileImageKey, userImage);
-      } else if (profile.avatar.isNotEmpty) {
-        userImage = fixS3Url(profile.avatar);
-        sharedPreferences!
-            .setString(SharedPreferencesKeys.avatarKey, userImage);
-        sharedPreferences!
-            .setString(SharedPreferencesKeys.avatarIdKey, profile.avatar);
+    cityName = json[SharedPreferencesKeys.cityKey] ?? json['city'] ?? '';
+    countryName =
+        json[SharedPreferencesKeys.countryKey] ?? json['country'] ?? '';
+    apartment = json[SharedPreferencesKeys.apartmentKey] ?? '';
+    email = json[SharedPreferencesKeys.emailKey] ?? "";
+    address = json[SharedPreferencesKeys.addressKey] ?? "";
+    postCode =
+        json[SharedPreferencesKeys.postCodeKey] ?? json['postCode'] ?? "";
+
+    // New profile address fields
+    profileAddress = json['profile_address'] ?? "";
+    profileCity = json['profile_city'] ?? "";
+    profileCountry = json['profile_country'] ?? "";
+    profilePostCode = json['profile_post_code'] ?? "";
+    isVerified = json['isVerified'] ?? json['is_verified'] ?? false;
+    stripeStatusActive = (() {
+      var stripe = json['stripeStatus'];
+      if (stripe == null) {
+        if (json['status'] == 1 ||
+            json['status'] == '1' ||
+            json['status'] == true) {
+          return '1';
+        }
+        return '0';
       }
-    });
+      if (stripe is Map) {
+        return (stripe['status'] ?? '0').toString();
+      }
+      return stripe.toString();
+    })();
+
+    latitude = (json[SharedPreferencesKeys.latitudeKey] ?? "").toString();
+    longitude = (json[SharedPreferencesKeys.longitudeKey] ?? "").toString();
+    totalIncome = json[SharedPreferencesKeys.totalIncomeKey] != null
+        ? json[SharedPreferencesKeys.totalIncomeKey].toString()
+        : "0";
+
+    // Captured actual profile image separately
+    String realImage = json["profile_image"]?.toString() ??
+        json["profileImage"]?.toString() ??
+        "";
+    realProfileImage = fixS3Url(realImage);
+
+    String tempAvatar = "";
+    if (json["avatarData"] is Map) {
+      tempAvatar = json["avatarData"]["avatar"]?.toString() ?? "";
+    } else if (json["avatarData"] is String &&
+        json["avatarData"].toString().startsWith("http")) {
+      tempAvatar = json["avatarData"];
+    }
+
+    if (tempAvatar.isEmpty) {
+      tempAvatar = json["avatar"]?.toString() ??
+          json["profile_image"]?.toString() ??
+          json["profileImage"]?.toString() ??
+          "";
+    }
+
+    avatarImage = fixS3Url(tempAvatar);
+    avatarId = (json["avatarData"] is Map
+            ? (json["avatarData"]["_id"]?.toString() ??
+                json["avatarData"]["id"]?.toString() ??
+                "")
+            : json["avatarData"]?.toString()) ??
+        json["avatar"]?.toString() ??
+        "";
+    joinedDate = json["createdAt"] != null
+        ? changeDateFormat(
+            "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'", json["createdAt"], "dd MMMM, yyyy")
+        : "";
   }
+  String firstName = "";
+  String lastName = "";
+  String userName = "";
+  String countryCode = "";
+  String phoneNumber = "";
+  String email = "";
+  String address = "";
+  String postCode = "";
 
-  void _updateUserImage(String imageUrl) {
-    setState(() {
-      userImage = fixS3Url(imageUrl);
-      sharedPreferences!
-          .setString(SharedPreferencesKeys.profileImageKey, userImage);
-    });
-    showSnackBar("Success", "Profile image updated successfully", Colors.green);
-  }
+  String profileAddress = "";
+  String profileCity = "";
+  String profileCountry = "";
+  String profilePostCode = "";
+  bool isVerified = false;
+  String? stripeStatusActive;
+
+  String latitude = "";
+  String longitude = "";
+  String avatarImage = "";
+  String realProfileImage = "";
+  String avatarId = "";
+  String joinedDate = "";
+  String earnings = "0";
+  String apartment = "";
+  String cityName = "";
+  String countryName = "";
+  String totalIncome = "";
 }

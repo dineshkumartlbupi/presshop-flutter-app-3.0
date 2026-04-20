@@ -159,18 +159,17 @@ List<MenuData> buildMenu() => [
         pageBuilder: (context) => const ReferScreen(),
       ),
       MenuData(
-        title: AppStrings.leaderboardText,
-        icon: "${iconsPath}ic_ranking.png",
-        action: MenuAction.leaderboard,
-        pageBuilder: (context) => const LeaderboardPage(),
-      ),
-      MenuData(
         title:
             "${AppStrings.ratingText} & ${AppStrings.reviewText.toLowerCase()}",
         icon: "${iconsPath}ic_rating_review.png",
         action: MenuAction.ratingReview,
         pageBuilder: (context) => const RatingReviewScreen(),
-        showAlertBadge: true,
+      ),
+      MenuData(
+        title: AppStrings.leaderboardText,
+        icon: "${iconsPath}ic_ranking.png",
+        action: MenuAction.leaderboard,
+        pageBuilder: (context) => const LeaderboardPage(),
       ),
       MenuData(
         title: AppStrings.uploadDocsHeadingText,

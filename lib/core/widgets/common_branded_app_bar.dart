@@ -7,7 +7,6 @@ import 'package:presshop/main.dart';
 
 class CommonBrandedAppBar extends StatelessWidget
     implements PreferredSizeWidget {
-
   const CommonBrandedAppBar({
     super.key,
     required this.title,
@@ -36,7 +35,7 @@ class CommonBrandedAppBar extends StatelessWidget
         title,
         style: TextStyle(
             color: Colors.black,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             fontSize: size.width * AppDimensions.appBarHeadingFontSize),
       ),
       centerTitle: false,

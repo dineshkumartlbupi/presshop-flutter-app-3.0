@@ -464,6 +464,8 @@ class _MenuScreenState extends State<MenuScreen> {
                           Expanded(
                             child: Text(
                               AppStrings.logoutMessageText,
+                              softWrap: true,
+                              textAlign: TextAlign.justify,
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: size.width * AppDimensions.numD035,
@@ -600,8 +602,7 @@ class MenuTile extends StatelessWidget {
   Widget _buildIcon(BuildContext context) {
     final size = context.mqSize;
     // Original logic for "Alerts" and "Choose currency" size
-    final isSpecialSize =
-        item.showAlertBadge || item.action == MenuAction.currency;
+    final isSpecialSize = item.action == MenuAction.currency;
     return Stack(
       alignment: Alignment.topRight,
       children: [

@@ -143,7 +143,7 @@ class SearchAndFilterBar extends StatelessWidget {
                       Expanded(
                         child: _FilterDropdown(
                           items: distanceFilter,
-                          selected: selectedDistance ?? '2 miles',
+                          selected: selectedDistance ?? '5 miles',
                           onChanged: onDistanceChanged,
                         ),
                       ),

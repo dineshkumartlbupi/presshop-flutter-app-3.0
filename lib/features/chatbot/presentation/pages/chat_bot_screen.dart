@@ -371,9 +371,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                                               chatList[index]
                                                                   .isNavigate,
                                                       child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(top: 8),
+                                                        padding: const EdgeInsets.only(
+                                                            top: 10, bottom: 10),
                                                         child: Row(
                                                           children: [
                                                             commonElevatedButton(
@@ -414,9 +413,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                                       visible: chatList[index]
                                                           .hasShownFirstFailMsg,
                                                       child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(top: 8),
+                                                        padding: const EdgeInsets.only(
+                                                            top: 10, bottom: 10),
                                                         child: Row(
                                                           children: [
                                                             commonElevatedButton(

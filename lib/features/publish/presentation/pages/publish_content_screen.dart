@@ -1935,7 +1935,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                         padding: EdgeInsets.symmetric(
                             horizontal: size.width * AppDimensions.numD04),
                         child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Container(
                               width: size.width * AppDimensions.numD32,

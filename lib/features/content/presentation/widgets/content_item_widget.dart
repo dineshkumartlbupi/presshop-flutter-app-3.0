@@ -20,31 +20,36 @@ class ContentItemWidget extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.only(
-          left: size.width * AppDimensions.numD03,
-          right: size.width * AppDimensions.numD03,
-          top: size.width * AppDimensions.numD03,
-        ),
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.shade200,
-              spreadRadius: 2,
-              blurRadius: 1,
+              color: Colors.black.withOpacity(0.06),
+              spreadRadius: 0,
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             )
           ],
           borderRadius:
               BorderRadius.circular(size.width * AppDimensions.numD04),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             MediaThumbnailWidget(item: item, size: size),
-            SizedBox(height: size.width * AppDimensions.numD02),
-            _buildInfoRow(),
-            const Spacer(),
-            _buildStatusRow(),
-            SizedBox(height: size.width * AppDimensions.numD02),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(size.width * AppDimensions.numD02),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildInfoRow(),
+                    const Spacer(),
+                    _buildStatusRow(),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -65,9 +70,9 @@ class ContentItemWidget extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: commonTextStyle(
               size: size,
-              fontSize: size.width * AppDimensions.numD03,
+              fontSize: size.width * AppDimensions.numD032,
               color: Colors.black,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),
@@ -76,9 +81,8 @@ class ContentItemWidget extends StatelessWidget {
           (item.isExclusive ?? false)
               ? "${iconsPath}ic_exclusive.png"
               : "${iconsPath}ic_share.png",
-          height: (item.isExclusive ?? false)
-              ? size.width * AppDimensions.numD03
-              : size.width * AppDimensions.numD04,
+          height: size.width * AppDimensions.numD04,
+          width: size.width * AppDimensions.numD04,
           color: AppColorTheme.colorTextFieldIcon,
         )
       ],
@@ -88,8 +92,10 @@ class ContentItemWidget extends StatelessWidget {
   Widget _buildStatusRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        _buildMetricsColumn(),
+        Expanded(child: _buildMetricsColumn()),
+        SizedBox(width: size.width * AppDimensions.numD01),
         _buildPriceBadge(),
       ],
     );
@@ -106,7 +112,7 @@ class ContentItemWidget extends StatelessWidget {
         ),
         SizedBox(height: size.width * AppDimensions.numD01),
         _buildMetricItem(
-          icon: "dollar1.png",
+          icon: "ic_offer.png", // Changed to ic_offer if available
           value:
               "${item.totalOffer} ${item.totalOffer > 1 ? '${AppStrings.offerText}s' : AppStrings.offerText}",
           isActive: item.totalOffer > 0,
@@ -131,18 +137,28 @@ class ContentItemWidget extends StatelessWidget {
       children: [
         Image.asset(
           "$iconsPath$icon",
-          height: size.width * AppDimensions.numD025,
-          width: size.width * AppDimensions.numD025,
+          height: size.width * AppDimensions.numD03,
+          width: size.width * AppDimensions.numD03,
           color: isActive ? AppColorTheme.colorThemePink : Colors.grey,
-        ),
-        SizedBox(width: size.width * AppDimensions.numD014),
-        Text(
-          value,
-          style: commonTextStyle(
-            size: size,
-            fontSize: size.width * AppDimensions.numD026,
+          errorBuilder: (context, error, stackTrace) => Image.asset(
+            "${iconsPath}dollar1.png",
+            height: size.width * AppDimensions.numD03,
+            width: size.width * AppDimensions.numD03,
             color: isActive ? AppColorTheme.colorThemePink : Colors.grey,
-            fontWeight: FontWeight.normal,
+          ),
+        ),
+        SizedBox(width: size.width * AppDimensions.numD015),
+        Expanded(
+          child: Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: commonTextStyle(
+              size: size,
+              fontSize: size.width * AppDimensions.numD026,
+              color: isActive ? AppColorTheme.colorThemePink : Colors.grey,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],
@@ -155,72 +171,65 @@ class ContentItemWidget extends StatelessWidget {
 
     if (isPendingOrRejected) {
       return Container(
-        height: size.height * AppDimensions.numD036,
-        width: size.width * AppDimensions.numD17,
+        padding: EdgeInsets.all(size.width * AppDimensions.numD015),
         decoration: BoxDecoration(
           color: Colors.black,
           borderRadius:
               BorderRadius.circular(size.width * AppDimensions.numD015),
         ),
-        child: Center(
-          child: Text(
-            item.status.toLowerCase() == "pending"
-                ? "Under\nReview"
-                : "Not\nApproved",
-            textAlign: TextAlign.center,
-            style: commonTextStyle(
-              size: size,
-              fontSize: size.width * AppDimensions.numD024,
-              color: Colors.white,
-              fontWeight: FontWeight.w400,
-            ),
+        child: Text(
+          item.status.toLowerCase() == "pending"
+              ? "Under\nReview"
+              : "Not\nApproved",
+          textAlign: TextAlign.center,
+          style: commonTextStyle(
+            size: size,
+            fontSize: size.width * AppDimensions.numD024,
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
           ),
         ),
       );
     }
 
     return Container(
-      height: size.width * AppDimensions.numD08,
       padding: EdgeInsets.symmetric(
-        horizontal: size.width * AppDimensions.numD015,
+        horizontal: size.width * AppDimensions.numD02,
         vertical: size.width * AppDimensions.numD01,
       ),
       decoration: BoxDecoration(
         color: item.paidStatus == false
             ? AppColorTheme.colorThemePink
-            : AppColorTheme.colorLightGrey,
+            : const Color(0xFFF0F0F0),
         borderRadius: BorderRadius.circular(size.width * AppDimensions.numD015),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: item.paidStatus && !item.isPaidStatusToHopper
-                ? EdgeInsets.symmetric(
-                    horizontal: size.width * AppDimensions.numD028)
-                : EdgeInsets.zero,
-            child: Text(
-              !item.paidStatus
-                  ? item.status.toCapitalized()
-                  : item.paidStatus && item.isPaidStatusToHopper
-                      ? "Received"
-                      : "Sold",
-              textAlign: TextAlign.center,
-              style: commonTextStyle(
-                size: size,
-                fontSize: size.width * AppDimensions.numD022,
-                color: item.paidStatus == false ? Colors.white : Colors.black,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
           Text(
-            "${item.currencySymbol.isNotEmpty ? item.currencySymbol : getCurrencySymbol(item.currency)}${formatDouble(double.tryParse(item.paidStatus == false ? (item.price ?? '0') : item.totalSold) ?? 0.0)}",
+            !item.paidStatus
+                ? item.status.toCapitalized()
+                : item.paidStatus && item.isPaidStatusToHopper
+                    ? "Received"
+                    : "Sold",
             textAlign: TextAlign.center,
             style: commonTextStyle(
               size: size,
               fontSize: size.width * AppDimensions.numD022,
               color: item.paidStatus == false ? Colors.white : Colors.black,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          FittedBox(
+            child: Text(
+              "${item.currencySymbol.isNotEmpty ? item.currencySymbol : getCurrencySymbol(item.currency)}${formatDouble(double.tryParse(item.paidStatus == false ? (item.price ?? '0') : item.totalSold) ?? 0.0)}",
+              textAlign: TextAlign.center,
+              style: commonTextStyle(
+                size: size,
+                fontSize: size.width * AppDimensions.numD024,
+                color: item.paidStatus == false ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],

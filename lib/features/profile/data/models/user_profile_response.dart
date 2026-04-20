@@ -108,10 +108,12 @@ class UserProfileModel extends Equatable {
               ? StripeStatusModel.fromJson(json['stripeStatus'])
               : StripeStatusModel(
                   stripeStatusActive:
-                      ['1', 'true'].contains(json['stripeStatus'].toString()),
+                      (['1', 'true'].contains(json['stripeStatus'].toString()))
+                          ? "1"
+                          : "0",
                   stripeStatusReason: ""))
           : const StripeStatusModel(
-              stripeStatusActive: false, stripeStatusReason: ""),
+              stripeStatusActive: "0", stripeStatusReason: ""),
     );
   }
 
@@ -289,15 +291,16 @@ class StripeStatusModel extends Equatable {
   });
 
   factory StripeStatusModel.fromJson(Map<String, dynamic> json) {
+    bool isActive = json['status'] == true ||
+        json['status'] == 1 ||
+        json['status'] == '1' ||
+        json['status'] == 'true';
     return StripeStatusModel(
-      stripeStatusActive: json['status'] == true ||
-          json['status'] == 1 ||
-          json['status'] == '1' ||
-          json['status'] == 'true',
+      stripeStatusActive: isActive ? "1" : "0",
       stripeStatusReason: json['reason'] ?? "",
     );
   }
-  final bool stripeStatusActive;
+  final String stripeStatusActive;
   final String stripeStatusReason;
 
   Map<String, dynamic> toJson() {

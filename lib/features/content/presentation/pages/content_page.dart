@@ -307,40 +307,51 @@ class MyContentViewState extends State<MyContentView>
       body: SafeArea(
         child: Column(
           children: [
-            // SizedBox(height: size.width * AppDimensions.numD04),
+            SizedBox(height: size.width * AppDimensions.numD02),
             Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: size.width * AppDimensions.numD04),
-              child: TabBar(
-                controller: _tabController,
-                physics: const NeverScrollableScrollPhysics(),
-                labelColor: Colors.white,
-                dividerColor: AppColorTheme.colorThemePink,
-                unselectedLabelColor: Colors.black,
-                indicator: BoxDecoration(
-                  color: AppColorTheme.colorThemePink,
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5F5F5),
                   borderRadius:
-                      BorderRadius.circular(size.width * AppDimensions.numD02),
+                      BorderRadius.circular(size.width * AppDimensions.numD03),
                 ),
-                labelStyle: commonTextStyle(
-                  size: size,
-                  fontSize: size.width * AppDimensions.numD038,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
+                child: TabBar(
+                  controller: _tabController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  labelColor: Colors.white,
+                  unselectedLabelColor: Colors.black,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicator: BoxDecoration(
+                    color: AppColorTheme.colorThemePink,
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD025),
+                  ),
+                  labelStyle: commonTextStyle(
+                    size: size,
+                    fontSize: size.width * AppDimensions.numD038,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  unselectedLabelStyle: commonTextStyle(
+                    size: size,
+                    fontSize: size.width * AppDimensions.numD038,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  tabs: const [
+                    Tab(text: "All Content"),
+                    Tab(text: "My Content"),
+                  ],
+                  onTap: (index) {
+                    setState(() {});
+                  },
                 ),
-                tabs: [
-                  Tab(text: "All Content"),
-                  Tab(text: "My Content"),
-                ],
-                onTap: (index) {
-                  setState(() {});
-                },
               ),
             ),
-            const Divider(
-              color: Color(0xFFD8D8D8),
-              thickness: 1.5,
-            ),
+            SizedBox(height: size.width * AppDimensions.numD02),
             Flexible(
               child: TabBarView(
                 controller: _tabController,

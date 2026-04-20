@@ -200,9 +200,13 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                 !rememberMe
                                     ? Padding(
                                         padding: EdgeInsets.symmetric(
-                                            horizontal: AppDimensions.commonPaddingSize(size)),
+                                            horizontal:
+                                                AppDimensions.commonPaddingSize(
+                                                    size)),
                                         child: Text(
                                           "PLEASE READ THESE LICENCE TERMS CAREFULLY. BY CLICKING ON THE ${"ACCEPT"} BUTTON BELOW YOU AGREE TO THESE TERMS WHICH WILL BIND YOU. IF YOU DO NOT AGREE TO THESE TERMS, CLICK ON THE REJECT BUTTON BELOW.",
+                                          textAlign: TextAlign.justify,
+                                          softWrap: true,
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontSize: size.width *
@@ -219,61 +223,75 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                     physics:
                                         const NeverScrollableScrollPhysics(),
                                     itemBuilder: (context, index) {
-                                      return Html(
-                                        data: htmlDataList[index],
-                                        style: {
-                                          "span": Style(
-                                            color: AppColorTheme
-                                                .colorTextFieldIcon,
-                                            fontSize: FontSize(size.width *
-                                                AppDimensions.numD01),
-                                          ),
-                                          "h1": Style(
-                                              color: AppColorTheme.colorGreyNew,
+                                      return SizedBox(
+                                        width: double.infinity,
+                                        child: Html(
+                                          data: htmlDataList[index],
+                                          shrinkWrap: true,
+                                          style: {
+                                            "span": Style(
+                                              whiteSpace: WhiteSpace.pre,
+                                              color: AppColorTheme
+                                                  .colorTextFieldIcon,
+                                              textAlign: TextAlign.justify,
                                               fontSize: FontSize(size.width *
-                                                  AppDimensions.numD02),
-                                              padding: HtmlPaddings.symmetric(
-                                                  vertical: size.width *
-                                                      AppDimensions.numD01)),
-                                          "h2": Style(
-                                              color: Colors.black,
-                                              fontSize: FontSize(size.width *
-                                                  AppDimensions.numD04),
-                                              padding: HtmlPaddings.symmetric(
-                                                  vertical: size.width *
-                                                      AppDimensions.numD01)),
-                                          "h3": Style(
-                                              color: Colors.black,
-                                              fontSize: FontSize(size.width *
-                                                  AppDimensions.numD035),
-                                              padding: HtmlPaddings.symmetric(
-                                                  vertical: size.width *
-                                                      AppDimensions.numD01)),
-                                          "h4": Style(
-                                              color: Colors.black,
-                                              fontSize: FontSize(size.width *
-                                                  AppDimensions.numD035),
-                                              padding: HtmlPaddings.symmetric(
-                                                  vertical: size.width *
-                                                      AppDimensions.numD01)),
-                                          "td": Style(
-                                              color: AppColorTheme.colorGreyNew,
-                                              fontSize: FontSize(size.width *
-                                                  AppDimensions.numD02),
-                                              padding: HtmlPaddings.symmetric(
-                                                  vertical: size.width *
-                                                      AppDimensions.numD01)),
-                                          "th": Style(
-                                              color: AppColorTheme.colorGreyNew,
-                                              fontSize: FontSize(size.width *
-                                                  AppDimensions.numD02),
-                                              fontWeight: FontWeight.w600,
-                                              padding: HtmlPaddings.zero),
-                                          "div": Style(
-                                            backgroundColor:
-                                                AppColorTheme.colorLightGrey,
-                                          )
-                                        },
+                                                  AppDimensions.numD01),
+                                            ),
+                                            "h1": Style(
+                                                color:
+                                                    AppColorTheme.colorGreyNew,
+                                                textAlign: TextAlign.justify,
+                                                fontSize: FontSize(size.width *
+                                                    AppDimensions.numD02),
+                                                padding: HtmlPaddings.symmetric(
+                                                    vertical: size.width *
+                                                        AppDimensions.numD01)),
+                                            "h2": Style(
+                                                color: Colors.black,
+                                                whiteSpace: WhiteSpace.normal,
+                                                fontSize: FontSize(size.width *
+                                                    AppDimensions.numD04),
+                                                textAlign: TextAlign.justify,
+                                                padding: HtmlPaddings.symmetric(
+                                                    vertical: size.width *
+                                                        AppDimensions.numD01)),
+                                            "h3": Style(
+                                                color: Colors.black,
+                                                whiteSpace: WhiteSpace.pre,
+                                                textAlign: TextAlign.justify,
+                                                fontSize: FontSize(size.width *
+                                                    AppDimensions.numD035),
+                                                padding: HtmlPaddings.symmetric(
+                                                    vertical: size.width *
+                                                        AppDimensions.numD01)),
+                                            "h4": Style(
+                                                color: Colors.black,
+                                                fontSize: FontSize(size.width *
+                                                    AppDimensions.numD035),
+                                                padding: HtmlPaddings.symmetric(
+                                                    vertical: size.width *
+                                                        AppDimensions.numD01)),
+                                            "td": Style(
+                                                color:
+                                                    AppColorTheme.colorGreyNew,
+                                                fontSize: FontSize(size.width *
+                                                    AppDimensions.numD02),
+                                                padding: HtmlPaddings.symmetric(
+                                                    vertical: size.width *
+                                                        AppDimensions.numD01)),
+                                            "th": Style(
+                                                color:
+                                                    AppColorTheme.colorGreyNew,
+                                                fontSize: FontSize(size.width *
+                                                    AppDimensions.numD02),
+                                                fontWeight: FontWeight.w600,
+                                                padding: HtmlPaddings.zero),
+                                            "div": Style(
+                                              backgroundColor:
+                                                  AppColorTheme.colorLightGrey,
+                                            )
+                                          },
+                                        ),
                                       );
                                     },
                                     separatorBuilder: (context, index) {

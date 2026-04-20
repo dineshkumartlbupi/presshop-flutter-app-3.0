@@ -72,7 +72,9 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
+                  softWrap: true,
                   AppStrings.deleteAccountText,
+                  textAlign: TextAlign.justify,
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD035,

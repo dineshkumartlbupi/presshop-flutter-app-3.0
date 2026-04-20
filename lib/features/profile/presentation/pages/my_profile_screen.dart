@@ -417,9 +417,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Container(
       padding: EdgeInsets.zero,
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFFF5F6F7),
           borderRadius:
-              BorderRadius.circular(size.width * AppDimensions.numD04),
+              BorderRadius.circular(size.width * AppDimensions.numD06),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -428,15 +428,15 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             )
           ]),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Stack(
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(size.width * AppDimensions.numD04),
-                  bottomLeft:
-                      Radius.circular(size.width * AppDimensions.numD04),
-                ),
+                    topLeft: Radius.circular(size.width * AppDimensions.numD06),
+                    bottomLeft:
+                        Radius.circular(size.width * AppDimensions.numD06)),
                 child: CachedNetworkImage(
                   imageUrl:
                       myProfileData != null ? myProfileData!.avatarImage : "",
@@ -467,8 +467,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                     );
                   },
                   fit: BoxFit.cover,
-                  width: size.width * 0.38,
-                  height: size.width * 0.38,
+                  width: size.width * 0.42,
+                  height: size.width * 0.42,
                 ),
               ),
               if (isSilentLoading)
@@ -476,12 +476,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.black26,
-                      borderRadius: BorderRadius.only(
-                        topLeft:
-                            Radius.circular(size.width * AppDimensions.numD04),
-                        bottomLeft:
-                            Radius.circular(size.width * AppDimensions.numD04),
-                      ),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD06),
                     ),
                     child: Center(
                       child: Lottie.asset(
@@ -519,9 +515,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 )
             ],
           ),
-          SizedBox(
-            width: size.width * AppDimensions.numD03,
-          ),
+          SizedBox(width: size.width * AppDimensions.numD01),
           Expanded(
               child: Padding(
                   padding: EdgeInsets.only(
@@ -543,9 +537,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                                   : "",
                               style: commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * AppDimensions.numD045,
+                                  fontSize: size.width * AppDimensions.numD05,
                                   color: Colors.black,
-                                  fontWeight: FontWeight.w600)),
+                                  fontWeight: FontWeight.bold)),
                           if (myProfileData?.stripeStatusActive == '1' ||
                               myProfileData?.stripeStatusActive == 'true' ||
                               myProfileData?.isVerified == true) ...[
@@ -555,9 +549,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                               height: size.width * AppDimensions.numD04,
                               width: size.width * AppDimensions.numD04,
                             ),
-                            SizedBox(width: size.width * AppDimensions.numD02),
+                            SizedBox(width: size.width * AppDimensions.numD01),
                             Transform.translate(
-                              offset: const Offset(0, -5),
+                              offset: const Offset(0, -7),
                               child: Container(
                                 padding: EdgeInsets.symmetric(
                                   horizontal:
@@ -567,13 +561,13 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                                 decoration: BoxDecoration(
                                   color: const Color(0xFF2D7ADE),
                                   borderRadius:
-                                      BorderRadius.circular(size.width * 0.04),
+                                      BorderRadius.circular(size.width * 0.01),
                                 ),
                                 child: Text(
                                   "Verified Hopper",
                                   style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * 0.02,
+                                    fontSize: size.width * 0.023,
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -590,30 +584,36 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                           "${AppStrings.joinedText} - ${myProfileData != null ? myProfileData!.joinedDate : ""}",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black54,
-                              fontWeight: FontWeight.normal)),
+                              fontSize: size.width * AppDimensions.numD038,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400)),
                       SizedBox(
-                        height: size.width * AppDimensions.numD005,
+                        height: size.width * AppDimensions.numD01,
                       ),
                       Text(
                           "${AppStrings.earningsText} - $currencySymbol${myProfileData != null ? formatDouble(double.parse(myProfileData!.totalIncome)) : "0"}",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black54,
-                              fontWeight: FontWeight.normal)),
-                      SizedBox(
-                        height: size.width * AppDimensions.numD01,
-                      ),
-                      Text(_getCurrentAddress(),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
+                              fontSize: size.width * AppDimensions.numD038,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400)),
+                      if (myProfileData != null &&
+                          (myProfileData!.cityName.isNotEmpty ||
+                              myProfileData!.countryName.isNotEmpty)) ...[
+                        SizedBox(
+                          height: size.width * AppDimensions.numD01,
+                        ),
+                        Text(
+                          "${myProfileData!.cityName}${myProfileData!.cityName.isNotEmpty ? ", " : ""}${myProfileData!.profileCountry}${myProfileData!.postCode.isNotEmpty ? ", " : ""}${myProfileData!.postCode}${myProfileData!.countryName.isNotEmpty ? ", " : ""}${myProfileData!.countryName}",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * AppDimensions.numD03,
-                              color: Colors.black54,
-                              fontWeight: FontWeight.normal))
+                              fontSize: size.width * AppDimensions.numD038,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ],
                   )))
         ],

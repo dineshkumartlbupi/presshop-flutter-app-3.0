@@ -78,7 +78,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           appBar: CommonBrandedAppBar(
             title: AppStrings.changePasswordText,
             size: size,
-            showLogo: false,
+            showLogo: true,
           ),
           body: SafeArea(
             child: Form(

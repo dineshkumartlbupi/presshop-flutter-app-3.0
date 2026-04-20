@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/core_export.dart';
@@ -30,12 +32,21 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         showLoader: showLoader,
       );
       if (response.statusCode == 200) {
-        final data = response.data;
-        if (data['code'] == 200 || data['success'] == true) {
-          return UserProfileResponse.fromJson(data).data;
+        var map = response.data;
+        if (map is String) map = jsonDecode(map);
+        if (map["code"] == 200 || map["success"] == true) {
+          var userData = map["userData"] ?? map["data"];
+          if (userData is Map &&
+              userData.containsKey('data') &&
+              userData['data'] is Map) {
+            userData = userData['data'];
+          }
+          if (userData is Map) {
+            return UserProfileModel.fromJson(Map<String, dynamic>.from(userData));
+          }
         }
         throw ServerFailure(
-            message: data['message'] ?? 'Failed to load profile');
+            message: map['message'] ?? 'Failed to load profile');
       }
       throw ServerFailure(message: 'Failed to load profile');
     } catch (e) {
@@ -74,7 +85,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final resData = response.data;
+        var resData = response.data;
+        if (resData is String) resData = jsonDecode(resData);
         if (resData['code'] == 200 || resData['success'] == true) {
           return UserProfileResponse.fromJson(resData).data;
         }
@@ -104,11 +116,14 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
           formData: formData,
           options: options);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = response.data;
+        var data = response.data;
+        if (data is String) data = jsonDecode(data);
         if (data['code'] == 200 || data['success'] == true) {
           final userData = data['userData'] ?? data['data'];
           if (userData != null && userData is Map) {
-            return userData['profile_image']?.toString() ?? data['profile_image']?.toString() ?? '';
+            return userData['profile_image']?.toString() ??
+                data['profile_image']?.toString() ??
+                '';
           }
           return data['profile_image']?.toString() ?? '';
         }
@@ -133,7 +148,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = response.data;
+        var data = response.data;
+        if (data is String) data = jsonDecode(data);
         if (data['code'] == 200 || data['success'] == true) {
           return;
         }
@@ -154,7 +170,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         showLoader: false,
       );
       if (response.statusCode == 200) {
-        final data = response.data;
+        var data = response.data;
+        if (data is String) data = jsonDecode(data);
         return data['userNameExist'] ?? false;
       }
       return false;
@@ -169,7 +186,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       final response = await apiClient.get(ApiConstantsNew.profile.getAvatars,
           showLoader: false);
       if (response.statusCode == 200) {
-        final data = response.data;
+        var data = response.data;
+        if (data is String) data = jsonDecode(data);
         final List list = data['data'] ?? [];
         return list.map((e) => AvatarModel.fromJson(e)).toList();
       }

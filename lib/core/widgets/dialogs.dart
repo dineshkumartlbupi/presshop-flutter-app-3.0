@@ -132,7 +132,9 @@ class AllDialogs {
                                           size, AppColorTheme.colorThemePink),
                                       () {
                                     sharedPreferences?.setBool(
-                                        SharedPreferencesKeys.alertInfoPopupShownKey, true);
+                                        SharedPreferencesKeys
+                                            .alertInfoPopupShownKey,
+                                        true);
                                     Navigator.pop(context);
                                   }),
                                 ),
@@ -233,6 +235,7 @@ class AllDialogs {
                               Expanded(
                                 child: Text(
                                   "💰 Location helps us send you tasks near you in real time. Turn it off and you may miss chances to capture news and earn. Are you sure you want to turn it off?",
+                                  softWrap: true,
                                   textAlign: TextAlign.justify,
                                   style: TextStyle(
                                       color: Colors.black,

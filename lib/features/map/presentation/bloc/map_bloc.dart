@@ -32,6 +32,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             target: LatLng(51.5074, -0.1278),
             zoom: 14,
           ),
+          selectedDistance: '5 miles',
         )) {
     on<GetCurrentLocationEvent>(_onGetCurrentLocation);
     on<GetRouteEvent>(_onGetRoute);
@@ -361,10 +362,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
         // STEP 2: Kick off news & incidents — these go into the event queue
         //         and are processed independently (non-blocking here)
+        final distanceKm = _convertDistanceToKm(state.selectedDistance);
         add(FetchNewsEvent(
-            lat: location.latitude, lng: location.longitude, km: 10));
+            lat: location.latitude, lng: location.longitude, km: distanceKm));
         add(FetchIncidentsEvent(
-            lat: location.latitude, lng: location.longitude, km: 10));
+            lat: location.latitude, lng: location.longitude, km: distanceKm));
 
         // STEP 3: Load avatar marker in background — fire-and-forget
         //         Emits separately via a microtask so it never blocks this handler
@@ -711,10 +713,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     Emitter<MapState> emit,
   ) {
     emit(state.copyWith(searchedLocation: event.location));
+    final distanceKm = _convertDistanceToKm(state.selectedDistance);
     add(FetchNewsEvent(
       lat: event.location.latitude,
       lng: event.location.longitude,
-      km: 10,
+      km: distanceKm,
       category: state.selectedCategory ?? 'all',
     ));
   }
@@ -776,12 +779,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   double _convertDistanceToKm(String? distance) {
-    if (distance == null) return 10.0;
+    if (distance == null) return 8.04; // ~5 miles
     try {
       final value = double.parse(distance.split(' ')[0]);
       return value * 1.60934;
     } catch (e) {
-      return 10.0;
+      return 8.04;
     }
   }
 
