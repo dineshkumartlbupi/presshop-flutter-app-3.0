@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:country_picker/country_picker.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -15,6 +16,7 @@ import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/widgets/common/avatar_bottom_sheet.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/profile/constants/profile_constants.dart';
@@ -63,6 +65,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   List<AvatarData> avatarList = [];
   MyProfileData? myProfileData;
   // Completer<String?>? _studentBeansCompleter;
+  final ImagePicker _picker = ImagePicker();
 
   String selectedCountryCode = "",
       userImagePath = "",
@@ -495,7 +498,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   right: size.width * 0.02,
                   child: InkWell(
                     onTap: () {
-                      avatarBottomSheet(size);
+                      _showImagePicker(context);
                     },
                     child: Container(
                       padding: EdgeInsets.all(size.width * 0.005),
@@ -822,20 +825,6 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         });
       }
     });
-  }
-
-  /// Avatar Images
-  void avatarBottomSheet(Size size) {
-    AvatarBottomSheet.show(
-      context: context,
-      size: size,
-      avatarList: avatarList,
-      onAvatarSelected: (avatar) {
-        myProfileData!.avatarImage = avatar.avatar;
-        myProfileData!.avatarId = avatar.id;
-        setState(() {});
-      },
-    );
   }
 
   Widget _buildUserNameField() {
@@ -1873,6 +1862,146 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return null;
   }
 
+  void _showImagePicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (modalContext) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Photo Library'),
+                onTap: () {
+                  _pickImage(ImageSource.gallery, context);
+                  modalContext.pop();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Camera'),
+                onTap: () {
+                  _pickImage(ImageSource.camera, context);
+                  modalContext.pop();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.face),
+                title: const Text('Choose Avatar'),
+                onTap: () {
+                  modalContext.pop();
+                  avatarBottomSheet(size);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source, BuildContext context) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(source: source);
+      if (pickedFile != null) {
+        if (!mounted) return;
+        uploadProfileImageApi(pickedFile.path);
+      }
+    } catch (e) {
+      debugPrint("Error picking image: $e");
+    }
+  }
+
+  /// Avatar Images
+  void avatarBottomSheet(Size size) {
+    AvatarBottomSheet.show(
+      context: context,
+      size: size,
+      avatarList: avatarList,
+      onAvatarSelected: (avatar) async {
+        setState(() {
+          isLoading = true;
+        });
+        try {
+          Map<String, String> data = {
+            SharedPreferencesKeys.avatarIdKey: avatar.id
+          };
+          // reuse editProfileApi logic for avatar update
+          String userId =
+              sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ??
+                  "";
+          Options options = Options(headers: {"x-user-id": userId});
+          final response = await sl<ApiClient>().post(
+            ApiConstantsNew.profile.editProfile,
+            data: data,
+            options: options,
+          );
+
+          if (response.statusCode == 200 || response.statusCode == 201) {
+            var map = response.data;
+            if (map is String) map = jsonDecode(map);
+            if (map["code"] == 200 || map["success"] == true) {
+              showSnackBar("Success", "Profile avatar updated successfully",
+                  Colors.green);
+              await myProfileApi();
+            }
+          }
+        } catch (e) {
+          debugPrint("Error updating avatar: $e");
+          showSnackBar("Error", "Failed to update avatar", Colors.red);
+        } finally {
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+            });
+          }
+        }
+      },
+    );
+  }
+
+  Future<void> uploadProfileImageApi(String imagePath) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      String userId =
+          sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
+
+      FormData formData = FormData.fromMap({
+        "profile_image": await MultipartFile.fromFile(imagePath),
+      });
+
+      Options options = Options(headers: {"x-user-id": userId});
+
+      final response = await sl<ApiClient>().multipartPost(
+        ApiConstantsNew.profile.editProfile,
+        formData: formData,
+        options: options,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var map = response.data;
+        if (map is String) map = jsonDecode(map);
+
+        if (map["code"] == 200 || map["success"] == true) {
+          showSnackBar(
+              "Success", "Profile image updated successfully", Colors.green);
+          await myProfileApi();
+        }
+      }
+    } catch (e) {
+      debugPrint("Error uploading image: $e");
+      showSnackBar("Error", "Failed to upload image", Colors.red);
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   // TODO: implement pageName
   String get pageName => PageNames.profile;
@@ -2083,7 +2212,9 @@ class MyProfileData {
       var stripe = json['stripeStatus'];
       if (stripe == null) {
         // Fallback to checking a top-level 'status' field if stripeStatus is missing
-        if (json['status'] == 1 || json['status'] == '1' || json['status'] == true) {
+        if (json['status'] == 1 ||
+            json['status'] == '1' ||
+            json['status'] == true) {
           return '1';
         }
         return '0';
@@ -2106,7 +2237,7 @@ class MyProfileData {
     } else if (json["avatarData"] is String &&
         json["avatarData"].toString().startsWith("http")) {
       tempAvatar = json["avatarData"];
-    } 
+    }
 
     if (tempAvatar.isEmpty) {
       tempAvatar = json["avatar"]?.toString() ??

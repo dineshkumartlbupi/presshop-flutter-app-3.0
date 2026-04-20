@@ -361,6 +361,7 @@ class MediaThumbnailWidget extends StatelessWidget {
             height: size.height * AppDimensions.numD03,
           ),
         );
+
       default:
         return CachedNetworkImage(
           imageUrl: getMediaImageUrl(url, isVideo: type == 'video'),

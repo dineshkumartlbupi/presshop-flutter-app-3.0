@@ -382,7 +382,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                     right: size.width * AppDimensions.numD02,
                                     bottom: size.width * AppDimensions.numD02,
                                     child: InkWell(
-                                      onTap: () => avatarBottomSheet(size),
+                                      onTap: () => _showImagePicker(context),
                                       child: Container(
                                         padding:
                                             EdgeInsets.all(size.width * 0.007),
