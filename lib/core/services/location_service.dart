@@ -45,7 +45,6 @@ class LocationService {
     }
   }
 
-
   DateTime? _lastSettingsOpen;
 
   Future<bool> _executePermissionRequest(Permission permission) async {

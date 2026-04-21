@@ -14,11 +14,15 @@ import '../../domain/usecases/get_trending_hashtags.dart';
 import '../../domain/usecases/get_content_detail.dart';
 import '../../domain/usecases/get_media_house_offers.dart';
 import '../../domain/usecases/get_content_transactions.dart';
+import '../../domain/usecases/record_content_view.dart';
+import '../../data/datasources/content_socket_datasource.dart';
 import '../../domain/entities/content_item.dart';
 import '../../domain/entities/category_data.dart';
 import '../../domain/entities/content_metadata.dart';
 import 'content_event.dart';
 import 'content_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:presshop/core/utils/shared_preferences.dart';
 
 class ContentBloc extends Bloc<ContentEvent, ContentState> {
   ContentBloc({
@@ -32,6 +36,9 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     required this.getContentDetail,
     required this.getMediaHouseOffers,
     required this.getContentTransactions,
+    required this.recordContentView,
+    required this.contentSocketDataSource,
+    required this.sharedPreferences,
   }) : super(ContentInitial()) {
     on<FetchMyContentEvent>(_onFetchMyContent);
     on<PublishContentEvent>(_onPublishContent);
@@ -43,6 +50,10 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     on<FetchContentDetailEvent>(_onFetchContentDetail);
     on<FetchMediaHouseOffersEvent>(_onFetchMediaHouseOffers);
     on<FetchContentTransactionsEvent>(_onFetchContentTransactions);
+    on<RecordContentViewEvent>(_onRecordContentView);
+    on<OnContentViewRecordedBroadcast>(_onContentViewRecordedBroadcast);
+
+    _initSocket();
   }
   final GetMyContent getMyContent;
   final PublishContent publishContent;
@@ -54,6 +65,27 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
   final GetContentDetail getContentDetail;
   final GetMediaHouseOffers getMediaHouseOffers;
   final GetContentTransactions getContentTransactions;
+  final RecordContentView recordContentView;
+  final ContentSocketDataSource contentSocketDataSource;
+  final SharedPreferences sharedPreferences;
+
+  void _initSocket() {
+    final userId =
+        sharedPreferences.getString(SharedPreferencesKeys.hopperIdKey) ?? '';
+    if (userId.isNotEmpty) {
+      contentSocketDataSource.initSocket(userId: userId, userType: "hopper");
+    }
+
+    contentSocketDataSource.listenToViewRecorded(onData: (data) {
+      add(OnContentViewRecordedBroadcast(data));
+    });
+  }
+
+  @override
+  Future<void> close() {
+    contentSocketDataSource.stopListeningToViewRecorded();
+    return super.close();
+  }
 
   Future<void> _onFetchMyContent(
     FetchMyContentEvent event,
@@ -105,6 +137,7 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
                               (m['original_file_name'] ?? '').toString(),
                           watermarkedMedia:
                               (m['watermarked_media'] ?? '').toString(),
+                          watermark: (m['watermark'] ?? '').toString(),
                         )
                       : const ContentMetadata(
                           media: '',
@@ -115,6 +148,7 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
                           isWatermarked: false,
                           originalFileName: '',
                           watermarkedMedia: '',
+                          watermark: '',
                         ))
                   .toList(),
               productId: (e['product_id'] ?? '').toString(),
@@ -445,5 +479,79 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
         isLoadingMy: currentState.isLoadingMy,
       )),
     );
+  }
+
+  Future<void> _onRecordContentView(
+    RecordContentViewEvent event,
+    Emitter<ContentState> emit,
+  ) async {
+    // 1. Fire socket event immediately
+    contentSocketDataSource.recordContentView(
+      contentId: event.contentId,
+      userId: event.userId,
+    );
+
+    // 2. Fallback to REST API
+    await recordContentView(RecordContentViewParams(
+      contentId: event.contentId,
+      userId: event.userId,
+    ));
+  }
+
+  Future<void> _onContentViewRecordedBroadcast(
+    OnContentViewRecordedBroadcast event,
+    Emitter<ContentState> emit,
+  ) async {
+    final data = event.data;
+    final String? contentId = data['contentId']?.toString();
+    final int? newViewCount = data['view_count'] is int
+        ? data['view_count']
+        : int.tryParse(data['view_count']?.toString() ?? '');
+
+    if (contentId == null) return;
+
+    final currentState = state;
+    if (currentState is MyContentLoaded) {
+      // Update the specific content item in the lists if it exists
+      List<ContentItem> updatedAll = currentState.allContent.map((item) {
+        if (item.id == contentId && newViewCount != null) {
+          return item.copyWith(contentViewCount: newViewCount);
+        }
+        return item;
+      }).toList();
+
+      List<ContentItem> updatedMy = currentState.myContent.map((item) {
+        if (item.id == contentId && newViewCount != null) {
+          return item.copyWith(contentViewCount: newViewCount);
+        }
+        return item;
+      }).toList();
+
+      // If we are currently in ContentDetailLoaded, update that content as well
+      if (currentState is ContentDetailLoaded) {
+        ContentItem updatedDetail = currentState.content;
+        if (updatedDetail.id == contentId && newViewCount != null) {
+          updatedDetail =
+              updatedDetail.copyWith(contentViewCount: newViewCount);
+        }
+
+        emit(ContentDetailLoaded(
+          updatedDetail,
+          allContent: updatedAll,
+          myContent: updatedMy,
+          allPage: currentState.allPage,
+          myPage: currentState.myPage,
+          hasMoreAll: currentState.hasMoreAll,
+          hasMoreMy: currentState.hasMoreMy,
+          isLoadingAll: currentState.isLoadingAll,
+          isLoadingMy: currentState.isLoadingMy,
+        ));
+      } else {
+        emit(currentState.copyWith(
+          allContent: updatedAll,
+          myContent: updatedMy,
+        ));
+      }
+    }
   }
 }

@@ -52,6 +52,8 @@ class ContentItemModel extends ContentItem {
     required super.currencyOriginal,
     required super.imageCount,
     required super.videoCount,
+    super.audioCount = 0,
+    super.otherCount = 0,
     required super.contentUnderOffer,
     required super.paidStatus,
     required super.contentViewCount,
@@ -96,8 +98,30 @@ class ContentItemModel extends ContentItem {
       productId: json['product_id'] ?? '',
       priceOriginal: json['price_original']?.toString() ?? '0',
       currencyOriginal: json['currency_original'] ?? '',
-      imageCount: json['image_count'] ?? 0,
-      videoCount: json['video_count'] ?? 0,
+      imageCount: int.tryParse((json['image_count'] ??
+                  json['imageCount'] ??
+                  json['images_count'] ??
+                  '0')
+              .toString()) ??
+          0,
+      videoCount: int.tryParse((json['video_count'] ??
+                  json['videoCount'] ??
+                  json['videos_count'] ??
+                  '0')
+              .toString()) ??
+          0,
+      audioCount: int.tryParse((json['audio_count'] ??
+                  json['audioCount'] ??
+                  json['audios_count'] ??
+                  '0')
+              .toString()) ??
+          0,
+      otherCount: int.tryParse((json['other_count'] ??
+                  json['otherCount'] ??
+                  json['others_count'] ??
+                  '0')
+              .toString()) ??
+          0,
       contentUnderOffer: json['content_under_offer'] == true,
       paidStatus: json['paid_status'] == true || json['paid_status'] == "paid",
       contentViewCount: json['content_view_count_by_marketplace_for_app'] ?? 0,
@@ -173,6 +197,8 @@ class ContentItemModel extends ContentItem {
         'currency_original': currencyOriginal,
         'image_count': imageCount,
         'video_count': videoCount,
+        'audio_count': audioCount,
+        'other_count': otherCount,
         'content_under_offer': contentUnderOffer,
         'paid_status': paidStatus,
         'content_view_count_by_marketplace_for_app': contentViewCount,

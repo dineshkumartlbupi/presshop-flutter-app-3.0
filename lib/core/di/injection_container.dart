@@ -184,6 +184,8 @@ import 'package:presshop/features/content/domain/usecases/get_content_detail.dar
 import 'package:presshop/features/content/domain/repositories/content_repository.dart';
 import 'package:presshop/features/content/data/repositories/content_repository_impl.dart';
 import 'package:presshop/features/content/data/datasources/content_remote_data_source.dart';
+import 'package:presshop/features/content/data/datasources/content_socket_datasource.dart';
+import 'package:presshop/features/content/domain/usecases/record_content_view.dart';
 
 import 'package:presshop/features/content/domain/usecases/get_media_house_offers.dart';
 import 'package:presshop/features/content/domain/usecases/get_content_transactions.dart';
@@ -441,6 +443,9 @@ Future<void> init() async {
       getContentDetail: sl(),
       getMediaHouseOffers: sl(),
       getContentTransactions: sl(),
+      recordContentView: sl(),
+      contentSocketDataSource: sl(),
+      sharedPreferences: sl(),
     ),
   );
 
@@ -584,6 +589,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetContentDetail(sl()));
   sl.registerLazySingleton(() => GetMediaHouseOffers(sl()));
   sl.registerLazySingleton(() => GetContentTransactions(sl()));
+  sl.registerLazySingleton(() => RecordContentView(sl()));
 
   // Account Settings Use Cases ==========================================>
   sl.registerLazySingleton(() => DeleteAccount(sl()));
@@ -794,6 +800,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => IncidentSocketDataSource(client: sl()));
   sl.registerLazySingleton(() => NewsSocketDataSource(client: sl()));
   sl.registerLazySingleton(() => ChatSocketDataSource(client: sl()));
+  sl.registerLazySingleton<ContentSocketDataSource>(
+      () => ContentSocketDataSourceImpl(socketClient: sl()));
   sl.registerLazySingleton<ChatRemoteDataSource>(
       () => ChatRemoteDataSource(sl()));
 

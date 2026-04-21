@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:country_picker/country_picker.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -15,6 +16,7 @@ import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/widgets/common/avatar_bottom_sheet.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/profile/constants/profile_constants.dart';
@@ -63,6 +65,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   List<AvatarData> avatarList = [];
   MyProfileData? myProfileData;
   // Completer<String?>? _studentBeansCompleter;
+  final ImagePicker _picker = ImagePicker();
 
   String selectedCountryCode = "",
       userImagePath = "",
@@ -109,9 +112,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     setUserNameListener();
     setPhoneListener();
     setEmailListener();
-    myProfileApi(showLoader: false);
+    myProfileApi(showLoader: true);
     if (widget.editProfileScreen) {
-      getAvatarsApi(showLoader: false);
+      getAvatarsApi(showLoader: true);
     }
   }
 
@@ -412,201 +415,207 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   Widget topProfileWidget() {
     return Container(
-      height: size.width * AppDimensions.numD35,
+      padding: EdgeInsets.zero,
       decoration: BoxDecoration(
-          color: AppColorTheme.colorLightGrey,
+          color: const Color(0xFFF5F6F7),
           borderRadius:
-              BorderRadius.circular(size.width * AppDimensions.numD04)),
+              BorderRadius.circular(size.width * AppDimensions.numD06),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ]),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Stack(
-            fit: StackFit.loose,
             children: [
               ClipRRect(
-                  borderRadius: BorderRadius.only(
-                      topLeft:
-                          Radius.circular(size.width * AppDimensions.numD04),
-                      bottomLeft:
-                          Radius.circular(size.width * AppDimensions.numD04)),
-                  child: CachedNetworkImage(
-                    imageUrl:
-                        myProfileData != null ? myProfileData!.avatarImage : "",
-                    placeholder: (context, url) => Center(
-                      child: Padding(
-                        padding:
-                            EdgeInsets.all(size.width * AppDimensions.numD04),
-                        child: Image.asset(
-                          "${commonImagePath}rabbitLogo.png",
-                          fit: BoxFit.contain,
-                          width: size.width * AppDimensions.numD35,
-                          height: size.width * AppDimensions.numD35,
-                        ),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(size.width * AppDimensions.numD06),
+                    bottomLeft:
+                        Radius.circular(size.width * AppDimensions.numD06)),
+                child: CachedNetworkImage(
+                  imageUrl:
+                      myProfileData != null ? myProfileData!.avatarImage : "",
+                  placeholder: (context, url) => Center(
+                    child: Padding(
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD04),
+                      child: Image.asset(
+                        "${commonImagePath}rabbitLogo.png",
+                        fit: BoxFit.contain,
+                        width: size.width * AppDimensions.numD20,
+                        height: size.width * AppDimensions.numD20,
                       ),
                     ),
-                    errorWidget: (context, url, error) {
-                      debugPrint(
-                          "Error loading profile avatar from URL: $url \nError: $error");
-                      return Padding(
-                        padding:
-                            EdgeInsets.all(size.width * AppDimensions.numD04),
-                        child: Image.asset(
-                          "${commonImagePath}rabbitLogo.png",
-                          fit: BoxFit.contain,
-                          width: size.width * AppDimensions.numD35,
-                          height: size.width * AppDimensions.numD35,
-                        ),
-                      );
-                    },
-                    fit: BoxFit.cover,
-                    width: size.width * AppDimensions.numD37,
-                    height: size.width * AppDimensions.numD35,
-                  )),
+                  ),
+                  errorWidget: (context, url, error) {
+                    debugPrint(
+                        "Error loading profile avatar from URL: $url \nError: $error");
+                    return Padding(
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD04),
+                      child: Image.asset(
+                        "${commonImagePath}rabbitLogo.png",
+                        fit: BoxFit.contain,
+                        width: size.width * AppDimensions.numD20,
+                        height: size.width * AppDimensions.numD20,
+                      ),
+                    );
+                  },
+                  fit: BoxFit.cover,
+                  width: size.width * 0.42,
+                  height: size.width * 0.42,
+                ),
+              ),
               if (isSilentLoading)
                 Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(
-                              size.width * AppDimensions.numD04),
-                          bottomLeft: Radius.circular(
-                              size.width * AppDimensions.numD04)),
+                      color: Colors.black26,
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD06),
                     ),
                     child: Center(
                       child: Lottie.asset(
                         "assets/lottieFiles/loader_new.json",
-                        height: size.width * 0.15,
-                        width: size.width * 0.15,
+                        height: size.width * 0.08,
+                        width: size.width * 0.08,
                       ),
                     ),
                   ),
                 ),
-              widget.editProfileScreen
-                  ? Positioned(
-                      bottom: size.width * AppDimensions.numD01,
-                      right: size.width * AppDimensions.numD01,
-                      child: InkWell(
-                        onTap: () {
-                          avatarBottomSheet(size);
-                        },
-                        child: Container(
+              if (widget.editProfileScreen)
+                Positioned(
+                  bottom: size.width * 0.02,
+                  right: size.width * 0.02,
+                  child: InkWell(
+                    onTap: () {
+                      avatarBottomSheet(size);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(size.width * 0.005),
+                      decoration: const BoxDecoration(
+                          color: Colors.white, shape: BoxShape.circle),
+                      child: Container(
                           padding: EdgeInsets.all(size.width * 0.005),
                           decoration: const BoxDecoration(
-                              color: Colors.white, shape: BoxShape.circle),
-                          child: Container(
-                              padding: EdgeInsets.all(size.width * 0.005),
-                              decoration: const BoxDecoration(
-                                  color: AppColorTheme.colorThemePink,
-                                  shape: BoxShape.circle),
-                              child: Icon(
-                                Icons.edit_outlined,
-                                color: Colors.white,
-                                size: size.width * AppDimensions.numD04,
-                              )),
-                        ),
-                      ),
-                    )
-                  : Container()
+                              color: AppColorTheme.colorThemePink,
+                              shape: BoxShape.circle),
+                          child: Icon(
+                            Icons.edit_outlined,
+                            color: Colors.white,
+                            size: size.width * AppDimensions.numD04,
+                          )),
+                    ),
+                  ),
+                )
             ],
           ),
-          SizedBox(
-            width: size.width * AppDimensions.numD04,
-          ),
+          SizedBox(width: size.width * AppDimensions.numD01),
           Expanded(
-              child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: size.width * AppDimensions.numD02),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+              child: Padding(
+                  padding: EdgeInsets.only(
+                    left: size.width * AppDimensions.numD04,
+                    right: size.width * AppDimensions.numD02,
+                    top: size.width * AppDimensions.numD02,
+                    bottom: size.width * AppDimensions.numD02,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                          myProfileData != null
-                              ? myProfileData!.userName.toCapitalized()
-                              : "",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * AppDimensions.numD04,
-                              color: AppColorTheme.colorThemePink,
-                              fontWeight: FontWeight.w500)),
-                      if (true ||
-                          myProfileData?.stripeStatusActive == 'true' ||
-                          myProfileData?.isVerified == true) ...[
-                        SizedBox(width: size.width * AppDimensions.numD02),
-                        Image.asset(
-                          "${iconsPath}verified_badge.png",
-                          height: size.width * AppDimensions.numD04,
-                          width: size.width * AppDimensions.numD04,
-                        ),
-                        SizedBox(width: size.width * AppDimensions.numD01),
-                        Transform.translate(
-                          offset: const Offset(0, -7),
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: size.width * AppDimensions.numD015,
-                              vertical: size.width * 0.005,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF2D7ADE),
-                              borderRadius:
-                                  BorderRadius.circular(size.width * 0.01),
-                            ),
-                            child: Text(
-                              "Verified Hopper",
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                              myProfileData != null
+                                  ? myProfileData!.userName.toCapitalized()
+                                  : "",
                               style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * 0.023,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                                  size: size,
+                                  fontSize: size.width * AppDimensions.numD05,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold)),
+                          if (myProfileData?.stripeStatusActive == '1' ||
+                              myProfileData?.stripeStatusActive == 'true' ||
+                              myProfileData?.isVerified == true) ...[
+                            SizedBox(width: size.width * AppDimensions.numD02),
+                            Image.asset(
+                              "${iconsPath}verified_badge.png",
+                              height: size.width * AppDimensions.numD04,
+                              width: size.width * AppDimensions.numD04,
+                            ),
+                            SizedBox(width: size.width * AppDimensions.numD01),
+                            Transform.translate(
+                              offset: const Offset(0, -7),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      size.width * AppDimensions.numD015,
+                                  vertical: size.width * 0.005,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF2D7ADE),
+                                  borderRadius:
+                                      BorderRadius.circular(size.width * 0.01),
+                                ),
+                                child: Text(
+                                  "Verified Hopper",
+                                  style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * 0.023,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
+                        ],
+                      ),
+                      SizedBox(
+                        height: size.width * AppDimensions.numD01,
+                      ),
+                      Text(
+                          "${AppStrings.joinedText} - ${myProfileData != null ? myProfileData!.joinedDate : ""}",
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * AppDimensions.numD038,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400)),
+                      SizedBox(
+                        height: size.width * AppDimensions.numD01,
+                      ),
+                      Text(
+                          "${AppStrings.earningsText} - $currencySymbol${myProfileData != null ? formatDouble(double.parse(myProfileData!.totalIncome)) : "0"}",
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * AppDimensions.numD038,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400)),
+                      if (myProfileData != null &&
+                          (myProfileData!.cityName.isNotEmpty ||
+                              myProfileData!.countryName.isNotEmpty)) ...[
+                        SizedBox(
+                          height: size.width * AppDimensions.numD01,
+                        ),
+                        Text(
+                          "${myProfileData!.cityName}${myProfileData!.cityName.isNotEmpty ? ", " : ""}${myProfileData!.profileCountry}${myProfileData!.postCode.isNotEmpty ? ", " : ""}${myProfileData!.postCode}${myProfileData!.countryName.isNotEmpty ? ", " : ""}${myProfileData!.countryName}",
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * AppDimensions.numD038,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ],
-                  ),
-                  SizedBox(
-                    height: size.width * AppDimensions.numD01,
-                  ),
-                  Text(
-                      "${AppStrings.joinedText} - ${myProfileData != null ? myProfileData!.joinedDate : ""}",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD035,
-                          // color: Colors.white,
-                          color: Colors.black,
-                          fontWeight: FontWeight.normal)),
-                  SizedBox(
-                    height: size.width * AppDimensions.numD005,
-                  ),
-                  Text(
-                      "${AppStrings.earningsText} - $currencySymbol${myProfileData != null ? formatDouble(double.parse(myProfileData!.totalIncome)) : "0"}",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD035,
-                          // color: Colors.white,
-                          color: Colors.black,
-                          fontWeight: FontWeight.normal)),
-                  SizedBox(
-                    height: size.width * AppDimensions.numD005,
-                  ),
-                  Text(_getCurrentAddress(),
-                      maxLines: 10,
-                      overflow: TextOverflow.ellipsis,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD035,
-                          // color: Colors.white,
-                          color: Colors.black,
-                          fontWeight: FontWeight.normal)),
-                ],
-              ),
-            ),
-          ))
+                  )))
         ],
       ),
     );
@@ -821,20 +830,6 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         });
       }
     });
-  }
-
-  /// Avatar Images
-  void avatarBottomSheet(Size size) {
-    AvatarBottomSheet.show(
-      context: context,
-      size: size,
-      avatarList: avatarList,
-      onAvatarSelected: (avatar) {
-        myProfileData!.avatarImage = avatar.avatar;
-        myProfileData!.avatarId = avatar.id;
-        setState(() {});
-      },
-    );
   }
 
   Widget _buildUserNameField() {
@@ -1066,7 +1061,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // SizedBox(height: size.width * AppDimensions.numD06),
+        SizedBox(height: size.width * AppDimensions.numD06),
         _buildApartmentField(),
         SizedBox(height: size.width * AppDimensions.numD06),
         _buildPostCodeField(),
@@ -1493,7 +1488,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       return placeMarkList;
     } on Exception catch (e) {
       debugPrint("PEx: $e");
-      showSnackBar("Exception", e.toString(), Colors.red);
+//       showSnackBar("Exception", e.toString(), Colors.red);
     }
     return [];
   }
@@ -1736,7 +1731,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           String? profileImg = userData["profile_image"]?.toString() ??
               userData["profileImage"]?.toString();
           if (profileImg != null && profileImg.isNotEmpty) {
-            sharedPreferences!.setString(
+            await sharedPreferences!.setString(
                 SharedPreferencesKeys.profileImageKey, fixS3Url(profileImg));
           }
 
@@ -1837,8 +1832,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           widget.editProfileScreen = false;
           debugPrint("heloooo::::${myProfileData!.avatarId}");
 
-          myProfileApi();
-          sharedPreferences!.setString(
+          await myProfileApi();
+          await sharedPreferences!.setString(
               SharedPreferencesKeys.avatarKey, myProfileData!.avatarImage);
         }
         setState(() {});
@@ -1870,6 +1865,146 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       debugPrint("Error in StudentBeans Activation: $e");
     }
     return null;
+  }
+
+  void _showImagePicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (modalContext) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Photo Library'),
+                onTap: () {
+                  _pickImage(ImageSource.gallery, context);
+                  modalContext.pop();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Camera'),
+                onTap: () {
+                  _pickImage(ImageSource.camera, context);
+                  modalContext.pop();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.face),
+                title: const Text('Choose Avatar'),
+                onTap: () {
+                  modalContext.pop();
+                  avatarBottomSheet(size);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source, BuildContext context) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(source: source);
+      if (pickedFile != null) {
+        if (!mounted) return;
+        uploadProfileImageApi(pickedFile.path);
+      }
+    } catch (e) {
+      debugPrint("Error picking image: $e");
+    }
+  }
+
+  /// Avatar Images
+  void avatarBottomSheet(Size size) {
+    AvatarBottomSheet.show(
+      context: context,
+      size: size,
+      avatarList: avatarList,
+      onAvatarSelected: (avatar) async {
+        setState(() {
+          isLoading = true;
+        });
+        try {
+          Map<String, String> data = {
+            SharedPreferencesKeys.avatarIdKey: avatar.id
+          };
+          // reuse editProfileApi logic for avatar update
+          String userId =
+              sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ??
+                  "";
+          Options options = Options(headers: {"x-user-id": userId});
+          final response = await sl<ApiClient>().post(
+            ApiConstantsNew.profile.editProfile,
+            data: data,
+            options: options,
+          );
+
+          if (response.statusCode == 200 || response.statusCode == 201) {
+            var map = response.data;
+            if (map is String) map = jsonDecode(map);
+            if (map["code"] == 200 || map["success"] == true) {
+              showSnackBar("Success", "Profile avatar updated successfully",
+                  Colors.green);
+              await myProfileApi();
+            }
+          }
+        } catch (e) {
+          debugPrint("Error updating avatar: $e");
+          showSnackBar("Error", "Failed to update avatar", Colors.red);
+        } finally {
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+            });
+          }
+        }
+      },
+    );
+  }
+
+  Future<void> uploadProfileImageApi(String imagePath) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      String userId =
+          sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
+
+      FormData formData = FormData.fromMap({
+        "profile_image": await MultipartFile.fromFile(imagePath),
+      });
+
+      Options options = Options(headers: {"x-user-id": userId});
+
+      final response = await sl<ApiClient>().multipartPost(
+        ApiConstantsNew.profile.editProfile,
+        formData: formData,
+        options: options,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var map = response.data;
+        if (map is String) map = jsonDecode(map);
+
+        if (map["code"] == 200 || map["success"] == true) {
+          showSnackBar(
+              "Success", "Profile image updated successfully", Colors.green);
+          await myProfileApi();
+        }
+      }
+    } catch (e) {
+      debugPrint("Error uploading image: $e");
+      showSnackBar("Error", "Failed to upload image", Colors.red);
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -2015,11 +2150,11 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                                         mode: LaunchMode.externalApplication,
                                       );
 
-                                      sharedPreferences!.setBool(
+                                      await sharedPreferences!.setBool(
                                           SharedPreferencesKeys
                                               .sourceDataIsClickKey,
                                           true);
-                                      sharedPreferences!.setBool(
+                                      await sharedPreferences!.setBool(
                                           SharedPreferencesKeys
                                               .sourceDataIsOpenedKey,
                                           true);
@@ -2048,6 +2183,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 }
 
 class MyProfileData {
+  MyProfileData();
   MyProfileData.fromJson(json) {
     firstName =
         json[SharedPreferencesKeys.firstNameKey] ?? json['firstName'] ?? "";
@@ -2138,7 +2274,6 @@ class MyProfileData {
             .toString()
         : "";
   }
-  MyProfileData();
   String firstName = "";
   String lastName = "";
   String userName = "";

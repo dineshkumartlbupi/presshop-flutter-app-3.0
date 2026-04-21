@@ -95,10 +95,30 @@ class MyContentItemModel extends ContentItem {
       currencyOriginal: (json['currency_original'] ?? '').toString(),
       priceBase: json['price_base']?.toString(),
       currencyBase: json['currency_base']?.toString(),
-      imageCount: int.tryParse(json['image_count']?.toString() ?? '0') ?? 0,
-      videoCount: int.tryParse(json['video_count']?.toString() ?? '0') ?? 0,
-      audioCount: int.tryParse(json['audio_count']?.toString() ?? '0') ?? 0,
-      otherCount: int.tryParse(json['other_count']?.toString() ?? '0') ?? 0,
+      imageCount: int.tryParse((json['image_count'] ??
+                  json['imageCount'] ??
+                  json['images_count'] ??
+                  '0')
+              .toString()) ??
+          0,
+      videoCount: int.tryParse((json['video_count'] ??
+                  json['videoCount'] ??
+                  json['videos_count'] ??
+                  '0')
+              .toString()) ??
+          0,
+      audioCount: int.tryParse((json['audio_count'] ??
+                  json['audioCount'] ??
+                  json['audios_count'] ??
+                  '0')
+              .toString()) ??
+          0,
+      otherCount: int.tryParse((json['other_count'] ??
+                  json['otherCount'] ??
+                  json['others_count'] ??
+                  '0')
+              .toString()) ??
+          0,
       contentUnderOffer: json['content_under_offer'] == true,
       paidStatus: json['paid_status'] == true,
       contentViewCount: int.tryParse(

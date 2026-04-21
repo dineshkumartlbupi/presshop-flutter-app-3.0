@@ -668,7 +668,6 @@ class DashboardPageState extends State<Dashboard>
       _cameraKey.currentState?.resumeCamera();
     }
 
-
     trackAction(ActionNames.tabSwitch, parameters: {
       'from_tab': currentIndex.toString(),
       'to_tab': index.toString(),
@@ -761,7 +760,7 @@ class DashboardPageState extends State<Dashboard>
     debugPrint("Starting Comprehensive Permission Sequence...");
 
     final locService = LocationService();
-    
+
     // Ordered sequence to prevent OS-level overlap crashes
     await locService.requestPermission(Permission.camera);
     await locService.requestPermission(Permission.microphone);

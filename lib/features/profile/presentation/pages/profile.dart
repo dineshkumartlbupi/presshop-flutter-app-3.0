@@ -414,7 +414,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Container(
       height: size.width * AppDimensions.numD35,
       decoration: BoxDecoration(
-          color: AppColorTheme.colorLightGrey,
+          color: Colors.black,
           borderRadius:
               BorderRadius.circular(size.width * AppDimensions.numD04)),
       child: Row(
@@ -521,54 +521,15 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                          myProfileData != null
-                              ? myProfileData!.userName.toCapitalized()
-                              : "",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * AppDimensions.numD04,
-                              color: AppColorTheme.colorThemePink,
-                              fontWeight: FontWeight.w500)),
-                      if (true ||
-                          myProfileData?.stripeStatusActive == 'true' ||
-                          myProfileData?.isVerified == true) ...[
-                        SizedBox(width: size.width * AppDimensions.numD02),
-                        Image.asset(
-                          "${iconsPath}verified_badge.png",
-                          height: size.width * AppDimensions.numD04,
-                          width: size.width * AppDimensions.numD04,
-                        ),
-                        SizedBox(width: size.width * AppDimensions.numD01),
-                        Transform.translate(
-                          offset: const Offset(0, -7),
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: size.width * AppDimensions.numD015,
-                              vertical: size.width * 0.005,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF2D7ADE),
-                              borderRadius:
-                                  BorderRadius.circular(size.width * 0.01),
-                            ),
-                            child: Text(
-                              "Verified Hopper",
-                              style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * 0.023,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
+                  Text(
+                      myProfileData != null
+                          ? myProfileData!.userName.toCapitalized()
+                          : "",
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD04,
+                          color: AppColorTheme.colorThemePink,
+                          fontWeight: FontWeight.w500)),
                   SizedBox(
                     height: size.width * AppDimensions.numD01,
                   ),
@@ -577,8 +538,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          // color: Colors.white,
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.normal)),
                   SizedBox(
                     height: size.width * AppDimensions.numD005,
@@ -588,8 +548,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          // color: Colors.white,
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.normal)),
                   SizedBox(
                     height: size.width * AppDimensions.numD005,
@@ -600,9 +559,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          // color: Colors.white,
-                          color: Colors.black,
-                          fontWeight: FontWeight.normal)),
+                          color: Colors.white,
+                          fontWeight: FontWeight.normal))
                 ],
               ),
             ),
@@ -1066,7 +1024,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // SizedBox(height: size.width * AppDimensions.numD06),
+        SizedBox(height: size.width * AppDimensions.numD06),
         _buildApartmentField(),
         SizedBox(height: size.width * AppDimensions.numD06),
         _buildPostCodeField(),
@@ -2076,24 +2034,6 @@ class MyProfileData {
     profileCity = json['profile_city'] ?? "";
     profileCountry = json['profile_country'] ?? "";
     profilePostCode = json['profile_post_code'] ?? "";
-    isVerified = json['isVerified'] ?? json['is_verified'] ?? false;
-    stripeStatusActive = (() {
-      var stripe = json['stripeStatus'];
-      if (stripe == null) {
-        // Fallback to checking a top-level 'status' field if stripeStatus is missing
-        if (json['status'] == 1 ||
-            json['status'] == '1' ||
-            json['status'] == true) {
-          return '1';
-        }
-        return '0';
-      }
-      if (stripe is Map) {
-        return (stripe['status'] ?? '0').toString();
-      }
-      return stripe.toString();
-    })();
-    debugPrint("MyProfile parsed stripeStatusActive: $stripeStatusActive");
 
     latitude = (json[SharedPreferencesKeys.latitudeKey] ?? "").toString();
     longitude = (json[SharedPreferencesKeys.longitudeKey] ?? "").toString();
@@ -2152,8 +2092,6 @@ class MyProfileData {
   String profileCity = "";
   String profileCountry = "";
   String profilePostCode = "";
-  bool isVerified = false;
-  String? stripeStatusActive;
 
   String latitude = "";
   String longitude = "";

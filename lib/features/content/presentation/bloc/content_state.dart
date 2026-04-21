@@ -211,7 +211,6 @@ class ContentTransactionsLoaded extends MyContentLoaded {
 }
 
 class ContentError extends MyContentLoaded {
-
   const ContentError(
     this.message, {
     super.allContent,
@@ -228,6 +227,38 @@ class ContentError extends MyContentLoaded {
   @override
   List<Object> get props => [
         message,
+        allContent,
+        myContent,
+        allPage,
+        myPage,
+        hasMoreAll,
+        hasMoreMy,
+        isLoadingAll,
+        isLoadingMy,
+      ];
+}
+
+class ContentViewRecordedBroadcast extends MyContentLoaded {
+  final String contentId;
+  final int newViewCount;
+
+  const ContentViewRecordedBroadcast({
+    required this.contentId,
+    required this.newViewCount,
+    super.allContent,
+    super.myContent,
+    super.allPage,
+    super.myPage,
+    super.hasMoreAll,
+    super.hasMoreMy,
+    super.isLoadingAll,
+    super.isLoadingMy,
+  });
+
+  @override
+  List<Object> get props => [
+        contentId,
+        newViewCount,
         allContent,
         myContent,
         allPage,

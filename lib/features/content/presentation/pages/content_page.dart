@@ -10,11 +10,16 @@ import 'package:presshop/features/content/presentation/bloc/content_event.dart';
 import 'package:presshop/features/content/presentation/bloc/content_state.dart';
 import 'package:presshop/features/content/presentation/widgets/content_filter_bottom_sheet.dart';
 import 'package:presshop/features/content/presentation/widgets/content_item_widget.dart';
-import 'package:presshop/core/services/media_upload_service.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 class MyContentPage extends StatelessWidget {
+  final bool hideLeading;
+  final bool fromMenu;
+  final Key? contentKey;
+  final bool showAppBar;
+
   const MyContentPage({
     super.key,
     this.contentKey,
@@ -22,10 +27,6 @@ class MyContentPage extends StatelessWidget {
     this.hideLeading = false,
     this.fromMenu = false,
   });
-  final bool hideLeading;
-  final bool fromMenu;
-  final Key? contentKey;
-  final bool showAppBar;
 
   @override
   Widget build(BuildContext context) {
@@ -39,15 +40,16 @@ class MyContentPage extends StatelessWidget {
 }
 
 class MyContentView extends StatefulWidget {
+  final bool hideLeading;
+  final bool fromMenu;
+  final bool showAppBar;
+
   const MyContentView({
     super.key,
     this.showAppBar = false,
     this.hideLeading = false,
     this.fromMenu = false,
   });
-  final bool hideLeading;
-  final bool fromMenu;
-  final bool showAppBar;
 
   @override
   State<MyContentView> createState() => MyContentViewState();
@@ -86,26 +88,6 @@ class MyContentViewState extends State<MyContentView>
     initializeFilter();
     _loadAllContent(false);
     _loadMyContent(false);
-    MediaUploadService.uploadStatus.addListener(_onUploadStatusChanged);
-  }
-
-  void _onUploadStatusChanged() {
-    final status = MediaUploadService.uploadStatus.value;
-    if (status != null && status['status'] == 'success') {
-      debugPrint(
-          "ContentPage: Media upload success detected. Refreshing content...");
-      _loadAllContent(true);
-      _loadMyContent(true);
-    }
-  }
-
-  @override
-  void dispose() {
-    MediaUploadService.uploadStatus.removeListener(_onUploadStatusChanged);
-    _tabController.dispose();
-    _allController.dispose();
-    _myController.dispose();
-    super.dispose();
   }
 
   void initializeFilter() {
@@ -197,7 +179,8 @@ class MyContentViewState extends State<MyContentView>
   void _loadMyContent(bool isRefresh) {
     if (isRefresh) myPage = 1;
     Map<String, dynamic> params = _buildFilterParams();
-    params['status'] = 'published,pending,rejected';
+    params['status'] =
+        'pending,rejected'; // "Under Review" maps to pending/rejected
 
     context.read<ContentBloc>().add(FetchMyContentEvent(
           page: myPage,
@@ -307,51 +290,40 @@ class MyContentViewState extends State<MyContentView>
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(height: size.width * AppDimensions.numD02),
+            // SizedBox(height: size.width * AppDimensions.numD04),
             Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: size.width * AppDimensions.numD04),
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF5F5F5),
+              child: TabBar(
+                controller: _tabController,
+                physics: const NeverScrollableScrollPhysics(),
+                labelColor: Colors.white,
+                dividerColor: AppColorTheme.colorThemePink,
+                unselectedLabelColor: Colors.black,
+                indicator: BoxDecoration(
+                  color: AppColorTheme.colorThemePink,
                   borderRadius:
-                      BorderRadius.circular(size.width * AppDimensions.numD03),
+                      BorderRadius.circular(size.width * AppDimensions.numD02),
                 ),
-                child: TabBar(
-                  controller: _tabController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  labelColor: Colors.white,
-                  unselectedLabelColor: Colors.black,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  indicator: BoxDecoration(
-                    color: AppColorTheme.colorThemePink,
-                    borderRadius: BorderRadius.circular(
-                        size.width * AppDimensions.numD025),
-                  ),
-                  labelStyle: commonTextStyle(
-                    size: size,
-                    fontSize: size.width * AppDimensions.numD038,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  unselectedLabelStyle: commonTextStyle(
-                    size: size,
-                    fontSize: size.width * AppDimensions.numD038,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  tabs: const [
-                    Tab(text: "All Content"),
-                    Tab(text: "My Content"),
-                  ],
-                  onTap: (index) {
-                    setState(() {});
-                  },
+                labelStyle: commonTextStyle(
+                  size: size,
+                  fontSize: size.width * AppDimensions.numD038,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
                 ),
+                tabs: [
+                  Tab(text: "All Content"),
+                  Tab(text: "My Content"),
+                ],
+                onTap: (index) {
+                  setState(() {});
+                },
               ),
             ),
-            SizedBox(height: size.width * AppDimensions.numD02),
+            const Divider(
+              color: Color(0xFFD8D8D8),
+              thickness: 1.5,
+            ),
             Flexible(
               child: TabBarView(
                 controller: _tabController,
@@ -413,7 +385,9 @@ class MyContentViewState extends State<MyContentView>
 
           if (isAll) {
             currentList = fetchedList
-                .where((item) => item.status.toLowerCase() == 'published')
+                .where((item) =>
+                    item.status.toLowerCase() == 'published' ||
+                    item.status.toLowerCase() == 'pending')
                 .toList();
           } else {
             currentList = fetchedList

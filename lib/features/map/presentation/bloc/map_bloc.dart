@@ -74,8 +74,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<SetVisibilityEvent>((event, emit) {
       emit(state.copyWith(isVisible: event.isVisible));
     });
-
-    // Internal events for non-blocking background result delivery
     on<EmitAvatarMarkerEvent>((event, emit) {
       emit(state.copyWith(
         markers: _appendMeMarker(state.markers, forceMarker: event.marker),
@@ -96,8 +94,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final SharedPreferences sharedPreferences;
   bool _isReadyForBursts = false;
 
-  static const int kContentMarkerSize = 120;
-  static const int kIncidentMarkerSize = 120;
+  static const int kContentMarkerSize = 50;
+  static const int kIncidentMarkerSize = 50;
 
   BitmapDescriptor? _meMarkerIcon;
 
@@ -276,7 +274,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       emit(state.copyWith(
         markers: _appendMeMarker(updatedMarkers),
         newsList: updatedNewsList,
-        selectedIncident: isSelected ? incident : null, // If null, copyWith won't replace current one unless clearSelectedIncident is true. Wait, copyWith usually keeps old value if new is null.
+        selectedIncident: isSelected
+            ? incident
+            : null, // If null, copyWith won't replace current one unless clearSelectedIncident is true. Wait, copyWith usually keeps old value if new is null.
       ));
     } catch (e, stack) {
       debugPrint("Error handling updated incident: $e");
@@ -492,11 +492,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         try {
           startIcon = await markerService.bitmapFromIncidentAsset(
             "assets/markers/starting_markers.png",
-            70,
+            30,
           );
           endIcon = await markerService.bitmapFromIncidentAsset(
             "assets/markers/destination-marker.png",
-            70,
+            30,
           );
         } catch (e) {
           debugPrint("Error loading route markers: $e");
@@ -848,9 +848,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       return;
     }
 
-    final updatedIncident = event.incident.copyWith(viewCount: (event.incident.viewCount ?? 0) + 1);
+    final updatedIncident =
+        event.incident.copyWith(viewCount: (event.incident.viewCount ?? 0) + 1);
 
-    final updatedNewsList = state.newsList.map((i) => i.id == updatedIncident.id ? updatedIncident : i).toList();
+    final updatedNewsList = state.newsList
+        .map((i) => i.id == updatedIncident.id ? updatedIncident : i)
+        .toList();
 
     emit(state.copyWith(
       selectedIncident: updatedIncident,

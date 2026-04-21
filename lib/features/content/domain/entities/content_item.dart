@@ -99,6 +99,11 @@ class ContentItem extends Equatable {
   List<String> get mediaUrls {
     List<String> urls = [...images];
     urls.addAll(videos.map((e) => e.toString()));
+    for (var meta in contentMetadata) {
+      if (meta.media.isNotEmpty && !urls.contains(meta.media)) {
+        urls.add(meta.media);
+      }
+    }
     return urls;
   }
 
@@ -269,7 +274,7 @@ class ContentItem extends Equatable {
       'currency_base': currencyBase,
       'image_count': imageCount,
       'video_count': videoCount,
-      'audio_count': audioCount,
+      'audio_count': 4,
       'other_count': otherCount,
       'content_under_offer': contentUnderOffer,
       'paid_status': paidStatus,
