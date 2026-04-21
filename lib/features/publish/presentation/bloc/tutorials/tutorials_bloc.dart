@@ -40,7 +40,7 @@ class TutorialsBloc extends Bloc<TutorialsEvent, TutorialsState> {
         var updatedCategories = List<CategoryDataModel>.from(categories);
         updatedCategories[0] = updatedCategories[0].copyWith(selected: true);
         emit(state.copyWith(
-          status: TutorialsStatus.success,
+          status: TutorialsStatus.loading,
           categories: updatedCategories,
           selectedCategoryIndex: 0,
         ));
@@ -67,7 +67,7 @@ class TutorialsBloc extends Bloc<TutorialsEvent, TutorialsState> {
           updatedCategories[0] = updatedCategories[0].copyWith(selected: true);
 
           emit(state.copyWith(
-            status: TutorialsStatus.success,
+            status: TutorialsStatus.loading,
             categories: updatedCategories,
             selectedCategoryIndex: 0,
           ));

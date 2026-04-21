@@ -33,8 +33,6 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
   String _referralCode = "";
   int _totalHopperArmy = 0;
   bool _isLoadingProfile = true;
-  bool _isLoadingCommissions = true;
-  List<Map<String, dynamic>> _commissionList = [];
   String _referralCurrency = "£";
 
   // Representative amounts for referral visualization
@@ -65,7 +63,6 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
 
     // Then fetch fresh data from API
     _fetchProfileData();
-    _fetchCommissionData();
   }
 
   Future<void> _fetchProfileData() async {
@@ -102,45 +99,6 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
       if (mounted) {
         setState(() {
           _isLoadingProfile = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _fetchCommissionData() async {
-    try {
-      final apiClient = di.sl<ApiClient>();
-      final now = DateTime.now();
-      final response = await apiClient.get(
-        ApiConstantsNew.payments.commission,
-        queryParameters: {
-          "year": now.year.toString(),
-          "month": now.month.toString(),
-        },
-        showLoader: false,
-      );
-
-      final dynamic responseData = response.data;
-      List<dynamic> dataList = [];
-
-      if (responseData is Map) {
-        dataList = (responseData['data'] as List?) ?? [];
-      } else if (responseData is List) {
-        dataList = responseData;
-      }
-
-      if (mounted) {
-        setState(() {
-          _commissionList =
-              dataList.map((e) => Map<String, dynamic>.from(e as Map)).toList();
-          _isLoadingCommissions = false;
-        });
-      }
-    } catch (e) {
-      debugPrint("Error fetching commissions: $e");
-      if (mounted) {
-        setState(() {
-          _isLoadingCommissions = false;
         });
       }
     }
@@ -189,12 +147,8 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
           onRefresh: () async {
             setState(() {
               _isLoadingProfile = true;
-              _isLoadingCommissions = true;
             });
-            await Future.wait([
-              _fetchProfileData(),
-              _fetchCommissionData(),
-            ]);
+            await _fetchProfileData();
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -232,7 +186,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                               fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
-                          text: "PressHop",
+                          text: "PressHop®",
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD03,
@@ -444,34 +398,43 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                   /// Hopper Army Count
                   Center(
                     child: RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                            text: "You have ",
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        text: "You have ",
+                        style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD03,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: _isLoadingProfile
+                                ? "..."
+                                : "$_totalHopperArmy ",
                             style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w400),
-                            children: [
-                              TextSpan(
-                                text: _isLoadingProfile
-                                    ? "..."
-                                    : "$_totalHopperArmy ",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * AppDimensions.numD03,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w800),
-                              ),
-                              TextSpan(
-                                text: "Hoppers in your Army.",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * AppDimensions.numD03,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400),
-                              )
-                            ])),
+                              size: size,
+                              fontSize: size.width * AppDimensions.numD03,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          TextSpan(
+                            text: _isLoadingProfile
+                                ? ""
+                                : (_totalHopperArmy == 1
+                                    ? "Hopper in your Army."
+                                    : "Hoppers in your Army."),
+                            style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * AppDimensions.numD03,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   Center(
                     child: RichText(
@@ -508,54 +471,6 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                   ),
 
                   SizedBox(height: size.width * AppDimensions.numD06),
-
-                  /// Hopper Army Commission Details Section
-                  if (_commissionList.isNotEmpty || _isLoadingCommissions) ...[
-                    Divider(color: Colors.grey.shade300, thickness: 1),
-                    SizedBox(height: size.width * AppDimensions.numD03),
-                    Text(
-                      "Your Hopper Army Earnings",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD04,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: size.width * AppDimensions.numD03),
-                    if (_isLoadingCommissions)
-                      Center(
-                        child: Padding(
-                          padding:
-                              EdgeInsets.all(size.width * AppDimensions.numD05),
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                AppColorTheme.colorThemePink),
-                          ),
-                        ),
-                      )
-                    else
-                      ..._commissionList
-                          .map((item) => _buildCommissionCard(size, item)),
-                  ],
-
-                  // if (!_isLoadingCommissions && _commissionList.isEmpty) ...[
-                  //   SizedBox(height: size.width * AppDimensions.numD04),
-                  //   Divider(color: Colors.grey.shade300, thickness: 1),
-                  //   SizedBox(height: size.width * AppDimensions.numD03),
-                  //   Center(
-                  //     child: Text(
-                  //       "No hopper army earnings yet.\nInvite friends to start earning!",
-                  //       textAlign: TextAlign.center,
-                  //       style: commonTextStyle(
-                  //           size: size,
-                  //           fontSize: size.width * AppDimensions.numD03,
-                  //           color: Colors.grey,
-                  //           fontWeight: FontWeight.w400),
-                  //     ),
-                  //   ),
-                  // ],
-
-                  SizedBox(height: size.width * AppDimensions.numD06),
                 ],
               ),
             ),
@@ -564,179 +479,9 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
       ),
     );
   }
-
-  Widget _buildCommissionCard(Size size, Map<String, dynamic> item) {
-    final firstName = item['first_name'] ?? item['firstName'] ?? '';
-    final lastName = item['last_name'] ?? item['lastName'] ?? '';
-    final totalEarning = (item['totalEarning'] ?? 0).toDouble();
-    final commission = (item['commission'] ?? 0).toDouble();
-    final commissionReceived = (item['commissionReceived'] ?? 0).toDouble();
-    final commissionPending = (item['commissionPending'] ?? 0).toDouble();
-    final paidOn = item['paidOn'];
-    final dateOfJoining = item['dateOfJoining'];
-    final avatarInfo = item['avatarInfo'];
-    final avatarImage = avatarInfo is Map ? (avatarInfo['avatar'] ?? '') : '';
-
-    String formattedJoinDate = '';
-    if (dateOfJoining != null) {
-      try {
-        final dt = DateTime.parse(dateOfJoining.toString());
-        formattedJoinDate = DateFormat('dd MMM yyyy').format(dt.toLocal());
-      } catch (_) {
-        formattedJoinDate = dateOfJoining.toString();
-      }
-    }
-
-    String formattedPaidOn = '';
-    if (paidOn != null) {
-      try {
-        final dt = DateTime.parse(paidOn.toString());
-        formattedPaidOn = DateFormat('dd MMM yyyy').format(dt.toLocal());
-      } catch (_) {
-        formattedPaidOn = paidOn.toString();
-      }
-    }
-
-    return Container(
-      margin: EdgeInsets.only(bottom: size.width * AppDimensions.numD03),
-      padding: EdgeInsets.all(size.width * AppDimensions.numD035),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.grey.shade200),
-        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade100,
-            spreadRadius: 1,
-            blurRadius: 3,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// Header Row: Avatar + Name + Join Date
-          Row(
-            children: [
-              CircleAvatar(
-                radius: size.width * AppDimensions.numD05,
-                backgroundColor: AppColorTheme.colorThemePink.withOpacity(0.1),
-                backgroundImage:
-                    avatarImage.isNotEmpty ? NetworkImage(avatarImage) : null,
-                child: avatarImage.isEmpty
-                    ? Text(
-                        firstName.isNotEmpty ? firstName[0].toUpperCase() : "?",
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * AppDimensions.numD04,
-                            color: AppColorTheme.colorThemePink,
-                            fontWeight: FontWeight.bold),
-                      )
-                    : null,
-              ),
-              SizedBox(width: size.width * AppDimensions.numD025),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "$firstName $lastName".trim().toTitleCase(),
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD033,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600),
-                    ),
-                    if (formattedJoinDate.isNotEmpty)
-                      Text(
-                        "Joined: $formattedJoinDate",
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * AppDimensions.numD025,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w400),
-                      ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: size.width * AppDimensions.numD025),
-
-          /// Earning Details Grid
-          Row(
-            children: [
-              Expanded(
-                child: _earningInfoTile(size, "Total Earning",
-                    "$currencySymbol${totalEarning.toStringAsFixed(2)}"),
-              ),
-              Expanded(
-                child: _earningInfoTile(size, "Your Commission",
-                    "$currencySymbol${commission.toStringAsFixed(2)}"),
-              ),
-            ],
-          ),
-          SizedBox(height: size.width * AppDimensions.numD015),
-          Row(
-            children: [
-              Expanded(
-                child: _earningInfoTile(size, "Received",
-                    "$currencySymbol${commissionReceived.toStringAsFixed(2)}",
-                    valueColor: Colors.green),
-              ),
-              Expanded(
-                child: _earningInfoTile(size, "Pending",
-                    "$currencySymbol${commissionPending.toStringAsFixed(2)}",
-                    valueColor: Colors.orange),
-              ),
-            ],
-          ),
-          if (formattedPaidOn.isNotEmpty) ...[
-            SizedBox(height: size.width * AppDimensions.numD015),
-            Text(
-              "Last Paid: $formattedPaidOn",
-              style: commonTextStyle(
-                  size: size,
-                  fontSize: size.width * AppDimensions.numD025,
-                  color: Colors.grey.shade600,
-                  fontWeight: FontWeight.w400),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _earningInfoTile(Size size, String label, String value,
-      {Color? valueColor}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: commonTextStyle(
-              size: size,
-              fontSize: size.width * AppDimensions.numD025,
-              color: Colors.grey,
-              fontWeight: FontWeight.w400),
-        ),
-        SizedBox(height: size.width * AppDimensions.numD005),
-        Text(
-          value,
-          style: commonTextStyle(
-              size: size,
-              fontSize: size.width * AppDimensions.numD03,
-              color: valueColor ?? Colors.black,
-              fontWeight: FontWeight.w600),
-        ),
-      ],
-    );
-  }
 }
 
 class _Referral3DCard extends StatelessWidget {
-
   const _Referral3DCard({
     required this.amount,
     required this.size,

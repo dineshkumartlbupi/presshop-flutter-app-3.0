@@ -12,6 +12,7 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:video_player/video_player.dart';
 
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/utils/common_utils.dart';
 
 enum MediaTypeEnum {
   video,
@@ -53,19 +54,22 @@ class _MediaViewScreenState extends State<MediaViewScreen>
   void initState() {
     debugPrint("mediaUrl =====> ${widget.mediaFile}");
     if (widget.type == MediaTypeEnum.video) {
-      final videoUrl =
-          widget.isFromTutorialScreen ? widget.mediaFile : (widget.mediaFile);
+      final String videoUrl = getMediaImageUrl(widget.mediaFile);
+      debugPrint("🎬 Initializing video player for URL: $videoUrl");
 
-      debugPrint("mediaUrl1111 =====> $videoUrl");
-
-      _videoPlayerController =
-          VideoPlayerController.networkUrl(Uri.parse(videoUrl));
+      _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(videoUrl));
+      
+      // Store the initialization future first
+      _initializeVideoPlayerFuture = _videoPlayerController!.initialize().then((_) {
+        debugPrint("✅ Video initialized successfully: $videoUrl");
+      }).catchError((error) {
+        debugPrint("❌ Video initialization failed: $error");
+      });
 
       flickManager = FlickManager(
         videoPlayerController: _videoPlayerController!,
+        autoPlay: true,
       );
-      // Store the initialization future
-      _initializeVideoPlayerFuture = _videoPlayerController!.initialize();
     } else if (widget.type == MediaTypeEnum.audio) {
       initWaveData();
     }

@@ -70,24 +70,16 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
           body: BlocConsumer<UploadDocumentsBloc, UploadDocumentsState>(
             listener: (context, state) {
               if (state.status == UploadDocumentsStatus.failure) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.errorMessage)),
-                );
+                showToast(state.errorMessage);
               } else if (state.status == UploadDocumentsStatus.uploaded) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('Documents uploaded successfully')),
-                );
+                showToast('Documents uploaded successfully');
                 // Refresh lists after upload
                 context
                     .read<UploadDocumentsBloc>()
                     .add(GetUploadedDocumentsEvent());
                 context.pop(); // Close any open sheets if needed
               } else if (state.status == UploadDocumentsStatus.deleted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('Document deleted successfully')),
-                );
+                showToast('Document deleted successfully');
                 // Refresh lists after delete
                 context
                     .read<UploadDocumentsBloc>()
@@ -541,9 +533,11 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
               ),
             ),
             padding: EdgeInsets.all(size.width * AppDimensions.numD05),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Stack(
               children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -852,11 +846,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                       return SizedBox(
                         width: size.width,
                         height: size.width * AppDimensions.numD13,
-                        child: state.status == UploadDocumentsStatus.loading
-                            ? Center(
-                                child:
-                                    CommonWidgetsNew.showAnimatedLoader(size))
-                            : commonElevatedButton(
+                        child: commonElevatedButton(
                                 AppStrings.submitText,
                                 size,
                                 commonTextStyle(
@@ -868,11 +858,9 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                                 commonButtonStyle(
                                     size, AppColorTheme.colorThemePink), () {
                                 final allFiles = getAllFiles();
-                                if (allFiles.isEmpty) {
-                                  ScaffoldMessenger.of(contextValue)
-                                      .showSnackBar(const SnackBar(
-                                          content: Text(
-                                              "Please upload at least one document")));
+                                if (allFiles.length < 2) {
+                                  showToast(
+                                      "You must upload at least 2 documents to become PRO.");
                                   return;
                                 }
 
@@ -888,7 +876,28 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                 SizedBox(height: size.width * AppDimensions.numD04),
               ],
             ),
-          );
+            BlocBuilder<UploadDocumentsBloc, UploadDocumentsState>(
+              bloc: contextValue.read<UploadDocumentsBloc>(),
+              builder: (context, state) {
+                if (state.status == UploadDocumentsStatus.loading) {
+                  return Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD05),
+                      ),
+                      child: Center(
+                          child: CommonWidgetsNew.showAnimatedLoader(size)),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        ),
+      );
         });
       },
     );

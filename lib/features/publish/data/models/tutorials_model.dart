@@ -18,11 +18,11 @@ class TutorialsModel {
   factory TutorialsModel.fromJson(Map<String, dynamic> json) {
     return TutorialsModel(
         id: json['_id'] ?? json['id'] ?? "",
-        video: json['video'] ?? "",
+        video: json['url'] ?? json['video'] ?? "",
         description: json['description'] ?? "",
         category: json['category'] ?? "",
-        duration: json['duration'] ?? "",
-        view: json['count_for_hopper'] ?? 0,
+        duration: json['duration'] ?? "00:00",
+        view: json['views'] ?? json['count_for_hopper'] ?? 0,
         thumbnail: json['thumbnail'] ?? "",
         showVideo: false);
   }

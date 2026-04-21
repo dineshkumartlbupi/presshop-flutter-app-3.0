@@ -1175,11 +1175,23 @@ class _MapPageContentState extends State<_MapPageContent>
                 Positioned(
                   left: 16,
                   bottom: 15,
-                  child: GestureDetector(
-                    onTap: () {
-                      context.read<MapBloc>().add(ToggleAlertPanelEvent());
+                  child: TweenAnimationBuilder<double>(
+                    duration: const Duration(milliseconds: 150),
+                    tween: Tween<double>(
+                        begin: 1.0, end: state.showAlertPanel ? 0.95 : 1.0),
+                    builder: (context, scale, child) {
+                      return Transform.scale(
+                        scale: scale,
+                        child: child,
+                      );
                     },
-                    child: const AlertButtonMap(),
+                    child: GestureDetector(
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        context.read<MapBloc>().add(ToggleAlertPanelEvent());
+                      },
+                      child: const AlertButtonMap(),
+                    ),
                   ),
                 ),
                 if (state.isLoadingNews)
@@ -1190,32 +1202,6 @@ class _MapPageContentState extends State<_MapPageContent>
                       child: CommonWidgetsNew.showAnimatedLoader(size),
                     ),
                   ),
-                // Positioned(
-                //   right: 28,
-                //   bottom: 175,
-                //   child: Container(
-                //     padding: const EdgeInsets.all(8),
-                //     decoration: BoxDecoration(
-                //       color: Colors.white,
-                //       shape: BoxShape.circle,
-                //       boxShadow: [
-                //         BoxShadow(
-                //           color: Colors.black.withOpacity(0.1),
-                //           blurRadius: 10,
-                //           offset: const Offset(0, 2),
-                //         )
-                //       ],
-                //     ),
-                //     child: const SizedBox(
-                //       width: 20,
-                //       height: 20,
-                //       child: CircularProgressIndicator(
-                //         strokeWidth: 2,
-                //         color: Color(0xFFEC4E54),
-                //       ),
-                //     ),
-                //   ),
-                // ),
 
                 Positioned(
                   right: 20,
@@ -1239,72 +1225,37 @@ class _MapPageContentState extends State<_MapPageContent>
                       ),
                     ),
                   ),
-                Positioned(
-                  bottom: 63,
-                  left: 0,
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 300),
-                    opacity: state.showAlertPanel ? 1 : 0,
-                    child: AnimatedRotation(
-                      turns: state.showAlertPanel ? 0 : -0.05,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeOutBack,
-                      child: AnimatedSlide(
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.easeOutBack,
-                        offset: state.showAlertPanel
-                            ? Offset.zero
-                            : const Offset(0.08, 0.15),
-                        child: AnimatedScale(
-                          duration: const Duration(milliseconds: 600),
-                          curve: Curves.bounceOut,
-                          alignment: Alignment.bottomLeft,
-                          scale: state.showAlertPanel ? 1 : 0.0,
-                          child: IgnorePointer(
-                            ignoring: !state.showAlertPanel,
-                            child: AlertPanel(
-                              onClose: () {
-                                context
-                                    .read<MapBloc>()
-                                    .add(ToggleAlertPanelEvent());
-                              },
-                              onAlertSelected: (type) async {
-                                try {
-                                  if (!state.isSelectingAlertLocation) {
-                                    context.read<MapBloc>().add(
-                                        SetSelectingAlertLocationEvent(
-                                            isSelecting: true, type: type));
-                                    _customInfoWindowController.hideInfoWindow
-                                        ?.call();
-                                  }
-                                  debugPrint("AlertSelected: $type");
-                                  final myLoc =
-                                      context.read<MapBloc>().state.myLocation;
-                                  if (myLoc != null) {
-                                    _addBurst(myLoc, type);
-                                    context.read<MapBloc>().add(
-                                        AddAlertMarkerEvent(
-                                            type: type, position: myLoc));
-                                  } else {
-                                    debugPrint(
-                                        "AlertSelected: Location not available");
-                                    // ScaffoldMessenger.of(context).showSnackBar(
-                                    //   const SnackBar(
-                                    //       content: Text(
-                                    //           "Location not available. Please try again.")),
-                                    // );
-                                  }
-                                } catch (e) {
-                                  debugPrint("Error adding alert marker: $e");
-                                }
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
+                if (state.showAlertPanel)
+                  Positioned(
+                    bottom: 63,
+                    left: 0,
+                    child: AlertPanel(
+                      onClose: () {
+                        context.read<MapBloc>().add(ToggleAlertPanelEvent());
+                      },
+                      onAlertSelected: (type) async {
+                        try {
+                          if (!state.isSelectingAlertLocation) {
+                            context.read<MapBloc>().add(
+                                SetSelectingAlertLocationEvent(
+                                    isSelecting: true, type: type));
+                            _customInfoWindowController.hideInfoWindow?.call();
+                          }
+                          debugPrint("AlertSelected: $type");
+                          final myLoc =
+                              context.read<MapBloc>().state.myLocation;
+                          if (myLoc != null) {
+                            _addBurst(myLoc, type);
+                            context.read<MapBloc>().add(
+                                AddAlertMarkerEvent(
+                                    type: type, position: myLoc));
+                          }
+                        } catch (e) {
+                          debugPrint("Error adding alert marker: $e");
+                        }
+                      },
                     ),
                   ),
-                ),
 
                 BurstParticlesOverlay(
                   controller: _burstController,

@@ -8,6 +8,8 @@ import 'package:presshop/features/chat/presentation/pages/full_video_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/features/publish/presentation/bloc/tutorials/tutorials_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart';
+import 'package:presshop/core/utils/common_utils.dart';
+import 'package:presshop/core/widgets/video_thumbnail_widget.dart';
 
 class TutorialsScreen extends StatefulWidget {
   const TutorialsScreen({super.key});
@@ -214,10 +216,7 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                 return InkWell(
                                   onTap: () {
                                     _bloc.add(TutorialsSelectCategory(index));
-                                    listController.animateTo(index * 100,
-                                        duration:
-                                            const Duration(milliseconds: 200),
-                                        curve: Curves.ease);
+                                    // Removed hardcoded animateTo for better reliability
                                   },
                                   child: Chip(
                                     backgroundColor: isSelected
@@ -250,12 +249,14 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                         ),
                       ],
                     ),
-
-                    if (state.status == TutorialsStatus.loading &&
-                        state.videos.isEmpty)
-                      SizedBox(
-                          height: size.height * 0.5,
-                          child: Center(child: showLoader()))
+                    if (state.status == TutorialsStatus.loading ||
+                        state.status == TutorialsStatus.initial)
+                      if (state.videos.isEmpty)
+                        SizedBox(
+                            height: size.height * 0.5,
+                            child: Center(child: showLoader()))
+                      else
+                        const SizedBox.shrink()
                     else if (state.videos.isNotEmpty || state.isSearch)
                       GridView.builder(
                           shrinkWrap: true,
@@ -285,11 +286,6 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                     });
                               },
                               child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        size.width * AppDimensions.numD04,
-                                    vertical:
-                                        size.width * AppDimensions.numD04),
                                 decoration: BoxDecoration(
                                     border: Border.all(
                                         color:
@@ -297,35 +293,30 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD04)),
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Expanded(
-                                      // Use Expanded to prevent overflow
+                                      flex: 6,
                                       child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(
-                                            size.width * AppDimensions.numD04),
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(size.width *
+                                              AppDimensions.numD04),
+                                          topRight: Radius.circular(size.width *
+                                              AppDimensions.numD04),
+                                        ),
                                         child: Stack(
+                                          fit: StackFit.expand,
                                           children: [
-                                            item.thumbnail.isNotEmpty
-                                                ? Image.network(
-                                                    item.thumbnail,
-                                                    height: double.infinity,
-                                                    width: size.width,
-                                                    fit: BoxFit.cover,
-                                                    errorBuilder: (context,
-                                                        exception, stackTrace) {
-                                                      return Image.asset(
-                                                        "${commonImagePath}rabbitLogo.png",
-                                                        width: size.width,
-                                                        fit: BoxFit.cover,
-                                                      );
-                                                    },
-                                                  )
-                                                : Image.asset(
-                                                    "${dummyImagePath}placeholderImage.png",
-                                                    height: double.infinity,
-                                                    width: size.width,
-                                                    fit: BoxFit.cover,
-                                                  ),
+                                            VideoThumbnailWidget(
+                                              videoUrl:
+                                                  getMediaImageUrl(item.video),
+                                              thumbnailUrl:
+                                                  item.thumbnail.isNotEmpty
+                                                      ? getMediaImageUrl(
+                                                          item.thumbnail)
+                                                      : null,
+                                              fit: BoxFit.cover,
+                                            ),
                                             Positioned(
                                               right: size.width *
                                                   AppDimensions.numD02,
@@ -356,65 +347,76 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
-                                      height: size.width * AppDimensions.numD01,
-                                    ),
-                                    Text(item.description,
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width *
-                                                AppDimensions.numD03,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w600),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis),
-                                    SizedBox(
-                                      height: size.width * AppDimensions.numD01,
-                                    ), // Spacer adjustment
-                                    Row(
-                                      children: [
-                                        Image.asset(
-                                          "${iconsPath}ic_clock.png",
-                                          height:
-                                              size.width * AppDimensions.numD03,
+                                    Expanded(
+                                      flex: 4, // 40% for text and footer
+                                      child: Padding(
+                                        padding: EdgeInsets.all(
+                                            size.width * AppDimensions.numD03),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Text(item.description,
+                                                  style: commonTextStyle(
+                                                      size: size,
+                                                      fontSize: size.width *
+                                                          AppDimensions.numD03,
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Image.asset(
+                                                  "${iconsPath}ic_clock.png",
+                                                  height: size.width *
+                                                      AppDimensions.numD03,
+                                                ),
+                                                SizedBox(
+                                                  width: size.width *
+                                                      AppDimensions.numD01,
+                                                ),
+                                                Text(
+                                                  item.duration,
+                                                  style: commonTextStyle(
+                                                      size: size,
+                                                      fontSize: size.width *
+                                                          AppDimensions.numD025,
+                                                      color: AppColorTheme
+                                                          .colorHint,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                                const Spacer(),
+                                                Image.asset(
+                                                  "${iconsPath}ic_view.png",
+                                                  height: size.width *
+                                                      AppDimensions.numD03,
+                                                ),
+                                                SizedBox(
+                                                  width: size.width *
+                                                      AppDimensions.numD01,
+                                                ),
+                                                Text(
+                                                  item.view.toString(),
+                                                  style: commonTextStyle(
+                                                      size: size,
+                                                      fontSize: size.width *
+                                                          AppDimensions.numD025,
+                                                      color: AppColorTheme
+                                                          .colorThemePink,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
-                                        SizedBox(
-                                          width:
-                                              size.width * AppDimensions.numD01,
-                                        ),
-                                        Text(
-                                          item.duration,
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width *
-                                                  AppDimensions.numD025,
-                                              color: AppColorTheme.colorHint,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                        const Spacer(),
-                                        Image.asset(
-                                          "${iconsPath}ic_view.png",
-                                          height:
-                                              size.width * AppDimensions.numD03,
-                                        ),
-                                        SizedBox(
-                                          width:
-                                              size.width * AppDimensions.numD01,
-                                        ),
-                                        Text(
-                                          item.view.toString(),
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width *
-                                                  AppDimensions.numD025,
-                                              color:
-                                                  AppColorTheme.colorThemePink,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: size.width * AppDimensions.numD01,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -425,7 +427,19 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                               ? state.searchResults.length
                               : state.videos.length)
                     else
-                      Container() // Empty state or placeholder
+                      SizedBox(
+                        height: size.height * 0.4,
+                        child: Center(
+                          child: Text(
+                            "No tutorials found",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * AppDimensions.numD04,
+                                color: AppColorTheme.colorHint,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      )
                   ],
                 ),
               ),

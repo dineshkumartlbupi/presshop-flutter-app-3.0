@@ -74,6 +74,17 @@ class ApiClient {
     Response response,
     ResponseInterceptorHandler handler,
   ) async {
+    final data = response.data;
+    if (data is Map && data['success'] == false) {
+      final message = data['message']?.toString() ?? "An error occurred";
+      handler.reject(DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        message: message,
+        type: DioExceptionType.badResponse,
+      ));
+      return;
+    }
     handler.next(response);
   }
 

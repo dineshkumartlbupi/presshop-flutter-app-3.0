@@ -128,8 +128,9 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
               }
             },
             builder: (context, state) {
-              if (state.categories.isEmpty &&
-                  state.status == FAQStatus.loading) {
+              if (state.items.isEmpty &&
+                  (state.status == FAQStatus.loading ||
+                      state.status == FAQStatus.initial)) {
                 return showAnimatedLoader(size);
               }
 
@@ -276,7 +277,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                   child: ExpansionTile(
                                     title: Row(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          CrossAxisAlignment.center,
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
@@ -310,8 +311,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                           width:
                                               size.width * AppDimensions.numD02,
                                         ),
-                                        Expanded(
-                                            child: Text(
+                                        Text(
                                           item.question,
                                           style: TextStyle(
                                               fontSize: size.width *
@@ -319,7 +319,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                               color: Colors.black,
                                               fontFamily: "AirbnbCereal",
                                               fontWeight: FontWeight.bold),
-                                        ))
+                                        )
                                       ],
                                     ),
                                     iconColor: Colors.black,

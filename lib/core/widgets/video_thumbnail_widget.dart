@@ -137,11 +137,13 @@ class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
     }
 
     if (_thumbnailPath != null) {
-      return Image.file(
-        File(_thumbnailPath!),
-        width: widget.width,
-        height: widget.height,
-        fit: widget.fit ?? BoxFit.cover,
+      return SizedBox(
+        width: widget.width ?? double.infinity,
+        height: widget.height ?? double.infinity,
+        child: Image.file(
+          File(_thumbnailPath!),
+          fit: widget.fit ?? BoxFit.cover,
+        ),
       );
     }
 

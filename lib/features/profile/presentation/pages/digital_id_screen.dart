@@ -91,8 +91,9 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
             userData = userData['data'];
           }
           setState(() {
-            myProfileData = MyProfileData.fromJson(userData);
-            if (myProfileData != null) {
+            if (userData is Map) {
+              myProfileData = MyProfileData.fromJson(Map<String, dynamic>.from(userData));
+              if (myProfileData != null) {
               fullName =
                   "${myProfileData!.firstName} ${myProfileData!.lastName}";
               userName = myProfileData!.userName;
@@ -100,6 +101,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
               userImage = myProfileData!.realProfileImage.isNotEmpty
                   ? myProfileData!.realProfileImage
                   : myProfileData!.avatarImage;
+              }
             }
           });
         }
@@ -696,7 +698,9 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
 
 class MyProfileData {
   MyProfileData();
-  MyProfileData.fromJson(json) {
+  MyProfileData.fromJson(dynamic data) {
+    if (data is! Map) return;
+    Map<String, dynamic> json = Map<String, dynamic>.from(data);
     firstName =
         json[SharedPreferencesKeys.firstNameKey] ?? json['firstName'] ?? "";
     lastName =

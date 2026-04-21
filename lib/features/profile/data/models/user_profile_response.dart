@@ -25,10 +25,14 @@ class UserProfileResponse extends Equatable {
       userData = userData['data'];
     }
 
+    if (userData is! Map) {
+      userData = {};
+    }
+
     return UserProfileResponse(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: UserProfileModel.fromJson(userData),
+      data: UserProfileModel.fromJson(Map<String, dynamic>.from(userData)),
     );
   }
   final bool success;
@@ -97,15 +101,18 @@ class UserProfileModel extends Equatable {
       longitude: (json['longitude'] ?? 0).toDouble(),
       totalEarnings: json['totalEarnings'] ?? 0,
       totalHopperArmy: json['totalHopperArmy'] ?? 0,
-      location: LocationModel.fromJson(json['location'] ?? {}),
+      location: LocationModel.fromJson(Map<String, dynamic>.from(
+          json['location'] is Map ? json['location'] : {})),
       preferredCurrencySign: PreferredCurrencySignModel.fromJson(
-          json['preferred_currency_sign'] ?? {}),
+          Map<String, dynamic>.from(json['preferred_currency_sign'] is Map
+              ? json['preferred_currency_sign']
+              : {})),
       createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
       updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
       lastLogin: DateTime.tryParse(json['lastLogin'] ?? '') ?? DateTime.now(),
       stripeStatus: json['stripeStatus'] != null
           ? (json['stripeStatus'] is Map
-              ? StripeStatusModel.fromJson(json['stripeStatus'])
+              ? StripeStatusModel.fromJson(Map<String, dynamic>.from(json['stripeStatus']))
               : StripeStatusModel(
                   stripeStatusActive:
                       (['1', 'true'].contains(json['stripeStatus'].toString()))
