@@ -211,7 +211,7 @@ class _NewsPageState extends State<NewsPage>
       appBar: NewHomeAppBar(
         size: size,
         hideLeading: widget.hideLeading,
-        showFilter: !widget.fromMap && _tabController.index == 0,
+        showFilter: false, // !widget.fromMap && _tabController.index == 0,
         onFilterTap: () {
           if (_tabController.index == 0 && _showFeedBottomSheet != null) {
             _showFeedBottomSheet!();

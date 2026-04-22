@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:country_picker/country_picker.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -15,6 +16,7 @@ import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/widgets/common/avatar_bottom_sheet.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/profile/constants/profile_constants.dart';
@@ -62,7 +64,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   List<AvatarData> avatarList = [];
   MyProfileData? myProfileData;
+  bool isEditMode = false;
   // Completer<String?>? _studentBeansCompleter;
+  final ImagePicker _picker = ImagePicker();
 
   String selectedCountryCode = "",
       userImagePath = "",
@@ -102,15 +106,13 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   @override
   void initState() {
-    debugPrint("class:::: $runtimeType");
     super.initState();
-    debugPrint("editStatus::::::: ${widget.editProfileScreen}");
-    _loadCachedData();
+    isEditMode = widget.editProfileScreen;
     setUserNameListener();
     setPhoneListener();
     setEmailListener();
     myProfileApi(showLoader: false);
-    if (widget.editProfileScreen) {
+    if (isEditMode) {
       getAvatarsApi(showLoader: false);
     }
   }
@@ -481,7 +483,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                     ),
                   ),
                 ),
-              widget.editProfileScreen
+              isEditMode
                   ? Positioned(
                       bottom: size.width * AppDimensions.numD01,
                       right: size.width * AppDimensions.numD01,
@@ -534,8 +536,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                               color: AppColorTheme.colorBlack,
                               fontWeight: FontWeight.w600)),
                       if (myProfileData != null &&
-                              myProfileData!.stripeStatusActive == true ||
-                          myProfileData!.isVerified == true) ...[
+                          (myProfileData!.stripeStatusActive == '1' ||
+                              myProfileData!.stripeStatusActive == 'true' ||
+                              myProfileData!.isVerified == true)) ...[
                         SizedBox(width: size.width * AppDimensions.numD02),
                         Image.asset(
                           "${iconsPath}verified_badge.png",
@@ -617,7 +620,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
     List<String> addressLines = [];
     if (myProfileData!.address.isNotEmpty) {
-      addressLines.add("Current Address: ${myProfileData!.address}");
+      addressLines.add("${myProfileData!.address}");
     }
     List<String> userAddressParts = [];
     if (myProfileData!.profileAddress.isNotEmpty) {
@@ -634,7 +637,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     }
 
     if (userAddressParts.isNotEmpty) {
-      addressLines.add("User Address: ${userAddressParts.join(', ')}");
+      addressLines.add("${userAddressParts.join(', ')}");
     }
 
     return addressLines.join('\n');
@@ -830,9 +833,11 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       size: size,
       avatarList: avatarList,
       onAvatarSelected: (avatar) {
-        myProfileData!.avatarImage = avatar.avatar;
-        myProfileData!.avatarId = avatar.id;
-        setState(() {});
+        setState(() {
+          myProfileData!.avatarImage = avatar.avatar;
+          myProfileData!.avatarId = avatar.id;
+        });
+        updateAvatarApi(avatar.id);
       },
     );
   }
@@ -1805,7 +1810,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             latitude.isNotEmpty ? latitude : myProfileData!.latitude,
         SharedPreferencesKeys.longitudeKey:
             longitude.isNotEmpty ? longitude : myProfileData!.longitude,
-        SharedPreferencesKeys.avatarIdKey: myProfileData!.avatarId,
+        if (myProfileData!.avatarId.isNotEmpty)
+          SharedPreferencesKeys.avatarIdKey: myProfileData!.avatarId,
         SharedPreferencesKeys.postCodeKey: postCodeController.text,
         SharedPreferencesKeys.cityKey: cityNameController.text.trim(),
         SharedPreferencesKeys.countryKey: countryNameController.text.trim(),
@@ -1834,12 +1840,13 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           String message = map["message"] ?? "Request successful";
           showSnackBar("Success", message, Colors.green);
 
+          await myProfileApi();
+          if (myProfileData != null) {
+            sharedPreferences!.setString(
+                SharedPreferencesKeys.avatarKey, myProfileData!.avatarImage);
+          }
+          isEditMode = false;
           widget.editProfileScreen = false;
-          debugPrint("heloooo::::${myProfileData!.avatarId}");
-
-          myProfileApi();
-          sharedPreferences!.setString(
-              SharedPreferencesKeys.avatarKey, myProfileData!.avatarImage);
         }
         setState(() {});
       }
@@ -1870,6 +1877,31 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       debugPrint("Error in StudentBeans Activation: $e");
     }
     return null;
+  }
+
+  Future<void> updateAvatarApi(String avatarId) async {
+    try {
+      Map<String, String> data = {SharedPreferencesKeys.avatarIdKey: avatarId};
+
+      final response = await sl<ApiClient>().post(
+        ApiConstantsNew.profile.editProfile,
+        data: data,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var map = response.data;
+        if (map is String) map = jsonDecode(map);
+
+        if (map["code"] == 200 || map["success"] == true) {
+          showSnackBar("Success", "Profile avatar updated successfully",
+              Colors.green);
+          await myProfileApi(showLoader: false);
+        }
+      }
+    } catch (e) {
+      debugPrint("Error updating avatar: $e");
+      showSnackBar("Error", "Failed to update avatar", Colors.red);
+    }
   }
 
   @override
@@ -2100,6 +2132,13 @@ class MyProfileData {
     totalIncome = json[SharedPreferencesKeys.totalIncomeKey] != null
         ? json[SharedPreferencesKeys.totalIncomeKey].toString()
         : "0";
+
+    // Captured actual profile image separately
+    String realImage = json["profile_image"]?.toString() ??
+        json["profileImage"]?.toString() ??
+        "";
+    realProfileImage = fixS3Url(realImage);
+
     String tempAvatar = "";
     if (json["avatarData"] is Map) {
       tempAvatar = json["avatarData"]["avatar"]?.toString() ?? "";
@@ -2109,13 +2148,21 @@ class MyProfileData {
     }
 
     if (tempAvatar.isEmpty) {
-      tempAvatar = json["avatar"]?.toString() ??
-          json["profile_image"]?.toString() ??
-          json["profileImage"]?.toString() ??
-          "";
+      tempAvatar = json["avatar"]?.toString() ?? "";
+      // If it looks like an ID (no extension, long string), don't use it as image path
+      if (tempAvatar.isNotEmpty &&
+          !tempAvatar.contains(".") &&
+          !tempAvatar.startsWith("http")) {
+        tempAvatar = "";
+      }
     }
 
-    avatarImage = fixS3Url(tempAvatar);
+    if (tempAvatar.isEmpty && realProfileImage.isNotEmpty) {
+      avatarImage = realProfileImage;
+    } else {
+      avatarImage = fixS3Url(tempAvatar);
+    }
+
     avatarId = (json["avatarData"] is Map
             ? (json["avatarData"]["_id"]?.toString() ??
                 json["avatarData"]["id"]?.toString() ??
@@ -2123,6 +2170,11 @@ class MyProfileData {
             : json["avatarData"]?.toString()) ??
         json["avatar"]?.toString() ??
         "";
+
+    // If avatarId looks like a URL, it's not an ID
+    if (avatarId.startsWith("http") || avatarId.contains("/")) {
+      avatarId = "";
+    }
     joinedDate = json["createdAt"] != null
         ? changeDateFormat(
             "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'", json["createdAt"], "dd MMMM, yyyy")
@@ -2158,6 +2210,7 @@ class MyProfileData {
   String latitude = "";
   String longitude = "";
   String avatarImage = "";
+  String realProfileImage = "";
   String avatarId = "";
   String joinedDate = "";
   String earnings = "0";

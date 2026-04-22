@@ -16,6 +16,7 @@ import '../../domain/entities/profile_data.dart';
 import 'package:presshop/core/widgets/common/avatar_bottom_sheet.dart';
 import 'dart:convert';
 import 'package:presshop/core/api/api_client.dart';
+import 'dart:io';
 
 class DigitalIdScreen extends StatefulWidget {
   const DigitalIdScreen({super.key});
@@ -33,6 +34,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   ValueNotifier<bool> avatarLoaderNotifier = ValueNotifier(false);
   MyProfileData? myProfileData;
   bool isLoading = false;
+  bool isUploading = false;
+  String? localImagePath;
 
   // File? _imageFile;
   final ImagePicker _picker = ImagePicker();
@@ -100,6 +103,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                 userImage = myProfileData!.realProfileImage.isNotEmpty
                     ? myProfileData!.realProfileImage
                     : myProfileData!.avatarImage;
+                localImagePath = null;
               }
             }
           });
@@ -183,6 +187,10 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
       final XFile? pickedFile = await _picker.pickImage(source: source);
       if (pickedFile != null) {
         if (!mounted) return;
+        setState(() {
+          localImagePath = pickedFile.path;
+          isUploading = true;
+        });
         context
             .read<ProfileBloc>()
             .add(UploadProfileImageEvent(pickedFile.path));
@@ -200,12 +208,21 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
       child: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
           if (state is ProfileImageUploaded) {
+            setState(() {
+              isUploading = false;
+            });
             myProfileApi(showLoader: false);
+            showSnackBar(
+                "Success", "Profile image uploaded successfully", Colors.green);
           } else if (state is ProfileUpdated) {
             myProfileApi(showLoader: false);
             showSnackBar(
                 "Success", "Profile updated successfully", Colors.green);
           } else if (state is ProfileError) {
+            setState(() {
+              isUploading = false;
+              localImagePath = null;
+            });
             Fluttertoast.showToast(msg: state.message);
           }
         },
@@ -299,20 +316,19 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                               child: Stack(
                                 alignment: Alignment.center,
                                 children: [
-                                  isLoading
-                                      ? Container(
-                                          height:
-                                              size.width * AppDimensions.numD60,
-                                          width:
-                                              size.width * AppDimensions.numD70,
-                                          alignment: Alignment.center,
-                                          child: showAnimatedLoader(size),
-                                        )
-                                      : ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                              size.width *
-                                                  AppDimensions.numD04),
-                                          child: CachedNetworkImage(
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * AppDimensions.numD04),
+                                    child: localImagePath != null
+                                        ? Image.file(
+                                            File(localImagePath!),
+                                            height: size.width *
+                                                AppDimensions.numD60,
+                                            width: size.width *
+                                                AppDimensions.numD70,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : CachedNetworkImage(
                                             imageUrl: userImage.isEmpty
                                                 ? "https://via.placeholder.com/300"
                                                 : userImage,
@@ -385,7 +401,19 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                               ),
                                             ),
                                           ),
-                                        ),
+                                  ),
+                                  if (isLoading || isUploading)
+                                    Container(
+                                      height: size.width * AppDimensions.numD60,
+                                      width: size.width * AppDimensions.numD70,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withValues(alpha: 0.3),
+                                        borderRadius: BorderRadius.circular(
+                                            size.width * AppDimensions.numD04),
+                                      ),
+                                      child: showAnimatedLoader(size),
+                                    ),
                                   // Edit button
                                   Positioned(
                                     right: size.width * AppDimensions.numD02,
