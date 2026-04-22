@@ -38,7 +38,8 @@ class ContentItemModel extends ContentItem {
     required super.latitude,
     required super.longitude,
     required super.categoryId,
-    required super.hopperId,
+    required String hopperId,
+    String? type,
     required super.askPrice,
     required super.isDraft,
     required super.isCharity,
@@ -67,7 +68,7 @@ class ContentItemModel extends ContentItem {
     super.currency = "",
     super.currencySymbol = "",
     super.totalEarnings = "0",
-  });
+  }) : super(hopperId: hopperId, type: type);
 
   factory ContentItemModel.fromJson(Map<String, dynamic> json) {
     return ContentItemModel(
@@ -80,6 +81,7 @@ class ContentItemModel extends ContentItem {
           json['category_ids']?.toString() ??
           '',
       hopperId: json['hopper_id'] ?? '',
+      type: json['type']?.toString(),
       askPrice: json['ask_price']?.toString() ?? '0',
       isDraft: json['is_draft'] == "true" || json['is_draft'] == true,
       isCharity: json['is_charity'] == "true" || json['is_charity'] == true,
@@ -182,6 +184,7 @@ class ContentItemModel extends ContentItem {
         'longitude': longitude,
         'category_id': categoryId,
         'hopper_id': hopperId,
+        'type': type,
         'ask_price': askPrice,
         'is_draft': isDraft,
         'is_charity': isCharity,

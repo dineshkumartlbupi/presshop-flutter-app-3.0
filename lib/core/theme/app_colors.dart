@@ -4,6 +4,7 @@ class AppColorTheme {
   /*---CommonColors------*/
   static const colorThemePink = Color(0xFFEC4E54);
   static const colorHint = Color(0xFF9DA3A3);
+  static const colorBlack = Color(0xFF000000);
   static const colorLightGrey = Color(0xFFF3F5F4);
   static const colorTextFieldBorder = Color(0xFF858585);
   static const colorTextFieldIcon = Color(0xFF505050);

@@ -1019,8 +1019,8 @@ class _MapPageContentState extends State<_MapPageContent>
                             key: ValueKey('animated_marker_${entry.key}'),
                             child: ciw.CustomInfoWindow(
                               controller: entry.value,
-                              height: 48,
-                              width: 48,
+                              height: MapBloc.kAlertMarkerSize.toDouble(),
+                              width: MapBloc.kAlertMarkerSize.toDouble(),
                               offset: 0,
                             ),
                           );
@@ -1038,8 +1038,8 @@ class _MapPageContentState extends State<_MapPageContent>
                             state.routeInfo != null &&
                             state.routeMidpoint != null)
                           Positioned(
-                            left: _routeInfoOffset!.dx - 100,
-                            top: _routeInfoOffset!.dy - 130,
+                            left: _routeInfoOffset!.dx - 150,
+                            top: _routeInfoOffset!.dy - 150,
                             child: RouteInfoWindow(
                               distance:
                                   "${state.routeInfo!.distanceKm.toStringAsFixed(2)} km",
@@ -1246,9 +1246,8 @@ class _MapPageContentState extends State<_MapPageContent>
                               context.read<MapBloc>().state.myLocation;
                           if (myLoc != null) {
                             _addBurst(myLoc, type);
-                            context.read<MapBloc>().add(
-                                AddAlertMarkerEvent(
-                                    type: type, position: myLoc));
+                            context.read<MapBloc>().add(AddAlertMarkerEvent(
+                                type: type, position: myLoc));
                           }
                         } catch (e) {
                           debugPrint("Error adding alert marker: $e");

@@ -96,6 +96,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   static const int kContentMarkerSize = 50;
   static const int kIncidentMarkerSize = 50;
+  static const int kAlertMarkerSize = 40;
 
   BitmapDescriptor? _meMarkerIcon;
 
@@ -161,8 +162,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 markerIcons[iconType] ?? markerIcons['accident']!;
             icon = await markerService.createCircularAssetMarker(
               assetPath,
-              size: Size(kIncidentMarkerSize.toDouble(),
-                  kIncidentMarkerSize.toDouble()),
+              size: Size(
+                  kAlertMarkerSize.toDouble(), kAlertMarkerSize.toDouble()),
             );
           }
         } catch (e) {
@@ -235,8 +236,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           String assetPath = markerIcons[iconType] ?? markerIcons['accident']!;
           icon = await markerService.createCircularAssetMarker(
             assetPath,
-            size: Size(
-                kIncidentMarkerSize.toDouble(), kIncidentMarkerSize.toDouble()),
+            size:
+                Size(kAlertMarkerSize.toDouble(), kAlertMarkerSize.toDouble()),
           );
         }
       } catch (e) {
@@ -639,8 +640,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                     icon = await markerService
                         .createCircularAssetMarker(
                           assetPath,
-                          size: Size(kIncidentMarkerSize.toDouble(),
-                              kIncidentMarkerSize.toDouble()),
+                          size: Size(kAlertMarkerSize.toDouble(),
+                              kAlertMarkerSize.toDouble()),
                         )
                         .timeout(const Duration(seconds: 10));
                   } else if (incident.markerType == 'news' ||
@@ -1041,8 +1042,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 icon = await markerService
                     .createCircularAssetMarker(
                       assetPath,
-                      size: Size(kIncidentMarkerSize.toDouble(),
-                          kIncidentMarkerSize.toDouble()),
+                      size: Size(kAlertMarkerSize.toDouble(),
+                          kAlertMarkerSize.toDouble()),
                     )
                     .timeout(const Duration(seconds: 10));
               }

@@ -282,16 +282,17 @@ class MediaThumbnailWidget extends StatelessWidget {
       );
     }
 
+    final firstMedia = item.mediaList.isNotEmpty ? item.mediaList.first : null;
     final isVideo = item.mediaType == 'video' ||
-        (item.mediaList.isNotEmpty &&
-            item.mediaList.first.mediaType == 'video');
+        (firstMedia?.mediaType.toLowerCase() == 'video');
+    final isAudio = item.mediaType == 'audio' ||
+        (firstMedia?.mediaType.toLowerCase() == 'audio');
 
     if (isVideo) {
       return VideoThumbnailWidget(
         videoUrl: getMediaImageUrl(item.mediaUrls.first, isVideo: true),
-        thumbnailUrl: item.mediaList.isNotEmpty &&
-                item.mediaList.first.thumbnailUrl.isNotEmpty
-            ? fixS3Url(item.mediaList.first.thumbnailUrl)
+        thumbnailUrl: firstMedia?.thumbnailUrl.isNotEmpty == true
+            ? fixS3Url(firstMedia!.thumbnailUrl)
             : null,
         width: double.infinity,
         height: double.infinity,
@@ -299,7 +300,29 @@ class MediaThumbnailWidget extends StatelessWidget {
       );
     }
 
-    return _showImage(item.mediaType ?? 'photo', item.mediaUrls.first);
+    // Try to show thumbnail from metadata if it looks like a valid image
+    if (firstMedia != null &&
+        firstMedia.thumbnailUrl.isNotEmpty &&
+        !firstMedia.thumbnailUrl.toLowerCase().endsWith('.m4a') &&
+        !firstMedia.thumbnailUrl.toLowerCase().endsWith('.mp3')) {
+      return CachedNetworkImage(
+        imageUrl: fixS3Url(firstMedia.thumbnailUrl),
+        width: double.infinity,
+        height: double.infinity,
+        fit: BoxFit.cover,
+        placeholder: (_, __) => _buildLightweightPlaceholder(),
+        errorWidget: (_, __, ___) => _showImage(
+          isAudio ? 'audio' : (item.mediaType ?? 'photo'),
+          item.mediaUrls.first,
+        ),
+      );
+    }
+
+    final effectiveType = isAudio
+        ? 'audio'
+        : (isVideo ? 'video' : (item.mediaType ?? 'photo'));
+
+    return _showImage(effectiveType, item.mediaUrls.first);
   }
 
   Widget _buildCountBadge() {

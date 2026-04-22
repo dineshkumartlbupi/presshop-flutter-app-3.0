@@ -531,11 +531,11 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD04,
-                              color: AppColorTheme.colorThemePink,
-                              fontWeight: FontWeight.w500)),
-                      if (true ||
-                          myProfileData?.stripeStatusActive == 'true' ||
-                          myProfileData?.isVerified == true) ...[
+                              color: AppColorTheme.colorBlack,
+                              fontWeight: FontWeight.w600)),
+                      if (myProfileData != null &&
+                              myProfileData!.stripeStatusActive == true ||
+                          myProfileData!.isVerified == true) ...[
                         SizedBox(width: size.width * AppDimensions.numD02),
                         Image.asset(
                           "${iconsPath}verified_badge.png",
