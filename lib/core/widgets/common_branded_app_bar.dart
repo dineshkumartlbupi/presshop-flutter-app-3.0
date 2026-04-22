@@ -52,7 +52,7 @@ class CommonBrandedAppBar extends StatelessWidget
         if (notificationCount != null)
           Center(
             child: Container(
-              margin: EdgeInsets.only(right: size.width * AppDimensions.numD04),
+              // margin: EdgeInsets.only(right: size.width * AppDimensions.numD04),
               width: size.width * AppDimensions.numD075,
               height: size.width * AppDimensions.numD075,
               child: Stack(

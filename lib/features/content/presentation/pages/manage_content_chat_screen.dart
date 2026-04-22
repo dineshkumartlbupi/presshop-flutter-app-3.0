@@ -257,9 +257,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
           contentView = viewCount.toString();
         }
 
-        if (state.allTasksStatus == TaskStatus.loading ||
-            state.taskDetailStatus == TaskStatus.loading ||
-            state.localTasksStatus == TaskStatus.loading) {
+        if (state.actionStatus == TaskStatus.loading ||
+            state.taskDetailStatus == TaskStatus.loading) {
           isDataLoaded = false;
         } else if (state.taskDetail != null &&
             state.taskDetailStatus == TaskStatus.success) {
@@ -342,13 +341,11 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   ],
                 ),
                 body:
-                    ((state.allTasksStatus == TaskStatus.loading ||
+                    ((state.actionStatus == TaskStatus.loading ||
                                     state.taskDetailStatus ==
-                                        TaskStatus.loading ||
-                                    state.localTasksStatus ==
                                         TaskStatus.loading) &&
                                 !isDataLoaded) ||
-                            (state.allTasksStatus == TaskStatus.initial &&
+                            (state.actionStatus == TaskStatus.initial &&
                                 !isDataLoaded)
                         ? Center(child: showLoader())
                         : SafeArea(
@@ -2572,22 +2569,6 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                     ],
                                                   ),
                                                 ),
-                                          widgetDivider(),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                bottom: size.height *
-                                                    AppDimensions.numD01),
-                                            child: Text(
-                                              "Please refresh to view more offers.",
-                                              style: commonTextStyle(
-                                                  size: size,
-                                                  fontSize: size.width *
-                                                      AppDimensions.numD035,
-                                                  color: Colors.black,
-                                                  lineHeight: 1.2,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          )
                                         ],
                                       ),
                                     ),
@@ -7005,6 +6986,6 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
         roomId: widget.roomId,
         type: widget.type,
         contentId: contentId,
-        showLoader: false));
+        showLoader: true));
   }
 }

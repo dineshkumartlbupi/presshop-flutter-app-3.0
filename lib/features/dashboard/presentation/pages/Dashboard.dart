@@ -503,7 +503,7 @@ class DashboardPageState extends State<Dashboard>
                     ?.getBool(SharedPreferencesKeys.isTaskGrabbingActiveKey) ??
                 false;
 
-            if (!isManuallyStopped) {
+            if (!isManuallyStopped && isTaskGrabbingActive) {
               BackgroundLocationService.initService(
                 notificationTitle: liveLocationHeading,
                 notificationContent: liveLocationDescription,
@@ -655,7 +655,7 @@ class DashboardPageState extends State<Dashboard>
     );
   }
 
-  void _onBottomBarItemTapped(int index) {
+  void _onBottomBarItemTapped(int index) async {
     if (currentIndex == index) return;
 
     // Pause camera when leaving camera tab
@@ -667,7 +667,6 @@ class DashboardPageState extends State<Dashboard>
       _cameraKey.currentState?.clearCapturedMedia();
       _cameraKey.currentState?.resumeCamera();
     }
-
 
     trackAction(ActionNames.tabSwitch, parameters: {
       'from_tab': currentIndex.toString(),
@@ -761,7 +760,7 @@ class DashboardPageState extends State<Dashboard>
     debugPrint("Starting Comprehensive Permission Sequence...");
 
     final locService = LocationService();
-    
+
     // Ordered sequence to prevent OS-level overlap crashes
     await locService.requestPermission(Permission.camera);
     await locService.requestPermission(Permission.microphone);

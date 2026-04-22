@@ -223,7 +223,8 @@ class CameraScreenState extends State<CameraScreen>
                 ).then((value) {
                   // On return
                   if (_bloc?.state.selectedMode == AppStrings.scanText) {
-                    _bloc?.add(const CameraModeChangeEvent(AppStrings.photoText));
+                    _bloc?.add(
+                        const CameraModeChangeEvent(AppStrings.photoText));
                   }
                   resumeCamera();
                 });
@@ -854,7 +855,6 @@ class CameraScreenState extends State<CameraScreen>
 }
 
 class PersistentGalleryThumbnail extends StatefulWidget {
-
   const PersistentGalleryThumbnail({
     super.key,
     required this.galleryMedia,

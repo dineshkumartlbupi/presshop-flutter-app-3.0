@@ -92,40 +92,10 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
     return BlocProvider(
       create: (_) => di.sl<RatingBloc>()..add(RatingLoadInitial()),
       child: Scaffold(
-        appBar: CommonAppBar(
-          elevation: 0,
-          hideLeading: false,
-          title: Text(
-            "${AppStrings.ratingText} & ${AppStrings.reviewText}",
-            style: TextStyle(
-                color: Colors.black,
-                fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-          ),
-          centerTitle: false,
-          titleSpacing: 0,
+        appBar: CommonBrandedAppBar(
+          title: "${AppStrings.ratingText} & ${AppStrings.reviewText}",
           size: size,
-          showActions: true,
-          leadingFxn: () {
-            context.pop();
-          },
-          actionWidget: [
-            InkWell(
-              onTap: () {
-                context.goNamed(
-                  AppRoutes.dashboardName,
-                  extra: {'initialPosition': 2},
-                );
-              },
-              child: Image.asset(
-                "${commonImagePath}rabbitLogo.png",
-                height: size.width * AppDimensions.numD07,
-                width: size.width * AppDimensions.numD07,
-              ),
-            ),
-            SizedBox(
-              width: size.width * AppDimensions.numD04,
-            )
-          ],
+          showLogo: true,
         ),
         body: SafeArea(
           child: BlocConsumer<RatingBloc, RatingState>(
@@ -169,18 +139,18 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                               color: Colors.black,
                               fontWeight: FontWeight.w500),
                         ),
-                        const Spacer(),
-                        InkWell(
-                            onTap: () {
-                              showBottomSheet(context, size, state);
-                            },
-                            child: Container(
-                                padding: EdgeInsets.all(
-                                    size.width * AppDimensions.numD04),
-                                child: Image.asset(
-                                  "${iconsPath}ic_filter.png",
-                                  height: size.width * AppDimensions.numD05,
-                                )))
+                        // const Spacer(),
+                        // InkWell(
+                        //     onTap: () {
+                        //       showBottomSheet(context, size, state);
+                        //     },
+                        //     child: Container(
+                        //         padding: EdgeInsets.all(
+                        //             size.width * AppDimensions.numD04),
+                        //         child: Image.asset(
+                        //           "${iconsPath}ic_filter.png",
+                        //           height: size.width * AppDimensions.numD05,
+                        //         )))
                       ],
                     ),
                   ),
@@ -405,7 +375,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                       ),
                     ),
                   ),
-                  const Spacer(),
+                  // const Spacer(),
                   Container(
                     padding: EdgeInsets.symmetric(
                         horizontal: size.width * AppDimensions.numD02,
@@ -424,9 +394,9 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(
-                          width: size.width * AppDimensions.numD01,
-                        ),
+                        // SizedBox(
+                        //   width: size.width * AppDimensions.numD01,
+                        // ),
                         RatingBar(
                           ratingWidget: RatingWidget(
                             empty: Image.asset("${iconsPath}ic_empty_star.png"),
@@ -458,8 +428,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                 padding: EdgeInsets.symmetric(
                     horizontal: size.width * AppDimensions.numD02),
                 child: Wrap(
-                    children: List<Widget>.generate(review.featureList.length,
-                        (idx) {
+                    children:
+                        List<Widget>.generate(review.featureList.length, (idx) {
                   return Container(
                       margin: EdgeInsets.only(
                           right: size.width * 0.04, top: size.width * 0.014),
