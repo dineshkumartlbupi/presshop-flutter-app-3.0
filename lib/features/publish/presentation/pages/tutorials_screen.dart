@@ -10,6 +10,7 @@ import 'package:presshop/features/publish/presentation/bloc/tutorials/tutorials_
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/utils/common_utils.dart';
 import 'package:presshop/core/widgets/video_thumbnail_widget.dart';
+import '../widgets/tutorial_item_card.dart';
 
 class TutorialsScreen extends StatefulWidget {
   const TutorialsScreen({super.key});
@@ -275,7 +276,9 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                             var item = state.isSearch
                                 ? state.searchResults[index]
                                 : state.videos[index];
-                            return InkWell(
+                            return TutorialItemCard(
+                              item: item,
+                              size: size,
                               onTap: () {
                                 _bloc.add(TutorialsAddViewCount(item.id));
                                 context.pushNamed(AppRoutes.fullVideoViewName,
@@ -285,142 +288,6 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                       'isFromTutorialScreen': true,
                                     });
                               },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color:
-                                            AppColorTheme.colorTextFieldIcon),
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * AppDimensions.numD04)),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      flex: 6,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(size.width *
-                                              AppDimensions.numD04),
-                                          topRight: Radius.circular(size.width *
-                                              AppDimensions.numD04),
-                                        ),
-                                        child: Stack(
-                                          fit: StackFit.expand,
-                                          children: [
-                                            VideoThumbnailWidget(
-                                              videoUrl:
-                                                  getMediaImageUrl(item.video),
-                                              thumbnailUrl:
-                                                  item.thumbnail.isNotEmpty
-                                                      ? getMediaImageUrl(
-                                                          item.thumbnail)
-                                                      : null,
-                                              fit: BoxFit.cover,
-                                            ),
-                                            Positioned(
-                                              right: size.width *
-                                                  AppDimensions.numD02,
-                                              top: size.width *
-                                                  AppDimensions.numD02,
-                                              child: Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: size.width *
-                                                          AppDimensions.numD01,
-                                                      vertical:
-                                                          size.width * 0.002),
-                                                  decoration: BoxDecoration(
-                                                      color: AppColorTheme
-                                                          .colorLightGreen
-                                                          .withOpacity(0.8),
-                                                      borderRadius: BorderRadius
-                                                          .circular(size.width *
-                                                              AppDimensions
-                                                                  .numD015)),
-                                                  child: Icon(
-                                                    Icons.videocam_outlined,
-                                                    size: size.width *
-                                                        AppDimensions.numD045,
-                                                    color: Colors.white,
-                                                  )),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 4, // 40% for text and footer
-                                      child: Padding(
-                                        padding: EdgeInsets.all(
-                                            size.width * AppDimensions.numD03),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Expanded(
-                                              child: Text(item.description,
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize: size.width *
-                                                          AppDimensions.numD03,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis),
-                                            ),
-                                            Row(
-                                              children: [
-                                                Image.asset(
-                                                  "${iconsPath}ic_clock.png",
-                                                  height: size.width *
-                                                      AppDimensions.numD03,
-                                                ),
-                                                SizedBox(
-                                                  width: size.width *
-                                                      AppDimensions.numD01,
-                                                ),
-                                                Text(
-                                                  item.duration,
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize: size.width *
-                                                          AppDimensions.numD025,
-                                                      color: AppColorTheme
-                                                          .colorHint,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                const Spacer(),
-                                                Image.asset(
-                                                  "${iconsPath}ic_view.png",
-                                                  height: size.width *
-                                                      AppDimensions.numD03,
-                                                ),
-                                                SizedBox(
-                                                  width: size.width *
-                                                      AppDimensions.numD01,
-                                                ),
-                                                Text(
-                                                  item.view.toString(),
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize: size.width *
-                                                          AppDimensions.numD025,
-                                                      color: AppColorTheme
-                                                          .colorThemePink,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
                             );
                           },
                           itemCount: state.isSearch
