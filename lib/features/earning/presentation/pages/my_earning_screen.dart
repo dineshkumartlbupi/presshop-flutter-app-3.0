@@ -187,61 +187,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
         return false;
       },
       child: Scaffold(
-          appBar: CommonAppBar(
-            elevation: 0,
-            hideLeading: false,
-            title: Text(
-              AppStrings.myEarningsText,
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-            ),
-            centerTitle: false,
-            titleSpacing: 0,
+          appBar: CommonBrandedAppBar(
+            title: AppStrings.myEarningsText,
             size: size,
-            showActions: true,
-            leadingFxn: () {
-              widget.openDashboard
-                  ? context.goNamed(
-                      AppRoutes.dashboardName,
-                      extra: {'initialPosition': 0},
-                    )
-                  : context.pop();
-            },
-            actionWidget: [
-              if (_selectedTabbar == 0)
-                InkWell(
-                  onTap: () {
-                    showBottomSheet(size, context.read<EarningBloc>());
-                  },
-                  child: commonFilterIcon(size),
-                ),
-              SizedBox(
-                width: size.width * AppDimensions.numD02,
-              ),
-              Container(
-                margin: EdgeInsets.only(
-                    bottom: size.width * AppDimensions.numD02,
-                    right: size.width * AppDimensions.numD016),
-                child: InkWell(
-                  onTap: () {
-                    context.goNamed(
-                      AppRoutes.dashboardName,
-                      extra: {'initialPosition': 2},
-                    );
-                  },
-                  child: Image.asset(
-                    "${commonImagePath}rabbitLogo.png",
-                    height: size.width * AppDimensions.numD07,
-                    width: size.width * AppDimensions.numD07,
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: size.width * AppDimensions.numD02,
-              ),
-            ],
           ),
           body: BlocConsumer<EarningBloc, EarningState>(
             listener: (context, state) {
@@ -258,7 +206,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
 
               return SingleChildScrollView(
                 child: Padding(
-                  padding: EdgeInsets.all(size.width * AppDimensions.numD02),
+                  padding: EdgeInsets.all(size.width * AppDimensions.numD04),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
@@ -267,7 +215,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                           /// My Earnings
                           Container(
                             padding: EdgeInsets.all(
-                                size.width * AppDimensions.numD05),
+                                size.width * AppDimensions.numD03),
                             decoration: BoxDecoration(
                                 color: AppColorTheme.colorLightGrey,
                                 borderRadius: BorderRadius.circular(
@@ -285,7 +233,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                   AppDimensions.numD04)),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(
-                                            size.width * AppDimensions.numD04),
+                                            size.width * AppDimensions.numD03),
                                         child: CachedNetworkImage(
                                           imageUrl: earningData?.avatar ?? "",
                                           imageBuilder:
@@ -649,7 +597,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                           ),
 
                           Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               TabBar(
                                 physics: const NeverScrollableScrollPhysics(),

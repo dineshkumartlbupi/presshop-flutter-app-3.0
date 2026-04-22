@@ -503,7 +503,7 @@ class DashboardPageState extends State<Dashboard>
                     ?.getBool(SharedPreferencesKeys.isTaskGrabbingActiveKey) ??
                 false;
 
-            if (!isManuallyStopped) {
+            if (!isManuallyStopped && isTaskGrabbingActive) {
               BackgroundLocationService.initService(
                 notificationTitle: liveLocationHeading,
                 notificationContent: liveLocationDescription,
@@ -655,7 +655,7 @@ class DashboardPageState extends State<Dashboard>
     );
   }
 
-  void _onBottomBarItemTapped(int index) {
+  void _onBottomBarItemTapped(int index) async {
     if (currentIndex == index) return;
 
     // Pause camera when leaving camera tab

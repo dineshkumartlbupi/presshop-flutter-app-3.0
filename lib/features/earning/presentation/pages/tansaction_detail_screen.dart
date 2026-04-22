@@ -11,8 +11,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-
-
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
@@ -200,7 +198,10 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                         ),
                         SizedBox(width: 6),
                         Text(
-                          (double.tryParse(widget.transactionData!.payableT0Hopper) ?? 0.0) != 0.0
+                          (double.tryParse(widget
+                                          .transactionData!.payableT0Hopper) ??
+                                      0.0) !=
+                                  0.0
                               ? "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol}${formatDouble(double.tryParse(widget.transactionData!.payableT0Hopper) ?? 0.0)}"
                               : "",
                           style: commonTextStyle(
@@ -700,7 +701,10 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      (double.tryParse(widget.transactionData!.totalEarningAmt) ?? 0.0) != 0.0
+                      (double.tryParse(widget
+                                      .transactionData!.totalEarningAmt) ??
+                                  0.0) !=
+                              0.0
                           ? "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} ${formatDouble(double.tryParse(widget.transactionData!.totalEarningAmt) ?? 0.0)}"
                           : "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} 0",
                       style: commonTextStyle(
@@ -791,7 +795,10 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      (double.tryParse(widget.transactionData!.payableT0Hopper) ?? 0.0) != 0.0
+                      (double.tryParse(widget
+                                      .transactionData!.payableT0Hopper) ??
+                                  0.0) !=
+                              0.0
                           ? "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} ${formatDouble(double.tryParse(widget.transactionData!.payableT0Hopper) ?? 0.0)}"
                           : "",
                       style: commonTextStyle(
@@ -1371,7 +1378,10 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      (double.tryParse(widget.transactionData!.totalEarningAmt) ?? 0.0) != 0.0
+                      (double.tryParse(widget
+                                      .transactionData!.totalEarningAmt) ??
+                                  0.0) !=
+                              0.0
                           ? "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} ${formatDouble(double.tryParse(widget.transactionData!.totalEarningAmt) ?? 0.0)}"
                           : "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} 0",
                       style: commonTextStyle(

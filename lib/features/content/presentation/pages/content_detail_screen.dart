@@ -1024,8 +1024,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                 fit: BoxFit.contain,
                                 height: size.width * AppDimensions.numD20,
                                 width: size.width * AppDimensions.numD20,
-                                errorBuilder: (context,
-                                    exception, stackTrace) {
+                                errorBuilder: (context, exception, stackTrace) {
                                   return Image.asset(
                                     "${commonImagePath}rabbitLogo.png",
                                     fit: BoxFit.contain,

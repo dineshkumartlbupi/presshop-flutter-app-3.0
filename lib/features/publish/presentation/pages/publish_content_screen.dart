@@ -15,6 +15,7 @@ import 'package:lottie/lottie.dart';
 import 'package:path/path.dart' hide Context, context;
 import 'package:path_provider/path_provider.dart';
 import 'package:presshop/core/di/injection_container.dart';
+import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/core/core_export.dart';
@@ -361,43 +362,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
           return Scaffold(
             backgroundColor: Colors.white,
-            appBar: CommonAppBar(
-              elevation: 0,
-              hideLeading: false,
-              title: Text(
-                //   AppStrings.publishContentText,
-                "Submit content",
-                style: commonTextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: size.width * AppDimensions.appBarHeadingFontSize,
-                    size: size),
-              ),
-              centerTitle: false,
-              titleSpacing: 0,
+            appBar: CommonBrandedAppBar(
+              title: 'Submit content',
               size: size,
-              showActions: true,
-              leadingFxn: () {
-                context.pop();
-              },
-              actionWidget: [
-                InkWell(
-                  onTap: () {
-                    context.goNamed(
-                      AppRoutes.dashboardName,
-                      extra: {'initialPosition': 2},
-                    );
-                  },
-                  child: Image.asset(
-                    "${commonImagePath}ic_black_rabbit.png",
-                    height: size.width * AppDimensions.numD07,
-                    width: size.width * AppDimensions.numD07,
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * AppDimensions.numD04,
-                )
-              ],
+              showLogo: true,
             ),
 
             /// body
@@ -711,226 +679,276 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                       mainAxisSize:
                                                           MainAxisSize.min,
                                                       children: [
-                                                        Text(
-                                                            (imageCount +
-                                                                    videoCount +
-                                                                    audioCount)
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: size
+                                                        if (imageCount > 0)
+                                                          Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              Image.asset(
+                                                                "${iconsPath}ic_camera1.png",
+                                                                height: size
                                                                         .width *
                                                                     AppDimensions
                                                                         .numD03,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600)),
-                                                        // if (imageCount > 0) ...[
-                                                        //   Container(
-                                                        //     padding: EdgeInsets.only(left: size.width * AppDimensions.numD01, right: size.width * AppDimensions.numD01, top: size.width * AppDimensions.numD005, bottom: size.width * AppDimensions.numD005),
-                                                        //     decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(size.width * AppDimensions.numD013)),
-                                                        //     child: Row(
-                                                        //       children: [
-                                                        //         Text(imageCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * AppDimensions.numD03, fontWeight: FontWeight.w600)),
-                                                        //         SizedBox(
-                                                        //           width: size.width * AppDimensions.numD005,
-                                                        //         ),
-                                                        //         Image.asset("${iconsPath}ic_camera_publish.png", color: Colors.white, height: size.width * AppDimensions.numD028),
-                                                        //       ],
-                                                        //     ),
-                                                        //   ),
-                                                        //   SizedBox(
-                                                        //     height: size.width * AppDimensions.numD005,
-                                                        //   ),
-                                                        // ],
-                                                        // if (videoCount > 0) ...[
-                                                        //   Container(
-                                                        //     padding: EdgeInsets.only(left: size.width * AppDimensions.numD01, right: size.width * AppDimensions.numD01, top: size.width * AppDimensions.numD005, bottom: size.width * AppDimensions.numD005),
-                                                        //     decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(size.width * AppDimensions.numD013)),
-                                                        //     child: Row(
-                                                        //       children: [
-                                                        //         Text(videoCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * AppDimensions.numD03, fontWeight: FontWeight.w700)),
-                                                        //         SizedBox(
-                                                        //           width: size.width * AppDimensions.numD005,
-                                                        //         ),
-                                                        //         Image.asset("${iconsPath}ic_v_cam.png", color: Colors.white, height: size.width * AppDimensions.numD035),
-                                                        //       ],
-                                                        //     ),
-                                                        //   ),
-                                                        //   SizedBox(
-                                                        //     height: size.width * AppDimensions.numD005,
-                                                        //   ),
-                                                        // ],
-                                                        // if (audioCount > 0) ...[
-                                                        //   Container(
-                                                        //     padding: EdgeInsets.only(left: size.width * AppDimensions.numD01, right: size.width * AppDimensions.numD01, top: size.width * AppDimensions.numD005, bottom: size.width * AppDimensions.numD005),
-                                                        //     decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(size.width * AppDimensions.numD013)),
-                                                        //     child: Row(
-                                                        //       children: [
-                                                        //         Text(audioCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * AppDimensions.numD03, fontWeight: FontWeight.w700)),
-                                                        //         SizedBox(
-                                                        //           width: size.width * AppDimensions.numD005,
-                                                        //         ),
-                                                        //         /*Icon(Icons.mic_none,
-                                                        //             color:Colors.white,
-                                                        //             size:size.width * AppDimensions.numD037),*/
-                                                        //
-                                                        //         Image.asset(
-                                                        //           "${iconsPath}ic_mic.png",
-                                                        //           color: Colors.white.withValues(alpha: 0.8),
-                                                        //           height: size.width * AppDimensions.numD03,
-                                                        //           width: size.width * AppDimensions.numD036,
-                                                        //         ),
-                                                        //       ],
-                                                        //     ),
-                                                        //   ),
-                                                        //   SizedBox(
-                                                        //     height: size.width * AppDimensions.numD005,
-                                                        //   ),
-                                                        // ],
-                                                        // if (docCount > 0) ...[
-                                                        //   Container(
-                                                        //     padding: EdgeInsets.only(left: size.width * AppDimensions.numD01, right: size.width * AppDimensions.numD01, top: size.width * AppDimensions.numD005, bottom: size.width * AppDimensions.numD005),
-                                                        //     decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(size.width * AppDimensions.numD013)),
-                                                        //     child: Row(
-                                                        //       children: [
-                                                        //         Text(docCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * AppDimensions.numD03, fontWeight: FontWeight.w700)),
-                                                        //         SizedBox(
-                                                        //           width: size.width * AppDimensions.numD005,
-                                                        //         ),
-                                                        //         Image.asset(
-                                                        //           "${iconsPath}doc_icon.png",
-                                                        //           color: Colors.red,
-                                                        //           height: size.width * AppDimensions.numD03,
-                                                        //           width: size.width * AppDimensions.numD022,
-                                                        //         ),
-                                                        //       ],
-                                                        //     ),
-                                                        //   ),
-                                                        //   SizedBox(
-                                                        //     height: size.width * AppDimensions.numD005,
-                                                        //   ),
-                                                        // ],
-                                                        // if (pdfCount > 0) ...[
-                                                        //   Container(
-                                                        //     padding: EdgeInsets.only(left: size.width * AppDimensions.numD01, right: size.width * AppDimensions.numD01, top: size.width * AppDimensions.numD005, bottom: size.width * AppDimensions.numD005),
-                                                        //     decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(size.width * AppDimensions.numD013)),
-                                                        //     child: Row(
-                                                        //       children: [
-                                                        //         Text(pdfCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * AppDimensions.numD03, fontWeight: FontWeight.w700)),
-                                                        //         SizedBox(
-                                                        //           width: size.width * AppDimensions.numD005,
-                                                        //         ),
-                                                        //         Image.asset(
-                                                        //           "${iconsPath}doc_icon.png",
-                                                        //           color: Colors.red,
-                                                        //           height: size.width * AppDimensions.numD03,
-                                                        //           width: size.width * AppDimensions.numD022,
-                                                        //         ),
-                                                        //       ],
-                                                        //     ),
-                                                        //   ),
-                                                        //   SizedBox(
-                                                        //     height: size.width * AppDimensions.numD005,
-                                                        //   ),
-                                                        // ],
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 4),
+                                                              Text(
+                                                                  imageCount
+                                                                      .toString(),
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize: size
+                                                                              .width *
+                                                                          AppDimensions
+                                                                              .numD03,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600)),
+                                                            ],
+                                                          ),
+                                                        if (videoCount > 0) ...[
+                                                          const SizedBox(
+                                                              height: 4),
+                                                          Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              Image.asset(
+                                                                "${iconsPath}ic_video_cam.png",
+                                                                height: 9,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 4),
+                                                              Text(
+                                                                  videoCount
+                                                                      .toString(),
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize: size
+                                                                              .width *
+                                                                          AppDimensions
+                                                                              .numD03,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600)),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                        if (audioCount > 0) ...[
+                                                          const SizedBox(
+                                                              height: 4),
+                                                          Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Image.asset(
+                                                                "${iconsPath}ic_mic1.png",
+                                                                height: size
+                                                                        .width *
+                                                                    AppDimensions
+                                                                        .numD04,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 4),
+                                                              Text(
+                                                                  audioCount
+                                                                      .toString(),
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize: size
+                                                                              .width *
+                                                                          AppDimensions
+                                                                              .numD03,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600)),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                        if (docCount > 0) ...[
+                                                          const SizedBox(
+                                                              height: 4),
+                                                          Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              Image.asset(
+                                                                "${iconsPath}doc_icon.png",
+                                                                height: size
+                                                                        .width *
+                                                                    AppDimensions
+                                                                        .numD03,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 4),
+                                                              Text(
+                                                                  docCount
+                                                                      .toString(),
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize: size
+                                                                              .width *
+                                                                          AppDimensions
+                                                                              .numD03,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600)),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                        if (pdfCount > 0) ...[
+                                                          const SizedBox(
+                                                              height: 4),
+                                                          Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              Image.asset(
+                                                                "${iconsPath}pdfIcon.png",
+                                                                height: size
+                                                                        .width *
+                                                                    AppDimensions
+                                                                        .numD03,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 4),
+                                                              Text(
+                                                                  pdfCount
+                                                                      .toString(),
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize: size
+                                                                              .width *
+                                                                          AppDimensions
+                                                                              .numD03,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600)),
+                                                            ],
+                                                          ),
+                                                        ],
                                                       ],
                                                     ),
                                                   ),
                                                 ],
                                               ),
 
-                                              /*   widget.hideDraft && widget.myContentData != null
-                                      ? Positioned(
-                                          right: size.width * AppDimensions.numD02,
-                                          top: size.width * AppDimensions.numD02,
-                                          child: Container(
-                                              width: size.width * AppDimensions.numD06,
-                                              height: size.width * AppDimensions.numD06,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: size.width * AppDimensions.numD01,
-                                                  vertical: size.width * 0.002),
-                                              decoration: BoxDecoration(
-                                                  color: AppColorTheme.colorLightGreen
-                                                      .withValues(alpha: 0.8),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          size.width * AppDimensions.numD015)),
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: widget
-                                                                    .myContentData!
-                                                                    .contentMediaList
-                                                                    .first
-                                                                    .mediaType ==
-                                                                "video" ||
-                                                            widget
-                                                                    .myContentData!
-                                                                    .contentMediaList
-                                                                    .first
-                                                                    .mediaType ==
-                                                                "audio"
-                                                        ? 0
-                                                        : size.width * 0.005,
-                                                    vertical: widget
-                                                                .myContentData!
-                                                                .contentMediaList
-                                                                .first
-                                                                .mediaType ==
-                                                            "video"
-                                                        ? size.width * 0.005
-                                                        : widget
-                                                                    .myContentData!
-                                                                    .contentMediaList
-                                                                    .first
-                                                                    .mediaType ==
-                                                                "audio"
-                                                            ? size.width * 0.009
-                                                            : size.width * 0.01),
-                                                child: Image.asset(
-                                                  widget
-                                                              .myContentData!
-                                                              .contentMediaList
-                                                              .first
-                                                              .mediaType ==
-                                                          "image"
-                                                      ? "${iconsPath}ic_camera_publish.png"
-                                                      : widget
-                                                                  .myContentData!
-                                                                  .contentMediaList
-                                                                  .first
-                                                                  .mediaType ==
-                                                              "video"
-                                                          ? "${iconsPath}ic_v_cam.png"
-                                                          : widget
-                                                                      .myContentData!
-                                                                      .contentMediaList
-                                                                      .first
-                                                                      .mediaType ==
-                                                                  "audio"
-                                                              ? "${iconsPath}ic_mic.png"
-                                                              : "${iconsPath}doc_icon.png",
-                                                  color: Colors.white,
-                                                  height: widget
-                                                              .myContentData!
-                                                              .contentMediaList
-                                                              .first
-                                                              .mediaType ==
-                                                          "video"
-                                                      ? size.width * AppDimensions.numD09
-                                                      : widget
-                                                                  .myContentData!
-                                                                  .contentMediaList
-                                                                  .first
-                                                                  .mediaType ==
-                                                              "image"
-                                                          ? size.width * AppDimensions.numD05
-                                                          : size.width * AppDimensions.numD08,
-                                                ),
-                                              )),
-                                        )
-                                      : const SizedBox.shrink(),*/
+                                              widget.hideDraft &&
+                                                      widget.myContentData !=
+                                                          null
+                                                  ? Positioned(
+                                                      right: size.width *
+                                                          AppDimensions.numD02,
+                                                      top: size.width *
+                                                          AppDimensions.numD02,
+                                                      child: Container(
+                                                          width: size.width *
+                                                              AppDimensions
+                                                                  .numD06,
+                                                          height: size.width *
+                                                              AppDimensions
+                                                                  .numD06,
+                                                          padding: EdgeInsets.symmetric(
+                                                              horizontal: size.width *
+                                                                  AppDimensions
+                                                                      .numD01,
+                                                              vertical:
+                                                                  size.width *
+                                                                      0.002),
+                                                          decoration: BoxDecoration(
+                                                              color: AppColorTheme
+                                                                  .colorLightGreen
+                                                                  .withValues(
+                                                                      alpha:
+                                                                          0.8),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                      size.width *
+                                                                          AppDimensions.numD015)),
+                                                          child: Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal: widget.myContentData!.contentMediaList.first.mediaType ==
+                                                                                "video" ||
+                                                                            widget.myContentData!.contentMediaList.first.mediaType ==
+                                                                                "audio"
+                                                                        ? 0
+                                                                        : size.width *
+                                                                            0.005,
+                                                                    vertical: widget.myContentData!.contentMediaList.first.mediaType ==
+                                                                            "video"
+                                                                        ? size.width *
+                                                                            0.005
+                                                                        : widget.myContentData!.contentMediaList.first.mediaType ==
+                                                                                "audio"
+                                                                            ? size.width *
+                                                                                0.009
+                                                                            : size.width *
+                                                                                0.01),
+                                                            child: Image.asset(
+                                                              widget
+                                                                          .myContentData!
+                                                                          .contentMediaList
+                                                                          .first
+                                                                          .mediaType ==
+                                                                      "image"
+                                                                  ? "${iconsPath}ic_camera_publish.png"
+                                                                  : widget.myContentData!.contentMediaList.first
+                                                                              .mediaType ==
+                                                                          "video"
+                                                                      ? "${iconsPath}ic_v_cam.png"
+                                                                      : widget.myContentData!.contentMediaList.first.mediaType ==
+                                                                              "audio"
+                                                                          ? "${iconsPath}ic_mic.png"
+                                                                          : "${iconsPath}doc_icon.png",
+                                                              color:
+                                                                  Colors.white,
+                                                              height: widget
+                                                                          .myContentData!
+                                                                          .contentMediaList
+                                                                          .first
+                                                                          .mediaType ==
+                                                                      "video"
+                                                                  ? size.width *
+                                                                      AppDimensions
+                                                                          .numD09
+                                                                  : widget.myContentData!.contentMediaList.first
+                                                                              .mediaType ==
+                                                                          "image"
+                                                                      ? size.width *
+                                                                          AppDimensions
+                                                                              .numD05
+                                                                      : size.width *
+                                                                          AppDimensions
+                                                                              .numD08,
+                                                            ),
+                                                          )),
+                                                    )
+                                                  : const SizedBox.shrink(),
                                             ],
                                           ),
                                         ),
@@ -1366,96 +1384,98 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 ],
                                               ),
 
-                                              /*   widget.hideDraft && widget.myContentData != null
-                                      ? Positioned(
-                                          right: size.width * AppDimensions.numD02,
-                                          top: size.width * AppDimensions.numD02,
-                                          child: Container(
-                                              width: size.width * AppDimensions.numD06,
-                                              height: size.width * AppDimensions.numD06,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: size.width * AppDimensions.numD01,
-                                                  vertical: size.width * 0.002),
-                                              decoration: BoxDecoration(
-                                                  color: AppColorTheme.colorLightGreen
-                                                      .withValues(alpha: 0.8),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          size.width * AppDimensions.numD015)),
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: widget
-                                                                    .myContentData!
-                                                                    .contentMediaList
-                                                                    .first
-                                                                    .mediaType ==
-                                                                "video" ||
-                                                            widget
-                                                                    .myContentData!
-                                                                    .contentMediaList
-                                                                    .first
-                                                                    .mediaType ==
-                                                                "audio"
-                                                        ? 0
-                                                        : size.width * 0.005,
-                                                    vertical: widget
-                                                                .myContentData!
-                                                                .contentMediaList
-                                                                .first
-                                                                .mediaType ==
-                                                            "video"
-                                                        ? size.width * 0.005
-                                                        : widget
-                                                                    .myContentData!
-                                                                    .contentMediaList
-                                                                    .first
-                                                                    .mediaType ==
-                                                                "audio"
-                                                            ? size.width * 0.009
-                                                            : size.width * 0.01),
-                                                child: Image.asset(
-                                                  widget
-                                                              .myContentData!
-                                                              .contentMediaList
-                                                              .first
-                                                              .mediaType ==
-                                                          "image"
-                                                      ? "${iconsPath}ic_camera_publish.png"
-                                                      : widget
-                                                                  .myContentData!
-                                                                  .contentMediaList
-                                                                  .first
-                                                                  .mediaType ==
-                                                              "video"
-                                                          ? "${iconsPath}ic_v_cam.png"
-                                                          : widget
-                                                                      .myContentData!
-                                                                      .contentMediaList
-                                                                      .first
-                                                                      .mediaType ==
-                                                                  "audio"
-                                                              ? "${iconsPath}ic_mic.png"
-                                                              : "${iconsPath}doc_icon.png",
-                                                  color: Colors.white,
-                                                  height: widget
-                                                              .myContentData!
-                                                              .contentMediaList
-                                                              .first
-                                                              .mediaType ==
-                                                          "video"
-                                                      ? size.width * AppDimensions.numD09
-                                                      : widget
-                                                                  .myContentData!
-                                                                  .contentMediaList
-                                                                  .first
-                                                                  .mediaType ==
-                                                              "image"
-                                                          ? size.width * AppDimensions.numD05
-                                                          : size.width * AppDimensions.numD08,
-                                                ),
-                                              )),
-                                        )
-                                      : const SizedBox.shrink(),*/
+                                              widget.hideDraft &&
+                                                      widget.myContentData !=
+                                                          null
+                                                  ? Positioned(
+                                                      right: size.width *
+                                                          AppDimensions.numD02,
+                                                      top: size.width *
+                                                          AppDimensions.numD02,
+                                                      child: Container(
+                                                          width: size.width *
+                                                              AppDimensions
+                                                                  .numD06,
+                                                          height: size.width *
+                                                              AppDimensions
+                                                                  .numD06,
+                                                          padding: EdgeInsets.symmetric(
+                                                              horizontal: size.width *
+                                                                  AppDimensions
+                                                                      .numD01,
+                                                              vertical:
+                                                                  size.width *
+                                                                      0.002),
+                                                          decoration: BoxDecoration(
+                                                              color: AppColorTheme
+                                                                  .colorLightGreen
+                                                                  .withValues(
+                                                                      alpha:
+                                                                          0.8),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                      size.width *
+                                                                          AppDimensions.numD015)),
+                                                          child: Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal: widget.myContentData!.contentMediaList.first.mediaType ==
+                                                                                "video" ||
+                                                                            widget.myContentData!.contentMediaList.first.mediaType ==
+                                                                                "audio"
+                                                                        ? 0
+                                                                        : size.width *
+                                                                            0.005,
+                                                                    vertical: widget.myContentData!.contentMediaList.first.mediaType ==
+                                                                            "video"
+                                                                        ? size.width *
+                                                                            0.005
+                                                                        : widget.myContentData!.contentMediaList.first.mediaType ==
+                                                                                "audio"
+                                                                            ? size.width *
+                                                                                0.009
+                                                                            : size.width *
+                                                                                0.01),
+                                                            child: Image.asset(
+                                                              widget
+                                                                          .myContentData!
+                                                                          .contentMediaList
+                                                                          .first
+                                                                          .mediaType ==
+                                                                      "image"
+                                                                  ? "${iconsPath}ic_camera_publish.png"
+                                                                  : widget.myContentData!.contentMediaList.first
+                                                                              .mediaType ==
+                                                                          "video"
+                                                                      ? "${iconsPath}ic_v_cam.png"
+                                                                      : widget.myContentData!.contentMediaList.first.mediaType ==
+                                                                              "audio"
+                                                                          ? "${iconsPath}ic_mic.png"
+                                                                          : "${iconsPath}doc_icon.png",
+                                                              color:
+                                                                  Colors.white,
+                                                              height: widget
+                                                                          .myContentData!
+                                                                          .contentMediaList
+                                                                          .first
+                                                                          .mediaType ==
+                                                                      "video"
+                                                                  ? size.width *
+                                                                      AppDimensions
+                                                                          .numD09
+                                                                  : widget.myContentData!.contentMediaList.first
+                                                                              .mediaType ==
+                                                                          "image"
+                                                                      ? size.width *
+                                                                          AppDimensions
+                                                                              .numD05
+                                                                      : size.width *
+                                                                          AppDimensions
+                                                                              .numD08,
+                                                            ),
+                                                          )),
+                                                    )
+                                                  : const SizedBox.shrink(),
                                             ],
                                           ),
                                         ),

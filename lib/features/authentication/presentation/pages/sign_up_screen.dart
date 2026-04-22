@@ -242,7 +242,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
             } else if (state is SignUpSuccess) {
               context.goNamed(AppRoutes.permissionName);
             } else if (state is AvatarsLoading) {
-               _avatarsNotifier.value = true;
+              _avatarsNotifier.value = true;
             } else if (state is AvatarsLoaded) {
               avatarList = state.avatars
                   .map((e) =>
