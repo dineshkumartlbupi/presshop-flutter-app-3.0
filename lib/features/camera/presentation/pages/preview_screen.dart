@@ -224,64 +224,28 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                     setState(() {});
                   },
                   itemBuilder: (context, index) {
-                    return InteractiveViewer(
-                      scaleEnabled:
-                          mediaList[index].mimeType == "image" ? true : false,
-                      child: Stack(
-                        alignment: Alignment.bottomCenter,
-                        children: [
-                          mediaList[index].mimeType.contains("video")
-                              ? Align(
-                                  alignment: Alignment.center,
-                                  child:
-                                      VideoWidget(mediaData: mediaList[index]),
-                                )
-                              : mediaList[index].mimeType.contains("audio")
-                                  // passing local path variable...
-                                  ? AudioWaveFormWidgetScreen(
-                                      mediaPath: mediaList[index].mediaPath,
+                    return Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        InteractiveViewer(
+                          scaleEnabled: mediaList[index].mimeType == "image",
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              mediaList[index].mimeType.contains("video")
+                                  ? Align(
+                                      alignment: Alignment.center,
+                                      child: VideoWidget(
+                                          mediaData: mediaList[index]),
                                     )
-                                  : mediaList[index].mimeType.contains("doc")
-                                      ? Center(
-                                          child: SizedBox(
-                                            height: size.width *
-                                                AppDimensions.numD60,
-                                            width: size.width *
-                                                AppDimensions.numD55,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Image.asset(
-                                                  "${dummyImagePath}doc_black_icon.png",
-                                                  fit: BoxFit.contain,
-                                                  height: size.width *
-                                                      AppDimensions.numD45,
-                                                ),
-                                                SizedBox(
-                                                  height: size.width *
-                                                      AppDimensions.numD04,
-                                                ),
-                                                Text(
-                                                  path.basename(mediaList[index]
-                                                      .mediaPath),
-                                                  textAlign: TextAlign.center,
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize: size.width *
-                                                          AppDimensions.numD03,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.normal),
-                                                  maxLines: 2,
-                                                )
-                                              ],
-                                            ),
-                                          ),
+                                  : mediaList[index].mimeType.contains("audio")
+                                      // passing local path variable...
+                                      ? AudioWaveFormWidgetScreen(
+                                          mediaPath: mediaList[index].mediaPath,
                                         )
                                       : mediaList[index]
                                               .mimeType
-                                              .contains("pdf")
+                                              .contains("doc")
                                           ? Center(
                                               child: SizedBox(
                                                 height: size.width *
@@ -293,7 +257,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                                       CrossAxisAlignment.center,
                                                   children: [
                                                     Image.asset(
-                                                      "${dummyImagePath}pngImage.png",
+                                                      "${dummyImagePath}doc_black_icon.png",
                                                       fit: BoxFit.contain,
                                                       height: size.width *
                                                           AppDimensions.numD45,
@@ -322,11 +286,60 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                                 ),
                                               ),
                                             )
-                                          : SizedBox(
-                                              height: size.height,
-                                              width: size.width,
-                                              child:
-                                                  mediaList[index].isLocalMedia
+                                          : mediaList[index]
+                                                  .mimeType
+                                                  .contains("pdf")
+                                              ? Center(
+                                                  child: SizedBox(
+                                                    height: size.width *
+                                                        AppDimensions.numD60,
+                                                    width: size.width *
+                                                        AppDimensions.numD55,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Image.asset(
+                                                          "${dummyImagePath}pngImage.png",
+                                                          fit: BoxFit.contain,
+                                                          height: size.width *
+                                                              AppDimensions
+                                                                  .numD45,
+                                                        ),
+                                                        SizedBox(
+                                                          height: size.width *
+                                                              AppDimensions
+                                                                  .numD04,
+                                                        ),
+                                                        Text(
+                                                          path.basename(
+                                                              mediaList[index]
+                                                                  .mediaPath),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: commonTextStyle(
+                                                              size: size,
+                                                              fontSize: size
+                                                                      .width *
+                                                                  AppDimensions
+                                                                      .numD03,
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal),
+                                                          maxLines: 2,
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
+                                              : SizedBox(
+                                                  height: size.height,
+                                                  width: size.width,
+                                                  child: mediaList[index]
+                                                          .isLocalMedia
                                                       ? Image.file(
                                                           File(mediaList[index]
                                                               .mediaPath),
@@ -342,52 +355,57 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                                           fit: BoxFit.fill,
                                                           gaplessPlayback: true,
                                                         ),
-                                            ),
-                          !mediaList[index].mimeType.contains("audio")
-                              ? Positioned(
-                                  top: 0,
-                                  bottom: mediaList[index]
-                                          .mimeType
-                                          .contains("video")
-                                      ? size.width * AppDimensions.numD08
-                                      : 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.1),
-                                      ),
-                                      child: Image.asset(
-                                        "${commonImagePath}watermark1.png",
-                                        fit: BoxFit.cover,
-                                      )))
-                              : Container(),
-                          Positioned(
-                            top: size.width * AppDimensions.numD09,
-                            right: size.width *
-                                (isIpad
-                                    ? AppDimensions.numD1
-                                    : AppDimensions.numD02),
-                            child: InkWell(
-                              /// @aditya 17 sep
-                              onTap: () {
-                                if (mediaList.isNotEmpty &&
-                                    index < mediaList.length) {
-                                  if (mediaList.length == 1) {
-                                    debugPrint('hello::::::::');
-                                    mediaList.removeAt(index);
-                                    context.goNamed(AppRoutes.dashboardName,
-                                        extra: {'initialPosition': 2});
-                                  } else {
-                                    mediaList.removeAt(index);
-                                    if (currentPage >= mediaList.length) {
-                                      currentPage = mediaList.length - 1;
-                                    }
+                                                ),
+                              !mediaList[index].mimeType.contains("audio")
+                                  ? Positioned(
+                                      top: 0,
+                                      bottom: mediaList[index]
+                                              .mimeType
+                                              .contains("video")
+                                          ? size.width * AppDimensions.numD08
+                                          : 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Container(
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Colors.black.withOpacity(0.1),
+                                          ),
+                                          child: Image.asset(
+                                            "${commonImagePath}watermark1.png",
+                                            fit: BoxFit.cover,
+                                          )))
+                                  : Container(),
+                            ],
+                          ),
+                        ),
+                        Positioned(
+                          top: size.width * AppDimensions.numD07,
+                          right:
+                              size.width * (isIpad ? AppDimensions.numD08 : 0),
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () {
+                              if (mediaList.isNotEmpty &&
+                                  index < mediaList.length) {
+                                if (mediaList.length == 1) {
+                                  debugPrint('hello::::::::');
+                                  mediaList.removeAt(index);
+                                  context.goNamed(AppRoutes.dashboardName,
+                                      extra: {'initialPosition': 2});
+                                } else {
+                                  mediaList.removeAt(index);
+                                  if (currentPage >= mediaList.length) {
+                                    currentPage = mediaList.length - 1;
                                   }
                                 }
+                              }
 
-                                setState(() {});
-                              },
+                              setState(() {});
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(
+                                  size.width * AppDimensions.numD02),
                               child: Container(
                                 padding: EdgeInsets.all(
                                     size.width * AppDimensions.numD015),
@@ -402,162 +420,157 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                               ),
                             ),
                           ),
-                          Positioned(
-                            bottom: 0,
-                            child: mediaList.isNotEmpty && mediaList.length > 1
-                                ? Padding(
-                                    padding: EdgeInsets.only(
-                                        bottom: mediaList[index]
-                                                .mimeType
-                                                .contains("video")
-                                            ? size.width * AppDimensions.numD08
-                                            : 0),
-                                    child: DotsIndicator(
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          child: mediaList.isNotEmpty && mediaList.length > 1
+                              ? Padding(
+                                  padding: EdgeInsets.only(
+                                      bottom: mediaList[index]
+                                              .mimeType
+                                              .contains("video")
+                                          ? size.width * AppDimensions.numD08
+                                          : 0),
+                                  child: DotsIndicator(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    dotsCount: mediaList.length,
+                                    position: currentPage,
+                                    decorator: const DotsDecorator(
+                                      color: Colors.grey, // Inactive color
+                                      activeColor: Colors.redAccent,
+                                    ),
+                                  ),
+                                )
+                              : Container(),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                              bottom: mediaList[index].mimeType == "video"
+                                  ? size.width * AppDimensions.numD11
+                                  : mediaList[index].mimeType == "audio"
+                                      ? size.width * AppDimensions.numD03
+                                      : mediaList[index].mimeType == "image"
+                                          ? size.width * AppDimensions.numD03
+                                          : 0),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD04,
+                              vertical: mediaList[index].mimeType == "audio"
+                                  ? size.width * AppDimensions.numD02
+                                  : size.width * AppDimensions.numD04),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    height: size.width * AppDimensions.numD11,
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey[100],
+                                        borderRadius: BorderRadius.circular(
+                                            size.width * AppDimensions.numD04)),
+                                    child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
-                                      dotsCount: mediaList.length,
-                                      position: currentPage,
-                                      decorator: const DotsDecorator(
-                                        color: Colors.grey, // Inactive color
-                                        activeColor: Colors.redAccent,
-                                      ),
-                                    ),
-                                  )
-                                : Container(),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(
-                                bottom: mediaList[index].mimeType == "video"
-                                    ? size.width * AppDimensions.numD11
-                                    : mediaList[index].mimeType == "audio"
-                                        ? size.width * AppDimensions.numD03
-                                        : mediaList[index].mimeType == "image"
-                                            ? size.width * AppDimensions.numD03
-                                            : 0),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * AppDimensions.numD04,
-                                vertical: mediaList[index].mimeType == "audio"
-                                    ? size.width * AppDimensions.numD02
-                                    : size.width * AppDimensions.numD04),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      height: size.width * AppDimensions.numD11,
-                                      decoration: BoxDecoration(
-                                          color: Colors.grey[100],
-                                          borderRadius: BorderRadius.circular(
-                                              size.width *
-                                                  AppDimensions.numD04)),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            "${iconsPath}ic_clock.png",
-                                            width: size.width *
-                                                AppDimensions.numD04,
-                                            height: size.width *
-                                                AppDimensions.numD04,
-                                          ),
-                                          SizedBox(
-                                            width: size.width *
-                                                AppDimensions.numD02,
-                                          ),
-                                          Text(
-                                            mediaList[index].dateTime,
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width *
-                                                    AppDimensions.numD025,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.normal),
-                                          )
-                                        ],
-                                      )),
-                                ),
-                                SizedBox(
-                                  width: size.width * AppDimensions.numD04,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                      height: size.width * AppDimensions.numD11,
-                                      decoration: BoxDecoration(
-                                          color: Colors.grey[100],
-                                          borderRadius: BorderRadius.circular(
-                                              size.width *
-                                                  AppDimensions.numD04)),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            "${iconsPath}ic_location.png",
-                                            width: size.width *
-                                                AppDimensions.numD04,
-                                            height: size.width *
-                                                AppDimensions.numD04,
-                                            color: mediaList[index]
+                                      children: [
+                                        Image.asset(
+                                          "${iconsPath}ic_clock.png",
+                                          width:
+                                              size.width * AppDimensions.numD04,
+                                          height:
+                                              size.width * AppDimensions.numD04,
+                                        ),
+                                        SizedBox(
+                                          width:
+                                              size.width * AppDimensions.numD02,
+                                        ),
+                                        Text(
+                                          mediaList[index].dateTime,
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD025,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.normal),
+                                        )
+                                      ],
+                                    )),
+                              ),
+                              SizedBox(
+                                width: size.width * AppDimensions.numD04,
+                              ),
+                              Expanded(
+                                child: Container(
+                                    height: size.width * AppDimensions.numD11,
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey[100],
+                                        borderRadius: BorderRadius.circular(
+                                            size.width * AppDimensions.numD04)),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          "${iconsPath}ic_location.png",
+                                          width:
+                                              size.width * AppDimensions.numD04,
+                                          height:
+                                              size.width * AppDimensions.numD04,
+                                          color:
+                                              mediaList[index].location.isEmpty
+                                                  ? isLocationFetching
+                                                      ? AppColorTheme.colorGrey6
+                                                      : Colors.red
+                                                  : Colors.black,
+                                        ),
+                                        SizedBox(
+                                          width:
+                                              size.width * AppDimensions.numD02,
+                                        ),
+                                        SizedBox(
+                                          width:
+                                              size.width * AppDimensions.numD25,
+                                          child: Text(
+                                            mediaList[currentPage]
                                                     .location
                                                     .isEmpty
                                                 ? isLocationFetching
-                                                    ? AppColorTheme.colorGrey6
-                                                    : Colors.red
-                                                : Colors.black,
+                                                    ? ""
+                                                    : ""
+                                                : mediaList[currentPage]
+                                                    .location,
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: mediaList[currentPage]
+                                                        .location
+                                                        .isEmpty
+                                                    ? size.width *
+                                                        AppDimensions.numD025
+                                                    : size.width *
+                                                        AppDimensions.numD025,
+                                                color: mediaList[currentPage]
+                                                        .location
+                                                        .isEmpty
+                                                    ? isLocationFetching
+                                                        ? AppColorTheme
+                                                            .colorGrey6
+                                                        : Colors.red
+                                                    : Colors.black,
+                                                fontWeight:
+                                                    mediaList[currentPage]
+                                                            .location
+                                                            .isEmpty
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                          SizedBox(
-                                            width: size.width *
-                                                AppDimensions.numD02,
-                                          ),
-                                          SizedBox(
-                                            width: size.width *
-                                                AppDimensions.numD25,
-                                            child: Text(
-                                              mediaList[currentPage]
-                                                      .location
-                                                      .isEmpty
-                                                  ? isLocationFetching
-                                                      ? ""
-                                                      : ""
-                                                  : mediaList[currentPage]
-                                                      .location,
-                                              style: commonTextStyle(
-                                                  size: size,
-                                                  fontSize: mediaList[
-                                                              currentPage]
-                                                          .location
-                                                          .isEmpty
-                                                      ? size.width *
-                                                          AppDimensions.numD025
-                                                      : size.width *
-                                                          AppDimensions.numD025,
-                                                  color: mediaList[currentPage]
-                                                          .location
-                                                          .isEmpty
-                                                      ? isLocationFetching
-                                                          ? AppColorTheme
-                                                              .colorGrey6
-                                                          : Colors.red
-                                                      : Colors.black,
-                                                  fontWeight:
-                                                      mediaList[currentPage]
-                                                              .location
-                                                              .isEmpty
-                                                          ? FontWeight.bold
-                                                          : FontWeight.normal),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          )
-                                        ],
-                                      )),
-                                ),
-                              ],
-                            ),
+                                        )
+                                      ],
+                                    )),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     );
                   },
                   itemCount: mediaList.length,

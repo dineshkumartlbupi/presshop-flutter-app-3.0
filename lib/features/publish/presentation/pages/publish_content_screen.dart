@@ -1949,6 +1949,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                         color: AppColorTheme.colorLightGrey,
                         thickness: 1,
                       ),
+                      SizedBox(height: size.width * AppDimensions.numD02),
 
                       /// hash Tags
                       Padding(
@@ -1958,10 +1959,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Container(
+                            SizedBox(
                               width: size.width * AppDimensions.numD32,
-                              margin: EdgeInsets.only(
-                                  top: size.width * AppDimensions.numD04),
                               child: Text(
                                 "${AppStrings.hashtagText.toUpperCase()}S",
                                 style: commonTextStyle(
@@ -2018,9 +2017,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       );
                                     }),
                                   ),
-                                  SizedBox(
-                                    height: size.width * AppDimensions.numD02,
-                                  ),
+                                  if (selectedHashtagList.isNotEmpty)
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD02,
+                                    ),
                                   TextFormField(
                                     controller: hashtagController,
                                     readOnly: true,

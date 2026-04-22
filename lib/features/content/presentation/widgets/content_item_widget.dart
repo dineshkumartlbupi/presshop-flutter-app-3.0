@@ -20,36 +20,32 @@ class ContentItemWidget extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
+        padding: EdgeInsets.only(
+          left: size.width * AppDimensions.numD03,
+          right: size.width * AppDimensions.numD03,
+          top: size.width * AppDimensions.numD03,
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              spreadRadius: 0,
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            )
+              color: Colors.grey.shade200,
+              spreadRadius: 2,
+              blurRadius: 1,
+            ),
           ],
-          borderRadius:
-              BorderRadius.circular(size.width * AppDimensions.numD04),
+          borderRadius: BorderRadius.circular(
+            size.width * AppDimensions.numD04,
+          ),
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             MediaThumbnailWidget(item: item, size: size),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(size.width * AppDimensions.numD02),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildInfoRow(),
-                    const Spacer(),
-                    _buildStatusRow(),
-                  ],
-                ),
-              ),
-            ),
+            SizedBox(height: size.width * AppDimensions.numD02),
+            _buildInfoRow(),
+            const Spacer(),
+            _buildStatusRow(),
+            SizedBox(height: size.width * AppDimensions.numD02),
           ],
         ),
       ),
@@ -70,9 +66,9 @@ class ContentItemWidget extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: commonTextStyle(
               size: size,
-              fontSize: size.width * AppDimensions.numD032,
+              fontSize: size.width * AppDimensions.numD03,
               color: Colors.black,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
@@ -81,10 +77,11 @@ class ContentItemWidget extends StatelessWidget {
           (item.isExclusive ?? false)
               ? "${iconsPath}ic_exclusive.png"
               : "${iconsPath}ic_share.png",
-          height: size.width * AppDimensions.numD04,
-          width: size.width * AppDimensions.numD04,
+          height: (item.isExclusive ?? false)
+              ? size.width * AppDimensions.numD03
+              : size.width * AppDimensions.numD04,
           color: AppColorTheme.colorTextFieldIcon,
-        )
+        ),
       ],
     );
   }
@@ -92,12 +89,7 @@ class ContentItemWidget extends StatelessWidget {
   Widget _buildStatusRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Expanded(child: _buildMetricsColumn()),
-        SizedBox(width: size.width * AppDimensions.numD01),
-        _buildPriceBadge(),
-      ],
+      children: [_buildMetricsColumn(), _buildPriceBadge()],
     );
   }
 
@@ -112,7 +104,7 @@ class ContentItemWidget extends StatelessWidget {
         ),
         SizedBox(height: size.width * AppDimensions.numD01),
         _buildMetricItem(
-          icon: "ic_offer.png", // Changed to ic_offer if available
+          icon: "dollar1.png",
           value:
               "${item.totalOffer} ${item.totalOffer > 1 ? '${AppStrings.offerText}s' : AppStrings.offerText}",
           isActive: item.totalOffer > 0,
@@ -137,28 +129,18 @@ class ContentItemWidget extends StatelessWidget {
       children: [
         Image.asset(
           "$iconsPath$icon",
-          height: size.width * AppDimensions.numD03,
-          width: size.width * AppDimensions.numD03,
+          height: size.width * AppDimensions.numD025,
+          width: size.width * AppDimensions.numD025,
           color: isActive ? AppColorTheme.colorThemePink : Colors.grey,
-          errorBuilder: (context, error, stackTrace) => Image.asset(
-            "${iconsPath}dollar1.png",
-            height: size.width * AppDimensions.numD03,
-            width: size.width * AppDimensions.numD03,
-            color: isActive ? AppColorTheme.colorThemePink : Colors.grey,
-          ),
         ),
-        SizedBox(width: size.width * AppDimensions.numD015),
-        Expanded(
-          child: Text(
-            value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: commonTextStyle(
-              size: size,
-              fontSize: size.width * AppDimensions.numD026,
-              color: isActive ? AppColorTheme.colorThemePink : Colors.grey,
-              fontWeight: FontWeight.w500,
-            ),
+        SizedBox(width: size.width * AppDimensions.numD014),
+        Text(
+          value,
+          style: commonTextStyle(
+            size: size,
+            fontSize: size.width * AppDimensions.numD026,
+            color: isActive ? AppColorTheme.colorThemePink : Colors.grey,
+            fontWeight: FontWeight.normal,
           ),
         ),
       ],
@@ -171,65 +153,74 @@ class ContentItemWidget extends StatelessWidget {
 
     if (isPendingOrRejected) {
       return Container(
-        padding: EdgeInsets.all(size.width * AppDimensions.numD015),
+        height: size.height * AppDimensions.numD036,
+        width: size.width * AppDimensions.numD17,
         decoration: BoxDecoration(
           color: Colors.black,
-          borderRadius:
-              BorderRadius.circular(size.width * AppDimensions.numD015),
+          borderRadius: BorderRadius.circular(
+            size.width * AppDimensions.numD015,
+          ),
         ),
-        child: Text(
-          item.status.toLowerCase() == "pending"
-              ? "Under\nReview"
-              : "Not\nApproved",
-          textAlign: TextAlign.center,
-          style: commonTextStyle(
-            size: size,
-            fontSize: size.width * AppDimensions.numD024,
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
+        child: Center(
+          child: Text(
+            item.status.toLowerCase() == "pending"
+                ? "Under\nReview"
+                : "Not\nApproved",
+            textAlign: TextAlign.center,
+            style: commonTextStyle(
+              size: size,
+              fontSize: size.width * AppDimensions.numD024,
+              color: Colors.white,
+              fontWeight: FontWeight.w400,
+            ),
           ),
         ),
       );
     }
 
     return Container(
+      height: size.width * AppDimensions.numD08,
       padding: EdgeInsets.symmetric(
-        horizontal: size.width * AppDimensions.numD02,
+        horizontal: size.width * AppDimensions.numD015,
         vertical: size.width * AppDimensions.numD01,
       ),
       decoration: BoxDecoration(
         color: item.paidStatus == false
             ? AppColorTheme.colorThemePink
-            : const Color(0xFFF0F0F0),
+            : AppColorTheme.colorLightGrey,
         borderRadius: BorderRadius.circular(size.width * AppDimensions.numD015),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
+          Padding(
+            padding: item.paidStatus && !item.isPaidStatusToHopper
+                ? EdgeInsets.symmetric(
+                    horizontal: size.width * AppDimensions.numD028,
+                  )
+                : EdgeInsets.zero,
+            child: Text(
+              !item.paidStatus
+                  ? item.status.toCapitalized()
+                  : item.paidStatus && item.isPaidStatusToHopper
+                      ? "Received"
+                      : "Sold",
+              textAlign: TextAlign.center,
+              style: commonTextStyle(
+                size: size,
+                fontSize: size.width * AppDimensions.numD022,
+                color: item.paidStatus == false ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
           Text(
-            !item.paidStatus
-                ? item.status.toCapitalized()
-                : item.paidStatus && item.isPaidStatusToHopper
-                    ? "Received"
-                    : "Sold",
+            "${item.currencySymbol.isNotEmpty ? item.currencySymbol : getCurrencySymbol(item.currency)}${formatDouble(double.tryParse(item.paidStatus == false ? (item.price ?? '0') : item.totalSold) ?? 0.0)}",
             textAlign: TextAlign.center,
             style: commonTextStyle(
               size: size,
               fontSize: size.width * AppDimensions.numD022,
               color: item.paidStatus == false ? Colors.white : Colors.black,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          FittedBox(
-            child: Text(
-              "${item.currencySymbol.isNotEmpty ? item.currencySymbol : getCurrencySymbol(item.currency)}${formatDouble(double.tryParse(item.paidStatus == false ? (item.price ?? '0') : item.totalSold) ?? 0.0)}",
-              textAlign: TextAlign.center,
-              style: commonTextStyle(
-                size: size,
-                fontSize: size.width * AppDimensions.numD024,
-                color: item.paidStatus == false ? Colors.white : Colors.black,
-                fontWeight: FontWeight.w700,
-              ),
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -250,7 +241,7 @@ class MediaThumbnailWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 1.5, // Standard content aspect ratio
+      aspectRatio: 1.3,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
         child: Stack(
@@ -265,12 +256,12 @@ class MediaThumbnailWidget extends StatelessWidget {
                 // Cache the watermark image for better performance
                 cacheWidth: (size.width * 2).toInt(),
               ),
-            // if (item.totalMediaCount > 1)
-            Positioned(
-              right: size.width * AppDimensions.numD02,
-              top: size.width * AppDimensions.numD02,
-              child: _buildCountBadge(),
-            ),
+            if (item.mediaUrls.length >= 1)
+              Positioned(
+                right: size.width * AppDimensions.numD02,
+                top: size.width * AppDimensions.numD02,
+                child: _buildCountBadge(),
+              ),
           ],
         ),
       ),
@@ -291,16 +282,17 @@ class MediaThumbnailWidget extends StatelessWidget {
       );
     }
 
+    final firstMedia = item.mediaList.isNotEmpty ? item.mediaList.first : null;
     final isVideo = item.mediaType == 'video' ||
-        (item.mediaList.isNotEmpty &&
-            item.mediaList.first.mediaType == 'video');
+        (firstMedia?.mediaType.toLowerCase() == 'video');
+    final isAudio = item.mediaType == 'audio' ||
+        (firstMedia?.mediaType.toLowerCase() == 'audio');
 
     if (isVideo) {
       return VideoThumbnailWidget(
         videoUrl: getMediaImageUrl(item.mediaUrls.first, isVideo: true),
-        thumbnailUrl: item.mediaList.isNotEmpty &&
-                item.mediaList.first.thumbnailUrl.isNotEmpty
-            ? fixS3Url(item.mediaList.first.thumbnailUrl)
+        thumbnailUrl: firstMedia?.thumbnailUrl.isNotEmpty == true
+            ? fixS3Url(firstMedia!.thumbnailUrl)
             : null,
         width: double.infinity,
         height: double.infinity,
@@ -308,7 +300,29 @@ class MediaThumbnailWidget extends StatelessWidget {
       );
     }
 
-    return _showImage(item.mediaType ?? 'photo', item.mediaUrls.first);
+    // Try to show thumbnail from metadata if it looks like a valid image
+    if (firstMedia != null &&
+        firstMedia.thumbnailUrl.isNotEmpty &&
+        !firstMedia.thumbnailUrl.toLowerCase().endsWith('.m4a') &&
+        !firstMedia.thumbnailUrl.toLowerCase().endsWith('.mp3')) {
+      return CachedNetworkImage(
+        imageUrl: fixS3Url(firstMedia.thumbnailUrl),
+        width: double.infinity,
+        height: double.infinity,
+        fit: BoxFit.cover,
+        placeholder: (_, __) => _buildLightweightPlaceholder(),
+        errorWidget: (_, __, ___) => _showImage(
+          isAudio ? 'audio' : (item.mediaType ?? 'photo'),
+          item.mediaUrls.first,
+        ),
+      );
+    }
+
+    final effectiveType = isAudio
+        ? 'audio'
+        : (isVideo ? 'video' : (item.mediaType ?? 'photo'));
+
+    return _showImage(effectiveType, item.mediaUrls.first);
   }
 
   Widget _buildCountBadge() {
@@ -323,7 +337,7 @@ class MediaThumbnailWidget extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          "${item.totalMediaCount} ",
+          "${(item.audioCount ?? 0) + (item.videoCount ?? 0) + (item.imageCount ?? 0) + (item.otherCount ?? 0)} ",
           textAlign: TextAlign.center,
           style: commonTextStyle(
             size: size,
@@ -370,7 +384,6 @@ class MediaThumbnailWidget extends StatelessWidget {
             height: size.height * AppDimensions.numD03,
           ),
         );
-
       default:
         return CachedNetworkImage(
           imageUrl: getMediaImageUrl(url, isVideo: type == 'video'),

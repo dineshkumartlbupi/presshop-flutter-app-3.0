@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:country_picker/country_picker.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -16,7 +15,6 @@ import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/widgets/common/avatar_bottom_sheet.dart';
-import 'package:image_picker/image_picker.dart';
 
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/profile/constants/profile_constants.dart';
@@ -64,9 +62,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   List<AvatarData> avatarList = [];
   MyProfileData? myProfileData;
-  bool isEditMode = false;
   // Completer<String?>? _studentBeansCompleter;
-  final ImagePicker _picker = ImagePicker();
 
   String selectedCountryCode = "",
       userImagePath = "",
@@ -106,13 +102,15 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   @override
   void initState() {
+    debugPrint("class:::: $runtimeType");
     super.initState();
-    isEditMode = widget.editProfileScreen;
+    debugPrint("editStatus::::::: ${widget.editProfileScreen}");
+    _loadCachedData();
     setUserNameListener();
     setPhoneListener();
     setEmailListener();
     myProfileApi(showLoader: false);
-    if (isEditMode) {
+    if (widget.editProfileScreen) {
       getAvatarsApi(showLoader: false);
     }
   }
@@ -416,7 +414,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Container(
       height: size.width * AppDimensions.numD35,
       decoration: BoxDecoration(
-          color: AppColorTheme.colorLightGrey,
+          color: Colors.black,
           borderRadius:
               BorderRadius.circular(size.width * AppDimensions.numD04)),
       child: Row(
@@ -483,7 +481,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                     ),
                   ),
                 ),
-              isEditMode
+              widget.editProfileScreen
                   ? Positioned(
                       bottom: size.width * AppDimensions.numD01,
                       right: size.width * AppDimensions.numD01,
@@ -523,55 +521,15 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                          myProfileData != null
-                              ? myProfileData!.userName.toCapitalized()
-                              : "",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * AppDimensions.numD04,
-                              color: AppColorTheme.colorBlack,
-                              fontWeight: FontWeight.w600)),
-                      if (myProfileData != null &&
-                          (myProfileData!.stripeStatusActive == '1' ||
-                              myProfileData!.stripeStatusActive == 'true' ||
-                              myProfileData!.isVerified == true)) ...[
-                        SizedBox(width: size.width * AppDimensions.numD02),
-                        Image.asset(
-                          "${iconsPath}verified_badge.png",
-                          height: size.width * AppDimensions.numD04,
-                          width: size.width * AppDimensions.numD04,
-                        ),
-                        SizedBox(width: size.width * AppDimensions.numD01),
-                        Transform.translate(
-                          offset: const Offset(0, -7),
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: size.width * AppDimensions.numD015,
-                              vertical: size.width * 0.005,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF2D7ADE),
-                              borderRadius:
-                                  BorderRadius.circular(size.width * 0.01),
-                            ),
-                            child: Text(
-                              "Verified Hopper",
-                              style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * 0.023,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
+                  Text(
+                      myProfileData != null
+                          ? myProfileData!.userName.toCapitalized()
+                          : "",
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD04,
+                          color: AppColorTheme.colorThemePink,
+                          fontWeight: FontWeight.w500)),
                   SizedBox(
                     height: size.width * AppDimensions.numD01,
                   ),
@@ -580,8 +538,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          // color: Colors.white,
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.normal)),
                   SizedBox(
                     height: size.width * AppDimensions.numD005,
@@ -591,8 +548,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          // color: Colors.white,
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.normal)),
                   SizedBox(
                     height: size.width * AppDimensions.numD005,
@@ -603,9 +559,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          // color: Colors.white,
-                          color: Colors.black,
-                          fontWeight: FontWeight.normal)),
+                          color: Colors.white,
+                          fontWeight: FontWeight.normal))
                 ],
               ),
             ),
@@ -620,7 +575,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
     List<String> addressLines = [];
     if (myProfileData!.address.isNotEmpty) {
-      addressLines.add("${myProfileData!.address}");
+      addressLines.add("Current Address: ${myProfileData!.address}");
     }
     List<String> userAddressParts = [];
     if (myProfileData!.profileAddress.isNotEmpty) {
@@ -637,7 +592,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     }
 
     if (userAddressParts.isNotEmpty) {
-      addressLines.add("${userAddressParts.join(', ')}");
+      addressLines.add("User Address: ${userAddressParts.join(', ')}");
     }
 
     return addressLines.join('\n');
@@ -833,11 +788,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       size: size,
       avatarList: avatarList,
       onAvatarSelected: (avatar) {
-        setState(() {
-          myProfileData!.avatarImage = avatar.avatar;
-          myProfileData!.avatarId = avatar.id;
-        });
-        updateAvatarApi(avatar.id);
+        myProfileData!.avatarImage = avatar.avatar;
+        myProfileData!.avatarId = avatar.id;
+        setState(() {});
       },
     );
   }
@@ -1071,7 +1024,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // SizedBox(height: size.width * AppDimensions.numD06),
+        SizedBox(height: size.width * AppDimensions.numD06),
         _buildApartmentField(),
         SizedBox(height: size.width * AppDimensions.numD06),
         _buildPostCodeField(),
@@ -1810,8 +1763,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             latitude.isNotEmpty ? latitude : myProfileData!.latitude,
         SharedPreferencesKeys.longitudeKey:
             longitude.isNotEmpty ? longitude : myProfileData!.longitude,
-        if (myProfileData!.avatarId.isNotEmpty)
-          SharedPreferencesKeys.avatarIdKey: myProfileData!.avatarId,
+        SharedPreferencesKeys.avatarIdKey: myProfileData!.avatarId,
         SharedPreferencesKeys.postCodeKey: postCodeController.text,
         SharedPreferencesKeys.cityKey: cityNameController.text.trim(),
         SharedPreferencesKeys.countryKey: countryNameController.text.trim(),
@@ -1840,13 +1792,12 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           String message = map["message"] ?? "Request successful";
           showSnackBar("Success", message, Colors.green);
 
-          await myProfileApi();
-          if (myProfileData != null) {
-            sharedPreferences!.setString(
-                SharedPreferencesKeys.avatarKey, myProfileData!.avatarImage);
-          }
-          isEditMode = false;
           widget.editProfileScreen = false;
+          debugPrint("heloooo::::${myProfileData!.avatarId}");
+
+          myProfileApi();
+          sharedPreferences!.setString(
+              SharedPreferencesKeys.avatarKey, myProfileData!.avatarImage);
         }
         setState(() {});
       }
@@ -1877,31 +1828,6 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       debugPrint("Error in StudentBeans Activation: $e");
     }
     return null;
-  }
-
-  Future<void> updateAvatarApi(String avatarId) async {
-    try {
-      Map<String, String> data = {SharedPreferencesKeys.avatarIdKey: avatarId};
-
-      final response = await sl<ApiClient>().post(
-        ApiConstantsNew.profile.editProfile,
-        data: data,
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        var map = response.data;
-        if (map is String) map = jsonDecode(map);
-
-        if (map["code"] == 200 || map["success"] == true) {
-          showSnackBar("Success", "Profile avatar updated successfully",
-              Colors.green);
-          await myProfileApi(showLoader: false);
-        }
-      }
-    } catch (e) {
-      debugPrint("Error updating avatar: $e");
-      showSnackBar("Error", "Failed to update avatar", Colors.red);
-    }
   }
 
   @override
@@ -2108,37 +2034,12 @@ class MyProfileData {
     profileCity = json['profile_city'] ?? "";
     profileCountry = json['profile_country'] ?? "";
     profilePostCode = json['profile_post_code'] ?? "";
-    isVerified = json['isVerified'] ?? json['is_verified'] ?? false;
-    stripeStatusActive = (() {
-      var stripe = json['stripeStatus'];
-      if (stripe == null) {
-        // Fallback to checking a top-level 'status' field if stripeStatus is missing
-        if (json['status'] == 1 ||
-            json['status'] == '1' ||
-            json['status'] == true) {
-          return '1';
-        }
-        return '0';
-      }
-      if (stripe is Map) {
-        return (stripe['status'] ?? '0').toString();
-      }
-      return stripe.toString();
-    })();
-    debugPrint("MyProfile parsed stripeStatusActive: $stripeStatusActive");
 
     latitude = (json[SharedPreferencesKeys.latitudeKey] ?? "").toString();
     longitude = (json[SharedPreferencesKeys.longitudeKey] ?? "").toString();
     totalIncome = json[SharedPreferencesKeys.totalIncomeKey] != null
         ? json[SharedPreferencesKeys.totalIncomeKey].toString()
         : "0";
-
-    // Captured actual profile image separately
-    String realImage = json["profile_image"]?.toString() ??
-        json["profileImage"]?.toString() ??
-        "";
-    realProfileImage = fixS3Url(realImage);
-
     String tempAvatar = "";
     if (json["avatarData"] is Map) {
       tempAvatar = json["avatarData"]["avatar"]?.toString() ?? "";
@@ -2148,21 +2049,13 @@ class MyProfileData {
     }
 
     if (tempAvatar.isEmpty) {
-      tempAvatar = json["avatar"]?.toString() ?? "";
-      // If it looks like an ID (no extension, long string), don't use it as image path
-      if (tempAvatar.isNotEmpty &&
-          !tempAvatar.contains(".") &&
-          !tempAvatar.startsWith("http")) {
-        tempAvatar = "";
-      }
+      tempAvatar = json["avatar"]?.toString() ??
+          json["profile_image"]?.toString() ??
+          json["profileImage"]?.toString() ??
+          "";
     }
 
-    if (tempAvatar.isEmpty && realProfileImage.isNotEmpty) {
-      avatarImage = realProfileImage;
-    } else {
-      avatarImage = fixS3Url(tempAvatar);
-    }
-
+    avatarImage = fixS3Url(tempAvatar);
     avatarId = (json["avatarData"] is Map
             ? (json["avatarData"]["_id"]?.toString() ??
                 json["avatarData"]["id"]?.toString() ??
@@ -2170,11 +2063,6 @@ class MyProfileData {
             : json["avatarData"]?.toString()) ??
         json["avatar"]?.toString() ??
         "";
-
-    // If avatarId looks like a URL, it's not an ID
-    if (avatarId.startsWith("http") || avatarId.contains("/")) {
-      avatarId = "";
-    }
     joinedDate = json["createdAt"] != null
         ? changeDateFormat(
             "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'", json["createdAt"], "dd MMMM, yyyy")
@@ -2204,13 +2092,10 @@ class MyProfileData {
   String profileCity = "";
   String profileCountry = "";
   String profilePostCode = "";
-  bool isVerified = false;
-  String? stripeStatusActive;
 
   String latitude = "";
   String longitude = "";
   String avatarImage = "";
-  String realProfileImage = "";
   String avatarId = "";
   String joinedDate = "";
   String earnings = "0";

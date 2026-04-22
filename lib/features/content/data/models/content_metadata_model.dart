@@ -10,6 +10,7 @@ class ContentMetadataModel extends ContentMetadata {
     required super.isWatermarked,
     required super.originalFileName,
     required super.watermarkedMedia,
+    required super.watermark,
   });
 
   factory ContentMetadataModel.fromJson(Map<String, dynamic> json) {
@@ -22,6 +23,7 @@ class ContentMetadataModel extends ContentMetadata {
       isWatermarked: json['is_watermarked'] == true,
       originalFileName: (json['originalFileName'] ?? '').toString(),
       watermarkedMedia: (json['watermarked_media'] ?? '').toString(),
+      watermark: (json['watermark'] ?? '').toString(),
     );
   }
 
@@ -35,5 +37,6 @@ class ContentMetadataModel extends ContentMetadata {
         'is_watermarked': isWatermarked,
         'originalFileName': originalFileName,
         'watermarked_media': watermarkedMedia,
+        'watermark': watermark,
       };
 }

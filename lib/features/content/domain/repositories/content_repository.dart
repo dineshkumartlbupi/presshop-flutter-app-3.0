@@ -30,4 +30,6 @@ abstract class ContentRepository {
   Future<Either<Failure, List<EarningTransactionDetail>>>
       getContentTransactions(String contentId, int limit, int offset,
           {bool showLoader = true});
+  Future<Either<Failure, void>> recordContentView(
+      {required String contentId, required String userId});
 }

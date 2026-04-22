@@ -94,11 +94,25 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
         _contentBloc.add(FetchMediaHouseOffersEvent(widget.contentId));
         _contentBloc.add(FetchContentTransactionsEvent(
             contentId: widget.contentId, limit: 10, offset: 0));
+
+        // Record view
+        _recordView();
       } else {
         debugPrint('❌ Bloc is closed, cannot add events');
       }
     } catch (e) {
       debugPrint('❌ Error adding events to ContentBloc in initState: $e');
+    }
+  }
+
+  void _recordView() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String currentUserId = prefs.getString("_id") ?? "";
+    if (currentUserId.isNotEmpty && !_contentBloc.isClosed) {
+      _contentBloc.add(RecordContentViewEvent(
+        contentId: widget.contentId,
+        userId: currentUserId,
+      ));
     }
   }
 
@@ -157,10 +171,23 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
 
             setState(() {
               contentItem = state.content;
+              localViewCount = state.content.totalView;
               isLoading = false;
               initialController();
               _checkOwnership();
             });
+          } else if (state is ContentViewRecordedBroadcast) {
+            if (state.contentId == widget.contentId) {
+              debugPrint(
+                  '✅ ContentViewRecordedBroadcast - New Count: ${state.newViewCount}');
+              setState(() {
+                localViewCount = state.newViewCount;
+                if (contentItem != null) {
+                  contentItem =
+                      contentItem!.copyWith(contentViewCount: state.newViewCount);
+                }
+              });
+            }
           } else if (state is MediaHouseOffersLoaded) {
             debugPrint('✅ MediaHouseOffersLoaded');
             setState(() {
@@ -1373,10 +1400,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
 
   void initialController() {
     if (contentItem?.mediaList[_currentMediaIndex].mediaType == "audio") {
-      var url =
-          getMediaImageUrl(contentItem?.mediaList[_currentMediaIndex].mediaUrl);
-      /*  initWaveData(contentImageUrl +
-          myContentData!.contentMediaList[_currentMediaIndex].media);*/
+      final media = contentItem!.mediaList[_currentMediaIndex];
+      var url = getMediaImageUrl(
+          media.watermarkUrl.isNotEmpty ? media.watermarkUrl : media.mediaUrl);
       initWaveData(url);
     } else if (contentItem?.mediaList[_currentMediaIndex].mediaType ==
         "video") {

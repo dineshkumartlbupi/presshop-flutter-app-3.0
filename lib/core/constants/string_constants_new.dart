@@ -433,7 +433,7 @@ class AppStrings {
   static const timeAndDateText = "Time and date";
   static const offeredAmountText = "Offered amount";
   static const contentSoldText = "Content sold";
-  static const soldText = "Sold";
+  static const soldText = "sold";
   static const dateOfSaleText = "Date of sale";
   static const deadlineText = "DEADLINE";
   // const declineText = "Decline";

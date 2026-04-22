@@ -123,7 +123,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
     _blinkingController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
-    )..repeat(reverse: true);
+    );
+    // ..repeat(reverse: true); // Disabled blinking as per user request
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
@@ -677,35 +678,34 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
                                       // Animated blinking/highlight effect
                                       // Blinking "Available" badge with infinite animation
-                                      FadeTransition(
-                                        opacity: _blinkingController,
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          height:
-                                              size.width * AppDimensions.numD08,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: size.width *
+                                      // FadeTransition(
+                                      //   opacity: _blinkingController,
+                                      //   child:
+                                      Container(
+                                        alignment: Alignment.center,
+                                        height:
+                                            size.width * AppDimensions.numD08,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: size.width *
+                                                AppDimensions.numD025,
+                                            vertical: size.width *
+                                                AppDimensions.numD01),
+                                        decoration: BoxDecoration(
+                                            color: AppColorTheme.colorThemePink,
+                                            borderRadius: BorderRadius.circular(
+                                                size.width *
+                                                    AppDimensions.numD015)),
+                                        child: Text(
+                                          "Available",
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
                                                   AppDimensions.numD025,
-                                              vertical: size.width *
-                                                  AppDimensions.numD01),
-                                          decoration: BoxDecoration(
-                                              color:
-                                                  AppColorTheme.colorThemePink,
-                                              borderRadius:
-                                                  BorderRadius.circular(size
-                                                          .width *
-                                                      AppDimensions.numD015)),
-                                          child: Text(
-                                            "Available",
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width *
-                                                    AppDimensions.numD025,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600),
-                                          ),
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600),
                                         ),
-                                      )
+                                      ),
+                                      // )
                                     ],
                                   ),
 
@@ -1253,47 +1253,48 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         )
-                                      : FadeTransition(
-                                          opacity: (item.isAvailableForAccept &&
-                                                  item.status != "rejected")
-                                              ? _blinkingController
-                                              : const AlwaysStoppedAnimation(
-                                                  1.0),
-                                          child: Container(
-                                            alignment: Alignment.center,
-                                            height: size.width *
-                                                AppDimensions.numD06,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: size.width *
-                                                    AppDimensions.numD025,
-                                                vertical: size.width *
-                                                    AppDimensions.numD003),
-                                            decoration: BoxDecoration(
-                                                color: item.isAvailableForAccept
-                                                    ? item.status == "rejected"
-                                                        ? Colors.black
-                                                        : AppColorTheme
-                                                            .colorThemePink
-                                                    : Colors.black,
-                                                borderRadius:
-                                                    BorderRadius.circular(size
-                                                            .width *
-                                                        AppDimensions.numD015)),
-                                            child: Text(
-                                              item.isAvailableForAccept
+                                      : // FadeTransition(
+                                      //     opacity: (item.isAvailableForAccept &&
+                                      //             item.status != "rejected")
+                                      //         ? _blinkingController
+                                      //         : const AlwaysStoppedAnimation(
+                                      //             1.0),
+                                      //     child:
+                                      Container(
+                                          alignment: Alignment.center,
+                                          height:
+                                              size.width * AppDimensions.numD06,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: size.width *
+                                                  AppDimensions.numD025,
+                                              vertical: size.width *
+                                                  AppDimensions.numD003),
+                                          decoration: BoxDecoration(
+                                              color: item.isAvailableForAccept
                                                   ? item.status == "rejected"
-                                                      ? "Live"
-                                                      : "Available"
-                                                  : "Live",
-                                              style: commonTextStyle(
-                                                  size: size,
-                                                  fontSize: size.width *
-                                                      AppDimensions.numD025,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
+                                                      ? Colors.black
+                                                      : AppColorTheme
+                                                          .colorThemePink
+                                                  : Colors.black,
+                                              borderRadius:
+                                                  BorderRadius.circular(size
+                                                          .width *
+                                                      AppDimensions.numD015)),
+                                          child: Text(
+                                            item.isAvailableForAccept
+                                                ? item.status == "rejected"
+                                                    ? "Live"
+                                                    : "Available"
+                                                : "Live",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD025,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600),
                                           ),
-                                        )
+                                        ),
+                                  // )
                                 ],
                               ),
                               SizedBox(
