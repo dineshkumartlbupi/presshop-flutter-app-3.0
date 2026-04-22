@@ -215,7 +215,7 @@ class AppStrings {
   static const stayLoggedInText = "Stay Logged In";
   static const okText = "Ok";
   static const feedText = "Feed";
-  static const paymentMethodText = "Manage payments with Stripe";
+  static const paymentMethodText = "Manage payments";
   static const legalText = "Legal";
   static const logoutText = "Logout";
   static const accountSettingText = "Account settings";
@@ -300,7 +300,7 @@ class AppStrings {
   static const manageTaskText = "Manage Task";
   static const manageContentText = "Manage Content";
   static const myBanksText = "My Banks";
-  static const paymentMethods = "Manage payments with Stripe";
+  static const paymentMethods = "Manage payments";
   static const messageText = "message";
   static const liveChatText = "Live Chat";
   static const emailUsText = "Email Us";

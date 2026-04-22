@@ -349,7 +349,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
               title: AppStrings.notificationText,
               size: size,
               notificationCount: state.unreadCount,
-              showLogo: false,
+              showLogo: true,
             ),
             body: Stack(
               children: [
@@ -516,10 +516,10 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                                       size.width *
                                                           AppDimensions.numD03),
                                                 ),
-                                                color: item.unread
-                                                    ? Colors.white
-                                                    : AppColorTheme
-                                                        .colorLightGrey,
+                                                // color: item.unread
+                                                //     ? Colors.white
+                                                //     : AppColorTheme
+                                                //         .colorLightGrey,
                                               ),
                                               child: Row(
                                                 crossAxisAlignment:

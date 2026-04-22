@@ -122,14 +122,18 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       // Check permission status first before calling .request() to avoid OS lifecycle interruptions
       bool cameraGranted = await Permission.camera.isGranted;
       bool micGranted = await Permission.microphone.isGranted;
-      bool photosGranted = Platform.isAndroid ? await Permission.photos.isGranted : true;
-      bool storageGranted = Platform.isAndroid ? await Permission.storage.isGranted : true;
+      bool photosGranted =
+          Platform.isAndroid ? await Permission.photos.isGranted : true;
+      bool storageGranted =
+          Platform.isAndroid ? await Permission.storage.isGranted : true;
 
       List<Permission> toRequest = [];
       if (!cameraGranted) toRequest.add(Permission.camera);
       if (!micGranted) toRequest.add(Permission.microphone);
-      if (Platform.isAndroid && !photosGranted) toRequest.add(Permission.photos);
-      if (Platform.isAndroid && !storageGranted) toRequest.add(Permission.storage);
+      if (Platform.isAndroid && !photosGranted)
+        toRequest.add(Permission.photos);
+      if (Platform.isAndroid && !storageGranted)
+        toRequest.add(Permission.storage);
 
       if (toRequest.isNotEmpty) {
         final locService = LocationService();
@@ -278,7 +282,6 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     if (event.state == AppLifecycleState.inactive ||
         event.state == AppLifecycleState.paused ||
         event.state == AppLifecycleState.detached) {
-      
       // IGNORING lifecycle dispose if we are actively initializing.
       // This prevents permission dialogs from triggering destructive disposal cycles.
       if (_isInitializing) return;
@@ -706,7 +709,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
           ..addAll(newMedia);
         emit(state.copyWith(
             selectedMode: "Scan",
-            capturedMedia: newList, status: CameraStatus.success));
+            capturedMedia: newList,
+            status: CameraStatus.success));
       }
     } catch (e) {
       debugPrint("Scan error: $e");

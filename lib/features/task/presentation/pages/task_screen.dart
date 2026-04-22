@@ -997,6 +997,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
   Widget allTaskWidget(List<TaskAll> allTaskList, BuildContext context) {
     final allTasksStatus =
         context.select((TaskBloc bloc) => bloc.state.allTasksStatus);
+    final localTasks = context.select((TaskBloc bloc) => bloc.state.localTasks);
     return LayoutBuilder(builder: (context, constraints) {
       return SmartRefresher(
         controller: _allRefreshController,
@@ -1035,18 +1036,26 @@ class MyTaskScreenState extends State<MyTaskScreen>
                     mainAxisSpacing: size.width * AppDimensions.numD04,
                     crossAxisSpacing: size.width * AppDimensions.numD04,
                   ),
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      var item = allTaskList[index];
-                      return InkWell(
-                        onTap: () {
-                          if (item.isAvailableForAccept &&
-                              item.status != "rejected" &&
-                              item.status != "accepted") {
-                            context.pushNamed(AppRoutes.broadcastName, extra: {
-                              'taskId': item.id,
-                              'mediaHouseId': item.mediaHouseDetails?.id ?? "",
-                            }).then((value) {
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        var item = allTaskList[index];
+                        final bool isPendingForMe = localTasks.any((lt) =>
+                            lt is TaskPending && lt.broadCastId == item.id);
+                        final bool isAcceptedByMe = item.acceptedTasks
+                                .any((e) => e.hopperId == myId) ||
+                            localTasks.any((lt) =>
+                                lt is TaskMy &&
+                                lt.taskDetail?.id == item.id &&
+                                lt.status == "accepted");
+                        return InkWell(
+                          onTap: () {
+                            if ((item.isAvailableForAccept || isPendingForMe) &&
+                                item.status != "rejected" &&
+                                !isAcceptedByMe) {
+                              context.pushNamed(AppRoutes.broadcastName, extra: {
+                                'taskId': item.id,
+                                'mediaHouseId': item.mediaHouseDetails?.id ?? "",
+                              }).then((value) {
                               if (context.mounted) {
                                 _allTaskOffset = 0;
                                 context.read<TaskBloc>().add(FetchAllTasksEvent(
@@ -1058,7 +1067,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                           } else {
                             context
                                 .pushNamed(AppRoutes.taskDetailNewName, extra: {
-                              'taskStatus': item.status,
+                              'taskStatus':
+                                  isAcceptedByMe ? "accepted" : item.status,
                               'taskId': item.id,
                               'totalEarning': "0",
                             }).then((value) {
@@ -1212,11 +1222,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                      item.isAvailableForAccept &&
-                                              item.status == "accepted"
+                                      isAcceptedByMe
                                           ? "ACCEPTED"
-                                          : item.isAvailableForAccept &&
-                                                  item.status == "pending"
+                                          : (isPendingForMe ||
+                                                  (item.isAvailableForAccept &&
+                                                      item.status == "pending"))
                                               ? "TAP TO ACCEPT"
                                               : "",
                                       style: commonTextStyle(
@@ -1227,7 +1237,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           fontWeight: FontWeight.normal)),
 
                                   //////////////
-                                  item.status == "accepted"
+                                  isAcceptedByMe || item.status == "accepted"
                                       ? Container(
                                           height: size.width *
                                               AppDimensions.numD065,
@@ -1270,21 +1280,24 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                               vertical: size.width *
                                                   AppDimensions.numD003),
                                           decoration: BoxDecoration(
-                                              color: item.isAvailableForAccept
-                                                  ? item.status == "rejected"
-                                                      ? Colors.black
-                                                      : AppColorTheme
-                                                          .colorThemePink
+                                              color: ((isPendingForMe ||
+                                                          item.isAvailableForAccept) &&
+                                                      item.status !=
+                                                          "rejected" &&
+                                                      !isAcceptedByMe)
+                                                  ? AppColorTheme.colorThemePink
                                                   : Colors.black,
                                               borderRadius:
                                                   BorderRadius.circular(size
                                                           .width *
                                                       AppDimensions.numD015)),
                                           child: Text(
-                                            item.isAvailableForAccept
-                                                ? item.status == "rejected"
-                                                    ? "Live"
-                                                    : "Available"
+                                            ((isPendingForMe ||
+                                                        item.isAvailableForAccept) &&
+                                                    item.status !=
+                                                        "rejected" &&
+                                                    !isAcceptedByMe)
+                                                ? "Available"
                                                 : "Live",
                                             style: commonTextStyle(
                                                 size: size,

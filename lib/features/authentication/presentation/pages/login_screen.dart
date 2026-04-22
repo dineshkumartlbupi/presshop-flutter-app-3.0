@@ -98,7 +98,8 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
             debugPrint("DEBUG: Login success, navigating to dashboard");
             _handleLoginSuccess(state.user.source ?? {});
           } else if (state is AuthSocialSignUpRequired) {
-            debugPrint("DEBUG: Social signup required, navigating to SocialSignUp");
+            debugPrint(
+                "DEBUG: Social signup required, navigating to SocialSignUp");
             context.push(
               AppRoutes.socialSignUpPath,
               extra: {
@@ -111,7 +112,6 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
               },
             );
           }
-
         },
         builder: (context, state) {
           return Scaffold(
@@ -747,3 +747,5 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
   // TODO: implement pageName
   String get pageName => PageNames.login;
 }
+
+String get pageName => PageNames.login;

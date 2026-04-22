@@ -99,7 +99,7 @@ Future<bool> locationPermission() async {
 
 Future<bool> storagePermission() async {
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-  
+
   if (Platform.isAndroid) {
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
 
@@ -148,7 +148,9 @@ Future<bool> storagePermission() async {
         case permission.PermissionStatus.limited:
           if (navigatorKey.currentContext != null) {
             ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
-              const SnackBar(content: Text("Please Enable Storage Permission in Settings")),
+              const SnackBar(
+                  content:
+                      Text("Please Enable Storage Permission in Settings")),
             );
           }
           return false;

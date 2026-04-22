@@ -52,20 +52,10 @@ class LeaderboardPage extends StatelessWidget {
         // While determining country, show a loader
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
-            appBar: CommonAppBar(
-              elevation: 0,
-              hideLeading: false,
-              title: const Text("Leaderboard",
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold)),
-              centerTitle: false,
-              titleSpacing: 0,
+            appBar: CommonBrandedAppBar(
+              title: "Leaderboard",
               size: MediaQuery.of(context).size,
-              showActions: true,
-              leadingFxn: () {
-                context.pop();
-              },
-              actionWidget: null,
+              showLogo: true,
             ),
             body: Center(
                 child: CommonWidgetsNew.showAnimatedLoader(
@@ -108,7 +98,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
               .getString(SharedPreferencesKeys.countryCodeKey) ??
           "";
     }
-    // Set first load to true if we don't have a saved code, 
+    // Set first load to true if we don't have a saved code,
     // or if we want to re-verify against the server list (safer)
     _isFirstLoad = true;
     _scrollController.addListener(_onScroll);
@@ -452,12 +442,15 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                     currencySymbol: leaderboard.currencySymbol,
                   ),
                   SizedBox(height: size.height * AppDimensions.numD04),
-                  Text('${leaderboard.totalMember} total earning members',
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500)),
+                  Text(
+                    '${leaderboard.totalMember} total earning ${leaderboard.totalMember == '1' ? 'member' : 'members'}',
+                    style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * AppDimensions.numD035,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                   Divider(
                     height: size.height * AppDimensions.numD02,
                     thickness: 0.5,
