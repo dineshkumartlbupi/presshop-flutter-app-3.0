@@ -99,39 +99,60 @@ Future<bool> locationPermission() async {
 
 Future<bool> storagePermission() async {
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-  AndroidDeviceInfo androidInfo;
+
   if (Platform.isAndroid) {
-    androidInfo = await deviceInfo.androidInfo;
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
 
     if (androidInfo.version.sdkInt >= 33) {
-      return true;
+      // For Android 13 and above, we need to request media permissions
+      var photoStatus = await permission.Permission.photos.status;
+      var videoStatus = await permission.Permission.videos.status;
+
+      if (photoStatus.isGranted && videoStatus.isGranted) {
+        return true;
+      }
+
+      Map<permission.Permission, permission.PermissionStatus> statuses = await [
+        permission.Permission.photos,
+        permission.Permission.videos,
+      ].request();
+
+      if (statuses[permission.Permission.photos]!.isGranted ||
+          statuses[permission.Permission.videos]!.isGranted) {
+        return true;
+      }
+
+      if (statuses[permission.Permission.photos]!.isPermanentlyDenied ||
+          statuses[permission.Permission.videos]!.isPermanentlyDenied) {
+        permission.openAppSettings();
+      }
+      return false;
     } else {
+      // For Android 12 and below, we use standard storage permission
       var status = await permission.Permission.storage.status;
+
+      if (status.isGranted) {
+        return true;
+      }
 
       switch (status) {
         case permission.PermissionStatus.denied:
           var requestValue = await permission.Permission.storage.request();
+          return requestValue.isGranted;
 
-          return requestValue.isDenied ? false : true;
-
-        case permission.PermissionStatus.granted:
-          return true;
+        case permission.PermissionStatus.permanentlyDenied:
+          permission.openAppSettings();
+          return false;
 
         case permission.PermissionStatus.restricted:
-          navigatorKey.currentContext!.pop();
-          const SnackBar(content: Text("Please Enable Storage Permission"));
-
-          return false;
-        case permission.PermissionStatus.permanentlyDenied:
-          navigatorKey.currentContext!.pop();
-          const SnackBar(content: Text("Please Enable Storage Permission"));
-
-          return false;
-
         case permission.PermissionStatus.limited:
-          navigatorKey.currentContext!.pop();
-          const SnackBar(content: Text("Please Enable Storage Permission"));
-
+          if (navigatorKey.currentContext != null) {
+            ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
+              const SnackBar(
+                  content:
+                      Text("Please Enable Storage Permission in Settings")),
+            );
+          }
           return false;
 
         default:
@@ -139,33 +160,20 @@ Future<bool> storagePermission() async {
       }
     }
   } else {
-    var status = await permission.Permission.storage.status;
+    // iOS Handling
+    var status = await permission.Permission.photos.status;
+
+    if (status.isGranted || status.isLimited) {
+      return true;
+    }
 
     switch (status) {
       case permission.PermissionStatus.denied:
-        {
-          var requestValue = await permission.Permission.storage.request();
+        var requestValue = await permission.Permission.photos.request();
+        return requestValue.isGranted || requestValue.isLimited;
 
-          return requestValue.isDenied ? false : true;
-        }
-
-      case permission.PermissionStatus.granted:
-        return true;
-
-      case permission.PermissionStatus.restricted:
-        navigatorKey.currentContext!.pop();
-        const SnackBar(content: Text("Please Enable Storage Permission"));
-
-        return false;
       case permission.PermissionStatus.permanentlyDenied:
-        navigatorKey.currentContext!.pop();
-        const SnackBar(content: Text("Please Enable Storage Permission"));
-
-        return false;
-
-      case permission.PermissionStatus.limited:
-        navigatorKey.currentContext!.pop();
-        const SnackBar(content: Text("Please Enable Storage Permission"));
+        permission.openAppSettings();
         return false;
 
       default:

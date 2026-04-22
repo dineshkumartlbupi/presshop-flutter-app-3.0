@@ -57,9 +57,19 @@ class MapRepositoryImpl implements MapRepository {
   }
 
   @override
-  Future<Either<Failure, List<Incident>>> getIncidents() async {
+  Future<Either<Failure, List<Incident>>> getIncidents({
+    double? lat,
+    double? lng,
+    double? km,
+    String? category,
+  }) async {
     try {
-      final result = await remoteDataSource.getIncidents();
+      final result = await remoteDataSource.getIncidents(
+        lat: lat,
+        lng: lng,
+        km: km,
+        category: category,
+      );
       return Right(result);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
@@ -83,6 +93,16 @@ class MapRepositoryImpl implements MapRepository {
     try {
       final result = await remoteDataSource.getAddressFromCoordinates(position);
       return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> incrementIncidentView(String incidentId) async {
+    try {
+      await remoteDataSource.incrementIncidentView(incidentId);
+      return const Right(null);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
     }

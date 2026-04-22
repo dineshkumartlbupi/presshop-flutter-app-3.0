@@ -7,6 +7,7 @@ import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:presshop/core/services/location_service.dart';
 import 'package:presshop/main.dart';
 
@@ -15,9 +16,15 @@ abstract class MapRemoteDataSource {
   Future<List<Map<String, dynamic>>> getPlaceSuggestions(String input);
   Future<LatLng> getPlaceDetails(String placeId);
   Future<LatLng> getCurrentLocation();
-  Future<List<Incident>> getIncidents();
+  Future<List<Incident>> getIncidents({
+    double? lat,
+    double? lng,
+    double? km,
+    String? category,
+  });
   Future<void> reportIncident(Map<String, dynamic> data);
   Future<String> getAddressFromCoordinates(LatLng position);
+  Future<void> incrementIncidentView(String incidentId);
 }
 
 class MapRemoteDataSourceImpl implements MapRemoteDataSource {
@@ -151,23 +158,43 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
     }
   }
 
+  static List<Incident> _parseIncidents(dynamic responseData) {
+    List<dynamic> data = [];
+    if (responseData is Map<String, dynamic> &&
+        responseData.containsKey('data')) {
+      data = responseData['data'];
+    } else if (responseData is List) {
+      data = responseData;
+    }
+
+    return data.map((json) => Incident.fromJson(json)).toList();
+  }
+
   @override
-  Future<List<Incident>> getIncidents() async {
+  Future<List<Incident>> getIncidents({
+    double? lat,
+    double? lng,
+    double? km,
+    String? category,
+  }) async {
+    final Map<String, dynamic> body = {};
+    if (lat != null && lng != null) {
+      body['coordinates'] = "$lat,$lng";
+    }
+    if (km != null) {
+      body['km'] = km;
+    }
+    if (category != null) {
+      body['category'] = category;
+    }
+
     try {
       final response = await apiClient.get(
-        ApiConstantsNew
-            .chat.getAlertIncidents, // Use Chat class where we added it
+        ApiConstantsNew.chat.getAlertIncidents,
+        queryParameters: body,
       );
 
-      List<dynamic> data = [];
-      if (response.data is Map<String, dynamic> &&
-          response.data.containsKey('data')) {
-        data = response.data['data'];
-      } else if (response.data is List) {
-        data = response.data;
-      }
-
-      return data.map((json) => Incident.fromJson(json)).toList();
+      return await compute(_parseIncidents, response.data);
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }
@@ -191,5 +218,17 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
       }
     }
     return "${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}";
+  }
+
+  @override
+  Future<void> incrementIncidentView(String incidentId) async {
+    try {
+      await apiClient.post(
+        ApiConstantsNew.chat.updateAlertView,
+        data: {"incidentId": incidentId},
+      );
+    } catch (e) {
+      debugPrint("Failed to increment incident view: $e");
+    }
   }
 }

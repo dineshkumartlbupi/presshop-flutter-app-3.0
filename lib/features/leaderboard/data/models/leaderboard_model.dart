@@ -7,6 +7,7 @@ class LeaderboardModel extends LeaderboardEntity {
     super.totalMember,
     required super.countryList,
     required super.memberList,
+    super.currencySymbol,
   });
 
   factory LeaderboardModel.fromJson(dynamic json) {
@@ -16,6 +17,7 @@ class LeaderboardModel extends LeaderboardEntity {
     List<dynamic> memberListRaw = [];
     List<dynamic> countryListRaw = [];
     int totalMember = 0;
+    String currencySymbol = "";
 
     if (json is Map<String, dynamic>) {
       debugPrint(
@@ -55,6 +57,11 @@ class LeaderboardModel extends LeaderboardEntity {
 
       totalMember =
           dataMap['totalMember'] ?? dataMap['count'] ?? memberListRaw.length;
+      currencySymbol = (dataMap['currency_symbol'] ??
+              dataMap['currencySymbol'] ??
+              dataMap['currency'] ??
+              '')
+          .toString();
     } else if (json is List) {
       memberListRaw = json;
       totalMember = json.length;
@@ -84,9 +91,11 @@ class LeaderboardModel extends LeaderboardEntity {
       memberList: memberListRaw
           .map((item) => MemberModel.fromJson(item as Map<String, dynamic>))
           .toList(),
+      currencySymbol: currencySymbol,
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'totalMember': totalMember,
@@ -112,6 +121,7 @@ class LeaderboardCountryModel extends LeaderboardCountryEntity {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'country': country,
@@ -189,6 +199,7 @@ class MemberModel extends MemberEntity {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,

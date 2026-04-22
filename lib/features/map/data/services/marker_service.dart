@@ -13,38 +13,54 @@ class MarkerService {
 
   List<Incident> getIncidents() => [];
 
+  static Future<Uint8List?> _resizeImageInBackground(
+      Map<String, dynamic> params) async {
+    try {
+      final bytes = params['bytes'] as Uint8List;
+      final width = params['width'] as int;
+
+      final image = img_pkg.decodeImage(bytes);
+      if (image == null) return null;
+
+      final resized = img_pkg.copyResize(image, width: width);
+      return Uint8List.fromList(img_pkg.encodePng(resized));
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<BitmapDescriptor> bitmapResize(
     String assetPath, {
-    int width = 50,
+    int width = 25,
   }) async {
-    final byteData = await rootBundle.load(assetPath);
-    final uint8list = byteData.buffer.asUint8List();
+    try {
+      final byteData = await rootBundle.load(assetPath);
+      final bytes = byteData.buffer.asUint8List();
+      final codec = await ui.instantiateImageCodec(bytes, targetWidth: width);
+      final frame = await codec.getNextFrame();
+      final image = frame.image;
 
-    final img = img_pkg.decodeImage(uint8list);
-    if (img == null) return BitmapDescriptor.defaultMarker;
-    final resized = img_pkg.copyResize(img, width: width);
-    final resizedBytes = img_pkg.encodePng(resized);
-    return BitmapDescriptor.bytes(resizedBytes);
+      final byteDataOut =
+          await image.toByteData(format: ui.ImageByteFormat.png);
+      if (byteDataOut == null) throw Exception('toByteData failed');
+
+      return BitmapDescriptor.fromBytes(byteDataOut.buffer.asUint8List());
+    } catch (e) {
+      debugPrint("Error resizing marker asset: $e");
+      return BitmapDescriptor.defaultMarker;
+    }
   }
 
   Future<BitmapDescriptor> bitmapFromIncidentAsset(
     String assetPath,
     int width,
   ) async {
-    final byteData = await rootBundle.load(assetPath);
-    final bytes = byteData.buffer.asUint8List();
-
-    final img = img_pkg.decodeImage(bytes)!;
-    final resized = img_pkg.copyResize(img, width: width);
-
-    return BitmapDescriptor.fromBytes(
-      Uint8List.fromList(img_pkg.encodePng(resized)),
-    );
+    return await bitmapResize(assetPath, width: width);
   }
 
   Future<BitmapDescriptor> bitmapFromUrl(
     String url, {
-    int width = 70,
+    int width = 35,
     String defaultAsset = "assets/markers/bg-removed-content.png",
   }) async {
     // Check cache first
@@ -103,110 +119,149 @@ class MarkerService {
 
   Future<BitmapDescriptor> createAvatarMarker(
     String url, {
-    Size size = const Size(60, 60),
+    Size size = const Size(40, 40),
+    String defaultAsset = "assets/markers/avatar.png",
   }) async {
     try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode != 200) {
-        throw Exception('Failed to load avatar: ${response.statusCode}');
+      if (!url.startsWith('http')) {
+        return await createCircularAssetMarker(defaultAsset, size: size);
       }
 
-      final bytes = response.bodyBytes;
+      final response =
+          await http.get(Uri.parse(url)).timeout(const Duration(seconds: 5));
+      if (response.statusCode != 200) {
+        throw Exception('HTTP ${response.statusCode}');
+      }
+
+      final Uint8List bytes = response.bodyBytes;
+      if (bytes.isEmpty) throw Exception('Empty image bytes');
+
       final codec = await ui.instantiateImageCodec(bytes,
-          targetWidth: size.width.toInt());
+          targetWidth: size.width.toInt(), targetHeight: size.height.toInt());
       final frame = await codec.getNextFrame();
-      final ui.Image img = frame.image;
+      final ui.Image image = frame.image;
 
       final recorder = ui.PictureRecorder();
       final canvas = Canvas(recorder);
-      final double radius = size.width / 2;
+      final paint = Paint()..isAntiAlias = true;
 
-      // 1. Draw Image (Clipped to Circle)
-      final Path clipPath = Path()
-        ..addOval(
-            Rect.fromCircle(center: Offset(radius, radius), radius: radius));
-      canvas.clipPath(clipPath);
+      // 1. Draw outer white circle (border)
+      paint.color = Colors.white;
+      canvas.drawCircle(
+          Offset(size.width / 2, size.height / 2), size.width / 2, paint);
 
-      final srcSize = Size(img.width.toDouble(), img.height.toDouble());
-      final dstSize = size;
-      final srcRect = _centerCrop(srcSize, dstSize);
-      final dstRect = Rect.fromLTWH(0, 0, size.width, size.height);
+      // 2. Draw inner circle clip (avatar)
+      final double padding = 4.0;
+      final double innerRadius = (size.width / 2) - padding;
 
-      canvas.drawImageRect(img, srcRect, dstRect, Paint());
+      canvas.save();
+      canvas.clipPath(Path()
+        ..addOval(Rect.fromCircle(
+            center: Offset(size.width / 2, size.height / 2),
+            radius: innerRadius)));
 
-      // 2. Draw White Border
-      final borderPaint = Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = size.width * 0.1;
-      canvas.drawCircle(Offset(radius, radius), radius, borderPaint);
+      final Rect rect = Rect.fromLTWH(0, 0, size.width, size.height);
+      canvas.drawImageRect(
+        image,
+        Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+        rect,
+        paint,
+      );
+      canvas.restore();
 
-      final picture = recorder.endRecording();
-      final finalImage =
-          await picture.toImage(size.width.toInt(), size.height.toInt());
+      final ui.Image finalImage = await recorder
+          .endRecording()
+          .toImage(size.width.toInt(), size.height.toInt());
       final byteData =
           await finalImage.toByteData(format: ui.ImageByteFormat.png);
-
       return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
     } catch (e) {
-      print("Error creating avatar marker: $e. Using default.");
-      return createCircularAssetMarker("assets/markers/avatar.png");
+      debugPrint("Error creating avatar marker: $e. Falling back to asset.");
+      return await createCircularAssetMarker(defaultAsset, size: size);
+    }
+  }
+
+  static Future<Uint8List?> _roundImageInBackground(
+      Map<String, dynamic> params) async {
+    try {
+      final bytes = params['bytes'] as Uint8List;
+      final width = params['width'] as int;
+      final height = params['height'] as int;
+
+      final image = img_pkg.decodeImage(bytes);
+      if (image == null) return null;
+
+      final resized = img_pkg.copyResize(image, width: width, height: height);
+      final circular = img_pkg.copyCropCircle(resized);
+
+      return Uint8List.fromList(img_pkg.encodePng(circular));
+    } catch (e) {
+      return null;
     }
   }
 
   Future<BitmapDescriptor> createCircularAssetMarker(
     String assetPath, {
-    Size size = const Size(60, 60),
+    Size size = const Size(40, 40),
   }) async {
     try {
       final byteData = await rootBundle.load(assetPath);
       final bytes = byteData.buffer.asUint8List();
 
-      final codec = await ui.instantiateImageCodec(bytes,
-          targetWidth: size.width.toInt());
+      final codec = await ui.instantiateImageCodec(
+        bytes,
+        targetWidth: size.width.toInt(),
+        targetHeight: size.height.toInt(),
+      );
       final frame = await codec.getNextFrame();
-      final ui.Image img = frame.image;
+      final image = frame.image;
 
       final recorder = ui.PictureRecorder();
       final canvas = Canvas(recorder);
-      final double radius = size.width / 2;
+      final paint = Paint()
+        ..isAntiAlias = true
+        ..filterQuality = FilterQuality.high;
 
-      // 1. Draw Image (Clipped to Circle)
-      final Path clipPath = Path()
-        ..addOval(
-            Rect.fromCircle(center: Offset(radius, radius), radius: radius));
-      canvas.clipPath(clipPath);
+      final rect = Rect.fromLTWH(0, 0, size.width, size.height);
+      final radius = size.width / 2;
 
-      final srcSize = Size(img.width.toDouble(), img.height.toDouble());
-      final dstSize = size;
-      final srcRect = _centerCrop(srcSize, dstSize);
-      final dstRect = Rect.fromLTWH(0, 0, size.width, size.height);
+      // 1. Draw outer white circle (border)
+      paint.color = Colors.white;
+      canvas.drawCircle(Offset(radius, radius), radius, paint);
 
-      canvas.drawImageRect(img, srcRect, dstRect, Paint());
+      // 2. Draw inner circle (image)
+      final double padding = 2.0;
+      final double innerRadius = radius - padding;
 
-      // 2. Draw White Border
-      final borderPaint = Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = size.width * 0.1;
-      canvas.drawCircle(Offset(radius, radius), radius, borderPaint);
+      canvas.save();
+      canvas.clipPath(Path()
+        ..addOval(Rect.fromCircle(
+            center: Offset(radius, radius), radius: innerRadius)));
 
-      final picture = recorder.endRecording();
-      final finalImage =
-          await picture.toImage(size.width.toInt(), size.height.toInt());
-      final outputByteData =
+      canvas.drawImageRect(
+        image,
+        Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+        rect.deflate(padding),
+        paint,
+      );
+      canvas.restore();
+
+      final ui.Image finalImage = await recorder
+          .endRecording()
+          .toImage(size.width.toInt(), size.height.toInt());
+      final byteDataOut =
           await finalImage.toByteData(format: ui.ImageByteFormat.png);
-
-      return BitmapDescriptor.fromBytes(outputByteData!.buffer.asUint8List());
+      return BitmapDescriptor.fromBytes(byteDataOut!.buffer.asUint8List());
     } catch (e) {
-      print("Error creating circular asset marker: $e");
+      debugPrint(
+          "Error creating circular asset marker: $e. Using generic fallback.");
       return BitmapDescriptor.defaultMarker;
     }
   }
 
   Future<BitmapDescriptor> createContentMarker(
     String url, {
-    int size = 120,
+    int size = 35,
     String? mediaType,
   }) async {
     final cacheKey = 'content:$url:$size:$mediaType';
@@ -249,7 +304,7 @@ class MarkerService {
         Paint()
           ..color = const Color.fromARGB(170, 158, 158, 158)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 20,
+          ..strokeWidth = 8,
       );
 
       // 🔹 Load and Draw Overlay Icon (Image/Video Icon)
@@ -261,7 +316,7 @@ class MarkerService {
         final overlayData = await rootBundle.load(assetPath);
         final overlayBytes = overlayData.buffer.asUint8List();
         final overlayCodec =
-            await ui.instantiateImageCodec(overlayBytes, targetWidth: 40);
+            await ui.instantiateImageCodec(overlayBytes, targetWidth: 20);
         final overlayFrame = await overlayCodec.getNextFrame();
         final ui.Image overlayImg = overlayFrame.image;
 
@@ -293,7 +348,9 @@ class MarkerService {
       return bitmap;
     } catch (e) {
       debugPrint("Error creating content marker: $e. Using default.");
-      final defaultBitmap = await bitmapResize("assets/markers/bg-removed-content.png", width: size);
+      final defaultBitmap = await bitmapResize(
+          "assets/markers/bg-removed-content.png",
+          width: size);
       _bitmapCache[cacheKey] = defaultBitmap;
       return defaultBitmap;
     }

@@ -32,10 +32,11 @@ class ContentItemWidget extends StatelessWidget {
               color: Colors.grey.shade200,
               spreadRadius: 2,
               blurRadius: 1,
-            )
+            ),
           ],
-          borderRadius:
-              BorderRadius.circular(size.width * AppDimensions.numD04),
+          borderRadius: BorderRadius.circular(
+            size.width * AppDimensions.numD04,
+          ),
         ),
         child: Column(
           children: [
@@ -80,7 +81,7 @@ class ContentItemWidget extends StatelessWidget {
               ? size.width * AppDimensions.numD03
               : size.width * AppDimensions.numD04,
           color: AppColorTheme.colorTextFieldIcon,
-        )
+        ),
       ],
     );
   }
@@ -88,10 +89,7 @@ class ContentItemWidget extends StatelessWidget {
   Widget _buildStatusRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildMetricsColumn(),
-        _buildPriceBadge(),
-      ],
+      children: [_buildMetricsColumn(), _buildPriceBadge()],
     );
   }
 
@@ -159,8 +157,9 @@ class ContentItemWidget extends StatelessWidget {
         width: size.width * AppDimensions.numD17,
         decoration: BoxDecoration(
           color: Colors.black,
-          borderRadius:
-              BorderRadius.circular(size.width * AppDimensions.numD015),
+          borderRadius: BorderRadius.circular(
+            size.width * AppDimensions.numD015,
+          ),
         ),
         child: Center(
           child: Text(
@@ -196,7 +195,8 @@ class ContentItemWidget extends StatelessWidget {
           Padding(
             padding: item.paidStatus && !item.isPaidStatusToHopper
                 ? EdgeInsets.symmetric(
-                    horizontal: size.width * AppDimensions.numD028)
+                    horizontal: size.width * AppDimensions.numD028,
+                  )
                 : EdgeInsets.zero,
             child: Text(
               !item.paidStatus
@@ -240,33 +240,30 @@ class MediaThumbnailWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
-      child: Stack(
-        children: [
-          _buildMediaContent(),
-          if (item.mediaUrls.isNotEmpty)
-            Image.asset(
-              "${commonImagePath}watermark1.png",
-              height: size.width * AppDimensions.numD29,
-              width: size.width,
-              fit: BoxFit.cover,
-              // Cache the watermark image for better performance
-              cacheWidth: (size.width * 2).toInt(),
-              cacheHeight: (size.width * AppDimensions.numD29 * 2).toInt(),
-            ),
-          if (item.mediaUrls.length > 1)
-            Positioned(
-              right: size.width * AppDimensions.numD02,
-              top: size.width * AppDimensions.numD02,
-              child: _buildCountBadge(),
-            ),
-          Positioned(
-            right: size.width * AppDimensions.numD02,
-            top: size.width * AppDimensions.numD02,
-            child: _buildCountBadge(),
-          ),
-        ],
+    return AspectRatio(
+      aspectRatio: 1.3,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+        child: Stack(
+          children: [
+            _buildMediaContent(),
+            if (item.mediaUrls.isNotEmpty)
+              Image.asset(
+                "${commonImagePath}watermark1.png",
+                height: double.infinity,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                // Cache the watermark image for better performance
+                cacheWidth: (size.width * 2).toInt(),
+              ),
+            if (item.mediaUrls.length >= 1)
+              Positioned(
+                right: size.width * AppDimensions.numD02,
+                top: size.width * AppDimensions.numD02,
+                child: _buildCountBadge(),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -274,36 +271,58 @@ class MediaThumbnailWidget extends StatelessWidget {
   Widget _buildMediaContent() {
     if (item.mediaUrls.isEmpty) {
       return Container(
-        height: size.width * AppDimensions.numD30,
-        width: size.width,
         decoration: const BoxDecoration(color: AppColorTheme.colorLightGrey),
-        padding: EdgeInsets.all(size.width * AppDimensions.numD06),
+        alignment: Alignment.center,
         child: Image.asset(
           "${commonImagePath}rabbitLogo.png",
-          height: size.width * AppDimensions.numD07,
-          width: size.width * AppDimensions.numD07,
+          height: size.width * AppDimensions.numD15,
+          width: size.width * AppDimensions.numD15,
+          fit: BoxFit.contain,
         ),
       );
     }
 
+    final firstMedia = item.mediaList.isNotEmpty ? item.mediaList.first : null;
     final isVideo = item.mediaType == 'video' ||
-        (item.mediaList.isNotEmpty &&
-            item.mediaList.first.mediaType == 'video');
+        (firstMedia?.mediaType.toLowerCase() == 'video');
+    final isAudio = item.mediaType == 'audio' ||
+        (firstMedia?.mediaType.toLowerCase() == 'audio');
 
     if (isVideo) {
       return VideoThumbnailWidget(
         videoUrl: getMediaImageUrl(item.mediaUrls.first, isVideo: true),
-        thumbnailUrl: item.mediaList.isNotEmpty &&
-                item.mediaList.first.thumbnailUrl.isNotEmpty
-            ? fixS3Url(item.mediaList.first.thumbnailUrl)
+        thumbnailUrl: firstMedia?.thumbnailUrl.isNotEmpty == true
+            ? fixS3Url(firstMedia!.thumbnailUrl)
             : null,
-        width: size.width,
-        height: size.width * AppDimensions.numD30,
+        width: double.infinity,
+        height: double.infinity,
         fit: BoxFit.cover,
       );
     }
 
-    return _showImage(item.mediaType ?? 'photo', item.mediaUrls.first);
+    // Try to show thumbnail from metadata if it looks like a valid image
+    if (firstMedia != null &&
+        firstMedia.thumbnailUrl.isNotEmpty &&
+        !firstMedia.thumbnailUrl.toLowerCase().endsWith('.m4a') &&
+        !firstMedia.thumbnailUrl.toLowerCase().endsWith('.mp3')) {
+      return CachedNetworkImage(
+        imageUrl: fixS3Url(firstMedia.thumbnailUrl),
+        width: double.infinity,
+        height: double.infinity,
+        fit: BoxFit.cover,
+        placeholder: (_, __) => _buildLightweightPlaceholder(),
+        errorWidget: (_, __, ___) => _showImage(
+          isAudio ? 'audio' : (item.mediaType ?? 'photo'),
+          item.mediaUrls.first,
+        ),
+      );
+    }
+
+    final effectiveType = isAudio
+        ? 'audio'
+        : (isVideo ? 'video' : (item.mediaType ?? 'photo'));
+
+    return _showImage(effectiveType, item.mediaUrls.first);
   }
 
   Widget _buildCountBadge() {
@@ -318,7 +337,7 @@ class MediaThumbnailWidget extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          "${item.mediaUrls.length} ",
+          "${(item.audioCount ?? 0) + (item.videoCount ?? 0) + (item.imageCount ?? 0) + (item.otherCount ?? 0)} ",
           textAlign: TextAlign.center,
           style: commonTextStyle(
             size: size,
@@ -336,8 +355,8 @@ class MediaThumbnailWidget extends StatelessWidget {
       case "video":
         return VideoThumbnailWidget(
           videoUrl: getMediaImageUrl(url, isVideo: true),
-          width: size.width,
-          height: size.height * AppDimensions.numD30,
+          width: double.infinity,
+          height: double.infinity,
           fit: BoxFit.cover,
         );
       case "audio":
@@ -345,7 +364,7 @@ class MediaThumbnailWidget extends StatelessWidget {
           color: AppColorTheme.colorThemePink,
           child: Icon(
             Icons.play_arrow_rounded,
-            size: size.width * AppDimensions.numD18,
+            size: size.width * AppDimensions.numD15,
             color: Colors.white,
           ),
         );
@@ -368,16 +387,12 @@ class MediaThumbnailWidget extends StatelessWidget {
       default:
         return CachedNetworkImage(
           imageUrl: getMediaImageUrl(url, isVideo: type == 'video'),
-          height: size.width * AppDimensions.numD30,
-          width: size.width,
+          width: double.infinity,
+          height: double.infinity,
           fit: BoxFit.cover,
-          // Optimize memory usage by caching at display size
-          memCacheWidth: (size.width * 2).toInt(), // 2x for retina displays
-          memCacheHeight: (size.width * AppDimensions.numD30 * 2).toInt(),
-          // Smooth fade-in transition
+          memCacheWidth: (size.width * 2).toInt(),
           fadeInDuration: const Duration(milliseconds: 200),
           fadeOutDuration: const Duration(milliseconds: 100),
-          // Lightweight placeholder for better performance
           placeholder: (_, __) => _buildLightweightPlaceholder(),
           errorWidget: (_, __, ___) => _buildLightweightPlaceholder(),
         );
@@ -386,9 +401,7 @@ class MediaThumbnailWidget extends StatelessWidget {
 
   Widget _buildPlaceholder({Color? color, required Widget child}) {
     return Container(
-      height: size.width * AppDimensions.numD30,
-      width: size.width,
-      padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+      alignment: Alignment.center,
       decoration: BoxDecoration(
         color: color,
         border: Border.all(color: AppColorTheme.colorHint),
@@ -407,14 +420,14 @@ class MediaThumbnailWidget extends StatelessWidget {
   // Lightweight placeholder using simple Container instead of loading PNG asset
   Widget _buildLightweightPlaceholder() {
     return Container(
-      alignment: Alignment.topCenter,
-      height: size.width * AppDimensions.numD30,
-      width: size.width,
+      alignment: Alignment.center,
+      decoration: const BoxDecoration(color: AppColorTheme.colorLightGrey),
       child: Center(
         child: Image.asset(
           "${commonImagePath}rabbitLogo.png",
           height: size.width * AppDimensions.numD15,
           width: size.width * AppDimensions.numD15,
+          fit: BoxFit.contain,
         ),
       ),
     );

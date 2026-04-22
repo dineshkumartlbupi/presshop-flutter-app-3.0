@@ -39,8 +39,10 @@ class ManageContentWidget extends StatelessWidget {
                   fit: BoxFit.cover,
                   height: size.width * AppDimensions.numD20,
                   width: size.width * AppDimensions.numD20,
-                  errorBuilder: (BuildContext context, Object exception,
-                      StackTrace? stackTrace) {
+                  cacheWidth: (size.width * AppDimensions.numD20 * 2).toInt(),
+                  cacheHeight: (size.width * AppDimensions.numD20 * 2).toInt(),
+                  errorBuilder: (context, exception,
+                      stackTrace) {
                     return Image.asset(
                       "${commonImagePath}rabbitLogo.png",
                       fit: BoxFit.contain,

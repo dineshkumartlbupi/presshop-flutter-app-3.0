@@ -18,9 +18,9 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint('message.data::::::${message.data}');
 
   if (message.data.isNotEmpty) {
-    localNotificationService.flutterLocalNotificationsPlugin.cancelAll();
+    await localNotificationService.flutterLocalNotificationsPlugin.cancelAll();
     debugPrint("Inside Background notification");
-    localNotificationService.showFlutterNotificationWithSound(message);
+    await localNotificationService.showFlutterNotificationWithSound(message);
   }
 
   debugPrint('Handling a background message ${message.messageId}');
@@ -109,12 +109,12 @@ class LocalNotificationService {
   Future<void> setup() async {
     /// Notification Permission For Android 12 or Android 13 Versions
     if (Platform.isAndroid) {
-      flutterLocalNotificationsPlugin
+      await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.requestNotificationsPermission();
     } else {
-      flutterLocalNotificationsPlugin
+      await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.requestPermissions(
@@ -247,7 +247,7 @@ class LocalNotificationService {
     RemoteNotification? notification = message.notification;
     AndroidNotification? android = message.notification?.android;
     if (notification != null && android != null) {
-      flutterLocalNotificationsPlugin.show(
+      await flutterLocalNotificationsPlugin.show(
           notification.hashCode,
           notification.title,
           notification.body,

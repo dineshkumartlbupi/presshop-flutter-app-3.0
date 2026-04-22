@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         applicationId = "com.presshop.app"
-        minSdk = 24
+        minSdk = 25
         targetSdk = 35
         versionCode = 53
         versionName = "3.0.0"
@@ -50,7 +50,7 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("presshop_jks.jks")  
+            storeFile = file("../presshop_jks.jks")  
             storePassword = "presshop_jks"
             keyAlias = "key"
             keyPassword = "presshop_jks"

@@ -3,7 +3,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 // ignore: must_be_immutable
 class PermissionErrorScreen extends StatefulWidget {

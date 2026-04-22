@@ -26,6 +26,7 @@ class ProfileData extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     required this.lastLogin,
+    required this.stripeStatus,
   });
   final String id;
   final String firstName;
@@ -51,6 +52,64 @@ class ProfileData extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime lastLogin;
+  final StripeStatus stripeStatus;
+
+  ProfileData copyWith({
+    String? id,
+    String? firstName,
+    String? lastName,
+    String? email,
+    String? phone,
+    String? userName,
+    String? role,
+    String? status,
+    String? hopperStatus,
+    String? chatStatus,
+    String? profileImage,
+    String? avatar,
+    bool? isVerified,
+    bool? isOnboard,
+    bool? isDeleted,
+    double? latitude,
+    double? longitude,
+    int? totalEarnings,
+    int? totalHopperArmy,
+    Location? location,
+    PreferredCurrencySign? preferredCurrencySign,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    DateTime? lastLogin,
+    StripeStatus? stripeStatus,
+  }) {
+    return ProfileData(
+      id: id ?? this.id,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      userName: userName ?? this.userName,
+      role: role ?? this.role,
+      status: status ?? this.status,
+      hopperStatus: hopperStatus ?? this.hopperStatus,
+      chatStatus: chatStatus ?? this.chatStatus,
+      profileImage: profileImage ?? this.profileImage,
+      avatar: avatar ?? this.avatar,
+      isVerified: isVerified ?? this.isVerified,
+      isOnboard: isOnboard ?? this.isOnboard,
+      isDeleted: isDeleted ?? this.isDeleted,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      totalEarnings: totalEarnings ?? this.totalEarnings,
+      totalHopperArmy: totalHopperArmy ?? this.totalHopperArmy,
+      location: location ?? this.location,
+      preferredCurrencySign:
+          preferredCurrencySign ?? this.preferredCurrencySign,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      lastLogin: lastLogin ?? this.lastLogin,
+      stripeStatus: stripeStatus ?? this.stripeStatus,
+    );
+  }
 
   @override
   List<Object?> get props => [
@@ -78,6 +137,7 @@ class ProfileData extends Equatable {
         createdAt,
         updatedAt,
         lastLogin,
+        stripeStatus,
       ];
 }
 
@@ -88,6 +148,16 @@ class Location extends Equatable {
   });
   final String type;
   final List<double> coordinates;
+
+  Location copyWith({
+    String? type,
+    List<double>? coordinates,
+  }) {
+    return Location(
+      type: type ?? this.type,
+      coordinates: coordinates ?? this.coordinates,
+    );
+  }
 
   @override
   List<Object?> get props => [type, coordinates];
@@ -109,6 +179,24 @@ class PreferredCurrencySign extends Equatable {
   final String countryCode;
   final String dialCode;
 
+  PreferredCurrencySign copyWith({
+    String? symbol,
+    String? code,
+    String? name,
+    String? countryName,
+    String? countryCode,
+    String? dialCode,
+  }) {
+    return PreferredCurrencySign(
+      symbol: symbol ?? this.symbol,
+      code: code ?? this.code,
+      name: name ?? this.name,
+      countryName: countryName ?? this.countryName,
+      countryCode: countryCode ?? this.countryCode,
+      dialCode: dialCode ?? this.dialCode,
+    );
+  }
+
   @override
   List<Object?> get props => [
         symbol,
@@ -118,4 +206,26 @@ class PreferredCurrencySign extends Equatable {
         countryCode,
         dialCode,
       ];
+}
+
+class StripeStatus extends Equatable {
+  const StripeStatus({
+    required this.stripeStatusActive,
+    required this.stripeStatusReason,
+  });
+  final String stripeStatusActive;
+  final String stripeStatusReason;
+
+  StripeStatus copyWith({
+    String? stripeStatusActive,
+    String? stripeStatusReason,
+  }) {
+    return StripeStatus(
+      stripeStatusActive: stripeStatusActive ?? this.stripeStatusActive,
+      stripeStatusReason: stripeStatusReason ?? this.stripeStatusReason,
+    );
+  }
+
+  @override
+  List<Object?> get props => [stripeStatusActive, stripeStatusReason];
 }

@@ -25,8 +25,8 @@ class EarningRepositoryImpl implements EarningRepository {
             await remoteDataSource.getEarningProfile(year, month);
         final entity = EarningProfile(
           id: remoteProfile.id,
-          avatar: remoteProfile.avatar,
-          totalEarning: remoteProfile.totalEarning,
+          avatar: remoteProfile.hopper.avatar,
+          totalEarning: remoteProfile.totalEarning.toString(),
           currency: remoteProfile.currency,
           currencySymbol: remoteProfile.currencySymbol,
         );
@@ -58,38 +58,7 @@ class EarningRepositoryImpl implements EarningRepository {
         }
         final transactions = dataList.map((e) {
           final model = EarningTransactionDetail.fromJson(e);
-
-          String uploadContent = "";
-
-          if (model.contentDataList.isNotEmpty) {}
-
-          return EarningTransaction(
-            id: model.id,
-            amount: model.amount,
-            totalEarningAmt: model.totalEarningAmt,
-            status: model.paidStatus ? "Paid" : "Pending",
-            paidStatus: model.paidStatus,
-            contentTitle: model.contentTitle,
-            contentType: model.contentType,
-            createdAt: model.createdAT,
-            dueDate: model.dueDate, // Added
-            adminFullName: model.adminFullName,
-            companyLogo: model.companyLogo,
-            contentImage: model.contentImage,
-            payableT0Hopper: model.payableT0Hopper,
-            payableCommission: model.payableCommission,
-            stripefee: model.stripefee,
-            hopperBankLogo: model.hopperBankLogo,
-            hopperBankName: model.hopperBankName,
-            userFirstName: model.userFirstName,
-            userLastName: model.userLastName,
-            contentDataList: model.contentDataList,
-            type: model.type,
-            typesOfContent: model.typesOfContent,
-            hopperAvatar: model.hopperAvatar,
-            uploadContent: uploadContent,
-            contentId: model.contentId, // Added
-          );
+          return model.toEntity();
         }).toList();
 
         double totalVal = double.tryParse(remoteData['totalEarning']

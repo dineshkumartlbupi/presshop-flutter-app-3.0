@@ -6,11 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:presshop/core/api/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:presshop/core/api/token_refresh_manager.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
-import 'package:presshop/core/utils/app_logger.dart';
 
 class ApiClient {
   ApiClient(this._dio, this._sharedPreferences, this._secureStorage) {
@@ -26,9 +24,9 @@ class ApiClient {
       ),
     );
 
-    // if (kDebugMode) {
-    //   _dio.interceptors.add(PrettyDioLogger(formatJson: true));
-    // }
+    if (kDebugMode) {
+      _dio.interceptors.add(PrettyDioLogger(formatJson: true));
+    }
   }
   final Dio _dio;
   final SharedPreferences _sharedPreferences;
@@ -69,7 +67,6 @@ class ApiClient {
     options.headers[SharedPreferencesKeys.headerDeviceIdKey] = deviceId;
     options.headers[SharedPreferencesKeys.headerDeviceTypeKey] =
         "mobile-flutter-${Platform.isIOS ? "ios" : "android"}";
-
     handler.next(options);
   }
 
@@ -77,6 +74,17 @@ class ApiClient {
     Response response,
     ResponseInterceptorHandler handler,
   ) async {
+    final data = response.data;
+    if (data is Map && data['success'] == false) {
+      final message = data['message']?.toString() ?? "An error occurred";
+      handler.reject(DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        message: message,
+        type: DioExceptionType.badResponse,
+      ));
+      return;
+    }
     handler.next(response);
   }
 
@@ -154,6 +162,7 @@ class ApiClient {
     AppLogger.error(
       "API Error [${err.requestOptions.method}] ${err.requestOptions.path}: ${failure.message}",
       trackAnalytics: true,
+      eventName: EventNames.apiError,
     );
 
     final sanitizedError = DioException(

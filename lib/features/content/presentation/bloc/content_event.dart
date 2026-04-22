@@ -95,3 +95,22 @@ class FetchContentTransactionsEvent extends ContentEvent {
   @override
   List<Object> get props => [contentId, limit, offset];
 }
+
+class RecordContentViewEvent extends ContentEvent {
+  final String contentId;
+  final String userId;
+
+  const RecordContentViewEvent({required this.contentId, required this.userId});
+
+  @override
+  List<Object> get props => [contentId, userId];
+}
+
+class OnContentViewRecordedBroadcast extends ContentEvent {
+  final Map<String, dynamic> data;
+
+  const OnContentViewRecordedBroadcast(this.data);
+
+  @override
+  List<Object> get props => [data];
+}

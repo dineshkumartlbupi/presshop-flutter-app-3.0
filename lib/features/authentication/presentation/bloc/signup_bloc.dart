@@ -52,8 +52,14 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     final result =
         await socialRegisterUser(SocialRegisterParams(data: event.data));
     result.fold(
-      (failure) => emit(SignUpError(message: failure.message)),
-      (user) => emit(SignUpSuccess(user: user)),
+      (failure) {
+        print("API Response Error: ${failure.message}");
+        emit(SignUpError(message: failure.message));
+      },
+      (user) {
+        print("API Response Success: ${user.email}");
+        emit(SignUpSuccess(user: user));
+      },
     );
   }
 
@@ -64,8 +70,12 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     emit(SignUpLoading());
     final result = await sendOtp(RegisterParams(data: event.data));
     result.fold(
-      (failure) => emit(SignUpError(message: failure.message)),
+      (failure) {
+        print("API Response Error: ${failure.message}");
+        emit(SignUpError(message: failure.message));
+      },
       (success) {
+        print("API Response Success: OTP Sent");
         emit(SignUpOtpSent(data: event.data));
       },
     );
@@ -110,6 +120,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     FetchAvatarsEvent event,
     Emitter<SignUpState> emit,
   ) async {
+    emit(AvatarsLoading());
     final result = await getAvatars(NoParams());
     result.fold(
       (failure) => emit(SignUpError(message: failure.message)),
@@ -123,7 +134,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   ) async {
     final result = await verifyReferralCode(event.code);
     result.fold(
-      (failure) => emit(SignUpError(message: failure.message)),
+      (failure) => emit(ReferralCodeVerificationFailed(failure.message)),
       (data) => emit(ReferralCodeVerified(data)),
     );
   }

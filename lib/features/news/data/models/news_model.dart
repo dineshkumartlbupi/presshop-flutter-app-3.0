@@ -71,7 +71,7 @@ class NewsModel extends News {
     String? userImage = userImageRaw != null && userImageRaw.isNotEmpty
         ? (userImageRaw.startsWith('http')
             ? fixS3Url(userImageRaw)
-            : "$userImageRaw")
+            : userImageRaw)
         : null;
 
     return NewsModel(

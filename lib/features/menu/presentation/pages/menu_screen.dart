@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
+
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/services/background_location_service.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/widgets/common_app_bar.dart';
+
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:flutter_switch/flutter_switch.dart';
-
-import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/dialogs.dart';
+import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/menu/presentation/bloc/menu_bloc.dart';
 import 'package:presshop/features/menu/presentation/pages/menu_config.dart';
 import 'package:presshop/features/menu/presentation/bloc/menu_ui_cubit.dart';
 import 'package:presshop/features/menu/presentation/widgets/currency_selector_sheet.dart';
 import 'package:presshop/core/extensions/context_extensions.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
+
 import 'package:presshop/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:presshop/features/profile/presentation/bloc/profile_event.dart';
 
@@ -66,9 +65,9 @@ class _MenuScreenState extends State<MenuScreen> {
             if (state.logoutStatus == MenuLogoutStatus.success) {
               _navigateToLogin(context);
             } else if (state.logoutStatus == MenuLogoutStatus.failure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.errorMessage ?? "Logout failed")),
-              );
+              // ScaffoldMessenger.of(context).showSnackBar(
+              //   SnackBar(content: Text(state.errorMessage ?? "Logout failed")),
+              // );
             }
           },
           child: Builder(builder: (context) => _buildContent(context)),
@@ -84,10 +83,22 @@ class _MenuScreenState extends State<MenuScreen> {
   void _onMenuTap(BuildContext context, MenuData item) {
     switch (item.action) {
       case MenuAction.logout:
+        AppLogger.trackAction(ActionNames.logout);
         logoutDialog(context.mqSize, context);
+        break;
+
+      case MenuAction.notification:
+        context.pushNamed(
+          AppRoutes.notificationsName,
+          extra: {'count': 0},
+        ).then((value) {
+          // ignore: use_build_context_synchronously
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
         break;
       case MenuAction.digitalId:
         context.pushNamed(AppRoutes.digitalIdName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
@@ -118,8 +129,9 @@ class _MenuScreenState extends State<MenuScreen> {
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
-      case MenuAction.accountSettings:
-        context.pushNamed(AppRoutes.accountSettingsName).then((value) {
+      case MenuAction.accountDelete:
+        context.pushNamed(AppRoutes.accountDeleteName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
@@ -130,6 +142,7 @@ class _MenuScreenState extends State<MenuScreen> {
         break;
       case MenuAction.contact:
         context.pushNamed(AppRoutes.contactUsName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
@@ -154,6 +167,7 @@ class _MenuScreenState extends State<MenuScreen> {
             'index': 0,
           },
         ).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
@@ -191,16 +205,19 @@ class _MenuScreenState extends State<MenuScreen> {
           AppRoutes.myDraftName,
           extra: {'publishedContent': false, 'screenType': ''},
         ).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.myContent:
         context.pushNamed(AppRoutes.myContentName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.feed:
         context.pushNamed(AppRoutes.feedName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
@@ -209,6 +226,7 @@ class _MenuScreenState extends State<MenuScreen> {
           AppRoutes.myTasksName,
           extra: {'hideLeading': false},
         ).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
@@ -217,24 +235,20 @@ class _MenuScreenState extends State<MenuScreen> {
           AppRoutes.myEarningName,
           extra: {'openDashboard': false, 'initialTapPosition': 0},
         ).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
-      case MenuAction.notification:
-        context.pushNamed(
-          AppRoutes.notificationsName,
-          extra: {'count': 0},
-        ).then((value) {
-          context.read<MenuBloc>().add(MenuLoadCounts());
-        });
-        break;
+
       case MenuAction.ratingReview:
         context.pushNamed(AppRoutes.ratingReviewName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.referHopper:
         context.pushNamed(AppRoutes.referName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
@@ -243,16 +257,19 @@ class _MenuScreenState extends State<MenuScreen> {
           AppRoutes.uploadDocumentsName,
           extra: {'menuScreen': true, 'hideLeading': false},
         ).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.tutorials:
         context.pushNamed(AppRoutes.tutorialsName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
       case MenuAction.locationSharing:
         context.pushNamed(AppRoutes.locationSharingName).then((value) {
+          // ignore: use_build_context_synchronously
           context.read<MenuBloc>().add(MenuLoadCounts());
         });
         break;
@@ -262,23 +279,32 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget _buildContent(BuildContext context) {
     final size = context.mqSize;
     return Scaffold(
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: false,
-        title: Text(
-          AppStrings.menuText,
-          style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
+      appBar: NewHomeAppBar(
         size: size,
-        showActions: false,
-        leadingFxn: () => context.pop(),
-        actionWidget: [],
+        hideLeading: true,
+        hideHamburger: true,
+        showFilter: false,
+        onFilterTap: () {
+          // showFilterSheet();
+        },
       ),
+      // appBar: CommonAppBar(
+      //   elevation: 0,
+      //   hideLeading: false,
+      //   title: Text(
+      //     AppStrings.menuText,
+      //     style: TextStyle(
+      //         color: Colors.black,
+      //         fontWeight: FontWeight.bold,
+      //         fontSize: size.width * AppDimensions.appBarHeadingFontSize),
+      //   ),
+      //   centerTitle: false,
+      //   titleSpacing: 0,
+      //   size: size,
+      //   showActions: false,
+      //   leadingFxn: () => context.pop(),
+      //   actionWidget: [],
+      // ),
       body: SafeArea(
         child: ListView.separated(
           padding: EdgeInsets.symmetric(
@@ -438,6 +464,8 @@ class _MenuScreenState extends State<MenuScreen> {
                           Expanded(
                             child: Text(
                               AppStrings.logoutMessageText,
+                              softWrap: true,
+                              textAlign: TextAlign.justify,
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: size.width * AppDimensions.numD035,
@@ -574,8 +602,7 @@ class MenuTile extends StatelessWidget {
   Widget _buildIcon(BuildContext context) {
     final size = context.mqSize;
     // Original logic for "Alerts" and "Choose currency" size
-    final isSpecialSize =
-        item.showAlertBadge || item.action == MenuAction.currency;
+    final isSpecialSize = item.action == MenuAction.currency;
     return Stack(
       alignment: Alignment.topRight,
       children: [
@@ -691,25 +718,19 @@ class NotificationBadge extends StatelessWidget {
                   alignment: Alignment.center,
                   children: [
                     Container(
-                      padding: EdgeInsets.all(size.width * 0.002),
-                      decoration: const BoxDecoration(
-                          color: Colors.white, shape: BoxShape.circle),
-                      child: Icon(
-                        Icons.circle,
-                        color: AppColorTheme.colorThemePink,
-                        size: size.width * AppDimensions.numD04,
-                      ),
-                    ),
-                    Text(
-                      count.toString(),
-                      style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * AppDimensions.numD025,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      textAlign: TextAlign.center,
-                    )
+                        padding: EdgeInsets.all(3),
+                        decoration: const BoxDecoration(
+                            color: Colors.red, shape: BoxShape.circle),
+                        child: Text(
+                          count.toString(),
+                          style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * AppDimensions.numD025,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                        )),
                   ],
                 ),
               )

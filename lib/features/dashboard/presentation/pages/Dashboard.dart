@@ -9,25 +9,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/global_loader.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
+import 'package:presshop/features/camera/presentation/pages/camera_screen.dart';
 import 'package:presshop/features/content/presentation/pages/content_page.dart';
 import 'package:presshop/features/map/presentation/pages/map_page.dart';
-import 'package:presshop/features/map/presentation/pages/map_page_new%20copy.dart';
 
-import 'package:presshop/features/map/presentation/pages/map_page_new.dart';
 import 'package:presshop/features/menu/presentation/pages/menu_screen.dart';
 import 'package:presshop/features/task/presentation/pages/task_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:location/location.dart' as lc;
-import 'package:presshop/features/news/presentation/pages/news_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
-import 'package:presshop/features/news/presentation/bloc/news_event.dart';
 import 'package:presshop/features/content/presentation/bloc/content_bloc.dart';
 import 'package:presshop/features/content/presentation/bloc/content_event.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
@@ -36,9 +28,10 @@ import 'package:presshop/features/task/presentation/bloc/task_event.dart'
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_state.dart';
+import 'package:presshop/features/map/presentation/bloc/map_bloc.dart';
+import 'package:presshop/features/map/presentation/bloc/map_event.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/features/dashboard/presentation/widgets/student_beans_dialog.dart';
 import 'package:presshop/features/dashboard/presentation/utils/dashboard_notification_mixin.dart';
 import 'package:presshop/features/dashboard/presentation/utils/dashboard_location_mixin.dart';
@@ -77,11 +70,11 @@ class Dashboard extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return DashboardState();
+    return DashboardPageState();
   }
 }
 
-class DashboardState extends State<Dashboard>
+class DashboardPageState extends State<Dashboard>
     with
         AnalyticsPageMixin,
         WidgetsBindingObserver,
@@ -147,7 +140,9 @@ class DashboardState extends State<Dashboard>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkUpdateAndShowPopup();
     });
-    _handlePermissionSequence();
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) _handlePermissionSequence();
+    });
     _updateBottomNavigationScreens();
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
@@ -162,25 +157,14 @@ class DashboardState extends State<Dashboard>
     };
     _dashboardBloc.add(FetchRoomIdEvent(roomParams));
 
-    currentIndex = 2;
-    _loadedIndices.add(currentIndex);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context
-          .read<ContentBloc>()
-          .add(const FetchMyContentEvent(type: 'all', page: 1, limit: 10));
-      context
-          .read<ContentBloc>()
-          .add(const FetchMyContentEvent(type: 'my', page: 1, limit: 10));
-
-      context.read<TaskBloc>().add(const FetchAllTasksEvent(offset: 0));
-      context.read<TaskBloc>().add(const FetchLocalTasksEvent());
-    });
+    _loadedIndices.add(widget.initialPosition); // Only load the starting tab
 
     if (widget.taskStatus != 'rejected') {
       if (widget.broadCastId != null) {
         _dashboardBloc.add(FetchTaskDetailEvent(widget.broadCastId!));
       }
       getFcmToken();
+
       initFirebaseMessaging(
         onTaskAssigned: (broadCastId) {
           if (mounted) {
@@ -223,7 +207,7 @@ class DashboardState extends State<Dashboard>
     } else {
       _dashboardBloc.add(DashboardCheckStudentBeansEvent());
     }
-    initDeepLinks(sl<AppLinks>());
+    initializeDeepLinks(sl<AppLinks>());
     super.initState();
   }
 
@@ -426,14 +410,42 @@ class DashboardState extends State<Dashboard>
       }
     } else if (state is DashboardAppVersionChecked) {
       var map = state.versionData;
-      if (map["code"] == 200) {
+      // Handle both full response and unwrapped data from CheckAppVersionEvent
+      var versionData = (map["code"] == 200) ? map["data"] : map;
+
+      if (versionData != null) {
         try {
-          var versionData = map["data"];
           sharedPreferences!.setInt(SharedPreferencesKeys.videoLimitKey,
               (versionData['video_limit'] ?? 2) * 60);
+
           bool shouldUpdate = Platform.isAndroid
               ? (versionData['aOSshouldForceUpdate'] ?? false)
               : (versionData['iOSshouldForceUpdate'] ?? false);
+
+          // Correctly extract and save nested referral data
+          if (versionData.containsKey('referral_data') &&
+              versionData['referral_data'] is Map) {
+            final referralData = versionData['referral_data'] as Map;
+
+            if (referralData.containsKey('referral_friend_earning_amount')) {
+              sharedPreferences!.setDouble(
+                  SharedPreferencesKeys.referralFriendEarningKey,
+                  (referralData['referral_friend_earning_amount'] as num)
+                      .toDouble());
+            }
+            if (referralData.containsKey('referral_user_earning_amount')) {
+              sharedPreferences!.setDouble(
+                  SharedPreferencesKeys.referralUserEarningKey,
+                  (referralData['referral_user_earning_amount'] as num)
+                      .toDouble());
+            }
+            if (referralData.containsKey('referral_currency_symbol')) {
+              sharedPreferences!.setString(
+                  SharedPreferencesKeys.referralCurrencyKey,
+                  referralData['referral_currency_symbol'].toString());
+            }
+          }
+
           if (shouldUpdate) forceUpdateCheck();
 
           String? liveLocationHeading =
@@ -454,6 +466,8 @@ class DashboardState extends State<Dashboard>
           String customPopupImage = versionData['custom_popup_image'] ?? "";
           String locationSharingDescription =
               versionData['location_sharing_description'] ?? "";
+          bool isLocationPopupEnabled =
+              versionData['is_location_popup_enabled'] ?? true;
 
           sharedPreferences?.setString(
               SharedPreferencesKeys.customLocationHeadingKey,
@@ -469,6 +483,9 @@ class DashboardState extends State<Dashboard>
           sharedPreferences?.setBool(
               SharedPreferencesKeys.isCustomLocationPopupKey,
               isCustomLocationPopup);
+          sharedPreferences?.setBool(
+              SharedPreferencesKeys.isLocationPopupEnabledKey,
+              isLocationPopupEnabled);
 
           bool isManuallyStopped = sharedPreferences
                   ?.getBool(SharedPreferencesKeys.manuallyStoppedServiceKey) ??
@@ -486,7 +503,7 @@ class DashboardState extends State<Dashboard>
                     ?.getBool(SharedPreferencesKeys.isTaskGrabbingActiveKey) ??
                 false;
 
-            if (!isManuallyStopped) {
+            if (!isManuallyStopped && isTaskGrabbingActive) {
               BackgroundLocationService.initService(
                 notificationTitle: liveLocationHeading,
                 notificationContent: liveLocationDescription,
@@ -494,7 +511,8 @@ class DashboardState extends State<Dashboard>
                 context: context,
                 showPrePermissionDialog: isCustomLocationPopup &&
                     !isTaskGrabbingActive &&
-                    !isServiceRunning,
+                    !isServiceRunning &&
+                    isLocationPopupEnabled,
                 dialogTitle: customLocationHeading,
                 dialogContent: customLocationDescription,
                 dialogImage: customPopupImage,
@@ -611,7 +629,7 @@ class DashboardState extends State<Dashboard>
   }
 
   void goToLocationErrorScreen() {
-    handleGoToLocationErrorScreen((lc.LocationData data) {
+    handleGoToLocationErrorScreen((data) {
       proceedWithLocation(data);
     });
   }
@@ -637,12 +655,15 @@ class DashboardState extends State<Dashboard>
     );
   }
 
-  void _onBottomBarItemTapped(int index) {
+  void _onBottomBarItemTapped(int index) async {
     if (currentIndex == index) return;
 
+    // Pause camera when leaving camera tab
     if (currentIndex == 2 && index != 2) {
       _cameraKey.currentState?.closeCamera();
-    } else if (currentIndex != 2 && index == 2) {
+    }
+    // Resume/clear camera when returning to camera tab
+    else if (currentIndex != 2 && index == 2) {
       _cameraKey.currentState?.clearCapturedMedia();
       _cameraKey.currentState?.resumeCamera();
     }
@@ -653,7 +674,9 @@ class DashboardState extends State<Dashboard>
       'tab_name': _getTabName(index),
     });
 
-    if (index != 2) {
+    if (index == 2) {
+      _handlePermissionSequence();
+    } else {
       updateLocationData();
     }
 
@@ -734,14 +757,20 @@ class DashboardState extends State<Dashboard>
   }
 
   Future<void> _handlePermissionSequence() async {
-    debugPrint("Starting Permission Sequence...");
+    debugPrint("Starting Comprehensive Permission Sequence...");
 
-    await [
-      Permission.camera,
-      Permission.microphone,
-    ].request();
+    final locService = LocationService();
 
-    debugPrint("Camera/Mic Permissions handled.");
+    // Ordered sequence to prevent OS-level overlap crashes
+    await locService.requestPermission(Permission.camera);
+    await locService.requestPermission(Permission.microphone);
+    await locService.requestPermission(Permission.location);
+    if (Platform.isAndroid) {
+      // Notification permission is runtime on Android 13+
+      await locService.requestPermission(Permission.notification);
+    }
+
+    debugPrint("All high-level permissions handled.");
 
     forceUpdateCheck();
 

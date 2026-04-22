@@ -22,9 +22,9 @@ import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
+import 'package:presshop/features/chat/presentation/pages/full_video_view.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
-import 'package:presshop/features/earning/presentation/pages/TransactionDetailScreen.dart';
+import 'package:presshop/features/earning/presentation/pages/tansaction_detail_screen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
@@ -34,22 +34,18 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
 
 // ignore: must_be_immutable
 class ManageContentChatScreen extends StatefulWidget {
-  ManageContentChatScreen(
+  const ManageContentChatScreen(
       {super.key,
       this.mediaHouseDetail,
       this.contentId,
@@ -58,15 +54,19 @@ class ManageContentChatScreen extends StatefulWidget {
       required this.type,
       this.contentMedia,
       this.myContentData,
-      this.contentHeader});
+      this.contentHeader,
+      this.offerCount,
+      this.purchasedCount});
   final TaskDetail? taskDetail;
-  MyContentData? myContentData;
+  final MyContentData? myContentData;
   final String roomId;
   final Widget? contentMedia;
   final Widget? contentHeader;
   final String? contentId;
   final ManageTaskChatModel? mediaHouseDetail;
   final String type;
+  final int? offerCount;
+  final int? purchasedCount;
 
   @override
   State<StatefulWidget> createState() {
@@ -105,6 +105,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
   String imageId = "";
   String contentView = "0";
   String contentPurchased = "0";
+  String contentOffer = "0";
   FlickManager? flickManager;
   PlayerController controller = PlayerController();
   int _currentMediaIndex = 0;
@@ -162,6 +163,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
     socketConnectionFunc();
     callGetManageTaskListingApi();
     initialController();
+
+    if (widget.offerCount != null) {
+      contentOffer = widget.offerCount.toString();
+    }
+    if (widget.purchasedCount != null) {
+      contentPurchased = widget.purchasedCount.toString();
+    }
   }
 
   void onTextChanged() {
@@ -224,11 +232,33 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
         if (state.chatList.isNotEmpty) {
           chatList = state.chatList;
           isDataLoaded = true;
+
+          // Updating stats dynamically from chat list
+          int purchaseCount = 0;
+          int offerCount = 0;
+          int viewCount = 0;
+
+          for (var item in chatList) {
+            String mType = item.messageType.toLowerCase();
+            if (mType == 'payment' || item.paidStatus) {
+              purchaseCount++;
+            } else if (mType == 'offered' ||
+                mType == 'mediahouse_initial_offer' ||
+                mType == 'hopper_counter_offer' ||
+                mType == 'initial_offer') {
+              offerCount++;
+            } else if (mType == 'view') {
+              viewCount++;
+            }
+          }
+
+          contentPurchased = purchaseCount.toString();
+          contentOffer = offerCount.toString();
+          contentView = viewCount.toString();
         }
 
-        if (state.allTasksStatus == TaskStatus.loading ||
-            state.taskDetailStatus == TaskStatus.loading ||
-            state.localTasksStatus == TaskStatus.loading) {
+        if (state.actionStatus == TaskStatus.loading ||
+            state.taskDetailStatus == TaskStatus.loading) {
           isDataLoaded = false;
         } else if (state.taskDetail != null &&
             state.taskDetailStatus == TaskStatus.success) {
@@ -259,7 +289,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
           }
         } else if (state.errorMessage != null) {
           isDataLoaded = true;
-          showSnackBar("Error", state.errorMessage!, Colors.red);
+//           showSnackBar("Error", state.errorMessage!, Colors.red);
         }
 
         setState(() {});
@@ -311,13 +341,11 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   ],
                 ),
                 body:
-                    ((state.allTasksStatus == TaskStatus.loading ||
+                    ((state.actionStatus == TaskStatus.loading ||
                                     state.taskDetailStatus ==
-                                        TaskStatus.loading ||
-                                    state.localTasksStatus ==
                                         TaskStatus.loading) &&
                                 !isDataLoaded) ||
-                            (state.allTasksStatus == TaskStatus.initial &&
+                            (state.actionStatus == TaskStatus.initial &&
                                 !isDataLoaded)
                         ? Center(child: showLoader())
                         : SafeArea(
@@ -966,7 +994,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                               child: ChoiceChip(
                                                                                 label: Text(intList[index]),
                                                                                 labelStyle: TextStyle(color: dataList.contains(intList[index]) ? Colors.white : AppColorTheme.colorGrey6),
-                                                                                onSelected: (bool selected) {
+                                                                                onSelected: (selected) {
                                                                                   if (selected) {
                                                                                     for (int i = 0; i < intList.length; i++) {
                                                                                       if (intList[i] == intList[index] && !dataList.contains(intList[i])) {
@@ -1089,7 +1117,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                                       });
                                                                                       setState(() {});
                                                                                     } else {
+/*
                                                                                       showSnackBar("Required *", "Please enter some review for mediahouse", Colors.red);
+                                                                                      */
                                                                                     }
                                                                                   }
                                                                                 : () {
@@ -2539,22 +2569,6 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                     ],
                                                   ),
                                                 ),
-                                          widgetDivider(),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                bottom: size.height *
-                                                    AppDimensions.numD01),
-                                            child: Text(
-                                              "Please refresh to view more offers.",
-                                              style: commonTextStyle(
-                                                  size: size,
-                                                  fontSize: size.width *
-                                                      AppDimensions.numD035,
-                                                  color: Colors.black,
-                                                  lineHeight: 1.2,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          )
                                         ],
                                       ),
                                     ),
@@ -2781,13 +2795,11 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                               size: size.width * AppDimensions.numD042),
                           SizedBox(width: size.width * AppDimensions.numD018),
                           Text(
-                            '${widget.myContentData?.purchasedMediahouseCount} ${AppStringsNew2.sold}',
+                            '$contentPurchased ${AppStringsNew2.sold}',
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD029,
-                                color: widget.myContentData
-                                            ?.purchasedMediahouseCount ==
-                                        0
+                                color: int.parse(contentPurchased) == 0
                                     ? Colors.grey
                                     : AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.normal),
@@ -2809,11 +2821,11 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                               size: size.width * AppDimensions.numD042),
                           SizedBox(width: size.width * AppDimensions.numD018),
                           Text(
-                            '${widget.myContentData?.offerCount} ${widget.myContentData!.offerCount > 1 ? '${AppStringsNew2.offerText}s' : AppStringsNew2.offerText}',
+                            '$contentOffer ${int.parse(contentOffer) > 1 ? '${AppStringsNew2.offerText}s' : AppStringsNew2.offerText}',
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD029,
-                                color: widget.myContentData?.offerCount == 0
+                                color: int.parse(contentOffer) == 0
                                     ? Colors.grey
                                     : AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.normal),
@@ -2821,7 +2833,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                         ],
                       ),
                       SizedBox(
-                          width: widget.myContentData!.offerCount >= 0
+                          width: int.parse(contentOffer) >= 0
                               ? size.width * AppDimensions.numD04
                               : size.width * AppDimensions.numD02),
                       Row(
@@ -2829,21 +2841,17 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ImageIcon(const AssetImage("${iconsPath}ic_view.png"),
-                              color: widget.myContentData!.contentView == 0
+                              color: int.parse(contentView) == 0
                                   ? Colors.grey
                                   : AppColorTheme.colorThemePink,
                               size: size.width * AppDimensions.numD05),
                           SizedBox(width: size.width * AppDimensions.numD018),
                           Text(
-                            '${widget.myContentData!.contentView.toString()} ${widget.myContentData!.contentView > 1 ? '${AppStringsNew2.viewsText}s' : AppStringsNew2.viewsText}',
+                            '$contentView ${int.parse(contentView) > 1 ? '${AppStringsNew2.viewText}s' : AppStringsNew2.viewText}',
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD029,
-                                color: (widget.myContentData!.paidStatus ==
-                                                AppStringsNew2.paidText &&
-                                            widget.myContentData!.contentView ==
-                                                1) ||
-                                        widget.myContentData!.contentView == 0
+                                color: int.parse(contentView) == 0
                                     ? Colors.grey
                                     : AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.normal),
@@ -6978,6 +6986,6 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
         roomId: widget.roomId,
         type: widget.type,
         contentId: contentId,
-        showLoader: false));
+        showLoader: true));
   }
 }

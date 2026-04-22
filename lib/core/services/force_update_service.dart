@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
-import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';

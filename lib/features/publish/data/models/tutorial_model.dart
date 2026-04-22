@@ -15,11 +15,11 @@ class TutorialModel extends Tutorial {
   factory TutorialModel.fromJson(Map<String, dynamic> json) {
     return TutorialModel(
       id: json['_id'] ?? json['id'] ?? "",
-      video: json['video'] ?? "",
+      video: json['url'] ?? json['video'] ?? "",
       description: json['description'] ?? "",
       category: json['category'] ?? "",
-      duration: json['duration'] ?? "",
-      view: json['count_for_hopper'] ?? 0,
+      duration: json['duration'] ?? "00:00",
+      view: json['views'] ?? json['count_for_hopper'] ?? 0,
       thumbnail: json['thumbnail'] ?? "",
       showVideo: false,
     );

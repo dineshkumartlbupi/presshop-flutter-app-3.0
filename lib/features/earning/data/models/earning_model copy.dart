@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/features/feed/presentation/pages/feedDataModel.dart';
+import 'package:presshop/features/feed/presentation/pages/feed_data_model.dart';
 import '../../domain/entities/earning_transaction.dart';
 
 class EarningProfileDataModel {
@@ -31,6 +31,19 @@ class EarningProfileDataModel {
 }
 
 class CommissionData {
+  CommissionData({
+    required this.totalEarning,
+    required this.commission,
+    required this.commissionReceived,
+    required this.commissionPending,
+    required this.paidOn,
+    required this.firstName,
+    required this.lastName,
+    required this.dateOfJoining,
+    required this.avatar,
+    this.currency = "",
+    this.currencySymbol = "",
+  });
   factory CommissionData.fromJson(Map<String, dynamic> json) {
     return CommissionData(
       totalEarning: json['totalEarning']?.toDouble() ?? 0.0,
@@ -48,19 +61,6 @@ class CommissionData {
       currencySymbol: (json['currency_symbol'] ?? '').toString(),
     );
   }
-  CommissionData({
-    required this.totalEarning,
-    required this.commission,
-    required this.commissionReceived,
-    required this.commissionPending,
-    required this.paidOn,
-    required this.firstName,
-    required this.lastName,
-    required this.dateOfJoining,
-    required this.avatar,
-    this.currency = "",
-    this.currencySymbol = "",
-  });
 
   double totalEarning;
   double commission;

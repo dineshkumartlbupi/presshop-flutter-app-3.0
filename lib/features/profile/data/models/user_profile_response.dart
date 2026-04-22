@@ -1,9 +1,9 @@
-import 'package:presshop/core/utils/common_utils.dart';
+import 'package:equatable/equatable.dart';
 import 'package:presshop/features/profile/domain/entities/profile_data.dart'
     as entity;
 
-class UserProfileResponse {
-  UserProfileResponse({
+class UserProfileResponse extends Equatable {
+  const UserProfileResponse({
     required this.success,
     required this.message,
     required this.data,
@@ -12,7 +12,9 @@ class UserProfileResponse {
   factory UserProfileResponse.fromJson(Map<String, dynamic> json) {
     var userData = json['data'] ?? json['userData'];
     if (userData == null) {
-      if (json.containsKey('email') || json.containsKey('first_name') || json.containsKey('profile_image')) {
+      if (json.containsKey('email') ||
+          json.containsKey('first_name') ||
+          json.containsKey('profile_image')) {
         userData = json;
       } else {
         userData = {};
@@ -22,11 +24,15 @@ class UserProfileResponse {
         userData['data'] is Map) {
       userData = userData['data'];
     }
-    
+
+    if (userData is! Map) {
+      userData = {};
+    }
+
     return UserProfileResponse(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: UserProfileModel.fromJson(userData),
+      data: UserProfileModel.fromJson(Map<String, dynamic>.from(userData)),
     );
   }
   final bool success;
@@ -40,10 +46,13 @@ class UserProfileResponse {
       'data': data.toJson(),
     };
   }
+
+  @override
+  List<Object?> get props => [success, message, data];
 }
 
-class UserProfileModel {
-  UserProfileModel({
+class UserProfileModel extends Equatable {
+  const UserProfileModel({
     required this.id,
     required this.firstName,
     required this.lastName,
@@ -68,24 +77,10 @@ class UserProfileModel {
     required this.createdAt,
     required this.updatedAt,
     required this.lastLogin,
+    required this.stripeStatus,
   });
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
-    String extractAvatar(Map<String, dynamic> json) {
-      String tempAvatar = json["avatar"]?.toString() ?? "";
-      if (json["avatarData"] is Map) {
-        tempAvatar = json["avatarData"]["avatar"]?.toString() ?? tempAvatar;
-      }
-      return fixS3Url(tempAvatar);
-    }
-
-    String extractProfileImage(Map<String, dynamic> json) {
-      String tempImg = json["profile_image"]?.toString() ??
-          json["profileImage"]?.toString() ??
-          "";
-      return fixS3Url(tempImg);
-    }
-
     return UserProfileModel(
       id: json['id'] ?? json['_id'] ?? '',
       firstName: json['first_name'] ?? json['firstName'] ?? '',
@@ -97,8 +92,8 @@ class UserProfileModel {
       status: json['status'] ?? '',
       hopperStatus: json['hopperStatus'] ?? '',
       chatStatus: json['chat_status'] ?? '',
-      profileImage: extractProfileImage(json),
-      avatar: extractAvatar(json),
+      profileImage: _extractProfileImage(json),
+      avatar: _extractAvatar(json),
       isVerified: json['isVerified'] ?? false,
       isOnboard: json['is_onboard'] ?? false,
       isDeleted: json['is_deleted'] ?? false,
@@ -106,20 +101,43 @@ class UserProfileModel {
       longitude: (json['longitude'] ?? 0).toDouble(),
       totalEarnings: json['totalEarnings'] ?? 0,
       totalHopperArmy: json['totalHopperArmy'] ?? 0,
-      location: LocationModel.fromJson(json['location'] ?? {}),
+      location: LocationModel.fromJson(Map<String, dynamic>.from(
+          json['location'] is Map ? json['location'] : {})),
       preferredCurrencySign: PreferredCurrencySignModel.fromJson(
-          json['preferred_currency_sign'] ?? {}),
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : DateTime.now(),
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
-          : DateTime.now(),
-      lastLogin: json['lastLogin'] != null
-          ? DateTime.parse(json['lastLogin'])
-          : DateTime.now(),
+          Map<String, dynamic>.from(json['preferred_currency_sign'] is Map
+              ? json['preferred_currency_sign']
+              : {})),
+      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
+      lastLogin: DateTime.tryParse(json['lastLogin'] ?? '') ?? DateTime.now(),
+      stripeStatus: json['stripeStatus'] != null
+          ? (json['stripeStatus'] is Map
+              ? StripeStatusModel.fromJson(Map<String, dynamic>.from(json['stripeStatus']))
+              : StripeStatusModel(
+                  stripeStatusActive:
+                      (['1', 'true'].contains(json['stripeStatus'].toString()))
+                          ? "1"
+                          : "0",
+                  stripeStatusReason: ""))
+          : const StripeStatusModel(
+              stripeStatusActive: "0", stripeStatusReason: ""),
     );
   }
+
+  static String _extractAvatar(Map<String, dynamic> json) {
+    String tempAvatar = json["avatar"]?.toString() ?? "";
+    if (json["avatarData"] is Map) {
+      tempAvatar = json["avatarData"]["avatar"]?.toString() ?? tempAvatar;
+    }
+    return tempAvatar;
+  }
+
+  static String _extractProfileImage(Map<String, dynamic> json) {
+    return json["profile_image"]?.toString() ??
+        json["profileImage"]?.toString() ??
+        "";
+  }
+
   final String id;
   final String firstName;
   final String lastName;
@@ -137,13 +155,14 @@ class UserProfileModel {
   final bool isDeleted;
   final double latitude;
   final double longitude;
-  final int totalEarnings;
+  final dynamic totalEarnings;
   final int totalHopperArmy;
   final LocationModel location;
   final PreferredCurrencySignModel preferredCurrencySign;
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime lastLogin;
+  final StripeStatusModel stripeStatus;
 
   Map<String, dynamic> toJson() {
     return {
@@ -171,6 +190,7 @@ class UserProfileModel {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'lastLogin': lastLogin.toIso8601String(),
+      'stripeStatus': stripeStatus.toJson(),
     };
   }
 
@@ -200,12 +220,42 @@ class UserProfileModel {
       createdAt: createdAt,
       updatedAt: updatedAt,
       lastLogin: lastLogin,
+      stripeStatus: stripeStatus.toEntity(),
     );
   }
+
+  @override
+  List<Object?> get props => [
+        id,
+        firstName,
+        lastName,
+        email,
+        phone,
+        userName,
+        role,
+        status,
+        hopperStatus,
+        chatStatus,
+        profileImage,
+        avatar,
+        isVerified,
+        isOnboard,
+        isDeleted,
+        latitude,
+        longitude,
+        totalEarnings,
+        totalHopperArmy,
+        location,
+        preferredCurrencySign,
+        createdAt,
+        updatedAt,
+        lastLogin,
+        stripeStatus,
+      ];
 }
 
-class LocationModel {
-  LocationModel({
+class LocationModel extends Equatable {
+  const LocationModel({
     required this.type,
     required this.coordinates,
   });
@@ -213,9 +263,10 @@ class LocationModel {
   factory LocationModel.fromJson(Map<String, dynamic> json) {
     return LocationModel(
       type: json['type'] ?? '',
-      coordinates: List<double>.from(
-        (json['coordinates'] ?? []).map((e) => e.toDouble()),
-      ),
+      coordinates: (json['coordinates'] as List?)
+              ?.map((e) => (e as num).toDouble())
+              .toList() ??
+          [],
     );
   }
   final String type;
@@ -234,10 +285,51 @@ class LocationModel {
       coordinates: coordinates,
     );
   }
+
+  @override
+  List<Object?> get props => [type, coordinates];
 }
 
-class PreferredCurrencySignModel {
-  PreferredCurrencySignModel({
+class StripeStatusModel extends Equatable {
+
+  const StripeStatusModel({
+    required this.stripeStatusActive,
+    required this.stripeStatusReason,
+  });
+
+  factory StripeStatusModel.fromJson(Map<String, dynamic> json) {
+    bool isActive = json['status'] == true ||
+        json['status'] == 1 ||
+        json['status'] == '1' ||
+        json['status'] == 'true';
+    return StripeStatusModel(
+      stripeStatusActive: isActive ? "1" : "0",
+      stripeStatusReason: json['reason'] ?? "",
+    );
+  }
+  final String stripeStatusActive;
+  final String stripeStatusReason;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'status': stripeStatusActive,
+      'reason': stripeStatusReason,
+    };
+  }
+
+  entity.StripeStatus toEntity() {
+    return entity.StripeStatus(
+      stripeStatusActive: stripeStatusActive,
+      stripeStatusReason: stripeStatusReason,
+    );
+  }
+
+  @override
+  List<Object?> get props => [stripeStatusActive, stripeStatusReason];
+}
+
+class PreferredCurrencySignModel extends Equatable {
+  const PreferredCurrencySignModel({
     required this.symbol,
     required this.code,
     required this.name,
@@ -284,4 +376,14 @@ class PreferredCurrencySignModel {
       dialCode: dialCode,
     );
   }
+
+  @override
+  List<Object?> get props => [
+        symbol,
+        code,
+        name,
+        countryName,
+        countryCode,
+        dialCode,
+      ];
 }

@@ -7,34 +7,40 @@ import 'package:presshop/core/utils/app_logger.dart';
 
 class LocationService {
   final Location _location = Location();
-  Future<void> _lastRequest = Future.value();
 
-  // Check and request any permission safely
+  // ── Static (shared across ALL instances) permission gate ──────────────────
+  // This prevents concurrent permission requests whether the caller uses
+  // sl<LocationService>() or LocationService() directly.
+
+  static Future<void> _lastRequest = Future.value();
+  static bool _isRequestInProgress = false;
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /// Check and request any permission safely — queued & de-duplicated.
   Future<bool> requestPermission(Permission permission) async {
-    // If already granted, return immediately to avoid blocking initialization
-    if (await permission.isGranted) {
-      return true;
-    }
+    // Fast-path: already granted
+    if (await permission.isGranted) return true;
 
-    // Chain this request to the end of the queue
-    final previousRequest = _lastRequest;
+    // Chain this request so concurrent callers queue up
     final completer = Completer<void>();
+    final previousRequest = _lastRequest;
     _lastRequest = completer.future;
 
-    // Wait for the previous request to complete
     try {
-      await previousRequest;
-    } catch (e) {
-      // Ignore errors from previous requests
-    }
-
-    try {
-      // Re-check status after waiting (incase user granted it externally or previous req covered it)
-      if (await permission.isGranted) {
-        return true;
+      if (_isRequestInProgress) {
+        debugPrint(
+            "LocationService: A permission request is already in progress, waiting in queue...");
       }
+      await previousRequest;
+    } catch (_) {}
+
+    _isRequestInProgress = true;
+    try {
+      // Re-check after waiting
+      if (await permission.isGranted) return true;
       return await _executePermissionRequest(permission);
     } finally {
+      _isRequestInProgress = false;
       completer.complete();
     }
   }
@@ -42,24 +48,28 @@ class LocationService {
   DateTime? _lastSettingsOpen;
 
   Future<bool> _executePermissionRequest(Permission permission) async {
-    var status = await permission.request();
-    if (status.isGranted) {
-      AppLogger.info("Permission ${permission.toString()} granted");
-      return true;
-    } else if (status.isDenied) {
-      AppLogger.warning("Permission ${permission.toString()} denied");
-      return false;
-    } else if (status.isPermanentlyDenied) {
-      AppLogger.error("Permission ${permission.toString()} permanently denied",
-          trackAnalytics: true);
-      // Avoid spamming settings if multiple permissions are denied at once
-      if (_lastSettingsOpen == null ||
-          DateTime.now().difference(_lastSettingsOpen!) >
-              const Duration(seconds: 2)) {
-        _lastSettingsOpen = DateTime.now();
-        await openAppSettings();
+    try {
+      var status = await permission.request();
+      if (status.isGranted) {
+        AppLogger.info("Permission ${permission.toString()} granted");
+        return true;
+      } else if (status.isDenied) {
+        AppLogger.warning("Permission ${permission.toString()} denied");
+        return false;
+      } else if (status.isPermanentlyDenied) {
+        AppLogger.error(
+            "Permission ${permission.toString()} permanently denied",
+            trackAnalytics: true);
+        if (_lastSettingsOpen == null ||
+            DateTime.now().difference(_lastSettingsOpen!) >
+                const Duration(seconds: 2)) {
+          _lastSettingsOpen = DateTime.now();
+          await openAppSettings();
+        }
+        return false;
       }
-      return false;
+    } catch (e) {
+      debugPrint("LocationService: Permission request error (ignored): $e");
     }
     return false;
   }
@@ -69,19 +79,6 @@ class LocationService {
       BuildContext context, bool shouldShowSettingPopup) async {
     return requestPermission(Permission.location);
   }
-
-  // Show dialog if location permission is denied
-  // Future<void> _showLocationMandatoryDialog(BuildContext context) async {
-  //   return commonErrorDialogDialog(
-  //       isFromNetworkError: false,
-  //       actionButton: "Open Settings",
-  //       MediaQuery.of(context).size,
-  //       "This app needs access to your location to provide its features. Please enable location permission in your app settings",
-  //       "Location permission required", () {
-  //     Navigator.pop(context);
-  //     openAppSettings();
-  //   });
-  // }
 
   // Check if GPS is enabled
   Future<bool> _checkAndRequestGps() async {
@@ -125,7 +122,7 @@ class LocationService {
 
       if (position == null) {
         debugPrint("🚀 LocationService: Failed to get location.");
-        return null; // Timeout or no position available
+        return null;
       } else {
         debugPrint(
             "🚀 LocationService: Location fetched: ${position.latitude}, ${position.longitude}");

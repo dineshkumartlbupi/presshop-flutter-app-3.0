@@ -1,12 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:presshop/core/router/router_constants.dart';
-import 'package:presshop/core/widgets/common_app_bar.dart';
-
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -17,6 +13,10 @@ import '../../presentation/bloc/profile_event.dart';
 import '../../presentation/bloc/profile_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import '../../domain/entities/profile_data.dart';
+import 'package:presshop/core/widgets/common/avatar_bottom_sheet.dart';
+import 'dart:convert';
+import 'package:presshop/core/api/api_client.dart';
+import 'dart:io';
 
 class DigitalIdScreen extends StatefulWidget {
   const DigitalIdScreen({super.key});
@@ -30,6 +30,12 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   String userImage = "";
   String userName = "";
   String fullName = "";
+  List<AvatarData> avatarList = [];
+  ValueNotifier<bool> avatarLoaderNotifier = ValueNotifier(false);
+  MyProfileData? myProfileData;
+  bool isLoading = false;
+  bool isUploading = false;
+  String? localImagePath;
 
   // File? _imageFile;
   final ImagePicker _picker = ImagePicker();
@@ -49,10 +55,101 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
     // Setup initial image from prefs if available
     String sessionAvatar =
         sharedPreferences!.getString(SharedPreferencesKeys.profileImageKey) ??
+            sharedPreferences!.getString(SharedPreferencesKeys.avatarKey) ??
             "";
     if (sessionAvatar.isNotEmpty) {
-      userImage = sessionAvatar;
+      userImage = fixS3Url(sessionAvatar);
     }
+    getAvatarsApi();
+    myProfileApi();
+  }
+
+  Future<void> myProfileApi({bool showLoader = true}) async {
+    String userId =
+        sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
+    if (showLoader) {
+      setState(() {
+        isLoading = true;
+      });
+    }
+    try {
+      final response = await sl<ApiClient>().get(
+        ApiConstantsNew.profile.myProfile,
+        queryParameters: {"userId": userId},
+        showLoader: false,
+      );
+
+      if (response.statusCode == 200) {
+        var map = response.data;
+        if (map is String) map = jsonDecode(map);
+        debugPrint("DigitalIdProfileSuccess:$map");
+
+        if (map["code"] == 200 || map["success"] == true) {
+          var userData = map["userData"] ?? map["data"];
+          if (userData is Map &&
+              userData.containsKey('data') &&
+              userData['data'] is Map) {
+            userData = userData['data'];
+          }
+          setState(() {
+            if (userData is Map) {
+              myProfileData =
+                  MyProfileData.fromJson(Map<String, dynamic>.from(userData));
+              if (myProfileData != null) {
+                fullName =
+                    "${myProfileData!.firstName} ${myProfileData!.lastName}";
+                userName = myProfileData!.userName;
+                // Prioritize real profile_image for Digital ID
+                userImage = myProfileData!.realProfileImage.isNotEmpty
+                    ? myProfileData!.realProfileImage
+                    : myProfileData!.avatarImage;
+                localImagePath = null;
+              }
+            }
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching profile in DigitalID: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> getAvatarsApi() async {
+    avatarLoaderNotifier.value = true;
+    try {
+      final response = await sl<ApiClient>()
+          .get(ApiConstantsNew.profile.getAvatars, showLoader: false);
+      if (response.statusCode == 200) {
+        var map = response.data;
+        if (map is String) map = jsonDecode(map);
+        var list = map["data"] as List;
+        avatarList = list.map((e) => AvatarData.fromJson(e)).toList();
+        debugPrint("AvatarList in DigitalID: ${avatarList.length}");
+      }
+    } catch (e) {
+      debugPrint("Error fetching avatars in DigitalID: $e");
+    } finally {
+      avatarLoaderNotifier.value = false;
+    }
+  }
+
+  void avatarBottomSheet(Size size) {
+    AvatarBottomSheet.show(
+      context: context,
+      size: size,
+      avatarList: avatarList,
+      notifier: avatarLoaderNotifier,
+      onAvatarSelected: (avatar) {
+        context.read<ProfileBloc>().add(
+            UpdateProfileEvent({SharedPreferencesKeys.avatarIdKey: avatar.id}));
+      },
+    );
   }
 
   void _showImagePicker(BuildContext context) {
@@ -90,6 +187,10 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
       final XFile? pickedFile = await _picker.pickImage(source: source);
       if (pickedFile != null) {
         if (!mounted) return;
+        setState(() {
+          localImagePath = pickedFile.path;
+          isUploading = true;
+        });
         context
             .read<ProfileBloc>()
             .add(UploadProfileImageEvent(pickedFile.path));
@@ -103,62 +204,34 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return BlocProvider.value(
-      value: sl<ProfileBloc>()..add(const FetchProfileEvent(showLoader: false)),
+      value: sl<ProfileBloc>(),
       child: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
-          if (state is ProfileLoaded) {
-            _updateUserProfile(state.profile);
-          } else if (state is ProfileImageUploaded) {
-            _updateUserImage(state.imageUrl);
+          if (state is ProfileImageUploaded) {
+            setState(() {
+              isUploading = false;
+            });
+            myProfileApi(showLoader: false);
+            showSnackBar(
+                "Success", "Profile image uploaded successfully", Colors.green);
           } else if (state is ProfileUpdated) {
-            _updateUserProfile(state.profile);
+            myProfileApi(showLoader: false);
             showSnackBar(
                 "Success", "Profile updated successfully", Colors.green);
           } else if (state is ProfileError) {
+            setState(() {
+              isUploading = false;
+              localImagePath = null;
+            });
             Fluttertoast.showToast(msg: state.message);
           }
         },
         builder: (context, state) {
-          bool isLoading = state is ProfileLoading;
-
           return Scaffold(
-            // appBar: CommonBrandedAppBar(
-            //   title: AppStrings.digitalId,
-            //   size: size,
-            // ),
-            appBar: CommonAppBar(
-              elevation: 0,
-              hideLeading: false,
-              title: Text(
-                "${AppStrings.digitalId}",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: size.width * AppDimensions.appBarHeadingFontSize,
-                    fontWeight: FontWeight.w700),
-              ),
-              centerTitle: false,
-              titleSpacing: 0,
+            appBar: CommonBrandedAppBar(
+              title: AppStrings.digitalId,
               size: size,
-              showActions: true,
-              leadingFxn: () {
-                context.pop();
-              },
-              actionWidget: [
-                InkWell(
-                  onTap: () {
-                    context.goNamed(AppRoutes.dashboardName,
-                        extra: {'initialPosition': 2});
-                  },
-                  child: Image.asset(
-                    "${commonImagePath}rabbitLogo.png",
-                    height: size.width * AppDimensions.numD07,
-                    width: size.width * AppDimensions.numD07,
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * AppDimensions.numD04,
-                )
-              ],
+              showLogo: true,
             ),
             body: Container(
               margin: EdgeInsets.only(
@@ -198,7 +271,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                               children: [
                                 Image.asset(
                                   "${commonImagePath}rabbitLogo.png",
-                                  height: size.width * AppDimensions.numD28,
+                                  height: size.width * AppDimensions.numD18,
                                   // width: size.width * AppDimensions.numD1,
                                 ),
                                 Expanded(
@@ -212,16 +285,16 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                           "press",
                                           style: TextStyle(
                                               fontSize: size.width *
-                                                  AppDimensions.numD065,
+                                                  AppDimensions.numD072,
                                               color: Colors.black,
                                               fontFamily: "AirbnbCereal",
                                               fontWeight: FontWeight.normal),
                                         ),
                                         Text(
-                                          "hop",
+                                          "Hop®",
                                           style: TextStyle(
                                               fontSize: size.width *
-                                                  AppDimensions.numD065,
+                                                  AppDimensions.numD075,
                                               color: Colors.black,
                                               letterSpacing: 0,
                                               fontFamily: "AirbnbCereal",
@@ -229,15 +302,6 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                               fontWeight: FontWeight.bold),
                                         ),
                                       ],
-                                    ),
-                                    Text(
-                                      "news delivered",
-                                      style: TextStyle(
-                                          fontSize:
-                                              size.width * AppDimensions.numD04,
-                                          color: Colors.black,
-                                          fontFamily: "AirbnbCereal",
-                                          fontWeight: FontWeight.normal),
                                     ),
                                     SizedBox(height: 8)
                                   ],
@@ -252,20 +316,19 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                               child: Stack(
                                 alignment: Alignment.center,
                                 children: [
-                                  isLoading
-                                      ? Container(
-                                          height:
-                                              size.width * AppDimensions.numD60,
-                                          width:
-                                              size.width * AppDimensions.numD70,
-                                          alignment: Alignment.center,
-                                          child: showAnimatedLoader(size),
-                                        )
-                                      : ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                              size.width *
-                                                  AppDimensions.numD04),
-                                          child: CachedNetworkImage(
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * AppDimensions.numD04),
+                                    child: localImagePath != null
+                                        ? Image.file(
+                                            File(localImagePath!),
+                                            height: size.width *
+                                                AppDimensions.numD60,
+                                            width: size.width *
+                                                AppDimensions.numD70,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : CachedNetworkImage(
                                             imageUrl: userImage.isEmpty
                                                 ? "https://via.placeholder.com/300"
                                                 : userImage,
@@ -319,7 +382,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                                         horizontal: 20,
                                                         vertical: 10),
                                                     child: Text(
-                                                      "Upload a recent photo or take a selfie. It’s helps you show that you're a verified Hopper, and part of the  PressHop community. Cheers",
+                                                      "Upload a recent photo or take a selfie. It’s helps you show that you're a verified Hopper, and part of the  PressHop® community. Cheers",
                                                       style: commonTextStyle(
                                                         size: size,
                                                         fontSize: size.width *
@@ -338,7 +401,19 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                               ),
                                             ),
                                           ),
-                                        ),
+                                  ),
+                                  if (isLoading || isUploading)
+                                    Container(
+                                      height: size.width * AppDimensions.numD60,
+                                      width: size.width * AppDimensions.numD70,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withValues(alpha: 0.3),
+                                        borderRadius: BorderRadius.circular(
+                                            size.width * AppDimensions.numD04),
+                                      ),
+                                      child: showAnimatedLoader(size),
+                                    ),
                                   // Edit button
                                   Positioned(
                                     right: size.width * AppDimensions.numD02,
@@ -379,15 +454,36 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                               height: size.width * AppDimensions.numD04,
                             ),
 
-                            /// User name
                             Center(
-                              child: Text(
-                                fullName,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * AppDimensions.numD05,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    fullName,
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD05,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  if (myProfileData?.stripeStatusActive ==
+                                          "1" ||
+                                      myProfileData?.isVerified == true) ...[
+                                    SizedBox(
+                                        width:
+                                            size.width * AppDimensions.numD02),
+                                    Image.asset(
+                                      "${iconsPath}verified_badge.png",
+                                      height: size.width * AppDimensions.numD04,
+                                      width: size.width * AppDimensions.numD04,
+                                    ),
+                                    SizedBox(
+                                        width:
+                                            size.width * AppDimensions.numD02),
+                                  ],
+                                ],
                               ),
                             ),
                             SizedBox(
@@ -462,8 +558,9 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                         height: 1.5),
                                     children: [
                                       TextSpan(
-                                        text: DateFormat("dd MMM yyyy")
-                                            .format(DateTime.now()),
+                                        text: DateFormat("dd MMM yyyy").format(
+                                            DateTime.now().add(
+                                                const Duration(days: 365))),
                                         style: TextStyle(
                                             fontSize: size.width *
                                                 AppDimensions.numD036,
@@ -595,57 +692,121 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
       ),
     );
   }
+}
 
-  void _updateUserProfile(ProfileData profile) {
-    setState(() {
-      if (profile.userName.isNotEmpty || profile.firstName.isNotEmpty) {
-        userName =
-            profile.userName.isNotEmpty ? profile.userName : profile.firstName;
-        sharedPreferences!
-            .setString(SharedPreferencesKeys.userNameKey, profile.userName);
-      }
-      if (profile.firstName.isNotEmpty) {
-        String firstName = profile.firstName;
-        String lastName = profile.lastName;
-        fullName = firstName + (lastName.isNotEmpty ? " $lastName" : "");
-        sharedPreferences!
-            .setString(SharedPreferencesKeys.firstNameKey, firstName);
-        sharedPreferences!
-            .setString(SharedPreferencesKeys.lastNameKey, lastName);
-      }
+class MyProfileData {
+  MyProfileData();
+  MyProfileData.fromJson(dynamic data) {
+    if (data is! Map) return;
+    Map<String, dynamic> json = Map<String, dynamic>.from(data);
+    firstName =
+        json[SharedPreferencesKeys.firstNameKey] ?? json['firstName'] ?? "";
+    lastName =
+        json[SharedPreferencesKeys.lastNameKey] ?? json['lastName'] ?? "";
+    userName = json[SharedPreferencesKeys.userNameKey] ??
+        json['username'] ??
+        json['userName'] ??
+        "";
+    countryCode =
+        json[SharedPreferencesKeys.countryCodeKey] ?? json['countryCode'] ?? "";
+    phoneNumber = (json[SharedPreferencesKeys.phoneKey] ?? "").toString();
 
-      if (profile.profileImage.isNotEmpty) {
-        if (profile.profileImage.startsWith("http")) {
-          userImage = fixS3Url(profile.profileImage);
-        } else {
-          userImage = fixS3Url("${profile.profileImage}");
+    cityName = json[SharedPreferencesKeys.cityKey] ?? json['city'] ?? '';
+    countryName =
+        json[SharedPreferencesKeys.countryKey] ?? json['country'] ?? '';
+    apartment = json[SharedPreferencesKeys.apartmentKey] ?? '';
+    email = json[SharedPreferencesKeys.emailKey] ?? "";
+    address = json[SharedPreferencesKeys.addressKey] ?? "";
+    postCode =
+        json[SharedPreferencesKeys.postCodeKey] ?? json['postCode'] ?? "";
+
+    // New profile address fields
+    profileAddress = json['profile_address'] ?? "";
+    profileCity = json['profile_city'] ?? "";
+    profileCountry = json['profile_country'] ?? "";
+    profilePostCode = json['profile_post_code'] ?? "";
+    isVerified = json['isVerified'] ?? json['is_verified'] ?? false;
+    stripeStatusActive = (() {
+      var stripe = json['stripeStatus'];
+      if (stripe == null) {
+        if (json['status'] == 1 ||
+            json['status'] == '1' ||
+            json['status'] == true) {
+          return '1';
         }
-        sharedPreferences!
-            .setString(SharedPreferencesKeys.profileImageKey, userImage);
+        return '0';
       }
-    });
-  }
-
-  void _updateUserImage(String imageUrl) {
-    setState(() {
-      if (imageUrl.startsWith("http")) {
-        userImage = fixS3Url(imageUrl);
-      } else {
-        userImage = fixS3Url("$imageUrl");
+      if (stripe is Map) {
+        return (stripe['status'] ?? '0').toString();
       }
-      sharedPreferences!
-          .setString(SharedPreferencesKeys.profileImageKey, userImage);
-    });
-    showSnackBar("Success", "Profile image updated successfully", Colors.green);
-  }
+      return stripe.toString();
+    })();
 
-  // void _launchURL() async {
-  //   const url = 'https://www.presshop.co.uk';
-  //   final uri = Uri.parse(url);
-  //   if (await canLaunchUrl(uri)) {
-  //     await launchUrl(uri, mode: LaunchMode.externalApplication);
-  //   } else {
-  //     throw 'Could not launch $url';
-  //   }
-  // }
+    latitude = (json[SharedPreferencesKeys.latitudeKey] ?? "").toString();
+    longitude = (json[SharedPreferencesKeys.longitudeKey] ?? "").toString();
+    totalIncome = json[SharedPreferencesKeys.totalIncomeKey] != null
+        ? json[SharedPreferencesKeys.totalIncomeKey].toString()
+        : "0";
+
+    // Captured actual profile image separately
+    String realImage = json["profile_image"]?.toString() ??
+        json["profileImage"]?.toString() ??
+        "";
+    realProfileImage = fixS3Url(realImage);
+
+    String tempAvatar = "";
+    if (json["avatarData"] is Map) {
+      tempAvatar = json["avatarData"]["avatar"]?.toString() ?? "";
+    } else if (json["avatarData"] is String &&
+        json["avatarData"].toString().startsWith("http")) {
+      tempAvatar = json["avatarData"];
+    }
+
+    if (tempAvatar.isEmpty) {
+      tempAvatar = json["avatar"]?.toString() ??
+          json["profile_image"]?.toString() ??
+          json["profileImage"]?.toString() ??
+          "";
+    }
+
+    avatarImage = fixS3Url(tempAvatar);
+    avatarId = (json["avatarData"] is Map
+            ? (json["avatarData"]["_id"]?.toString() ??
+                json["avatarData"]["id"]?.toString() ??
+                "")
+            : json["avatarData"]?.toString()) ??
+        json["avatar"]?.toString() ??
+        "";
+    joinedDate = json["createdAt"] != null
+        ? changeDateFormat(
+            "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'", json["createdAt"], "dd MMMM, yyyy")
+        : "";
+  }
+  String firstName = "";
+  String lastName = "";
+  String userName = "";
+  String countryCode = "";
+  String phoneNumber = "";
+  String email = "";
+  String address = "";
+  String postCode = "";
+
+  String profileAddress = "";
+  String profileCity = "";
+  String profileCountry = "";
+  String profilePostCode = "";
+  bool isVerified = false;
+  String? stripeStatusActive;
+
+  String latitude = "";
+  String longitude = "";
+  String avatarImage = "";
+  String realProfileImage = "";
+  String avatarId = "";
+  String joinedDate = "";
+  String earnings = "0";
+  String apartment = "";
+  String cityName = "";
+  String countryName = "";
+  String totalIncome = "";
 }

@@ -18,7 +18,6 @@ import 'package:presshop/core/widgets/animated_button.dart';
 import 'package:presshop/core/widgets/video_thumbnail_widget.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -73,6 +72,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
   bool shouldRestartAnimation = false;
   bool isOwner = false;
   late ContentBloc _contentBloc;
+  int localOfferCount = 0;
+  int localPurchasedCount = 0;
+  int localViewCount = 0;
 
   @override
   void initState() {
@@ -92,11 +94,25 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
         _contentBloc.add(FetchMediaHouseOffersEvent(widget.contentId));
         _contentBloc.add(FetchContentTransactionsEvent(
             contentId: widget.contentId, limit: 10, offset: 0));
+
+        // Record view
+        _recordView();
       } else {
         debugPrint('❌ Bloc is closed, cannot add events');
       }
     } catch (e) {
       debugPrint('❌ Error adding events to ContentBloc in initState: $e');
+    }
+  }
+
+  void _recordView() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String currentUserId = prefs.getString("_id") ?? "";
+    if (currentUserId.isNotEmpty && !_contentBloc.isClosed) {
+      _contentBloc.add(RecordContentViewEvent(
+        contentId: widget.contentId,
+        userId: currentUserId,
+      ));
     }
   }
 
@@ -155,16 +171,69 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
 
             setState(() {
               contentItem = state.content;
+              localViewCount = state.content.totalView;
               isLoading = false;
               initialController();
               _checkOwnership();
             });
+          } else if (state is ContentViewRecordedBroadcast) {
+            if (state.contentId == widget.contentId) {
+              debugPrint(
+                  '✅ ContentViewRecordedBroadcast - New Count: ${state.newViewCount}');
+              setState(() {
+                localViewCount = state.newViewCount;
+                if (contentItem != null) {
+                  contentItem =
+                      contentItem!.copyWith(contentViewCount: state.newViewCount);
+                }
+              });
+            }
           } else if (state is MediaHouseOffersLoaded) {
             debugPrint('✅ MediaHouseOffersLoaded');
             setState(() {
               _mediaHouseList.clear();
               _mediaHouseList.addAll(state.offers);
               isMediaOffer = state.offers.any((element) => !element.paidStatus);
+
+              // Syncing chatList for ManageContentWidget
+              int offCount = 0;
+              int purCount = 0;
+              int vCount = 0;
+
+              chatList = state.offers.map((item) {
+                String mType = item.messageType.toLowerCase();
+                if (mType == 'payment' || item.paidStatus) {
+                  purCount++;
+                } else if (mType == 'offered' ||
+                    mType == 'mediahouse_initial_offer' ||
+                    mType == 'hopper_counter_offer' ||
+                    mType == 'initial_offer') {
+                  offCount++;
+                } else if (mType == 'view') {
+                  vCount++;
+                }
+
+                return {
+                  'userDetails': [
+                    {
+                      'profile_image': item.mediaHouseImage,
+                      'company_name': item.mediaHouseName
+                    }
+                  ],
+                  'createdAt': item.createdAtTime,
+                  'message_type': (mType == 'offered' ||
+                          mType == 'mediahouse_initial_offer' ||
+                          mType == 'hopper_counter_offer' ||
+                          mType == 'initial_offer')
+                      ? 'Offered'
+                      : 'Sold',
+                  'amount': item.amount,
+                };
+              }).toList();
+
+              localOfferCount = offCount;
+              localPurchasedCount = purCount;
+              localViewCount = vCount;
             });
           } else if (state is ContentTransactionsLoaded) {
             debugPrint('✅ ContentTransactionsLoaded');
@@ -334,6 +403,20 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                                             showMediaWidget(),
                                                         'contentHeader':
                                                             headerWidget(),
+                                                        'offerCount':
+                                                            _mediaHouseList
+                                                                    .isNotEmpty
+                                                                ? _mediaHouseList
+                                                                    .length
+                                                                : widget
+                                                                    .offerCount,
+                                                        'purchasedCount':
+                                                            publicationTransactionList
+                                                                    .isNotEmpty
+                                                                ? publicationTransactionList
+                                                                    .length
+                                                                : widget
+                                                                    .purchasedMediahouseCount,
                                                         'myContentData':
                                                             contentItem!
                                                                 .toMyContentData(),
@@ -632,45 +715,56 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              ImageIcon(
-                                  const AssetImage("${iconsPath}dollar1.png"),
-                                  color: widget.purchasedMediahouseCount == 0
-                                      ? Colors.grey
-                                      : AppColorTheme.colorThemePink,
-                                  size: size.width * AppDimensions.numD042),
-                              SizedBox(
-                                  width: size.width * AppDimensions.numD018),
-                              Text(
-                                '${widget.purchasedMediahouseCount} ${AppStrings.sold}',
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize:
-                                        size.width * AppDimensions.numD029,
-                                    color: widget.purchasedMediahouseCount == 0
-                                        ? Colors.grey
-                                        : AppColorTheme.colorThemePink,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                            ],
-                          ),
-                          SizedBox(width: size.width * AppDimensions.numD02),
                           ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
-                              color: widget.offerCount == 0
+                              color: (_mediaHouseList.isNotEmpty
+                                          ? localPurchasedCount
+                                          : widget.purchasedMediahouseCount) ==
+                                      0
                                   ? Colors.grey
                                   : AppColorTheme.colorThemePink,
                               size: size.width * AppDimensions.numD042),
                           SizedBox(width: size.width * AppDimensions.numD018),
                           Text(
-                            '${widget.offerCount.toString()} ${widget.offerCount > 1 ? '${AppStrings.offerText}s' : AppStrings.offerText}',
+                            '${_mediaHouseList.isNotEmpty ? localPurchasedCount : widget.purchasedMediahouseCount} ${AppStrings.sold}',
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD029,
-                                color: widget.offerCount == 0
+                                color: (_mediaHouseList.isNotEmpty
+                                            ? localPurchasedCount
+                                            : widget
+                                                .purchasedMediahouseCount) ==
+                                        0
+                                    ? Colors.grey
+                                    : AppColorTheme.colorThemePink,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: size.width * AppDimensions.numD02),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
+                              color: (_mediaHouseList.isNotEmpty
+                                          ? localOfferCount
+                                          : widget.offerCount) ==
+                                      0
+                                  ? Colors.grey
+                                  : AppColorTheme.colorThemePink,
+                              size: size.width * AppDimensions.numD042),
+                          SizedBox(width: size.width * AppDimensions.numD018),
+                          Text(
+                            '${_mediaHouseList.isNotEmpty ? localOfferCount.toString() : widget.offerCount.toString()} ${(_mediaHouseList.isNotEmpty ? localOfferCount : widget.offerCount) > 1 ? '${AppStrings.offerText}s' : AppStrings.offerText}',
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * AppDimensions.numD029,
+                                color: (_mediaHouseList.isNotEmpty
+                                            ? localOfferCount
+                                            : widget.offerCount) ==
+                                        0
                                     ? Colors.grey
                                     : AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.normal),
@@ -682,13 +776,16 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ImageIcon(const AssetImage("${iconsPath}ic_view.png"),
-                              color: contentItem!.totalView == 0
+                              color: (_mediaHouseList.isNotEmpty
+                                          ? localViewCount
+                                          : (contentItem?.totalView ?? 0)) ==
+                                      0
                                   ? Colors.grey
                                   : AppColorTheme.colorThemePink,
                               size: size.width * AppDimensions.numD05),
                           SizedBox(width: size.width * AppDimensions.numD018),
                           Text(
-                            '${contentItem!.totalView.toString()} ${contentItem!.totalView > 1 ? '${AppStrings.viewsText}s' : AppStrings.viewsText}',
+                            '${_mediaHouseList.isNotEmpty ? localViewCount : (contentItem?.totalView ?? 0)} ${(_mediaHouseList.isNotEmpty ? localViewCount : (contentItem?.totalView ?? 0)) > 1 ? '${AppStrings.viewsText}s' : AppStrings.viewsText}',
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD029,
@@ -865,7 +962,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             right: size.width * AppDimensions.numD02,
                           ),
                           child: Text(
-                            "${(contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency))}${formatDouble(double.tryParse(contentItem!.totalSold) ?? 0.0)}",
+                            "${contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency)}${formatDouble(double.tryParse(contentItem!.totalSold) ?? 0.0)}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD05,
@@ -927,8 +1024,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                 fit: BoxFit.contain,
                                 height: size.width * AppDimensions.numD20,
                                 width: size.width * AppDimensions.numD20,
-                                errorBuilder: (BuildContext context,
-                                    Object exception, StackTrace? stackTrace) {
+                                errorBuilder: (context, exception, stackTrace) {
                                   return Image.asset(
                                     "${commonImagePath}rabbitLogo.png",
                                     fit: BoxFit.contain,
@@ -947,6 +1043,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 /// Title
+
                                 Text(
                                   item.mediaHouseName.isEmpty
                                       ? "Reuters News"
@@ -1054,7 +1151,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                 fontWeight: FontWeight.w400),
                           ),
                           Text(
-                            "${(contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency))}${numberFormatting(item.initialOfferAmount)}",
+                            "${contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency)}${numberFormatting(item.initialOfferAmount)}",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: commonTextStyle(
@@ -1303,10 +1400,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
 
   void initialController() {
     if (contentItem?.mediaList[_currentMediaIndex].mediaType == "audio") {
-      var url =
-          getMediaImageUrl(contentItem?.mediaList[_currentMediaIndex].mediaUrl);
-      /*  initWaveData(contentImageUrl +
-          myContentData!.contentMediaList[_currentMediaIndex].media);*/
+      final media = contentItem!.mediaList[_currentMediaIndex];
+      var url = getMediaImageUrl(
+          media.watermarkUrl.isNotEmpty ? media.watermarkUrl : media.mediaUrl);
       initWaveData(url);
     } else if (contentItem?.mediaList[_currentMediaIndex].mediaType ==
         "video") {

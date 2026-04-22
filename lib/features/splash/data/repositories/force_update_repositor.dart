@@ -160,9 +160,10 @@ class ForceUpdateRepository {
             value: response.data["data"]["refreshToken"]);
 
         // Also update shared prefs for consistency if needed by other parts
-        sharedPreferences!.setString(
+        await sharedPreferences!.setString(
             SharedPreferencesKeys.tokenKey, response.data["data"]["token"]);
-        sharedPreferences!.setString(SharedPreferencesKeys.refreshtokenKey,
+        await sharedPreferences!.setString(
+            SharedPreferencesKeys.refreshtokenKey,
             response.data["data"]["refreshToken"]);
 
         return true;

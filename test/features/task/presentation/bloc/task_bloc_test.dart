@@ -24,6 +24,9 @@ import 'package:presshop/features/task/domain/usecases/upload_task_media.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
+import 'package:presshop/features/task/data/models/all_task_model.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'dart:io';
 
 class MockGetTaskDetail extends Mock implements GetTaskDetail {}
 
@@ -66,6 +69,10 @@ class FakeGetAllTasksParams extends Fake implements GetAllTasksParams {}
 class FakeContentTransactionParams extends Fake
     implements ContentTransactionParams {}
 
+class FakeGetLocalTasksParams extends Fake implements GetLocalTasksParams {}
+
+class FakeGetTaskDetailParams extends Fake implements GetTaskDetailParams {}
+
 void main() {
   late TaskBloc bloc;
   late MockGetTaskDetail mockGetTaskDetail;
@@ -87,6 +94,8 @@ void main() {
     registerFallbackValue(FakeGetRoomIdParams());
     registerFallbackValue(FakeGetAllTasksParams());
     registerFallbackValue(FakeContentTransactionParams());
+    registerFallbackValue(FakeGetLocalTasksParams());
+    registerFallbackValue(FakeGetTaskDetailParams());
     registerFallbackValue(MockFormData());
   });
 
@@ -107,6 +116,11 @@ void main() {
     await sl.reset();
     sl.registerLazySingleton<FirebaseAnalytics>(() => mockAnalytics);
     sl.registerLazySingleton<FirebaseCrashlytics>(() => mockCrashlytics);
+
+    // Initialize Hive for tests
+    final tempDir = Directory.systemTemp.createTempSync();
+    Hive.init(tempDir.path);
+    await Hive.openBox('sync_cache');
 
     // Default mocks for Firebase
     when(() => mockAnalytics.logEvent(
@@ -178,8 +192,11 @@ void main() {
       },
       act: (bloc) => bloc.add(const GetTaskDetailEvent(tTaskId)),
       expect: () => [
-        const TaskState(taskDetailStatus: TaskStatus.loading),
-        TaskState(
+        const TaskState().copyWith(
+            taskDetailStatus: TaskStatus.loading,
+            clearTaskDetail: true,
+            clearErrorMessage: true),
+        const TaskState().copyWith(
           taskDetail: tTaskAssignedEntity,
           taskDetailStatus: TaskStatus.success,
         ),
@@ -195,8 +212,11 @@ void main() {
       },
       act: (bloc) => bloc.add(const GetTaskDetailEvent(tTaskId)),
       expect: () => [
-        const TaskState(taskDetailStatus: TaskStatus.loading),
-        const TaskState(
+        const TaskState().copyWith(
+            taskDetailStatus: TaskStatus.loading,
+            clearTaskDetail: true,
+            clearErrorMessage: true),
+        const TaskState().copyWith(
             taskDetailStatus: TaskStatus.failure, errorMessage: 'Error'),
       ],
     );
@@ -213,8 +233,10 @@ void main() {
         act: (bloc) => bloc.add(const AcceptRejectTaskEvent(
             taskId: '1', mediaHouseId: 'MH1', status: 'accepted')),
         expect: () => [
-              const TaskState(actionStatus: TaskStatus.loading),
-              const TaskState(actionStatus: TaskStatus.success),
+              const TaskState().copyWith(actionStatus: TaskStatus.loading),
+              const TaskState().copyWith(
+                  actionStatus: TaskStatus.success,
+                  successMessage: "Task accepted successfully"),
             ],
         verify: (_) {
           verify(() => mockAnalytics.logEvent(
@@ -224,7 +246,7 @@ void main() {
   });
 
   group('FetchAllTasksEvent', () {
-    final tTaskAll = TaskAll(
+    final tTaskAll = AllTaskModel(
         id: '1',
         userId: 'u1',
         heading: 'Task 1',
@@ -232,7 +254,7 @@ void main() {
         description: 'desc',
         location: 'loc',
         status: 'pending');
-    final tTasks = <TaskAll>[tTaskAll];
+    final tTasks = <AllTaskModel>[tTaskAll];
 
     blocTest<TaskBloc, TaskState>(
       'emits [loading, success] on first load',
@@ -243,8 +265,10 @@ void main() {
       },
       act: (bloc) => bloc.add(const FetchAllTasksEvent(offset: 0)),
       expect: () => [
-        const TaskState(allTasksStatus: TaskStatus.loading),
-        TaskState(allTasks: tTasks, allTasksStatus: TaskStatus.success),
+        const TaskState().copyWith(
+            allTasksStatus: TaskStatus.loading, clearErrorMessage: true),
+        const TaskState().copyWith(
+            allTasks: tTasks, allTasksStatus: TaskStatus.success),
       ],
     );
   });
@@ -267,8 +291,10 @@ void main() {
       },
       act: (bloc) => bloc.add(const FetchLocalTasksEvent()),
       expect: () => [
-        const TaskState(localTasksStatus: TaskStatus.loading),
-        TaskState(localTasks: tTasks, localTasksStatus: TaskStatus.success),
+        const TaskState().copyWith(
+            localTasksStatus: TaskStatus.loading, clearErrorMessage: true),
+        const TaskState().copyWith(
+            localTasks: tTasks, localTasksStatus: TaskStatus.success),
       ],
     );
   });
@@ -283,7 +309,11 @@ void main() {
         },
         act: (bloc) => bloc.add(const GetRoomIdEvent(
             receiverId: 'r1', taskId: 't1', roomType: 'rt', type: 't')),
-        expect: () => [const TaskState(roomId: tRoomId)]);
+        expect: () => [
+          const TaskState(actionStatus: TaskStatus.loading),
+          const TaskState(roomId: tRoomId, actionStatus: TaskStatus.initial),
+        ],
+      );
   });
 
   group('GetHopperAcceptedCountEvent', () {

@@ -6,16 +6,17 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_helper.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_web_view.dart';
-import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart';
-import 'package:presshop/features/authentication/presentation/pages/SignUpScreen.dart';
-import 'package:presshop/features/authentication/presentation/pages/WelcomeScreen.dart';
+import 'package:presshop/features/authentication/presentation/pages/login_screen.dart';
+import 'package:presshop/features/authentication/presentation/pages/sign_up_screen.dart';
+import 'package:presshop/features/authentication/presentation/pages/welcome_screen.dart';
 // import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
-import 'package:presshop/features/authentication/presentation/pages/ForgotPasswordScreen.dart';
-import 'package:presshop/features/authentication/presentation/pages/ResetPasswordScreen.dart';
-import 'package:presshop/features/authentication/presentation/pages/SocialSignUpScreen.dart';
-import 'package:presshop/features/authentication/presentation/pages/UploadDocumnetsScreen.dart';
-import 'package:presshop/features/authentication/presentation/pages/VerifyAccountScreen.dart';
-import 'package:presshop/features/onboarding/presentation/pages/WalkThrough.dart';
+import 'package:presshop/features/authentication/presentation/pages/forgot_password_screen.dart';
+import 'package:presshop/features/authentication/presentation/pages/reset_password_screen.dart';
+import 'package:presshop/features/authentication/presentation/pages/social_sign_up_screen.dart';
+import 'package:presshop/features/authentication/presentation/pages/upload_doc_screen.dart';
+import 'package:presshop/features/authentication/presentation/pages/verify_account_screen.dart';
+import 'package:presshop/features/onboarding/presentation/pages/walk_through.dart';
+import 'package:presshop/features/onboarding/presentation/pages/permission_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/authentication/presentation/bloc/signup_bloc.dart';
@@ -25,47 +26,46 @@ import 'package:presshop/features/authentication/presentation/bloc/signup_event.
 import 'package:presshop/features/bank/presentation/pages/my_banks_page.dart';
 import 'package:presshop/features/profile/presentation/pages/digital_id_screen.dart';
 import 'package:presshop/features/profile/presentation/pages/my_profile_screen.dart';
-import 'package:presshop/features/account_settings/presentation/pages/account_settings.dart';
 import 'package:presshop/features/account_settings/presentation/pages/account_delete_screen.dart';
 import 'package:presshop/features/content/presentation/pages/content_detail_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
-import 'package:presshop/features/notification/presentation/pages/MyNotifications.dart';
+import 'package:presshop/features/notification/presentation/pages/my_notifications.dart';
 import 'package:presshop/features/account_settings/presentation/pages/change_password_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
-import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
-import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
+import 'package:presshop/features/authentication/presentation/pages/term_check_screen.dart';
+import 'package:presshop/features/publish/presentation/pages/tutorials_screen.dart';
 import 'package:presshop/features/chat/presentation/pages/human_chat_screen.dart';
 import 'package:presshop/features/task/presentation/pages/task_screen.dart';
 import 'package:presshop/features/content/presentation/pages/manage_content_chat_screen.dart';
-import 'package:presshop/features/task/presentation/pages/detail_new/task_details_screen.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast/BroardcastScreen.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast_chat/broadcast_chat_task_screen.dart';
+import 'package:presshop/features/task/presentation/pages/task_details_screen.dart';
+import 'package:presshop/features/task/presentation/pages/task_accept_reject_screen.dart';
+import 'package:presshop/features/task/presentation/pages/broadcast_chat_task_screen.dart';
 import 'package:presshop/features/news/presentation/pages/news_page.dart';
 import 'package:presshop/features/news/presentation/pages/news_detail_page.dart';
 import 'package:presshop/features/news/domain/entities/news.dart';
 import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
 import 'package:presshop/features/news/presentation/bloc/news_event.dart';
-import 'package:presshop/features/feed/presentation/pages/FeedScreen.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast_chat/media_preview_screen.dart';
+import 'package:presshop/features/feed/presentation/pages/feed_screen.dart';
+import 'package:presshop/features/task/presentation/widgets/broadcast_chat/media_preview_screen.dart';
 import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
-import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
-import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
-import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
-import 'package:presshop/features/camera/presentation/pages/CustomGallary.dart';
+import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
+import 'package:presshop/features/chat/presentation/pages/full_video_view.dart';
+import 'package:presshop/features/camera/presentation/pages/camera_screen.dart';
+import 'package:presshop/features/camera/presentation/pages/custom_gallary.dart';
 import 'package:presshop/features/menu/presentation/pages/menu_screen.dart';
-import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
-import 'package:presshop/features/earning/presentation/pages/TransactionDetailScreen.dart';
+import 'package:presshop/features/earning/presentation/pages/my_earning_screen.dart';
+import 'package:presshop/features/earning/presentation/pages/tansaction_detail_screen.dart';
 import 'package:presshop/core/widgets/error/permission_error_screen.dart';
 import 'package:presshop/core/widgets/error/location_error_screen.dart';
-import 'package:presshop/features/chatbot/presentation/pages/chatBotScreen.dart';
-import 'package:presshop/features/rating/presentation/pages/RatingReviewScreen.dart';
-import 'package:presshop/features/publish/presentation/pages/AudioRecorderScreen.dart';
-import 'package:presshop/features/publish/presentation/pages/HashTagSearchScreen.dart';
-import 'package:presshop/features/task/presentation/pages/preview/manage_task_preview_screen.dart';
-import 'package:presshop/features/task/presentation/pages/preview_media/manage_task_preview_media_sreen.dart';
-import 'package:presshop/features/task/presentation/pages/task_grabbing_screen.dart';
-import 'package:presshop/features/publish/presentation/pages/PublishContentScreen.dart';
-import 'package:presshop/features/publish/presentation/pages/ContentSubmittedScreen.dart';
+import 'package:presshop/features/chatbot/presentation/pages/chat_bot_screen.dart';
+import 'package:presshop/features/rating/presentation/pages/rating_review_screen.dart';
+import 'package:presshop/features/publish/presentation/pages/audio_recorder_screen.dart';
+import 'package:presshop/features/publish/presentation/pages/hash_tag_search_screen.dart';
+import 'package:presshop/features/task/presentation/widgets/preview/manage_task_preview_screen.dart';
+import 'package:presshop/features/task/presentation/widgets/preview_media/manage_task_preview_media_sreen.dart';
+
+import 'package:presshop/features/publish/presentation/pages/publish_content_screen.dart';
+import 'package:presshop/features/publish/presentation/pages/content_submitted_screen.dart';
 import 'package:presshop/features/publication/presentation/pages/publication_list_screen.dart';
 
 import 'package:presshop/features/leaderboard/presentation/pages/leaderboard_page.dart';
@@ -113,6 +113,11 @@ class AppRouter {
         path: AppRoutes.walkthroughPath,
         name: AppRoutes.walkthroughName,
         builder: (context, state) => const Walkthrough(),
+      ),
+      GoRoute(
+        path: AppRoutes.permissionPath,
+        name: AppRoutes.permissionName,
+        builder: (context, state) => const PermissionPage(),
       ),
       GoRoute(
         path: AppRoutes.loginPath,
@@ -177,11 +182,6 @@ class AppRouter {
         path: AppRoutes.digitalIdPath,
         name: AppRoutes.digitalIdName,
         builder: (context, state) => const DigitalIdScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.accountSettingsPath,
-        name: AppRoutes.accountSettingsName,
-        builder: (context, state) => const AccountSetting(),
       ),
       GoRoute(
         path: AppRoutes.accountDeletePath,
@@ -279,6 +279,8 @@ class AppRouter {
             contentMedia: extra['contentMedia'],
             myContentData: extra['myContentData'],
             contentHeader: extra['contentHeader'],
+            offerCount: extra['offerCount'],
+            purchasedCount: extra['purchasedCount'],
           );
         },
       ),
@@ -676,11 +678,11 @@ class AppRouter {
           );
         },
       ),
-      GoRoute(
-        path: AppRoutes.locationSharingPath,
-        name: AppRoutes.locationSharingName,
-        builder: (context, state) => const TaskGrabbingScreen(),
-      ),
+      // GoRoute(
+      //   path: AppRoutes.locationSharingPath,
+      //   name: AppRoutes.locationSharingName,
+      //   builder: (context, state) => const TaskGrabbingScreen(),
+      // ),
       GoRoute(
         path: AppRoutes.menuPath,
         name: AppRoutes.menuName,

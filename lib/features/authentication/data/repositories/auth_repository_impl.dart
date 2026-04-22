@@ -2,6 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/api/network_info.dart';
+import 'package:presshop/core/utils/shared_preferences.dart';
+import 'package:presshop/main.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/entities/avatar.dart';
@@ -9,7 +11,6 @@ import '../datasources/auth_local_data_source.dart';
 import '../datasources/auth_remote_data_source.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-
   AuthRepositoryImpl({
     required this.remoteDataSource,
     required this.localDataSource,
@@ -25,7 +26,7 @@ class AuthRepositoryImpl implements AuthRepository {
       try {
         final remoteUser = await remoteDataSource.login(username, password);
         debugPrint(
-            "✅ AuthRepository: Login Success. Received Token: ${remoteUser.token?.substring(0, (remoteUser.token?.length ?? 0) > 10 ? 10 : (remoteUser.token?.length ?? 0))}...");
+            "✅ AuthReposi tory: Login Success. Received Token: ${remoteUser.token?.substring(0, (remoteUser.token?.length ?? 0) > 10 ? 10 : (remoteUser.token?.length ?? 0))}...");
         await localDataSource.cacheToken(remoteUser.token ?? ""); // Cache token
         if (remoteUser.refreshToken != null) {
           debugPrint(
@@ -58,6 +59,7 @@ class AuthRepositoryImpl implements AuthRepository {
       'currency_symbol': user.currencySymbol,
       'referral_code': user.referralCode,
       'total_hopper_army': user.totalHopperArmy,
+      // 'total_earnings': user./s,
       'avatar_id': user.avatarId,
       'avatar': user.avatar,
       '_id': user.id,
@@ -158,6 +160,10 @@ class AuthRepositoryImpl implements AuthRepository {
         }
         final remoteUser = await remoteDataSource.getProfile(userId);
         // optionally update cache
+
+        sharedPreferences!.setString(SharedPreferencesKeys.currencySymbolKey,
+            remoteUser.currencySymbol ?? "");
+
         return Right(remoteUser);
       } on Failure catch (failure) {
         return Left(failure);

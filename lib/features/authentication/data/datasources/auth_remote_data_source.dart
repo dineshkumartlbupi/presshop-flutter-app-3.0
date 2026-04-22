@@ -7,6 +7,9 @@ import '../models/avatar_model.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
+
+
 
 abstract class AuthRemoteDataSource {
   Future<UserModel> login(String username, String password);
@@ -108,6 +111,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<UserModel> socialLogin(String socialType, String socialId,
       String email, String name, String photoUrl) async {
     try {
+      debugPrint("DEBUG: [AuthRemoteDataSource] socialLogin - Start");
+      debugPrint("DEBUG: socialType: $socialType, email: $email");
+
       final response = await apiClient.post(
         ApiConstantsNew.auth.socialLogin,
         data: {
@@ -117,12 +123,38 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         },
       );
 
+      debugPrint(
+          "DEBUG: [AuthRemoteDataSource] response status: ${response.statusCode}");
+      debugPrint("DEBUG: [AuthRemoteDataSource] response data: ${response.data}");
+
       if (response.statusCode == 200) {
         final data = response.data;
+
+        // Check for specific error flags in 200 OK response (some APIs do this)
+        final isFailure = data['success'] == false || (data['code'] != null && data['code'] != 200);
+        final message = data['message']?.toString().toLowerCase() ?? "";
+        final dataStr = data.toString().toLowerCase();
+
+        if (isFailure || message.contains("not found") || message.contains("not register") || dataStr.contains("no hopper record")) {
+           if (message.contains("not found") || 
+               message.contains("not register") || 
+               message.contains("signup required") ||
+               message.contains("no user") ||
+               dataStr.contains("no hopper record") ||
+               data['code'] == 404) {
+             debugPrint("DEBUG: Detected new user from 200 response via message/code");
+             throw const UserNotRegisteredFailure(message: "User not found, registration required");
+           }
+        }
+
         if (data['code'] == 200 || data['success'] == true) {
           final user = _handleUserResponse(data);
-          if (user.source is Map &&
-              (user.source as Map)['isSocialRegister'] == false) {
+
+          // Check if it's an existing user but hasn't completed registration
+          final source = user.source;
+          if (source is Map<String, dynamic> && 
+              (source['isSocialRegister'] == false || source['isSocialRegister']?.toString().toLowerCase() == 'false')) {
+            debugPrint("DEBUG: Detected existing user with incomplete social register");
             throw const UserNotRegisteredFailure(
                 message: "Social registration required");
           }
@@ -137,6 +169,31 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
                 'Social Login failed with status code ${response.statusCode}');
       }
     } catch (e) {
+      debugPrint("DEBUG: [AuthRemoteDataSource] socialLogin catch error: $e");
+      
+      if (e is DioException) {
+        final data = e.response?.data;
+        final statusCode = e.response?.statusCode;
+        debugPrint("DEBUG: DioException StatusCode: $statusCode");
+        debugPrint("DEBUG: DioException ResponseData: $data");
+
+        final message = (data is Map ? data['message'] : data)?.toString().toLowerCase() ?? "";
+        final dataStr = data.toString().toLowerCase();
+        
+        if (statusCode == 404 || 
+            statusCode == 400 || 
+            statusCode == 401 ||
+            message.contains("not found") || 
+            message.contains("not register") ||
+            message.contains("signup required") ||
+            dataStr.contains("no hopper record")) {
+          debugPrint("DEBUG: Detected new user from DioException (message: $message)");
+          throw const UserNotRegisteredFailure(
+              message: "User not found, registration required");
+        }
+      }
+      
+      if (e is Failure) rethrow;
       throw ApiErrorHandler.handle(e);
     }
   }
@@ -285,16 +342,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           }
         }
 
-        // Fallback/Legacy: Check code
         if (data['code'] != null) {
           if (data['code'] != 200) {
-            // In legacy, != 200 usually meant error/taken.
-            // If code is present and not 200, assume failure/taken.
             return false;
           }
         }
 
-        return true; // Default to available if 'exists' is not true and no error code
+        return true;
       } else {
         throw ServerFailure(
             message: 'Check UserName failed: ${response.statusCode}');
@@ -399,12 +453,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await apiClient.post(ApiConstantsNew.auth.verifyReferral,
           data: {"referral_code": code});
       if (response.statusCode == 200) {
-        return response.data;
+        final data = response.data;
+        if (data['success'] == true) {
+          return data;
+        } else {
+          throw ServerFailure(
+              message: data['message'] ?? 'Referral code verification failed');
+        }
       }
       throw ServerFailure(
           message: 'Referral code verification failed: ${response.statusCode}');
     } catch (e) {
-      throw ServerFailure(message: 'Referral code verification failed');
+      if (e is Failure) rethrow;
+      throw ServerFailure(message: e.toString());
     }
   }
 

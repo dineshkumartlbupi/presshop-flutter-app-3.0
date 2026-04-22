@@ -1,3 +1,5 @@
+import 'package:presshop/core/utils/common_utils.dart';
+
 class AdminDetailModel {
   AdminDetailModel({
     required this.id,
@@ -13,8 +15,10 @@ class AdminDetailModel {
 
   AdminDetailModel.fromJson(Map<String, dynamic> json) {
     id = (json["_id"] ?? "").toString();
-    name = (json["name"] ?? "").toString();
-    profilePic = (json["profile_image"] ?? "").toString();
+    name = (json["name"] ??
+           json["full_name"] ??
+           "${json["first_name"] ?? ""} ${json["last_name"] ?? ""}").toString().trim();
+    profilePic = getMediaImageUrl((json["profile_image"] ?? "").toString());
     lastMessageTime = '';
     lastMessage = '';
     roomId =

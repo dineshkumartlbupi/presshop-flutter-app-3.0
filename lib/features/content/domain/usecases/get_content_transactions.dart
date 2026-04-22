@@ -21,10 +21,6 @@ class GetContentTransactions
 }
 
 class GetContentTransactionsParams extends Equatable {
-  final String contentId;
-  final int limit;
-  final int offset;
-  final bool showLoader;
 
   const GetContentTransactionsParams({
     required this.contentId,
@@ -32,6 +28,10 @@ class GetContentTransactionsParams extends Equatable {
     required this.offset,
     this.showLoader = true,
   });
+  final String contentId;
+  final int limit;
+  final int offset;
+  final bool showLoader;
 
   @override
   @override

@@ -8,20 +8,6 @@ import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart
 enum TaskStatus { initial, loading, success, failure }
 
 class TaskState extends Equatable {
-  final TaskAssignedEntity? taskDetail;
-  final List<TaskAll> allTasks;
-  final List<Task> localTasks;
-  final List<ManageTaskChatModel> chatList;
-  final List<EarningTransactionDetail> transactions;
-  final Map<String, dynamic>? uploadResponse;
-  final String? roomId;
-  final String? hopperAcceptedCount;
-  final TaskStatus allTasksStatus;
-  final TaskStatus localTasksStatus;
-  final TaskStatus taskDetailStatus;
-  final TaskStatus actionStatus;
-  final String? errorMessage;
-  final String? successMessage;
 
   const TaskState({
     this.taskDetail,
@@ -41,6 +27,20 @@ class TaskState extends Equatable {
   });
 
   factory TaskState.initial() => const TaskState();
+  final TaskAssignedEntity? taskDetail;
+  final List<TaskAll> allTasks;
+  final List<Task> localTasks;
+  final List<ManageTaskChatModel> chatList;
+  final List<EarningTransactionDetail> transactions;
+  final Map<String, dynamic>? uploadResponse;
+  final String? roomId;
+  final String? hopperAcceptedCount;
+  final TaskStatus allTasksStatus;
+  final TaskStatus localTasksStatus;
+  final TaskStatus taskDetailStatus;
+  final TaskStatus actionStatus;
+  final String? errorMessage;
+  final String? successMessage;
 
   TaskState copyWith({
     TaskAssignedEntity? taskDetail,

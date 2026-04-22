@@ -49,7 +49,7 @@ extension ContentItemMapper on ContentItem {
       categoryId: categoryId,
       contentView: totalView,
       purchasedMediahouseCount: purchasedMediahouseCount,
-      totalEarning: "0",
+      totalEarning: totalSold,
       currency: currency,
       currencySymbol: currencySymbol,
     );

@@ -3,9 +3,9 @@ import 'package:presshop/core/api/socket_constants.dart';
 import 'package:presshop/core/api/global_socket_client.dart';
 
 class ChatSocketDataSource {
-  final GlobalSocketClient _client;
 
   ChatSocketDataSource({required GlobalSocketClient client}) : _client = client;
+  final GlobalSocketClient _client;
 
   Function(dynamic)? onChatMessage;
   Function(dynamic)? onMediaMessage;
@@ -39,7 +39,23 @@ class ChatSocketDataSource {
 
     _client.on(SocketEvents.typing, (data) {
       debugPrint("ChatSocketDataSource received typing: $data");
-      onTyping?.call(data);
+      // Add is_typing if missing
+      if (data is Map && !data.containsKey('is_typing')) {
+        final Map<String, dynamic> enrichedData =
+            Map<String, dynamic>.from(data);
+        enrichedData['is_typing'] = true;
+        onTyping?.call(enrichedData);
+      } else {
+        onTyping?.call(data);
+      }
+    });
+
+    _client.on(SocketEvents.stopTyping, (data) {
+      debugPrint("ChatSocketDataSource received stop typing: $data");
+      final Map<String, dynamic> stopData =
+          (data is Map) ? Map<String, dynamic>.from(data) : {};
+      stopData['is_typing'] = false;
+      onTyping?.call(stopData);
     });
 
     _client.on(SocketEvents.roomJoin, (data) {
@@ -84,10 +100,12 @@ class ChatSocketDataSource {
   }
 
   void sendTypingStatus(String roomId, String userId, bool isTyping,
-      {String? receiverId}) {
+      {String? receiverId, String? typedValue}) {
     final data = {
       'room_id': roomId,
       'user_id': userId,
+      'is_typing': isTyping,
+      if (typedValue != null) 'typed_value': typedValue,
       if (receiverId != null) 'receiver_id': receiverId,
     };
     if (isTyping) {
@@ -99,11 +117,12 @@ class ChatSocketDataSource {
 
   void markAsRead(String roomId, String userId, {String? receiverId}) {
     debugPrint("ChatSocketDataSource emitting read message for: $roomId");
-    _client.emit(SocketEvents.readMessage, {
+    final data = {
       'room_id': roomId,
       'user_id': userId,
       if (receiverId != null) 'receiver_id': receiverId,
-    });
+    };
+    _client.emit(SocketEvents.readMessage, data);
   }
 
   void dispose() {

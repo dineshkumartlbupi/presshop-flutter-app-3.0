@@ -6,9 +6,9 @@ import '../entities/content_item.dart';
 import '../repositories/content_repository.dart';
 
 class GetContentDetail implements UseCase<ContentItem, GetContentDetailParams> {
-  final ContentRepository repository;
 
   GetContentDetail(this.repository);
+  final ContentRepository repository;
 
   @override
   Future<Either<Failure, ContentItem>> call(
@@ -19,10 +19,10 @@ class GetContentDetail implements UseCase<ContentItem, GetContentDetailParams> {
 }
 
 class GetContentDetailParams extends Equatable {
-  final String contentId;
-  final bool showLoader;
 
   const GetContentDetailParams(this.contentId, {this.showLoader = true});
+  final String contentId;
+  final bool showLoader;
 
   @override
   List<Object?> get props => [contentId, showLoader];

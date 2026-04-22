@@ -8,8 +8,8 @@ abstract class PublishEvent extends Equatable {
 }
 
 class LoadPublishDataEvent extends PublishEvent {
-  final String? country;
   const LoadPublishDataEvent({this.country});
+  final String? country;
 
   @override
   List<Object?> get props => [country];

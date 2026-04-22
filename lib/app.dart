@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:force_update_helper/force_update_helper.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:presshop/core/services/force_update_service.dart';
 import 'package:presshop/features/splash/data/repositories/force_update_repositor.dart';
 import 'package:presshop/main.dart';
@@ -16,41 +14,40 @@ import 'package:presshop/features/earning/presentation/bloc/earning_bloc.dart';
 import 'package:presshop/features/content/presentation/bloc/content_bloc.dart';
 import 'package:presshop/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:presshop/core/router/app_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ProviderScope(
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (_) => sl<TaskBloc>()),
-          BlocProvider(create: (_) => sl<EarningBloc>()),
-          BlocProvider(create: (_) => sl<ContentBloc>()),
-          BlocProvider(create: (_) => sl<AuthBloc>()),
-        ],
-        child: MaterialApp.router(
-          routerConfig: AppRouter.router,
-          builder: (context, child) {
-            return ForceUpdateWidget(
-              navigatorKey: navigatorKey,
-              forceUpdateClient: ForceUpdateClient(
-                fetchRequiredVersion: _fetchRequiredVersion,
-                iosAppStoreId: '6744651614',
-              ),
-              allowCancel: false,
-              showForceUpdateAlert: ForceUpdateService.showForceUpdateDialog,
-              showStoreListing: (storeUrl) async {},
-              child: ConnectivityWrapper(child: child ?? const SizedBox()),
-            );
-          },
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            fontFamily: "AirbnbCereal",
-            scaffoldBackgroundColor: Colors.white,
-            useMaterial3: false,
-          ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => sl<TaskBloc>()),
+        BlocProvider(create: (_) => sl<EarningBloc>()),
+        BlocProvider(create: (_) => sl<ContentBloc>()),
+        BlocProvider(create: (_) => sl<AuthBloc>()),
+      ],
+      child: MaterialApp.router(
+        routerConfig: AppRouter.router,
+        builder: (context, child) {
+          return ForceUpdateWidget(
+            navigatorKey: navigatorKey,
+            forceUpdateClient: ForceUpdateClient(
+              fetchRequiredVersion: _fetchRequiredVersion,
+              iosAppStoreId: '6744651614',
+            ),
+            allowCancel: false,
+            showForceUpdateAlert: ForceUpdateService.showForceUpdateDialog,
+            showStoreListing: (storeUrl) async {},
+            child: ConnectivityWrapper(child: child ?? const SizedBox()),
+          );
+        },
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: "AirbnbCereal",
+          scaffoldBackgroundColor: Colors.white,
+          useMaterial3: false,
         ),
       ),
     );
@@ -82,13 +79,15 @@ class ConnectivityWrapper extends StatefulWidget {
   State<ConnectivityWrapper> createState() => _ConnectivityWrapperState();
 }
 
-class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
+class _ConnectivityWrapperState extends State<ConnectivityWrapper>
+    with WidgetsBindingObserver {
   late StreamSubscription<List<ConnectivityResult>> _subscription;
   bool _isDialogShowing = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     Connectivity().checkConnectivity().then((results) {
       debugPrint("ConnectivityWrapper: Initial check: $results");
       _checkConnectivity(results);
@@ -100,6 +99,15 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
     });
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      AppLogger.trackEvent(EventNames.appBackground);
+    } else if (state == AppLifecycleState.resumed) {
+      AppLogger.trackEvent(EventNames.appForeground);
+    }
+  }
+
   Future<void> _checkConnectivity(List<ConnectivityResult> results) async {
     bool isDeviceOffline = results.contains(ConnectivityResult.none);
 
@@ -109,6 +117,7 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
     if (isDeviceOffline) {
       bool hasConnection = await InternetConnectionChecker().hasConnection;
       if (!hasConnection) {
+        AppLogger.trackEvent(EventNames.networkError);
         _showOfflineDialog();
       } else {
         _dismissOfflineDialog();
@@ -174,6 +183,7 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _subscription.cancel();
     super.dispose();
   }

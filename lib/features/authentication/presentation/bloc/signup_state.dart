@@ -39,33 +39,37 @@ class SignUpError extends SignUpState {
 }
 
 class UserNameCheckResult extends SignUpState {
-
-  const UserNameCheckResult(this.isAvailable, {this.errorMessage = ""});
+  UserNameCheckResult(this.isAvailable, {this.errorMessage = ""})
+      : timestamp = DateTime.now();
   final bool isAvailable;
   final String errorMessage;
+  final DateTime timestamp;
 
   @override
-  List<Object> get props => [isAvailable, errorMessage];
+  List<Object> get props => [isAvailable, errorMessage, timestamp];
 }
 
 class EmailCheckResult extends SignUpState {
-
-  const EmailCheckResult(this.isAvailable);
+  EmailCheckResult(this.isAvailable) : timestamp = DateTime.now();
   final bool isAvailable;
+  final DateTime timestamp;
 
   @override
-  List<Object> get props => [isAvailable];
+  List<Object> get props => [isAvailable, timestamp];
 }
 
 class PhoneCheckResult extends SignUpState {
-
-  const PhoneCheckResult(this.isAvailable, {this.errorMessage = ""});
+  PhoneCheckResult(this.isAvailable, {this.errorMessage = ""})
+      : timestamp = DateTime.now();
   final bool isAvailable;
   final String errorMessage;
+  final DateTime timestamp;
 
   @override
-  List<Object> get props => [isAvailable, errorMessage];
+  List<Object> get props => [isAvailable, errorMessage, timestamp];
 }
+
+class AvatarsLoading extends SignUpState {}
 
 class AvatarsLoaded extends SignUpState {
 
@@ -77,12 +81,21 @@ class AvatarsLoaded extends SignUpState {
 }
 
 class ReferralCodeVerified extends SignUpState {
-
-  const ReferralCodeVerified(this.data);
+  ReferralCodeVerified(this.data) : timestamp = DateTime.now();
   final Map<String, dynamic> data;
+  final DateTime timestamp;
 
   @override
-  List<Object> get props => [data];
+  List<Object> get props => [data, timestamp];
+}
+
+class ReferralCodeVerificationFailed extends SignUpState {
+  ReferralCodeVerificationFailed(this.message) : timestamp = DateTime.now();
+  final String message;
+  final DateTime timestamp;
+
+  @override
+  List<Object> get props => [message, timestamp];
 }
 
 class SocialExistsChecked extends SignUpState {

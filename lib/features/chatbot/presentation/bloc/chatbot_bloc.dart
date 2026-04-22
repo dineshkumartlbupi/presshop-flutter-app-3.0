@@ -31,7 +31,7 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
       InitChatbotEvent event, Emitter<ChatbotState> emit) async {
     try {
       dialogFlowtter ??=
-          await DialogFlowtter(jsonPath: "assets/dialog_flow_auth.json");
+          DialogFlowtter(jsonPath: "assets/dialog_flow_auth.json");
       add(FetchMessagesEvent());
     } catch (e) {
       emit(ChatbotError("Failed to initialize chatbot: $e"));

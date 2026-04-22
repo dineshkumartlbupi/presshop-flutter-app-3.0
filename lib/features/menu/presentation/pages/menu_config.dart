@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/account_settings/presentation/pages/account_delete_screen.dart';
-import 'package:presshop/features/account_settings/presentation/pages/account_settings.dart';
+
 import 'package:presshop/features/account_settings/presentation/pages/change_password_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
-import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
-import 'package:presshop/features/authentication/presentation/pages/UploadDocumnetsScreen.dart';
+import 'package:presshop/features/authentication/presentation/pages/term_check_screen.dart';
+import 'package:presshop/features/authentication/presentation/pages/upload_doc_screen.dart';
 import 'package:presshop/features/bank/presentation/pages/my_banks_page.dart';
-import 'package:presshop/features/chatbot/presentation/pages/chatBotScreen.dart';
+import 'package:presshop/features/chatbot/presentation/pages/chat_bot_screen.dart';
 import 'package:presshop/features/content/presentation/pages/my_draft_screen.dart';
-import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
+import 'package:presshop/features/earning/presentation/pages/my_earning_screen.dart';
 import 'package:presshop/features/leaderboard/presentation/pages/leaderboard_page.dart';
-import 'package:presshop/features/notification/presentation/pages/MyNotifications.dart';
+import 'package:presshop/features/notification/presentation/pages/my_notifications.dart';
 import 'package:presshop/features/profile/presentation/pages/digital_id_screen.dart';
 import 'package:presshop/features/profile/presentation/pages/my_profile_screen.dart';
-import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
-import 'package:presshop/features/rating/presentation/pages/RatingReviewScreen.dart';
+import 'package:presshop/features/publish/presentation/pages/tutorials_screen.dart';
+import 'package:presshop/features/rating/presentation/pages/rating_review_screen.dart';
 import 'package:presshop/features/referral/presentation/pages/refer_screen.dart';
 
 enum MenuAction {
@@ -43,7 +43,7 @@ enum MenuAction {
   priceTips,
   tutorials,
   changePassword,
-  accountSettings,
+  accountDelete,
   logout,
   currency,
   locationSharing,
@@ -75,6 +75,13 @@ List<MenuData> buildMenu() => [
         action: MenuAction.locationSharing,
       ),
       MenuData(
+        title: AppStrings.notificationText,
+        icon: "${iconsPath}ic_feed.png",
+        action: MenuAction.notification,
+        pageBuilder: (context) => const MyNotificationScreen(
+            count: 0), // Count now handled by BlocSelector
+      ),
+      MenuData(
         title: AppStrings.digitalIdText,
         icon: "${iconsPath}ic_id.png",
         action: MenuAction.digitalId,
@@ -98,31 +105,7 @@ List<MenuData> buildMenu() => [
           screenType: AppStrings.editProfileText,
         ),
       ),
-      MenuData(
-        title: "Chat",
-        icon: "${iconsPath}ic_chat.png",
-        action: MenuAction.chat,
-        pageBuilder: (context) => ChatBotScreen(),
-      ),
-      MenuData(
-        title: "${AppStrings.contactText} PressHop",
-        icon: "${iconsPath}ic_contact_us.png",
-        action: MenuAction.contact,
-        pageBuilder: (context) => const ContactUsScreen(),
-        isContactBrand: true,
-      ),
-      MenuData(
-        title: AppStrings.leaderboardText,
-        icon: "${iconsPath}ic_ranking.png",
-        action: MenuAction.leaderboard,
-        pageBuilder: (context) => const LeaderboardPage(),
-      ),
-      MenuData(
-        title: AppStrings.paymentMethodText,
-        icon: "${iconsPath}ic_payment_method.png",
-        action: MenuAction.paymentMethod,
-        pageBuilder: (context) => const MyBanksPage(),
-      ),
+
       MenuData(
         title: AppStrings.myDraftText,
         icon: "${iconsPath}ic_my_draft.png",
@@ -153,6 +136,7 @@ List<MenuData> buildMenu() => [
       //   action: MenuAction.myTasks,
       //   pageBuilder: (context) => MyTaskScreen(hideLeading: false),
       // ),
+
       MenuData(
         title: "My earnings",
         icon: "${iconsPath}ic_earning.png",
@@ -163,11 +147,16 @@ List<MenuData> buildMenu() => [
         ),
       ),
       MenuData(
-        title: AppStrings.notificationText,
-        icon: "${iconsPath}ic_feed.png",
-        action: MenuAction.notification,
-        pageBuilder: (context) => const MyNotificationScreen(
-            count: 0), // Count now handled by BlocSelector
+        title: "Manage payments",
+        icon: "${iconsPath}ic_payment_method.png",
+        action: MenuAction.paymentMethod,
+        pageBuilder: (context) => const MyBanksPage(),
+      ),
+      MenuData(
+        title: "Refer a Hopper",
+        icon: "${iconsPath}gift.png",
+        action: MenuAction.referHopper,
+        pageBuilder: (context) => const ReferScreen(),
       ),
       MenuData(
         title:
@@ -175,13 +164,12 @@ List<MenuData> buildMenu() => [
         icon: "${iconsPath}ic_rating_review.png",
         action: MenuAction.ratingReview,
         pageBuilder: (context) => const RatingReviewScreen(),
-        showAlertBadge: true,
       ),
       MenuData(
-        title: "Refer a Hopper",
-        icon: "${iconsPath}gift.png",
-        action: MenuAction.referHopper,
-        pageBuilder: (context) => const ReferScreen(),
+        title: AppStrings.leaderboardText,
+        icon: "${iconsPath}ic_ranking.png",
+        action: MenuAction.leaderboard,
+        pageBuilder: (context) => const LeaderboardPage(),
       ),
       MenuData(
         title: AppStrings.uploadDocsHeadingText,
@@ -192,6 +180,23 @@ List<MenuData> buildMenu() => [
           hideLeading: false,
         ),
       ),
+
+      MenuData(
+        title: "Price tips",
+        icon: "${iconsPath}ic_price_tips.png",
+        action: MenuAction.priceTips,
+        pageBuilder: (context) => FAQScreen(
+          priceTipsSelected: true,
+          type: 'price_tips',
+          index: 0,
+        ),
+      ),
+      MenuData(
+        title: AppStrings.tutorialsText,
+        icon: "${iconsPath}ic_tutorials.png",
+        action: MenuAction.tutorials,
+        pageBuilder: (context) => const TutorialsScreen(),
+      ),
       MenuData(
         title: AppStrings.faqText,
         icon: "${iconsPath}ic_faq.png",
@@ -201,6 +206,19 @@ List<MenuData> buildMenu() => [
           type: 'faq',
           index: 0,
         ),
+      ),
+      MenuData(
+        title: "Chat",
+        icon: "${iconsPath}ic_chat.png",
+        action: MenuAction.chat,
+        pageBuilder: (context) => ChatBotScreen(),
+      ),
+      MenuData(
+        title: "${AppStrings.contactText} PressHop",
+        icon: "${iconsPath}ic_contact_us.png",
+        action: MenuAction.contact,
+        pageBuilder: (context) => const ContactUsScreen(),
+        isContactBrand: true,
       ),
       MenuData(
         title: "${AppStrings.legalText} ${AppStrings.tcText}",
@@ -219,22 +237,6 @@ List<MenuData> buildMenu() => [
         ),
       ),
       MenuData(
-        title: "Price tips",
-        icon: "${iconsPath}ic_price_tips.png",
-        action: MenuAction.priceTips,
-        pageBuilder: (context) => FAQScreen(
-          priceTipsSelected: true,
-          type: 'price_tips',
-          index: 0,
-        ),
-      ),
-      MenuData(
-        title: AppStrings.tutorialsText,
-        icon: "${iconsPath}ic_tutorials.png",
-        action: MenuAction.tutorials,
-        pageBuilder: (context) => const TutorialsScreen(),
-      ),
-      MenuData(
         title: AppStrings.changePasswordText,
         icon: "${iconsPath}ic_change_password.png",
         action: MenuAction.changePassword,
@@ -244,7 +246,7 @@ List<MenuData> buildMenu() => [
       MenuData(
         title: "Delete account",
         icon: "${iconsPath}ic_my_profile.png",
-        action: MenuAction.accountSettings,
+        action: MenuAction.accountDelete,
         pageBuilder: (context) => const AccountDeleteScreen(),
       ),
       // MenuData(

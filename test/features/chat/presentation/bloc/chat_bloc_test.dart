@@ -1,188 +1,167 @@
-// import 'dart:async';
-// import 'package:bloc_test/bloc_test.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:mocktail/mocktail.dart';
-// import 'package:presshop/features/chat/presentation/bloc/chat_bloc.dart';
-// import 'package:presshop/features/chat/presentation/bloc/chat_event.dart';
-// import 'package:presshop/features/chat/presentation/bloc/chat_state.dart';
-// import 'package:presshop/core/utils/shared_preferences.dart';
-// import 'package:record/record.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:presshop/main.dart';
+import 'dart:io';
+import 'package:bloc_test/bloc_test.dart';
+import 'package:dartz/dartz.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/error/failures.dart';
+import 'package:presshop/core/usecases/usecase.dart';
+import 'package:presshop/features/chat/data/datasources/chat_socket_datasource.dart';
+import 'package:presshop/features/chat/data/models/chat_models.dart';
+import 'package:presshop/features/chat/domain/usecases/get_chat_list.dart';
+import 'package:presshop/features/chat/domain/usecases/get_room_chat.dart';
+import 'package:presshop/features/chat/domain/usecases/send_message.dart';
+import 'package:presshop/features/chat/domain/usecases/upload_media.dart';
+import 'package:presshop/features/chat/domain/usecases/update_typing_status.dart';
+import 'package:presshop/features/chat/presentation/bloc/chat_bloc.dart';
+import 'package:presshop/features/chat/presentation/bloc/chat_event.dart';
+import 'package:presshop/features/chat/presentation/bloc/chat_state.dart';
+import 'package:presshop/main.dart';
+import 'package:record/record.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-// class MockFirestore extends Mock implements FirebaseFirestore {}
+// Mocks
+class MockGetChatListUseCase extends Mock implements GetChatListUseCase {}
+class MockGetRoomChatUseCase extends Mock implements GetRoomChatUseCase {}
+class MockSendMessageUseCase extends Mock implements SendMessageUseCase {}
+class MockUploadMediaUseCase extends Mock implements UploadMediaUseCase {}
+class MockUpdateTypingStatusUseCase extends Mock implements UpdateTypingStatusUseCase {}
+class MockChatSocketDataSource extends Mock implements ChatSocketDataSource {}
+class MockAudioRecorder extends Mock implements AudioRecorder {}
+class MockSharedPreferences extends Mock implements SharedPreferences {}
 
-// class MockFirebaseStorage extends Mock implements FirebaseStorage {}
+// Fallbacks for Mocktail any()
+class FakeNoParams extends Fake implements NoParams {}
+class FakeSendMessageParams extends Fake implements SendMessageParams {}
+class FakeTypingStatusParams extends Fake implements TypingStatusParams {}
 
-// class MockAudioRecorder extends Mock implements AudioRecorder {}
+void main() {
+  late ChatBloc bloc;
+  late MockGetChatListUseCase mockGetChatListUseCase;
+  late MockGetRoomChatUseCase mockGetRoomChatUseCase;
+  late MockSendMessageUseCase mockSendMessageUseCase;
+  late MockUploadMediaUseCase mockUploadMediaUseCase;
+  late MockUpdateTypingStatusUseCase mockUpdateTypingStatusUseCase;
+  late MockChatSocketDataSource mockChatSocketDataSource;
+  late MockAudioRecorder mockAudioRecorder;
+  late MockSharedPreferences mockSharedPreferences;
 
-// // class MockCollectionReference extends Mock
-// //     implements CollectionReference<Map<String, dynamic>> {}
+  setUpAll(() {
+    registerFallbackValue(FakeNoParams());
+    registerFallbackValue(FakeSendMessageParams());
+    registerFallbackValue(FakeTypingStatusParams());
+    registerFallbackValue(File(''));
+  });
 
-// // class MockDocumentReference extends Mock
-// //     implements DocumentReference<Map<String, dynamic>> {}
+  setUp(() {
+    mockGetChatListUseCase = MockGetChatListUseCase();
+    mockGetRoomChatUseCase = MockGetRoomChatUseCase();
+    mockSendMessageUseCase = MockSendMessageUseCase();
+    mockUploadMediaUseCase = MockUploadMediaUseCase();
+    mockUpdateTypingStatusUseCase = MockUpdateTypingStatusUseCase();
+    mockChatSocketDataSource = MockChatSocketDataSource();
+    mockAudioRecorder = MockAudioRecorder();
+    mockSharedPreferences = MockSharedPreferences();
 
-// // class MockQuery extends Mock implements Query<Map<String, dynamic>> {}
+    sharedPreferences = mockSharedPreferences;
 
-// // class MockQuerySnapshot extends Mock
-// //     implements QuerySnapshot<Map<String, dynamic>> {}
+    // Default mocks for shared preferences
+    when(() => mockSharedPreferences.getString(SharedPreferencesKeys.hopperIdKey)).thenReturn('user123');
+    when(() => mockSharedPreferences.getString(SharedPreferencesKeys.firstNameKey)).thenReturn('John');
+    when(() => mockSharedPreferences.getString(SharedPreferencesKeys.lastNameKey)).thenReturn('Doe');
+    when(() => mockSharedPreferences.getString(SharedPreferencesKeys.avatarKey)).thenReturn('avatar.png');
 
-// // class MockDocumentSnapshot extends Mock
-// //     implements DocumentSnapshot<Map<String, dynamic>> {}
+    when(() => mockAudioRecorder.dispose()).thenAnswer((_) async => {});
+    when(() => mockChatSocketDataSource.dispose()).thenAnswer((_) async => {});
 
-// void main() {
-//   late ChatBloc chatBloc;
-//   late MockFirestore mockFirestore;
-//   late MockFirebaseStorage mockStorage;
-//   late MockAudioRecorder mockAudioRecorder;
+    bloc = ChatBloc(
+      getChatListUseCase: mockGetChatListUseCase,
+      getRoomChatUseCase: mockGetRoomChatUseCase,
+      sendMessageUseCase: mockSendMessageUseCase,
+      uploadMediaUseCase: mockUploadMediaUseCase,
+      updateTypingStatusUseCase: mockUpdateTypingStatusUseCase,
+      chatSocketDataSource: mockChatSocketDataSource,
+      audioRecorder: mockAudioRecorder,
+    );
+  });
 
-//   setUp(() async {
-//     mockFirestore = MockFirestore();
-//     mockStorage = MockFirebaseStorage();
-//     mockAudioRecorder = MockAudioRecorder();
+  tearDown(() {
+    bloc.close();
+  });
 
-//     SharedPreferences.setMockInitialValues({
-//       hopperIdKey: 'tester123',
-//       firstNameKey: 'Test',
-//       lastNameKey: 'User',
-//     });
-//     sharedPreferences = await SharedPreferences.getInstance();
+  group('ChatBloc Tests', () {
+    test('initial state should be ChatState()', () {
+      expect(bloc.state, const ChatState());
+    });
 
-//     when(() => mockAudioRecorder.dispose()).thenAnswer((_) async {});
+    blocTest<ChatBloc, ChatState>(
+      'should emit [loading, loaded] when LoadChatListEvent is successful',
+      build: () {
+        when(() => mockGetChatListUseCase(any()))
+            .thenAnswer((_) async => const Right([]));
+        return bloc;
+      },
+      act: (bloc) => bloc.add(LoadChatListEvent()),
+      expect: () => [
+        isA<ChatState>().having((p) => p.status, 'status', ChatStatus.loading),
+        isA<ChatState>().having((p) => p.status, 'status', ChatStatus.loaded),
+      ],
+    );
 
-//     registerFallbackValue(const EnterChatRoomEvent(
-//         roomId: '', receiverId: '', receiverName: '', receiverImage: ''));
-//     registerFallbackValue(
-//         const SendMessageEvent(message: '', messageType: 'text'));
+    blocTest<ChatBloc, ChatState>(
+      'should emit [loading, failure] when LoadChatListEvent fails',
+      build: () {
+        when(() => mockGetChatListUseCase(any()))
+            .thenAnswer((_) async => Left(ServerFailure(message: 'Error')));
+        return bloc;
+      },
+      act: (bloc) => bloc.add(LoadChatListEvent()),
+      expect: () => [
+        isA<ChatState>().having((p) => p.status, 'status', ChatStatus.loading),
+        isA<ChatState>().having((p) => p.status, 'status', ChatStatus.failure).having((p) => p.errorMessage, 'errorMessage', 'Error'),
+      ],
+    );
 
-//     chatBloc = ChatBloc(
-//       firestore: mockFirestore,
-//       storage: mockStorage,
-//       audioRecorder: mockAudioRecorder,
-//     );
-//   });
+    blocTest<ChatBloc, ChatState>(
+      'should emit loaded state with new message when SendMessageEvent is successful',
+      build: () {
+        final tMessage = ChatMessageModel(
+          id: '1',
+          roomId: 'room1',
+          message: 'Hello',
+          messageType: 'text',
+          senderId: 'user123',
+          senderType: 'hopper',
+          senderName: 'John Doe',
+          senderImage: 'avatar.png',
+          createdAt: DateTime.now().toIso8601String(),
+          readStatus: 'unread',
+          media: [],
+          isSender: true,
+        );
 
-//   tearDown(() {
-//     chatBloc.close();
-//   });
+        when(() => mockSendMessageUseCase(any()))
+            .thenAnswer((_) async => Right(tMessage));
+        return bloc;
+      },
+      seed: () => const ChatState(currentRoomId: 'room1', status: ChatStatus.loaded),
+      act: (bloc) => bloc.add(const SendMessageEvent(message: 'Hello', messageType: 'text')),
+      verify: (bloc) {
+        verify(() => mockSendMessageUseCase(any())).called(1);
+      },
+    );
 
-//   group('ChatBloc Tests', () {
-//     test('initial state is correct', () {
-//       expect(chatBloc.state, const ChatState());
-//     });
-
-//     blocTest<ChatBloc, ChatState>(
-//       'emits ChatStatus.loading when LoadChatListEvent is added',
-//       build: () {
-//         final mockCollection = MockCollectionReference();
-//         final mockQuery = MockQuery();
-
-//         when(() => mockFirestore.collection(any())).thenReturn(mockCollection);
-//         when(() => mockCollection.orderBy(any(),
-//             descending: any(named: 'descending'))).thenReturn(mockQuery);
-//         when(() => mockQuery.snapshots()).thenAnswer((_) => Stream.empty());
-
-//         return chatBloc;
-//       },
-//       act: (bloc) => bloc.add(LoadChatListEvent()),
-//       expect: () => [
-//         isA<ChatState>().having((s) => s.status, 'status', ChatStatus.loading),
-//       ],
-//     );
-
-//     blocTest<ChatBloc, ChatState>(
-//       'emits ChatStatus.loaded when ChatListUpdatedEvent is added',
-//       build: () => chatBloc,
-//       act: (bloc) => bloc.add(const ChatListUpdatedEvent([])),
-//       expect: () => [
-//         isA<ChatState>()
-//             .having((s) => s.status, 'status', ChatStatus.loaded)
-//             .having((s) => s.chatList, 'chatList', []),
-//       ],
-//     );
-
-//     blocTest<ChatBloc, ChatState>(
-//       'emits ChatStatus.loading and loaded when EnterChatRoomEvent is added',
-//       build: () {
-//         final mockCollection = MockCollectionReference();
-//         final mockDoc = MockDocumentReference();
-//         final mockSubCollection = MockCollectionReference();
-//         final mockQuery = MockQuery();
-//         final mockUnreadQuery = MockQuery();
-//         final mockUnreadSnapshot = MockQuerySnapshot();
-
-//         when(() => mockFirestore.collection(any())).thenReturn(mockCollection);
-//         when(() => mockCollection.doc(any())).thenReturn(mockDoc);
-//         when(() => mockDoc.collection(any())).thenReturn(mockSubCollection);
-//         when(() => mockSubCollection.orderBy(any(),
-//             descending: any(named: 'descending'))).thenReturn(mockQuery);
-//         when(() => mockQuery.snapshots()).thenAnswer((_) => Stream.empty());
-
-//         // Listen to typing
-//         when(() => mockSubCollection.doc(any())).thenReturn(mockDoc);
-//         when(() => mockDoc.snapshots()).thenAnswer((_) => Stream.empty());
-
-//         // Mark as read logic
-//         when(() => mockSubCollection.where(any(),
-//             isEqualTo: any(named: 'isEqualTo'))).thenReturn(mockUnreadQuery);
-//         when(() => mockUnreadQuery.where(any(),
-//             isEqualTo: any(named: 'isEqualTo'))).thenReturn(mockUnreadQuery);
-//         when(() => mockUnreadQuery.get())
-//             .thenAnswer((_) async => mockUnreadSnapshot);
-//         when(() => mockUnreadSnapshot.docs).thenReturn([]);
-
-//         return chatBloc;
-//       },
-//       act: (bloc) => bloc.add(const EnterChatRoomEvent(
-//         roomId: 'room1',
-//         receiverId: 'user2',
-//         receiverName: 'User Two',
-//         receiverImage: 'image.jpg',
-//       )),
-//       expect: () => [
-//         isA<ChatState>()
-//             .having((s) => s.status, 'status', ChatStatus.loading)
-//             .having((s) => s.currentRoomId, 'roomId', 'room1')
-//             .having((s) => s.receiverId, 'receiverId', 'user2'),
-//         isA<ChatState>().having((s) => s.status, 'status', ChatStatus.loaded),
-//       ],
-//     );
-
-//     blocTest<ChatBloc, ChatState>(
-//       'emits status sending then loaded when SendMessageEvent is added',
-//       build: () {
-//         final mockCollection = MockCollectionReference();
-//         final mockDoc = MockDocumentReference();
-//         final mockSubCollection = MockCollectionReference();
-//         final mockMsgDoc = MockDocumentReference();
-
-//         when(() => mockFirestore.collection(any())).thenReturn(mockCollection);
-//         when(() => mockCollection.doc(any())).thenReturn(mockDoc);
-//         when(() => mockDoc.collection(any())).thenReturn(mockSubCollection);
-//         when(() => mockSubCollection.doc()).thenReturn(mockMsgDoc);
-//         when(() => mockMsgDoc.set(any())).thenAnswer((_) async {});
-//         when(() => mockDoc.set(any(), any())).thenAnswer((_) async {});
-
-//         return chatBloc;
-//       },
-//       seed: () => const ChatState(currentRoomId: 'room1', receiverId: 'user2'),
-//       act: (bloc) => bloc
-//           .add(const SendMessageEvent(message: 'Hello', messageType: 'text')),
-//       expect: () => [
-//         isA<ChatState>().having((s) => s.status, 'status', ChatStatus.sending),
-//         isA<ChatState>().having((s) => s.status, 'status', ChatStatus.loaded),
-//       ],
-//     );
-
-//     blocTest<ChatBloc, ChatState>(
-//       'OtherUserTypingUpdatedEvent updates isTyping state',
-//       build: () => chatBloc,
-//       act: (bloc) => bloc.add(const OtherUserTypingUpdatedEvent(true)),
-//       expect: () => [
-//         isA<ChatState>().having((s) => s.isTyping, 'isTyping', true),
-//       ],
-//     );
-//   });
-// }
+    blocTest<ChatBloc, ChatState>(
+      'should call UpdateTypingStatusUseCase when UpdateTypingStatusEvent is added',
+      build: () {
+        when(() => mockUpdateTypingStatusUseCase(any()))
+            .thenAnswer((_) async => const Right(null));
+        return bloc;
+      },
+      act: (bloc) => bloc.add(const UpdateTypingStatusEvent(roomId: 'room1', isTyping: true)),
+      verify: (bloc) {
+        verify(() => mockUpdateTypingStatusUseCase(any())).called(1);
+      },
+    );
+  });
+}

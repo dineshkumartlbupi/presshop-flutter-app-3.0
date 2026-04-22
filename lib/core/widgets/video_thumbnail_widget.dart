@@ -113,11 +113,13 @@ class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
         width: widget.width,
         height: widget.height,
         fit: widget.fit ?? BoxFit.cover,
-        // Optimize memory usage for thumbnails
-        memCacheWidth:
-            widget.width != null ? (widget.width! * 2).toInt() : null,
+        memCacheWidth: (widget.width != null && widget.width != double.infinity)
+            ? (widget.width! * 2).toInt()
+            : 800,
         memCacheHeight:
-            widget.height != null ? (widget.height! * 2).toInt() : null,
+            (widget.height != null && widget.height != double.infinity)
+                ? (widget.height! * 2).toInt()
+                : 800,
         placeholder: (context, url) => Container(
           width: widget.width,
           height: widget.height,
@@ -135,11 +137,13 @@ class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
     }
 
     if (_thumbnailPath != null) {
-      return Image.file(
-        File(_thumbnailPath!),
-        width: widget.width,
-        height: widget.height,
-        fit: widget.fit ?? BoxFit.cover,
+      return SizedBox(
+        width: widget.width ?? double.infinity,
+        height: widget.height ?? double.infinity,
+        child: Image.file(
+          File(_thumbnailPath!),
+          fit: widget.fit ?? BoxFit.cover,
+        ),
       );
     }
 

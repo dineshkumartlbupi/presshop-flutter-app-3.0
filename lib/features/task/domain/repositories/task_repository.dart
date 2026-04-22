@@ -9,7 +9,7 @@ import 'package:presshop/features/earning/data/models/earning_model.dart';
 
 abstract class TaskRepository {
   Future<Either<Failure, TaskAssignedEntity>> getTaskDetail(String taskId,
-      {bool showLoader = true});
+      {double? latitude, double? longitude, bool showLoader = true});
   Future<Either<Failure, void>> acceptRejectTask(
       {required String taskId,
       required String mediaHouseId,

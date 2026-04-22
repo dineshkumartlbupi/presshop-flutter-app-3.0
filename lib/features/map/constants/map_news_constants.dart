@@ -21,6 +21,7 @@ const Map<String, String> markerIcons = {
   "snow": "assets/markers/gifs/snow.webp",
   "earthquake": "assets/markers/gifs/earthquake.webp",
   "icon": "assets/markers/gifs/weather1.webp",
+  "weather": "assets/markers/gifs/weather1.webp",
   // "nomarker": "assets/markers/marker-icons/no_marker.png",
   "nomarker": "assets/markers/gifs/car-crash.webp",
 };
@@ -32,25 +33,24 @@ final List<Map<String, String>> alertTypes = [
     'label': 'Accident',
   },
   {
+    'type': 'crash',
+    'icon': 'assets/markers/gifs/car-crash.webp',
+    'label': 'Crash',
+  },
+  {
     'type': 'fire',
     'icon': 'assets/markers/gifs/fire.webp',
-    'label': 'Fire',
+    'label': 'Fire Alert',
   },
   {'type': 'fight', 'icon': 'assets/markers/gifs/fight.webp', 'label': 'Fight'},
-
-  ///////
   {
     'type': 'knife',
-    // 'icon': 'assets/markers/gifs/knife.webp',
     'icon': 'assets/markers/gifs/public_safty_alert.webp',
-    // 'label': 'Stabbing'
-    'label': 'Public Safety'
+    'label': 'Safety Alert'
   },
   {
     'type': 'gun',
-    // 'icon': 'assets/markers/gifs/gun.webp',
     'icon': 'assets/markers/gifs/vandalism.webp',
-    // 'label': 'Shooting'
     'label': 'Vandalism'
   },
   {
@@ -58,7 +58,6 @@ final List<Map<String, String>> alertTypes = [
     'icon': 'assets/markers/gifs/medicine.webp',
     'label': 'Medical',
   },
-  /////
   {
     'type': 'protest',
     'icon': 'assets/markers/gifs/protesters.webp',
@@ -70,15 +69,9 @@ final List<Map<String, String>> alertTypes = [
     'label': 'Police',
   },
   {
-    'type': 'road-block',
-    'icon': 'assets/markers/gifs/road-block.webp',
-    'label': 'Road Block',
-  },
-  /////
-  {
-    'type': 'floods',
-    'icon': 'assets/markers/gifs/floods.webp',
-    'label': 'Flood',
+    'type': 'weather',
+    'icon': 'assets/markers/gifs/weather1.webp',
+    'label': 'Weather',
   },
   {
     'type': 'snow',
@@ -100,10 +93,10 @@ final Map<String, String> burstIcons = {
   //
   "gun": "assets/markers/bg-removed/bg-removed-vandalism.png",
   "protest": "assets/markers/bg-removed/bg-removed-protest.png",
-  "knife": "assets/markers/bg-removed/bg-removed-public_safety_alert.png",
+  "knife": "assets/markers/bg-removed/bg-removed-vandalism.png",
   "fight": "assets/markers/bg-removed/bg-removed-fight.png",
   //
-  "content": "assets/markers/bg-removed/bg-removed-content.png",
+  "content": "assets/markers/bg-removed/bg-removed-crash.png",
   "police": "assets/markers/bg-removed/bg-removed-police.png",
   "floods": "assets/markers/bg-removed/bg-removed-flood.png",
   "storm": "assets/markers/bg-removed/bg-removed-storm.png",
@@ -113,15 +106,19 @@ final Map<String, String> burstIcons = {
 };
 
 const List<String> alertTypeFilter = [
-  'Alert',
+  'Alerts',
   'Accident',
   'Crash',
   'Fire Alert',
   'Fight',
-  'Knife',
-  'Gun',
+  'Safety Alert',
+  'Vandalism',
   'Medical',
   'Protest',
+  'Police',
+  'Weather',
+  'Snow',
+  'Earthquake',
 ];
 
 const List<String> distanceFilter = [

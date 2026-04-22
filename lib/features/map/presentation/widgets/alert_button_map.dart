@@ -9,21 +9,21 @@ class AlertButtonMap extends StatelessWidget {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Container(
-      padding: EdgeInsets.only(right: size.width * AppDimensions.numD04),
+      // padding: EdgeInsets.only(right: size.width * AppDimensions.numD01),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color.fromARGB(255, 255, 255, 255),
         borderRadius: BorderRadius.all(
             Radius.circular(size.width * AppDimensions.numD53)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: size.width * AppDimensions.numD01,
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: size.width * AppDimensions.numD02,
             offset: Offset(0.0, size.width * AppDimensions.numD005),
           ),
         ],
       ),
       child: Row(
-        spacing: size.width * AppDimensions.numD026,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             margin: EdgeInsets.only(
@@ -35,12 +35,13 @@ class AlertButtonMap extends StatelessWidget {
             decoration: BoxDecoration(
               color: Color(0xffEC4E54),
               borderRadius:
-                  BorderRadius.circular(size.width * AppDimensions.numD26),
+                  BorderRadius.circular(size.width * AppDimensions.numD10),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
                   blurRadius: size.width * AppDimensions.numD01,
-                  offset: Offset(0.0, size.width * AppDimensions.numD005),
+                  offset: Offset(size.width * AppDimensions.numD005,
+                      size.width * AppDimensions.numD005),
                 ),
               ],
             ),
@@ -50,6 +51,7 @@ class AlertButtonMap extends StatelessWidget {
               size: size.width * AppDimensions.numD042,
             ),
           ),
+          SizedBox(width: size.width * AppDimensions.numD02),
           Text(
             "Share Alerts",
             style: TextStyle(
@@ -58,6 +60,7 @@ class AlertButtonMap extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
+          SizedBox(width: size.width * AppDimensions.numD02),
         ],
       ),
     );

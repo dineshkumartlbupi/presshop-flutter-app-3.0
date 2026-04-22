@@ -1,24 +1,24 @@
-import 'package:equatable/equatable.dart';
+// import 'package:equatable/equatable.dart';
 
-abstract class AlertEvent extends Equatable {
-  const AlertEvent();
+// abstract class AlertEvent extends Equatable {
+//   const AlertEvent();
 
-  @override
-  List<Object> get props => [];
-}
+//   @override
+//   List<Object> get props => [];
+// }
 
-class FetchAlertsEvent extends AlertEvent {
-  const FetchAlertsEvent();
-}
+// class FetchAlertsEvent extends AlertEvent {
+//   const FetchAlertsEvent();
+// }
 
-class RefreshAlertsEvent extends AlertEvent {
-  const RefreshAlertsEvent();
-}
+// class RefreshAlertsEvent extends AlertEvent {
+//   const RefreshAlertsEvent();
+// }
 
-class LoadMoreAlertsEvent extends AlertEvent {
-  const LoadMoreAlertsEvent();
-}
+// class LoadMoreAlertsEvent extends AlertEvent {
+//   const LoadMoreAlertsEvent();
+// }
 
-class GetCurrentLocationEvent extends AlertEvent {
-  const GetCurrentLocationEvent();
-}
+// class GetCurrentLocationEvent extends AlertEvent {
+//   const GetCurrentLocationEvent();
+// }

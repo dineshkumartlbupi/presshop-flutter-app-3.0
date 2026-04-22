@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/main.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/services/media_upload_service.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
@@ -126,7 +123,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
     _blinkingController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
-    )..repeat(reverse: true);
+    );
+    // ..repeat(reverse: true); // Disabled blinking as per user request
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
@@ -173,22 +171,29 @@ class MyTaskScreenState extends State<MyTaskScreen>
             current.taskDetail != null,
         listener: (context, state) {
           debugPrint("🚀 UI: Showing Broadcast Dialog");
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            broadcastDialog(
-              size: size,
-              taskDetail: state.taskDetail!,
-              onTapViewDetails: () {
-                context.pop();
-                context.pushNamed(
-                  AppRoutes.broadcastName,
-                  extra: {
-                    'taskId': state.taskDetail!.task.id,
-                    'mediaHouseId': state.taskDetail!.task.mediaHouse.id,
-                  },
-                );
-              },
-            );
-          });
+          context.pushNamed(
+            AppRoutes.broadcastName,
+            extra: {
+              'taskId': state.taskDetail!.task.id,
+              'mediaHouseId': state.taskDetail!.task.mediaHouse.id,
+            },
+          );
+          // WidgetsBinding.instance.addPostFrameCallback((_) {
+          //   // broadcastDialog(
+          //   //   size: size,
+          //   //   taskDetail: state.taskDetail!,
+          //   //   onTapViewDetails: () {
+          //   //     context.pop();
+          //   //     context.pushNamed(
+          //   //       AppRoutes.broadcastName,
+          //   //       extra: {
+          //   //         'taskId': state.taskDetail!.task.id,
+          //   //         'mediaHouseId': state.taskDetail!.task.mediaHouse.id,
+          //   //       },
+          //   //     );
+          //   //   },
+          //   // );
+          // });
         },
         child: BlocListener<TaskBloc, TaskState>(
           listenWhen: (previous, current) =>
@@ -207,13 +212,12 @@ class MyTaskScreenState extends State<MyTaskScreen>
           child: Builder(builder: (context) {
             return Scaffold(
               appBar: NewHomeAppBar(
-                      size: size,
-                      hideLeading: widget.hideLeading,
-                      onFilterTap: () {
-                        showBottomSheet(size);
-                      },
-                    ),
-                
+                size: size,
+                hideLeading: widget.hideLeading,
+                onFilterTap: () {
+                  showBottomSheet(size);
+                },
+              ),
               body: SafeArea(
                 child: Column(
                   children: [
@@ -283,7 +287,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                         List<Task> currentLocalTasks =
                             state.localTasks.where((item) {
                           if (item.status == "accepted" ||
-                              item.status == "completed") return true;
+                              item.status == "completed") {
+                            return true;
+                          }
                           if (item is TaskPending && item.taskDetail != null) {
                             return !item.taskDetail!.deadLine
                                 .isBefore(DateTime.now());
@@ -298,7 +304,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                         List<TaskAll> currentAllTasks =
                             state.allTasks.where((item) {
                           if (item.status == "accepted" ||
-                              item.status == "completed") return true;
+                              item.status == "completed") {
+                            return true;
+                          }
                           if (item.deadlineDate != null) {
                             return !item.deadlineDate!.isBefore(DateTime.now());
                           }
@@ -448,7 +456,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
   Widget showLocalTasksDataWidget(List<Task> taskList, BuildContext context) {
     final localTasksStatus =
-        context.select((TaskBloc bloc) => bloc.state.localTasksStatus);
+        context.select((TaskBloc bloc) => bloc.state.allTasksStatus);
     return LayoutBuilder(
       builder: (context, constraints) {
         return SmartRefresher(
@@ -536,8 +544,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                 fit: BoxFit.cover,
                                                 loadingBuilder: (context, child,
                                                     loadingProgress) {
-                                                  if (loadingProgress == null)
+                                                  if (loadingProgress == null) {
                                                     return child;
+                                                  }
                                                   return Container(
                                                     alignment:
                                                         Alignment.topCenter,
@@ -669,35 +678,34 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
                                       // Animated blinking/highlight effect
                                       // Blinking "Available" badge with infinite animation
-                                      FadeTransition(
-                                        opacity: _blinkingController,
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          height:
-                                              size.width * AppDimensions.numD08,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: size.width *
+                                      // FadeTransition(
+                                      //   opacity: _blinkingController,
+                                      //   child:
+                                      Container(
+                                        alignment: Alignment.center,
+                                        height:
+                                            size.width * AppDimensions.numD08,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: size.width *
+                                                AppDimensions.numD025,
+                                            vertical: size.width *
+                                                AppDimensions.numD01),
+                                        decoration: BoxDecoration(
+                                            color: AppColorTheme.colorThemePink,
+                                            borderRadius: BorderRadius.circular(
+                                                size.width *
+                                                    AppDimensions.numD015)),
+                                        child: Text(
+                                          "Available",
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
                                                   AppDimensions.numD025,
-                                              vertical: size.width *
-                                                  AppDimensions.numD01),
-                                          decoration: BoxDecoration(
-                                              color:
-                                                  AppColorTheme.colorThemePink,
-                                              borderRadius:
-                                                  BorderRadius.circular(size
-                                                          .width *
-                                                      AppDimensions.numD015)),
-                                          child: Text(
-                                            "Available",
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width *
-                                                    AppDimensions.numD025,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600),
-                                          ),
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600),
                                         ),
-                                      )
+                                      ),
+                                      // )
                                     ],
                                   ),
 
@@ -760,8 +768,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           fit: BoxFit.cover,
                                           loadingBuilder: (context, child,
                                               loadingProgress) {
-                                            if (loadingProgress == null)
+                                            if (loadingProgress == null) {
                                               return child;
+                                            }
                                             return Container(
                                               alignment: Alignment.topCenter,
                                               child: Image.asset(
@@ -988,6 +997,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
   Widget allTaskWidget(List<TaskAll> allTaskList, BuildContext context) {
     final allTasksStatus =
         context.select((TaskBloc bloc) => bloc.state.allTasksStatus);
+    final localTasks = context.select((TaskBloc bloc) => bloc.state.localTasks);
     return LayoutBuilder(builder: (context, constraints) {
       return SmartRefresher(
         controller: _allRefreshController,
@@ -1026,19 +1036,28 @@ class MyTaskScreenState extends State<MyTaskScreen>
                     mainAxisSpacing: size.width * AppDimensions.numD04,
                     crossAxisSpacing: size.width * AppDimensions.numD04,
                   ),
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      var item = allTaskList[index];
-                      return InkWell(
-                        onTap: () {
-                          if (item.isAvailableForAccept &&
-                              item.status != "rejected" &&
-                              item.status != "accepted") {
-                            context.pushNamed(AppRoutes.broadcastName, extra: {
-                              'taskId': item.id,
-                              'mediaHouseId': item.mediaHouseDetails?.id ?? "",
-                            }).then((value) {
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        var item = allTaskList[index];
+                        final bool isPendingForMe = localTasks.any((lt) =>
+                            lt is TaskPending && lt.broadCastId == item.id);
+                        final bool isAcceptedByMe = item.acceptedTasks
+                                .any((e) => e.hopperId == myId) ||
+                            localTasks.any((lt) =>
+                                lt is TaskMy &&
+                                lt.taskDetail?.id == item.id &&
+                                lt.status == "accepted");
+                        return InkWell(
+                          onTap: () {
+                            if ((item.isAvailableForAccept || isPendingForMe) &&
+                                item.status != "rejected" &&
+                                !isAcceptedByMe) {
+                              context.pushNamed(AppRoutes.broadcastName, extra: {
+                                'taskId': item.id,
+                                'mediaHouseId': item.mediaHouseDetails?.id ?? "",
+                              }).then((value) {
                               if (context.mounted) {
+                                _allTaskOffset = 0;
                                 context.read<TaskBloc>().add(FetchAllTasksEvent(
                                     offset: 0,
                                     filterParams: {},
@@ -1048,11 +1067,13 @@ class MyTaskScreenState extends State<MyTaskScreen>
                           } else {
                             context
                                 .pushNamed(AppRoutes.taskDetailNewName, extra: {
-                              'taskStatus': item.status,
+                              'taskStatus':
+                                  isAcceptedByMe ? "accepted" : item.status,
                               'taskId': item.id,
                               'totalEarning': "0",
                             }).then((value) {
                               if (context.mounted) {
+                                _allTaskOffset = 0;
                                 context.read<TaskBloc>().add(FetchAllTasksEvent(
                                     offset: 0,
                                     filterParams: {},
@@ -1093,8 +1114,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       fit: BoxFit.cover,
                                       loadingBuilder:
                                           (context, child, loadingProgress) {
-                                        if (loadingProgress == null)
+                                        if (loadingProgress == null) {
                                           return child;
+                                        }
                                         return Container(
                                           alignment: Alignment.topCenter,
                                           child: Image.asset(
@@ -1200,11 +1222,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                      item.isAvailableForAccept &&
-                                              item.status == "accepted"
+                                      isAcceptedByMe
                                           ? "ACCEPTED"
-                                          : item.isAvailableForAccept &&
-                                                  item.status == "pending"
+                                          : (isPendingForMe ||
+                                                  (item.isAvailableForAccept &&
+                                                      item.status == "pending"))
                                               ? "TAP TO ACCEPT"
                                               : "",
                                       style: commonTextStyle(
@@ -1215,7 +1237,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           fontWeight: FontWeight.normal)),
 
                                   //////////////
-                                  item.status == "accepted"
+                                  isAcceptedByMe || item.status == "accepted"
                                       ? Container(
                                           height: size.width *
                                               AppDimensions.numD065,
@@ -1241,47 +1263,51 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         )
-                                      : FadeTransition(
-                                          opacity: (item.isAvailableForAccept &&
-                                                  item.status != "rejected")
-                                              ? _blinkingController
-                                              : const AlwaysStoppedAnimation(
-                                                  1.0),
-                                          child: Container(
-                                            alignment: Alignment.center,
-                                            height: size.width *
-                                                AppDimensions.numD06,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: size.width *
+                                      : // FadeTransition(
+                                      //     opacity: (item.isAvailableForAccept &&
+                                      //             item.status != "rejected")
+                                      //         ? _blinkingController
+                                      //         : const AlwaysStoppedAnimation(
+                                      //             1.0),
+                                      //     child:
+                                      Container(
+                                          alignment: Alignment.center,
+                                          height:
+                                              size.width * AppDimensions.numD06,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: size.width *
+                                                  AppDimensions.numD025,
+                                              vertical: size.width *
+                                                  AppDimensions.numD003),
+                                          decoration: BoxDecoration(
+                                              color: ((isPendingForMe ||
+                                                          item.isAvailableForAccept) &&
+                                                      item.status !=
+                                                          "rejected" &&
+                                                      !isAcceptedByMe)
+                                                  ? AppColorTheme.colorThemePink
+                                                  : Colors.black,
+                                              borderRadius:
+                                                  BorderRadius.circular(size
+                                                          .width *
+                                                      AppDimensions.numD015)),
+                                          child: Text(
+                                            ((isPendingForMe ||
+                                                        item.isAvailableForAccept) &&
+                                                    item.status !=
+                                                        "rejected" &&
+                                                    !isAcceptedByMe)
+                                                ? "Available"
+                                                : "Live",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width *
                                                     AppDimensions.numD025,
-                                                vertical: size.width *
-                                                    AppDimensions.numD003),
-                                            decoration: BoxDecoration(
-                                                color: item.isAvailableForAccept
-                                                    ? item.status == "rejected"
-                                                        ? Colors.black
-                                                        : AppColorTheme
-                                                            .colorThemePink
-                                                    : Colors.black,
-                                                borderRadius:
-                                                    BorderRadius.circular(size
-                                                            .width *
-                                                        AppDimensions.numD015)),
-                                            child: Text(
-                                              item.isAvailableForAccept
-                                                  ? item.status == "rejected"
-                                                      ? "Live"
-                                                      : "Available"
-                                                  : "Live",
-                                              style: commonTextStyle(
-                                                  size: size,
-                                                  fontSize: size.width *
-                                                      AppDimensions.numD025,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600),
                                           ),
-                                        )
+                                        ),
+                                  // )
                                 ],
                               ),
                               SizedBox(
@@ -1576,10 +1602,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         .isAtSameMomentAs(parseFromDate)) {
                                   item.toDate = pickedDate;
                                 } else {
-                                  showSnackBar(
-                                      "Date Error",
-                                      "Please select to date above from date",
-                                      Colors.red);
+                                  // showSnackBar(
+                                  //     "Date Error",
+                                  //     "Please select to date above from date",
+                                  //     Colors.red);
                                 }
                               }
 

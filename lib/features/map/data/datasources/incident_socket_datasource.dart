@@ -4,10 +4,10 @@ import 'package:presshop/core/api/global_socket_client.dart';
 import 'package:presshop/core/api/socket_constants.dart';
 
 class IncidentSocketDataSource {
-  final GlobalSocketClient _client;
 
   IncidentSocketDataSource({required GlobalSocketClient client})
       : _client = client;
+  final GlobalSocketClient _client;
 
   Function(dynamic)? onIncidentNew;
   Function(dynamic)? onIncidentUpdated;
@@ -61,9 +61,19 @@ class IncidentSocketDataSource {
     _client.emit(SocketEvents.incidentCreate, data);
   }
 
+  void joinNewsRoom() {
+    _client.emit(SocketEvents.joinNewsAll);
+    debugPrint(
+        ":::: Joined Global News Room :::: event: ${SocketEvents.joinNewsAll}");
+  }
+
   void dispose() {
     _client.off(SocketEvents.incidentNew);
     _client.off(SocketEvents.incidentUpdated);
     _client.off(SocketEvents.incidentCreated);
+  }
+
+  void emitIncidentView({required String incidentId}) {
+    _client.emit('incident:view', {"incidentId": incidentId});
   }
 }

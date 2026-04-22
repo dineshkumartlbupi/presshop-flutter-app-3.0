@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
+import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:presshop/core/services/appsflyer_service.dart';
 import 'package:presshop/core/services/local_notification_service.dart';
@@ -20,6 +22,9 @@ import 'package:presshop/main.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:presshop/features/publish/data/models/tutorials_model.dart';
 import 'package:presshop/features/publish/data/models/category_data_model.dart';
+import 'package:presshop/core/models/upload_job.dart';
+import 'package:presshop/core/models/upload_chunk.dart';
+import 'package:presshop/features/media/domain/services/background_upload_service.dart';
 
 class AppInitializationService {
   static Future<void> loadEnvironment() async {
@@ -66,6 +71,9 @@ class AppInitializationService {
       // Disable Crashlytics in debug mode
       await FirebaseCrashlytics.instance
           .setCrashlyticsCollectionEnabled(AppLogger.isCrashlyticsEnabled);
+
+      // Explicitly enable Analytics
+      await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
 
       await localNotificationService.setup();
 
@@ -123,7 +131,7 @@ class AppInitializationService {
             sharedPreferences!.getBool(SharedPreferencesKeys.rememberKey)!;
       }
 
-      // Set currency symbol
+      // get currency symbol
       currencySymbol = sharedPreferences!
               .getString(SharedPreferencesKeys.currencySymbolKey) ??
           "£";
@@ -175,12 +183,10 @@ class AppInitializationService {
 
   /// Initialize AppsFlyer if needed
   static Future<void> initializeAppsFlyerIfNeeded() async {
-    if (!rememberMe) {
-      try {
-        await AppsFlyerService.initialize();
-      } catch (e) {
-        debugPrint("❌ AppsFlyer initialization error: $e");
-      }
+    try {
+      await AppsFlyerService.initialize();
+    } catch (e) {
+      debugPrint("❌ AppsFlyer initialization error: $e");
     }
   }
 
@@ -198,20 +204,17 @@ class AppInitializationService {
     debugPrint("✅ Audio player configured");
   }
 
-  /// Log app open event to Facebook
+  /// Log app open event to Analytics
   static void logAppOpenEvent() {
     try {
-      // facebookAppEvents.logEvent(
-      //   name: "app_open",
-      //   parameters: {
-      //     "app_name": "Presshop",
-      //     "platform": Platform.operatingSystem,
-      //     "version": Platform.version,
-      //   },
-      // );
-      debugPrint("✅ App open event logged");
+      AppLogger.trackEvent(EventNames.appOpen, parameters: {
+        "app_name": "Presshop",
+        "platform": Platform.operatingSystem,
+        "version": Platform.version,
+      });
+      //  debugPrint("✅ App open event logged");
     } catch (e) {
-      debugPrint("❌ Facebook event logging error: $e");
+      debugPrint("❌ Analytics event logging error: $e");
     }
   }
 
@@ -220,9 +223,18 @@ class AppInitializationService {
       await Hive.initFlutter();
       Hive.registerAdapter(TutorialsModelAdapter());
       Hive.registerAdapter(CategoryDataModelAdapter());
+      Hive.registerAdapter(UploadJobAdapter());
+      Hive.registerAdapter(UploadChunkAdapter());
       await Hive.openBox<TutorialsModel>('tutorials_box');
       await Hive.openBox<CategoryDataModel>('categories_box');
+      await Hive.openBox<UploadJob>('upload_jobs');
       await Hive.openBox('sync_cache');
+
+      // Initialize background upload service so it responds to App actions on launch!
+      await BackgroundUploadService().initialize();
+      // Auto-resume any paused background uploads
+      BackgroundUploadService().startOrResumeUpload();
+
       debugPrint("✅ Hive initialized and boxes opened");
     } catch (e) {
       debugPrint("❌ Hive initialization error: $e");

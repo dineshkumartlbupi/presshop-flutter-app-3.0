@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class User extends Equatable {
-
   const User({
     required this.id,
     required this.firstName,
@@ -24,6 +23,7 @@ class User extends Equatable {
     this.profileImage,
     this.refreshToken,
     this.source,
+    this.totalEarnings,
   });
   final String id;
   final String firstName;
@@ -33,6 +33,7 @@ class User extends Equatable {
   final String? referralCode;
   final String? currencySymbol;
   final String? totalHopperArmy;
+  final String? totalEarnings;
   final String? avatarId;
   final String? avatar;
   final String? userName;
@@ -57,6 +58,7 @@ class User extends Equatable {
         referralCode,
         currencySymbol,
         totalHopperArmy,
+        totalEarnings,
         avatarId,
         avatar,
         userName,

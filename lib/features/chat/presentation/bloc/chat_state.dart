@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:presshop/features/chat/data/models/chat_models.dart';
 
 enum ChatStatus { initial, loading, loaded, failure, sending, recording }
 
@@ -18,11 +19,14 @@ class ChatState extends Equatable {
     this.receiverName = '',
     this.receiverImage = '',
     this.uploadProgress = '0.0',
+    this.offset = 0,
+    this.hasMore = true,
+    this.isFetchingMore = false,
   });
   final ChatStatus status;
-  final List<Map<String, dynamic>> chatList;
-  final List<Map<String, dynamic>> searchResult;
-  final List<Map<String, dynamic>> messages;
+  final List<ChatRoomModel> chatList;
+  final List<ChatRoomModel> searchResult;
+  final List<ChatMessageModel> messages;
   final bool isTyping; // Received typing status from other user
   final bool isSelfTyping;
   final bool isRecording;
@@ -33,12 +37,15 @@ class ChatState extends Equatable {
   final String receiverName;
   final String receiverImage;
   final String uploadProgress;
+  final int offset;
+  final bool hasMore;
+  final bool isFetchingMore;
 
   ChatState copyWith({
     ChatStatus? status,
-    List<Map<String, dynamic>>? chatList,
-    List<Map<String, dynamic>>? searchResult,
-    List<Map<String, dynamic>>? messages,
+    List<ChatRoomModel>? chatList,
+    List<ChatRoomModel>? searchResult,
+    List<ChatMessageModel>? messages,
     bool? isTyping,
     bool? isSelfTyping,
     bool? isRecording,
@@ -49,6 +56,9 @@ class ChatState extends Equatable {
     String? receiverName,
     String? receiverImage,
     String? uploadProgress,
+    int? offset,
+    bool? hasMore,
+    bool? isFetchingMore,
   }) {
     return ChatState(
       status: status ?? this.status,
@@ -65,6 +75,9 @@ class ChatState extends Equatable {
       receiverName: receiverName ?? this.receiverName,
       receiverImage: receiverImage ?? this.receiverImage,
       uploadProgress: uploadProgress ?? this.uploadProgress,
+      offset: offset ?? this.offset,
+      hasMore: hasMore ?? this.hasMore,
+      isFetchingMore: isFetchingMore ?? this.isFetchingMore,
     );
   }
 
@@ -84,5 +97,8 @@ class ChatState extends Equatable {
         receiverName,
         receiverImage,
         uploadProgress,
+        offset,
+        hasMore,
+        isFetchingMore,
       ];
 }

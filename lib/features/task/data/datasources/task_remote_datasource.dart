@@ -15,7 +15,7 @@ import 'package:presshop/features/task/data/models/task_assigned_response_model.
 
 abstract class TaskRemoteDataSource {
   Future<TaskAssignedResponseModel> getTaskDetail(String taskId,
-      {bool showLoader = true});
+      {double? latitude, double? longitude, bool showLoader = true});
   Future<void> acceptRejectTask(
       {required String taskId,
       required String mediaHouseId,
@@ -42,16 +42,21 @@ abstract class TaskRemoteDataSource {
 }
 
 class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
-  final ApiClient apiClient;
 
   TaskRemoteDataSourceImpl({required this.apiClient});
+  final ApiClient apiClient;
 
   @override
   Future<TaskAssignedResponseModel> getTaskDetail(String taskId,
-      {bool showLoader = true}) async {
+      {double? latitude, double? longitude, bool showLoader = true}) async {
     try {
+      final Map<String, dynamic> queryParams = {};
+      if (latitude != null) queryParams['latitude'] = latitude;
+      if (longitude != null) queryParams['longitude'] = longitude;
+
       final response = await apiClient.get(
           "${ApiConstantsNew.tasks.assignedTaskDetail}$taskId",
+          queryParameters: queryParams.isNotEmpty ? queryParams : null,
           showLoader: showLoader);
 
       final data = response.data;

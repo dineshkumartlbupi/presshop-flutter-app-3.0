@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:presshop/core/core_export.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 
 class NewsMediaWidget extends StatefulWidget {
-  final String mediaUrl;
-  final String imageUrl;
-  final bool isVideo;
-  final Size size;
 
   const NewsMediaWidget({
-    Key? key,
+    super.key,
     required this.mediaUrl,
     required this.imageUrl,
     required this.isVideo,
     required this.size,
-  }) : super(key: key);
+  });
+  final String mediaUrl;
+  final String imageUrl;
+  final bool isVideo;
+  final Size size;
 
   @override
   State<NewsMediaWidget> createState() => _NewsMediaWidgetState();
@@ -43,7 +42,7 @@ class _NewsMediaWidgetState extends State<NewsMediaWidget> {
       looping: false,
       aspectRatio: _videoPlayerController!.value.aspectRatio,
       placeholder: widget.imageUrl.isNotEmpty
-          ? Image.network(widget.imageUrl, fit: BoxFit.cover)
+          ? Image.network(widget.imageUrl, fit: BoxFit.cover, cacheHeight: 400)
           : const Center(child: CircularProgressIndicator()),
       errorBuilder: (context, errorMessage) {
         return Center(
@@ -83,6 +82,7 @@ class _NewsMediaWidgetState extends State<NewsMediaWidget> {
                         width: double.infinity,
                         height: double.infinity,
                         fit: BoxFit.cover,
+                        cacheHeight: (widget.size.height * 0.3 * 2).toInt(),
                       ),
                       const Icon(Icons.play_circle_fill,
                           color: Colors.white, size: 50),
@@ -96,6 +96,7 @@ class _NewsMediaWidgetState extends State<NewsMediaWidget> {
         width: double.infinity,
         height: widget.size.height * 0.3,
         fit: BoxFit.cover,
+        cacheHeight: (widget.size.height * 0.3 * 2).toInt(),
         errorBuilder: (context, error, stackTrace) => Container(
           height: widget.size.height * 0.3,
           color: Colors.grey[200],

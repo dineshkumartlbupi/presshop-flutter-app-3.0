@@ -20,16 +20,16 @@ class GetAllTasks implements UseCase<List<TaskAll>, GetAllTasksParams> {
 }
 
 class GetAllTasksParams extends Equatable {
-  final int limit;
-  final int offset;
-  final Map<String, dynamic>? filterParams;
-  final bool showLoader;
 
   const GetAllTasksParams(
       {required this.limit,
       required this.offset,
       this.filterParams,
       this.showLoader = true});
+  final int limit;
+  final int offset;
+  final Map<String, dynamic>? filterParams;
+  final bool showLoader;
 
   @override
   List<Object?> get props => [limit, offset, filterParams, showLoader];

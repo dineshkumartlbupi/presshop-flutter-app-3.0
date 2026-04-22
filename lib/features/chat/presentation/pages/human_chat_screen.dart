@@ -16,28 +16,22 @@ import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:presshop/core/widgets/common_widgets.dart' hide Config;
-import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
+import 'package:presshop/features/chat/presentation/pages/full_video_view.dart';
 import 'package:record/record.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 import 'package:presshop/main.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/core_export.dart' hide Config;
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
-import 'SqliteDataBase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/chat/presentation/bloc/chat_bloc.dart';
 import 'package:presshop/features/chat/presentation/bloc/chat_event.dart';
 import 'package:presshop/features/chat/presentation/bloc/chat_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
+import 'package:presshop/features/chat/data/models/chat_models.dart';
 
 // ignore: must_be_immutable
 class ConversationScreen extends StatefulWidget {
@@ -72,7 +66,6 @@ class _ConversationScreenState extends State<ConversationScreen>
   ScrollController chatScrollController = ScrollController();
   PlayerController controller = PlayerController();
 
-  SqliteDataBase sqliteDatabase = SqliteDataBase();
   Timer? timer;
 
   String lastSeen = "";
@@ -152,6 +145,7 @@ class _ConversationScreenState extends State<ConversationScreen>
   @override
   void dispose() {
     _chatBloc.add(LeaveChatRoomEvent());
+    chatScrollController.dispose();
     super.dispose();
     controller.dispose();
     timer?.cancel();
@@ -180,11 +174,6 @@ class _ConversationScreenState extends State<ConversationScreen>
         break;
     }
   }
-
-  ///Typing-->
-  // void _onTypingFocusChange() {
-  //   addTyping(messageController.text.length);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -275,7 +264,8 @@ class _ConversationScreenState extends State<ConversationScreen>
               children: [
                 if (state.messages.isNotEmpty &&
                     (state.status == ChatStatus.loading ||
-                        state.status == ChatStatus.sending))
+                        state.status == ChatStatus.sending ||
+                        state.isFetchingMore))
                   const LinearProgressIndicator(
                     backgroundColor: AppColorTheme.colorLightGrey,
                     valueColor: AlwaysStoppedAnimation<Color>(
@@ -288,63 +278,60 @@ class _ConversationScreenState extends State<ConversationScreen>
                       ? showLoader()
                       : state.messages.isNotEmpty
                           ? ListView.separated(
+                              controller: chatScrollController,
                               padding: EdgeInsets.all(
                                 size.width * AppDimensions.numD018,
                               ),
                               separatorBuilder: (context, index) =>
                                   const SizedBox(height: 10),
                               itemBuilder: (context, index) {
-                                var document = state.messages[index];
-                                final String senderIdRaw =
-                                    (document['sender_id'] is Map)
-                                        ? (document['sender_id']['_id']
-                                                ?.toString() ??
-                                            "")
-                                        : (document['sender_id']?.toString() ??
-                                            "");
-                                final String senderDataId =
-                                    (document['sender_data'] != null)
-                                        ? (document['sender_data']['_id']
-                                                ?.toString() ??
-                                            "")
-                                        : "";
-
-                                final String currentHopperIdStr =
-                                    _senderId.trim().toLowerCase();
-                                final isMe =
-                                    (senderIdRaw.trim().toLowerCase() ==
-                                                currentHopperIdStr ||
-                                            senderDataId.trim().toLowerCase() ==
-                                                currentHopperIdStr) &&
-                                        currentHopperIdStr.isNotEmpty;
-
-                                // Debug log for alignment
-                                if (index == 0 ||
-                                    index == state.messages.length - 1) {
-                                  debugPrint(
-                                      "Msg $index Alignment Debug: senderIdRaw=$senderIdRaw, senderDataId=$senderDataId, currentHopperId=$_senderId, isMe=$isMe");
+                                if (index == state.messages.length) {
+                                  return const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 20),
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
                                 }
+                                var document = state.messages[index];
+                                final isMe = document.isSender;
 
-                                return Container(
-                                  alignment: isMe
-                                      ? Alignment.centerRight
-                                      : Alignment.centerLeft,
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        size.width * AppDimensions.numD03,
-                                    vertical:
-                                        size.width * AppDimensions.numD015,
-                                  ),
-                                  child: messageWidget(
-                                    document,
-                                    isMe ? "sender" : "receiver",
-                                    size,
-                                  ),
-                                );
+                                try {
+                                  return Container(
+                                    alignment: isMe
+                                        ? Alignment.centerRight
+                                        : Alignment.centerLeft,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal:
+                                          size.width * AppDimensions.numD03,
+                                      vertical:
+                                          size.width * AppDimensions.numD015,
+                                    ),
+                                    child: messageWidget(
+                                      document,
+                                      isMe ? "sender" : "receiver",
+                                      size,
+                                    ),
+                                  );
+                                } catch (e, stack) {
+                                  debugPrint(
+                                      "Error rendering message $index: $e\n$stack");
+                                  return Container(
+                                    color: Colors.red,
+                                    padding: const EdgeInsets.all(8),
+                                    child: Text(
+                                      "Error: $e",
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                  );
+                                }
                               },
                               reverse: true,
-                              shrinkWrap: true,
-                              itemCount: state.messages.length,
+                              shrinkWrap: false,
+                              itemCount: state.hasMore
+                                  ? state.messages.length + 1
+                                  : state.messages.length,
                             )
                           : Container(),
                 ),
@@ -392,20 +379,6 @@ class _ConversationScreenState extends State<ConversationScreen>
         },
       ),
     );
-  }
-
-  Future<void> sendLocalChat(var data) async {
-    debugPrint("data: $data");
-    final db = await sqliteDatabase.getDataBase();
-    await db
-        .insert('CHAT', data, conflictAlgorithm: ConflictAlgorithm.replace)
-        .then((value) async {
-      debugPrint("Inserted");
-
-      if (mounted) {
-        setState(() {});
-      }
-    });
   }
 
   /*  /// For checking person is Online Or OffLine
@@ -1038,7 +1011,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
   }
 
-  Widget leftChatWidget(Map<String, dynamic> document) {
+  Widget leftChatWidget(ChatMessageModel document) {
     return Padding(
       padding: EdgeInsets.only(right: size.width * AppDimensions.numD20),
       child: Row(
@@ -1102,7 +1075,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                     vertical: size.width * AppDimensions.numD025,
                   ),
                   child: Text(
-                    document["message"].toString(),
+                    document.message,
                     style: TextStyle(
                       fontSize: size.width * AppDimensions.numD035,
                       color: Colors.black,
@@ -1134,7 +1107,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
   }
 
-  Widget rightChatWidget(Map<String, dynamic> document) {
+  Widget rightChatWidget(ChatMessageModel document) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1251,7 +1224,7 @@ class _ConversationScreenState extends State<ConversationScreen>
   }
 
   ///Message widgets-->
-  Widget messageWidget(Map<String, dynamic> document, String type, size) {
+  Widget messageWidget(ChatMessageModel document, String type, size) {
     //callCustomNotificationApi(document['message_type'] == 'text' ?document["message"].toString():document['message_type']);
     return Slidable(
       key: ValueKey(document["messageId"].toString()),
@@ -1292,15 +1265,14 @@ class _ConversationScreenState extends State<ConversationScreen>
             ? CrossAxisAlignment.end
             : CrossAxisAlignment.start,
         children: [
-          document['message_type'] == 'text'
+          document.messageType == 'text'
               ? type == 'sender'
                   ? rightChatWidget(document)
                   : leftChatWidget(document)
               : Container(),
 
           /// To Send Image
-          document['message_type'] == 'image' ||
-                  document['message_type'] == 'imageFile'
+          document.messageType == 'image'
               ? type == 'sender'
                   ? rightImageChatWidget(document)
                   : leftImageChatWidget(document)
@@ -1361,7 +1333,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                               2,
                         ),
                         margin: const EdgeInsets.all(8.0),
-                        child: document['uploadPercent'] < 100
+                        child: (document['uploadPercent'] ?? 100) < 100
                             ? Container(
                                 margin: const EdgeInsets.all(20),
                                 child: Stack(
@@ -1369,7 +1341,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                                   children: [
                                     CircularProgressIndicator(
                                       value: double.parse(
-                                        document['uploadPercent'].toString(),
+                                        (document['uploadPercent'] ?? 0)
+                                            .toString(),
                                       ),
                                       strokeWidth: 4,
                                       valueColor:
@@ -1575,7 +1548,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                               2,
                         ),
                         margin: const EdgeInsets.all(8.0),
-                        child: document['uploadPercent'] < 100
+                        child: (document['uploadPercent'] ?? 100) < 100
                             ? Container(
                                 margin: const EdgeInsets.all(20),
                                 child: Stack(
@@ -1583,7 +1556,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                                   children: [
                                     CircularProgressIndicator(
                                       value: double.parse(
-                                        document['uploadPercent'].toString(),
+                                        (document['uploadPercent'] ?? 0)
+                                            .toString(),
                                       ),
                                       strokeWidth: 4,
                                       valueColor:
@@ -1839,7 +1813,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                 )
               : Container(),
 
-          document['message_type'] == 'recording'
+          document.messageType == 'recording'
               ? type == 'sender'
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -1849,17 +1823,19 @@ class _ConversationScreenState extends State<ConversationScreen>
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Container(
-                              width: document['uploadPercent'] < 100
-                                  ? size.width * AppDimensions.numD60
-                                  : size.width * AppDimensions.numD60,
+                              width: size.width * AppDimensions.numD60,
                               decoration: BoxDecoration(
                                 color: AppColorTheme.colorLightGrey,
                                 borderRadius: BorderRadius.circular(
                                   size.width * AppDimensions.numD06,
                                 ),
                               ),
-                              child: document['uploadPercent'] < 100
-                                  ? showLoader()
+                              child: (document['uploadPercent'] ?? 100) < 100
+                                  ? const Center(
+                                      child: CircularProgressIndicator(
+                                        color: AppColorTheme.colorThemePink,
+                                      ),
+                                    )
                                   : Row(
                                       children: [
                                         InkWell(
@@ -1873,7 +1849,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                                               });
                                             } else {
                                               downloadAudioFromUrl(
-                                                document['message'],
+                                                document.message,
                                               ).then((path) {
                                                 initWave(path, true);
                                                 setState(() {
@@ -1887,7 +1863,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                                             height: size.width *
                                                 AppDimensions.numD06,
                                             child: Icon(
-                                              document['isAudioSelected']
+                                              (document['isAudioSelected'] ??
+                                                      false)
                                                   ? Icons.pause_circle
                                                   : Icons.play_circle,
                                               color: Colors.black,
@@ -1900,7 +1877,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                                           width:
                                               size.width * AppDimensions.numD02,
                                         ),
-                                        document['isAudioSelected']
+                                        (document['isAudioSelected'] ?? false)
                                             ? Expanded(
                                                 child: AudioFileWaveforms(
                                                   size: Size(
@@ -2142,7 +2119,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        if (document['isAudioSelected'] ==
+                                        if ((document['isAudioSelected'] ??
+                                                false) ==
                                             true) {
                                           controller.pausePlayer();
                                           setState(() {
@@ -2164,7 +2142,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                                         height:
                                             size.width * AppDimensions.numD06,
                                         child: Icon(
-                                          document['isAudioSelected']
+                                          (document['isAudioSelected'] ?? false)
                                               ? Icons.pause_circle
                                               : Icons.play_circle,
                                           color: Colors.black,
@@ -2173,7 +2151,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                                         ),
                                       ),
                                     ),
-                                    document['isAudioSelected']
+                                    (document['isAudioSelected'] ?? false)
                                         ? Expanded(
                                             child: AudioFileWaveforms(
                                               size: Size(
@@ -2301,7 +2279,7 @@ class _ConversationScreenState extends State<ConversationScreen>
       controller.startPlayer();
       debugPrint("Play=======>");
     } else {
-      controller.pausePlayer();
+      await controller.pausePlayer();
     }
     controller.onPlayerStateChanged.listen((event) {
       if (event.isPaused) {
@@ -2354,14 +2332,15 @@ class _ConversationScreenState extends State<ConversationScreen>
     _ampTimer?.cancel();
 
     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
-      setState(() => _recordDuration++);
+      if (mounted) setState(() => _recordDuration++);
     });
-    _ampTimer = Timer.periodic(const Duration(milliseconds: 200), (t) async {
-      setState(() {});
+    // Increased from 200ms to 500ms — reduces from 5 to 2 rebuilds/sec of the entire chat widget tree
+    _ampTimer = Timer.periodic(const Duration(milliseconds: 500), (t) async {
+      if (mounted) setState(() {});
     });
   }
 
-  Widget rightVideoChatWidget(Map<String, dynamic> document) {
+  Widget rightVideoChatWidget(ChatMessageModel document) {
     return Container(
       margin: EdgeInsets.only(left: size.width * AppDimensions.numD20),
       child: Row(
@@ -2387,7 +2366,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                     ),
                   ),
                   padding: EdgeInsets.all(size.width * AppDimensions.numD03),
-                  child: document['uploadPercent'] < 100
+                  child: (document['uploadPercent'] ?? 100) < 100
                       ? SizedBox(
                           height: size.width * AppDimensions.numD55,
                           width: size.width,
@@ -2543,7 +2522,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
   }
 
-  Widget leftVideoChatWidget(Map<String, dynamic> document) {
+  Widget leftVideoChatWidget(ChatMessageModel document) {
     return Container(
       margin: EdgeInsets.only(right: size.width * AppDimensions.numD20),
       child: Row(
@@ -2667,7 +2646,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
   }
 
-  Widget rightImageChatWidget(Map<String, dynamic> document) {
+  Widget rightImageChatWidget(ChatMessageModel document) {
     return Container(
       margin: EdgeInsets.only(left: size.width * AppDimensions.numD20),
       child: Row(
@@ -2707,7 +2686,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                       borderRadius: BorderRadius.circular(
                         size.width * AppDimensions.numD01,
                       ),
-                      child: document['uploadPercent'] > 100
+                      child: (document['uploadPercent'] ?? 100) > 100
                           ? Container(
                               padding: EdgeInsets.all(
                                 size.width * AppDimensions.numD03,
@@ -2726,7 +2705,11 @@ class _ConversationScreenState extends State<ConversationScreen>
                                   ),
                                 ),
                               ),
-                              child: showLoader(),
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColorTheme.colorThemePink,
+                                ),
+                              ),
                             )
                           : document['message_type'] == "imageFile" &&
                                   File(document['message']).existsSync()
@@ -2848,7 +2831,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
   }
 
-  Widget leftImageChatWidget(Map<String, dynamic> document) {
+  Widget leftImageChatWidget(ChatMessageModel document) {
     debugPrint("image::::::${document['message'].toString()}");
     return Container(
       margin: EdgeInsets.only(right: size.width * AppDimensions.numD20),
@@ -3155,6 +3138,14 @@ class _ConversationScreenState extends State<ConversationScreen>
       ),
     );
 
+    // Add scroll listener for pagination
+    chatScrollController
+        .removeListener(_scrollListener); // Remove if already added
+    chatScrollController.addListener(_scrollListener);
+
+    // Check online status
+    _chatBloc.add(CheckOnlineStatusEvent(_receiverId));
+
     if (widget.message.isNotEmpty && !_isInitialMessageSent) {
       _isInitialMessageSent = true;
       commonValues(
@@ -3172,18 +3163,36 @@ class _ConversationScreenState extends State<ConversationScreen>
           showPredictiveMsg = messageController.text.isNotEmpty;
         });
         if (roomId.isNotEmpty) {
+          debugPrint(
+              "ConversationScreen: Adding UpdateTypingStatusEvent for room: $roomId, isTyping: ${messageController.text.isNotEmpty}");
           _chatBloc.add(
             UpdateTypingStatusEvent(
               roomId: roomId,
               isTyping: messageController.text.isNotEmpty,
+              typedValue: messageController.text,
             ),
           );
+        } else {
+          debugPrint(
+              "ConversationScreen: Cannot send typing status, roomId is EMPTY");
         }
       }
     });
 
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  void _scrollListener() {
+    if (chatScrollController.hasClients) {
+      if (chatScrollController.position.pixels >=
+          chatScrollController.position.maxScrollExtent - 200) {
+        if (!_chatBloc.state.isFetchingMore && _chatBloc.state.hasMore) {
+          debugPrint(":::: Fetching More Messages ::::");
+          _chatBloc.add(const FetchMoreMessagesEvent());
+        }
+      }
     }
   }
 
@@ -3218,6 +3227,10 @@ class _ConversationScreenState extends State<ConversationScreen>
     callCustomNotificationApi(
       messageType == "text" ? messageInput : messageType,
     );
+
+    AppLogger.trackEvent(EventNames.messageSent, parameters: {
+      'message_type': messageType,
+    });
   }
 
   /// To get Videos From the Gallery
@@ -3395,12 +3408,12 @@ String timeParse(String time) {
 }
 */
 String timeParse(String time) {
-  debugPrint("Time Before parse Value : $time");
+  // debugPrint("Time Before parse Value : $time");
 
   var utc = DateTime.parse(time).toLocal();
 
-  debugPrint("Time parse Value : ${utc.toUtc().toLocal()}");
-  debugPrint("Time parse Value : $utc");
+  // debugPrint("Time parse Value : ${utc.toUtc().toLocal()}");
+  // debugPrint("Time parse Value : $utc");
 
   //utc = utc.add(DateTime.parse(time).timeZoneOffset);
 

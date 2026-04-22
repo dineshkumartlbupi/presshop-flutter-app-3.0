@@ -30,7 +30,7 @@ class TaskAssignedDataModel {
 
   factory TaskAssignedDataModel.fromJson(Map<String, dynamic> json) {
     bool isFlattened = json.containsKey('_id') && !json.containsKey('task');
-
+    List<HopperLocationModel> activeHoppersLocations = [];
     if (isFlattened) {
       final String effectiveRoomId =
           SafeParser.parseString(json['room_id'] ?? json['resp']?['room_id']);
@@ -84,20 +84,25 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
     required super.createdAt,
     required super.updatedAt,
     required List<TaskContentDataModel> super.content,
-    super.isNeedPhoto = false,
-    super.isNeedVideo = false,
-    super.isNeedInterview = false,
-    super.photoPrice = "0",
-    super.videoPrice = "0",
-    super.interviewPrice = "0",
-    super.currency = "",
-    super.currencySymbol = "",
-    super.hopperInfo = const [],
-    super.hopperTaskAmount = "0",
-    super.acceptedHoppers = const [],
-    super.distance = "",
-    super.walkTime = "",
-    super.driveTime = "",
+    super.isNeedPhoto,
+    super.isNeedVideo,
+    super.isNeedInterview,
+    super.photoPrice,
+    super.videoPrice,
+    super.interviewPrice,
+    super.currency,
+    super.currencySymbol,
+    List<HopperInfoDataModel> super.hopperInfo = const [],
+    super.hopperTaskAmount,
+    super.hopperLocation,
+    super.activeHoppersCount,
+    super.activeHoppersLocations,
+    super.acceptedHoppers,
+    super.distance,
+    super.walkTime,
+    super.driveTime,
+    super.specialRequirements,
+    super.preferences,
   });
 
   factory TaskAssignedItemModel.fromJson(Map<String, dynamic> json) {
@@ -156,6 +161,10 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
       hopperInfo: SafeParser.parseList<HopperInfoDataModel>(
           json['hopperInfo'], (e) => HopperInfoDataModel.fromJson(e ?? {})),
       hopperTaskAmount: SafeParser.parseString(json['hopperTaskAmount']),
+      // hopperLocation: SafeParser.parseList<HopperLocationModel>(
+      //   json['hopperLocation'],
+      //   (e) => HopperLocationModel.fromJson(e ?? {}),
+      // ),
       acceptedHoppers: SafeParser.parseList<String>(
           json['accepted_hoppers'], (e) => SafeParser.parseString(e)),
       distance: SafeParser.parseString(json['distance'] ?? json['miles'] ?? ""),
@@ -163,6 +172,29 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
           json['timeByWalking'] ?? json['by_feet'] ?? json['walk_time'] ?? ""),
       driveTime: SafeParser.parseString(
           json['timeByDriving'] ?? json['by_car'] ?? json['drive_time'] ?? ""),
+      hopperLocation: (json['hopperLocation'] is String)
+          ? HopperLocationModel.fromJson(jsonDecode(json['hopperLocation']))
+          : (json['hopperLocation'] != null
+              ? HopperLocationModel.fromJson(json['hopperLocation'])
+              : null),
+      activeHoppersLocations: SafeParser.parseList<HopperLocationModel>(
+          json['active_hopper_locations'] ??
+              json['active_hoppers_location'] ??
+              json['active_hoppers_locations'],
+          (e) => HopperLocationModel.fromJson(e ?? {})),
+      activeHoppersCount: SafeParser.parseInt(json['active_hoppers'] ??
+          json['hopperCount'] ??
+          json['assignedHoppers'] ??
+          SafeParser.parseList<HopperLocationModel>(
+              json['active_hopper_locations'] ??
+                  json['active_hoppers_location'] ??
+                  json['active_hoppers_locations'],
+              (e) => HopperLocationModel.fromJson(e ?? {})).length),
+      specialRequirements: SafeParser.parseString(
+          json['special_requirements'] ?? json['specialRequirements']),
+      preferences: (json['preferences'] is Map<String, dynamic>)
+          ? json['preferences']
+          : null,
     );
   }
 }
@@ -263,6 +295,34 @@ class TaskContentDataModel extends TaskContentEntity {
           SafeParser.parseDateTime(json['time_stamp'] ?? json['createdAt']),
     );
   }
+}
+
+class HopperLocationModel {
+
+  HopperLocationModel({
+    this.id = "",
+    this.latitude = 0.0,
+    this.longitude = 0.0,
+    this.avatar = "",
+  });
+
+  HopperLocationModel.fromJson(Map<String, dynamic> json) {
+    id = (json["id"] ?? "").toString();
+    latitude = double.tryParse((json["latitude"] ?? "0.0").toString()) ?? 0.0;
+    longitude = double.tryParse((json["longitude"] ?? "0.0").toString()) ?? 0.0;
+    avatar = (json["avatarImage"] ?? json["avatar"] ?? "").toString();
+
+    // Auto-fix for swapped coordinates (Latitude cannot exceed 90 degrees)
+    if (latitude.abs() > 90 && longitude.abs() <= 90) {
+      double temp = latitude;
+      latitude = longitude;
+      longitude = temp;
+    }
+  }
+  String id = "";
+  double latitude = 0.0;
+  double longitude = 0.0;
+  String avatar = "";
 }
 
 class ChatRoomDataModel extends ChatRoomEntity {

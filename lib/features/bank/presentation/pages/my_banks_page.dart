@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 // import 'package:presshop/core/widgets/common_web_view.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
@@ -11,7 +10,6 @@ import 'package:presshop/features/bank/presentation/bloc/bank_state.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 class MyBanksPage extends StatelessWidget {
   const MyBanksPage({super.key});

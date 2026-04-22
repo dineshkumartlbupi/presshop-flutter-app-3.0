@@ -12,6 +12,10 @@ import 'package:presshop/features/task/presentation/widgets/dialog_for_continuou
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:presshop/features/media/domain/services/background_upload_service.dart';
+import 'package:presshop/core/services/app_initialization_service.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:presshop/core/services/location_service.dart';
 // URL from old project to maintain API compatibility
 
 /// =============================================================
@@ -20,7 +24,9 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
   DartPluginRegistrant.ensureInitialized();
-
+  if (service is AndroidServiceInstance) {
+    service.setAsForegroundService();
+  }
   final prefs = await SharedPreferences.getInstance();
   final notifications = FlutterLocalNotificationsPlugin();
 
@@ -39,7 +45,7 @@ void onStart(ServiceInstance service) async {
     onDidReceiveBackgroundNotificationResponse:
         internalNotificationTapBackground,
     onDidReceiveNotificationResponse:
-        (NotificationResponse notificationResponse) async {
+        (notificationResponse) async {
       // Forward foreground taps to the same handler
       internalNotificationTapBackground(notificationResponse);
     },
@@ -54,6 +60,20 @@ void onStart(ServiceInstance service) async {
   }
 
   _registerAndroidServiceEvents(service);
+
+  // --- Video Upload Integration ---
+  try {
+    await AppInitializationService.initializeHive();
+    await BackgroundUploadService().initialize();
+    await BackgroundUploadService().startOrResumeUpload();
+
+    service.on('startUpload').listen((_) {
+      BackgroundUploadService().startOrResumeUpload();
+    });
+  } catch (e) {
+    debugPrint("Background upload init error: \$e");
+  }
+  // --------------------------------
 
   final userId = prefs.getString('_id') ?? '';
   debugPrint("BackgroundService started for user: $userId");
@@ -138,7 +158,8 @@ void _pollStopFlag(
   ServiceInstance service,
   FlutterLocalNotificationsPlugin notifications,
 ) {
-  Timer.periodic(const Duration(seconds: 1), (timer) async {
+  // Reduced from 1s to 5s — minimizes disk I/O to prevent overheating
+  Timer.periodic(const Duration(seconds: 5), (timer) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.reload();
     if (prefs.getBool('stop_service_flag') == true) {
@@ -268,25 +289,28 @@ Future<LocationSettings> _buildLocationSettings(SharedPreferences prefs) async {
 
   if (Platform.isAndroid) {
     return AndroidSettings(
-      accuracy: LocationAccuracy.bestForNavigation,
+      // Changed from bestForNavigation (uses all sensors) to high — reduces heat significantly
+      accuracy: LocationAccuracy.high,
       distanceFilter: distanceFilter.toInt(),
-      intervalDuration: const Duration(seconds: 1),
+      // Reduced from 1s to 3s — fewer GPS updates = less CPU & battery drain
+      intervalDuration: const Duration(seconds: 3),
       forceLocationManager: true,
     );
   }
 
   if (Platform.isIOS) {
     return AppleSettings(
-      accuracy: LocationAccuracy.bestForNavigation,
+      // Changed from bestForNavigation to high — saves battery on iOS
+      accuracy: LocationAccuracy.high,
       activityType: ActivityType.other,
       distanceFilter: distanceFilter.toInt(),
-      pauseLocationUpdatesAutomatically: false,
+      pauseLocationUpdatesAutomatically: true, // Allow iOS to pause when stationary
       showBackgroundLocationIndicator: true,
     );
   }
 
   return LocationSettings(
-    accuracy: LocationAccuracy.bestForNavigation,
+    accuracy: LocationAccuracy.high,
     distanceFilter: distanceFilter.toInt(),
   );
 }
@@ -343,7 +367,9 @@ void _startLocationTracking({
 /// =============================================================
 class BackgroundLocationService {
   static final FlutterBackgroundService service = FlutterBackgroundService();
-  static final ValueNotifier<bool> isRunningNotifier = ValueNotifier<bool>(false);
+  static final ValueNotifier<bool> isRunningNotifier =
+      ValueNotifier<bool>(false);
+  static bool _isDialogShowing = false;
 
   static Future<void> syncRunningStatus() async {
     isRunningNotifier.value = await service.isRunning();
@@ -376,6 +402,12 @@ class BackgroundLocationService {
     }
 
     if (showPrePermissionDialog && context != null) {
+      if (_isDialogShowing) {
+        debugPrint("DEBUG: Location dialog already showing, skipping duplicate.");
+        return false;
+      }
+      _isDialogShowing = true;
+
       final size = MediaQuery.of(context).size;
       final confirmed = await showLocationPermissionDialogWithImage(
         context: context,
@@ -387,16 +419,20 @@ class BackgroundLocationService {
         cancelText: dialogCancelText,
       );
 
+      _isDialogShowing = false;
+
       if (confirmed != true) {
         return false; // User cancelled the custom dialog
       }
     }
 
-    LocationPermission permission = await Geolocator.checkPermission();
+    final locService = LocationService();
+    if (Platform.isAndroid) {
+      await locService.requestPermission(Permission.notification);
+    }
 
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      // permission = await Geolocator.requestPermission();
+    if (await locService.requestPermission(Permission.location)) {
+      await locService.requestPermission(Permission.locationAlways);
     }
 
     if (Platform.isAndroid) {
@@ -450,7 +486,8 @@ class BackgroundLocationService {
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(SharedPreferencesKeys.isTaskGrabbingActiveKey, false);
-      await prefs.setBool(SharedPreferencesKeys.manuallyStoppedServiceKey, true);
+      await prefs.setBool(
+          SharedPreferencesKeys.manuallyStoppedServiceKey, true);
     }
   }
 }

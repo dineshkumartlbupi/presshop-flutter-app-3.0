@@ -4,8 +4,8 @@ import '../../../../core/usecases/usecase.dart';
 import '../repositories/publish_repository.dart';
 
 class GetShareExclusivePriceParams {
-  final String? country;
   GetShareExclusivePriceParams({this.country});
+  final String? country;
 }
 
 class GetShareExclusivePrice

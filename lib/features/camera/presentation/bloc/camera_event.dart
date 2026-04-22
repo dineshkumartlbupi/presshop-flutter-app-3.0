@@ -8,16 +8,16 @@ sealed class CameraEvent {
 
 /// Event to initialize the camera
 class CameraInitializeEvent extends CameraEvent {
-  final bool force;
 
   const CameraInitializeEvent({this.force = false});
+  final bool force;
 }
 
 /// Event to handle app lifecycle changes
 class CameraLifecycleEvent extends CameraEvent {
-  final AppLifecycleState state;
 
   const CameraLifecycleEvent(this.state);
+  final AppLifecycleState state;
 }
 
 /// Event to switch between front and back camera
@@ -32,9 +32,9 @@ class CameraFlashToggleEvent extends CameraEvent {
 
 /// Event to change camera mode (Photo, Video, Audio, Scan)
 class CameraModeChangeEvent extends CameraEvent {
-  final String mode;
 
   const CameraModeChangeEvent(this.mode);
+  final String mode;
 }
 
 /// Event to capture an image
@@ -79,28 +79,28 @@ class LoadGalleryMediaEvent extends CameraEvent {
 
 /// Event to update captured media list
 class UpdateCapturedMediaEvent extends CameraEvent {
-  final List<CameraData> media;
 
   const UpdateCapturedMediaEvent(this.media);
+  final List<CameraData> media;
 }
 
 /// Event to update exposure offset
 class UpdateExposureEvent extends CameraEvent {
-  final double exposure;
 
   const UpdateExposureEvent(this.exposure);
+  final double exposure;
 }
 
 /// Event to update zoom level
 class UpdateZoomEvent extends CameraEvent {
-  final double zoom;
 
   const UpdateZoomEvent(this.zoom);
+  final double zoom;
 }
 
 /// Event for timer tick during recording
 class CameraTimerTickEvent extends CameraEvent {
-  final String time;
 
   const CameraTimerTickEvent(this.time);
+  final String time;
 }

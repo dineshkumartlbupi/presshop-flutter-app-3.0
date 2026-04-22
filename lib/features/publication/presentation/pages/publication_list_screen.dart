@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:presshop/features/earning/domain/entities/earning_transaction.dart';
-import 'package:presshop/features/earning/presentation/pages/TransactionDetailScreen.dart';
+import 'package:presshop/features/earning/presentation/pages/tansaction_detail_screen.dart';
 
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
@@ -16,7 +16,6 @@ import '../bloc/publication_event.dart';
 import '../bloc/publication_state.dart';
 import '../../domain/entities/publication_earning_stats.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 // ignore: must_be_immutable
 class PublicationListScreen extends StatefulWidget {
@@ -113,7 +112,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                       .toList();
                 }
               } else if (state is PublicationError) {
-                showSnackBar("Error", state.message, Colors.red);
+//                 showSnackBar("Error", state.message, Colors.red);
               }
             },
             builder: (context, state) {
@@ -318,10 +317,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                               sortList[4].isSelected = true;
                                               _applyFilter(context);
                                             } else {
-                                              showSnackBar(
-                                                  "Date Error",
-                                                  "Please select to date above from date",
-                                                  Colors.red);
+//                                               showSnackBar("Date Error", "Please select to date above from date", Colors.red);
                                             }
                                           }
                                           if (mounted) {
@@ -979,7 +975,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
   Future<void> showBottomSheet(BuildContext context, Size size) async {
     final bloc = context.read<PublicationBloc>();
-    showModalBottomSheet(
+    await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         useSafeArea: true,

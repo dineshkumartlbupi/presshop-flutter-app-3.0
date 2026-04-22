@@ -65,13 +65,22 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
           clearErrorMessage: true));
     }
     final result = await getTaskDetail(GetTaskDetailParams(
-        taskId: event.taskId, showLoader: event.showLoader));
+        taskId: event.taskId,
+        latitude: event.latitude,
+        longitude: event.longitude,
+        showLoader: event.showLoader));
     result.fold(
       (failure) => emit(state.copyWith(
           taskDetailStatus: TaskStatus.failure, errorMessage: failure.message)),
-      (taskAssignedEntity) => emit(state.copyWith(
-          taskDetailStatus: TaskStatus.success,
-          taskDetail: taskAssignedEntity)),
+      (taskAssignedEntity) {
+        AppLogger.trackEvent(EventNames.contentViewed, parameters: {
+          'task_id': event.taskId,
+          'task_title': taskAssignedEntity.task.heading,
+        });
+        emit(state.copyWith(
+            taskDetailStatus: TaskStatus.success,
+            taskDetail: taskAssignedEntity));
+      },
     );
   }
 
@@ -228,8 +237,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
                 AllTaskModel.fromJson(Map<String, dynamic>.from(e as Map)))
             .toList();
         if (tasks.isNotEmpty) {
-          // Verify we don't block loading state emission by setting success here immediately?
-          // We can emit success from cache, but we MUST emit loading before API call if we want refresh indicator to show/work.
           emit(state.copyWith(
               allTasksStatus: TaskStatus.success, allTasks: tasks));
         }
@@ -238,7 +245,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       }
     }
 
-    // Always emit loading state to ensure listeners react to state changes
     emit(state.copyWith(
         allTasksStatus: TaskStatus.loading, clearErrorMessage: true));
 
@@ -267,6 +273,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         } catch (e) {
           debugPrint("TaskBloc: Error updating cache: $e");
         }
+      }
+
+      if (event.offset == 0 && tasks.isNotEmpty) {
+        AppLogger.trackEvent(EventNames.taskReceived, parameters: {
+          'count': tasks.length,
+        });
       }
 
       emit(state.copyWith(
@@ -299,7 +311,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
           clearErrorMessage: true));
     }
     final result = await getTaskDetail(GetTaskDetailParams(
-        taskId: event.taskId, showLoader: event.showLoader));
+        taskId: event.taskId,
+        latitude: event.latitude,
+        longitude: event.longitude,
+        showLoader: event.showLoader));
     result.fold(
       (failure) => emit(state.copyWith(
           taskDetailStatus: TaskStatus.failure, errorMessage: failure.message)),

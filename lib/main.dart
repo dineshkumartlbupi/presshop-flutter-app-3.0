@@ -3,11 +3,10 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
+import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/services/app_initialization_service.dart';
-import 'package:presshop/core/services/deeplink_service.dart';
 import 'package:presshop/core/services/media_upload_service.dart';
 import 'package:presshop/app.dart';
 import 'dart:io';
@@ -41,6 +40,7 @@ void main() async {
   await AppInitializationService.initializeSharedPreferences(deviceInfo);
   AppInitializationService.setupErrorHandlers();
   AppInitializationService.setupAudioPlayer();
+  await AppInitializationService.initializeAppsFlyerIfNeeded();
 
   final storage = FlutterSecureStorage();
   String? token = await storage.read(key: SharedPreferencesKeys.tokenKey);
@@ -54,12 +54,12 @@ void main() async {
   runApp(const MyApp());
 }
 
-Future<void> onDeeplinkCallbackApi(
-  String data,
-  bool isAppInstallCallback,
-) async {
-  await DeeplinkService.sendCallback(data, isAppInstallCallback);
-}
+// Future<void> onDeeplinkCallbackApi(
+//   String data,
+//   bool isAppInstallCallback,
+// ) async {
+//   await DeeplinkService.sendCallback(data, isAppInstallCallback);
+// }
 
 Future<bool> uploadMediaUsingDio(
   String endUrl,

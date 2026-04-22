@@ -137,6 +137,13 @@ class AppStrings {
   static const benefitText = "benefits";
   static const uploadText = "Upload";
   static const finishText = "Finish";
+  static const validDegreeText =
+      "Valid degree in photography from a recognised university in the UK, Europe or the USA";
+  static const validMembershipText =
+      "Valid membership at a professional photographer's association (UK) ";
+  static const validPassportText =
+      "Valid British Passport or a valid UK Work-Permit";
+  static const othersText = "Others";
   static const myAccountText = "My Account";
   static const cameraText = "Camera";
   static const earningsText = "Total earnings";
@@ -208,7 +215,7 @@ class AppStrings {
   static const stayLoggedInText = "Stay Logged In";
   static const okText = "Ok";
   static const feedText = "Feed";
-  static const paymentMethodText = "Manage payments with Stripe";
+  static const paymentMethodText = "Manage payments";
   static const legalText = "Legal";
   static const logoutText = "Logout";
   static const accountSettingText = "Account settings";
@@ -293,7 +300,7 @@ class AppStrings {
   static const manageTaskText = "Manage Task";
   static const manageContentText = "Manage Content";
   static const myBanksText = "My Banks";
-  static const paymentMethods = "Manage payments with Stripe";
+  static const paymentMethods = "Manage payments";
   static const messageText = "message";
   static const liveChatText = "Live Chat";
   static const emailUsText = "Email Us";
@@ -426,7 +433,7 @@ class AppStrings {
   static const timeAndDateText = "Time and date";
   static const offeredAmountText = "Offered amount";
   static const contentSoldText = "Content sold";
-  static const soldText = "Sold";
+  static const soldText = "sold";
   static const dateOfSaleText = "Date of sale";
   static const deadlineText = "DEADLINE";
   // const declineText = "Decline";

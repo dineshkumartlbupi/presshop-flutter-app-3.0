@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
@@ -9,7 +7,6 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/account_settings/presentation/bloc/faq/faq_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 class FAQScreen extends StatefulWidget {
   const FAQScreen({
@@ -131,8 +128,9 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
               }
             },
             builder: (context, state) {
-              if (state.categories.isEmpty &&
-                  state.status == FAQStatus.loading) {
+              if (state.items.isEmpty &&
+                  (state.status == FAQStatus.loading ||
+                      state.status == FAQStatus.initial)) {
                 return showAnimatedLoader(size);
               }
 
@@ -279,7 +277,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                   child: ExpansionTile(
                                     title: Row(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          CrossAxisAlignment.center,
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
@@ -313,8 +311,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                           width:
                                               size.width * AppDimensions.numD02,
                                         ),
-                                        Expanded(
-                                            child: Text(
+                                        Text(
                                           item.question,
                                           style: TextStyle(
                                               fontSize: size.width *
@@ -322,7 +319,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                               color: Colors.black,
                                               fontFamily: "AirbnbCereal",
                                               fontWeight: FontWeight.bold),
-                                        ))
+                                        )
                                       ],
                                     ),
                                     iconColor: Colors.black,

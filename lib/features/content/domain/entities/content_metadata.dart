@@ -10,6 +10,7 @@ class ContentMetadata extends Equatable {
     required this.isWatermarked,
     required this.originalFileName,
     required this.watermarkedMedia,
+    required this.watermark,
   });
   final String media;
   final bool isNsfw;
@@ -19,11 +20,12 @@ class ContentMetadata extends Equatable {
   final bool isWatermarked;
   final String originalFileName;
   final String watermarkedMedia;
+  final String watermark;
 
   // Getters for UI compatibility
   String get mediaUrl => media;
   String get thumbnailUrl => thumbnail;
-  String get watermarkUrl => watermarkedMedia;
+  String get watermarkUrl => watermark.isNotEmpty ? watermark : watermarkedMedia;
 
   @override
   List<Object?> get props => [
@@ -35,6 +37,7 @@ class ContentMetadata extends Equatable {
         isWatermarked,
         originalFileName,
         watermarkedMedia,
+        watermark,
       ];
 
   ContentMetadata copyWith({
@@ -46,6 +49,7 @@ class ContentMetadata extends Equatable {
     bool? isWatermarked,
     String? originalFileName,
     String? watermarkedMedia,
+    String? watermark,
   }) {
     return ContentMetadata(
       media: media ?? this.media,
@@ -56,19 +60,21 @@ class ContentMetadata extends Equatable {
       isWatermarked: isWatermarked ?? this.isWatermarked,
       originalFileName: originalFileName ?? this.originalFileName,
       watermarkedMedia: watermarkedMedia ?? this.watermarkedMedia,
+      watermark: watermark ?? this.watermark,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'media': media,
-      'isNsfw': isNsfw,
+      'is_nsfw': isNsfw,
       'deep_fake': deepFake,
       'thumbnail': thumbnail,
       'media_type': mediaType,
       'is_watermarked': isWatermarked,
       'originalFileName': originalFileName,
       'watermarked_media': watermarkedMedia,
+      'watermark': watermark,
     };
   }
 }

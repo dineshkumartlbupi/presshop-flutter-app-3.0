@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:presshop/main.dart'; // Check if needed, maybe for global vars like iconsPath?
+// Check if needed, maybe for global vars like iconsPath?
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart'; // Check path
 // for avatarImageUrl
@@ -12,8 +12,10 @@ class LeadershipTableWidget extends StatelessWidget {
   const LeadershipTableWidget({
     super.key,
     required this.memberList,
+    this.currencySymbol = "",
   });
   final List<MemberEntity> memberList;
+  final String currencySymbol;
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +44,7 @@ class LeadershipTableWidget extends StatelessWidget {
               isLeader: false,
               size: size,
               member: safeList[1],
+              currencySymbol: currencySymbol,
             ),
           ),
 
@@ -74,6 +77,7 @@ class LeadershipTableWidget extends StatelessWidget {
               isLeader: true,
               size: size,
               member: safeList[0],
+              currencySymbol: currencySymbol,
             ),
           ),
 
@@ -85,6 +89,7 @@ class LeadershipTableWidget extends StatelessWidget {
               isLeader: false,
               size: size,
               member: safeList[2],
+              currencySymbol: currencySymbol,
             ),
           ),
 
@@ -106,6 +111,7 @@ class LeadershipTableWidget extends StatelessWidget {
     bool isLeader = false,
     required Size size,
     MemberEntity? member,
+    required String currencySymbol,
   }) {
     final hasData = member != null;
     final name = hasData ? member.userName : "--";

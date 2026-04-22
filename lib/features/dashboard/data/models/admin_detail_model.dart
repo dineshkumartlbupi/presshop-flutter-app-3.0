@@ -1,3 +1,4 @@
+import 'package:presshop/core/utils/common_utils.dart';
 import '../../domain/entities/admin_detail.dart';
 
 class AdminDetailModel extends AdminDetail {
@@ -16,8 +17,10 @@ class AdminDetailModel extends AdminDetail {
   factory AdminDetailModel.fromJson(Map<String, dynamic> json) {
     return AdminDetailModel(
       id: (json["_id"] ?? "").toString(),
-      name: (json["name"] ?? "").toString(),
-      profilePic: (json["profile_image"] ?? "").toString(),
+    name: (json["name"] ?? 
+          json["full_name"] ?? 
+          "${json["first_name"] ?? ""} ${json["last_name"] ?? ""}").toString().trim(),
+    profilePic: getMediaImageUrl((json["profile_image"] ?? "").toString()),
       lastMessageTime: '', // Logic from CommonModel
       lastMessage: '', // Logic from CommonModel
       roomId: json["room_details"] != null ? json["room_details"]['room_id'] ?? '' : '',

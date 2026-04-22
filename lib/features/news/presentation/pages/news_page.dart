@@ -2,29 +2,24 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:presshop/core/theme/app_colors.dart';
 import 'package:presshop/features/map/domain/usecases/get_place_details.dart';
 import 'package:presshop/features/map/domain/usecases/search_places.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:presshop/core/constants/app_assets.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/news/domain/entities/news.dart';
 import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
 import 'package:presshop/features/news/presentation/bloc/news_event.dart';
 import 'package:presshop/features/news/presentation/bloc/news_state.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
-import 'package:presshop/features/feed/presentation/pages/FeedScreen.dart';
+import 'package:presshop/features/feed/presentation/pages/feed_screen.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({
-    Key? key,
+    super.key,
     this.hideLeading = false,
     this.latitude,
     this.longitude,
@@ -33,7 +28,7 @@ class NewsPage extends StatefulWidget {
     this.appBarTitle,
     this.showAppBar = false,
     this.fromMap = false,
-  }) : super(key: key);
+  });
   final bool hideLeading;
   final bool showAppBar;
   final double? latitude;
@@ -48,7 +43,10 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage>
-    with AnalyticsPageMixin, AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+    with
+        AnalyticsPageMixin,
+        AutomaticKeepAliveClientMixin,
+        TickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
 
@@ -213,7 +211,7 @@ class _NewsPageState extends State<NewsPage>
       appBar: NewHomeAppBar(
         size: size,
         hideLeading: widget.hideLeading,
-        showFilter: !widget.fromMap && _tabController.index == 0,
+        showFilter: false, // !widget.fromMap && _tabController.index == 0,
         onFilterTap: () {
           if (_tabController.index == 0 && _showFeedBottomSheet != null) {
             _showFeedBottomSheet!();
@@ -291,9 +289,9 @@ class _NewsPageState extends State<NewsPage>
           _refreshController.loadNoData();
         }
         if (state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.errorMessage!)),
-          );
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(content: Text(state.errorMessage!)),
+          // );
         }
       },
       builder: (context, state) {
@@ -316,7 +314,7 @@ class _NewsPageState extends State<NewsPage>
                         child: Text(
                           state.isProcessing
                               ? "News is being aggregated for your location. Please pull down to refresh in a few moments."
-                              : "No news found",
+                              : "No data found",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: size.width * AppDimensions.numD04,
@@ -571,7 +569,7 @@ class _NewsPageState extends State<NewsPage>
                 color: Colors.grey[600],
               ),
               "${item.likesCount ?? 0}",
-              "${item.likesCount == 1 || item.likesCount == 0 ? 'like' : 'likes'}",
+              item.likesCount == 1 || item.likesCount == 0 ? 'like' : 'likes',
               size,
               color: Colors.grey[500],
             ),
@@ -585,7 +583,7 @@ class _NewsPageState extends State<NewsPage>
                 color: Colors.grey[500],
               ),
               "${item.viewCount ?? 0}",
-              "${item.viewCount == 1 || item.viewCount == 0 ? 'view' : 'views'}",
+              item.viewCount == 1 || item.viewCount == 0 ? 'view' : 'views',
               size,
               color: Colors.grey[500],
             ),
@@ -856,13 +854,12 @@ class _NewsPageState extends State<NewsPage>
 
 class _FilterBottomSheetContent extends StatefulWidget {
   const _FilterBottomSheetContent({
-    Key? key,
     required this.size,
     required this.initialAlertType,
     required this.initialDistance,
     required this.initialCategory,
     required this.onApply,
-  }) : super(key: key);
+  });
   final Size size;
   final String initialAlertType;
   final String initialDistance;

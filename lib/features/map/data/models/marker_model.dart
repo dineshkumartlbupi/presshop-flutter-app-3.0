@@ -1,7 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Incident {
-
   Incident({
     required this.id,
     required this.markerType,
@@ -34,6 +33,8 @@ class Incident {
     this.temperature,
     this.wind,
     this.heading,
+    this.avatar,
+    this.username,
   });
 
   factory Incident.fromMap(Map<String, dynamic> map) {
@@ -70,6 +71,8 @@ class Incident {
       temperature: map['temperature'],
       wind: map['wind'],
       heading: map['heading'],
+      avatar: map['avatar'],
+      username: map['username'],
     );
   }
 
@@ -91,7 +94,9 @@ class Incident {
       markerType: json['markerType'] ?? 'icon',
       type: json['type'] ?? 'accident',
       position: LatLng(lat, lng),
-      address: json['address'] ?? json['location'],
+      address: json['address'] is String
+          ? json['address'] as String
+          : (json['location'] is String ? json['location'] as String : null),
       time: (json['createdAt'] ?? json['time'] ?? json['date'])?.toString(),
       image: json['image'],
       title: json['title'],
@@ -118,6 +123,8 @@ class Incident {
       temperature: json['temperature']?.toString(),
       wind: json['wind']?.toString(),
       heading: json['heading']?.toString(),
+      avatar: json['avatar'] ?? json['user_avatar'] ?? json['user_image'],
+      username: json['username'] ?? json['user_name'] ?? json['author_name'] ?? json['author'],
     );
   }
   final String id;
@@ -151,6 +158,8 @@ class Incident {
   final String? temperature;
   final String? wind;
   final String? heading;
+  final String? avatar;
+  final String? username;
 
   Incident copyWith({
     String? id,
@@ -184,6 +193,8 @@ class Incident {
     String? temperature,
     String? wind,
     String? heading,
+    String? avatar,
+    String? username,
   }) {
     return Incident(
       id: id ?? this.id,
@@ -217,12 +228,13 @@ class Incident {
       temperature: temperature ?? this.temperature,
       wind: wind ?? this.wind,
       heading: heading ?? this.heading,
+      avatar: avatar ?? this.avatar,
+      username: username ?? this.username,
     );
   }
 }
 
 class DangerZone {
-
   DangerZone({
     required this.id,
     required this.name,
@@ -238,7 +250,6 @@ class DangerZone {
 }
 
 class Listing {
-
   Listing({
     required this.id,
     required this.title,
@@ -254,7 +265,6 @@ class Listing {
 }
 
 class LocationModel {
-
   LocationModel({this.currentPosition, this.targetPosition, this.distance});
   LatLng? currentPosition;
   LatLng? targetPosition;

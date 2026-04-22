@@ -41,6 +41,12 @@ class MapState extends Equatable {
     this.placeSuggestions = const [],
     this.errorMessage,
     this.newlyCreatedIncident,
+    this.showAnimatedMarkers = true,
+    this.isSelectingAlertLocation = false,
+    this.pendingAlertType,
+    this.showDropdown = false,
+    this.locationTimeout = false,
+    this.isVisible = true,
   });
   final LatLng? myLocation;
   final CameraPosition? initialCamera;
@@ -79,6 +85,12 @@ class MapState extends Equatable {
   final List<Map<String, dynamic>> placeSuggestions;
   final String? errorMessage;
   final Incident? newlyCreatedIncident;
+  final bool showAnimatedMarkers;
+  final bool isSelectingAlertLocation;
+  final String? pendingAlertType;
+  final bool showDropdown;
+  final bool locationTimeout;
+  final bool isVisible;
 
   MapState copyWith({
     LatLng? myLocation,
@@ -117,6 +129,12 @@ class MapState extends Equatable {
     List<Map<String, dynamic>>? placeSuggestions,
     String? errorMessage,
     Incident? newlyCreatedIncident,
+    bool? showAnimatedMarkers,
+    bool? isSelectingAlertLocation,
+    String? pendingAlertType,
+    bool? showDropdown,
+    bool? locationTimeout,
+    bool? isVisible,
     bool clearDestination = false,
     bool clearRouteInfo = false,
     bool clearSelectedIncident = false,
@@ -196,6 +214,13 @@ class MapState extends Equatable {
       newlyCreatedIncident: clearNewlyCreatedIncident
           ? null
           : (newlyCreatedIncident ?? this.newlyCreatedIncident),
+      showAnimatedMarkers: showAnimatedMarkers ?? this.showAnimatedMarkers,
+      isSelectingAlertLocation:
+          isSelectingAlertLocation ?? this.isSelectingAlertLocation,
+      pendingAlertType: pendingAlertType ?? this.pendingAlertType,
+      showDropdown: showDropdown ?? this.showDropdown,
+      locationTimeout: locationTimeout ?? this.locationTimeout,
+      isVisible: isVisible ?? this.isVisible,
     );
   }
 
@@ -237,5 +262,11 @@ class MapState extends Equatable {
         placeSuggestions,
         errorMessage,
         newlyCreatedIncident,
+        showAnimatedMarkers,
+        isSelectingAlertLocation,
+        pendingAlertType,
+        showDropdown,
+        locationTimeout,
+        isVisible,
       ];
 }

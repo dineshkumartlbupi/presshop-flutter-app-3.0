@@ -106,7 +106,7 @@ class CommonAppBarState extends State<CommonAppBar> {
                             widget.size.width * AppDimensions.numD025,
                       ),
                       child: Icon(
-                        Icons.arrow_back_ios_new_rounded,
+                        Icons.arrow_back_rounded,
                         size: widget.size.width * AppDimensions.numD06,
                         color: widget.leadingIconColor,
                       ),

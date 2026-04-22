@@ -1,8 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../domain/usecases/login_user.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
+import '../../domain/usecases/check_email.dart';
 import '../../domain/usecases/social_login_user.dart';
 import '../../domain/usecases/forgot_password.dart';
 import '../../domain/usecases/verify_forgot_password_otp.dart';
@@ -17,6 +20,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({
     required this.loginUser,
     required this.socialLoginUser,
+    required this.checkEmail,
     required this.forgotPassword,
     required this.verifyForgotPasswordOtp,
     required this.resetPassword,
@@ -37,7 +41,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           AppLogger.setUserIdentity(
             userId: user.id,
             email: user.email,
-            name: user.firstName + " " + user.lastName,
+            name: "${user.firstName} ${user.lastName}",
           );
           AppLogger.trackEvent(EventNames.userLogin, parameters: {
             'method': 'email',
@@ -51,6 +55,37 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<SocialLoginRequested>((event, emit) async {
       emit(AuthLoading());
+
+      // STEP 1: Search for user by email first
+      final checkResult = await checkEmail(event.email);
+
+      bool isNewUser = false;
+      checkResult.fold(
+        (failure) {
+          // If check fails, we proceed with socialLogin anyway as fallback
+          AppLogger.error("Check email failed: ${failure.message}");
+        },
+        (isAvailable) {
+          if (isAvailable) {
+            // isAvailable == true means user DOES NOT exist in DB
+            isNewUser = true;
+          }
+        },
+      );
+
+      if (isNewUser) {
+        debugPrint("DEBUG: [AuthBloc] New user detected by email search. Redirecting to SocialSignUp.");
+        emit(AuthSocialSignUpRequired(
+          socialType: event.socialType,
+          socialId: event.socialId,
+          email: event.email,
+          name: event.name,
+          photoUrl: event.photoUrl,
+        ));
+        return; // Stop here for new users
+      }
+
+      // STEP 2: Proceed with social login for existing users
       final result = await socialLoginUser(SocialLoginParams(
         socialType: event.socialType,
         socialId: event.socialId,
@@ -79,7 +114,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           AppLogger.setUserIdentity(
             userId: user.id,
             email: user.email,
-            name: user.firstName + " " + user.lastName,
+            name: "${user.firstName} ${user.lastName}",
           );
           AppLogger.trackEvent(EventNames.userLogin, parameters: {
             'method': event.socialType,
@@ -134,6 +169,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
   final LoginUser loginUser;
   final SocialLoginUser socialLoginUser;
+  final CheckEmail checkEmail;
   final ForgotPassword forgotPassword;
   final VerifyForgotPasswordOtp verifyForgotPasswordOtp;
   final ResetPassword resetPassword;

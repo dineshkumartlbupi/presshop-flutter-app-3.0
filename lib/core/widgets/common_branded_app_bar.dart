@@ -1,22 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/logo_widget.dart';
 import 'package:presshop/main.dart';
 
 class CommonBrandedAppBar extends StatelessWidget
     implements PreferredSizeWidget {
-  final String title;
-  final Size size;
-  final List<Widget>? actionWidgets;
-  final VoidCallback? leadingFxn;
-  final double elevation;
-  final bool hideLeading;
-  final int? notificationCount;
-  final bool showLogo;
-
   const CommonBrandedAppBar({
     super.key,
     required this.title,
@@ -28,6 +18,14 @@ class CommonBrandedAppBar extends StatelessWidget
     this.notificationCount,
     this.showLogo = true,
   });
+  final String title;
+  final Size size;
+  final List<Widget>? actionWidgets;
+  final VoidCallback? leadingFxn;
+  final double elevation;
+  final bool hideLeading;
+  final int? notificationCount;
+  final bool showLogo;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +35,7 @@ class CommonBrandedAppBar extends StatelessWidget
         title,
         style: TextStyle(
             color: Colors.black,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
             fontSize: size.width * AppDimensions.appBarHeadingFontSize),
       ),
       centerTitle: false,
@@ -48,14 +46,13 @@ class CommonBrandedAppBar extends StatelessWidget
           () {
             context.pop();
           },
-          
       actionWidget: [
         if (actionWidgets != null)
           ...actionWidgets!.map((w) => Center(child: w)),
         if (notificationCount != null)
           Center(
             child: Container(
-              margin: EdgeInsets.only(right: size.width * AppDimensions.numD04),
+              // margin: EdgeInsets.only(right: size.width * AppDimensions.numD04),
               width: size.width * AppDimensions.numD075,
               height: size.width * AppDimensions.numD075,
               child: Stack(
@@ -77,25 +74,20 @@ class CommonBrandedAppBar extends StatelessWidget
                       alignment: Alignment.center,
                       children: [
                         Container(
-                          padding: EdgeInsets.all(size.width * 0.002),
-                          decoration: const BoxDecoration(
-                              color: Colors.white, shape: BoxShape.circle),
-                          child: Icon(
-                            Icons.circle,
-                            color: AppColorTheme.colorThemePink,
-                            size: size.width * AppDimensions.numD04,
-                          ),
-                        ),
-                        Text(
-                          notificationCount.toString(),
-                          style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * AppDimensions.numD025,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          textAlign: TextAlign.center,
-                        )
+                            padding: EdgeInsets.all(3),
+                            decoration: const BoxDecoration(
+                                color: AppColorTheme.colorThemePink,
+                                shape: BoxShape.circle),
+                            child: Text(
+                              notificationCount.toString(),
+                              style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * AppDimensions.numD025,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
+                            )),
                       ],
                     ),
                   ),
@@ -112,8 +104,7 @@ class CommonBrandedAppBar extends StatelessWidget
                   extra: {'initialPosition': 2},
                 );
               },
-              child:  LogoWidget.buildLogo(size),
-              
+              child: LogoWidget.buildLogo(size),
             ),
           ),
         if (showLogo)
@@ -127,7 +118,7 @@ class CommonBrandedAppBar extends StatelessWidget
 
   @override
   Size get preferredSize =>
-      Size.fromHeight((sharedPreferences?.getBool('isIpad') ?? false
+      Size.fromHeight(sharedPreferences?.getBool('isIpad') ?? false
           ? kToolbarHeightIpad
-          : kToolbarHeight));
+          : kToolbarHeight);
 }

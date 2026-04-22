@@ -17,8 +17,7 @@ class Config {
   const Config();
   static const int env = 1;
 
-  // "http://localhost:8100/api/";
-
+  // ====================== Ngrok Url =====================
   // String get baseUrl =>
   //     "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/";
 
@@ -29,6 +28,15 @@ class Config {
       "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
 
   String get socketUrl2 => "wss://funnellike-subangular-sulema.ngrok-free.dev";
+// ====================== Localhost Url =====================
+
+  // String get baseUrl => "http://localhost:8100/api/";
+  // String get socketUrl2 => "http://localhost:8100";
+
+  // ====================== AWS Url =====================
+  // String get baseUrl => "http://18.170.92.207:8100/api/";
+
+  // String get socketUrl2 => "wss://18.170.92.207:8100/api/";
 
   String get googleMapURL =>
       "https://maps.googleapis.com/maps/api/place/autocomplete/json";
@@ -101,7 +109,7 @@ class Profile {
   final String getUploadedDocs = "hopper/getuploadedDocumentList";
   final String deleteDocument = "hopper/deleteDocument";
   final String deleteCertificate = "hopper/deleteuploadDocToBecomePro";
-  final String getAvatars = "admin/getAvatars";
+  final String getAvatars = "users/getAvatars";
   final String updateLocation = "hopper/updatelocation";
   final String addDevice = "hopper/add/fcm/token";
   final String removeDevice = "hopper/remove/fcm/token";
@@ -115,6 +123,7 @@ class Content {
   const Content();
 
   final String uploadUserMedia = "hopper/uploadUserMedia";
+  final String uploadChatAttachment = "hopper/uploadChatAttachment";
   final String uploadMedia = "hopper/uploadmedia";
   final String uploadMultipleImages = "hopper/uploadMultipleImg";
   final String addContent = "hopper/addContent";
@@ -135,6 +144,12 @@ class Content {
   final String addTags = "users/addTag";
   final String category = "users/getCategory/";
   final String hopperCategory = "hopper/getCategory?";
+
+  // Chunked Upload Endpoints
+  final String initiateUpload = "media/initiate-upload";
+  final String completeUpload = "media/complete-upload";
+  final String abortUpload = "media/abort-upload";
+  final String mediaStatus = "media/status/";
 }
 
 class Tasks {
@@ -186,6 +201,7 @@ class Chat {
   final String sendChatMessage = "hopper/send/chat/message";
   final String allAlerts = "hopper/getHopperAlertList?";
   final String getAlertIncidents = "hopper/getAlertIncidents";
+  final String updateAlertView = "hopper/updateAlertView";
 }
 
 class Misc {

@@ -33,6 +33,7 @@ abstract class ContentRemoteDataSource {
   Future<List<EarningTransactionDetail>> getContentTransactions(
       String contentId, int limit, int offset,
       {bool showLoader = true});
+  Future<void> recordContentView(String contentId, String userId);
 }
 
 class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
@@ -381,7 +382,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
     try {
       final response = await apiClient.get(
         ApiConstantsNew.tasks.mediaHouseOffer,
-        queryParameters: {'image_id': contentId},
+        queryParameters: {'content_id': contentId},
         showLoader: showLoader,
       );
 
@@ -458,6 +459,19 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       throw ServerFailure(message: 'Failed to load transactions');
     } catch (e) {
       throw ApiErrorHandler.handle(e);
+    }
+  }
+
+  @override
+  Future<void> recordContentView(String contentId, String userId) async {
+    try {
+      // Placeholder for REST API call
+      // await apiClient.post('hopper/recordContentView', data: {
+      //   'contentId': contentId,
+      //   'user_id': userId,
+      // });
+    } catch (e) {
+      debugPrint("Error recording view via REST: $e");
     }
   }
 }

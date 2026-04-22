@@ -282,6 +282,10 @@ class ActionNames {
   static const String privacyChange = 'privacy_change';
   static const String logout = 'logout';
 
+  // Notification Actions
+  static const String notificationReceived = 'notification_received';
+  static const String notificationClick = 'notification_click';
+
   // Purchase Actions
   static const String purchase = 'purchase';
   static const String subscribe = 'subscribe';
@@ -297,6 +301,7 @@ class EventNames {
   static const String appForeground = 'app_foreground';
   static const String appClose = 'app_close';
   static const String appCrash = 'app_crash';
+  static const String splashOpened = 'splash_opened';
 
   // User Lifecycle
   static const String userRegistered = 'user_registered';

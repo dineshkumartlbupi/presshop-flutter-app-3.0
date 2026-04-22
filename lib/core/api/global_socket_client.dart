@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/api/socket_constants.dart';
 
 class GlobalSocketClient {
   IO.Socket? _socket;
@@ -49,6 +50,7 @@ class GlobalSocketClient {
     socket.connect();
 
     socket.onConnect((_) {
+      SocketLogger.logReceive('connect');
       debugPrint('Connected to Global socket: ${socket.id}');
       print("::: Global Socket Connection SUCCESS ::: ID: ${socket.id}");
 
@@ -59,15 +61,17 @@ class GlobalSocketClient {
     });
 
     socket.onDisconnect((_) {
+      SocketLogger.logReceive('disconnect');
       debugPrint('Disconnected from Global socket');
       print("::: Global Socket Connection DISCONNECTED :::");
     });
 
     socket.onError((data) {
+      SocketLogger.logReceive('error', data: data);
       debugPrint("Error Global Socket ::: $data");
       print("::: Global Socket Connection FAILURE ::: Error: $data");
     });
-    
+
     socket.on('reconnect_attempt', (data) {
       debugPrint("Global Socket Reconnect Attempt: $data");
     });
@@ -79,9 +83,13 @@ class GlobalSocketClient {
 
   void on(String event, dynamic Function(dynamic) callback) {
     if (isInitialized) {
-      socket.on(event, callback);
+      socket.on(event, (data) {
+        SocketLogger.logReceive(event, data: data);
+        callback(data);
+      });
     } else {
-      debugPrint("GlobalSocketClient: Cannot listen to $event, socket not initialized");
+      debugPrint(
+          "GlobalSocketClient: Cannot listen to $event, socket not initialized");
     }
   }
 
@@ -93,9 +101,11 @@ class GlobalSocketClient {
 
   void emit(String event, [dynamic data]) {
     if (!isInitialized) {
-      debugPrint("GlobalSocketClient: Cannot emit $event, socket not initialized");
+      debugPrint(
+          "GlobalSocketClient: Cannot emit $event, socket not initialized");
       return;
     }
+    SocketLogger.logEmit(event, data: data);
     socket.emit(event, data);
   }
 

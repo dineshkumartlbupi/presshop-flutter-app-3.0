@@ -25,6 +25,9 @@ class SharedPreferencesKeys {
   static const currencySymbolKey = "preferred_currency_sign";
   static const totalHopperArmy = "totalHopperArmy";
   static const videoLimitKey = "videoLimit";
+  static const referralFriendEarningKey = "referral_friend_earning_amount";
+  static const referralUserEarningKey = "referral_user_earning_amount";
+  static const referralCurrencyKey = "referral_currency_symbol";
 
   static const lastNameKey = "last_name";
   static const userNameKey = "user_name";
@@ -81,6 +84,8 @@ class SharedPreferencesKeys {
   static const locationSharingDescriptionKey = "location_sharing_description";
   static const manuallyStoppedServiceKey = "manually_stopped_service";
   static const isTaskGrabbingActiveKey = "is_task_grabbing_active";
+  static const alertInfoPopupShownKey = "alert_info_popup_shown";
+  static const isLocationPopupEnabledKey = "is_location_popup_enabled";
 
   // Caching Keys
   static const tutorialCategoriesCacheKey = "tutorial_categories_cache";

@@ -1,14 +1,91 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:presshop/core/constants/app_dimensions.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'dart:ui' as ui;
+import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 
 AlertDialog? alertDialog;
 final Set<String> _shownBroadcastIds = {};
+BitmapDescriptor? mapIcon;
+Map<String, BitmapDescriptor> hopperAvatarIcons = {};
+void getAllIcons() async {
+  mapIcon = await BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(size: Size(5.0, 5.0)),
+      "${commonImagePath}ic_cover_radius.png");
+}
+
+Future<BitmapDescriptor> getMarkerIcon(String url, Size size) async {
+  try {
+    final http.Response response = await http.get(Uri.parse(url));
+    if (response.statusCode != 200) throw Exception("Failed to load image");
+    final Uint8List bytes = response.bodyBytes;
+
+    final ui.Codec codec = await ui.instantiateImageCodec(bytes,
+        targetWidth: size.width.toInt(), targetHeight: size.height.toInt());
+    final ui.FrameInfo fi = await codec.getNextFrame();
+    final ui.Image image = fi.image;
+
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    final Paint paint = Paint()..filterQuality = FilterQuality.high;
+    final double radius = size.width / 2;
+
+    // Draw circle background
+    canvas.drawCircle(
+        Offset(radius, radius), radius, Paint()..color = Colors.white);
+
+    // Clip to circle
+    canvas.clipPath(
+        ui.Path()..addOval(Rect.fromLTWH(0, 0, size.width, size.height)));
+
+    // Draw image
+    canvas.drawImageRect(
+        image,
+        Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+        Rect.fromLTWH(0, 0, size.width, size.height),
+        paint);
+
+    // Draw border
+    final Paint borderPaint = Paint()
+      ..color = AppColorTheme.colorThemePink
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 6.0;
+    canvas.drawCircle(Offset(radius, radius), radius - 3.0, borderPaint);
+
+    final ui.Image finalImage = await pictureRecorder
+        .endRecording()
+        .toImage(size.width.toInt(), size.height.toInt());
+    final ByteData? byteData =
+        await finalImage.toByteData(format: ui.ImageByteFormat.png);
+    return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
+  } catch (e) {
+    debugPrint("Error creating marker icon: $e");
+    return mapIcon ?? BitmapDescriptor.defaultMarker;
+  }
+}
+
+Future<void> loadHopperAvatars(
+    List<dynamic> hoppers, Function(void Function()) setState,
+    [Size size = const Size(60, 60)]) async {
+  bool updated = false;
+  for (var hopper in hoppers) {
+    String avatarUrl = getMediaImageUrl(hopper.avatar);
+    if (avatarUrl.isNotEmpty && !hopperAvatarIcons.containsKey(avatarUrl)) {
+      final icon = await getMarkerIcon(avatarUrl, size);
+      hopperAvatarIcons[avatarUrl] = icon;
+      updated = true;
+    }
+  }
+  if (updated) {
+    setState(() {});
+  }
+}
 
 void commonDialog(BuildContext context, String message, VoidCallback pressed) {
   var screenWidth = MediaQuery.of(context).size.width;
@@ -75,6 +152,21 @@ void commonDialog(BuildContext context, String message, VoidCallback pressed) {
       });
 }
 
+LatLng getTaskLatLng(TaskAssignedDetailEntity task) {
+  final coords = task.addressLocation.coordinates;
+
+  // GeoJSON format: [longitude, latitude]
+  if (coords.length >= 2) {
+    return LatLng(coords[1], coords[0]);
+  }
+
+  // fallback to direct lat/lng
+  return LatLng(
+    task.latitude ?? 0.0,
+    task.longitude ?? 0.0,
+  );
+}
+
 void broadcastDialog({
   required Size size,
   required TaskAssignedEntity taskDetail,
@@ -83,16 +175,17 @@ void broadcastDialog({
   if (_shownBroadcastIds.contains(taskDetail.task.id)) {
     return;
   }
+  if (mapIcon == null) {
+    getAllIcons();
+  }
   _shownBroadcastIds.add(taskDetail.task.id);
 
   showDialog(
       context: navigatorKey.currentState!.context,
       barrierDismissible: false,
       builder: (context) {
-        return WillPopScope(
-          onWillPop: () {
-            return Future.value(false);
-          },
+        return PopScope(
+          canPop: false,
           child: AlertDialog(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -101,6 +194,21 @@ void broadcastDialog({
                   horizontal: size.width * AppDimensions.numD04),
               content: StatefulBuilder(
                 builder: (context, setState) {
+                  final coords = taskDetail.task.addressLocation.coordinates;
+                  final latitude = (coords.length >= 2)
+                      ? coords[1]
+                      : (taskDetail.task.latitude ?? 0.0);
+
+                  final longitude = (coords.length >= 2)
+                      ? coords[0]
+                      : (taskDetail.task.longitude ?? 0.0);
+
+                  final LatLng taskLatLng = LatLng(latitude, longitude);
+
+                  // Load hopper avatars for markers
+                  loadHopperAvatars(
+                      taskDetail.task.activeHoppersLocations, setState);
+
                   return Container(
                     width: size.width,
                     decoration: BoxDecoration(
@@ -414,66 +522,212 @@ void broadcastDialog({
                         ),
 
                         SizedBox(height: size.width * AppDimensions.numD02),
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD04),
+                          height: size.width * 0.5,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(
+                                size.width * AppDimensions.numD03),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                size.width * AppDimensions.numD03),
+                            child: Stack(
+                              children: [
+                                GoogleMap(
+                                  initialCameraPosition: CameraPosition(
+                                    target: taskLatLng,
+                                    zoom: 12,
+                                  ),
+                                  zoomControlsEnabled: false,
+                                  myLocationButtonEnabled: false,
+                                  mapToolbarEnabled: false,
+                                  scrollGesturesEnabled: false,
+                                  zoomGesturesEnabled: false,
+                                  rotateGesturesEnabled: false,
+                                  tiltGesturesEnabled: false,
+                                  markers: {
+                                    Marker(
+                                      markerId: const MarkerId("task_location"),
+                                      position: taskLatLng,
+                                      anchor: const Offset(0.5, 0.5),
+                                      zIndex: 0,
+                                      icon: mapIcon ??
+                                          BitmapDescriptor.defaultMarker,
+                                    ),
+                                    ...taskDetail.task.activeHoppersLocations
+                                        .map((hopper) {
+                                      return Marker(
+                                        markerId: MarkerId(hopper.id.isNotEmpty
+                                            ? hopper.id
+                                            : "${hopper.latitude}_${hopper.longitude}"),
+                                        position: LatLng(
+                                            hopper.latitude, hopper.longitude),
+                                        anchor: const Offset(0.5, 0.5),
+                                        zIndex: 1,
+                                        icon: hopperAvatarIcons[
+                                                getMediaImageUrl(
+                                                    hopper.avatar)] ??
+                                            BitmapDescriptor.defaultMarker,
+                                      );
+                                    }).toSet(),
+                                  },
+                                ),
+                                Positioned(
+                                  bottom: size.width * AppDimensions.numD03,
+                                  left: size.width * AppDimensions.numD03,
+                                  right: size.width * AppDimensions.numD03,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            size.width * AppDimensions.numD03,
+                                        vertical:
+                                            size.width * AppDimensions.numD03),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * AppDimensions.numD02),
+                                      // boxShadow: const [
+                                      //   BoxShadow(
+                                      //     color: Colors.black12,
+                                      //     blurRadius: 4,
+                                      //     offset: Offset(0, 2),
+                                      //   ),
+                                      // ],
+                                    ),
+                                    child: RichText(
+                                      textAlign: TextAlign.center,
+                                      text: TextSpan(
+                                        text:
+                                            "${taskDetail.task.activeHoppersCount} active Hoppers nearby. ",
+                                        style: commonTextStyle(
+                                            size: size,
+                                            // fontSize: size.width * numD035,
+                                            // color: Colors.black,
+                                            // fontWeight: FontWeight.bold,
+                                            fontSize: size.width *
+                                                AppDimensions.numD03,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500),
+                                        children: [
+                                          TextSpan(
+                                            text: "Grab it before it's gone.",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                // fontSize: size.width * numD035,
+                                                color: AppColorTheme
+                                                    .colorThemePink,
+                                                // fontWeight: FontWeight.bold,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD03,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: size.width * AppDimensions.numD02),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD08,
+                              vertical: size.width * AppDimensions.numD04),
+                          decoration: BoxDecoration(
+                              color: AppColorTheme.colorThemePink,
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD04)),
+                          child: GestureDetector(
+                            onTap: onTapViewDetails,
+                            child: Text(
+                              "View Task $currencySymbol${formatDouble(double.tryParse(taskDetail.task.hopperTaskAmount) ?? 0.0)}",
+                              style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * AppDimensions.numD04,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(
+                          height: size.width * AppDimensions.numD02,
+                        ),
 
                         /// Illustration
-                        Image.asset(
-                          "assets/illustrations/priceimage2.png",
-                          height: size.width * AppDimensions.numD25,
-                          fit: BoxFit.contain,
-                        ),
+                        // Image.asset(
+                        //   "assets/illustrations/priceimage2.png",
+                        //   height: size.width * AppDimensions.numD25,
+                        //   fit: BoxFit.contain,
+                        // ),
 
-                        SizedBox(height: size.width * AppDimensions.numD05),
+                        // SizedBox(height: size.width * AppDimensions.numD05),
 
-                        /// Price and Hours
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text:
-                                    "${taskDetail.task.currencySymbol.isNotEmpty ? taskDetail.task.currencySymbol : currencySymbol}${taskDetail.task.hopperTaskAmount} ",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: size.width * AppDimensions.numD07,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                              TextSpan(
-                                text:
-                                    "for ${taskDetail.task.hopperInfo.isNotEmpty ? taskDetail.task.hopperInfo.first.hours : "0"} hours",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: size.width * AppDimensions.numD04,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        // /// Price and Hours
+                        // RichText(
+                        //   textAlign: TextAlign.center,
+                        //   text: TextSpan(
+                        //     children: [
+                        //       TextSpan(
+                        //         text:
+                        //             "${taskDetail.task.currencySymbol.isNotEmpty ? taskDetail.task.currencySymbol : currencySymbol}${taskDetail.task.hopperTaskAmount} ",
+                        //         style: TextStyle(
+                        //           color: Colors.black,
+                        //           fontSize: size.width * AppDimensions.numD07,
+                        //           fontWeight: FontWeight.w800,
+                        //         ),
+                        //       ),
+                        //       TextSpan(
+                        //         text:
+                        //             "for ${taskDetail.task.hopperInfo.first.hours } hours",
+                        //         style: TextStyle(
+                        //           color: Colors.black,
+                        //           fontSize: size.width * AppDimensions.numD04,
+                        //           fontWeight: FontWeight.w600,
+                        //         ),
+                        //       ),
+                        //       // TextSpan(
+                        //       //   text:
+                        //       //       "for ${taskDetail.task.hopperInfo.isNotEmpty ? taskDetail.task.hopperInfo.first.hours : "0"} hours",
+                        //       //   style: TextStyle(
+                        //       //     color: Colors.black,
+                        //       //     fontSize: size.width * AppDimensions.numD04,
+                        //       //     fontWeight: FontWeight.w600,
+                        //       //   ),
+                        //       // ),
+                        //     ],
+                        //   ),
+                        // ),
 
-                        SizedBox(height: size.width * AppDimensions.numD02),
+                        // SizedBox(height: size.width * AppDimensions.numD02),
 
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * AppDimensions.numD04,
-                              vertical: size.width * AppDimensions.numD04),
-                          child: SizedBox(
-                            width: size.width,
-                            height: size.width * AppDimensions.numD12,
-                            child: commonElevatedButton(
-                                "View Details",
-                                size,
-                                commonTextStyle(
-                                    size: size,
-                                    fontSize:
-                                        size.width * AppDimensions.numD035,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700),
-                                commonButtonStyle(
-                                    size, AppColorTheme.colorThemePink),
-                                onTapViewDetails),
-                          ),
-                        ),
+                        // Padding(
+                        // padding: EdgeInsets.symmetric(
+                        //     horizontal: size.width * AppDimensions.numD04,
+                        //     vertical: size.width * AppDimensions.numD04),
+                        // child: SizedBox(
+                        //   width: size.width,
+                        //   height: size.width * AppDimensions.numD12,
+                        //   child: commonElevatedButton(
+                        //       "View Details",
+                        //       size,
+                        //       commonTextStyle(
+                        //           size: size,
+                        //           fontSize:
+                        //               size.width * AppDimensions.numD035,
+                        //           color: Colors.white,
+                        //           fontWeight: FontWeight.w700),
+                        //       commonButtonStyle(
+                        //           size, AppColorTheme.colorThemePink),
+                        //       onTapViewDetails),
+                        // ),
+                        // ),
                       ],
                     ),
                   );
@@ -564,7 +818,7 @@ void commonErrorDialogDialog(
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD04),
                                   child: Image.asset(
-                                    "${commonImagePath}dog.png",
+                                    "assets/rabbits/update_rabbit.png",
                                     height: size.width * AppDimensions.numD25,
                                     width: size.width * AppDimensions.numD35,
                                     fit: BoxFit.cover,
@@ -755,7 +1009,7 @@ void showLoaderDialog(BuildContext context) {
   }
   alertDialog = AlertDialog(
     elevation: 0,
-    backgroundColor: Colors.white.withOpacity(0),
+    backgroundColor: Colors.transparent,
     content: const Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -768,7 +1022,7 @@ void showLoaderDialog(BuildContext context) {
   );
   showDialog(
     barrierDismissible: false,
-    barrierColor: Colors.white.withOpacity(0),
+    barrierColor: Colors.transparent,
     context: context,
     builder: (context) {
       return alertDialog!;

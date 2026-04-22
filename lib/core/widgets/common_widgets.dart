@@ -92,6 +92,8 @@ Widget commonRefresherFooter(BuildContext context, LoadStatus? mode) {
     body = const Text("Load Failed!Click retry!");
   } else if (mode == LoadStatus.canLoading) {
     body = const Text("release to load more");
+  } else if (mode == LoadStatus.noMore) {
+    body = const Text("No item available");
   } else {
     body = const Text("");
   }
@@ -264,7 +266,6 @@ List<Widget> getMediaCount(List<ContentMediaData> contentMediaList, Size size) {
   return widgetList;
 }
 
-/// Takes List<dynamic> which can be List<FeedContent> or List<ContentDataModel>
 List<Widget> getMediaCount2(List<dynamic> contentMediaList, Size size) {
   final imageCount =
       contentMediaList.where((item) => item.mediaType == "image").length;

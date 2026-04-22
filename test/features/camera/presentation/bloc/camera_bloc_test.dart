@@ -225,7 +225,7 @@ void main() {
               .having((s) => s.isFlashOn, 'isFlashOn', true)));
       verify(() => mockCameraController.setFlashMode(FlashMode.torch))
           .called(1);
-      cameraBloc.close();
+      await cameraBloc.close();
     });
   });
 }

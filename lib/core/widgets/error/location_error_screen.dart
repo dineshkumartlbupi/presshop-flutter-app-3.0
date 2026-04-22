@@ -4,7 +4,6 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 
 import 'package:presshop/core/core_export.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 class LocationErrorScreen extends StatefulWidget {
   const LocationErrorScreen({super.key});
@@ -71,7 +70,8 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                         ClipRRect(
                             borderRadius: BorderRadius.circular(
                                 size.width * AppDimensions.numD06),
-                            child: Image.asset("${commonImagePath}dog.png",
+                            child: Image.asset(
+                                "assets/rabbits/update_rabbit.png",
                                 height: size.width * AppDimensions.numD30,
                                 width: size.width * AppDimensions.numD30,
                                 fit: BoxFit.cover)),

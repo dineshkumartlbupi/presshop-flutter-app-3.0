@@ -65,6 +65,14 @@ import 'package:presshop/core/api/global_socket_client.dart';
 import 'package:presshop/features/map/data/datasources/incident_socket_datasource.dart';
 import 'package:presshop/features/news/data/datasources/news_socket_datasource.dart';
 import 'package:presshop/features/chat/data/datasources/chat_socket_datasource.dart';
+import 'package:presshop/features/chat/data/datasources/chat_remote_data_source.dart';
+import 'package:presshop/features/chat/data/repositories/chat_repository_impl.dart';
+import 'package:presshop/features/chat/domain/repositories/chat_repository.dart';
+import 'package:presshop/features/chat/domain/usecases/get_chat_list.dart';
+import 'package:presshop/features/chat/domain/usecases/get_room_chat.dart';
+import 'package:presshop/features/chat/domain/usecases/send_message.dart';
+import 'package:presshop/features/chat/domain/usecases/upload_media.dart';
+import 'package:presshop/features/chat/domain/usecases/update_typing_status.dart';
 import 'package:presshop/features/news/data/datasources/news_remote_datasource.dart';
 import 'package:presshop/features/news/data/repositories/news_repository_impl.dart';
 import 'package:presshop/features/news/domain/repositories/news_repository.dart';
@@ -80,7 +88,7 @@ import 'package:presshop/features/earning/domain/usecases/get_earning_profile.da
 import 'package:presshop/features/earning/domain/usecases/get_transactions.dart';
 import 'package:presshop/features/earning/domain/usecases/get_commissions.dart';
 import 'package:presshop/features/earning/presentation/bloc/earning_bloc.dart';
-import 'package:presshop/features/alert/presentation/bloc/alert_bloc.dart';
+
 import 'package:presshop/features/camera/presentation/bloc/camera_bloc.dart';
 import 'package:presshop/features/chat/presentation/bloc/chat_bloc.dart';
 import 'package:presshop/features/feed/domain/repositories/feed_repository.dart';
@@ -102,7 +110,6 @@ import 'package:presshop/features/task/domain/usecases/get_hopper_accepted_count
 import 'package:presshop/features/task/domain/usecases/get_task_transaction_details.dart';
 import 'package:presshop/features/task/domain/usecases/get_content_transaction_details.dart';
 
-import 'package:presshop/features/chat/data/datasources/chat_local_data_source.dart';
 import 'package:presshop/features/authentication/domain/usecases/login_user.dart';
 import 'package:presshop/features/authentication/domain/usecases/social_login_user.dart';
 import 'package:presshop/features/authentication/domain/usecases/register_user.dart';
@@ -177,6 +184,8 @@ import 'package:presshop/features/content/domain/usecases/get_content_detail.dar
 import 'package:presshop/features/content/domain/repositories/content_repository.dart';
 import 'package:presshop/features/content/data/repositories/content_repository_impl.dart';
 import 'package:presshop/features/content/data/datasources/content_remote_data_source.dart';
+import 'package:presshop/features/content/data/datasources/content_socket_datasource.dart';
+import 'package:presshop/features/content/domain/usecases/record_content_view.dart';
 
 import 'package:presshop/features/content/domain/usecases/get_media_house_offers.dart';
 import 'package:presshop/features/content/domain/usecases/get_content_transactions.dart';
@@ -249,8 +258,6 @@ Future<void> init() async {
         clientId: Platform.isIOS
             ? '750460561502-geuno4tt1ic52cor9l2obl1vhuogvsp0.apps.googleusercontent.com'
             : null,
-        serverClientId:
-            '750460561502-fajfc82s14phu6iu767i7qm53qmu2r8f.apps.googleusercontent.com',
         scopes: ['email'],
       ));
 
@@ -336,6 +343,7 @@ Future<void> init() async {
     () => AuthBloc(
       loginUser: sl(),
       socialLoginUser: sl(),
+      checkEmail: sl(),
       forgotPassword: sl(),
       verifyForgotPasswordOtp: sl(),
       resetPassword: sl(),
@@ -435,6 +443,9 @@ Future<void> init() async {
       getContentDetail: sl(),
       getMediaHouseOffers: sl(),
       getContentTransactions: sl(),
+      recordContentView: sl(),
+      contentSocketDataSource: sl(),
+      sharedPreferences: sl(),
     ),
   );
 
@@ -502,10 +513,17 @@ Future<void> init() async {
       getCommissions: sl(),
     ),
   );
-  sl.registerFactory(() => AlertBloc(apiClient: sl()));
+  // sl.registerFactory(() => AlertBloc(apiClient: sl()));
   sl.registerFactory(() => CameraBloc(sl()));
   sl.registerFactory(
-    () => ChatBloc(chatSocketDataSource: sl(), localDataSource: sl()),
+    () => ChatBloc(
+      getChatListUseCase: sl(),
+      getRoomChatUseCase: sl(),
+      sendMessageUseCase: sl(),
+      uploadMediaUseCase: sl(),
+      updateTypingStatusUseCase: sl(),
+      chatSocketDataSource: sl(),
+    ),
   );
   sl.registerFactory(
     () => FeedBloc(getFeeds: sl(), toggleFeedInteraction: sl()),
@@ -520,7 +538,7 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerFactory(
+  sl.registerLazySingleton(
     () => MapBloc(
       getCurrentLocation: sl(),
       getRoute: sl(),
@@ -571,6 +589,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetContentDetail(sl()));
   sl.registerLazySingleton(() => GetMediaHouseOffers(sl()));
   sl.registerLazySingleton(() => GetContentTransactions(sl()));
+  sl.registerLazySingleton(() => RecordContentView(sl()));
 
   // Account Settings Use Cases ==========================================>
   sl.registerLazySingleton(() => DeleteAccount(sl()));
@@ -781,5 +800,24 @@ Future<void> init() async {
   sl.registerLazySingleton(() => IncidentSocketDataSource(client: sl()));
   sl.registerLazySingleton(() => NewsSocketDataSource(client: sl()));
   sl.registerLazySingleton(() => ChatSocketDataSource(client: sl()));
-  sl.registerLazySingleton(() => ChatLocalDataSource());
+  sl.registerLazySingleton<ContentSocketDataSource>(
+      () => ContentSocketDataSourceImpl(socketClient: sl()));
+  sl.registerLazySingleton<ChatRemoteDataSource>(
+      () => ChatRemoteDataSource(sl()));
+
+  // Chat Repository
+  sl.registerLazySingleton<ChatRepository>(
+    () => ChatRepositoryImpl(
+      remoteDataSource: sl(),
+      socketDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Chat Use Cases
+  sl.registerLazySingleton(() => GetChatListUseCase(sl()));
+  sl.registerLazySingleton(() => GetRoomChatUseCase(sl()));
+  sl.registerLazySingleton(() => SendMessageUseCase(sl()));
+  sl.registerLazySingleton(() => UploadMediaUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateTypingStatusUseCase(sl()));
 }

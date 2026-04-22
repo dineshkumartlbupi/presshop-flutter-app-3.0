@@ -29,7 +29,7 @@ Future<bool?> showLocationPermissionDialogWithImage({
   return showDialog<bool>(
     barrierDismissible: false,
     context: context,
-    builder: (BuildContext context) {
+    builder: (context) {
       bool isChecked = false;
 
       return WillPopScope(

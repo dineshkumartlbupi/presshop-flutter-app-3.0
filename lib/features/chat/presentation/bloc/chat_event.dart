@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-// import 'package:image_picker/image_picker.dart';
+import 'package:presshop/features/chat/data/models/chat_models.dart';
 
 abstract class ChatEvent extends Equatable {
   const ChatEvent();
@@ -75,17 +75,19 @@ class SendMessageEvent extends ChatEvent {
 }
 
 class UpdateTypingStatusEvent extends ChatEvent {
-  const UpdateTypingStatusEvent({required this.isTyping, required this.roomId});
+  const UpdateTypingStatusEvent(
+      {required this.isTyping, required this.roomId, this.typedValue});
   final bool isTyping;
   final String roomId;
+  final String? typedValue;
 
   @override
-  List<Object> get props => [isTyping, roomId];
+  List<Object> get props => [isTyping, roomId, typedValue ?? ''];
 }
 
 class ReceiveMessageEvent extends ChatEvent {
   const ReceiveMessageEvent(this.messages);
-  final List<Map<String, dynamic>> messages;
+  final List<ChatMessageModel> messages;
 
   @override
   List<Object> get props => [messages];
@@ -125,7 +127,7 @@ class OtherUserTypingUpdatedEvent extends ChatEvent {
 
 class ChatListUpdatedEvent extends ChatEvent {
   const ChatListUpdatedEvent(this.chatList);
-  final List<Map<String, dynamic>> chatList;
+  final List<ChatRoomModel> chatList;
 
   @override
   List<Object> get props => [chatList];
@@ -137,4 +139,8 @@ class OtherUserOnlineStatusUpdatedEvent extends ChatEvent {
 
   @override
   List<Object> get props => [isOnline];
+}
+
+class FetchMoreMessagesEvent extends ChatEvent {
+  const FetchMoreMessagesEvent();
 }

@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:presshop/core/router/router_constants.dart';
 
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
@@ -73,7 +72,9 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
+                  softWrap: true,
                   AppStrings.deleteAccountText,
+                  textAlign: TextAlign.justify,
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD035,
@@ -137,31 +138,33 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                     },
                   ),
                 ),
-                Container(
-                  width: double.infinity,
-                  height: size.height *
-                      (isIpad ? AppDimensions.numD1 : AppDimensions.numD08),
-                  padding: EdgeInsets.symmetric(
-                      vertical: size.height * AppDimensions.numD015),
-                  child: commonElevatedButton(
-                    'Delete Account',
-                    size,
-                    commonTextStyle(
-                        size: size,
-                        fontSize: size.width *
-                            (isIpad
-                                ? AppDimensions.numD032
-                                : AppDimensions.numD038),
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700),
-                    commonButtonStyle(size, AppColorTheme.colorThemePink),
-                    () {
-                      if (selectReason.isNotEmpty) {
-                        showDeleteDialog(size);
-                      } else {
-                        showToast("Please select reason...");
-                      }
-                    },
+                SafeArea(
+                  child: Container(
+                    width: double.infinity,
+                    height: size.height *
+                        (isIpad ? AppDimensions.numD1 : AppDimensions.numD08),
+                    padding: EdgeInsets.symmetric(
+                        vertical: size.height * AppDimensions.numD015),
+                    child: commonElevatedButton(
+                      'Delete Account',
+                      size,
+                      commonTextStyle(
+                          size: size,
+                          fontSize: size.width *
+                              (isIpad
+                                  ? AppDimensions.numD032
+                                  : AppDimensions.numD038),
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700),
+                      commonButtonStyle(size, AppColorTheme.colorThemePink),
+                      () {
+                        if (selectReason.isNotEmpty) {
+                          showDeleteDialog(size);
+                        } else {
+                          showToast("Please select reason...");
+                        }
+                      },
+                    ),
                   ),
                 )
               ],

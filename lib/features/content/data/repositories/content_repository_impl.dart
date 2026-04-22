@@ -9,7 +9,6 @@ import '../../domain/repositories/content_repository.dart';
 import '../datasources/content_remote_data_source.dart';
 
 class ContentRepositoryImpl implements ContentRepository {
-
   ContentRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
@@ -210,6 +209,23 @@ class ContentRepositoryImpl implements ContentRepository {
         return Right(transactions);
       } on Failure catch (failure) {
         return Left(failure);
+      } catch (e) {
+        return Left(ServerFailure(message: e.toString()));
+      }
+    } else {
+      return const Left(NetworkFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> recordContentView(
+      {required String contentId, required String userId}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        // We call the remote data source for REST tracking
+        // (even if it's just a placeholder for now if endpoint is unknown)
+        // await remoteDataSource.recordContentView(contentId, userId);
+        return const Right(null);
       } catch (e) {
         return Left(ServerFailure(message: e.toString()));
       }

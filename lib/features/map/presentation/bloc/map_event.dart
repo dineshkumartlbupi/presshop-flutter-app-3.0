@@ -62,6 +62,22 @@ class FetchNewsEvent extends MapEvent {
   List<Object> get props => [lat, lng, km, category, isFeedOnly];
 }
 
+class FetchIncidentsEvent extends MapEvent {
+  const FetchIncidentsEvent({
+    required this.lat,
+    required this.lng,
+    required this.km,
+    this.category = "all",
+  });
+  final double lat;
+  final double lng;
+  final double km;
+  final String category;
+
+  @override
+  List<Object> get props => [lat, lng, km, category];
+}
+
 class SetSearchedLocationEvent extends MapEvent {
   const SetSearchedLocationEvent(this.location);
   final LatLng location;
@@ -190,4 +206,48 @@ class SetDraggingEvent extends MapEvent {
 
   @override
   List<Object> get props => [isDragging];
+}
+
+class ToggleAnimatedMarkersEvent extends MapEvent {
+  const ToggleAnimatedMarkersEvent();
+}
+
+// ── Internal background-task result events ──────────────────────────────────
+// Fired by _loadAvatarAndEmit / _fetchAddressAndEmit background helpers.
+
+class EmitAvatarMarkerEvent extends MapEvent {
+  const EmitAvatarMarkerEvent(this.marker);
+  final Marker marker;
+  @override
+  List<Object> get props => [marker.markerId.value];
+}
+
+class EmitAddressEvent extends MapEvent {
+  const EmitAddressEvent(this.address);
+  final String address;
+  @override
+  List<Object> get props => [address];
+}
+
+class SetSelectingAlertLocationEvent extends MapEvent {
+  const SetSelectingAlertLocationEvent({this.isSelecting = false, this.type});
+  final bool isSelecting;
+  final String? type;
+  @override
+  List<Object> get props => [isSelecting, type ?? ''];
+}
+
+class SetShowDropdownEvent extends MapEvent {
+  const SetShowDropdownEvent(this.show);
+  final bool show;
+}
+
+class SetLocationTimeoutEvent extends MapEvent {
+  const SetLocationTimeoutEvent(this.isTimeout);
+  final bool isTimeout;
+}
+
+class SetVisibilityEvent extends MapEvent {
+  const SetVisibilityEvent(this.isVisible);
+  final bool isVisible;
 }

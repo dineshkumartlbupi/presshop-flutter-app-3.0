@@ -38,7 +38,8 @@ class ContentItemModel extends ContentItem {
     required super.latitude,
     required super.longitude,
     required super.categoryId,
-    required super.hopperId,
+    required String hopperId,
+    String? type,
     required super.askPrice,
     required super.isDraft,
     required super.isCharity,
@@ -52,6 +53,8 @@ class ContentItemModel extends ContentItem {
     required super.currencyOriginal,
     required super.imageCount,
     required super.videoCount,
+    super.audioCount = 0,
+    super.otherCount = 0,
     required super.contentUnderOffer,
     required super.paidStatus,
     required super.contentViewCount,
@@ -65,7 +68,7 @@ class ContentItemModel extends ContentItem {
     super.currency = "",
     super.currencySymbol = "",
     super.totalEarnings = "0",
-  });
+  }) : super(hopperId: hopperId, type: type);
 
   factory ContentItemModel.fromJson(Map<String, dynamic> json) {
     return ContentItemModel(
@@ -78,6 +81,7 @@ class ContentItemModel extends ContentItem {
           json['category_ids']?.toString() ??
           '',
       hopperId: json['hopper_id'] ?? '',
+      type: json['type']?.toString(),
       askPrice: json['ask_price']?.toString() ?? '0',
       isDraft: json['is_draft'] == "true" || json['is_draft'] == true,
       isCharity: json['is_charity'] == "true" || json['is_charity'] == true,
@@ -96,8 +100,30 @@ class ContentItemModel extends ContentItem {
       productId: json['product_id'] ?? '',
       priceOriginal: json['price_original']?.toString() ?? '0',
       currencyOriginal: json['currency_original'] ?? '',
-      imageCount: json['image_count'] ?? 0,
-      videoCount: json['video_count'] ?? 0,
+      imageCount: int.tryParse((json['image_count'] ??
+                  json['imageCount'] ??
+                  json['images_count'] ??
+                  '0')
+              .toString()) ??
+          0,
+      videoCount: int.tryParse((json['video_count'] ??
+                  json['videoCount'] ??
+                  json['videos_count'] ??
+                  '0')
+              .toString()) ??
+          0,
+      audioCount: int.tryParse((json['audio_count'] ??
+                  json['audioCount'] ??
+                  json['audios_count'] ??
+                  '0')
+              .toString()) ??
+          0,
+      otherCount: int.tryParse((json['other_count'] ??
+                  json['otherCount'] ??
+                  json['others_count'] ??
+                  '0')
+              .toString()) ??
+          0,
       contentUnderOffer: json['content_under_offer'] == true,
       paidStatus: json['paid_status'] == true || json['paid_status'] == "paid",
       contentViewCount: json['content_view_count_by_marketplace_for_app'] ?? 0,
@@ -149,6 +175,7 @@ class ContentItemModel extends ContentItem {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() => {
         'id': id,
         'description': description,
@@ -157,6 +184,7 @@ class ContentItemModel extends ContentItem {
         'longitude': longitude,
         'category_id': categoryId,
         'hopper_id': hopperId,
+        'type': type,
         'ask_price': askPrice,
         'is_draft': isDraft,
         'is_charity': isCharity,
@@ -172,6 +200,8 @@ class ContentItemModel extends ContentItem {
         'currency_original': currencyOriginal,
         'image_count': imageCount,
         'video_count': videoCount,
+        'audio_count': audioCount,
+        'other_count': otherCount,
         'content_under_offer': contentUnderOffer,
         'paid_status': paidStatus,
         'content_view_count_by_marketplace_for_app': contentViewCount,

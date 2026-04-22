@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:presshop/features/map/constants/map_news_constants.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:intl/intl.dart';
-import 'package:presshop/core/constants/app_dimensions.dart';
-import 'package:presshop/core/constants/app_assets.dart';
 
 class CustomInfoWindow extends StatelessWidget {
-  final Incident incident;
-  final VoidCallback onPressed;
 
   const CustomInfoWindow({
     super.key,
     required this.incident,
     required this.onPressed,
   });
+  final Incident incident;
+  final VoidCallback onPressed;
 
   String _getDisplayTitle(String? type, String? address) {
-    String typeName = (type ?? "Incident");
+    String typeName = type ?? "Incident";
     if (typeName.isNotEmpty) {
       typeName =
           typeName[0].toUpperCase() + typeName.substring(1).toLowerCase();
@@ -73,6 +72,24 @@ class CustomInfoWindow extends StatelessWidget {
     return "No Date";
   }
 
+  String _formatRelativeTime(String? timeStr) {
+    if (timeStr == null || timeStr.isEmpty) return "some time ago";
+    try {
+      DateTime? parsed = DateTime.tryParse(timeStr);
+      if (parsed == null) return "some time ago";
+      
+      final diff = DateTime.now().difference(parsed);
+      if (diff.inDays > 365) return "${(diff.inDays / 365).floor()} years ago";
+      if (diff.inDays > 30) return "${(diff.inDays / 30).floor()} months ago";
+      if (diff.inDays > 0) return "${diff.inDays} days ago";
+      if (diff.inHours > 0) return "${diff.inHours} hours ago";
+      if (diff.inMinutes > 0) return "${diff.inMinutes} minutes ago";
+      return "just now";
+    } catch (_) {
+      return "some time ago";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -83,13 +100,13 @@ class CustomInfoWindow extends StatelessWidget {
       child: TweenAnimationBuilder<double>(
         tween: Tween(begin: 0.0, end: 1.0),
         duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOutQuart,
+        curve: Curves.easeOutBack,
         builder: (context, value, child) {
           return Transform.scale(
             scale: value,
-            alignment: Alignment.bottomCenter, // Scale from center bottom
+            alignment: Alignment.bottomCenter,
             child: Opacity(
-              opacity: value,
+              opacity: value.clamp(0.0, 1.0),
               child: child,
             ),
           );
@@ -98,29 +115,22 @@ class CustomInfoWindow extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           child: Material(
             color: Colors.transparent,
-            elevation: 20,
+            elevation: 0,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // MAIN CARD
                 Container(
-                  width: responsiveWidth * AppDimensions.numD65,
-                  padding: EdgeInsets.only(
-                      left: responsiveWidth * AppDimensions.numD04,
-                      right: responsiveWidth * AppDimensions.numD04,
-                      top: responsiveWidth * AppDimensions.numD02,
-                      bottom: responsiveWidth * AppDimensions.numD04),
+                  width: responsiveWidth * 0.7,
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(
-                        responsiveWidth * AppDimensions.numD045),
+                    borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: responsiveWidth * AppDimensions.numD02,
-                        offset:
-                            Offset(0, responsiveWidth * AppDimensions.numD008),
+                        color: Colors.black.withOpacity(0.15),
+                        blurRadius: 15,
+                        offset: const Offset(0, 8),
                       ),
                     ],
                   ),
@@ -128,122 +138,97 @@ class CustomInfoWindow extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // TOP ROW (ICON + CITY)
-                      Container(
-                        padding: EdgeInsets.only(
-                            bottom: responsiveWidth * AppDimensions.numD02),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Image.asset(
-                              burstIcons[incident.type] ??
-                                  markerIcons[incident.type] ??
-                                  markerIcons["nomarker"]!,
-                              height: responsiveWidth * AppDimensions.numD10,
-                            ),
-                            SizedBox(
-                                width: responsiveWidth * AppDimensions.numD015),
-                            Flexible(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    // Use heading if available, else fallback
-                                    incident.heading ??
-                                        _getDisplayTitle(
-                                            incident.type, incident.address),
-                                    style: TextStyle(
-                                      fontSize: responsiveWidth *
-                                          AppDimensions.numD045,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  if (incident.temperature != null ||
-                                      incident.wind != null ||
-                                      (incident.type
-                                              ?.toLowerCase()
-                                              .contains('snow') ??
-                                          false) ||
-                                      (incident.type
-                                              ?.toLowerCase()
-                                              .contains('weather') ??
-                                          false) ||
-                                      (incident.type
-                                              ?.toLowerCase()
-                                              .contains('storm') ??
-                                          false)) ...[
-                                    SizedBox(
-                                        height: responsiveWidth *
-                                            AppDimensions.numD01),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "${incident.temperature ?? '--'}°C",
-                                          style: TextStyle(
-                                            fontSize: responsiveWidth *
-                                                AppDimensions.numD032,
-                                            color: Colors.grey.shade700,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                            width: responsiveWidth *
-                                                AppDimensions.numD02),
-                                        Text(
-                                          "${incident.wind ?? '--'} km/h Wind",
-                                          style: TextStyle(
-                                            fontSize: responsiveWidth *
-                                                AppDimensions.numD032,
-                                            color: Colors.grey.shade700,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ],
+                      // Poster Info
+                      Row(
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: (incident.avatar != null && incident.avatar!.isNotEmpty)
+                                    ? CachedNetworkImageProvider(incident.avatar!)
+                                    : const AssetImage('assets/markers/avatar.png') as ImageProvider,
+                                fit: BoxFit.cover,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  incident.username ?? "Anonymous",
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                Text(
+                                  "posted an alert : ${_formatRelativeTime(incident.time)}",
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Divider(height: 1, thickness: 1),
                       ),
 
-                      // DIVIDER
-                      Container(height: 1, color: Colors.grey.shade300),
+                      // Header Row
+                      Row(
+                        children: [
+                          Image.asset(
+                            burstIcons[incident.type] ?? markerIcons[incident.type] ?? markerIcons["nomarker"]!,
+                            height: 36,
+                            width: 36,
+                            errorBuilder: (context, error, stackTrace) => const Icon(Icons.warning_amber_rounded, size: 36, color: Colors.orange),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              incident.heading ?? _getDisplayTitle(incident.type, incident.address),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Divider(height: 1, thickness: 1),
+                      ),
 
-                      SizedBox(height: responsiveWidth * AppDimensions.numD025),
-
-                      // FULL ADDRESS
-                      if (incident.address != null &&
-                          incident.address!.isNotEmpty) ...[
+                      // Details
+                      if (incident.address != null && incident.address!.isNotEmpty) ...[
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: SizedBox(
-                                width: responsiveWidth * AppDimensions.numD06,
-                                child: Image.asset(
-                                    "assets/icons/news_location.png",
-                                    height:
-                                        responsiveWidth * AppDimensions.numD04,
-                                    color: Colors.grey[800]),
-                              ),
-                            ),
-                            SizedBox(
-                                width: responsiveWidth * AppDimensions.numD02),
+                            Icon(Icons.location_on_outlined, size: 18, color: Colors.grey[600]),
+                            const SizedBox(width: 6),
                             Expanded(
                               child: Text(
                                 incident.address!,
                                 style: TextStyle(
-                                  fontSize:
-                                      responsiveWidth * AppDimensions.numD035,
-                                  color: Colors.grey.shade700,
-                                  // height: 1.3,
+                                  fontSize: 13,
+                                  color: Colors.grey[700],
+                                  fontWeight: FontWeight.w500,
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -251,134 +236,72 @@ class CustomInfoWindow extends StatelessWidget {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 6),
                       ],
 
-                      if (incident.description != null &&
-                          incident.description!.isNotEmpty) ...[
-                        SizedBox(
-                            height: responsiveWidth * AppDimensions.numD02),
+                      // Description
+                      if (incident.description != null && incident.description!.isNotEmpty) ...[
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
-                              width: responsiveWidth * AppDimensions.numD06,
-                              child: Icon(Icons.info_outline,
-                                  size: responsiveWidth * AppDimensions.numD04,
-                                  color: Colors.grey[800]),
-                            ),
-                            SizedBox(
-                                width: responsiveWidth * AppDimensions.numD02),
+                            Icon(Icons.info_outline, size: 18, color: Colors.grey[600]),
+                            const SizedBox(width: 6),
                             Expanded(
                               child: Text(
                                 incident.description!,
                                 style: TextStyle(
-                                  fontSize:
-                                      responsiveWidth * AppDimensions.numD032,
-                                  color: Colors.grey.shade600,
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
                                   fontStyle: FontStyle.italic,
-                                  height: 1.3,
                                 ),
-                                maxLines: 3,
+                                maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
                         ),
+                        const SizedBox(height: 6),
                       ],
 
-                      SizedBox(height: responsiveWidth * AppDimensions.numD02),
-
-                      // TIME AND VIEW COUNT (ROW)
+                      // Time and Views
                       Row(
                         children: [
-                          // Time (Left)
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: responsiveWidth * AppDimensions.numD06,
-                                child: Image.asset(
-                                  "${iconsPath}ic_clock.png",
-                                  height:
-                                      responsiveWidth * AppDimensions.numD035,
-                                  color: Colors.grey[800],
-                                ),
-                              ),
-                              SizedBox(
-                                  width:
-                                      responsiveWidth * AppDimensions.numD025),
-                              Text(
-                                _formatTime(incident.time),
-                                style: TextStyle(
-                                  fontSize:
-                                      responsiveWidth * AppDimensions.numD035,
-                                  color: Colors.grey.shade700,
-                                ),
-                              ),
-                            ],
+                          Icon(Icons.access_time, size: 18, color: Colors.grey[600]),
+                          const SizedBox(width: 6),
+                          Text(
+                            _formatTime(incident.time),
+                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                           ),
-
-                          SizedBox(
-                              width: responsiveWidth * AppDimensions.numD03),
-
-                          // Views (Right)
-                          Row(
-                            children: [
-                              Image.asset(
-                                "assets/icons/news_eye.png",
-                                height: responsiveWidth * AppDimensions.numD03,
-                                color: Colors.grey.shade800,
-                              ),
-                              SizedBox(
-                                  width:
-                                      responsiveWidth * AppDimensions.numD015),
-                              Text(
-                                "${incident.viewCount ?? 0}",
-                                style: TextStyle(
-                                  fontSize:
-                                      responsiveWidth * AppDimensions.numD035,
-                                  color: Colors.grey.shade700,
-                                ),
-                              ),
-                            ],
+                          const SizedBox(width: 16),
+                          Icon(Icons.visibility_outlined, size: 18, color: Colors.grey[600]),
+                          const SizedBox(width: 6),
+                          Text(
+                            "${incident.viewCount ?? 0}",
+                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                           ),
                         ],
                       ),
+                      
+                      const SizedBox(height: 4),
 
-                      SizedBox(height: responsiveWidth * AppDimensions.numD02),
-
-                      // DATE
+                      // Date
                       Row(
                         children: [
-                          SizedBox(
-                            width: responsiveWidth * AppDimensions.numD06,
-                            child: Image.asset(
-                              "${iconsPath}ic_yearly_calendar.png",
-                              height: responsiveWidth * AppDimensions.numD035,
-                              color: Colors.grey.shade700,
-                            ),
-                          ),
-                          SizedBox(
-                              width: responsiveWidth * AppDimensions.numD02),
+                          Icon(Icons.calendar_today_outlined, size: 16, color: Colors.grey[600]),
+                          const SizedBox(width: 6),
                           Text(
                             _formatDate(incident.date, incident.time),
-                            style: TextStyle(
-                              fontSize: responsiveWidth * AppDimensions.numD035,
-                              color: Colors.grey.shade700,
-                            ),
+                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                           ),
                         ],
                       ),
                     ],
                   ),
                 ),
-
-                // TRIANGLE
-                Padding(
-                  padding: EdgeInsets.zero,
-                  child: CustomPaint(
-                      size: Size(responsiveWidth * AppDimensions.numD06,
-                          responsiveWidth * AppDimensions.numD03),
-                      painter: _TrianglePainter()),
+                // Triangle
+                CustomPaint(
+                  size: const Size(20, 10),
+                  painter: _TrianglePainter(),
                 ),
               ],
             ),

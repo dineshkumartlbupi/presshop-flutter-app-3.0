@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:presshop/features/task/data/models/task_assigned_response_model.dart';
 
 class TaskAssignedEntity extends Equatable {
   const TaskAssignedEntity({
@@ -15,8 +16,48 @@ class TaskAssignedEntity extends Equatable {
 }
 
 class TaskAssignedDetailEntity extends Equatable {
+
+  const TaskAssignedDetailEntity({
+    required this.id,
+    required this.mediaHouse,
+    required this.deadlineDate,
+    required this.heading,
+    required this.description,
+    required this.location,
+    required this.addressLocation,
+    required this.status,
+    required this.isDraft,
+    required this.paidStatus,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.content,
+    this.hopperLocation,
+    this.activeHoppersCount = 0,
+    this.activeHoppersLocations = const [],
+    this.isNeedPhoto = false,
+    this.isNeedVideo = false,
+    this.isNeedInterview = false,
+    this.photoPrice = "0",
+    this.videoPrice = "0",
+    this.interviewPrice = "0",
+    this.currency = "",
+    this.currencySymbol = "",
+    this.hopperInfo = const [],
+    this.hopperTaskAmount = "0",
+    this.acceptedHoppers = const [],
+    this.distance = "",
+    this.walkTime = "",
+    this.driveTime = "",
+    this.latitude,
+    this.longitude,
+    this.specialRequirements = "",
+    this.preferences,
+  });
   final String id;
   final MediaHouseEntity mediaHouse;
+  final HopperLocationModel? hopperLocation;
+  final int activeHoppersCount;
+  final List<HopperLocationModel> activeHoppersLocations;
   final DateTime deadlineDate;
   final String heading;
   final String description;
@@ -42,36 +83,10 @@ class TaskAssignedDetailEntity extends Equatable {
   final String distance;
   final String walkTime;
   final String driveTime;
-
-  const TaskAssignedDetailEntity({
-    required this.id,
-    required this.mediaHouse,
-    required this.deadlineDate,
-    required this.heading,
-    required this.description,
-    required this.location,
-    required this.addressLocation,
-    required this.status,
-    required this.isDraft,
-    required this.paidStatus,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.content,
-    this.isNeedPhoto = false,
-    this.isNeedVideo = false,
-    this.isNeedInterview = false,
-    this.photoPrice = "0",
-    this.videoPrice = "0",
-    this.interviewPrice = "0",
-    this.currency = "",
-    this.currencySymbol = "",
-    this.hopperInfo = const [],
-    this.hopperTaskAmount = "0",
-    this.acceptedHoppers = const [],
-    this.distance = "",
-    this.walkTime = "",
-    this.driveTime = "",
-  });
+  final String specialRequirements;
+  final Map<String, dynamic>? preferences;
+  final double? latitude;
+  final double? longitude;
 
   @override
   List<Object?> get props => [
@@ -98,10 +113,15 @@ class TaskAssignedDetailEntity extends Equatable {
         currencySymbol,
         hopperInfo,
         hopperTaskAmount,
+        hopperLocation,
+        activeHoppersCount,
+        activeHoppersLocations,
         acceptedHoppers,
         distance,
         walkTime,
         driveTime,
+        specialRequirements,
+        preferences,
       ];
 }
 

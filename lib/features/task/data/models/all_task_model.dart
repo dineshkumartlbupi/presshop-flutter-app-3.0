@@ -39,16 +39,19 @@ class AllTaskModel extends TaskAll {
       location: (json['location'] ?? "").toString(),
       status: (json['status'] ?? "").toString(),
       isAvailableForAccept: json['is_available_for_accept'] ?? false,
-      mediaHouseDetails: (json['mediahouse_id'] is Map<String, dynamic>)
-          ? MediaHouseDetails.fromJson(json['mediahouse_id'])
+      mediaHouseDetails: json['mediahouse_id'] != null
+          ? MediaHouseDetails.fromJson(
+              Map<String, dynamic>.from(json['mediahouse_id'] as Map))
           : null,
       acceptedTasks: json['acceptedTasks'] != null
           ? (json['acceptedTasks'] as List)
-              .map((v) => AcceptedTask.fromJson(v))
+              .map((v) =>
+                  AcceptedTask.fromJson(Map<String, dynamic>.from(v as Map)))
               .toList()
           : [],
       uploadContents: json['uploadContents'] != null
-          ? UploadContents.fromJson(json['uploadContents'])
+          ? UploadContents.fromJson(
+              Map<String, dynamic>.from(json['uploadContents'] as Map))
           : null,
       isNeedPhoto: (json['need_photos'] ?? false) is bool
           ? (json['need_photos'] ?? false)

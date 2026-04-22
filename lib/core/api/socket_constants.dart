@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class SocketEvents {
   // Authentication & Connection Rooms
   static const String joinWebsite = "joinWebsite";
@@ -38,4 +40,15 @@ class SocketEvents {
   static const String leaveRoom = "leave room";
   static const String adminStatus = "adminStatus";
   static const String readMessage = "read message";
+}
+
+class SocketLogger {
+  /// Log when a socket event is emitted
+  static void logEmit(String eventName, {dynamic data}) {
+    debugPrint('🚀 [EMIT] Event: $eventName | Data: $data');
+  }
+  /// Log when a socket event is received
+  static void logReceive(String eventName, {dynamic data}) {
+    debugPrint('📥 [RECEIVE] Event: $eventName | Data: $data');
+  }
 }

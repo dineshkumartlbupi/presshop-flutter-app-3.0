@@ -94,9 +94,19 @@ class ContentItem extends Equatable {
   int get totalView => contentViewCount;
   List<ContentMetadata> get mediaList => contentMetadata;
   String? get mediaType => type;
-  List<String> get mediaUrls => images.isNotEmpty
-      ? images
-      : (videos.isNotEmpty ? videos.map((e) => e.toString()).toList() : []);
+  int get totalMediaCount =>
+      imageCount + videoCount + (audioCount ?? 0) + (otherCount ?? 0);
+  List<String> get mediaUrls {
+    List<String> urls = [...images];
+    urls.addAll(videos.map((e) => e.toString()));
+    for (var meta in contentMetadata) {
+      if (meta.media.isNotEmpty && !urls.contains(meta.media)) {
+        urls.add(meta.media);
+      }
+    }
+    return urls;
+  }
+
   String get totalSold => totalEarnings;
   String get title => description.isNotEmpty ? description : "No Title";
   String? get price => askPrice.isNotEmpty ? askPrice : priceOriginal;
@@ -264,7 +274,7 @@ class ContentItem extends Equatable {
       'currency_base': currencyBase,
       'image_count': imageCount,
       'video_count': videoCount,
-      'audio_count': audioCount,
+      'audio_count': 4,
       'other_count': otherCount,
       'content_under_offer': contentUnderOffer,
       'paid_status': paidStatus,

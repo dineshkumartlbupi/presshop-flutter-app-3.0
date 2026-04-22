@@ -3,16 +3,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/router/router_constants.dart';
-import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import '../bloc/splash_bloc.dart';
@@ -42,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     FirebaseCrashlytics.instance.log("SplashScreen -> initState()");
-    FirebaseAnalytics.instance.logEvent(name: "splash_opened");
+    AppLogger.trackEvent(EventNames.splashOpened);
     getFcmToken();
     _checkInitialMessage();
   }
@@ -69,8 +64,8 @@ class _SplashScreenState extends State<SplashScreen>
         openNotification = true;
         openChatScreen = false;
       }
-      FirebaseAnalytics.instance.logEvent(
-        name: "notification_received",
+      AppLogger.trackAction(
+        ActionNames.notificationReceived,
         parameters: {"type": type},
       );
     } catch (e, st) {
@@ -92,7 +87,7 @@ class _SplashScreenState extends State<SplashScreen>
       child: BlocConsumer<SplashBloc, SplashState>(
         listener: (context, state) {
           if (state is SplashAuthenticated) {
-            context.go(AppRoutes.dashboardPath);
+            context.goNamed(AppRoutes.permissionName);
           } else if (state is SplashUnauthenticated) {
             // context.go(AppRoutes.loginPath);
             context.go(AppRoutes.walkthroughPath);

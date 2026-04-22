@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 import '../../domain/entities/task_detail.dart';
 import '../../domain/entities/task_media.dart';
+import 'task_assigned_response_model.dart';
 
 class TaskVideoModel {
   TaskVideoModel(
@@ -130,6 +131,8 @@ class TaskDetailModel extends TaskDetail {
     super.currencySymbol = "",
     super.hopperInfo = const [],
     super.hopperTaskAmount = "0",
+    super.activeHoppersCount = 0,
+    super.activeHoppersLocations = const [],
   });
 
   factory TaskDetailModel.fromJson(Map<String, dynamic> json,
@@ -259,6 +262,12 @@ class TaskDetailModel extends TaskDetail {
           ? (json["hopperInfo"] as List).toList()
           : [],
       hopperTaskAmount: (json["hopperTaskAmount"] ?? "0").toString(),
+      activeHoppersCount: int.tryParse((json["active_hoppers"] ?? "").toString()) ?? 0,
+      activeHoppersLocations: json["active_hoppers_locations"] != null
+          ? (json["active_hoppers_locations"] as List)
+              .map((e) => HopperLocationModel.fromJson(e ?? {}))
+              .toList()
+          : [],
     );
   }
 
@@ -305,6 +314,8 @@ class TaskDetailModel extends TaskDetail {
       currencySymbol: entity.currencySymbol,
       hopperInfo: entity.hopperInfo,
       hopperTaskAmount: entity.hopperTaskAmount,
+      activeHoppersCount: entity.activeHoppersCount,
+      activeHoppersLocations: entity.activeHoppersLocations,
     );
   }
 }

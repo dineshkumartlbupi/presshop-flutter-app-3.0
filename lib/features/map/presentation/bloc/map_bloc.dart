@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,6 +32,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             target: LatLng(51.5074, -0.1278),
             zoom: 14,
           ),
+          selectedDistance: '5 miles',
         )) {
     on<GetCurrentLocationEvent>(_onGetCurrentLocation);
     on<GetRouteEvent>(_onGetRoute);
@@ -38,6 +40,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<OnIncidentNewEvent>(_onIncidentNew);
     on<OnIncidentUpdatedEvent>(_onIncidentUpdated);
     on<FetchNewsEvent>(_onFetchNews);
+    on<FetchIncidentsEvent>(_onFetchIncidents);
     on<SetSearchedLocationEvent>(_onSetSearchedLocation);
     on<SetSelectedPositionEvent>(_onSetSelectedPosition);
     on<ToggleAlertPanelEvent>(_onToggleAlertPanel);
@@ -56,6 +59,29 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<SetDestinationSelectionModeEvent>(_onSetDestinationSelectionMode);
     on<ClearRouteEvent>(_onClearRoute);
     on<SetDraggingEvent>(_onSetDragging);
+    on<ToggleAnimatedMarkersEvent>(_onToggleAnimatedMarkers);
+    on<SetSelectingAlertLocationEvent>((event, emit) {
+      emit(state.copyWith(
+          isSelectingAlertLocation: event.isSelecting,
+          pendingAlertType: event.type));
+    });
+    on<SetShowDropdownEvent>((event, emit) {
+      emit(state.copyWith(showDropdown: event.show));
+    });
+    on<SetLocationTimeoutEvent>((event, emit) {
+      emit(state.copyWith(locationTimeout: event.isTimeout));
+    });
+    on<SetVisibilityEvent>((event, emit) {
+      emit(state.copyWith(isVisible: event.isVisible));
+    });
+    on<EmitAvatarMarkerEvent>((event, emit) {
+      emit(state.copyWith(
+        markers: _appendMeMarker(state.markers, forceMarker: event.marker),
+      ));
+    });
+    on<EmitAddressEvent>((event, emit) {
+      emit(state.copyWith(myLocationAddress: event.address));
+    });
 
     _initSocket();
   }
@@ -66,9 +92,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final NewsRepository newsRepository;
   final MarkerService markerService;
   final SharedPreferences sharedPreferences;
+  bool _isReadyForBursts = false;
 
-  static const int kContentMarkerSize = 120;
+  static const int kContentMarkerSize = 50;
   static const int kIncidentMarkerSize = 50;
+  static const int kAlertMarkerSize = 40;
+
+  BitmapDescriptor? _meMarkerIcon;
 
   void _onToggleGetDirectionCard(
     ToggleGetDirectionCardEvent event,
@@ -93,6 +123,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     incidentSocketDataSource.onIncidentCreated = (data) {
       add(OnIncidentNewEvent(data));
     };
+
+    // CRITICAL: Start the listeners on the socket client
+    incidentSocketDataSource.initializeListeners();
+    // Join the global news/incident broadcast room
+    incidentSocketDataSource.joinNewsRoom();
   }
 
   Future<void> _onIncidentNew(
@@ -102,45 +137,80 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     try {
       final incident = Incident.fromJson(event.data);
       final markerId = _getMarkerId(incident);
-      if (state.markers.any((m) => m.markerId.value == markerId)) {
-        return;
-      }
 
-      BitmapDescriptor icon;
-      if (incident.markerType == 'content' || incident.markerType == 'news') {
-        icon = await markerService.createContentMarker(
-          incident.image ?? '',
-          size: kContentMarkerSize,
-          mediaType: incident.mediaType,
+      debugPrint(
+          "Processing new incident: ${incident.id} | Type: ${incident.type} | MarkerID: $markerId");
+
+      final updatedMarkers = Set<Marker>.from(state.markers);
+      final bool markerAlreadyExists =
+          updatedMarkers.any((m) => m.markerId.value == markerId);
+
+      if (!markerAlreadyExists) {
+        BitmapDescriptor icon;
+        try {
+          if (incident.markerType == 'content' ||
+              incident.markerType == 'news') {
+            icon = await markerService.createContentMarker(
+              incident.image ?? '',
+              size: kContentMarkerSize,
+              mediaType: incident.mediaType,
+            );
+          } else {
+            final iconType =
+                _resolveIconType(incident.type ?? incident.alertType);
+            String assetPath =
+                markerIcons[iconType] ?? markerIcons['accident']!;
+            icon = await markerService.createCircularAssetMarker(
+              assetPath,
+              size: Size(
+                  kAlertMarkerSize.toDouble(), kAlertMarkerSize.toDouble()),
+            );
+          }
+        } catch (e) {
+          debugPrint("Error creating icon for incident ${incident.id}: $e");
+          icon =
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange);
+        }
+
+        final marker = Marker(
+          markerId: MarkerId(markerId),
+          position: incident.position,
+          icon: icon,
+          alpha: 1.0,
+          onTap: () {
+            add(SetSelectedIncidentEvent(incident));
+          },
         );
-      } else {
-        final iconType = _resolveIconType(incident.type ?? incident.alertType);
-        String assetPath = markerIcons[iconType] ?? markerIcons['accident']!;
-        icon = await markerService.bitmapResize(assetPath,
-            width: kIncidentMarkerSize);
+        updatedMarkers.add(marker);
       }
 
-      final marker = Marker(
-        markerId: MarkerId(markerId),
-        position: incident.position,
-        icon: icon,
-        alpha: 0.0,
-        onTap: () {
-          add(SetSelectedIncidentEvent(incident));
-        },
-      );
+      final bool isRecent = _isIncidentRecent(incident);
+
+      // CRITICAL: Always ensure the incident is in the news list for the animated overlay to find it
+      final updatedNewsList = List<Incident>.from(state.newsList);
+      final existingIndex =
+          updatedNewsList.indexWhere((i) => i.id == incident.id);
+      if (existingIndex == -1) {
+        updatedNewsList.add(incident);
+      } else {
+        updatedNewsList[existingIndex] = incident;
+      }
 
       emit(state.copyWith(
-        markers: {...state.markers, marker},
-        newlyCreatedIncident: incident,
+        markers: _appendMeMarker(updatedMarkers),
+        newsList: updatedNewsList,
+        newlyCreatedIncident: _isReadyForBursts && isRecent ? incident : null,
       ));
 
-      await Future.delayed(const Duration(milliseconds: 100));
-      if (!emit.isDone) {
-        emit(state.copyWith(clearNewlyCreatedIncident: true));
+      if (_isReadyForBursts && isRecent) {
+        await Future.delayed(const Duration(milliseconds: 100));
+        if (!emit.isDone) {
+          emit(state.copyWith(clearNewlyCreatedIncident: true));
+        }
       }
-    } catch (e) {
+    } catch (e, stack) {
       debugPrint("Error handling new incident: $e");
+      debugPrint(stack.toString());
     }
   }
 
@@ -153,24 +223,35 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       final markerId = _getMarkerId(incident);
 
       BitmapDescriptor icon;
-      if (incident.markerType == 'content' || incident.markerType == 'news') {
-        icon = await markerService.createContentMarker(
-          incident.image ?? '',
-          size: kContentMarkerSize, // Align with legacy size
-          mediaType: incident.mediaType,
-        );
-      } else {
-        final iconType = _resolveIconType(incident.type ?? incident.alertType);
-        String assetPath = markerIcons[iconType] ?? markerIcons['accident']!;
-        icon = await markerService.bitmapResize(assetPath,
-            width: kIncidentMarkerSize);
+      try {
+        if (incident.markerType == 'content' || incident.markerType == 'news') {
+          icon = await markerService.createContentMarker(
+            incident.image ?? '',
+            size: kContentMarkerSize,
+            mediaType: incident.mediaType,
+          );
+        } else {
+          final iconType =
+              _resolveIconType(incident.type ?? incident.alertType);
+          String assetPath = markerIcons[iconType] ?? markerIcons['accident']!;
+          icon = await markerService.createCircularAssetMarker(
+            assetPath,
+            size:
+                Size(kAlertMarkerSize.toDouble(), kAlertMarkerSize.toDouble()),
+          );
+        }
+      } catch (e) {
+        debugPrint(
+            "Error creating icon for updated incident ${incident.id}: $e");
+        icon =
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange);
       }
 
       final marker = Marker(
         markerId: MarkerId(markerId),
         position: incident.position,
         icon: icon,
-        alpha: 0.0,
+        alpha: 1.0,
         onTap: () {
           add(SetSelectedIncidentEvent(incident));
         },
@@ -180,11 +261,27 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           state.markers.where((m) => m.markerId.value != markerId).toSet();
       updatedMarkers.add(marker);
 
+      final updatedNewsList = List<Incident>.from(state.newsList);
+      final existingIndex =
+          updatedNewsList.indexWhere((i) => i.id == incident.id);
+      if (existingIndex == -1) {
+        updatedNewsList.add(incident);
+      } else {
+        updatedNewsList[existingIndex] = incident;
+      }
+
+      final isSelected = state.selectedIncident?.id == incident.id;
+
       emit(state.copyWith(
-        markers: updatedMarkers,
+        markers: _appendMeMarker(updatedMarkers),
+        newsList: updatedNewsList,
+        selectedIncident: isSelected
+            ? incident
+            : null, // If null, copyWith won't replace current one unless clearSelectedIncident is true. Wait, copyWith usually keeps old value if new is null.
       ));
-    } catch (e) {
+    } catch (e, stack) {
       debugPrint("Error handling updated incident: $e");
+      debugPrint(stack.toString());
     }
   }
 
@@ -236,67 +333,132 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     GetCurrentLocationEvent event,
     Emitter<MapState> emit,
   ) async {
-    final result = await getCurrentLocation(NoParams());
+    // Prevent triggering a second location request if one returned a valid location
+    if (state.myLocation != null) {
+      debugPrint("GetCurrentLocation: skipped — location already acquired.");
+      return;
+    }
+
+    final result = await getCurrentLocation(NoParams())
+        .timeout(
+      const Duration(seconds: 25),
+      onTimeout: () => throw TimeoutException('Location timed out'),
+    )
+        .catchError((e) async {
+      debugPrint("GetCurrentLocation outer error: $e");
+      return null;
+    });
+
     await result.fold(
       (failure) async {
-        final defaultLocation = const LatLng(51.5074, -0.1278); // London
-        debugPrint("Using default location due to error: ${failure.message}");
-
-        emit(state.copyWith(
-          errorMessage: failure.message,
-          myLocation: defaultLocation,
-          initialCamera: CameraPosition(target: defaultLocation, zoom: 14),
-        ));
-        add(FetchNewsEvent(
-            lat: defaultLocation.latitude,
-            lng: defaultLocation.longitude,
-            km: 10));
+        debugPrint("Location error: ${failure.message}");
+        emit(state.copyWith(myLocation: null));
       },
       (location) async {
+        // STEP 1: Emit location immediately — unblocks the UI and camera animation
         emit(state.copyWith(
           myLocation: location,
           initialCamera: CameraPosition(target: location, zoom: 14),
         ));
-        await Future.delayed(const Duration(milliseconds: 100));
+
+        // STEP 2: Kick off news & incidents — these go into the event queue
+        //         and are processed independently (non-blocking here)
+        final distanceKm = _convertDistanceToKm(state.selectedDistance);
         add(FetchNewsEvent(
-            lat: location.latitude, lng: location.longitude, km: 10));
+            lat: location.latitude, lng: location.longitude, km: distanceKm));
+        add(FetchIncidentsEvent(
+            lat: location.latitude, lng: location.longitude, km: distanceKm));
 
-        final avatarImage =
-            sharedPreferences.getString(SharedPreferencesKeys.avatarIdKey) ??
-                '';
-        BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
-        if (avatarImage.isNotEmpty) {
-          icon = await markerService.createAvatarMarker(avatarImage,
-              size: const Size(120, 120));
-        } else {
-          icon = await markerService.createCircularAssetMarker(
-              "assets/markers/avatar.png",
-              size: const Size(120, 120));
-        }
+        // STEP 3: Load avatar marker in background — fire-and-forget
+        //         Emits separately via a microtask so it never blocks this handler
+        unawaited(_loadAvatarAndEmit(location));
 
-        final meMarker = Marker(
-          markerId: const MarkerId('my_custom_location'),
-          position: location,
-          icon: icon,
-          anchor: const Offset(0.5, 0.5),
-        );
+        // STEP 4: Fetch address in background — fire-and-forget with timeout
+        unawaited(_fetchAddressAndEmit(location));
 
-        // Fetch address in background (non-blocking for camera)
-        String? address;
-        final addressResult =
-            await repository.getAddressFromCoordinates(location);
-        addressResult.fold(
-          (failure) => debugPrint("Failed to get address: ${failure.message}"),
-          (addr) => address = addr,
-        );
-        emit(state.copyWith(
-          myLocationAddress: address,
-          markers: {...state.markers, meMarker},
-        ));
-
-        await _fetchInitialIncidents(emit);
+        // Enable burst effect after a short delay
+        Future.delayed(const Duration(seconds: 3), () {
+          _isReadyForBursts = true;
+        });
       },
     );
+  }
+
+  /// Loads the user avatar marker in the background and emits a state update.
+  Future<void> _loadAvatarAndEmit(LatLng location) async {
+    try {
+      String avatarImage =
+          sharedPreferences.getString(SharedPreferencesKeys.avatarKey) ?? '';
+      final String profileImage =
+          sharedPreferences.getString(SharedPreferencesKeys.profileImageKey) ??
+              '';
+      final String avatarId =
+          sharedPreferences.getString(SharedPreferencesKeys.avatarIdKey) ?? '';
+
+      if (avatarImage.isEmpty) avatarImage = profileImage;
+      if (avatarImage.isEmpty) avatarImage = avatarId;
+
+      if (avatarImage.isNotEmpty && avatarImage.startsWith('http')) {
+        _meMarkerIcon = await markerService
+            .createAvatarMarker(avatarImage, size: const Size(120, 120))
+            .timeout(const Duration(seconds: 6));
+      } else {
+        _meMarkerIcon = await markerService
+            .createCircularAssetMarker(
+              "assets/markers/avatar.png",
+              size: const Size(120, 120),
+            )
+            .timeout(const Duration(seconds: 4));
+      }
+
+      final meMarker = Marker(
+        markerId: const MarkerId('my_custom_location'),
+        position: location,
+        icon: _meMarkerIcon ?? BitmapDescriptor.defaultMarker,
+        anchor: const Offset(0.5, 0.5),
+        zIndex: 1000,
+      );
+
+      if (!isClosed) {
+        add(EmitAvatarMarkerEvent(meMarker));
+      }
+    } catch (e) {
+      debugPrint("Avatar marker load failed (ignored): $e");
+    }
+  }
+
+  /// Fetches reverse-geocoded address in the background and emits a state update.
+  Future<void> _fetchAddressAndEmit(LatLng location) async {
+    try {
+      final addressResult = await repository
+          .getAddressFromCoordinates(location)
+          .timeout(const Duration(seconds: 8));
+
+      addressResult.fold(
+        (failure) => debugPrint("Address fetch failed: ${failure.message}"),
+        (address) {
+          if (!isClosed) {
+            add(EmitAddressEvent(address));
+          }
+        },
+      );
+    } catch (e) {
+      debugPrint("Address fetch timed out or failed (ignored): $e");
+    }
+  }
+
+  bool _isIncidentRecent(Incident incident) {
+    if (incident.time == null) {
+      return true; // Default to showing if no time provided
+    }
+    try {
+      final incidentTime = DateTime.parse(incident.time!);
+      final now = DateTime.now();
+      // Only burst if created in the last 30 seconds
+      return now.difference(incidentTime).inSeconds < 30;
+    } catch (e) {
+      return true; // Fallback to showing if parsing fails
+    }
   }
 
   Future<void> _onGetRoute(
@@ -331,11 +493,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         try {
           startIcon = await markerService.bitmapFromIncidentAsset(
             "assets/markers/starting_markers.png",
-            70,
+            30,
           );
           endIcon = await markerService.bitmapFromIncidentAsset(
             "assets/markers/destination-marker.png",
-            70,
+            30,
           );
         } catch (e) {
           debugPrint("Error loading route markers: $e");
@@ -395,123 +557,156 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         "DEBUG: _onFetchNews triggered. Lat: ${event.lat}, Lng: ${event.lng}");
     if (event.isFeedOnly) return;
 
+    // Guard: skip if already loading to prevent concurrent fetches
+    if (state.isLoadingNews) {
+      debugPrint("DEBUG: FetchNews skipped — already loading.");
+      return;
+    }
+
     emit(state.copyWith(isLoadingNews: true));
-    final result = await newsRepository.getAggregatedNews(
-      lat: event.lat,
-      lng: event.lng,
-      km: event.km,
-      category: event.category,
-    );
 
-    await result.fold(
-      (failure) async {
-        debugPrint("DEBUG: FetchNews Failed: ${failure.message}");
-        emit(state.copyWith(
-            isLoadingNews: false, errorMessage: failure.message));
-      },
-      (newsList) async {
-        debugPrint("DEBUG: FetchNews Success. Items found: ${newsList.length}");
-        try {
-          final List<Incident> incidents = newsList.map((news) {
-            double lat = news.latitude ?? 0.0;
-            double lng = news.longitude ?? 0.0;
+    try {
+      final result = await newsRepository
+          .getAggregatedNews(
+            lat: event.lat,
+            lng: event.lng,
+            km: event.km,
+            category: event.category,
+          )
+          .timeout(const Duration(seconds: 20));
 
-            if (lat == 0.0 && lng == 0.0) {
-              lat = double.tryParse(news.location?.split(',')[0] ?? '0') ?? 0.0;
-              lng = double.tryParse(news.location?.split(',')[1] ?? '0') ?? 0.0;
-            }
+      await result.fold(
+        (failure) async {
+          debugPrint("DEBUG: FetchNews Failed: ${failure.message}");
+        },
+        (newsList) async {
+          debugPrint(
+              "DEBUG: FetchNews Success. Items found: ${newsList.length}");
+          try {
+            // HARD LIMIT: cap at 40 markers to prevent ANR/freeze
+            const int maxMarkers = 40;
+            final limitedList = newsList.take(maxMarkers).toList();
 
-            return Incident(
-                id: news.id,
-                markerType: news.markerType ?? 'news',
-                type: news.type ?? 'news',
-                position: LatLng(lat, lng),
-                address: news.location,
-                time: news.createdAt,
-                category: 'News',
-                alertType: 'News',
-                image: news.mediaUrl,
-                description: news.description,
-                title: news.title,
-                mediaType: news.mediaType);
-          }).toList();
+            final List<Incident> incidents = limitedList.map((news) {
+              double lat = news.latitude ?? 0.0;
+              double lng = news.longitude ?? 0.0;
 
-          final Set<Marker> newMarkers = {};
-          const int batchSize = 20; // Increased batch size for better performance
+              if (lat == 0.0 && lng == 0.0) {
+                lat =
+                    double.tryParse(news.location?.split(',')[0] ?? '0') ?? 0.0;
+                lng =
+                    double.tryParse(news.location?.split(',')[1] ?? '0') ?? 0.0;
+              }
 
-          for (int i = 0; i < incidents.length; i += batchSize) {
-            final end = (i + batchSize < incidents.length)
-                ? i + batchSize
-                : incidents.length;
-            final batch = incidents.sublist(i, end);
+              return Incident(
+                  id: news.id,
+                  markerType: news.markerType ?? 'news',
+                  type: news.type ?? 'news',
+                  position: LatLng(lat, lng),
+                  address: news.location,
+                  time: news.createdAt,
+                  category: 'News',
+                  alertType: 'News',
+                  image: news.mediaUrl,
+                  description: news.description,
+                  title: news.title,
+                  avatar: news.userImage,
+                  username: news.userName,
+                  mediaType: news.mediaType);
+            }).toList();
 
-            final List<Future<Marker>> batchFutures =
-                batch.map((incident) async {
-              BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
+            final Set<Marker> newMarkers = {};
+            // Smaller batches to keep UI responsive
+            const int batchSize = 10;
 
-              if (incident.markerType == 'icon') {
-                final iconType =
-                    _resolveIconType(incident.type ?? incident.alertType);
-                String assetPath =
-                    markerIcons[iconType] ?? markerIcons['accident']!;
-                icon = await markerService.bitmapResize(assetPath,
-                    width: kIncidentMarkerSize);
-              } else if (incident.markerType == 'news' ||
-                  incident.markerType == 'content') {
+            for (int i = 0; i < incidents.length; i += batchSize) {
+              if (emit.isDone) break; // Bloc was closed; stop
+
+              final end = (i + batchSize < incidents.length)
+                  ? i + batchSize
+                  : incidents.length;
+              final batch = incidents.sublist(i, end);
+
+              final List<Future<Marker>> batchFutures =
+                  batch.map((incident) async {
+                BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
+
                 try {
-                  icon = await markerService.createContentMarker(
-                    incident.image ?? '',
-                    size: kContentMarkerSize,
-                    mediaType: incident.mediaType,
-                  );
-                } catch (e) {
+                  if (incident.markerType == 'icon') {
+                    final iconType =
+                        _resolveIconType(incident.type ?? incident.alertType);
+                    String assetPath =
+                        markerIcons[iconType] ?? markerIcons['accident']!;
+                    icon = await markerService
+                        .createCircularAssetMarker(
+                          assetPath,
+                          size: Size(kAlertMarkerSize.toDouble(),
+                              kAlertMarkerSize.toDouble()),
+                        )
+                        .timeout(const Duration(seconds: 10));
+                  } else if (incident.markerType == 'news' ||
+                      incident.markerType == 'content') {
+                    icon = await markerService
+                        .createContentMarker(
+                          incident.image ?? '',
+                          size: kContentMarkerSize,
+                          mediaType: incident.mediaType,
+                        )
+                        .timeout(const Duration(seconds: 10));
+                  }
+                } catch (_) {
                   icon = BitmapDescriptor.defaultMarkerWithHue(
                       BitmapDescriptor.hueViolet);
                 }
-              }
 
-              final markerId = (incident.markerType == 'content' ||
-                      incident.markerType == 'news')
-                  ? 'news_${incident.id}'
-                  : 'alert_${incident.id}';
+                final markerId = _getMarkerId(incident);
+                return Marker(
+                  markerId: MarkerId(markerId),
+                  position: incident.position,
+                  alpha: 1.0,
+                  icon: icon,
+                  onTap: () => add(SetSelectedIncidentEvent(incident)),
+                );
+              }).toList();
 
-              return Marker(
-                markerId: MarkerId(markerId),
-                position: incident.position,
-                icon: icon,
-                onTap: () {
-                  add(SetSelectedIncidentEvent(incident));
-                },
-              );
-            }).toList();
+              final batchMarkers = await Future.wait(batchFutures);
+              newMarkers.addAll(batchMarkers);
 
-            final batchMarkers = await Future.wait(batchFutures);
-            newMarkers.addAll(batchMarkers);
+              // Yield to event loop: keeps UI responsive between batches
+              await Future.delayed(Duration.zero);
+            }
 
-            // Only emit updates if we have finished a significant batch or reached the end
-            if (i + batchSize >= incidents.length || (i / batchSize) % 2 == 0) {
+            debugPrint("DEBUG: Created ${newMarkers.length} markers for news.");
+
+            if (!emit.isDone) {
+              final remainingMarkers = state.markers.where((m) {
+                return !m.markerId.value.startsWith('news_') &&
+                    !m.markerId.value.startsWith('weather_');
+              }).toSet();
+              final survivingAlerts =
+                  state.newsList.where((i) => i.markerType == 'icon').toList();
+
               emit(state.copyWith(
-                isLoadingNews: i + batchSize >= incidents.length ? false : true,
-                newsList: incidents,
-                markers: {...state.markers, ...newMarkers},
+                isLoadingNews: false,
+                newsList: [...survivingAlerts, ...incidents],
+                markers: _appendMeMarker({...remainingMarkers, ...newMarkers}),
               ));
             }
+          } catch (e, stack) {
+            debugPrint("Error parsing news for map: $e\n$stack");
           }
-
-          debugPrint("DEBUG: Created ${newMarkers.length} markers for news.");
-          emit(state.copyWith(
-            isLoadingNews: false,
-            newsList: incidents,
-            markers: {...state.markers, ...newMarkers},
-          ));
-        } catch (e, stack) {
-          debugPrint("Error parsing news for map: $e");
-          debugPrint(stack.toString());
-          emit(state.copyWith(
-              isLoadingNews: false, errorMessage: "Error displaying news"));
-        }
-      },
-    );
+        },
+      );
+    } on TimeoutException catch (_) {
+      debugPrint("DEBUG: FetchNews timed out after 20s.");
+    } catch (e) {
+      debugPrint("DEBUG: FetchNews unexpected error: $e");
+    } finally {
+      // GUARANTEE: isLoadingNews is ALWAYS cleared — prevents stuck loader/freeze
+      if (!emit.isDone) {
+        emit(state.copyWith(isLoadingNews: false));
+      }
+    }
   }
 
   void _onSetSearchedLocation(
@@ -519,10 +714,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     Emitter<MapState> emit,
   ) {
     emit(state.copyWith(searchedLocation: event.location));
+    final distanceKm = _convertDistanceToKm(state.selectedDistance);
     add(FetchNewsEvent(
       lat: event.location.latitude,
       lng: event.location.longitude,
-      km: 10,
+      km: distanceKm,
       category: state.selectedCategory ?? 'all',
     ));
   }
@@ -574,16 +770,22 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         km: _convertDistanceToKm(event.distance),
         category: event.category ?? 'all',
       ));
+      add(FetchIncidentsEvent(
+        lat: state.searchedLocation?.latitude ?? state.myLocation!.latitude,
+        lng: state.searchedLocation?.longitude ?? state.myLocation!.longitude,
+        km: _convertDistanceToKm(event.distance),
+        category: event.category ?? 'all',
+      ));
     }
   }
 
   double _convertDistanceToKm(String? distance) {
-    if (distance == null) return 10.0;
+    if (distance == null) return 8.04; // ~5 miles
     try {
       final value = double.parse(distance.split(' ')[0]);
       return value * 1.60934;
     } catch (e) {
-      return 10.0;
+      return 8.04;
     }
   }
 
@@ -647,12 +849,24 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       return;
     }
 
+    final updatedIncident =
+        event.incident.copyWith(viewCount: (event.incident.viewCount ?? 0) + 1);
+
+    final updatedNewsList = state.newsList
+        .map((i) => i.id == updatedIncident.id ? updatedIncident : i)
+        .toList();
+
     emit(state.copyWith(
-      selectedIncident: event.incident,
-      selectedPosition: event.incident.position,
+      selectedIncident: updatedIncident,
+      selectedPosition: updatedIncident.position,
+      newsList: updatedNewsList,
       clearSelectedPolygonId: true,
       clearSelectedPolygonPosition: true,
     ));
+
+    // Increment View through both Socket and REST
+    repository.incrementIncidentView(event.incident.id);
+    incidentSocketDataSource.emitIncidentView(incidentId: event.incident.id);
   }
 
   Future<void> _onSetMapSelectedLocation(
@@ -779,56 +993,162 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     emit(state.copyWith(isDragging: event.isDragging));
   }
 
-  Future<void> _fetchInitialIncidents(Emitter<MapState> emit) async {
-    final result = await repository.getIncidents();
+  Future<void> _onFetchIncidents(
+    FetchIncidentsEvent event,
+    Emitter<MapState> emit,
+  ) async {
+    final result = await repository.getIncidents(
+      lat: event.lat,
+      lng: event.lng,
+      km: event.km,
+      category: event.category,
+    );
     await result.fold(
       (failure) async {
-        debugPrint("Failed to fetch initial incidents: ${failure.message}");
+        debugPrint("Failed to fetch incidents: ${failure.message}");
       },
       (incidents) async {
-        debugPrint("Fetched ${incidents.length} initial incidents");
+        debugPrint("Fetched ${incidents.length} incidents");
 
-        final List<Future<Marker>> markerFutures =
-            incidents.map((incident) async {
-          BitmapDescriptor icon;
-          if (incident.markerType == 'content' ||
-              incident.markerType == 'news') {
-            icon = await markerService.createContentMarker(
-              incident.image ?? '',
-              size: kContentMarkerSize,
-              mediaType: incident.mediaType,
+        final Set<Marker> alertMarkers = {};
+        const int batchSize = 5; // Smaller batch for incidents
+
+        for (int i = 0; i < incidents.length; i += batchSize) {
+          if (emit.isDone) break;
+
+          final end = (i + batchSize < incidents.length)
+              ? i + batchSize
+              : incidents.length;
+          final batch = incidents.sublist(i, end);
+
+          final List<Future<Marker>> batchFutures = batch.map((incident) async {
+            BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
+
+            try {
+              if (incident.markerType == 'content' ||
+                  incident.markerType == 'news') {
+                icon = await markerService
+                    .createContentMarker(
+                      incident.image ?? '',
+                      size: kContentMarkerSize,
+                      mediaType: incident.mediaType,
+                    )
+                    .timeout(const Duration(seconds: 5));
+              } else {
+                final iconType =
+                    _resolveIconType(incident.type ?? incident.alertType);
+                String assetPath =
+                    markerIcons[iconType] ?? markerIcons['accident']!;
+                icon = await markerService
+                    .createCircularAssetMarker(
+                      assetPath,
+                      size: Size(kAlertMarkerSize.toDouble(),
+                          kAlertMarkerSize.toDouble()),
+                    )
+                    .timeout(const Duration(seconds: 10));
+              }
+            } catch (e) {
+              debugPrint("FetchIncidents marker load failed (ignored): $e");
+              icon = BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueViolet);
+            }
+
+            final markerId = _getMarkerId(incident);
+
+            return Marker(
+              markerId: MarkerId(markerId),
+              position: incident.position,
+              alpha: 1.0,
+              icon: icon,
+              onTap: () {
+                add(SetSelectedIncidentEvent(incident));
+              },
             );
-          } else {
-            final iconType =
-                _resolveIconType(incident.type ?? incident.alertType);
-            String assetPath =
-                markerIcons[iconType] ?? markerIcons['accident']!;
-            icon = await markerService.bitmapResize(assetPath,
-                width: kIncidentMarkerSize);
-          }
+          }).toList();
 
-          final markerId = (incident.markerType == 'content' ||
-                  incident.markerType == 'news')
-              ? 'news_${incident.id}'
-              : 'alert_${incident.id}';
+          final batchMarkers = await Future.wait(batchFutures);
+          alertMarkers.addAll(batchMarkers);
 
-          return Marker(
-            markerId: MarkerId(markerId),
-            position: incident.position,
-            alpha: 0.0,
-            icon: icon,
-            onTap: () {
-              add(SetSelectedIncidentEvent(incident));
-            },
-          );
-        }).toList();
+          // Yield to event loop to keep UI responsive
+          await Future.delayed(Duration.zero);
+        }
 
-        final List<Marker> newMarkersList = await Future.wait(markerFutures);
-        final Set<Marker> newMarkers = newMarkersList.toSet();
-        emit(state.copyWith(
-          markers: {...state.markers, ...newMarkers},
-        ));
+        // 1. Identify and clear previous Alert-domain markers ONLY
+        final remainingMarkers = state.markers.where((m) {
+          return !m.markerId.value.startsWith('alert_');
+        }).toSet();
+
+        // 2. Identify and clear previous Alert-domain incidents in newsList, keep others (news/weather)
+        final otherIncidents =
+            state.newsList.where((i) => i.markerType != 'icon').toList();
+
+        final combinedNewsList = [...otherIncidents, ...incidents];
+
+        if (!emit.isDone) {
+          emit(state.copyWith(
+            markers: _appendMeMarker({...remainingMarkers, ...alertMarkers}),
+            newsList: combinedNewsList,
+          ));
+        }
       },
     );
+  }
+
+  Set<Marker> _appendMeMarker(Set<Marker> markers, {Marker? forceMarker}) {
+    // 1. Remove any existing "Me" marker to ensure we don't have duplicates with same ID but different fields
+    final filtered =
+        markers.where((m) => m.markerId.value != 'my_custom_location').toSet();
+
+    // 2. If we have a forced marker, use it
+    if (forceMarker != null) {
+      filtered.add(forceMarker);
+      return filtered;
+    }
+
+    // 3. Look for it in the current state
+    final stateMe = state.markers.firstWhere(
+      (m) => m.markerId.value == 'my_custom_location',
+      orElse: () => const Marker(markerId: MarkerId('none'), visible: false),
+    );
+
+    if (stateMe.markerId.value != 'none') {
+      filtered.add(stateMe);
+      return filtered;
+    }
+
+    // 4. Fallback: create it if we have location and icon
+    if (state.myLocation != null && _meMarkerIcon != null) {
+      final newMe = Marker(
+        markerId: const MarkerId('my_custom_location'),
+        position: state.myLocation!,
+        icon: _meMarkerIcon!,
+        anchor: const Offset(0.5, 0.5),
+        zIndex: 1000,
+      );
+      filtered.add(newMe);
+      return filtered;
+    }
+
+    return filtered;
+  }
+
+  void _onToggleAnimatedMarkers(
+      ToggleAnimatedMarkersEvent event, Emitter<MapState> emit) {
+    final bool newValue = !state.showAnimatedMarkers;
+
+    // We must update all existing markers to flip their alpha
+    final updatedMarkers = state.markers.map((m) {
+      if (m.markerId.value.startsWith('alert_') ||
+          m.markerId.value.startsWith('news_') ||
+          m.markerId.value.startsWith('weather_')) {
+        return m.copyWith(alphaParam: newValue ? 1.0 : 0.0);
+      }
+      return m;
+    }).toSet();
+
+    emit(state.copyWith(
+      showAnimatedMarkers: newValue,
+      markers: updatedMarkers,
+    ));
   }
 }
