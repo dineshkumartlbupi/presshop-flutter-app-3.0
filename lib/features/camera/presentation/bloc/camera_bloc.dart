@@ -50,6 +50,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     on<CameraTimerTickEvent>(
         (event, emit) => emit(state.copyWith(recordingTime: event.time)));
     on<PickDocumentEvent>(_onPickDocument);
+    on<CameraResetStatusEvent>((event, emit) =>
+        emit(state.copyWith(status: CameraStatus.initial, errorMessage: null)));
   }
   Timer? _recordingTimer;
   DateTime? _startTime;
@@ -374,14 +376,17 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     bool shouldInitCamera = false;
     bool isFront = state.isFrontCamera;
 
-    if (event.mode == "Photo" || event.mode == "Video") {
+    if (event.mode == AppStrings.photoText || event.mode == AppStrings.videoText) {
       isFront = false;
       shouldInitCamera = true;
     }
 
-    emit(state.copyWith(selectedMode: event.mode, isFrontCamera: isFront));
+    emit(state.copyWith(
+        selectedMode: event.mode,
+        isFrontCamera: isFront,
+        status: CameraStatus.initial));
     if (shouldInitCamera) {
-      add(CameraInitializeEvent());
+      add(const CameraInitializeEvent());
     }
   }
 

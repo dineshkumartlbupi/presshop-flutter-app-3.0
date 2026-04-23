@@ -133,8 +133,10 @@ class DashboardPageState extends State<Dashboard>
 
   @override
   void initState() {
+    debugPrint("🚀 Dashboard: Initializing with position ${widget.initialPosition}");
     GlobalLoader.forceHide();
     _dashboardBloc = sl<DashboardBloc>();
+    currentIndex = widget.initialPosition;
     myProfileApi();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -209,6 +211,17 @@ class DashboardPageState extends State<Dashboard>
     }
     initializeDeepLinks(sl<AppLinks>());
     super.initState();
+  }
+  
+  @override
+  void didUpdateWidget(covariant Dashboard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialPosition != widget.initialPosition) {
+      setState(() {
+        currentIndex = widget.initialPosition;
+        _loadedIndices.add(currentIndex);
+      });
+    }
   }
 
   @override

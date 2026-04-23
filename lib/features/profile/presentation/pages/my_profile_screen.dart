@@ -108,12 +108,13 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   void initState() {
     super.initState();
     isEditMode = widget.editProfileScreen;
+    _loadCachedData();
     setUserNameListener();
     setPhoneListener();
     setEmailListener();
-    myProfileApi(showLoader: false);
+    myProfileApi(showLoader: true);
     if (isEditMode) {
-      getAvatarsApi(showLoader: false);
+      getAvatarsApi(showLoader: true);
     }
   }
 
@@ -273,52 +274,12 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    debugPrint("Building MyProfileScreen with size: $size");
     return Scaffold(
       appBar: CommonBrandedAppBar(
         title: widget.screenType,
         size: size,
+        showLogo: true,
       ),
-      // appBar: CommonAppBar(
-      //   elevation: 0,
-      //   hideLeading: false,
-      //   title: Text(
-      //     widget.screenType,
-      //     style: TextStyle(
-      //         color: Colors.black,
-      //         fontWeight: FontWeight.bold,
-      //         fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-      //   ),
-      //   centerTitle: false,
-      //   titleSpacing: 0,
-      //   size: size,
-      //   showActions: true,
-      //   leadingFxn: () {
-      //     /*  if (widget.editProfileScreen) {
-      //         widget.editProfileScreen = false;
-      //       }*/
-      //     context.pop();
-      //   },
-      //   actionWidget: [
-      //     InkWell(
-      //       onTap: () {
-      //         context.goNamed(
-      //           AppRoutes.dashboardName,
-      //           extra: {'initialPosition': 2},
-      //         );
-      //       },
-      //       child: Image.asset(
-      //         "${commonImagePath}rabbitLogo.png",
-      //         height: size.width * AppDimensions.numD07,
-      //         width: size.width * AppDimensions.numD07,
-      //       ),
-      //     ),
-      //     SizedBox(
-      //       width: size.width * AppDimensions.numD04,
-      //     )
-      //   ],
-      // ),
-
       body: Stack(
         children: [
           GestureDetector(
@@ -1893,8 +1854,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         if (map is String) map = jsonDecode(map);
 
         if (map["code"] == 200 || map["success"] == true) {
-          showSnackBar("Success", "Profile avatar updated successfully",
-              Colors.green);
+          showSnackBar(
+              "Success", "Profile avatar updated successfully", Colors.green);
           await myProfileApi(showLoader: false);
         }
       }

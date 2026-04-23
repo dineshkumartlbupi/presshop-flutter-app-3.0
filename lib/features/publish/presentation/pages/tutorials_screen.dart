@@ -82,41 +82,10 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
         },
         builder: (context, state) {
           return Scaffold(
-            appBar: CommonAppBar(
-              elevation: 0,
-              hideLeading: false,
-              title: Text(
-                AppStrings.tutorialsText,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-              ),
-              centerTitle: false,
-              titleSpacing: 0,
+            appBar: CommonBrandedAppBar(
+              title: AppStrings.tutorialsText,
               size: size,
-              showActions: true,
-              leadingFxn: () {
-                context.pop();
-              },
-              actionWidget: [
-                InkWell(
-                  onTap: () {
-                    context.goNamed(
-                      AppRoutes.dashboardName,
-                      extra: {'initialPosition': 2},
-                    );
-                  },
-                  child: Image.asset(
-                    "${commonImagePath}rabbitLogo.png",
-                    height: size.width * AppDimensions.numD07,
-                    width: size.width * AppDimensions.numD07,
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * AppDimensions.numD04,
-                )
-              ],
+              showLogo: true,
             ),
             body: SafeArea(
               child: SmartRefresher(

@@ -76,41 +76,11 @@ class ContactUsScreenState extends State<ContactUsScreen> {
           }
         },
         child: Scaffold(
-          appBar: CommonAppBar(
-            elevation: 0,
-            hideLeading: false,
-            title: Text(
-              "${AppStrings.contactText} ${AppStrings.usText.toTitleCase()}",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: size.width * AppDimensions.appBarHeadingFontSize,
-                  fontWeight: FontWeight.w700),
-            ),
-            centerTitle: false,
-            titleSpacing: 0,
+          appBar: CommonBrandedAppBar(
+            title:
+                "${AppStrings.contactText} ${AppStrings.usText.toTitleCase()}",
             size: size,
-            showActions: true,
-            leadingFxn: () {
-              context.pop();
-            },
-            actionWidget: [
-              InkWell(
-                onTap: () {
-                  context.goNamed(
-                    AppRoutes.dashboardName,
-                    extra: {'initialPosition': 2},
-                  );
-                },
-                child: Image.asset(
-                  "${commonImagePath}rabbitLogo.png",
-                  height: size.width * AppDimensions.numD07,
-                  width: size.width * AppDimensions.numD07,
-                ),
-              ),
-              SizedBox(
-                width: size.width * AppDimensions.numD04,
-              )
-            ],
+            showLogo: true,
           ),
           body: SafeArea(
             child: BlocBuilder<AccountSettingsBloc, AccountSettingsState>(

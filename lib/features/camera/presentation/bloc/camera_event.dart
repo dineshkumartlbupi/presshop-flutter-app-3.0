@@ -104,3 +104,8 @@ class CameraTimerTickEvent extends CameraEvent {
   const CameraTimerTickEvent(this.time);
   final String time;
 }
+
+/// Event to reset the camera status to initial
+class CameraResetStatusEvent extends CameraEvent {
+  const CameraResetStatusEvent();
+}

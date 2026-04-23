@@ -236,13 +236,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                         zoomControlsEnabled: false,
                                         zoomGesturesEnabled: false,
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.all(
-                                            size.width * AppDimensions.numD07),
-                                        child: Image.asset(
-                                          "${commonImagePath}ic_cover_radius.png",
-                                        ),
-                                      ),
+                                      // Padding(
+                                      //   padding: EdgeInsets.all(
+                                      //       size.width * AppDimensions.numD07),
+                                      //   child: Image.asset(
+                                      //     "${commonImagePath}ic_cover_radius.png",
+                                      //   ),
+                                      // ),
                                       InkWell(
                                         splashColor: Colors.transparent,
                                         highlightColor: Colors.transparent,
@@ -889,30 +889,20 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     ),
                     if (isOwner)
                       widget.taskStatus != "rejected"
-                          ? GestureDetector(
-                              onTap: () {
+                          ? AnimatedButtonWidget(
+                              shouldRestartAnimation: shouldRestartAnimation,
+                              size: size,
+                              buttonText: AppStringsNew2.manageTaskText,
+                              onPressed: () {
                                 context.pushNamed(AppRoutes.broadcastChatName,
                                     extra: {
                                       'taskDetail': taskDetail!,
                                       'roomId': roomId,
-                                    }).then((value) =>
-                                    _fetchTaskDetail(showLoader: false));
+                                    }).then((value) {
+                                  shouldRestartAnimation = true;
+                                  _fetchTaskDetail(showLoader: false);
+                                });
                               },
-                              child: AnimatedButtonWidget(
-                                shouldRestartAnimation: shouldRestartAnimation,
-                                size: size,
-                                buttonText: AppStringsNew2.manageTaskText,
-                                onPressed: () {
-                                  context.pushNamed(AppRoutes.broadcastChatName,
-                                      extra: {
-                                        'taskDetail': taskDetail!,
-                                        'roomId': roomId,
-                                      }).then((value) {
-                                    shouldRestartAnimation = true;
-                                    _fetchTaskDetail(showLoader: false);
-                                  });
-                                },
-                              ),
                             )
                           : Container(
                               width: size.width,

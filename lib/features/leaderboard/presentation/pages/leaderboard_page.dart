@@ -168,41 +168,10 @@ class _LeaderboardViewState extends State<LeaderboardView> {
     size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: false,
-        title: Text(
-          "Leaderboard",
-          style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
+      appBar: CommonBrandedAppBar(
+        title: 'Leaderboard',
         size: size,
-        showActions: true,
-        leadingFxn: () {
-          context.pop();
-        },
-        actionWidget: [
-          InkWell(
-            onTap: () {
-              context.goNamed(
-                AppRoutes.dashboardName,
-                extra: {'initialPosition': 2},
-              );
-            },
-            child: Image.asset(
-              "${commonImagePath}rabbitLogo.png",
-              height: size.width * AppDimensions.numD07,
-              width: size.width * AppDimensions.numD07,
-            ),
-          ),
-          SizedBox(
-            width: size.width * AppDimensions.numD02,
-          ),
-        ],
+        showLogo: true,
       ),
       body: BlocConsumer<LeaderboardBloc, LeaderboardState>(
         listener: (context, state) async {

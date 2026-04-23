@@ -172,38 +172,10 @@ class _MyBanksViewState extends State<MyBanksView> {
     var size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: false,
-        title: Text(
-          AppStrings.paymentMethods,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-            fontSize: size.width * AppDimensions.appBarHeadingFontSize,
-          ),
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
+      appBar: CommonBrandedAppBar(
+        title: AppStrings.paymentMethods,
         size: size,
-        showActions: true,
-        leadingFxn: () => context.pop(),
-        actionWidget: [
-          InkWell(
-            onTap: () {
-              context.goNamed(
-                AppRoutes.dashboardName,
-                extra: {'initialPosition': 2},
-              );
-            },
-            child: Image.asset(
-              "${commonImagePath}rabbitLogo.png",
-              height: size.width * AppDimensions.numD07,
-              width: size.width * AppDimensions.numD07,
-            ),
-          ),
-          SizedBox(width: size.width * AppDimensions.numD04),
-        ],
+        showLogo: true,
       ),
       body: BlocConsumer<BankBloc, BankState>(
         listener: (context, state) {

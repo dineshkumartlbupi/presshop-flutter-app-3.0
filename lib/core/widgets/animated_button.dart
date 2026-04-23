@@ -48,14 +48,6 @@ class _AnimatedButtonState extends State<AnimatedButtonWidget>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _controller.forward();
     });
-
-    _revealAnimation.addListener(() {
-      if (_revealAnimation.isCompleted) {
-        if (mounted) {
-          widget.onPressed();
-        }
-      }
-    });
   }
 
   @override
