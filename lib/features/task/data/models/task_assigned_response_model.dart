@@ -298,7 +298,6 @@ class TaskContentDataModel extends TaskContentEntity {
 }
 
 class HopperLocationModel {
-
   HopperLocationModel({
     this.id = "",
     this.latitude = 0.0,

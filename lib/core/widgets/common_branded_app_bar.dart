@@ -99,7 +99,8 @@ class CommonBrandedAppBar extends StatelessWidget
           Center(
             child: InkWell(
               onTap: () {
-                context.goNamed(
+                print('click------------------------>');
+                context.pushNamed(
                   AppRoutes.dashboardName,
                   extra: {'initialPosition': 2},
                 );

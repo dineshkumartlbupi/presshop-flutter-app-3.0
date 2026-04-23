@@ -197,13 +197,8 @@ class CameraScreenState extends State<CameraScreen>
             if (widget.picAgain) {
               context.pop(state.capturedMedia);
             } else {
-              // Navigate to Preview
-              // We need to pass the captured media. The preview screen handles the list.
-              // Important: The original code clears camListData or builds it up?
-              // "camListData.add(...)". So it builds up.
-              // Here state.capturedMedia has the list.
-
               if (mounted) {
+                _bloc?.add(const CameraResetStatusEvent());
                 await context.pushNamed(
                   AppRoutes.previewName,
                   extra: {
@@ -311,6 +306,7 @@ class CameraScreenState extends State<CameraScreen>
     final isSelected = state.selectedMode == mode;
     return InkWell(
       onTap: () {
+        if (state.selectedMode == mode) return;
         if (mode == AppStrings.scanText) {
           context.read<CameraBloc>().add(const CameraScanDocEvent());
         } else {
@@ -408,7 +404,7 @@ class CameraScreenState extends State<CameraScreen>
         Align(
           alignment: Alignment.bottomCenter,
           child: InkWell(
-            onTap: state.isVideoLoading
+            onTap: state.isVideoLoading || state.status == CameraStatus.loading
                 ? null
                 : () {
                     if (state.selectedMode == AppStrings.videoText) {

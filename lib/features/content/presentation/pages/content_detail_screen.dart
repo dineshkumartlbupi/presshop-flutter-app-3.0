@@ -185,8 +185,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
               setState(() {
                 localViewCount = state.newViewCount;
                 if (contentItem != null) {
-                  contentItem =
-                      contentItem!.copyWith(contentViewCount: state.newViewCount);
+                  contentItem = contentItem!
+                      .copyWith(contentViewCount: state.newViewCount);
                 }
               });
             }
@@ -251,39 +251,12 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
         },
         child: Scaffold(
           /// app-bar
-          appBar: CommonAppBar(
-              elevation: 0,
-              hideLeading: false,
-              title: Text(
+          appBar: CommonBrandedAppBar(
+            title:
                 "${AppStrings.myContentText.toTitleCase()} ${AppStrings.detailsText.toTitleCase()}",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-              ),
-              centerTitle: false,
-              titleSpacing: 0,
-              size: size,
-              showActions: true,
-              leadingFxn: () {
-                context.pop(true);
-              },
-              actionWidget: [
-                InkWell(
-                  onTap: () {
-                    context.goNamed(AppRoutes.dashboardName,
-                        extra: {'initialPosition': 2});
-                  },
-                  child: Image.asset(
-                    "${commonImagePath}rabbitLogo.png",
-                    height: size.width * AppDimensions.numD07,
-                    width: size.width * AppDimensions.numD07,
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * AppDimensions.numD04,
-                )
-              ]),
+            size: size,
+            showLogo: true,
+          ),
 
           /// body
           body: SafeArea(
@@ -1309,29 +1282,81 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
 
   List<Widget> getMediaCount(List<ContentMetadata> mediaList, Size size) {
     if (mediaList.isEmpty) return [];
-    return [
-      Container(
-        padding: EdgeInsets.symmetric(
+
+    int imageCount = 0;
+    int videoCount = 0;
+    int audioCount = 0;
+    int docCount = 0;
+
+    for (var item in mediaList) {
+      if (item.mediaType == "image") {
+        imageCount++;
+      } else if (item.mediaType == "video") {
+        videoCount++;
+      } else if (item.mediaType == "audio") {
+        audioCount++;
+      } else if (item.mediaType == "pdf" || item.mediaType == "doc") {
+        docCount++;
+      }
+    }
+
+    List<Widget> widgets = [];
+
+    if (imageCount > 0) {
+      widgets.add(
+          mediaCountCard(size, "${iconsPath}ic_camera_publish.png", imageCount, "image"));
+    }
+    if (videoCount > 0) {
+      widgets
+          .add(mediaCountCard(size, "${iconsPath}ic_v_cam.png", videoCount, "video"));
+    }
+    if (audioCount > 0) {
+      widgets
+          .add(mediaCountCard(size, "${iconsPath}new_audio.png", audioCount, "audio"));
+    }
+    if (docCount > 0) {
+      widgets.add(mediaCountCard(size, "${iconsPath}doc_icon.png", docCount, "doc"));
+    }
+
+    return widgets;
+  }
+
+  Widget mediaCountCard(Size size, String iconPath, int count, String type) {
+    return Container(
+      margin: EdgeInsets.only(bottom: size.width * AppDimensions.numD01),
+      padding: EdgeInsets.symmetric(
           horizontal: size.width * AppDimensions.numD015,
-          vertical: size.width * 0.005,
-        ),
-        decoration: BoxDecoration(
-            color: AppColorTheme.colorLightGreen.withOpacity(0.8),
-            borderRadius:
-                BorderRadius.circular(size.width * AppDimensions.numD015)),
-        child: Center(
-          child: Text(
-            "${mediaList.length} ",
+          vertical: size.width * 0.005),
+      decoration: BoxDecoration(
+          color: AppColorTheme.colorLightGreen.withOpacity(0.8),
+          borderRadius:
+              BorderRadius.circular(size.width * AppDimensions.numD015)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "$count ",
             textAlign: TextAlign.center,
             style: commonTextStyle(
                 size: size,
-                fontSize: size.width * AppDimensions.numD038,
+                fontSize: size.width * AppDimensions.numD03,
                 color: Colors.white,
                 fontWeight: FontWeight.w600),
           ),
-        ),
-      )
-    ];
+          Image.asset(
+            iconPath,
+            height: type == "image"
+                ? size.width * 0.029
+                : type == "video"
+                    ? size.width * 0.041
+                    : type == "audio"
+                        ? size.width * 0.04
+                        : size.width * 0.04,
+            color: Colors.white,
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> openUrl(String url) async {

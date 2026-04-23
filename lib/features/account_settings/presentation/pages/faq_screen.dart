@@ -79,43 +79,12 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
     return BlocProvider(
       create: (_) => _bloc,
       child: Scaffold(
-        appBar: CommonAppBar(
-          elevation: 0,
-          hideLeading: false,
-          title: Text(
-            widget.priceTipsSelected
-                ? AppStrings.priceTipsText
-                : AppStrings.faqText,
-            style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-          ),
-          centerTitle: false,
-          titleSpacing: 0,
+        appBar: CommonBrandedAppBar(
+          title: widget.priceTipsSelected
+              ? AppStrings.priceTipsText
+              : AppStrings.faqText,
           size: size,
-          showActions: true,
-          leadingFxn: () {
-            context.pop();
-          },
-          actionWidget: [
-            InkWell(
-              onTap: () {
-                context.goNamed(
-                  AppRoutes.dashboardName,
-                  extra: {'initialPosition': 2},
-                );
-              },
-              child: Image.asset(
-                "${commonImagePath}rabbitLogo.png",
-                height: size.width * AppDimensions.numD07,
-                width: size.width * AppDimensions.numD07,
-              ),
-            ),
-            SizedBox(
-              width: size.width * AppDimensions.numD04,
-            )
-          ],
+          showLogo: true,
         ),
         body: SafeArea(
           child: BlocConsumer<FAQBloc, FAQState>(
