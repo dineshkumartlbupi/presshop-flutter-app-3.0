@@ -21,6 +21,7 @@ class AnimatedButtonWidget extends StatefulWidget {
 
 class _AnimatedButtonState extends State<AnimatedButtonWidget>
     with SingleTickerProviderStateMixin {
+  bool _hasTriggered = false;
   late AnimationController _controller;
   late Animation<double> _revealAnimation;
   late Animation<double> _opacityAnimation;
@@ -51,7 +52,10 @@ class _AnimatedButtonState extends State<AnimatedButtonWidget>
 
     _revealAnimation.addListener(() {
       if (_revealAnimation.isCompleted) {
-        if (mounted) {
+        if (mounted &&
+            !_hasTriggered &&
+            (ModalRoute.of(context)?.isCurrent ?? false)) {
+          _hasTriggered = true;
           widget.onPressed();
         }
       }
@@ -83,9 +87,11 @@ class _AnimatedButtonState extends State<AnimatedButtonWidget>
             return ClipRect(
               child: Align(
                 alignment: Alignment.centerLeft,
-                widthFactor: _revealAnimation.value, // Left-to-right reveal
+                widthFactor: _hasTriggered
+                    ? 1.0
+                    : _revealAnimation.value, // Left-to-right reveal
                 child: AnimatedOpacity(
-                  opacity: _opacityAnimation.value,
+                  opacity: _hasTriggered ? 1.0 : _opacityAnimation.value,
                   duration: const Duration(microseconds: 350),
                   child: SizedBox(
                     width: widget.size.width,
@@ -94,8 +100,10 @@ class _AnimatedButtonState extends State<AnimatedButtonWidget>
                         widget.buttonText,
                         widget.size,
                         commonButtonTextStyle(widget.size),
-                        commonButtonStyle(widget.size, AppColorTheme.colorThemePink), () {
-                      _controller.reset();
+                        commonButtonStyle(
+                            widget.size, AppColorTheme.colorThemePink), () {
+                      _controller.stop();
+                      _hasTriggered = true;
                       widget.onPressed();
                     }),
                   ),

@@ -607,13 +607,13 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                       top: size.width * AppDimensions.numD04,
                       bottom: size.width * AppDimensions.numD05,
                     ),
-                    child: Row(
-                      children: [
-                        Expanded(
+                    child: IntrinsicHeight(
+                      child: Row(
+                        children: [
+                          Expanded(
                           child: Container(
-                            alignment: Alignment.center,
                             padding: EdgeInsets.symmetric(
-                                vertical: size.width * AppDimensions.numD055,
+                                vertical: size.width * AppDimensions.numD03,
                                 horizontal: size.width * AppDimensions.numD02),
                             decoration: BoxDecoration(
                                 color: AppColorTheme.colorLightGrey,
@@ -705,7 +705,6 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         ),
                         Expanded(
                           child: Container(
-                            height: size.width * AppDimensions.numD20,
                             padding: EdgeInsets.symmetric(
                                 vertical: size.width * AppDimensions.numD03,
                                 horizontal: size.width * AppDimensions.numD02),
@@ -761,6 +760,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                       ],
                     ),
                   ),
+                ),
 
                   priceOfferWidget(),
 
@@ -826,19 +826,28 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                   setState(() {});
                                 }
                               },
-                        child: Text(
-                          taskDetail!.deadLine.isBefore(DateTime.now())
-                              ? "Too Late!"
-                              : "Accept $currencySymbol${formatDouble(double.tryParse(taskDetail!.hopperTaskAmount) ?? 0.0)}",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * AppDimensions.numD04,
-                              color:
-                                  taskDetail!.deadLine.isBefore(DateTime.now())
-                                      ? Colors.black
-                                      : Colors.white,
-                              fontWeight: FontWeight.w700),
-                        ),
+                        child: state.actionStatus == TaskStatus.loading
+                            ? SizedBox(
+                                height: size.width * AppDimensions.numD05,
+                                width: size.width * AppDimensions.numD05,
+                                child: const CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                taskDetail!.deadLine.isBefore(DateTime.now())
+                                    ? "Too Late!"
+                                    : "Accept $currencySymbol${formatDouble(double.tryParse(taskDetail!.hopperTaskAmount) ?? 0.0)}",
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * AppDimensions.numD04,
+                                    color: taskDetail!.deadLine
+                                            .isBefore(DateTime.now())
+                                        ? Colors.black
+                                        : Colors.white,
+                                    fontWeight: FontWeight.w700),
+                              ),
                       ),
                     ),
                   ),
@@ -874,11 +883,32 @@ class _BroadCastScreenState extends State<BroadCastScreen>
             ),
             InkWell(
               onTap: () async {
+                debugPrint("🚀 Share button tapped");
                 try {
-                  Share.share(
-                      "${taskDetail!.title}\n ${taskDetail!.description}.\n\n Hi there, ${sharedPreferences!.getString(SharedPreferencesKeys.firstNameKey).toString()} ${sharedPreferences!.getString(SharedPreferencesKeys.lastNameKey).toString()} has shared a task priced from $currencySymbol${taskDetail!.minimumPriceRange} to $currencySymbol${taskDetail!.maximumPriceRange} with you. Please click this ${Uri.parse(ApiConstantsNew.config.appUrl)} to download PressHop and review the task. Cheers");
+                  final String firstName = sharedPreferences
+                          ?.getString(SharedPreferencesKeys.firstNameKey) ??
+                      "";
+                  final String lastName = sharedPreferences
+                          ?.getString(SharedPreferencesKeys.lastNameKey) ??
+                      "";
+                  final String appUrl = ApiConstantsNew.config.appUrl;
+
+                  String shareText =
+                      "${taskDetail?.title ?? ""}\n ${taskDetail?.description ?? ""}.\n\n"
+                      "Hi there, $firstName $lastName has shared a task priced from "
+                      "$currencySymbol${taskDetail?.minimumPriceRange ?? ""} to "
+                      "$currencySymbol${taskDetail?.maximumPriceRange ?? ""} with you. "
+                      "Please click this $appUrl to download PressHop and review the task. Cheers";
+
+                  debugPrint("🚀 Sharing text: $shareText");
+                  final RenderBox? box = context.findRenderObject() as RenderBox?;
+                  await Share.share(
+                    shareText,
+                    sharePositionOrigin:
+                        box!.localToGlobal(Offset.zero) & box.size,
+                  );
                 } catch (e) {
-                  debugPrint("Share Error: $e");
+                  debugPrint("❌ Share Error: $e");
                 }
               },
               child: Container(
@@ -1475,6 +1505,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
   /// Update Map Location
   Future<void> _updateGoogleMap(LatLng latLng) async {
     final GoogleMapController controller = await _controller.future;
+    marker.clear();
     marker.add(Marker(
       markerId: const MarkerId("1"),
       position: latLng,

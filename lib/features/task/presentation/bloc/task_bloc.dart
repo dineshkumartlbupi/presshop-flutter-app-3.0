@@ -44,6 +44,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<AddLocalTaskEvent>(_onAddLocalTask);
     on<UpdateLocalTaskProgressEvent>(_onUpdateLocalTaskProgress);
     on<RemoveLocalTaskEvent>(_onRemoveLocalTask);
+    on<ResetTaskActionStatusEvent>(_onResetTaskActionStatus);
   }
   final GetTaskDetail getTaskDetail;
   final AcceptRejectTask acceptRejectTask;
@@ -348,6 +349,16 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     final updatedChatList =
         state.chatList.where((task) => task.id != event.taskId).toList();
     emit(state.copyWith(chatList: updatedChatList));
+  }
+
+  void _onResetTaskActionStatus(
+      ResetTaskActionStatusEvent event, Emitter<TaskState> emit) {
+    emit(state.copyWith(
+        actionStatus: TaskStatus.initial,
+        clearErrorMessage: true,
+        clearSuccessMessage: true,
+        transactions: const [],
+        chatList: const []));
   }
 
   @override

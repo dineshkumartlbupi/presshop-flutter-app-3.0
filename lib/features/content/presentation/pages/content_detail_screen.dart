@@ -21,6 +21,8 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
+import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 import '../bloc/content_bloc.dart';
 import '../bloc/content_event.dart';
 import '../bloc/content_state.dart';
@@ -389,6 +391,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                                 buttonText: AppStrings
                                                     .manageContentText,
                                                 onPressed: () {
+                                                  context
+                                                      .read<TaskBloc>()
+                                                      .add(const ResetTaskActionStatusEvent());
                                                   context.pushNamed(
                                                       AppRoutes.manageTaskName,
                                                       extra: {

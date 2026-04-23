@@ -57,6 +57,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
       RefreshController(initialRefresh: false);
   late AnimationController _blinkingController;
   late TabController _tabController;
+  bool _isNavigating = false;
 
   late Size size;
 
@@ -170,6 +171,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
             previous.taskDetail != current.taskDetail &&
             current.taskDetail != null,
         listener: (context, state) {
+          if (_isNavigating) return;
+          _isNavigating = true;
+
           debugPrint("🚀 UI: Showing Broadcast Dialog");
           context.pushNamed(
             AppRoutes.broadcastName,
@@ -177,7 +181,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
               'taskId': state.taskDetail!.task.id,
               'mediaHouseId': state.taskDetail!.task.mediaHouse.id,
             },
-          );
+          ).then((_) {
+            _isNavigating = false;
+          });
           // WidgetsBinding.instance.addPostFrameCallback((_) {
           //   // broadcastDialog(
           //   //   size: size,
@@ -502,6 +508,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                           var item = taskList[index] as TaskPending;
                           return InkWell(
                             onTap: () {
+                              if (context.read<TaskBloc>().state.actionStatus ==
+                                  TaskStatus.loading) return;
                               context
                                   .read<TaskBloc>()
                                   .add(FetchTaskDetailEvent(item.broadCastId));

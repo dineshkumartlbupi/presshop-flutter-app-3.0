@@ -167,3 +167,7 @@ class RemoveLocalTaskEvent extends TaskEvent {
   @override
   List<Object> get props => [taskId];
 }
+
+class ResetTaskActionStatusEvent extends TaskEvent {
+  const ResetTaskActionStatusEvent();
+}

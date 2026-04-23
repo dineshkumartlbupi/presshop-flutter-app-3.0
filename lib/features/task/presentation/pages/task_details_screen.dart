@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:presshop/core/constants/string_constants_new2.dart';
@@ -125,8 +128,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             taskDetail = state.taskDetail;
             roomId = taskDetail!.resp.roomId;
             _updateGoogleMap(LatLng(
-                taskDetail!.task.addressLocation.coordinates[0],
-                taskDetail!.task.addressLocation.coordinates[1]));
+                taskDetail!.task.addressLocation.coordinates[1],
+                taskDetail!.task.addressLocation.coordinates[0]));
 
             if (myId.isEmpty) {
               SharedPreferences.getInstance().then((input) {
@@ -235,13 +238,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                         mapToolbarEnabled: false,
                                         zoomControlsEnabled: false,
                                         zoomGesturesEnabled: false,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.all(
-                                            size.width * AppDimensions.numD07),
-                                        child: Image.asset(
-                                          "${commonImagePath}ic_cover_radius.png",
-                                        ),
                                       ),
                                       InkWell(
                                         splashColor: Colors.transparent,
@@ -889,30 +885,22 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     ),
                     if (isOwner)
                       widget.taskStatus != "rejected"
-                          ? GestureDetector(
-                              onTap: () {
+                          ? AnimatedButtonWidget(
+                              shouldRestartAnimation: shouldRestartAnimation,
+                              size: size,
+                              buttonText: AppStringsNew2.manageTaskText,
+                              onPressed: () {
+                                context
+                                    .read<TaskBloc>()
+                                    .add(const ResetTaskActionStatusEvent());
                                 context.pushNamed(AppRoutes.broadcastChatName,
                                     extra: {
                                       'taskDetail': taskDetail!,
                                       'roomId': roomId,
-                                    }).then((value) =>
-                                    _fetchTaskDetail(showLoader: false));
+                                    }).then((value) {
+                                  _fetchTaskDetail(showLoader: false);
+                                });
                               },
-                              child: AnimatedButtonWidget(
-                                shouldRestartAnimation: shouldRestartAnimation,
-                                size: size,
-                                buttonText: AppStringsNew2.manageTaskText,
-                                onPressed: () {
-                                  context.pushNamed(AppRoutes.broadcastChatName,
-                                      extra: {
-                                        'taskDetail': taskDetail!,
-                                        'roomId': roomId,
-                                      }).then((value) {
-                                    shouldRestartAnimation = true;
-                                    _fetchTaskDetail(showLoader: false);
-                                  });
-                                },
-                              ),
                             )
                           : Container(
                               width: size.width,
@@ -996,18 +984,30 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   }
 
   void getAllIcons() async {
-    mapIcon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(5, 5)),
-        "${commonImagePath}ic_cover_radius.png");
+    final Uint8List markerIcon =
+        await getBytesFromAsset("${commonImagePath}ic_cover_radius.png", 300);
+    mapIcon = BitmapDescriptor.fromBytes(markerIcon);
+  }
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
   }
 
   Future<void> _updateGoogleMap(LatLng latLng) async {
     final GoogleMapController controller = await _controller.future;
     if (!mounted) return;
     try {
+      marker.clear();
       marker.add(Marker(
         markerId: const MarkerId("1"),
         position: latLng,
+        anchor: const Offset(0.5, 0.5),
         icon: mapIcon ?? BitmapDescriptor.defaultMarker,
       ));
       await controller.animateCamera(CameraUpdate.newLatLngZoom(

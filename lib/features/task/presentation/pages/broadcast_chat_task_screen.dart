@@ -49,7 +49,6 @@ class BroadCastChatTaskScreen extends StatefulWidget {
 }
 
 class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
-  List<ManageTaskChatModel> chatList = [];
   late IO.Socket socket;
   final String _senderId =
       sharedPreferences!.getString(SharedPreferencesKeys.hopperIdKey) ?? "";
@@ -72,7 +71,6 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   bool isRequiredVisible = false;
   bool isRatingGiven = false;
   bool showCelebration = false;
-  bool isLoading = false;
   String imageId = "", chatId = "", contentView = "", contentPurchased = "";
   lc.LocationData? locationData;
   lc.Location location = lc.Location();
@@ -119,17 +117,14 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     super.initState();
     socketConnectionFunc();
     // Only fetch if list is empty to avoid double fetch on rebuilds if any
-    if (chatList.isEmpty) {
-      isLoading = true;
-      context.read<TaskBloc>().add(
-            GetTaskChatEvent(
-              roomId: widget.roomId,
-              type: "task_content",
-              contentId: widget.taskDetail?.task.id ?? "",
-              showLoader: false,
-            ),
-          );
-    }
+    context.read<TaskBloc>().add(
+          GetTaskChatEvent(
+            roomId: widget.roomId,
+            type: "task_content",
+            contentId: widget.taskDetail?.task.id ?? "",
+            showLoader: true,
+          ),
+        );
     getCurrentLocation();
 
     // Listen to upload status changes to update local task progress
@@ -217,10 +212,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   void dispose() {
     // Remove upload status listener
     MediaUploadService.uploadStatus.removeListener(_onUploadStatusChanged);
+    context.read<TaskBloc>().add(const ResetTaskActionStatusEvent());
     socket.disconnect();
-    socket.onDisconnect(
-      (_) => socket.emit('room join', {"room_id": widget.roomId}),
-    );
     super.dispose();
   }
 
@@ -257,55 +250,46 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     var size = MediaQuery.of(context).size;
     return BlocConsumer<TaskBloc, TaskState>(
       listener: (context, state) {
-        if (state.allTasksStatus == TaskStatus.loading ||
-            state.taskDetailStatus == TaskStatus.loading ||
-            state.localTasksStatus == TaskStatus.loading ||
-            state.actionStatus == TaskStatus.loading) {
-          setState(() {
-            isLoading = true;
-          });
-        } else {
-          setState(() {
-            isLoading = false;
-          });
-        }
-
         if (state.actionStatus == TaskStatus.success) {
-          setState(() {
-            chatList = state.chatList;
-          });
-        } else if (state.transactions.isNotEmpty) {
-          earningTransactionDataList = state.transactions;
-          if (earningTransactionDataList.isNotEmpty) {
-            if (earningTransactionDataList.isNotEmpty) {
-              context.pushNamed(
-                AppRoutes.transactionDetailName,
-                extra: {
-                  'pageType': PageType.TASK,
-                  'type': "received",
-                  'transactionData':
-                      earningTransactionDataList.first.toEntity(),
-                },
-              );
+          if (state.transactions.isNotEmpty) {
+            earningTransactionDataList = state.transactions;
+            context.pushNamed(
+              AppRoutes.transactionDetailName,
+              extra: {
+                'type': "task",
+                'transactionData': earningTransactionDataList.first,
+                'pageType': 'broadcast',
+                'shouldShowPublication': false,
+              },
+            ).then((value) {
+              if (mounted) {
+                context
+                    .read<TaskBloc>()
+                    .add(const ResetTaskActionStatusEvent());
+              }
+            });
+          } else if (state.uploadResponse != null) {
+            showSnackBar(
+                "Success", "Media uploaded successfully", Colors.green);
+            if (mounted) {
+              context.read<TaskBloc>().add(
+                    GetTaskChatEvent(
+                      roomId: widget.roomId,
+                      type: "task_content",
+                      contentId: widget.taskDetail?.task.id ?? "",
+                      showLoader: false,
+                    ),
+                  );
             }
-          }
-        } else if (state.actionStatus == TaskStatus.success) {
-          showSnackBar("Success", "Media uploaded successfully", Colors.green);
-          if (mounted) {
-            context.read<TaskBloc>().add(
-                  GetTaskChatEvent(
-                    roomId: widget.roomId,
-                    type: "task_content",
-                    contentId: widget.taskDetail?.task.id ?? "",
-                    showLoader: false,
-                  ),
-                );
           }
         } else if (state.errorMessage != null) {
           // showSnackBar("Error", state.errorMessage!, Colors.red);
         }
       },
       builder: (context, state) {
+        final chatList = state.chatList;
+        final bool isDataLoading = state.actionStatus == TaskStatus.loading;
+
         return Scaffold(
           appBar: CommonAppBar(
             elevation: 0,
@@ -342,7 +326,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
               SizedBox(width: size.width * AppDimensions.numD04),
             ],
           ),
-          bottomNavigationBar: isLoading
+          bottomNavigationBar: (isDataLoading && chatList.isNotEmpty)
               ? showLoader()
               : Padding(
                   padding: EdgeInsets.only(
@@ -432,10 +416,12 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     ],
                   ),
                 ),
-          body: SingleChildScrollView(
-            padding: EdgeInsets.all(size.width * AppDimensions.numD04),
-            child: Column(
-              children: [
+          body: (isDataLoading && chatList.isEmpty)
+              ? Center(child: showLoader())
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+                  child: Column(
+                    children: [
                 TaskChatHeader(taskDetail: widget.taskDetail!),
                 SizedBox(height: size.width * AppDimensions.numD04),
                 SizedBox(height: size.width * AppDimensions.numD04),
