@@ -887,19 +887,41 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                          item.totalAmount == "0" &&
-                                                  item.status == "accepted"
-                                              ? item.status.toUpperCase()
-                                              : "RECEIVED",
+                                          item.statusText.isNotEmpty
+                                              ? item.statusText.toUpperCase()
+                                              : (item.taskDetail?.deadLine
+                                                          .isBefore(
+                                                              DateTime.now()) ??
+                                                      false)
+                                                  ? "EXPIRED"
+                                                  : (item.totalAmount == "0" &&
+                                                          item.status ==
+                                                              "accepted")
+                                                      ? item.status
+                                                          .toUpperCase()
+                                                      : "RECEIVED",
                                           style: commonTextStyle(
                                               size: size,
                                               fontSize: size.width *
                                                   AppDimensions.numD025,
-                                              color: item.status ==
-                                                          "accepted" ||
-                                                      item.status == "completed"
-                                                  ? AppColorTheme.colorThemePink
-                                                  : Colors.black,
+                                              color: item.statusColor.isNotEmpty
+                                                  ? Color(int.parse(item
+                                                      .statusColor
+                                                      .replaceAll(
+                                                          "#", "0xFF")))
+                                                  : (item.taskDetail?.deadLine
+                                                              .isBefore(
+                                                                  DateTime
+                                                                      .now()) ??
+                                                          false)
+                                                      ? Colors.grey
+                                                      : (item.status ==
+                                                                  "accepted" ||
+                                                              item.status ==
+                                                                  "completed")
+                                                          ? AppColorTheme
+                                                              .colorThemePink
+                                                          : Colors.black,
                                               fontWeight: FontWeight.normal)),
                                       item.status == "accepted"
                                           ? Container(
@@ -1047,14 +1069,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         var item = allTaskList[index];
-                        final bool isPendingForMe = localTasks.any((lt) =>
-                            lt is TaskPending && lt.broadCastId == item.id);
+                        final bool isPendingForMe = item.isAvailableForAccept;
                         final bool isAcceptedByMe = item.acceptedTasks
-                                .any((e) => e.hopperId == myId) ||
-                            localTasks.any((lt) =>
-                                lt is TaskMy &&
-                                lt.taskDetail?.id == item.id &&
-                                lt.status == "accepted");
+                                .any((e) => e.hopperId == myId);
                         return InkWell(
                           onTap: () {
                             if ((item.isAvailableForAccept || isPendingForMe) &&
@@ -1230,18 +1247,33 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                      isAcceptedByMe
-                                          ? "ACCEPTED"
-                                          : (isPendingForMe ||
-                                                  (item.isAvailableForAccept &&
-                                                      item.status == "pending"))
-                                              ? "TAP TO ACCEPT"
-                                              : "",
+                                      item.statusText.isNotEmpty
+                                          ? item.statusText.toUpperCase()
+                                          : (item.deadlineDate?.isBefore(
+                                                      DateTime.now()) ??
+                                                  false)
+                                              ? "EXPIRED"
+                                              : isAcceptedByMe
+                                                  ? "ACCEPTED"
+                                                  : (isPendingForMe ||
+                                                          (item.isAvailableForAccept &&
+                                                              item.status ==
+                                                                  "pending"))
+                                                      ? "TAP TO ACCEPT"
+                                                      : "",
                                       style: commonTextStyle(
                                           size: size,
                                           fontSize: size.width *
                                               AppDimensions.numD025,
-                                          color: AppColorTheme.colorThemePink,
+                                          color: item.statusColor.isNotEmpty
+                                              ? Color(int.parse(item.statusColor
+                                                  .replaceAll("#", "0xFF")))
+                                              : (item.deadlineDate?.isBefore(
+                                                          DateTime.now()) ??
+                                                      false)
+                                                  ? Colors.grey
+                                                  : AppColorTheme
+                                                      .colorThemePink,
                                           fontWeight: FontWeight.normal)),
 
                                   //////////////

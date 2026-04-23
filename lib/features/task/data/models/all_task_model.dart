@@ -24,6 +24,8 @@ class AllTaskModel extends TaskAll {
     super.isAvailableForAccept = false,
     super.latitude = 0.0,
     super.longitude = 0.0,
+    super.statusColor = "",
+    super.statusText = "",
   });
 
   factory AllTaskModel.fromJson(Map<String, dynamic> json) {
@@ -83,6 +85,8 @@ class AllTaskModel extends TaskAll {
               json["address_location"]["coordinates"] != null
           ? (json["address_location"]["coordinates"] as List).last.toDouble()
           : 0.0,
+      statusColor: (json['status_color'] ?? "").toString(),
+      statusText: (json['status_text'] ?? "").toString(),
     );
   }
 

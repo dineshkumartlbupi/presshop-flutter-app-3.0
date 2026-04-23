@@ -75,6 +75,8 @@ class TaskAll extends Equatable {
     this.isAvailableForAccept = false,
     this.latitude = 0.0,
     this.longitude = 0.0,
+    this.statusColor = "",
+    this.statusText = "",
   });
   final String id;
   final String userId;
@@ -98,6 +100,8 @@ class TaskAll extends Equatable {
   final bool isAvailableForAccept;
   final double latitude;
   final double longitude;
+  final String statusColor;
+  final String statusText;
 
   @override
   List<Object?> get props => [
@@ -123,5 +127,7 @@ class TaskAll extends Equatable {
         isAvailableForAccept,
         latitude,
         longitude,
+        statusColor,
+        statusText,
       ];
 }

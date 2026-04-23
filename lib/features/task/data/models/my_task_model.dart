@@ -23,5 +23,7 @@ class MyTaskModel extends TaskMy {
           status: (json["task_status"] ?? "").toString(),
           totalAmount: json['total_payment']?.toString() ?? '0',
           taskDetail: TaskDetailModel.fromJson(json["task_id"] ?? {}),
+          statusColor: (json["status_color"] ?? "").toString(),
+          statusText: (json["status_text"] ?? "").toString(),
         );
 }

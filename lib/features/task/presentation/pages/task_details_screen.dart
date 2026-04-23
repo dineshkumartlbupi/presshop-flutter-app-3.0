@@ -192,14 +192,17 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                 ? "TASK ACCEPTED"
                                 : (taskDetail!.task.deadlineDate
                                         .isBefore(DateTime.now())
-                                    ? ""
+                                    ? "TASK EXPIRED"
                                     : "LIVE TASK"),
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD036,
-                                color: widget.taskStatus == "rejected"
-                                    ? Colors.black
-                                    : AppColorTheme.colorThemePink,
+                                color: (taskDetail!.task.deadlineDate
+                                        .isBefore(DateTime.now()))
+                                    ? Colors.grey
+                                    : widget.taskStatus == "rejected"
+                                        ? Colors.black
+                                        : AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.w500),
                           )
                         ],
