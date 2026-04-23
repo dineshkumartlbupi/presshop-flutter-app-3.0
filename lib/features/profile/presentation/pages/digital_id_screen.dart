@@ -264,50 +264,59 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                             SizedBox(
                               height: size.width * AppDimensions.numD03,
                             ),
+                            Center(
+                              child: Image.asset(
+                                'assets/logo/cmplogo2.png',
+                                height: size.width * AppDimensions.numD15,
+                                fit: BoxFit.fill,
+                              ),
+                            ),
 
                             /// Rabbit logo
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Image.asset(
-                                  "${commonImagePath}rabbitLogo.png",
-                                  height: size.width * AppDimensions.numD18,
-                                  // width: size.width * AppDimensions.numD1,
-                                ),
-                                Expanded(
-                                    child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "press",
-                                          style: TextStyle(
-                                              fontSize: size.width *
-                                                  AppDimensions.numD072,
-                                              color: Colors.black,
-                                              fontFamily: "AirbnbCereal",
-                                              fontWeight: FontWeight.normal),
-                                        ),
-                                        Text(
-                                          "Hop®",
-                                          style: TextStyle(
-                                              fontSize: size.width *
-                                                  AppDimensions.numD075,
-                                              color: Colors.black,
-                                              letterSpacing: 0,
-                                              fontFamily: "AirbnbCereal",
-                                              fontStyle: FontStyle.italic,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 8)
-                                  ],
-                                ))
-                              ],
-                            ),
+                            // Row(
+                            //   crossAxisAlignment: CrossAxisAlignment.end,
+                            //   children: [
+                            //     Image.asset(
+                            //       "${commonImagePath}rabbitLogo.png",
+                            //       height: size.width * AppDimensions.numD18,
+                            //       // width: size.width * AppDimensions.numD1,
+                            //     ),
+                            //     Expanded(
+                            //         child: Column(
+                            //       crossAxisAlignment: CrossAxisAlignment.start,
+                            //       mainAxisAlignment: MainAxisAlignment.end,
+                            //       children: [
+
+                            //         // Row(
+                            //         //   children: [
+                            //         //     Text(
+                            //         //       "press",
+                            //         //       style: TextStyle(
+                            //         //           fontSize: size.width *
+                            //         //               AppDimensions.numD072,
+                            //         //           color: Colors.black,
+                            //         //           fontFamily: "AirbnbCereal",
+                            //         //           fontWeight: FontWeight.normal),
+                            //         //     ),
+                            //         //     Text(
+                            //         //       "Hop®",
+                            //         //       style: TextStyle(
+                            //         //           fontSize: size.width *
+                            //         //               AppDimensions.numD075,
+                            //         //           color: Colors.black,
+                            //         //           letterSpacing: 0,
+                            //         //           fontFamily: "AirbnbCereal",
+                            //         //           fontStyle: FontStyle.italic,
+                            //         //           fontWeight: FontWeight.bold),
+                            //         //     ),
+                            //         //   ],
+                            //         // ),
+                            //         SizedBox(height: 8)
+                            //       ],
+                            //     ))
+                            //   ],
+                            // ),
+
                             SizedBox(
                               height: size.width * AppDimensions.numD04,
                             ),
@@ -408,7 +417,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                       width: size.width * AppDimensions.numD70,
                                       alignment: Alignment.center,
                                       decoration: BoxDecoration(
-                                        color: Colors.black.withValues(alpha: 0.3),
+                                        color:
+                                            Colors.black.withValues(alpha: 0.3),
                                         borderRadius: BorderRadius.circular(
                                             size.width * AppDimensions.numD04),
                                       ),

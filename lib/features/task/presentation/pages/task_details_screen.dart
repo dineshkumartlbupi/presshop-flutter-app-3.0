@@ -108,8 +108,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
-              height: size.width * AppDimensions.numD07,
-              width: size.width * AppDimensions.numD07,
+              height: size.width * AppDimensions.numD09,
+              width: size.width * AppDimensions.numD09,
             ),
           ),
           SizedBox(
@@ -658,19 +658,21 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                     ?.isNotEmpty ==
                                 true))) ...[
                       SizedBox(height: size.width * AppDimensions.numD06),
-                      Text(
-                        "Capture in ${_getPrefText(taskDetail?.task.preferences?["pictureStyle"], "Landscape")} format, "
-                        "record a ${_getPrefText(taskDetail?.task.preferences?["videoLength"], "40-50s")} video, "
-                        "and keep a distance of approximately ${_getPrefText(taskDetail?.task.preferences?["distance"], "15-20m")}.",
-                        style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD03,
-                          color: Colors.black,
-                          lineHeight: 1.8,
-                          fontWeight: FontWeight.normal,
-                        ),
-                        textAlign: TextAlign.justify,
-                      ),
+                      if (taskDetail?.task.preferences?["pictureStyle"]
+                              ?.isNotEmpty ==
+                          true)
+                        _buildPreferenceBullet(size,
+                            "Capture in ${taskDetail?.task.preferences?["pictureStyle"]} format"),
+                      if (taskDetail?.task.preferences?["videoLength"]
+                              ?.isNotEmpty ==
+                          true)
+                        _buildPreferenceBullet(size,
+                            "Record a ${taskDetail?.task.preferences?["videoLength"]} video"),
+                      if (taskDetail?.task.preferences?["distance"]
+                              ?.isNotEmpty ==
+                          true)
+                        _buildPreferenceBullet(size,
+                            "Keep a distance of approximately ${taskDetail?.task.preferences?["distance"]}"),
                     ],
                     const Divider(
                       thickness: 1,
@@ -1144,11 +1146,36 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     return "$driveMinutes mins";
   }
 
-  String _getPrefText(dynamic value, String defaultValue) {
-    if (value == null || value.toString().isEmpty) {
-      return defaultValue;
-    }
-    return value.toString();
+  Widget _buildPreferenceBullet(Size size, String text) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: size.width * AppDimensions.numD015),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "• ",
+            style: commonTextStyle(
+              size: size,
+              fontSize: size.width * AppDimensions.numD035,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              text,
+              style: commonTextStyle(
+                size: size,
+                fontSize: size.width * AppDimensions.numD03,
+                color: Colors.black,
+                lineHeight: 1.4,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _fetchTaskDetail({bool showLoader = true}) {

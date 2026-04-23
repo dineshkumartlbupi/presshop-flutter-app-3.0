@@ -262,6 +262,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                     Flexible(child: BlocBuilder<TaskBloc, TaskState>(
                       builder: (context, state) {
                         // Check if we need to fetch tasks for All Tasks tab
+
                         if (_tabController.index == 0 &&
                             !_allTasksFetchInitiated &&
                             state.allTasks.isEmpty &&
@@ -1036,26 +1037,26 @@ class MyTaskScreenState extends State<MyTaskScreen>
                     mainAxisSpacing: size.width * AppDimensions.numD04,
                     crossAxisSpacing: size.width * AppDimensions.numD04,
                   ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        var item = allTaskList[index];
-                        final bool isPendingForMe = localTasks.any((lt) =>
-                            lt is TaskPending && lt.broadCastId == item.id);
-                        final bool isAcceptedByMe = item.acceptedTasks
-                                .any((e) => e.hopperId == myId) ||
-                            localTasks.any((lt) =>
-                                lt is TaskMy &&
-                                lt.taskDetail?.id == item.id &&
-                                lt.status == "accepted");
-                        return InkWell(
-                          onTap: () {
-                            if ((item.isAvailableForAccept || isPendingForMe) &&
-                                item.status != "rejected" &&
-                                !isAcceptedByMe) {
-                              context.pushNamed(AppRoutes.broadcastName, extra: {
-                                'taskId': item.id,
-                                'mediaHouseId': item.mediaHouseDetails?.id ?? "",
-                              }).then((value) {
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      var item = allTaskList[index];
+                      final bool isPendingForMe = localTasks.any((lt) =>
+                          lt is TaskPending && lt.broadCastId == item.id);
+                      final bool isAcceptedByMe =
+                          item.acceptedTasks.any((e) => e.hopperId == myId) ||
+                              localTasks.any((lt) =>
+                                  lt is TaskMy &&
+                                  lt.taskDetail?.id == item.id &&
+                                  lt.status == "accepted");
+                      return InkWell(
+                        onTap: () {
+                          if ((item.isAvailableForAccept || isPendingForMe) &&
+                              item.status != "rejected" &&
+                              !isAcceptedByMe) {
+                            context.pushNamed(AppRoutes.broadcastName, extra: {
+                              'taskId': item.id,
+                              'mediaHouseId': item.mediaHouseDetails?.id ?? "",
+                            }).then((value) {
                               if (context.mounted) {
                                 _allTaskOffset = 0;
                                 context.read<TaskBloc>().add(FetchAllTasksEvent(
@@ -1273,15 +1274,16 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       Container(
                                           alignment: Alignment.center,
                                           height:
-                                              size.width * AppDimensions.numD06,
+                                              size.width * AppDimensions.numD065,
                                           padding: EdgeInsets.symmetric(
                                               horizontal: size.width *
-                                                  AppDimensions.numD025,
+                                                  AppDimensions.numD04,
                                               vertical: size.width *
-                                                  AppDimensions.numD003),
+                                                  AppDimensions.numD01),
                                           decoration: BoxDecoration(
                                               color: ((isPendingForMe ||
-                                                          item.isAvailableForAccept) &&
+                                                          item
+                                                              .isAvailableForAccept) &&
                                                       item.status !=
                                                           "rejected" &&
                                                       !isAcceptedByMe)
@@ -1294,8 +1296,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           child: Text(
                                             ((isPendingForMe ||
                                                         item.isAvailableForAccept) &&
-                                                    item.status !=
-                                                        "rejected" &&
+                                                    item.status != "rejected" &&
                                                     !isAcceptedByMe)
                                                 ? "Available"
                                                 : "Live",

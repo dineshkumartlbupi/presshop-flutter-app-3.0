@@ -4,6 +4,9 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/widgets/logo_widget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
 
 class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const NewHomeAppBar({
@@ -49,8 +52,19 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   left: hideLeading ? size.width * AppDimensions.numD018 : 0),
               child: InkWell(
                 onTap: () {
-                  context.goNamed(AppRoutes.dashboardName,
-                      extra: {'initialPosition': 2});
+                  print("hello---------------------");
+                  try {
+                    // Try to change tab directly if we are already in Dashboard context
+                    context
+                        .read<DashboardBloc>()
+                        .add(const ChangeDashboardTabEvent(2));
+                  } catch (e) {
+                    // If not in Dashboard context, use router
+                    context.goNamed(
+                      AppRoutes.dashboardName,
+                      extra: {'initialPosition': 2},
+                    );
+                  }
                 },
                 child: LogoWidget.buildLogo(size),
                 // child: Image.asset(

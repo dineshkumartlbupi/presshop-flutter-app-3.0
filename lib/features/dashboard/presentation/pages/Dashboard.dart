@@ -600,10 +600,7 @@ class DashboardPageState extends State<Dashboard>
       }
       setState(() {});
     } else if (state is DashboardTabChanged) {
-      setState(() {
-        currentIndex = state.index;
-        _loadedIndices.add(currentIndex);
-      });
+      _onBottomBarItemTapped(state.index);
     } else if (state is DashboardError) {}
   }
 
