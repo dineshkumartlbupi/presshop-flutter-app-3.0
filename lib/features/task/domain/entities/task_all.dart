@@ -73,6 +73,11 @@ class TaskAll extends Equatable {
     this.currency = "",
     this.currencySymbol = "",
     this.isAvailableForAccept = false,
+    this.isLive = false,
+    this.ctaColorCode = "",
+    this.ctaName = "",
+    this.taskAcceptedCount = "",
+    this.ctaTextColorCode = "",
     this.latitude = 0.0,
     this.longitude = 0.0,
     this.statusColor = "",
@@ -98,6 +103,11 @@ class TaskAll extends Equatable {
   final String currency;
   final String currencySymbol;
   final bool isAvailableForAccept;
+  final bool isLive;
+  final String ctaColorCode;
+  final String ctaName;
+  final String taskAcceptedCount;
+  final String ctaTextColorCode;
   final double latitude;
   final double longitude;
   final String statusColor;
@@ -125,6 +135,11 @@ class TaskAll extends Equatable {
         currency,
         currencySymbol,
         isAvailableForAccept,
+        isLive,
+        ctaColorCode,
+        ctaName,
+        taskAcceptedCount,
+        ctaTextColorCode,
         latitude,
         longitude,
         statusColor,

@@ -22,6 +22,11 @@ class AllTaskModel extends TaskAll {
     super.currency = "",
     super.currencySymbol = "",
     super.isAvailableForAccept = false,
+    super.isLive = false,
+    super.ctaColorCode = "",
+    super.ctaName = "",
+    super.taskAcceptedCount = "",
+    super.ctaTextColorCode = "",
     super.latitude = 0.0,
     super.longitude = 0.0,
     super.statusColor = "",
@@ -41,6 +46,13 @@ class AllTaskModel extends TaskAll {
       location: (json['location'] ?? "").toString(),
       status: (json['status'] ?? "").toString(),
       isAvailableForAccept: json['is_available_for_accept'] ?? false,
+      ////=====>>
+      isLive: json['isLive'] ?? false,
+      ctaColorCode: (json['ctaColorCode'] ?? "").toString(),
+      ctaName: (json['ctaName'] ?? "").toString(),
+      ctaTextColorCode: (json['ctaTextColorCode'] ?? "").toString(),
+      ////======>>
+      taskAcceptedCount: (json['task_accepted_count'] ?? "").toString(),
       mediaHouseDetails: json['mediahouse_id'] != null
           ? MediaHouseDetails.fromJson(
               Map<String, dynamic>.from(json['mediahouse_id'] as Map))
