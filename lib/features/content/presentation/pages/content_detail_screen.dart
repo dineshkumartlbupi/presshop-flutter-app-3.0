@@ -364,9 +364,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                                 buttonText: AppStrings
                                                     .manageContentText,
                                                 onPressed: () {
-                                                  context
-                                                      .read<TaskBloc>()
-                                                      .add(const ResetTaskActionStatusEvent());
+                                                  context.read<TaskBloc>().add(
+                                                      const ResetTaskActionStatusEvent());
                                                   context.pushNamed(
                                                       AppRoutes.manageTaskName,
                                                       extra: {
@@ -1303,19 +1302,20 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
     List<Widget> widgets = [];
 
     if (imageCount > 0) {
-      widgets.add(
-          mediaCountCard(size, "${iconsPath}ic_camera_publish.png", imageCount, "image"));
+      widgets.add(mediaCountCard(
+          size, "${iconsPath}ic_camera_publish.png", imageCount, "image"));
     }
     if (videoCount > 0) {
-      widgets
-          .add(mediaCountCard(size, "${iconsPath}ic_v_cam.png", videoCount, "video"));
+      widgets.add(mediaCountCard(
+          size, "${iconsPath}ic_v_cam.png", videoCount, "video"));
     }
     if (audioCount > 0) {
-      widgets
-          .add(mediaCountCard(size, "${iconsPath}new_audio.png", audioCount, "audio"));
+      widgets.add(mediaCountCard(
+          size, "${iconsPath}new_audio.png", audioCount, "audio"));
     }
     if (docCount > 0) {
-      widgets.add(mediaCountCard(size, "${iconsPath}doc_icon.png", docCount, "doc"));
+      widgets.add(
+          mediaCountCard(size, "${iconsPath}doc_icon.png", docCount, "doc"));
     }
 
     return widgets;
@@ -1346,7 +1346,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
           Image.asset(
             iconPath,
             height: type == "image"
-                ? size.width * 0.029
+                ? size.width * 0.035
                 : type == "video"
                     ? size.width * 0.041
                     : type == "audio"

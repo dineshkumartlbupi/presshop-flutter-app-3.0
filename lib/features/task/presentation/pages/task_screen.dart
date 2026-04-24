@@ -154,6 +154,28 @@ class MyTaskScreenState extends State<MyTaskScreen>
     super.dispose();
   }
 
+  Color _parseColor(String? colorCode, {Color defaultColor = Colors.black}) {
+    if (colorCode == null ||
+        colorCode.isEmpty ||
+        colorCode == "#" ||
+        colorCode == "0x") {
+      return defaultColor;
+    }
+    try {
+      String code = colorCode.replaceAll("#", "").trim();
+      if (code.startsWith("0x")) {
+        code = code.substring(2);
+      }
+      if (code.length == 6) {
+        code = "FF$code";
+      }
+      return Color(int.parse("0x$code"));
+    } catch (e) {
+      debugPrint("Error parsing color: $colorCode - $e");
+      return defaultColor;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -903,13 +925,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                               size: size,
                                               fontSize: size.width *
                                                   AppDimensions.numD025,
-                                              color: item.statusColor.isNotEmpty
-                                                  ? Color(int.parse(
-                                                      item.statusColor
-                                                          .replaceAll(
-                                                              "#", "0xFF")))
-                                                  : (item.taskDetail?.deadLine.isBefore(
-                                                              DateTime.now()) ??
+                                              color: _parseColor(item.statusColor,
+                                                  defaultColor: (item.taskDetail
+                                                              ?.deadLine
+                                                              .isBefore(DateTime
+                                                                  .now()) ??
                                                           false)
                                                       ? Colors.grey
                                                       : (item.status ==
@@ -918,7 +938,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                                   "completed")
                                                           ? AppColorTheme
                                                               .colorThemePink
-                                                          : Colors.black,
+                                                          : Colors.black),
                                               fontWeight: FontWeight.normal)),
                                       item.status == "accepted"
                                           ? Container(
@@ -1278,15 +1298,14 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           size: size,
                                           fontSize: size.width *
                                               AppDimensions.numD025,
-                                          color: item.statusColor.isNotEmpty
-                                              ? Color(int.parse(item.statusColor
-                                                  .replaceAll("#", "0xFF")))
-                                              : (item.deadlineDate?.isBefore(
-                                                          DateTime.now()) ??
+                                          color: _parseColor(item.statusColor,
+                                              defaultColor: (item.deadlineDate
+                                                          ?.isBefore(DateTime
+                                                              .now()) ??
                                                       false)
                                                   ? Colors.grey
                                                   : AppColorTheme
-                                                      .colorThemePink,
+                                                      .colorThemePink),
                                           fontWeight: FontWeight.normal)),
                                   item.status == "accepted"
                                       ? Container(
@@ -1307,8 +1326,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                       ? Colors.black
                                                       : AppColorTheme
                                                           .colorLightGrey
-                                                  : Color(int.parse("0x" +
-                                                      item.ctaColorCode)),
+                                                  : _parseColor(
+                                                      item.ctaColorCode),
                                               borderRadius:
                                                   BorderRadius.circular(size
                                                           .width *
@@ -1330,8 +1349,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                         // && item.totalAmount == "0"
                                                         ? Colors.white
                                                         : Colors.black
-                                                    : Color(int.parse(
-                                                        "0x${item.ctaTextColorCode.isNotEmpty ? "FF000000" : "000000"}")),
+                                                    : _parseColor(item
+                                                                .ctaTextColorCode
+                                                                .isNotEmpty
+                                                            ? item.ctaTextColorCode
+                                                            : "000000"),
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         )
@@ -1356,8 +1378,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                               .colorThemePink
                                                       : Colors.black
                                                   // : colorThemePink,
-                                                  : Color(int.parse(
-                                                      "0x${item.ctaColorCode}")),
+                                                  : _parseColor(
+                                                      item.ctaColorCode),
                                               borderRadius:
                                                   BorderRadius.circular(size
                                                           .width *
@@ -1380,8 +1402,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                     AppDimensions.numD025,
                                                 color: item.ctaName != "Expired"
                                                     ? Colors.white
-                                                    : Color(int.parse(
-                                                        "0x${item.ctaTextColorCode.isNotEmpty ? item.ctaTextColorCode : "000000"}")),
+                                                    : _parseColor(item
+                                                                .ctaTextColorCode
+                                                                .isNotEmpty
+                                                            ? item.ctaTextColorCode
+                                                            : "000000"),
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         )
