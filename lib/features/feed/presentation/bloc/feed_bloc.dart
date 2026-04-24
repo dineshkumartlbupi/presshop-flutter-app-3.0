@@ -11,7 +11,7 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
   FeedBloc({
     required this.getFeeds,
     required this.toggleFeedInteraction,
-  }) : super(const FeedState()) {
+  }) : super(const FeedState(status: FeedStatus.loading)) {
     on<FetchFeeds>(_onFetchFeeds);
     on<LoadMoreFeeds>(_onLoadMoreFeeds);
     on<ToggleLikeFeed>(_onToggleLike);

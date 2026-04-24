@@ -221,6 +221,11 @@ class DashboardPageState extends State<Dashboard>
         currentIndex = widget.initialPosition;
         _loadedIndices.add(currentIndex);
       });
+      // Handle camera initialization if switching to camera tab
+      if (currentIndex == 2) {
+        _handlePermissionSequence();
+        _cameraKey.currentState?.resumeCamera();
+      }
     }
   }
 
@@ -600,10 +605,7 @@ class DashboardPageState extends State<Dashboard>
       }
       setState(() {});
     } else if (state is DashboardTabChanged) {
-      setState(() {
-        currentIndex = state.index;
-        _loadedIndices.add(currentIndex);
-      });
+      _onBottomBarItemTapped(state.index);
     } else if (state is DashboardError) {}
   }
 
@@ -787,7 +789,8 @@ class DashboardPageState extends State<Dashboard>
 
     forceUpdateCheck();
 
-    if (widget.initialPosition == 2) {
+    // Resume camera if we are on camera tab
+    if (currentIndex == 2) {
       if (mounted) {
         final delay = Platform.isIOS ? 1200 : 500;
         await Future.delayed(Duration(milliseconds: delay));

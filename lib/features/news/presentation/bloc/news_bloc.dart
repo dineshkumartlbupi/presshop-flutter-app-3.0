@@ -19,7 +19,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     required this.getComments,
     required this.newsSocketDataSource,
     required this.sharedPreferences,
-  }) : super(NewsState()) {
+  }) : super(const NewsState(isLoading: true)) {
     on<GetAggregatedNewsEvent>(_onGetAggregatedNews);
     on<GetNewsDetailEvent>(_onGetNewsDetail);
     on<GetCommentsEvent>(_onGetComments);

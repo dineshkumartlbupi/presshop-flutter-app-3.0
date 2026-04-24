@@ -140,7 +140,7 @@ class FeedScreenState extends State<FeedScreen>
         builder: (context, state) {
           if (state.status == FeedStatus.initial ||
               (state.status == FeedStatus.loading && state.feeds.isEmpty)) {
-            return const SizedBox.shrink();
+            return Center(child: showAnimatedLoader(size));
           }
 
           return SmartRefresher(

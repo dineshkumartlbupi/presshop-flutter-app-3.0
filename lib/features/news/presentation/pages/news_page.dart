@@ -211,6 +211,8 @@ class _NewsPageState extends State<NewsPage>
       appBar: NewHomeAppBar(
         size: size,
         hideLeading: widget.hideLeading,
+        hideHamburger: true,
+        showLogo: false,
         showFilter: false, // !widget.fromMap && _tabController.index == 0,
         onFilterTap: () {
           if (_tabController.index == 0 && _showFeedBottomSheet != null) {
@@ -218,7 +220,8 @@ class _NewsPageState extends State<NewsPage>
           }
         },
         appBarTitle: widget.appBarTitle,
-        hideHamburger: widget.appBarTitle != null,
+
+        // hideHamburger: widget.appBarTitle != null,
         bottom: widget.fromMap
             ? null
             : PreferredSize(
@@ -414,7 +417,7 @@ class _NewsPageState extends State<NewsPage>
                   ),
                 ),
               ),
-            if (state.isLoading && newsList.isEmpty)
+            if (state.isLoading)
               Container(
                 color: Colors.transparent,
                 child: Center(

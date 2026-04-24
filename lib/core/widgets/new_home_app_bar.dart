@@ -4,6 +4,9 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/widgets/logo_widget.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const NewHomeAppBar({
@@ -17,6 +20,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.hideHamburger = false,
     this.appBarbackgroundColor = Colors.white,
     this.isFromMap = false,
+    this.showLogo = true,
   });
   final Size size;
   final bool hideLeading;
@@ -27,6 +31,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool hideHamburger;
   final Color appBarbackgroundColor;
   final bool isFromMap;
+  final bool showLogo;
 
   @override
   Widget build(BuildContext context) {
@@ -44,22 +49,28 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 fontFamily: "AirbnbCereal",
               ),
             )
-          : Padding(
-              padding: EdgeInsets.only(
-                  left: hideLeading ? size.width * AppDimensions.numD018 : 0),
-              child: InkWell(
-                onTap: () {
-                  context.goNamed(AppRoutes.dashboardName,
-                      extra: {'initialPosition': 2});
-                },
-                child: LogoWidget.buildLogo(size),
-                // child: Image.asset(
-                //   "${commonImagePath}rabbitLogo.png",
-                //   height: size.width * AppDimensions.numD11,
-                //   width: size.width * AppDimensions.numD11,
-                // ),
-              ),
-            ),
+          : (showLogo)
+              ? Padding(
+                  padding: EdgeInsets.only(
+                      left: hideLeading
+                          ? size.width * AppDimensions.numD018
+                          : 0),
+                  child: InkWell(
+                    onTap: () {
+                      print("logo tapped");
+                      try {
+                        context
+                            .read<DashboardBloc>()
+                            .add(const ChangeDashboardTabEvent(2));
+                      } catch (e) {
+                        context.goNamed(AppRoutes.dashboardName,
+                            extra: {'initialPosition': 2});
+                      }
+                    },
+                    child: LogoWidget.buildLogo(size),
+                  ),
+                )
+              : const SizedBox.shrink(),
       centerTitle: false,
       titleSpacing: 0,
       size: size,
@@ -121,7 +132,23 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
           ),
-
+        if (hideHamburger)
+          Padding(
+            padding: EdgeInsets.only(right: size.width * AppDimensions.numD02),
+            child: InkWell(
+              onTap: () {
+                try {
+                  context
+                      .read<DashboardBloc>()
+                      .add(const ChangeDashboardTabEvent(2));
+                } catch (e) {
+                  context.goNamed(AppRoutes.dashboardName,
+                      extra: {'initialPosition': 2});
+                }
+              },
+              child: LogoWidget.buildLogo(size),
+            ),
+          ),
         if (showFilter)
           InkWell(
             onTap: () {

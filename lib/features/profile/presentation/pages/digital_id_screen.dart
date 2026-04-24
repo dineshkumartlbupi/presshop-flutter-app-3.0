@@ -408,7 +408,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                       width: size.width * AppDimensions.numD70,
                                       alignment: Alignment.center,
                                       decoration: BoxDecoration(
-                                        color: Colors.black.withValues(alpha: 0.3),
+                                        color:
+                                            Colors.black.withValues(alpha: 0.3),
                                         borderRadius: BorderRadius.circular(
                                             size.width * AppDimensions.numD04),
                                       ),

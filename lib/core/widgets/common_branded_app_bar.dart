@@ -4,6 +4,9 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/logo_widget.dart';
 import 'package:presshop/main.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CommonBrandedAppBar extends StatelessWidget
     implements PreferredSizeWidget {
@@ -100,10 +103,14 @@ class CommonBrandedAppBar extends StatelessWidget
             child: InkWell(
               onTap: () {
                 print('click------------------------>');
-                context.pushNamed(
-                  AppRoutes.dashboardName,
-                  extra: {'initialPosition': 2},
-                );
+                try {
+                  context
+                      .read<DashboardBloc>()
+                      .add(const ChangeDashboardTabEvent(2));
+                } catch (e) {
+                  context.goNamed(AppRoutes.dashboardName,
+                      extra: {'initialPosition': 2});
+                }
               },
               child: LogoWidget.buildLogo(size),
             ),

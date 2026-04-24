@@ -101,18 +101,17 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       if (existingController != null) {
         try {
           debugPrint("🚀 CameraBloc: Disposing previous controller...");
-          await existingController.dispose();
+          await existingController.dispose().timeout(const Duration(seconds: 3),
+              onTimeout: () {
+            debugPrint("⚠️ CameraBloc: Previous controller disposal timed out.");
+          });
         } catch (e) {
           debugPrint("Error disposing previous controller during init: $e");
         }
       }
 
       // Parallelize initialization tasks
-      // 1. Kick off non-blocking location fetch
-      // 1. Kick off non-blocking location fetch - MOVED TO END
-      // unawaited(_initLocation());
-
-      // 2. Setup recorder (fast)
+      // 1. Setup recorder (fast)
       RecorderController? recorderController = state.recorderController;
       recorderController ??= RecorderController()
         ..androidEncoder = AndroidEncoder.aac
@@ -124,23 +123,15 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       // Check permission status first before calling .request() to avoid OS lifecycle interruptions
       bool cameraGranted = await Permission.camera.isGranted;
       bool micGranted = await Permission.microphone.isGranted;
-      bool photosGranted =
-          Platform.isAndroid ? await Permission.photos.isGranted : true;
-      bool storageGranted =
-          Platform.isAndroid ? await Permission.storage.isGranted : true;
 
       List<Permission> toRequest = [];
       if (!cameraGranted) toRequest.add(Permission.camera);
       if (!micGranted) toRequest.add(Permission.microphone);
-      if (Platform.isAndroid && !photosGranted)
-        toRequest.add(Permission.photos);
-      if (Platform.isAndroid && !storageGranted)
-        toRequest.add(Permission.storage);
 
       if (toRequest.isNotEmpty) {
         final locService = LocationService();
         for (final p in toRequest) {
-          await locService.requestPermission(p);
+          await locService.requestPermission(p).timeout(const Duration(seconds: 30), onTimeout: () => false);
         }
         cameraGranted = await Permission.camera.isGranted;
         micGranted = await Permission.microphone.isGranted;
@@ -152,41 +143,27 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       debugPrint("🚀 CameraBloc: Camera: $cameraStatus, Mic: $micStatus");
 
       if (!cameraStatus) {
-        // If critical permission missing, try via service to trigger dialog if needed
-        final retryStatus =
-            await _locationService.requestPermission(Permission.camera);
-        if (!retryStatus) {
-          debugPrint("🚀 CameraBloc: Camera permission denied!");
-          emit(state.copyWith(
-              status: CameraStatus.failure,
-              errorMessage: "Camera permission denied",
-              recorderController: recorderController));
-          _isInitializing = false;
-          return;
-        }
+        emit(state.copyWith(
+            status: CameraStatus.failure,
+            errorMessage: "Camera permission denied",
+            recorderController: recorderController));
+        _isInitializing = false;
+        return;
       }
 
-      // Pre-authorize PhotoManager in background only if needed and granted
-      if (photosGranted || storageGranted) {
-        try {
-          await PhotoManager.requestPermissionExtend();
-        } catch (e) {
-          debugPrint("PhotoManager pre-auth error (ignored): $e");
-        }
-      }
+      // Give the OS a moment to catch up after permission changes
+      await Future.delayed(const Duration(milliseconds: 300));
 
       // 4. Init Camera list if empty (fast usually)
       if (cameras.isEmpty) {
         try {
           debugPrint("🚀 CameraBloc: Fetching available cameras...");
           cameras =
-              await availableCameras().timeout(const Duration(seconds: 2));
+              await availableCameras().timeout(const Duration(seconds: 5));
           debugPrint("🚀 CameraBloc: Cameras fetched: ${cameras.length}");
         } catch (e) {
           debugPrint(
               "🚀 CameraBloc: Error fetching cameras (timeout/error): $e");
-          // Don't fail yet, maybe controller init will work if cameras existed before?
-          // But usually this means no camera access.
         }
       }
 
@@ -206,11 +183,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       debugPrint(
           "🚀 CameraBloc: Creating controller for ${cameraDescription.name}...");
 
-      // Note: old controller was already disposed at the start of _onInitialize
-
       final controller = _cameraControllerBuilder.create(
         cameraDescription,
-        ResolutionPreset.high, // Try High
+        ResolutionPreset.high,
         imageFormatGroup: ImageFormatGroup.jpeg,
         enableAudio: false,
       );
@@ -218,7 +193,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       debugPrint("🚀 CameraBloc: Initializing controller...");
 
       try {
-        await controller.initialize().timeout(const Duration(seconds: 15),
+        await controller.initialize().timeout(const Duration(seconds: 10),
             onTimeout: () {
           throw TimeoutException("Camera controller initialization timed out");
         });
@@ -226,10 +201,15 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         debugPrint("🚀 CameraBloc: Controller initialized.");
 
         // Wait for Flutter surface to be ready before starting preview
-        await Future.delayed(const Duration(milliseconds: 100));
+        await Future.delayed(const Duration(milliseconds: 200));
 
-        // Explicitly start preview to avoid black screen on some devices
-        await controller.resumePreview();
+        // Explicitly start preview to avoid black screen
+        try {
+          await controller.resumePreview().timeout(const Duration(seconds: 3));
+        } catch (e) {
+          debugPrint("⚠️ resumePreview error (ignored): $e");
+        }
+        
         debugPrint("🚀 CameraBloc: Preview resumed.");
 
         emit(state.copyWith(
@@ -244,7 +224,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
             status: CameraStatus.failure,
             errorMessage: "Camera failed to initialize: $e",
             recorderController: recorderController,
-            cameraController: null // Clear controller on failure
+            cameraController: null
             ));
       }
     } finally {

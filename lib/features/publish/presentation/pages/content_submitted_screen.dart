@@ -83,7 +83,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
         sharedPreferences!.getString(SharedPreferencesKeys.contryCode) != "GB";
     return WillPopScope(
       onWillPop: () async {
-        context.goNamed(AppRoutes.dashboardName, extra: {'initialPosition': 2});
+        context.goNamed(AppRoutes.dashboardName, extra: {'initialPosition': 0});
         return false;
       },
       child: Scaffold(
@@ -104,13 +104,13 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
             showActions: true,
             leadingFxn: () {
               context.goNamed(AppRoutes.dashboardName,
-                  extra: {'initialPosition': 2});
+                  extra: {'initialPosition': 0});
             },
             actionWidget: [
               InkWell(
                 onTap: () {
                   context.goNamed(AppRoutes.dashboardName,
-                      extra: {'initialPosition': 2});
+                      extra: {'initialPosition': 0});
                 },
                 child: Image.asset(
                   "${commonImagePath}ic_black_rabbit.png",
