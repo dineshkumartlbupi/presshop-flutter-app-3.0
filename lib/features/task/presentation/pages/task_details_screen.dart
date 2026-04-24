@@ -990,6 +990,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     final Uint8List markerIcon =
         await getBytesFromAsset("${commonImagePath}ic_cover_radius.png", 300);
     mapIcon = BitmapDescriptor.fromBytes(markerIcon);
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
@@ -1003,21 +1006,31 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   }
 
   Future<void> _updateGoogleMap(LatLng latLng) async {
-    final GoogleMapController controller = await _controller.future;
     if (!mounted) return;
+
+    // Avoid redundant updates if the marker is already at the same position
+    if (marker.isNotEmpty &&
+        marker.first.position.latitude == latLng.latitude &&
+        marker.first.position.longitude == latLng.longitude) {
+      return;
+    }
+
     try {
-      marker.clear();
-      marker.add(Marker(
-        markerId: const MarkerId("1"),
-        position: latLng,
-        anchor: const Offset(0.5, 0.5),
-        icon: mapIcon ?? BitmapDescriptor.defaultMarker,
-      ));
+      if (mounted) {
+        setState(() {
+          marker.clear();
+          marker.add(Marker(
+            markerId: const MarkerId("1"),
+            position: latLng,
+            anchor: const Offset(0.5, 0.5),
+            icon: mapIcon ?? BitmapDescriptor.defaultMarker,
+          ));
+        });
+      }
+
+      final GoogleMapController controller = await _controller.future;
       await controller.animateCamera(CameraUpdate.newLatLngZoom(
           LatLng(latLng.latitude, latLng.longitude), 14));
-      if (mounted) {
-        setState(() {});
-      }
     } catch (e) {
       debugPrint("Error updating map: $e");
     }
@@ -1040,18 +1053,20 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   }
 
   Future<void> openUrl() async {
+    // GeoJSON coordinates are [longitude, latitude], but Maps APIs expect [latitude, longitude]
+    double lat = taskDetail!.task.addressLocation.coordinates[1];
+    double lng = taskDetail!.task.addressLocation.coordinates[0];
+
     String googleUrl = isDirection
         ? 'https://www.google.com/maps/dir/?api=1&origin=${_latLng!.latitude},'
-            '${_latLng!.longitude}&destination=${taskDetail!.task.addressLocation.coordinates[0]},'
-            '${taskDetail!.task.addressLocation.coordinates[1]}&travelmode=driving&dir_action=navigate'
-        : 'https://www.google.com/maps/search/?api=1&query=${taskDetail!.task.addressLocation.coordinates[0]},${taskDetail!.task.addressLocation.coordinates[1]}';
+            '${_latLng!.longitude}&destination=$lat,$lng&travelmode=driving&dir_action=navigate'
+        : 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
 
     String appleUrl = isDirection
         ? 'http://maps.apple.com/maps?saddr=${_latLng!.latitude},'
-            '${_latLng!.longitude}&daddr=${taskDetail!.task.addressLocation.coordinates[0]},'
-            '${taskDetail!.task.addressLocation.coordinates[1]}'
-        : 'http://maps.apple.com/?q=${taskDetail!.task.addressLocation.coordinates[0]},'
-            '${taskDetail!.task.addressLocation.coordinates[1]}';
+            '${_latLng!.longitude}&daddr=$lat,$lng'
+        : 'http://maps.apple.com/?q=$lat,$lng';
+
     if (await canLaunchUrl(Uri.parse(googleUrl))) {
       debugPrint('launching com googleUrl');
       await launchUrl(Uri.parse(googleUrl),
