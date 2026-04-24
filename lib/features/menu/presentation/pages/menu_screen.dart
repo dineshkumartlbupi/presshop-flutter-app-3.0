@@ -3,12 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/services/background_location_service.dart';
+import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:presshop/core/widgets/dialogs.dart';
+import 'package:presshop/core/widgets/logo_widget.dart';
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'package:presshop/features/menu/presentation/bloc/menu_bloc.dart';
 import 'package:presshop/features/menu/presentation/pages/menu_config.dart';
 import 'package:presshop/features/menu/presentation/bloc/menu_ui_cubit.dart';
@@ -279,16 +283,28 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget _buildContent(BuildContext context) {
     final size = context.mqSize;
     return Scaffold(
-      appBar: NewHomeAppBar(
-        size: size,
-        hideLeading: true,
-        hideHamburger: true,
-        showFilter: false,
-        onFilterTap: () {
-          // showFilterSheet();
-        },
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        elevation: 0,
+        leading: Center(
+          child: InkWell(
+            onTap: () {
+              print('click------------------------>');
+              try {
+                context
+                    .read<DashboardBloc>()
+                    .add(const ChangeDashboardTabEvent(2));
+              } catch (e) {
+                context.goNamed(AppRoutes.dashboardName,
+                    extra: {'initialPosition': 2});
+              }
+            },
+            child: LogoWidget.buildLogo(size),
+          ),
+        ),
       ),
-      // appBar: CommonAppBar(
+      //  CommonAppBar(
       //   elevation: 0,
       //   hideLeading: false,
       //   title: Text(
@@ -305,6 +321,7 @@ class _MenuScreenState extends State<MenuScreen> {
       //   leadingFxn: () => context.pop(),
       //   actionWidget: [],
       // ),
+
       body: SafeArea(
         child: ListView.separated(
           padding: EdgeInsets.symmetric(
