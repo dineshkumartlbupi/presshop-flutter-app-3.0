@@ -988,6 +988,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                               AppDimensions
                                                                   .numD015)),
                                               child: Text(
+                                                // if(item.is)
                                                 item.status == "accepted" &&
                                                         item.totalAmount == "0"
                                                     ? "Live"
