@@ -66,7 +66,8 @@ class _NewsPageState extends State<NewsPage>
         if (_tabController.index == 1) {
           final newsBloc = context.read<NewsBloc>();
           if (newsBloc.state.newsList.isEmpty && !newsBloc.state.isLoading) {
-            debugPrint("NewsPage: Tab switched to Local News and empty, reloading...");
+            debugPrint(
+                "NewsPage: Tab switched to Local News and empty, reloading...");
             _applyFilters();
           }
         }
@@ -74,27 +75,19 @@ class _NewsPageState extends State<NewsPage>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final newsBloc = context.read<NewsBloc>();
-
-      // If the bloc is already loading (e.g. from the router), don't trigger another load
-      if (newsBloc.state.isLoading && newsBloc.state.newsList.isEmpty) {
-        debugPrint("NewsPage: Already loading, skipping initial event");
-        return;
-      }
-
       if (widget.prioritizedContentId != null &&
           widget.prioritizedContentId!.isNotEmpty) {
-        newsBloc.add(GetAggregatedNewsEvent(
-          lat: widget.latitude ?? 0.0,
-          lng: widget.longitude ?? 0.0,
-          km: 50,
-          prioritizedContentId: widget.prioritizedContentId,
-        ));
+        context.read<NewsBloc>().add(GetAggregatedNewsEvent(
+              lat: widget.latitude ?? 0.0,
+              lng: widget.longitude ?? 0.0,
+              km: 50,
+              prioritizedContentId: widget.prioritizedContentId,
+            ));
       } else {
         if (widget.latitude != null && widget.longitude != null) {
           _applyFilters();
         } else {
-          newsBloc.add(const GetAllNewsEvent());
+          context.read<NewsBloc>().add(const GetAllNewsEvent());
         }
       }
     });
@@ -104,7 +97,7 @@ class _NewsPageState extends State<NewsPage>
   String get pageName => PageNames.newsPage;
 
   String selectedAlertType = 'Alert';
-  String selectedDistance = '2 miles';
+  String selectedDistance = '50 miles';
   String selectedCategory = 'Category';
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();

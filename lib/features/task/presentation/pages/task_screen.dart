@@ -484,7 +484,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
   Widget showLocalTasksDataWidget(List<Task> taskList, BuildContext context) {
     final localTasksStatus =
-        context.select((TaskBloc bloc) => bloc.state.allTasksStatus);
+        context.select((TaskBloc bloc) => bloc.state.localTasksStatus);
     return LayoutBuilder(
       builder: (context, constraints) {
         return SmartRefresher(
@@ -911,8 +911,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       Text(
                                           item.statusText.isNotEmpty
                                               ? item.statusText.toUpperCase()
-                                              : (item.taskDetail?.deadLine.isBefore(
-                                                          DateTime.now()) ??
+                                              : (item.taskDetail?.deadLine
+                                                          .isBefore(
+                                                              DateTime.now()) ??
                                                       false)
                                                   ? "EXPIRED"
                                                   : (item.totalAmount == "0" &&
@@ -925,7 +926,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                               size: size,
                                               fontSize: size.width *
                                                   AppDimensions.numD025,
-                                              color: _parseColor(item.statusColor,
+                                              color: _parseColor(
+                                                  item.statusColor,
                                                   defaultColor: (item.taskDetail
                                                               ?.deadLine
                                                               .isBefore(DateTime
@@ -1300,8 +1302,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                               AppDimensions.numD025,
                                           color: _parseColor(item.statusColor,
                                               defaultColor: (item.deadlineDate
-                                                          ?.isBefore(DateTime
-                                                              .now()) ??
+                                                          ?.isBefore(
+                                                              DateTime.now()) ??
                                                       false)
                                                   ? Colors.grey
                                                   : AppColorTheme
@@ -1350,10 +1352,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                         ? Colors.white
                                                         : Colors.black
                                                     : _parseColor(item
-                                                                .ctaTextColorCode
-                                                                .isNotEmpty
-                                                            ? item.ctaTextColorCode
-                                                            : "000000"),
+                                                            .ctaTextColorCode
+                                                            .isNotEmpty
+                                                        ? item.ctaTextColorCode
+                                                        : "000000"),
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         )
@@ -1403,10 +1405,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                 color: item.ctaName != "Expired"
                                                     ? Colors.white
                                                     : _parseColor(item
-                                                                .ctaTextColorCode
-                                                                .isNotEmpty
-                                                            ? item.ctaTextColorCode
-                                                            : "000000"),
+                                                            .ctaTextColorCode
+                                                            .isNotEmpty
+                                                        ? item.ctaTextColorCode
+                                                        : "000000"),
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         )

@@ -300,7 +300,12 @@ class _MenuScreenState extends State<MenuScreen> {
                     extra: {'initialPosition': 2});
               }
             },
-            child: LogoWidget.buildLogo(size),
+            child: Padding(
+              padding: EdgeInsets.only(
+                  left: size.width * AppDimensions.numD01,
+                  bottom: size.width * AppDimensions.numD01),
+              child: LogoWidget.buildLogo(size),
+            ),
           ),
         ),
       ),

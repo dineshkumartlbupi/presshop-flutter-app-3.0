@@ -74,7 +74,7 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
           } else if (state.status == TutorialsStatus.success) {
             _refreshController.refreshCompleted();
             if (state.hasReachedMax) {
-              _refreshController.loadNoData();
+              //_refreshController.loadNoData();
             } else {
               _refreshController.loadComplete();
             }
@@ -222,9 +222,11 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                     if (state.status == TutorialsStatus.loading ||
                         state.status == TutorialsStatus.initial)
                       if (state.videos.isEmpty)
-                        SizedBox(
-                            height: size.height * 0.5,
-                            child: Center(child: showLoader()))
+                        Padding(
+                          padding:
+                              EdgeInsets.symmetric(vertical: size.height * 0.1),
+                          child: Center(child: showAnimatedLoader(size)),
+                        )
                       else
                         const SizedBox.shrink()
                     else if (state.videos.isNotEmpty || state.isSearch)

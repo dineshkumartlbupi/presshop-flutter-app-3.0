@@ -20,6 +20,8 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.hideHamburger = false,
     this.appBarbackgroundColor = Colors.white,
     this.isFromMap = false,
+    this.latitude,
+    this.longitude,
     this.showLogo = true,
   });
   final Size size;
@@ -31,6 +33,8 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool hideHamburger;
   final Color appBarbackgroundColor;
   final bool isFromMap;
+  final double? latitude;
+  final double? longitude;
   final bool showLogo;
 
   @override
@@ -97,7 +101,12 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: GestureDetector(
                   onTap: () {
                     context.pushNamed(AppRoutes.newsName,
-                        extra: {'hideFilters': true, 'fromMap': isFromMap});
+                        extra: {
+                          'hideFilters': true,
+                          'fromMap': isFromMap,
+                          'latitude': latitude,
+                          'longitude': longitude
+                        });
                   },
                   child: Text(
                     "Click to view local news",
@@ -113,8 +122,12 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: InkWell(
               onTap: () {
                 // context.pushNamed(AppRoutes.menuName);
-                context.pushNamed(AppRoutes.newsName,
-                    extra: {'fromMap': isFromMap});
+                    context.pushNamed(AppRoutes.newsName,
+                        extra: {
+                          'fromMap': isFromMap,
+                          'latitude': latitude,
+                          'longitude': longitude
+                        });
               },
               child: Container(
                 padding: EdgeInsets.all(size.width * AppDimensions.numD025),

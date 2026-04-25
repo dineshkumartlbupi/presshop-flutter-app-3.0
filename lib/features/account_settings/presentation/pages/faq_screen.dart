@@ -102,6 +102,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                       state.status == FAQStatus.initial)) {
                 return showAnimatedLoader(size);
               }
+              
 
               return SmartRefresher(
                 controller: _refreshController,
@@ -178,10 +179,18 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                               _bloc.add(FAQSearch(value));
                             }),
                       ),
-                      state.categories.isEmpty
-                          ? Center(
-                              child: errorMessageWidget("No Category found"))
-                          : Container(
+                      if (state.categories.isEmpty)
+                        SizedBox(
+                          height: size.width * AppDimensions.numD15,
+                          child: Center(
+                            child: (state.status == FAQStatus.loading ||
+                                    state.status == FAQStatus.initial)
+                                ? showAnimatedLoader(size)
+                                : errorMessageWidget("No Category found"),
+                          ),
+                        )
+                      else
+                        Container(
                               height: size.width * AppDimensions.numD15,
                               margin: EdgeInsets.only(
                                   left: size.width * AppDimensions.numD035),
@@ -228,8 +237,17 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                   },
                                   itemCount: state.categories.length),
                             ),
-                      state.items.isNotEmpty
-                          ? ListView.separated(
+                      if ((state.status == FAQStatus.loading ||
+                                  state.status == FAQStatus.initial) &&
+                              state.items.isEmpty &&
+                              state.categories.isNotEmpty)
+                        Padding(
+                          padding:
+                              EdgeInsets.symmetric(vertical: size.height * 0.1),
+                          child: Center(child: showAnimatedLoader(size)),
+                        )
+                      else if (state.items.isNotEmpty)
+                        ListView.separated(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               padding: EdgeInsets.symmetric(
@@ -376,11 +394,17 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                 );
                               },
                               itemCount: state.items.length)
-                          : state.status == FAQStatus.loading
-                              ? showLoader()
-                              : errorMessageWidget(widget.priceTipsSelected
-                                  ? "No Price Tips Found"
-                                  : "No FAQ found"),
+                      else if (state.categories.isNotEmpty)
+                        (state.status == FAQStatus.loading ||
+                                state.status == FAQStatus.initial)
+                            ? Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: size.height * 0.1),
+                                child: Center(child: showAnimatedLoader(size)),
+                              )
+                            : errorMessageWidget(widget.priceTipsSelected
+                                ? "No Price Tips Found"
+                                : "No FAQ found"),
                     ],
                   ),
                 ),
