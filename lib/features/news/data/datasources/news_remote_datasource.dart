@@ -43,7 +43,7 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
       "search": "",
       "locationFilter": "",
       "coordinates": "$lat,$lng",
-      "km": km,
+      "km": 80,
       "limit": limit,
       "offset": offset,
       "alert_type": alertType,
