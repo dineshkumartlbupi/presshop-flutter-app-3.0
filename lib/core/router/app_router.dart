@@ -419,12 +419,7 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};
           return BlocProvider(
-            create: (context) => sl<NewsBloc>()
-              ..add(GetAggregatedNewsEvent(
-                lat: extra['latitude'] ?? 0.0,
-                lng: extra['longitude'] ?? 0.0,
-                km: 50,
-              )),
+            create: (context) => sl<NewsBloc>(),
             child: NewsPage(
               hideLeading: extra['hideLeading'] ?? false,
               latitude: extra['latitude'],

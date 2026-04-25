@@ -131,7 +131,7 @@ const List<String> distanceFilter = [
   // '20 miles',
   // '25 miles',
   // '30 miles',
-  // '50 miles',
+  '50 miles',
 ];
 
 const List<String> categoryFilter = [

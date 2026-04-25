@@ -45,7 +45,7 @@ class ContentMarkerPopup extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: responsiveWidth * AppDimensions.numD65,
+                    width: responsiveWidth * AppDimensions.numD60,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(
@@ -66,9 +66,9 @@ class ContentMarkerPopup extends StatelessWidget {
                         // Image with Padding
                         Padding(
                           padding: EdgeInsets.only(
-                            top: responsiveWidth * AppDimensions.numD02,
-                            left: responsiveWidth * AppDimensions.numD02,
-                            right: responsiveWidth * AppDimensions.numD02,
+                            top: responsiveWidth * AppDimensions.numD025,
+                            left: responsiveWidth * AppDimensions.numD025,
+                            right: responsiveWidth * AppDimensions.numD025,
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(
@@ -77,7 +77,7 @@ class ContentMarkerPopup extends StatelessWidget {
                                 ? CachedNetworkImage(
                                     imageUrl: incident.image!,
                                     height:
-                                        responsiveWidth * AppDimensions.numD30,
+                                        responsiveWidth * AppDimensions.numD25,
                                     width: double.infinity,
                                     fit: BoxFit.cover,
                                     placeholder: (context, url) => Container(

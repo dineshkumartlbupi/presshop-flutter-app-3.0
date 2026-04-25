@@ -484,7 +484,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
   Widget showLocalTasksDataWidget(List<Task> taskList, BuildContext context) {
     final localTasksStatus =
-        context.select((TaskBloc bloc) => bloc.state.allTasksStatus);
+        context.select((TaskBloc bloc) => bloc.state.localTasksStatus);
     return LayoutBuilder(
       builder: (context, constraints) {
         return SmartRefresher(

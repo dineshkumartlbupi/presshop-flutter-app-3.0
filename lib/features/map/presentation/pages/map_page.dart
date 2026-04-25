@@ -65,7 +65,6 @@ class _MapPageState extends State<MapPage> {
 
   @override
   void dispose() {
-    _mapBloc.close();
     super.dispose();
   }
 
@@ -862,6 +861,8 @@ class _MapPageContentState extends State<_MapPageContent>
               size: size,
               hideLeading: widget.hideLeading,
               showFilter: false,
+              latitude: state.myLocation?.latitude,
+              longitude: state.myLocation?.longitude,
             ),
             body: Stack(
               children: [

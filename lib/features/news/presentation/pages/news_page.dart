@@ -63,6 +63,14 @@ class _NewsPageState extends State<NewsPage>
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
         setState(() {});
+        if (_tabController.index == 1) {
+          final newsBloc = context.read<NewsBloc>();
+          if (newsBloc.state.newsList.isEmpty && !newsBloc.state.isLoading) {
+            debugPrint(
+                "NewsPage: Tab switched to Local News and empty, reloading...");
+            _applyFilters();
+          }
+        }
       }
     });
 
@@ -89,7 +97,7 @@ class _NewsPageState extends State<NewsPage>
   String get pageName => PageNames.newsPage;
 
   String selectedAlertType = 'Alert';
-  String selectedDistance = '2 miles';
+  String selectedDistance = '50 miles';
   String selectedCategory = 'Category';
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
@@ -309,7 +317,9 @@ class _NewsPageState extends State<NewsPage>
               onLoading: _onLoading,
               header: const WaterDropHeader(),
               footer: const CustomFooter(builder: commonRefresherFooter),
-              child: newsList.isEmpty && !state.isLoading
+              child: newsList.isEmpty &&
+                      !state.isLoading &&
+                      (state.isProcessing || !state.hasMoreNews)
                   ? Center(
                       child: Padding(
                         padding: EdgeInsets.symmetric(
@@ -417,7 +427,8 @@ class _NewsPageState extends State<NewsPage>
                   ),
                 ),
               ),
-            if (state.isLoading)
+            if (state.isLoading ||
+                (newsList.isEmpty && state.hasMoreNews && !state.isProcessing))
               Container(
                 color: Colors.transparent,
                 child: Center(
