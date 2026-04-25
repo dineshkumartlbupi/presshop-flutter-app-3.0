@@ -63,23 +63,38 @@ class _NewsPageState extends State<NewsPage>
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
         setState(() {});
+        if (_tabController.index == 1) {
+          final newsBloc = context.read<NewsBloc>();
+          if (newsBloc.state.newsList.isEmpty && !newsBloc.state.isLoading) {
+            debugPrint("NewsPage: Tab switched to Local News and empty, reloading...");
+            _applyFilters();
+          }
+        }
       }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final newsBloc = context.read<NewsBloc>();
+
+      // If the bloc is already loading (e.g. from the router), don't trigger another load
+      if (newsBloc.state.isLoading && newsBloc.state.newsList.isEmpty) {
+        debugPrint("NewsPage: Already loading, skipping initial event");
+        return;
+      }
+
       if (widget.prioritizedContentId != null &&
           widget.prioritizedContentId!.isNotEmpty) {
-        context.read<NewsBloc>().add(GetAggregatedNewsEvent(
-              lat: widget.latitude ?? 0.0,
-              lng: widget.longitude ?? 0.0,
-              km: 50,
-              prioritizedContentId: widget.prioritizedContentId,
-            ));
+        newsBloc.add(GetAggregatedNewsEvent(
+          lat: widget.latitude ?? 0.0,
+          lng: widget.longitude ?? 0.0,
+          km: 50,
+          prioritizedContentId: widget.prioritizedContentId,
+        ));
       } else {
         if (widget.latitude != null && widget.longitude != null) {
           _applyFilters();
         } else {
-          context.read<NewsBloc>().add(const GetAllNewsEvent());
+          newsBloc.add(const GetAllNewsEvent());
         }
       }
     });
@@ -309,7 +324,9 @@ class _NewsPageState extends State<NewsPage>
               onLoading: _onLoading,
               header: const WaterDropHeader(),
               footer: const CustomFooter(builder: commonRefresherFooter),
-              child: newsList.isEmpty && !state.isLoading
+              child: newsList.isEmpty &&
+                      !state.isLoading &&
+                      (state.isProcessing || !state.hasMoreNews)
                   ? Center(
                       child: Padding(
                         padding: EdgeInsets.symmetric(
@@ -417,7 +434,8 @@ class _NewsPageState extends State<NewsPage>
                   ),
                 ),
               ),
-            if (state.isLoading)
+            if (state.isLoading ||
+                (newsList.isEmpty && state.hasMoreNews && !state.isProcessing))
               Container(
                 color: Colors.transparent,
                 child: Center(
