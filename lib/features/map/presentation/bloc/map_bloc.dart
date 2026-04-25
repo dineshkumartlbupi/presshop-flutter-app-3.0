@@ -632,7 +632,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
 
                 try {
-                  if (incident.markerType == 'icon') {
+                  if (incident.markerType == 'icon' ||
+                      incident.markerType == 'news') {
                     final iconType =
                         _resolveIconType(incident.type ?? incident.alertType);
                     String assetPath =
@@ -644,8 +645,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                               kAlertMarkerSize.toDouble()),
                         )
                         .timeout(const Duration(seconds: 10));
-                  } else if (incident.markerType == 'news' ||
-                      incident.markerType == 'content') {
+                  } else if (incident.markerType == 'content') {
                     icon = await markerService
                         .createContentMarker(
                           incident.image ?? '',
@@ -1025,16 +1025,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
 
             try {
-              if (incident.markerType == 'content' ||
+              if (incident.markerType == 'icon' ||
                   incident.markerType == 'news') {
-                icon = await markerService
-                    .createContentMarker(
-                      incident.image ?? '',
-                      size: kContentMarkerSize,
-                      mediaType: incident.mediaType,
-                    )
-                    .timeout(const Duration(seconds: 5));
-              } else {
                 final iconType =
                     _resolveIconType(incident.type ?? incident.alertType);
                 String assetPath =
@@ -1046,6 +1038,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                           kAlertMarkerSize.toDouble()),
                     )
                     .timeout(const Duration(seconds: 10));
+              } else if (incident.markerType == 'content') {
+                icon = await markerService
+                    .createContentMarker(
+                      incident.image ?? '',
+                      size: kContentMarkerSize,
+                      mediaType: incident.mediaType,
+                    )
+                    .timeout(const Duration(seconds: 5));
               }
             } catch (e) {
               debugPrint("FetchIncidents marker load failed (ignored): $e");

@@ -439,7 +439,8 @@ class _MapPageContentState extends State<_MapPageContent>
     if (_isDisposed || !mounted) return;
 
     final currentAnimatedMarkers = state.newsList
-        .where((incident) => incident.markerType == 'icon')
+        .where((incident) =>
+            incident.markerType == 'icon' || incident.markerType == 'news')
         .toList();
 
     final currentIds = currentAnimatedMarkers.map((m) => m.id).toSet();

@@ -692,52 +692,6 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   SizedBox(
                                     height: size.width * AppDimensions.numD013,
                                   ),
-                                  // Row(
-                                  //   mainAxisAlignment:
-                                  //       MainAxisAlignment.spaceBetween,
-                                  //   children: [
-                                  //     Text(
-                                  //       "TAP TO ACCEPT",
-                                  //       style: commonTextStyle(
-                                  //           size: size,
-                                  //           fontSize: size.width *
-                                  //               AppDimensions.numD025,
-                                  //           color: AppColorTheme.colorThemePink,
-                                  //           fontWeight: FontWeight.normal),
-                                  //     ),
-
-                                  //     // Animated blinking/highlight effect
-                                  //     // Blinking "Available" badge with infinite animation
-                                  //     // FadeTransition(
-                                  //     //   opacity: _blinkingController,
-                                  //     //   child:
-                                  //     Container(
-                                  //       alignment: Alignment.center,
-                                  //       height:
-                                  //           size.width * AppDimensions.numD08,
-                                  //       padding: EdgeInsets.symmetric(
-                                  //           horizontal: size.width *
-                                  //               AppDimensions.numD025,
-                                  //           vertical: size.width *
-                                  //               AppDimensions.numD01),
-                                  //       decoration: BoxDecoration(
-                                  //           color: AppColorTheme.colorThemePink,
-                                  //           borderRadius: BorderRadius.circular(
-                                  //               size.width *
-                                  //                   AppDimensions.numD015)),
-                                  //       child: Text(
-                                  //         "Available",
-                                  //         style: commonTextStyle(
-                                  //             size: size,
-                                  //             fontSize: size.width *
-                                  //                 AppDimensions.numD025,
-                                  //             color: Colors.white,
-                                  //             fontWeight: FontWeight.w600),
-                                  //       ),
-                                  //     ),
-                                  //     // )
-                                  //   ],
-                                  // ),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -754,6 +708,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
                                       // Animated blinking/highlight effect
                                       // Blinking "Available" badge with infinite animation
+                                      // FadeTransition(
+                                      //   opacity: _blinkingController,
+                                      //   child:
                                       Container(
                                         alignment: Alignment.center,
                                         height:
@@ -777,9 +734,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                               color: Colors.white,
                                               fontWeight: FontWeight.w600),
                                         ),
-                                      )
+                                      ),
+                                      // )
                                     ],
                                   ),
+
                                   SizedBox(
                                     height: size.width * AppDimensions.numD02,
                                   )
@@ -950,19 +909,38 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                          item.totalAmount == "0" &&
-                                                  item.status == "accepted"
-                                              ? item.status.toUpperCase()
-                                              : "RECEIVED",
+                                          item.statusText.isNotEmpty
+                                              ? item.statusText.toUpperCase()
+                                              : (item.taskDetail?.deadLine
+                                                          .isBefore(
+                                                              DateTime.now()) ??
+                                                      false)
+                                                  ? ""
+                                                  : (item.totalAmount == "0" &&
+                                                          item.status ==
+                                                              "accepted")
+                                                      ? item.status
+                                                          .toUpperCase()
+                                                      : "RECEIVED",
                                           style: commonTextStyle(
                                               size: size,
                                               fontSize: size.width *
                                                   AppDimensions.numD025,
-                                              color: item.status ==
-                                                          "accepted" ||
-                                                      item.status == "completed"
-                                                  ? AppColorTheme.colorThemePink
-                                                  : Colors.black,
+                                              color: _parseColor(
+                                                  item.statusColor,
+                                                  defaultColor: (item.taskDetail
+                                                              ?.deadLine
+                                                              .isBefore(DateTime
+                                                                  .now()) ??
+                                                          false)
+                                                      ? Colors.grey
+                                                      : (item.status ==
+                                                                  "accepted" ||
+                                                              item.status ==
+                                                                  "completed")
+                                                          ? AppColorTheme
+                                                              .colorThemePink
+                                                          : Colors.black),
                                               fontWeight: FontWeight.normal)),
                                       item.status == "accepted"
                                           ? Container(
@@ -975,34 +953,58 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                       AppDimensions.numD01),
                                               alignment: Alignment.center,
                                               decoration: BoxDecoration(
-                                                  color: item.status ==
-                                                              "accepted" &&
-                                                          item.totalAmount ==
-                                                              "0"
-                                                      ? Colors.black
-                                                      : AppColorTheme
-                                                          .colorLightGrey,
+                                                  color: ((item.taskDetail
+                                                                  ?.deadLine
+                                                                  .isBefore(DateTime
+                                                                      .now()) ??
+                                                              false) &&
+                                                          item.status ==
+                                                              "accepted")
+                                                      ? const Color.fromARGB(
+                                                          255, 206, 206, 206)
+                                                      : item.status == "accepted" &&
+                                                              item.totalAmount ==
+                                                                  "0"
+                                                          ? Colors.black
+                                                          : AppColorTheme
+                                                              .colorLightGrey,
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          size.width *
-                                                              AppDimensions
-                                                                  .numD015)),
+                                                      BorderRadius.circular(size
+                                                              .width *
+                                                          AppDimensions.numD015)),
                                               child: Text(
-                                                // if(item.is)
-                                                item.status == "accepted" &&
-                                                        item.totalAmount == "0"
-                                                    ? "Live"
-                                                    : "$currencySymbol${item.totalAmount}",
+                                                (item.taskDetail?.deadLine
+                                                                .isBefore(DateTime
+                                                                    .now()) ??
+                                                            false) &&
+                                                        item.status ==
+                                                            "accepted"
+                                                    ? "Expired"
+                                                    : item.status ==
+                                                                "accepted" &&
+                                                            item.totalAmount ==
+                                                                "0"
+                                                        ? "Live"
+                                                        : "$currencySymbol${item.totalAmount}",
                                                 style: commonTextStyle(
                                                     size: size,
                                                     fontSize: size.width *
                                                         AppDimensions.numD025,
-                                                    color: item.status ==
-                                                                "accepted" &&
-                                                            item.totalAmount ==
-                                                                "0"
-                                                        ? Colors.white
-                                                        : Colors.black,
+                                                    color: ((item.taskDetail
+                                                                    ?.deadLine
+                                                                    .isBefore(
+                                                                        DateTime
+                                                                            .now()) ??
+                                                                false) &&
+                                                            item.status ==
+                                                                "accepted")
+                                                        ? Colors.black
+                                                        : item.status ==
+                                                                    "accepted" &&
+                                                                item.totalAmount ==
+                                                                    "0"
+                                                            ? Colors.white
+                                                            : Colors.black,
                                                     fontWeight:
                                                         FontWeight.w600),
                                               ),
