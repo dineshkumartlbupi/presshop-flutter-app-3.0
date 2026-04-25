@@ -13,11 +13,9 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:presshop/main.dart';
 import 'package:presshop/core/widgets/animated_button.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
@@ -84,41 +82,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: false,
-        title: Text(
-          AppStringsNew2.taskDetailText,
-          style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
+      appBar: CommonBrandedAppBar(
+        title: AppStrings.digitalId,
         size: size,
-        showActions: true,
-        leadingFxn: () {
-          context.pop();
-        },
-        actionWidget: [
-          InkWell(
-            onTap: () {
-              context.goNamed(
-                AppRoutes.dashboardName,
-                extra: {'initialPosition': 2},
-              );
-            },
-            child: Image.asset(
-              "${commonImagePath}rabbitLogo.png",
-              height: size.width * AppDimensions.numD07,
-              width: size.width * AppDimensions.numD07,
-            ),
-          ),
-          SizedBox(
-            width: size.width * AppDimensions.numD04,
-          )
-        ],
+        showLogo: true,
       ),
       body: BlocConsumer<TaskBloc, TaskState>(
         listener: (context, state) {
