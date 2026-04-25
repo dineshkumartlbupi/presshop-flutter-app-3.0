@@ -236,7 +236,6 @@ class DashboardPageState extends State<Dashboard>
   @override
   void dispose() {
     player.dispose();
-    _dashboardBloc.close();
     super.dispose();
   }
 

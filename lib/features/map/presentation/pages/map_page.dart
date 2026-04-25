@@ -65,7 +65,6 @@ class _MapPageState extends State<MapPage> {
 
   @override
   void dispose() {
-    _mapBloc.close();
     super.dispose();
   }
 
