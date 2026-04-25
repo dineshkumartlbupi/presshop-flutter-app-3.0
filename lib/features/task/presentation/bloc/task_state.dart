@@ -14,6 +14,10 @@ class TaskState extends Equatable {
     this.allTasks = const [],
     this.localTasks = const [],
     this.chatList = const [],
+    this.offerCount = 0,
+    this.purchaseCount = 0,
+    this.viewCount = 0,
+    this.totalEarning,
     this.transactions = const [],
     this.uploadResponse,
     this.roomId,
@@ -31,6 +35,10 @@ class TaskState extends Equatable {
   final List<TaskAll> allTasks;
   final List<Task> localTasks;
   final List<ManageTaskChatModel> chatList;
+  final int offerCount;
+  final int purchaseCount;
+  final int viewCount;
+  final String? totalEarning;
   final List<EarningTransactionDetail> transactions;
   final Map<String, dynamic>? uploadResponse;
   final String? roomId;
@@ -47,6 +55,10 @@ class TaskState extends Equatable {
     List<TaskAll>? allTasks,
     List<Task>? localTasks,
     List<ManageTaskChatModel>? chatList,
+    int? offerCount,
+    int? purchaseCount,
+    int? viewCount,
+    String? totalEarning,
     List<EarningTransactionDetail>? transactions,
     Map<String, dynamic>? uploadResponse,
     String? roomId,
@@ -67,6 +79,10 @@ class TaskState extends Equatable {
       allTasks: allTasks ?? this.allTasks,
       localTasks: localTasks ?? this.localTasks,
       chatList: chatList ?? this.chatList,
+      offerCount: offerCount ?? this.offerCount,
+      purchaseCount: purchaseCount ?? this.purchaseCount,
+      viewCount: viewCount ?? this.viewCount,
+      totalEarning: totalEarning ?? this.totalEarning,
       transactions: transactions ?? this.transactions,
       uploadResponse: uploadResponse ?? this.uploadResponse,
       roomId: clearRoomId ? null : (roomId ?? this.roomId),
@@ -88,6 +104,10 @@ class TaskState extends Equatable {
         allTasks,
         localTasks,
         chatList,
+        offerCount,
+        purchaseCount,
+        viewCount,
+        totalEarning,
         transactions,
         uploadResponse,
         roomId,

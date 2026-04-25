@@ -1,3 +1,4 @@
+import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
 import '../../domain/entities/content_item.dart';
 import 'category_data_model.dart';
 import 'content_metadata_model.dart';
@@ -68,6 +69,7 @@ class ContentItemModel extends ContentItem {
     super.currency = "",
     super.currencySymbol = "",
     super.totalEarnings = "0",
+    super.chatList = const [],
   }) : super(hopperId: hopperId, type: type);
 
   factory ContentItemModel.fromJson(Map<String, dynamic> json) {
@@ -126,16 +128,33 @@ class ContentItemModel extends ContentItem {
           0,
       contentUnderOffer: json['content_under_offer'] == true,
       paidStatus: json['paid_status'] == true || json['paid_status'] == "paid",
-      contentViewCount: json['content_view_count_by_marketplace_for_app'] ?? 0,
+      contentViewCount: int.tryParse((json['content_view_count_by_marketplace_for_app'] ??
+                  json['view_count'] ??
+                  json['viewCount'] ??
+                  json['totalViews'] ??
+                  '0')
+              .toString()) ??
+          0,
       isFavourite: json['is_favourite'] == true,
       isLiked: json['is_liked'] == true,
       categoryData: (json['categoryData'] ?? json['category']) != null
           ? CategoryDataModel.fromJson(json['categoryData'] ?? json['category'])
           : const CategoryDataModel(id: '', name: '', percentage: '', type: ''),
-      purchasedMediahouseCount: json['purchased_mediahouse'] != null
-          ? (json['purchased_mediahouse'] as List).length
-          : 0,
-      totalOffer: json['offer_content_size'] ?? 0,
+      purchasedMediahouseCount: int.tryParse((json["purchased_mediahouse_count"] ??
+                  json["purchasedMediahouseCount"] ??
+                  json["sale_count"] ??
+                  json["sold_count"] ??
+                  (json['purchased_mediahouse'] != null
+                      ? (json['purchased_mediahouse'] as List).length
+                      : 0))
+              .toString()) ??
+          0,
+      totalOffer: int.tryParse((json['offer_content_size'] ??
+                  json['total_offer'] ??
+                  json['offer_count'] ??
+                  '0')
+              .toString()) ??
+          0,
       isExclusive: json['is_exclusive'] ?? (json['type'] != 'shared'),
       isPaidStatusToHopper: json['paid_status_to_hopper'] == true ||
           json['paid_status_to_hopper'] == "paid",
@@ -145,6 +164,11 @@ class ContentItemModel extends ContentItem {
           ? json['currency_symbol'].toString()
           : getCurrencySymbol(
               (json['currency'] ?? json['currency_original'] ?? '').toString()),
+      chatList: json["chat"] != null && json["chat"] is List
+          ? (json["chat"] as List)
+              .map((e) => ManageTaskChatModel.fromJson(e))
+              .toList()
+          : [],
       totalEarnings: (() {
         // First try to get total earnings directly
         var earning = json['total_earnings'] ??

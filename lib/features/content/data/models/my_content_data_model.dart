@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:presshop/core/utils/date_time_utils.dart';
 import 'package:video_thumbnail/video_thumbnail.dart' as vt;
+import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
 import '../../domain/entities/content_item.dart';
 import 'category_data_model.dart';
 import 'content_metadata_model.dart';
@@ -121,9 +122,12 @@ class MyContentItemModel extends ContentItem {
           0,
       contentUnderOffer: json['content_under_offer'] == true,
       paidStatus: json['paid_status'] == true,
-      contentViewCount: int.tryParse(
-              json['content_view_count_by_marketplace_for_app']?.toString() ??
-                  '0') ??
+      contentViewCount: int.tryParse((json['content_view_count_by_marketplace_for_app'] ??
+                  json['view_count'] ??
+                  json['viewCount'] ??
+                  json['totalViews'] ??
+                  '0')
+              .toString()) ??
           0,
       isFavourite: json['is_favourite'] == true,
       isLiked: json['is_liked'] == true,
@@ -174,6 +178,7 @@ class MyContentData {
     required this.contentView,
     required this.purchasedMediahouseCount,
     required this.totalEarning,
+    this.chatList = const [],
     this.currency = "",
     this.currencySymbol = "",
   });
@@ -271,12 +276,38 @@ class MyContentData {
       completionPercent: completionPercent,
       discountPercent: "0",
       leftPercent: leftPercent,
-      offerCount: json["total_offer"] ?? 0,
+      offerCount: int.tryParse((json["total_offer"] ??
+                  json["offer_count"] ??
+                  json["offer_content_size"] ??
+                  "0")
+              .toString()) ??
+          0,
       mediaHouseName: "",
       categoryId: categoryData?.id ?? "",
-      contentView: 0,
-      purchasedMediahouseCount: 0,
-      totalEarning: "0",
+      contentView: int.tryParse((json["view_count"] ??
+                  json["viewCount"] ??
+                  json["content_view_count"] ??
+                  json["content_view_count_by_marketplace_for_app"] ??
+                  "0")
+              .toString()) ??
+          0,
+      purchasedMediahouseCount: int.tryParse((json["purchased_mediahouse_count"] ??
+                  json["purchasedMediahouseCount"] ??
+                  json["sale_count"] ??
+                  json["sold_count"] ??
+                  "0")
+              .toString()) ??
+          0,
+      totalEarning: (json["total_earnings"] ??
+              json["totalEarnings"] ??
+              json["total_earning"] ??
+              "0")
+          .toString(),
+      chatList: json["chat"] != null && json["chat"] is List
+          ? (json["chat"] as List)
+              .map((e) => ManageTaskChatModel.fromJson(e))
+              .toList()
+          : [],
       currency: (json['currency'] ?? '').toString(),
       currencySymbol: (json['currency_symbol'] != null &&
               json['currency_symbol'].toString().isNotEmpty)
@@ -316,6 +347,7 @@ class MyContentData {
   int contentView;
   int purchasedMediahouseCount;
   String totalEarning;
+  List<ManageTaskChatModel> chatList;
   String currency;
   String currencySymbol;
 

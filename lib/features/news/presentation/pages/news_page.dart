@@ -510,8 +510,9 @@ class _NewsPageState extends State<NewsPage>
                     backgroundImage: (item.userImage != null &&
                             item.userImage!.isNotEmpty)
                         ? NetworkImage(item.userImage!)
-                        : const NetworkImage(
-                            "https://i.pravatar.cc/150?u=a042581f4e29026704d"),
+                        : (item.mediaUrl != null && item.mediaUrl!.isNotEmpty)
+                            ? NetworkImage(item.mediaUrl!)
+                            : const AssetImage("assets/images/placeholder.png") as ImageProvider,
                     backgroundColor: Colors.grey[300],
                   ),
                   SizedBox(width: size.width * AppDimensions.numD02),

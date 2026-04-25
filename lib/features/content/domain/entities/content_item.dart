@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
 import 'category_data.dart';
 import 'content_metadata.dart';
 
@@ -46,6 +47,7 @@ class ContentItem extends Equatable {
     this.currency = "",
     this.currencySymbol = "",
     this.totalEarnings = "0",
+    this.chatList = const [],
   });
   final String id;
   final String description;
@@ -89,6 +91,7 @@ class ContentItem extends Equatable {
   final String currency;
   final String currencySymbol;
   final String totalEarnings;
+  final List<ManageTaskChatModel> chatList;
 
   // Getters for UI compatibility
   int get totalView => contentViewCount;
@@ -155,6 +158,7 @@ class ContentItem extends Equatable {
         currency,
         currencySymbol,
         totalEarnings,
+        chatList,
       ];
 
   ContentItem copyWith({
@@ -200,6 +204,7 @@ class ContentItem extends Equatable {
     String? currency,
     String? currencySymbol,
     String? totalEarnings,
+    List<ManageTaskChatModel>? chatList,
   }) {
     return ContentItem(
       id: id ?? this.id,
@@ -245,6 +250,7 @@ class ContentItem extends Equatable {
       currency: currency ?? this.currency,
       currencySymbol: currencySymbol ?? this.currencySymbol,
       totalEarnings: totalEarnings ?? this.totalEarnings,
+      chatList: chatList ?? this.chatList,
     );
   }
 

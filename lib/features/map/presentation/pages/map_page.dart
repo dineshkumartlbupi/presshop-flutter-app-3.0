@@ -414,6 +414,8 @@ class _MapPageContentState extends State<_MapPageContent>
       return markerIcons['knife']!;
     } else if (lowerType.contains('fight')) {
       return markerIcons['fight']!;
+    } else if (lowerType.contains('crime')) {
+      return markerIcons['crime']!;
     } else if (lowerType.contains('protest')) {
       return markerIcons['protest']!;
     } else if (lowerType.contains('medicine') ||

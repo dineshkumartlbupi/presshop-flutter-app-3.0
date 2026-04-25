@@ -24,6 +24,7 @@ const Map<String, String> markerIcons = {
   "weather": "assets/markers/gifs/weather1.webp",
   // "nomarker": "assets/markers/marker-icons/no_marker.png",
   "nomarker": "assets/markers/gifs/car-crash.webp",
+  "crime": "assets/markers/gifs/vandalism.webp",
 };
 
 final List<Map<String, String>> alertTypes = [

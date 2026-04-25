@@ -243,7 +243,9 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
           sharedPreferences.getDouble(SharedPreferencesKeys.currentLon) ?? 0.0;
     }
 
-    emit(state.copyWith(isLoading: true, isProcessing: false));
+    if (event.offset == 0) {
+      emit(state.copyWith(isLoading: true, isProcessing: false));
+    }
     final result = await getAggregatedNews(GetAggregatedNewsParams(
       lat: lat,
       lng: lng,
@@ -312,7 +314,9 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     double lng =
         sharedPreferences.getDouble(SharedPreferencesKeys.currentLon) ?? 0.0;
 
-    emit(state.copyWith(isLoading: true, isProcessing: false));
+    if (event.offset == 0) {
+      emit(state.copyWith(isLoading: true, isProcessing: false));
+    }
     final result = await getAggregatedNews(GetAggregatedNewsParams(
       lat: lat,
       lng: lng,

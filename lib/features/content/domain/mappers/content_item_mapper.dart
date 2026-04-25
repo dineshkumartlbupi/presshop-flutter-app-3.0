@@ -50,6 +50,7 @@ extension ContentItemMapper on ContentItem {
       contentView: totalView,
       purchasedMediahouseCount: purchasedMediahouseCount,
       totalEarning: totalSold,
+      chatList: chatList,
       currency: currency,
       currencySymbol: currencySymbol,
     );

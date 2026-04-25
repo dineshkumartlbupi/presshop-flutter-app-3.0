@@ -354,8 +354,12 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
 
         // Fallback or legacy variants
         if (data['code'] == 200) {
-          return ContentItemModel.fromJson(
-              data['contentDetail'] ?? data['content'] ?? data['data']);
+          var contentData =
+              data['contentDetail'] ?? data['content'] ?? data['data'];
+          if (data['chat'] != null) {
+            contentData['chat'] = data['chat'];
+          }
+          return ContentItemModel.fromJson(contentData);
         }
 
         // If none of the above matches but success is true, try to find content anyway

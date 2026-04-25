@@ -7,6 +7,8 @@ import 'package:presshop/features/task/domain/entities/task_all.dart';
 import 'package:presshop/core/common_models_export.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 
+import 'package:presshop/features/task/domain/entities/manage_task_chat_response.dart';
+
 abstract class TaskRepository {
   Future<Either<Failure, TaskAssignedEntity>> getTaskDetail(String taskId,
       {double? latitude, double? longitude, bool showLoader = true});
@@ -14,7 +16,7 @@ abstract class TaskRepository {
       {required String taskId,
       required String mediaHouseId,
       required String status});
-  Future<Either<Failure, List<ManageTaskChatModel>>> getTaskChat(
+  Future<Either<Failure, ManageTaskChatResponse>> getTaskChat(
       String roomId, String type, String contentId,
       {bool showLoader = true});
   Future<Either<Failure, Map<String, dynamic>>> uploadTaskMedia(FormData data,

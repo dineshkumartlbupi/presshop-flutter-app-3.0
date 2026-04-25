@@ -13,6 +13,8 @@ import 'package:presshop/features/task/domain/entities/task_all.dart';
 import 'dart:convert';
 import 'package:presshop/features/task/data/models/task_assigned_response_model.dart';
 
+import 'package:presshop/features/task/domain/entities/manage_task_chat_response.dart';
+
 abstract class TaskRemoteDataSource {
   Future<TaskAssignedResponseModel> getTaskDetail(String taskId,
       {double? latitude, double? longitude, bool showLoader = true});
@@ -20,7 +22,7 @@ abstract class TaskRemoteDataSource {
       {required String taskId,
       required String mediaHouseId,
       required String status});
-  Future<List<ManageTaskChatModel>> getTaskChat(
+  Future<ManageTaskChatResponse> getTaskChat(
       String roomId, String type, String contentId,
       {bool showLoader = true});
   Future<Map<String, dynamic>> uploadTaskMedia(FormData data,
@@ -200,7 +202,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   }
 
   @override
-  Future<List<ManageTaskChatModel>> getTaskChat(
+  Future<ManageTaskChatResponse> getTaskChat(
       String roomId, String type, String contentId,
       {bool showLoader = true}) async {
     try {
@@ -227,6 +229,10 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         List<ManageTaskChatModel> chatList = [];
 
         dynamic possibleList;
+        int offerCount = 0;
+        int purchaseCount = 0;
+        int viewCount = 0;
+        String? totalEarning;
 
         /// Step 1: detect main container
         final container = rawData["data"] ??
@@ -241,6 +247,13 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
 
         /// Step 3: if container is map
         else if (container is Map) {
+          offerCount = int.tryParse(container["offerCount"]?.toString() ?? "0") ?? 0;
+          purchaseCount = int.tryParse(container["purchaseCount"]?.toString() ?? "0") ?? 0;
+          viewCount = int.tryParse(container["viewCount"]?.toString() ?? "0") ?? 0;
+          totalEarning = container["totalEarning"]?.toString() ?? 
+                         container["total_earning"]?.toString() ?? 
+                         container["totalEarnings"]?.toString();
+
           if (container["chat"] is List) {
             final List groupedList = container["chat"];
             List flattened = [];
@@ -272,7 +285,13 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           }
         }
 
-        return chatList;
+        return ManageTaskChatResponse(
+          chatList: chatList,
+          offerCount: offerCount,
+          purchaseCount: purchaseCount,
+          viewCount: viewCount,
+          totalEarning: totalEarning,
+        );
       } else {
         throw ServerException(
             response.data["message"] ?? "Failed to load chat");

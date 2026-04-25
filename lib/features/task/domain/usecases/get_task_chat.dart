@@ -5,13 +5,15 @@ import 'package:presshop/features/task/domain/repositories/task_repository.dart'
 import 'package:equatable/equatable.dart';
 import 'package:presshop/core/common_models_export.dart';
 
+import 'package:presshop/features/task/domain/entities/manage_task_chat_response.dart';
+
 class GetTaskChat
-    implements UseCase<List<ManageTaskChatModel>, GetTaskChatParams> {
+    implements UseCase<ManageTaskChatResponse, GetTaskChatParams> {
   GetTaskChat(this.repository);
   final TaskRepository repository;
 
   @override
-  Future<Either<Failure, List<ManageTaskChatModel>>> call(
+  Future<Either<Failure, ManageTaskChatResponse>> call(
       GetTaskChatParams params) async {
     return await repository.getTaskChat(
         params.roomId, params.type, params.contentId,

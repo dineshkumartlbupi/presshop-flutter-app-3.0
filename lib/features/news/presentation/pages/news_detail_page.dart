@@ -16,7 +16,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 
 class NewsDetailPage extends StatefulWidget {
-
   const NewsDetailPage({
     super.key,
     required this.newsId,
@@ -259,23 +258,47 @@ class _NewsDetailPageState extends State<NewsDetailPage>
   Widget _buildAuthorRow(News news, Size size) {
     return Row(
       children: [
-        CircleAvatar(
-          radius: size.width * AppDimensions.numD03,
-          backgroundColor: Colors.red[900],
-          backgroundImage:
-              (news.userImage != null && news.userImage!.isNotEmpty)
-                  ? NetworkImage(news.userImage!)
-                  : null,
-          child: (news.userImage == null || news.userImage!.isEmpty)
-              ? Text(
-                  (news.userName != null && news.userName!.isNotEmpty)
-                      ? news.userName![0].toUpperCase()
-                      : "J",
-                  style: TextStyle(
-                      fontSize: size.width * AppDimensions.numD03,
-                      color: Colors.white))
-              : null,
+        Container(
+          width: size.width * AppDimensions.numD09,
+          height: size.width * AppDimensions.numD09,
+          padding: EdgeInsets.symmetric(horizontal: 1, vertical: 1),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Colors.grey,
+              width: 1.5, // adjust thickness
+            ),
+          ),
+          child: ClipRRect(
+              borderRadius:
+                  BorderRadius.circular(size.width * AppDimensions.numD06),
+              child: Image.network(
+                news.userImage!,
+                height: size.width * AppDimensions.numD06,
+                fit: BoxFit.fill,
+              )),
         ),
+        // CircleAvatar(
+        //   radius: size.width * AppDimensions.numD03,
+        //   backgroundColor: Colors.red[900],
+        //   backgroundImage:
+        //       (news.userImage != null && news.userImage!.isNotEmpty)
+        //           ? NetworkImage(news.userImage!)
+        //           : (news.mediaUrl != null && news.mediaUrl!.isNotEmpty)
+        //               ? NetworkImage(news.mediaUrl!)
+        //               : null,
+        //   child: ((news.userImage == null || news.userImage!.isEmpty) &&
+        //           (news.mediaUrl == null || news.mediaUrl!.isEmpty))
+        //       ? Text(
+        //           (news.userName != null && news.userName!.isNotEmpty)
+        //               ? news.userName![0].toUpperCase()
+        //               : "J",
+        //           style: TextStyle(
+        //               fontSize: size.width * AppDimensions.numD03,
+        //               color: Colors.white))
+        //       : null,
+        // ),
         SizedBox(width: size.width * AppDimensions.numD02),
         Expanded(
           child: SingleChildScrollView(
@@ -698,12 +721,9 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ...repliesWidgets
-                                  .skip(1)
-                                  .map((reply) => _buildThreadedReplyItem(
-                                      reply, size,
-                                      isLast: false))
-                                  ,
+                              ...repliesWidgets.skip(1).map((reply) =>
+                                  _buildThreadedReplyItem(reply, size,
+                                      isLast: false)),
                               _buildThreadedReplyItem(
                                 GestureDetector(
                                   onTap: onToggleExpand,

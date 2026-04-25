@@ -307,6 +307,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       return 'knife';
     } else if (type.contains('fight')) {
       return 'fight';
+    } else if (type.contains('crime')) {
+      return 'crime';
     } else if (type.contains('protest')) {
       return 'protest';
     } else if (type.contains('medicine') || type.contains('medical')) {

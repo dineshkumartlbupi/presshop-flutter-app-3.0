@@ -12,9 +12,9 @@ import 'package:presshop/features/task/domain/entities/task.dart';
 import 'package:presshop/features/task/domain/entities/task_all.dart';
 import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
 import 'package:presshop/features/task/domain/mappers/task_assigned_mapper.dart';
+import 'package:presshop/features/task/domain/entities/manage_task_chat_response.dart';
 
 class TaskRepositoryImpl implements TaskRepository {
-
   TaskRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
@@ -61,7 +61,7 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<Either<Failure, List<ManageTaskChatModel>>> getTaskChat(
+  Future<Either<Failure, ManageTaskChatResponse>> getTaskChat(
       String roomId, String type, String contentId,
       {bool showLoader = true}) async {
     if (await networkInfo.isConnected) {

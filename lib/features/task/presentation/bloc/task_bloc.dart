@@ -133,8 +133,13 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     result.fold(
       (failure) => emit(state.copyWith(
           actionStatus: TaskStatus.failure, errorMessage: failure.message)),
-      (chatList) => emit(
-          state.copyWith(actionStatus: TaskStatus.success, chatList: chatList)),
+      (response) => emit(state.copyWith(
+          actionStatus: TaskStatus.success,
+          chatList: response.chatList,
+          offerCount: response.offerCount,
+          purchaseCount: response.purchaseCount,
+          viewCount: response.viewCount,
+          totalEarning: response.totalEarning)),
     );
   }
 

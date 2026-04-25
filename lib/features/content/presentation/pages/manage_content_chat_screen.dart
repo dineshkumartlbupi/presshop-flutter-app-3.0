@@ -106,6 +106,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
   String contentView = "0";
   String contentPurchased = "0";
   String contentOffer = "0";
+  String totalEarnings = "0";
   FlickManager? flickManager;
   PlayerController controller = PlayerController();
   int _currentMediaIndex = 0;
@@ -170,6 +171,19 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
     if (widget.purchasedCount != null) {
       contentPurchased = widget.purchasedCount.toString();
     }
+
+    if (widget.myContentData != null) {
+      contentView = widget.myContentData!.contentView.toString();
+      contentOffer = widget.myContentData!.offerCount.toString();
+      contentPurchased =
+          widget.myContentData!.purchasedMediahouseCount.toString();
+      totalEarnings = widget.myContentData!.totalEarning;
+
+      if (widget.myContentData!.chatList.isNotEmpty) {
+        chatList = widget.myContentData!.chatList;
+        isDataLoaded = true;
+      }
+    }
   }
 
   void onTextChanged() {
@@ -229,32 +243,16 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
     size = MediaQuery.of(context).size;
     return BlocConsumer<TaskBloc, TaskState>(
       listener: (context, state) {
-        if (state.chatList.isNotEmpty) {
+        if (state.actionStatus == TaskStatus.success) {
           chatList = state.chatList;
           isDataLoaded = true;
 
-          // Updating stats dynamically from chat list
-          int purchaseCount = 0;
-          int offerCount = 0;
-          int viewCount = 0;
-
-          for (var item in chatList) {
-            String mType = item.messageType.toLowerCase();
-            if (mType == 'payment' || item.paidStatus) {
-              purchaseCount++;
-            } else if (mType == 'offered' ||
-                mType == 'mediahouse_initial_offer' ||
-                mType == 'hopper_counter_offer' ||
-                mType == 'initial_offer') {
-              offerCount++;
-            } else if (mType == 'view') {
-              viewCount++;
-            }
+          contentPurchased = state.purchaseCount.toString();
+          contentOffer = state.offerCount.toString();
+          contentView = state.viewCount.toString();
+          if (state.totalEarning != null) {
+            totalEarnings = state.totalEarning!;
           }
-
-          contentPurchased = purchaseCount.toString();
-          contentOffer = offerCount.toString();
-          contentView = viewCount.toString();
         }
 
         if (state.actionStatus == TaskStatus.loading ||
@@ -2779,17 +2777,16 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   ),
 
                   /// Offers
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.start,
+                    runSpacing: size.width * AppDimensions.numD02,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
-                              color: widget.myContentData
-                                          ?.purchasedMediahouseCount ==
-                                      0
+                              color: int.parse(contentPurchased) == 0
                                   ? Colors.grey
                                   : AppColorTheme.colorThemePink,
                               size: size.width * AppDimensions.numD042),
@@ -2806,16 +2803,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           ),
                         ],
                       ),
-                      SizedBox(
-                          width: widget.myContentData!.offerCount >= 0
-                              ? size.width * AppDimensions.numD04
-                              : size.width * AppDimensions.numD02),
+                      SizedBox(width: size.width * AppDimensions.numD04),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
-                              color: widget.myContentData?.offerCount == 0
+                              color: int.parse(contentOffer) == 0
                                   ? Colors.grey
                                   : AppColorTheme.colorThemePink,
                               size: size.width * AppDimensions.numD042),
@@ -2832,10 +2826,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           ),
                         ],
                       ),
-                      SizedBox(
-                          width: int.parse(contentOffer) >= 0
-                              ? size.width * AppDimensions.numD04
-                              : size.width * AppDimensions.numD02),
+                      SizedBox(width: size.width * AppDimensions.numD04),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.min,
@@ -3041,7 +3032,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             right: size.width * AppDimensions.numD02,
                           ),
                           child: Text(
-                            "$itemCurrencySymbol${formatDouble(double.tryParse(widget.myContentData!.totalEarning) ?? 0.0)}",
+                            "$itemCurrencySymbol${formatDouble(double.tryParse(totalEarnings) ?? 0.0)}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD05,

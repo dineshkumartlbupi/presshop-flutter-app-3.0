@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:presshop/core/constants/app_assets.dart';
+import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
 
 class ContentMarkerPopup extends StatelessWidget {
@@ -43,16 +45,17 @@ class ContentMarkerPopup extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: responsiveWidth *
-                        0.75, // Increased width to match screenshot
+                    width: responsiveWidth * AppDimensions.numD65,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(
+                          responsiveWidth * AppDimensions.numD045),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.15),
-                          blurRadius: 15,
-                          offset: const Offset(0, 8),
+                          blurRadius: responsiveWidth * AppDimensions.numD02,
+                          offset: Offset(
+                              0, responsiveWidth * AppDimensions.numD008),
                         ),
                       ],
                     ),
@@ -62,18 +65,24 @@ class ContentMarkerPopup extends StatelessWidget {
                       children: [
                         // Image with Padding
                         Padding(
-                          padding:
-                              const EdgeInsets.only(top: 8, left: 8, right: 8),
+                          padding: EdgeInsets.only(
+                            top: responsiveWidth * AppDimensions.numD02,
+                            left: responsiveWidth * AppDimensions.numD02,
+                            right: responsiveWidth * AppDimensions.numD02,
+                          ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(
+                                responsiveWidth * AppDimensions.numD03),
                             child: incident.image != null
                                 ? CachedNetworkImage(
                                     imageUrl: incident.image!,
-                                    height: responsiveWidth * 0.35,
+                                    height:
+                                        responsiveWidth * AppDimensions.numD30,
                                     width: double.infinity,
                                     fit: BoxFit.cover,
                                     placeholder: (context, url) => Container(
-                                      height: responsiveWidth * 0.35,
+                                      height: responsiveWidth *
+                                          AppDimensions.numD35,
                                       color: Colors.grey[100],
                                       child: const Center(
                                           child: CircularProgressIndicator(
@@ -81,14 +90,16 @@ class ContentMarkerPopup extends StatelessWidget {
                                     ),
                                     errorWidget: (context, url, error) =>
                                         Container(
-                                      height: responsiveWidth * 0.35,
+                                      height: responsiveWidth *
+                                          AppDimensions.numD35,
                                       color: Colors.grey[100],
                                       child: const Icon(Icons.error_outline,
                                           color: Colors.grey),
                                     ),
                                   )
                                 : Container(
-                                    height: responsiveWidth * 0.35,
+                                    height:
+                                        responsiveWidth * AppDimensions.numD35,
                                     width: double.infinity,
                                     color: Colors.grey[200],
                                     child: const Icon(Icons.image,
@@ -98,7 +109,12 @@ class ContentMarkerPopup extends StatelessWidget {
                         ),
 
                         Padding(
-                          padding: const EdgeInsets.all(12),
+                          padding: EdgeInsets.only(
+                            left: responsiveWidth * AppDimensions.numD03,
+                            right: responsiveWidth * AppDimensions.numD03,
+                            top: responsiveWidth * AppDimensions.numD02,
+                            bottom: responsiveWidth * AppDimensions.numD03,
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -108,7 +124,6 @@ class ContentMarkerPopup extends StatelessWidget {
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black,
-                                  height: 1.3,
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -119,16 +134,24 @@ class ContentMarkerPopup extends StatelessWidget {
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Icon(Icons.location_on_outlined,
-                                      size: 18, color: Colors.grey[600]),
-                                  const SizedBox(width: 4),
+                                  SizedBox(
+                                    width:
+                                        responsiveWidth * AppDimensions.numD06,
+                                    child: Image.asset(
+                                        "assets/icons/news_location.png",
+                                        height: responsiveWidth *
+                                            AppDimensions.numD04,
+                                        color: Colors.grey[800]),
+                                  ),
+                                  SizedBox(
+                                      width: responsiveWidth *
+                                          AppDimensions.numD01),
                                   Expanded(
                                     child: Text(
                                       incident.address ?? "Unknown Location",
                                       style: TextStyle(
-                                        fontSize: 12.5,
+                                        fontSize: 12,
                                         color: Colors.grey[600],
-                                        fontWeight: FontWeight.w500,
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -136,21 +159,34 @@ class ContentMarkerPopup extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 6),
+                              SizedBox(
+                                  height:
+                                      responsiveWidth * AppDimensions.numD015),
 
                               // Time and Views
                               Row(
                                 children: [
-                                  Icon(Icons.access_time,
-                                      size: 18, color: Colors.grey[600]),
-                                  const SizedBox(width: 4),
+                                  SizedBox(
+                                    width:
+                                        responsiveWidth * AppDimensions.numD06,
+                                    child: Image.asset(
+                                      "${iconsPath}ic_clock.png",
+                                      height: responsiveWidth *
+                                          AppDimensions.numD035,
+                                      color: Colors.grey[800],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                      width: responsiveWidth *
+                                          AppDimensions.numD01),
                                   Builder(builder: (context) {
                                     final timeStr = incident.time;
                                     if (timeStr == null) {
-                                      return Text("Unknown Time",
+                                      return Text("No Time",
                                           style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey[600]));
+                                            fontSize: 12,
+                                            color: Colors.grey[600],
+                                          ));
                                     }
                                     DateTime? parsed =
                                         DateTime.tryParse(timeStr);
@@ -161,13 +197,22 @@ class ContentMarkerPopup extends StatelessWidget {
                                     }
                                     return Text(displayTime,
                                         style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey[600]));
+                                          fontSize: 12,
+                                          color: Colors.grey[600],
+                                        ));
                                   }),
-                                  const SizedBox(width: 16),
-                                  Icon(Icons.visibility_outlined,
-                                      size: 18, color: Colors.grey[600]),
-                                  const SizedBox(width: 4),
+                                  SizedBox(
+                                      width: responsiveWidth *
+                                          AppDimensions.numD03),
+                                  Image.asset(
+                                    "assets/icons/news_eye.png",
+                                    height:
+                                        responsiveWidth * AppDimensions.numD03,
+                                    color: Colors.grey.shade800,
+                                  ),
+                                  SizedBox(
+                                      width: responsiveWidth *
+                                          AppDimensions.numD01),
                                   TweenAnimationBuilder<double>(
                                     duration:
                                         const Duration(milliseconds: 1500),
@@ -180,45 +225,61 @@ class ContentMarkerPopup extends StatelessWidget {
                                       return Text(
                                         "${value.toInt()}",
                                         style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey[600]),
+                                          fontSize: 12,
+                                          color: Colors.grey[600],
+                                        ),
                                       );
                                     },
                                   )
                                 ],
                               ),
-                              const SizedBox(height: 6),
+                              SizedBox(
+                                  height:
+                                      responsiveWidth * AppDimensions.numD015),
 
                               // Date
                               Row(
                                 children: [
-                                  Icon(Icons.calendar_today_outlined,
-                                      size: 16, color: Colors.grey[600]),
-                                  const SizedBox(width: 6),
+                                  SizedBox(
+                                    width:
+                                        responsiveWidth * AppDimensions.numD06,
+                                    child: Image.asset(
+                                      "${iconsPath}ic_yearly_calendar.png",
+                                      height: responsiveWidth *
+                                          AppDimensions.numD035,
+                                      color: Colors.grey.shade700,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                      width: responsiveWidth *
+                                          AppDimensions.numD01),
                                   Builder(builder: (context) {
                                     final timeStr = incident.time;
                                     DateTime? parsed =
                                         DateTime.tryParse(timeStr ?? "");
                                     String displayDate =
-                                        incident.date ?? "Unknown Date";
+                                        incident.date ?? "No Date";
                                     if (parsed != null) {
                                       displayDate = DateFormat("dd MMM yyyy")
                                           .format(parsed);
                                     }
                                     return Text(displayDate,
                                         style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey[600]));
+                                          fontSize: 12,
+                                          color: Colors.grey[600],
+                                        ));
                                   }),
                                 ],
                               ),
 
-                              const SizedBox(height: 12),
+                              SizedBox(
+                                  height:
+                                      responsiveWidth * AppDimensions.numD02),
 
                               // View Button
                               SizedBox(
                                 width: double.infinity,
-                                height: 44,
+                                height: 35,
                                 child: ElevatedButton(
                                   onPressed: onViewPressed,
                                   style: ElevatedButton.styleFrom(

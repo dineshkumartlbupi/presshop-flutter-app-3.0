@@ -68,6 +68,10 @@ class NewsModel extends News {
       userName = json['full_name'] ?? json['user_name'] ?? json['userName'];
     }
 
+    if (userImageRaw == null || userImageRaw.isEmpty) {
+      userImageRaw = json['author_url'] ?? json['author_image'];
+    }
+
     String? userImage = userImageRaw != null && userImageRaw.isNotEmpty
         ? (userImageRaw.startsWith('http')
             ? fixS3Url(userImageRaw)
@@ -91,14 +95,32 @@ class NewsModel extends News {
       userImage: userImage,
       userName: userName,
       latitude: json['position'] != null && json['position'] is Map
-          ? (json['position']['lat'] is double
-              ? json['position']['lat']
-              : double.tryParse(json['position']['lat'].toString()))
+          ? (json['position']['lat'] != null
+              ? (json['position']['lat'] is double
+                  ? json['position']['lat']
+                  : double.tryParse(json['position']['lat'].toString()))
+              : (json['position']['coordinates'] != null &&
+                      json['position']['coordinates'] is List &&
+                      (json['position']['coordinates'] as List).length >= 2
+                  ? (json['position']['coordinates'][1] is num
+                      ? (json['position']['coordinates'][1] as num).toDouble()
+                      : double.tryParse(
+                          json['position']['coordinates'][1].toString()))
+                  : null))
           : null,
       longitude: json['position'] != null && json['position'] is Map
-          ? (json['position']['lng'] is double
-              ? json['position']['lng']
-              : double.tryParse(json['position']['lng'].toString()))
+          ? (json['position']['lng'] != null
+              ? (json['position']['lng'] is double
+                  ? json['position']['lng']
+                  : double.tryParse(json['position']['lng'].toString()))
+              : (json['position']['coordinates'] != null &&
+                      json['position']['coordinates'] is List &&
+                      (json['position']['coordinates'] as List).length >= 2
+                  ? (json['position']['coordinates'][0] is num
+                      ? (json['position']['coordinates'][0] as num).toDouble()
+                      : double.tryParse(
+                          json['position']['coordinates'][0].toString()))
+                  : null))
           : null,
       type: json['type'],
       markerType: json['markerType'],

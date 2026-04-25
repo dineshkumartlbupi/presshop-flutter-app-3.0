@@ -5,7 +5,6 @@ import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:intl/intl.dart';
 
 class CustomInfoWindow extends StatelessWidget {
-
   const CustomInfoWindow({
     super.key,
     required this.incident,
@@ -77,7 +76,7 @@ class CustomInfoWindow extends StatelessWidget {
     try {
       DateTime? parsed = DateTime.tryParse(timeStr);
       if (parsed == null) return "some time ago";
-      
+
       final diff = DateTime.now().difference(parsed);
       if (diff.inDays > 365) return "${(diff.inDays / 365).floor()} years ago";
       if (diff.inDays > 30) return "${(diff.inDays / 30).floor()} months ago";
@@ -147,9 +146,13 @@ class CustomInfoWindow extends StatelessWidget {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               image: DecorationImage(
-                                image: (incident.avatar != null && incident.avatar!.isNotEmpty)
-                                    ? CachedNetworkImageProvider(incident.avatar!)
-                                    : const AssetImage('assets/markers/avatar.png') as ImageProvider,
+                                image: (incident.avatar != null &&
+                                        incident.avatar!.isNotEmpty)
+                                    ? CachedNetworkImageProvider(
+                                        incident.avatar!)
+                                    : const AssetImage(
+                                            'assets/markers/avatar.png')
+                                        as ImageProvider,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -179,7 +182,7 @@ class CustomInfoWindow extends StatelessWidget {
                           ),
                         ],
                       ),
-                      
+
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 8),
                         child: Divider(height: 1, thickness: 1),
@@ -189,15 +192,21 @@ class CustomInfoWindow extends StatelessWidget {
                       Row(
                         children: [
                           Image.asset(
-                            burstIcons[incident.type] ?? markerIcons[incident.type] ?? markerIcons["nomarker"]!,
+                            burstIcons[incident.type] ??
+                                markerIcons[incident.type] ??
+                                markerIcons["nomarker"]!,
                             height: 36,
                             width: 36,
-                            errorBuilder: (context, error, stackTrace) => const Icon(Icons.warning_amber_rounded, size: 36, color: Colors.orange),
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.warning_amber_rounded,
+                                    size: 36, color: Colors.orange),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              incident.heading ?? _getDisplayTitle(incident.type, incident.address),
+                              incident.heading ??
+                                  _getDisplayTitle(
+                                      incident.type, incident.address),
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -209,18 +218,20 @@ class CustomInfoWindow extends StatelessWidget {
                           ),
                         ],
                       ),
-                      
+
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 8),
                         child: Divider(height: 1, thickness: 1),
                       ),
 
                       // Details
-                      if (incident.address != null && incident.address!.isNotEmpty) ...[
+                      if (incident.address != null &&
+                          incident.address!.isNotEmpty) ...[
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.location_on_outlined, size: 18, color: Colors.grey[600]),
+                            Icon(Icons.location_on_outlined,
+                                size: 18, color: Colors.grey[600]),
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
@@ -240,11 +251,13 @@ class CustomInfoWindow extends StatelessWidget {
                       ],
 
                       // Description
-                      if (incident.description != null && incident.description!.isNotEmpty) ...[
+                      if (incident.description != null &&
+                          incident.description!.isNotEmpty) ...[
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.info_outline, size: 18, color: Colors.grey[600]),
+                            Icon(Icons.info_outline,
+                                size: 18, color: Colors.grey[600]),
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
@@ -266,32 +279,38 @@ class CustomInfoWindow extends StatelessWidget {
                       // Time and Views
                       Row(
                         children: [
-                          Icon(Icons.access_time, size: 18, color: Colors.grey[600]),
+                          Icon(Icons.access_time,
+                              size: 18, color: Colors.grey[600]),
                           const SizedBox(width: 6),
                           Text(
                             _formatTime(incident.time),
-                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                            style: TextStyle(
+                                fontSize: 12, color: Colors.grey[600]),
                           ),
                           const SizedBox(width: 16),
-                          Icon(Icons.visibility_outlined, size: 18, color: Colors.grey[600]),
+                          Icon(Icons.visibility_outlined,
+                              size: 18, color: Colors.grey[600]),
                           const SizedBox(width: 6),
                           Text(
                             "${incident.viewCount ?? 0}",
-                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                            style: TextStyle(
+                                fontSize: 12, color: Colors.grey[600]),
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 4),
 
                       // Date
                       Row(
                         children: [
-                          Icon(Icons.calendar_today_outlined, size: 16, color: Colors.grey[600]),
+                          Icon(Icons.calendar_today_outlined,
+                              size: 16, color: Colors.grey[600]),
                           const SizedBox(width: 6),
                           Text(
                             _formatDate(incident.date, incident.time),
-                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                            style: TextStyle(
+                                fontSize: 12, color: Colors.grey[600]),
                           ),
                         ],
                       ),
