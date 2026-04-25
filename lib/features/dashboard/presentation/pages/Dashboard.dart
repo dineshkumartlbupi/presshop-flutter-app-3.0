@@ -133,9 +133,10 @@ class DashboardPageState extends State<Dashboard>
 
   @override
   void initState() {
-    debugPrint("🚀 Dashboard: Initializing with position ${widget.initialPosition}");
+    debugPrint(
+        "🚀 Dashboard: Initializing with position ${widget.initialPosition}");
     GlobalLoader.forceHide();
-    _dashboardBloc = sl<DashboardBloc>();
+    _dashboardBloc = context.read<DashboardBloc>();
     currentIndex = widget.initialPosition;
     myProfileApi();
 
@@ -212,11 +213,12 @@ class DashboardPageState extends State<Dashboard>
     initializeDeepLinks(sl<AppLinks>());
     super.initState();
   }
-  
+
   @override
   void didUpdateWidget(covariant Dashboard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.initialPosition != widget.initialPosition) {
+    if (oldWidget.initialPosition != widget.initialPosition ||
+        widget.isClick == true) {
       setState(() {
         currentIndex = widget.initialPosition;
         _loadedIndices.add(currentIndex);
@@ -226,6 +228,8 @@ class DashboardPageState extends State<Dashboard>
         _handlePermissionSequence();
         _cameraKey.currentState?.resumeCamera();
       }
+      // Reset isClick to prevent continuous snapping back
+      widget.isClick = false;
     }
   }
 
@@ -321,57 +325,54 @@ class DashboardPageState extends State<Dashboard>
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return BlocProvider.value(
-        value: _dashboardBloc,
-        child: BlocListener<DashboardBloc, dynamic>(
-            listener: _handleDashboardState,
-            child: PopScope(
-              canPop: false,
-              onPopInvokedWithResult: (didPop, result) async {
-                if (didPop) return;
-                DateTime now = DateTime.now();
-                if (currentTime == null ||
-                    now.difference(currentTime!) > const Duration(seconds: 2)) {
-                  currentTime = now;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Press again to exit'),
-                    ),
-                  );
-                } else {
-                  SystemNavigator.pop();
-                  exit(0);
-                }
-              },
-              child: Scaffold(
-                // appBar: _buildDashboardAppBar(size),
-                bottomNavigationBar: DashboardBottomNavBar(
-                  size: size,
-                  currentIndex: currentIndex,
-                  onTap: _onBottomBarItemTapped,
+    return BlocListener<DashboardBloc, dynamic>(
+        listener: _handleDashboardState,
+        child: PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) async {
+            if (didPop) return;
+            DateTime now = DateTime.now();
+            if (currentTime == null ||
+                now.difference(currentTime!) > const Duration(seconds: 2)) {
+              currentTime = now;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Press again to exit'),
                 ),
-                body: Stack(
-                  children: [
-                    const Center(
-                        child: Text("This is the center Text for popup")),
-                    Visibility(
-                      visible: !isGetLatLong,
-                      replacement: showLoader(isForLocation: false),
-                      child: IndexedStack(
-                        index: currentIndex,
-                        children: List.generate(bottomNavigationScreens.length,
-                            (index) {
-                          if (_loadedIndices.contains(index)) {
-                            return bottomNavigationScreens[index];
-                          }
-                          return const SizedBox();
-                        }),
-                      ),
-                    ),
-                  ],
+              );
+            } else {
+              SystemNavigator.pop();
+              exit(0);
+            }
+          },
+          child: Scaffold(
+            // appBar: _buildDashboardAppBar(size),
+            bottomNavigationBar: DashboardBottomNavBar(
+              size: size,
+              currentIndex: currentIndex,
+              onTap: _onBottomBarItemTapped,
+            ),
+            body: Stack(
+              children: [
+                const Center(child: Text("This is the center Text for popup")),
+                Visibility(
+                  visible: !isGetLatLong,
+                  replacement: showLoader(isForLocation: false),
+                  child: IndexedStack(
+                    index: currentIndex,
+                    children:
+                        List.generate(bottomNavigationScreens.length, (index) {
+                      if (_loadedIndices.contains(index)) {
+                        return bottomNavigationScreens[index];
+                      }
+                      return const SizedBox();
+                    }),
+                  ),
                 ),
-              ),
-            )));
+              ],
+            ),
+          ),
+        ));
   }
 
   void _handleDashboardState(BuildContext context, dynamic state) {

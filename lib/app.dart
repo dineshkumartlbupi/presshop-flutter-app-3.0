@@ -5,6 +5,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:force_update_helper/force_update_helper.dart';
 import 'package:presshop/core/services/force_update_service.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:presshop/features/splash/data/repositories/force_update_repositor.dart';
 import 'package:presshop/main.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => sl<EarningBloc>()),
         BlocProvider(create: (_) => sl<ContentBloc>()),
         BlocProvider(create: (_) => sl<AuthBloc>()),
+        BlocProvider(create: (_) => sl<DashboardBloc>()),
       ],
       child: MaterialApp.router(
         routerConfig: AppRouter.router,

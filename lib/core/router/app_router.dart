@@ -147,18 +147,21 @@ class AppRouter {
           bool openBeansActivation = false;
           bool openNotification = false;
 
+          bool isClick = false;
           if (state.extra is Map<String, dynamic>) {
             final args = state.extra as Map<String, dynamic>;
             initialPos = args['initialPosition'] ?? 2;
             openChatScreen = args['openChatScreen'] ?? false;
             openBeansActivation = args['openBeansActivation'] ?? false;
             openNotification = args['openNotification'] ?? false;
+            isClick = args['isClick'] ?? false;
           }
           return Dashboard(
             initialPosition: initialPos,
             openChatScreen: openChatScreen,
             openBeansActivation: openBeansActivation,
             openNotification: openNotification,
+            isClick: isClick,
           );
         },
       ),

@@ -108,9 +108,10 @@ class CommonBrandedAppBar extends StatelessWidget
                       .read<DashboardBloc>()
                       .add(const ChangeDashboardTabEvent(2));
                 } catch (e) {
-                  context.goNamed(AppRoutes.dashboardName,
-                      extra: {'initialPosition': 2});
+                  debugPrint("DashboardBloc not found in context: $e");
                 }
+                context.goNamed(AppRoutes.dashboardName,
+                    extra: {'initialPosition': 2, 'isClick': true});
               },
               child: LogoWidget.buildLogo(size),
             ),

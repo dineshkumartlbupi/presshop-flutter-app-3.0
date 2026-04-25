@@ -15,9 +15,13 @@ import 'commission_widget.dart';
 import 'package:presshop/main.dart';
 
 class MyEarningScreen extends StatefulWidget {
-  const MyEarningScreen(
-      {super.key, this.openDashboard = false, required int initialTapPosition});
+  const MyEarningScreen({
+    super.key,
+    this.openDashboard = false,
+    this.initialTapPosition = 0,
+  });
   final bool openDashboard;
+  final int initialTapPosition;
 
   @override
   State<MyEarningScreen> createState() => _MyEarningScreenState();
@@ -41,7 +45,13 @@ class _MyEarningScreenState extends State<MyEarningScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _selectedTabbar = widget.initialTapPosition;
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: _selectedTabbar,
+    );
+    context.read<EarningBloc>().add(ChangeTabEvent(_selectedTabbar));
     _tabController!.addListener(() {
       setState(() {
         _selectedTabbar = _tabController!.index;
