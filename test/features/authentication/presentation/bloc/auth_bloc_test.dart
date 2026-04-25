@@ -88,6 +88,7 @@ void main() {
       forgotPassword: mockForgotPassword,
       verifyForgotPasswordOtp: mockVerifyForgotPasswordOtp,
       resetPassword: mockResetPassword,
+      checkEmail: null,
     );
   });
 

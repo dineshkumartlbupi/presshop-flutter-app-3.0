@@ -927,7 +927,6 @@ class _MapPageContentState extends State<_MapPageContent>
                         onTap: (pos) async {
                           _customInfoWindowController.hideInfoWindow?.call();
                           context.read<MapBloc>().add(ClearRouteEvent());
-
                           if (mapState.isSelectingAlertLocation &&
                               mapState.pendingAlertType != null) {
                             context.read<MapBloc>().add(
