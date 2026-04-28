@@ -97,7 +97,8 @@ class Incident {
       address: json['address'] is String
           ? json['address'] as String
           : (json['location'] is String ? json['location'] as String : null),
-      time: (json['createdAt'] ?? json['time'] ?? json['date'])?.toString(),
+      time: (json['createdAt'] ?? json['created_at'] ?? json['time'] ?? json['date'])
+          ?.toString(),
       image: json['image'],
       title: json['title'],
       description: json['description'] ?? json['message'],
@@ -123,8 +124,16 @@ class Incident {
       temperature: json['temperature']?.toString(),
       wind: json['wind']?.toString(),
       heading: json['heading']?.toString(),
-      avatar: json['avatar'] ?? json['user_avatar'] ?? json['user_image'],
-      username: json['username'] ?? json['user_name'] ?? json['author_name'] ?? json['author'],
+      avatar: json['avatar'] ??
+          json['user_avatar'] ??
+          json['user_image'] ??
+          json['created_by']?['avatar_id']?['avatar'] ??
+          json['created_by']?['avatar'],
+      username: json['username'] ??
+          json['user_name'] ??
+          json['author_name'] ??
+          json['author'] ??
+          json['created_by']?['user_name'],
     );
   }
   final String id;

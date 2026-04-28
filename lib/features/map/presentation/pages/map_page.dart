@@ -677,7 +677,8 @@ class _MapPageContentState extends State<_MapPageContent>
         }
 
         // Handle Info Window updates
-        if (_lastState?.selectedIncident?.id != state.selectedIncident?.id) {
+        //  if (_lastState?.selectedIncident?.id != state.selectedIncident?.id) {
+        if (_lastState?.selectedIncident != state.selectedIncident) {
           if (state.selectedIncident != null &&
               state.selectedPosition != null) {
             _customInfoWindowController.hideInfoWindow?.call();
