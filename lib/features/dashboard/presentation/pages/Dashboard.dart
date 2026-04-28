@@ -136,6 +136,11 @@ class DashboardPageState extends State<Dashboard>
     debugPrint(
         "🚀 Dashboard: Initializing with position ${widget.initialPosition}");
     GlobalLoader.forceHide();
+
+    // Future.delayed(const Duration(seconds: 1), () {
+    //   if (mounted) _handlePermissionSequence();
+    // });
+    _handlePermissionSequence();
     _dashboardBloc = context.read<DashboardBloc>();
     currentIndex = widget.initialPosition;
     myProfileApi();
@@ -143,9 +148,7 @@ class DashboardPageState extends State<Dashboard>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkUpdateAndShowPopup();
     });
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted) _handlePermissionSequence();
-    });
+
     _updateBottomNavigationScreens();
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
@@ -158,6 +161,7 @@ class DashboardPageState extends State<Dashboard>
       "type": "content_negotiation",
       "content_id": "content_123"
     };
+
     _dashboardBloc.add(FetchRoomIdEvent(roomParams));
 
     _loadedIndices.add(widget.initialPosition); // Only load the starting tab
@@ -774,18 +778,40 @@ class DashboardPageState extends State<Dashboard>
   Future<void> _handlePermissionSequence() async {
     debugPrint("Starting Comprehensive Permission Sequence...");
 
-    final locService = LocationService();
+    bool allGranted = true;
 
-    // Ordered sequence to prevent OS-level overlap crashes
-    await locService.requestPermission(Permission.camera);
-    await locService.requestPermission(Permission.microphone);
-    await locService.requestPermission(Permission.location);
+    List<Permission> requiredPermissions = [
+      Permission.camera,
+      Permission.microphone,
+      Permission.location,
+    ];
+
     if (Platform.isAndroid) {
-      // Notification permission is runtime on Android 13+
-      await locService.requestPermission(Permission.notification);
+      requiredPermissions.add(Permission.notification);
     }
 
-    debugPrint("All high-level permissions handled.");
+    Map<Permission, bool> permissionsStatus = {};
+
+    for (var permission in requiredPermissions) {
+      var status = await permission.status;
+      if (!status.isGranted) {
+        status = await permission.request();
+      }
+      permissionsStatus[permission] = status.isGranted;
+      if (status.isDenied || status.isPermanentlyDenied) {
+        allGranted = false;
+      }
+    }
+
+    if (!allGranted) {
+      if (mounted) {
+        context.pushNamed(
+          AppRoutes.permissionErrorName,
+          extra: {'permissionsStatus': permissionsStatus},
+        );
+      }
+      return;
+    }
 
     forceUpdateCheck();
 

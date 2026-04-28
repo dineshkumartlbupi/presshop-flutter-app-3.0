@@ -147,7 +147,11 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
                                     ? "Camera"
                                     : permission == Permission.microphone
                                         ? "Microphone"
-                                        : "Gallery",
+                                        : permission == Permission.location
+                                            ? "Location"
+                                            : permission == Permission.notification
+                                                ? "Notifications"
+                                                : "Gallery",
                                 style: commonTextStyle(
                                     size: size,
                                     fontSize: size.width * AppDimensions.numD04,
@@ -156,10 +160,14 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
                               ),
                               Text(
                                 permission == Permission.camera
-                                    ? "Allow PressHop to use the camera for taking photos and videos for news content submissions"
+                                    ? "Allow PressHop to use the camera for taking photos and videos for news content submissions."
                                     : permission == Permission.microphone
                                         ? "Allow PressHop to record audio during video capture or interviews."
-                                        : "Allow saving captured content to your device's gallery.",
+                                        : permission == Permission.location
+                                            ? "Allow PressHop to use your location for finding nearby news and alerts."
+                                            : permission == Permission.notification
+                                                ? "Allow PressHop to send you real-time alerts and news updates."
+                                                : "Allow saving captured content to your device's gallery.",
                                 style: commonTextStyle(
                                     size: size,
                                     fontSize:

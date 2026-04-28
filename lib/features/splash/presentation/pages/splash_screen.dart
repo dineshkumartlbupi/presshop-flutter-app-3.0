@@ -87,7 +87,7 @@ class _SplashScreenState extends State<SplashScreen>
       child: BlocConsumer<SplashBloc, SplashState>(
         listener: (context, state) {
           if (state is SplashAuthenticated) {
-            context.goNamed(AppRoutes.permissionName);
+            context.goNamed(AppRoutes.dashboardName);
           } else if (state is SplashUnauthenticated) {
             // context.go(AppRoutes.loginPath);
             context.go(AppRoutes.walkthroughPath);
