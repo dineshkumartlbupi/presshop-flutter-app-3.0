@@ -294,12 +294,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       updatedMarkers.add(marker);
 
       final updatedNewsList = List<Incident>.from(state.newsList);
-      final existingIndex =
-          updatedNewsList.indexWhere((i) => i.id == incident.id);
-      if (existingIndex == -1) {
+      final matchIndex = updatedNewsList.indexWhere((i) => i.id == incident.id);
+      if (matchIndex == -1) {
         updatedNewsList.add(incident);
       } else {
-        updatedNewsList[existingIndex] = incident;
+        updatedNewsList[matchIndex] = incident;
       }
 
       final isSelected = state.selectedIncident?.id == incident.id;
