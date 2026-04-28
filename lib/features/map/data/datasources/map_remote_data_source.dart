@@ -222,13 +222,6 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
 
   @override
   Future<void> incrementIncidentView(String incidentId) async {
-    try {
-      await apiClient.post(
-        ApiConstantsNew.chat.updateAlertView,
-        data: {"incidentId": incidentId},
-      );
-    } catch (e) {
-      debugPrint("Failed to increment incident view: $e");
-    }
+    // API removed, emit is enough
   }
 }

@@ -44,6 +44,13 @@ class OnIncidentUpdatedEvent extends MapEvent {
   List<Object> get props => [data];
 }
 
+class OnIncidentViewCountUpdatedEvent extends MapEvent {
+  const OnIncidentViewCountUpdatedEvent(this.data);
+  final dynamic data;
+  @override
+  List<Object> get props => [data];
+}
+
 class FetchNewsEvent extends MapEvent {
   const FetchNewsEvent({
     required this.lat,

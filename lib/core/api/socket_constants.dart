@@ -12,6 +12,8 @@ class SocketEvents {
   static const String incidentNew = "incident:new";
   static const String incidentUpdated = "incident:updated";
   static const String incidentCreated = "incident:created";
+  static const String addIncidentView = "add:incident:view";
+  static const String incidentView = "incident:view";
 
   // Room Events
   static const String joinNewsAll = "join:news:all";
@@ -47,6 +49,7 @@ class SocketLogger {
   static void logEmit(String eventName, {dynamic data}) {
     debugPrint('🚀 [EMIT] Event: $eventName | Data: $data');
   }
+
   /// Log when a socket event is received
   static void logReceive(String eventName, {dynamic data}) {
     debugPrint('📥 [RECEIVE] Event: $eventName | Data: $data');

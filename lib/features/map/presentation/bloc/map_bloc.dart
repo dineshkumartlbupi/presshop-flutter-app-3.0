@@ -12,6 +12,7 @@ import 'package:presshop/features/map/presentation/bloc/map_event.dart';
 import 'package:presshop/features/map/presentation/bloc/map_state.dart';
 import 'package:presshop/features/map/data/datasources/incident_socket_datasource.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
+import 'package:presshop/features/map/data/models/incident_socket_models.dart';
 import 'package:presshop/features/news/domain/repositories/news_repository.dart';
 import 'package:presshop/features/map/data/services/marker_service.dart';
 
@@ -39,6 +40,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<SearchPlacesEvent>(_onSearchPlaces);
     on<OnIncidentNewEvent>(_onIncidentNew);
     on<OnIncidentUpdatedEvent>(_onIncidentUpdated);
+    on<OnIncidentViewCountUpdatedEvent>(_onIncidentViewCountUpdated);
     on<FetchNewsEvent>(_onFetchNews);
     on<FetchIncidentsEvent>(_onFetchIncidents);
     on<SetSearchedLocationEvent>(_onSetSearchedLocation);
@@ -122,6 +124,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     };
     incidentSocketDataSource.onIncidentCreated = (data) {
       add(OnIncidentNewEvent(data));
+    };
+    incidentSocketDataSource.onIncidentView = (data) {
+      add(OnIncidentViewCountUpdatedEvent(data));
     };
 
     // CRITICAL: Start the listeners on the socket client
@@ -281,6 +286,41 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       ));
     } catch (e, stack) {
       debugPrint("Error handling updated incident: $e");
+      debugPrint(stack.toString());
+    }
+  }
+
+  Future<void> _onIncidentViewCountUpdated(
+    OnIncidentViewCountUpdatedEvent event,
+    Emitter<MapState> emit,
+  ) async {
+    try {
+      final response = IncidentViewResponse.fromJson(event.data);
+      final incidentId = response.incidentId;
+      final viewCount = response.viewCount;
+
+      if (incidentId == null || viewCount == null) return;
+
+      final updatedNewsList = state.newsList.map((incident) {
+        if (incident.id == incidentId) {
+          return incident.copyWith(viewCount: viewCount);
+        }
+        return incident;
+      }).toList();
+
+      Incident? updatedSelectedIncident = state.selectedIncident;
+      if (updatedSelectedIncident != null &&
+          updatedSelectedIncident.id == incidentId) {
+        updatedSelectedIncident =
+            updatedSelectedIncident.copyWith(viewCount: viewCount);
+      }
+
+      emit(state.copyWith(
+        newsList: updatedNewsList,
+        selectedIncident: updatedSelectedIncident,
+      ));
+    } catch (e, stack) {
+      debugPrint("Error handling incident view count update: $e");
       debugPrint(stack.toString());
     }
   }
@@ -868,7 +908,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     // Increment View through both Socket and REST
     repository.incrementIncidentView(event.incident.id);
-    incidentSocketDataSource.emitIncidentView(incidentId: event.incident.id);
+    final userId =
+        sharedPreferences.getString(SharedPreferencesKeys.hopperIdKey) ?? '';
+    incidentSocketDataSource.emitIncidentView(
+      IncidentViewRequest(incidentId: event.incident.id, userId: userId),
+    );
   }
 
   Future<void> _onSetMapSelectedLocation(

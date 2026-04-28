@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:presshop/core/api/global_socket_client.dart';
 import 'package:presshop/core/api/socket_constants.dart';
+import 'package:presshop/features/map/data/models/incident_socket_models.dart';
 
 class IncidentSocketDataSource {
 
@@ -12,6 +13,7 @@ class IncidentSocketDataSource {
   Function(dynamic)? onIncidentNew;
   Function(dynamic)? onIncidentUpdated;
   Function(dynamic)? onIncidentCreated;
+  Function(dynamic)? onIncidentView;
 
   bool get isInitialized => _client.isInitialized;
 
@@ -36,6 +38,12 @@ class IncidentSocketDataSource {
       debugPrint(
           "IncidentSocketDataSource: incident:created received (data length: ${data?.toString().length})");
       onIncidentCreated?.call(data);
+    });
+
+    _client.on('incident:view', (data) {
+      debugPrint(
+          "IncidentSocketDataSource: incident:view received (data length: ${data?.toString().length})");
+      onIncidentView?.call(data);
     });
   }
 
@@ -71,9 +79,10 @@ class IncidentSocketDataSource {
     _client.off(SocketEvents.incidentNew);
     _client.off(SocketEvents.incidentUpdated);
     _client.off(SocketEvents.incidentCreated);
+    _client.off('incident:view');
   }
 
-  void emitIncidentView({required String incidentId}) {
-    _client.emit('incident:view', {"incidentId": incidentId});
+  void emitIncidentView(IncidentViewRequest request) {
+    _client.emit('add:incident:view', request.toJson());
   }
 }
