@@ -1,7 +1,13 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:http/http.dart';
 import 'package:presshop/core/constants/app_dimensions.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/theme/app_colors.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'package:presshop/features/map/constants/map_news_constants.dart';
 
 class AlertPanel extends StatefulWidget {
@@ -91,24 +97,40 @@ class _AlertPanelState extends State<AlertPanel>
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        Row(
-                          children: [
-                            Image.asset(
-                              "assets/icons/ic_v_cam.png",
-                              height: size.width * AppDimensions.numD05,
-                              width: size.width * AppDimensions.numD05,
-                              color: AppColorTheme.colorThemePink,
-                            ),
-                            SizedBox(width: size.width * AppDimensions.numD01),
-                            Text(
-                              "Share Video",
-                              style: TextStyle(
-                                fontSize: size.width * AppDimensions.numD032,
-                                fontWeight: FontWeight.w500,
+                        InkWell(
+                          onTap: () {
+                            print('click------------------------>');
+                            try {
+                              context
+                                  .read<DashboardBloc>()
+                                  .add(const ChangeDashboardTabEvent(2));
+                            } catch (e) {
+                              debugPrint(
+                                  "DashboardBloc not found in context: $e");
+                            }
+                            context.goNamed(AppRoutes.dashboardName,
+                                extra: {'initialPosition': 2, 'isClick': true});
+                          },
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                "assets/icons/ic_v_cam.png",
+                                height: size.width * AppDimensions.numD05,
+                                width: size.width * AppDimensions.numD05,
                                 color: AppColorTheme.colorThemePink,
                               ),
-                            ),
-                          ],
+                              SizedBox(
+                                  width: size.width * AppDimensions.numD01),
+                              Text(
+                                "Share Video",
+                                style: TextStyle(
+                                  fontSize: size.width * AppDimensions.numD032,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColorTheme.colorThemePink,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

@@ -83,7 +83,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: CommonBrandedAppBar(
-        title: AppStrings.digitalId,
+        title: 'Task Detail',
         size: size,
         showLogo: true,
       ),

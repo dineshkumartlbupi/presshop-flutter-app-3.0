@@ -33,20 +33,19 @@ final List<Map<String, String>> alertTypes = [
     'label': 'Accident',
   },
   {
-    'type': 'crash',
-    'icon': 'assets/markers/gifs/car-crash.webp',
-    'label': 'Crash',
-  },
-  {
     'type': 'fire',
     'icon': 'assets/markers/gifs/fire.webp',
-    'label': 'Fire Alert',
+    'label': 'Fire',
   },
-  {'type': 'fight', 'icon': 'assets/markers/gifs/fight.webp', 'label': 'Fight'},
+  {
+    'type': 'fight', 
+    'icon': 'assets/markers/gifs/fight.webp', 
+    'label': 'Fight'
+  },
   {
     'type': 'knife',
     'icon': 'assets/markers/gifs/public_safty_alert.webp',
-    'label': 'Safety Alert'
+    'label': 'Public Safety'
   },
   {
     'type': 'gun',
@@ -69,9 +68,14 @@ final List<Map<String, String>> alertTypes = [
     'label': 'Police',
   },
   {
-    'type': 'weather',
-    'icon': 'assets/markers/gifs/weather1.webp',
-    'label': 'Weather',
+    'type': 'road-block',
+    'icon': 'assets/markers/gifs/road-block.webp',
+    'label': 'Road Block',
+  },
+  {
+    'type': 'floods',
+    'icon': 'assets/markers/gifs/floods.webp',
+    'label': 'Flood',
   },
   {
     'type': 'snow',
@@ -108,15 +112,15 @@ final Map<String, String> burstIcons = {
 const List<String> alertTypeFilter = [
   'Alerts',
   'Accident',
-  'Crash',
-  'Fire Alert',
+  'Fire',
   'Fight',
-  'Safety Alert',
+  'Public Safety',
   'Vandalism',
   'Medical',
   'Protest',
   'Police',
-  'Weather',
+  'Road Block',
+  'Flood',
   'Snow',
   'Earthquake',
 ];
