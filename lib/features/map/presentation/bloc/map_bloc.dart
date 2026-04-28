@@ -76,7 +76,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     });
     on<EmitAvatarMarkerEvent>((event, emit) {
       emit(state.copyWith(
-        markers: _appendMeMarker(state.markers, forceMarker: event.marker),
+        markers: _appendMeAndSearchedMarkers(state.markers,
+            forceMeMarker: event.marker),
       ));
     });
     on<EmitAddressEvent>((event, emit) {
@@ -99,6 +100,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   static const int kAlertMarkerSize = 40;
 
   BitmapDescriptor? _meMarkerIcon;
+  BitmapDescriptor? _searchedLocationIcon;
 
   void _onToggleGetDirectionCard(
     ToggleGetDirectionCardEvent event,
@@ -197,7 +199,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       }
 
       emit(state.copyWith(
-        markers: _appendMeMarker(updatedMarkers),
+        markers: _appendMeAndSearchedMarkers(updatedMarkers),
         newsList: updatedNewsList,
         newlyCreatedIncident: _isReadyForBursts && isRecent ? incident : null,
       ));
@@ -273,7 +275,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       final isSelected = state.selectedIncident?.id == incident.id;
 
       emit(state.copyWith(
-        markers: _appendMeMarker(updatedMarkers),
+        markers: _appendMeAndSearchedMarkers(updatedMarkers),
         newsList: updatedNewsList,
         selectedIncident: isSelected
             ? incident
@@ -531,7 +533,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           polylines: {polyline},
           destination: event.end,
           routeMidpoint: midpoint,
-          markers: updatedMarkers,
+          markers: _appendMeAndSearchedMarkers(updatedMarkers),
         ));
       },
     );
@@ -689,7 +691,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               emit(state.copyWith(
                 isLoadingNews: false,
                 newsList: [...survivingAlerts, ...incidents],
-                markers: _appendMeMarker({...remainingMarkers, ...newMarkers}),
+                markers: _appendMeAndSearchedMarkers(
+                    {...remainingMarkers, ...newMarkers}),
               ));
             }
           } catch (e, stack) {
@@ -709,11 +712,27 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     }
   }
 
-  void _onSetSearchedLocation(
+  Future<void> _onSetSearchedLocation(
     SetSearchedLocationEvent event,
     Emitter<MapState> emit,
-  ) {
-    emit(state.copyWith(searchedLocation: event.location));
+  ) async {
+    if (_searchedLocationIcon == null) {
+      try {
+        _searchedLocationIcon = await markerService.createCircularAssetMarker(
+          "assets/markers/location.png",
+          size: Size(80, 80),
+        );
+      } catch (e) {
+        debugPrint("Error loading searched location icon: $e");
+      }
+    }
+
+    final newState = state.copyWith(searchedLocation: event.location);
+    emit(newState.copyWith(
+      markers: _appendMeAndSearchedMarkers(newState.markers,
+          forceSearchedLocation: event.location),
+    ));
+
     final distanceKm = _convertDistanceToKm(state.selectedDistance);
     add(FetchNewsEvent(
       lat: event.location.latitude,
@@ -1086,7 +1105,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
         if (!emit.isDone) {
           emit(state.copyWith(
-            markers: _appendMeMarker({...remainingMarkers, ...alertMarkers}),
+            markers: _appendMeAndSearchedMarkers(
+                {...remainingMarkers, ...alertMarkers}),
             newsList: combinedNewsList,
           ));
         }
@@ -1094,39 +1114,48 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     );
   }
 
-  Set<Marker> _appendMeMarker(Set<Marker> markers, {Marker? forceMarker}) {
-    // 1. Remove any existing "Me" marker to ensure we don't have duplicates with same ID but different fields
-    final filtered =
+  Set<Marker> _appendMeAndSearchedMarkers(Set<Marker> markers,
+      {Marker? forceMeMarker, LatLng? forceSearchedLocation}) {
+    // 1. Handle "Me" marker
+    var filtered =
         markers.where((m) => m.markerId.value != 'my_custom_location').toSet();
 
-    // 2. If we have a forced marker, use it
-    if (forceMarker != null) {
-      filtered.add(forceMarker);
-      return filtered;
-    }
-
-    // 3. Look for it in the current state
-    final stateMe = state.markers.firstWhere(
-      (m) => m.markerId.value == 'my_custom_location',
-      orElse: () => const Marker(markerId: MarkerId('none'), visible: false),
-    );
-
-    if (stateMe.markerId.value != 'none') {
-      filtered.add(stateMe);
-      return filtered;
-    }
-
-    // 4. Fallback: create it if we have location and icon
-    if (state.myLocation != null && _meMarkerIcon != null) {
-      final newMe = Marker(
-        markerId: const MarkerId('my_custom_location'),
-        position: state.myLocation!,
-        icon: _meMarkerIcon!,
-        anchor: const Offset(0.5, 0.5),
-        zIndex: 1000,
+    if (forceMeMarker != null) {
+      filtered.add(forceMeMarker);
+    } else {
+      final stateMe = state.markers.firstWhere(
+        (m) => m.markerId.value == 'my_custom_location',
+        orElse: () => const Marker(markerId: MarkerId('none'), visible: false),
       );
-      filtered.add(newMe);
-      return filtered;
+
+      if (stateMe.markerId.value != 'none') {
+        filtered.add(stateMe);
+      } else if (state.myLocation != null && _meMarkerIcon != null) {
+        final newMe = Marker(
+          markerId: const MarkerId('my_custom_location'),
+          position: state.myLocation!,
+          icon: _meMarkerIcon!,
+          anchor: const Offset(0.5, 0.5),
+          zIndex: 1000,
+        );
+        filtered.add(newMe);
+      }
+    }
+
+    // 2. Handle "Searched Location" marker
+    filtered = filtered
+        .where((m) => m.markerId.value != 'searched_location_marker')
+        .toSet();
+
+    final LatLng? locToUse = forceSearchedLocation ?? state.searchedLocation;
+
+    if (locToUse != null) {
+      filtered.add(Marker(
+        markerId: const MarkerId('searched_location_marker'),
+        position: locToUse,
+        icon: _searchedLocationIcon ?? BitmapDescriptor.defaultMarker,
+        zIndex: 900,
+      ));
     }
 
     return filtered;
