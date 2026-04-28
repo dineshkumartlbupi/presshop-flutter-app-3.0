@@ -309,7 +309,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                         ? AppStringsNew2.manageContentText
                         : AppStringsNew2.manageTaskText,
                     style: TextStyle(
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontWeight: FontWeight.bold,
                         fontSize:
                             size.width * AppDimensions.appBarHeadingFontSize),
@@ -392,25 +392,27 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                               .start,
                                                       children: [
                                                         Container(
-                                                            margin: EdgeInsets.only(
-                                                                left: size
-                                                                        .width *
-                                                                    AppDimensions
-                                                                        .numD04),
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .black,
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                boxShadow: [
-                                                                  BoxShadow(
-                                                                      color: Colors
-                                                                          .grey
-                                                                          .shade300,
-                                                                      spreadRadius:
-                                                                          2)
-                                                                ]),
-                                                            child: ClipOval(
+                                                          margin: EdgeInsets.only(
+                                                              left: size.width *
+                                                                  AppDimensions
+                                                                      .numD04),
+                                                          decoration: BoxDecoration(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyLarge
+                                                                  ?.color,
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .shade300,
+                                                                    spreadRadius:
+                                                                        2)
+                                                              ]),
+                                                          child: ClipOval(
                                                               clipBehavior: Clip
                                                                   .antiAlias,
                                                               child: Padding(
@@ -421,8 +423,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                 child:
                                                                     Image.asset(
                                                                   "${commonImagePath}ic_black_rabbit.png",
-                                                                  color: Colors
-                                                                      .white,
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .cardColor,
                                                                   width: size
                                                                           .width *
                                                                       AppDimensions
@@ -432,8 +435,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                       AppDimensions
                                                                           .numD07,
                                                                 ),
-                                                              ),
-                                                            )),
+                                                              )),
+                                                        ),
                                                         SizedBox(
                                                           width: size.width *
                                                               AppDimensions
@@ -512,7 +515,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                             style: commonTextStyle(
                                                                                 size: size,
                                                                                 fontSize: size.width * AppDimensions.numD036,
-                                                                                color: Colors.black,
+                                                                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                                                                 fontWeight: FontWeight.normal),
                                                                           ),
                                                                           int.parse(contentView) < 2
@@ -530,7 +533,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                             style: commonTextStyle(
                                                                                 size: size,
                                                                                 fontSize: size.width * AppDimensions.numD036,
-                                                                                color: Colors.black,
+                                                                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                                                                 fontWeight: FontWeight.normal),
                                                                           ),
                                                                           int.parse(contentPurchased) < 2
@@ -552,7 +555,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                             style: commonTextStyle(
                                                                                 size: size,
                                                                                 fontSize: size.width * AppDimensions.numD036,
-                                                                                color: Colors.black,
+                                                                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                                                                 fontWeight: FontWeight.normal),
                                                                           ),
                                                                           TextSpan(
@@ -570,7 +573,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                             style: commonTextStyle(
                                                                                 size: size,
                                                                                 fontSize: size.width * AppDimensions.numD036,
-                                                                                color: Colors.black,
+                                                                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                                                                 fontWeight: FontWeight.normal),
                                                                           ),
                                                                           TextSpan(
@@ -591,7 +594,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                             style: commonTextStyle(
                                                                                 size: size,
                                                                                 fontSize: size.width * AppDimensions.numD036,
-                                                                                color: Colors.black,
+                                                                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                                                                 fontWeight: FontWeight.normal),
                                                                           ),
                                                                           TextSpan(
@@ -968,13 +971,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                         height: size.width *
                                                                             0.04,
                                                                       ),
-                                                                      const Text(
+                                                                      Text(
                                                                         "Tell us what you liked about the App",
                                                                         style: TextStyle(
                                                                             fontSize:
                                                                                 14,
                                                                             color:
-                                                                                Colors.black,
+                                                                                Theme.of(context).textTheme.bodyLarge?.color,
                                                                             fontWeight: FontWeight.w700),
                                                                       ),
                                                                       SizedBox(
@@ -1037,7 +1040,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                                 false,
                                                                             style:
                                                                                 TextStyle(
-                                                                              color: Colors.black,
+                                                                              color: Theme.of(context).textTheme.bodyLarge?.color,
                                                                               fontSize: size.width * AppDimensions.numD035,
                                                                             ),
                                                                             onChanged:
@@ -1224,7 +1227,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                       !item.isMakeCounterOffer
                                                       ? BorderSide.none
                                                       : const BorderSide(
-                                                      color: Colors.black, width: 1))),
+                                                      color: Theme.of(context).textTheme.bodyLarge?.color, width: 1))),
                                                                                   child: Text(
                                                                                         AppStringsNew2.rejectText,
                                                                                         style: commonTextStyle(
@@ -1291,7 +1294,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                       !item.isMakeCounterOffer
                                                       ? BorderSide.none
                                                       : const BorderSide(
-                                                      color: Colors.black, width: 1))),
+                                                      color: Theme.of(context).textTheme.bodyLarge?.color, width: 1))),
                                                                                   child: Text(
                                                                                         AppStringsNew2.acceptText,
                                                                                         style: commonTextStyle(
@@ -1501,7 +1504,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                           style: commonTextStyle(
                                                                               size: size,
                                                                               fontSize: size.width * AppDimensions.numD036,
-                                                                              color: Colors.black,
+                                                                              color: Theme.of(context).textTheme.bodyLarge?.color,
                                                                               fontWeight: FontWeight.normal),
                                                                         ),
                                                                         TextSpan(
@@ -1520,7 +1523,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                           style: commonTextStyle(
                                                                               size: size,
                                                                               fontSize: size.width * AppDimensions.numD036,
-                                                                              color: Colors.black,
+                                                                              color: Theme.of(context).textTheme.bodyLarge?.color,
                                                                               fontWeight: FontWeight.normal),
                                                                         ),
                                                                         TextSpan(
@@ -1711,7 +1714,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                           style: commonTextStyle(
                                                                               size: size,
                                                                               fontSize: size.width * AppDimensions.numD036,
-                                                                              color: Colors.black,
+                                                                              color: Theme.of(context).textTheme.bodyLarge?.color,
                                                                               fontWeight: FontWeight.normal),
                                                                         ),
                                                                         TextSpan(
@@ -1729,7 +1732,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                           style: commonTextStyle(
                                                                               size: size,
                                                                               fontSize: size.width * AppDimensions.numD036,
-                                                                              color: Colors.black,
+                                                                              color: Theme.of(context).textTheme.bodyLarge?.color,
                                                                               fontWeight: FontWeight.normal),
                                                                         ),
                                                                         TextSpan(
@@ -1747,7 +1750,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                           style: commonTextStyle(
                                                                               size: size,
                                                                               fontSize: size.width * AppDimensions.numD036,
-                                                                              color: Colors.black,
+                                                                              color: Theme.of(context).textTheme.bodyLarge?.color,
                                                                               fontWeight: FontWeight.normal),
                                                                         )
                                                                       ])),
@@ -1811,7 +1814,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                     !item.isMakeCounterOffer
                                                     ? BorderSide.none
                                                     : const BorderSide(
-                                                    color: Colors.black, width: 1))),
+                                                    color: Theme.of(context).textTheme.bodyLarge?.color, width: 1))),
                                         child: Text(
                                           AppStringsNew2.rejectText,
                                           style: commonTextStyle(
@@ -1878,7 +1881,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                     !item.isMakeCounterOffer
                                                     ? BorderSide.none
                                                     : const BorderSide(
-                                                    color: Colors.black, width: 1))),
+                                                    color: Theme.of(context).textTheme.bodyLarge?.color, width: 1))),
                                         child: Text(
                                           AppStringsNew2.acceptText,
                                           style: commonTextStyle(
@@ -2127,7 +2130,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                           style: commonTextStyle(
                                                                               size: size,
                                                                               fontSize: size.width * AppDimensions.numD035,
-                                                                              color: Colors.black,
+                                                                              color: Theme.of(context).textTheme.bodyLarge?.color,
                                                                               fontWeight: FontWeight.w600),
                                                                         ),
                                                                       ])),
@@ -2411,7 +2414,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                           style: commonTextStyle(
                                                                               size: size,
                                                                               fontSize: size.width * AppDimensions.numD036,
-                                                                              color: Colors.black,
+                                                                              color: Theme.of(context).textTheme.bodyLarge?.color,
                                                                               lineHeight: 1.2,
                                                                               fontWeight: FontWeight.w400),
                                                                         ),
@@ -2439,7 +2442,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                           style: commonTextStyle(
                                                                               size: size,
                                                                               fontSize: size.width * AppDimensions.numD036,
-                                                                              color: Colors.black,
+                                                                              color: Theme.of(context).textTheme.bodyLarge?.color,
                                                                               fontWeight: FontWeight.w400),
                                                                         ),
                                                                         TextSpan(
@@ -2460,7 +2463,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                           style: commonTextStyle(
                                                                               size: size,
                                                                               fontSize: size.width * AppDimensions.numD036,
-                                                                              color: Colors.black,
+                                                                              color: Theme.of(context).textTheme.bodyLarge?.color,
                                                                               lineHeight: 1.4,
                                                                               fontWeight: FontWeight.w400),
                                                                         ),
@@ -3031,7 +3034,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w400),
                       ),
                       FittedBox(
@@ -3045,7 +3048,10 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD05,
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontWeight: FontWeight.bold),
                             /*myContentData!.paidStatus == AppStringsNew2.paidText &&
                                             myContentData!.isPaidStatusToHopper
@@ -3395,7 +3401,10 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD036,
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontWeight: FontWeight.normal),
                           ),
                           TextSpan(
@@ -3530,7 +3539,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                           !item.isMakeCounterOffer
                                           ? BorderSide.none
                                           : const BorderSide(
-                                          color: Colors.black, width: 1))),
+                                          color: Theme.of(context).textTheme.bodyLarge?.color, width: 1))),
                               child: Text(
                                 AppStringsNew2.rejectText,
                                 style: commonTextStyle(
@@ -3597,7 +3606,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                           !item.isMakeCounterOffer
                                           ? BorderSide.none
                                           : const BorderSide(
-                                          color: Colors.black, width: 1))),
+                                          color: Theme.of(context).textTheme.bodyLarge?.color, width: 1))),
                               child: Text(
                                 AppStringsNew2.acceptText,
                                 style: commonTextStyle(
@@ -3684,7 +3693,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                       "Offered Price",
                       style: TextStyle(
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.white,
+                          color: Theme.of(context).cardColor,
                           fontFamily: 'AirbnbCereal_W_Lt Light'),
                     ),
                     Text(
@@ -3693,7 +3702,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           : "$itemCurrencySymbol${formatDouble(double.parse(item.amount))}",
                       style: TextStyle(
                           fontSize: size.width * AppDimensions.numD045,
-                          color: Colors.white,
+                          color: Theme.of(context).cardColor,
                           fontWeight: FontWeight.w900,
                           fontFamily: 'AirbnbCereal_W_Bd'),
                     ),
@@ -3937,7 +3946,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w600),
                         ),
                         const Spacer(),
@@ -3945,7 +3955,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           height: size.width * AppDimensions.numD12,
                           width: size.width * AppDimensions.numD12,
                           decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: Theme.of(context).cardColor,
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
@@ -4020,7 +4030,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                       color: Colors.black, shape: BoxShape.circle),
                   child: Icon(
                     Icons.check,
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     size: size.width * AppDimensions.numD07,
                   ),
                 ),
@@ -4088,7 +4098,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     text: TextSpan(
                         style: TextStyle(
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontFamily: "AirbnbCereal",
                             height: 1.5),
                         children: [
@@ -4231,7 +4241,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.normal)),
                     Text(" 1 $type",
                         style: commonTextStyle(
@@ -4298,9 +4308,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           color: AppColorTheme.colorLightGreen.withOpacity(0.8),
                           borderRadius: BorderRadius.circular(
                               size.width * AppDimensions.numD01)),
-                      child: const Icon(
+                      child: Icon(
                         Icons.videocam_outlined,
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                       ),
                     )),
                 InkWell(
@@ -4317,7 +4327,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   },
                   child: Icon(
                     Icons.play_circle,
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     size: size.width * AppDimensions.numD09,
                   ),
                 )
@@ -4536,9 +4546,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                   .withOpacity(0.8),
                               borderRadius: BorderRadius.circular(
                                   size.width * AppDimensions.numD01)),
-                          child: const Icon(
+                          child: Icon(
                             Icons.camera_alt_outlined,
-                            color: Colors.white,
+                            color: Theme.of(context).cardColor,
                           ),
                         )),
                     ClipRRect(
@@ -4675,7 +4685,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                     child: Image.asset(
                       "${commonImagePath}ic_black_rabbit.png",
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       width: size.width * AppDimensions.numD07,
                       height: size.width * AppDimensions.numD07,
                     ),
@@ -4721,7 +4731,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD036,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
@@ -4737,7 +4748,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD036,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
@@ -4796,7 +4808,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                     child: Image.asset(
                       "${commonImagePath}ic_black_rabbit.png",
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       width: size.width * AppDimensions.numD07,
                       height: size.width * AppDimensions.numD07,
                     ),
@@ -4832,7 +4844,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   RichText(
                       text: TextSpan(
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Theme.of(context).cardColor,
                             fontSize: size.width * AppDimensions.numD037,
                             fontFamily: "AirbnbCereal",
                             fontWeight: FontWeight.bold,
@@ -4843,7 +4855,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD036,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
@@ -4861,7 +4874,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD036,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
@@ -4877,7 +4891,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD036,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.normal),
                         )
                       ])),
@@ -4935,7 +4950,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                     child: Image.asset(
                       "${commonImagePath}ic_black_rabbit.png",
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       width: size.width * AppDimensions.numD07,
                       height: size.width * AppDimensions.numD07,
                     ),
@@ -4972,7 +4987,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   RichText(
                       text: TextSpan(
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Theme.of(context).cardColor,
                             fontSize: size.width * AppDimensions.numD037,
                             fontFamily: "AirbnbCereal",
                             fontWeight: FontWeight.bold,
@@ -4984,7 +4999,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD036,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
@@ -5000,7 +5016,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD036,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
@@ -5017,7 +5034,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD036,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.normal),
                         ),
                       ])),
@@ -5157,8 +5175,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                               side: item.requestStatus == "true" ||
                                       item.requestStatus.isEmpty
                                   ? BorderSide.none
-                                  : const BorderSide(
-                                      color: Colors.black, width: 1))),
+                                  : BorderSide(
+                                      color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .color ??
+                                          Colors.transparent,
+                                      width: 1))),
                       child: Text(
                         AppStringsNew2.yesText,
                         style: commonTextStyle(
@@ -5221,8 +5244,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                               side: item.requestStatus == "false" ||
                                       item.requestStatus.isEmpty
                                   ? BorderSide.none
-                                  : const BorderSide(
-                                      color: Colors.black, width: 1))),
+                                  : BorderSide(
+                                      color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.color ??
+                                          Colors.transparent,
+                                      width: 1))),
                       child: Text(
                         AppStringsNew2.noText,
                         style: commonTextStyle(
@@ -5353,7 +5381,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                       vertical: size.width * AppDimensions.numD02),
                   width: size.width,
                   decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
+                      border: Border.all(
+                          color: Theme.of(context).textTheme.bodyLarge?.color ??
+                              Colors.black),
                       borderRadius: BorderRadius.only(
                           topRight: Radius.circular(
                               size.width * AppDimensions.numD04),
@@ -5372,7 +5402,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
@@ -5383,7 +5413,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w600)),
                       SizedBox(
                         height: size.width * AppDimensions.numD04,
@@ -5430,7 +5461,10 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD035,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.w700),
                                   ),
                                 ),
@@ -5477,7 +5511,10 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD035,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.w700),
                                   ),
                                 ),
@@ -5524,7 +5561,10 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD035,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.w700),
                                   ),
                                 ),
@@ -5540,11 +5580,12 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   alignment: Alignment.center,
                   child: Container(
                     padding: EdgeInsets.all(size.width * AppDimensions.numD03),
-                    decoration: const BoxDecoration(
-                        color: Colors.black, shape: BoxShape.circle),
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                        shape: BoxShape.circle),
                     child: Icon(
                       Icons.check,
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       size: size.width * AppDimensions.numD07,
                     ),
                   ),
@@ -5796,7 +5837,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD04,
-                                color: Colors.white,
+                                color: Theme.of(context).cardColor,
                                 fontWeight: FontWeight.w500),
                           ),
                         ),
@@ -5861,7 +5902,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD035,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontWeight: FontWeight.w600),
                   ),
                   SizedBox(
@@ -5999,7 +6040,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
               width: size.width,
               decoration: BoxDecoration(
                   color: AppColorTheme.colorLightGrey,
-                  border: Border.all(color: Colors.black),
+                  border: Border.all(
+                      color: Theme.of(context).textTheme.bodyLarge?.color ??
+                          Colors.black),
                   borderRadius: BorderRadius.only(
                       topRight:
                           Radius.circular(size.width * AppDimensions.numD04),
@@ -6020,7 +6063,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w600),
                     ),
                     TextSpan(
@@ -6036,7 +6079,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w600),
                     ),
                   ])),
@@ -6057,8 +6100,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD04),
-                                  side: const BorderSide(
-                                      color: Colors.black, width: 1))),
+                                  side: BorderSide(
+                                      color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .color ??
+                                          Colors.transparent,
+                                      width: 1))),
                           child: Text(
                             AppStringsNew2.rejectText,
                             style: commonTextStyle(
@@ -6089,7 +6137,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD04,
-                                color: Colors.white,
+                                color: Theme.of(context).cardColor,
                                 fontWeight: FontWeight.w500),
                           ),
                         ),
@@ -6109,7 +6157,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w600),
                       ),
                       const Expanded(
@@ -6140,7 +6188,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD035,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontWeight: FontWeight.w500),
                   ),
                 ],
@@ -6160,7 +6208,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
               margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
               padding: EdgeInsets.all(size.width * AppDimensions.numD03),
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(color: Colors.grey.shade300, spreadRadius: 2)
@@ -6181,7 +6229,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
+                  border: Border.all(
+                      color: Theme.of(context).textTheme.bodyLarge?.color ??
+                          Colors.black),
                   borderRadius: BorderRadius.only(
                       topRight:
                           Radius.circular(size.width * AppDimensions.numD04),
@@ -6218,7 +6268,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                         filled: false,
                         hintText: "Enter price here...",
                         hintStyle: TextStyle(
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontSize: size.width * AppDimensions.numD04),
                         disabledBorder: OutlineInputBorder(
                             borderRadius:
@@ -6362,7 +6412,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w600),
                     ),
                     TextSpan(
@@ -6378,7 +6428,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w600),
                     ),
                   ])),
@@ -6399,8 +6449,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD04),
-                                  side: const BorderSide(
-                                      color: Colors.black, width: 1))),
+                                  side: BorderSide(
+                                      color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.color ??
+                                          Colors.transparent,
+                                      width: 1))),
                           child: Text(
                             AppStringsNew2.rejectText,
                             style: commonTextStyle(
@@ -6425,14 +6480,19 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD04),
-                                  side: const BorderSide(
-                                      color: Colors.black, width: 1))),
+                                  side: BorderSide(
+                                      color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .color ??
+                                          Colors.transparent,
+                                      width: 1))),
                           child: Text(
                             AppStringsNew2.acceptText,
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD04,
-                                color: Colors.white,
+                                color: Theme.of(context).cardColor,
                                 fontWeight: FontWeight.w500),
                           ),
                         ),
@@ -6454,7 +6514,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
               margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
               padding: EdgeInsets.all(size.width * AppDimensions.numD03),
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(color: Colors.grey.shade300, spreadRadius: 2)
@@ -6550,8 +6610,10 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.black),
+                  color: Theme.of(context).cardColor,
+                  border: Border.all(
+                      color: Theme.of(context).textTheme.bodyLarge?.color ??
+                          Colors.black),
                   borderRadius: BorderRadius.only(
                       topRight:
                           Radius.circular(size.width * AppDimensions.numD04),
@@ -6571,7 +6633,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD035,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontWeight: FontWeight.w600),
                   ),
                   SizedBox(
@@ -6601,7 +6663,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w600),
                     ),
                   ),
@@ -6625,28 +6687,53 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             disabledBorder: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.circular(size.width * 0.03),
-                                borderSide: const BorderSide(
-                                    width: 1, color: Colors.black)),
+                                borderSide: BorderSide(
+                                    width: 1,
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color ??
+                                        Colors.black)),
                             focusedBorder: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.circular(size.width * 0.03),
-                                borderSide: const BorderSide(
-                                    width: 1, color: Colors.black)),
+                                borderSide: BorderSide(
+                                    width: 1,
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color ??
+                                        Colors.black)),
                             enabledBorder: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.circular(size.width * 0.03),
-                                borderSide: const BorderSide(
-                                    width: 1, color: Colors.black)),
+                                borderSide: BorderSide(
+                                    width: 1,
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color ??
+                                        Colors.black)),
                             errorBorder: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.circular(size.width * 0.03),
-                                borderSide: const BorderSide(
-                                    width: 1, color: Colors.black)),
+                                borderSide: BorderSide(
+                                    width: 1,
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color ??
+                                        Colors.black)),
                             focusedErrorBorder: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.circular(size.width * 0.03),
-                                borderSide: const BorderSide(
-                                    width: 1, color: Colors.black)),
+                                borderSide: BorderSide(
+                                    width: 1,
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color ??
+                                        Colors.black)),
                             contentPadding: EdgeInsets.only(
                                 left: size.width * AppDimensions.numD08,
                                 right: size.width * AppDimensions.numD03,

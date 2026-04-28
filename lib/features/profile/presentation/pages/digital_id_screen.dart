@@ -241,10 +241,10 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                 bottom: size.width * AppDimensions.numD1,
               ),
               decoration: BoxDecoration(
-                  color: AppColorTheme.colorLightGrey,
+                  color: Theme.of(context).cardColor,
                   borderRadius:
                       BorderRadius.circular(size.width * AppDimensions.numD03),
-                  border: Border.all(width: 1.0, color: Colors.black)),
+                  border: Border.all(width: 1.0, color: Theme.of(context).dividerColor)),
               child: Stack(
                 alignment: Alignment.centerRight,
                 children: [
@@ -318,8 +318,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 border: Border.all(
-                                                    color: const Color.fromARGB(
-                                                        255, 223, 223, 223)),
+                                                    color: Theme.of(context).dividerColor),
                                                 borderRadius:
                                                     BorderRadius.circular(size
                                                             .width *
@@ -428,7 +427,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD05,
-                                        color: Colors.black,
+                                        color: Theme.of(context).textTheme.bodyLarge?.color,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   if (myProfileData?.stripeStatusActive ==
@@ -461,7 +460,9 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                   horizontal: size.width * AppDimensions.numD01,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.black,
+                                  color: Theme.of(context).brightness == Brightness.dark 
+                                      ? Colors.white10 
+                                      : Colors.black,
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD02),
                                 ),
@@ -508,7 +509,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD02),
                                     border: Border.all(
-                                        width: 1.0, color: Colors.black)),
+                                        width: 1.0, color: Theme.of(context).dividerColor)),
                                 child: RichText(
                                   textAlign: TextAlign.start,
                                   text: TextSpan(
@@ -516,7 +517,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                     style: TextStyle(
                                         fontSize:
                                             size.width * AppDimensions.numD036,
-                                        color: Colors.black,
+                                        color: Theme.of(context).textTheme.bodyLarge?.color,
                                         fontWeight: FontWeight.w400,
                                         height: 1.5),
                                     children: [
@@ -527,7 +528,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                         style: TextStyle(
                                             fontSize: size.width *
                                                 AppDimensions.numD036,
-                                            color: Colors.black,
+                                            color: Theme.of(context).textTheme.bodyLarge?.color,
                                             fontWeight: FontWeight.w600,
                                             height: 1.5),
                                       )
@@ -548,7 +549,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD02),
                                     border: Border.all(
-                                        width: 1.0, color: Colors.black)),
+                                        width: 1.0, color: Theme.of(context).dividerColor)),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -563,6 +564,14 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                         data: "https://www.presshop.co.uk/",
                                         version: QrVersions.auto,
                                         padding: const EdgeInsets.all(2),
+                                        eyeStyle: QrEyeStyle(
+                                          eyeShape: QrEyeShape.square,
+                                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                                        ),
+                                        dataModuleStyle: QrDataModuleStyle(
+                                          dataModuleShape: QrDataModuleShape.square,
+                                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                                        ),
                                       ),
                                     ),
                                     SizedBox(
@@ -580,7 +589,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                             style: TextStyle(
                                                 fontSize: size.width *
                                                     AppDimensions.numD03,
-                                                color: Colors.black,
+                                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                                 fontWeight: FontWeight.w600,
                                                 height: 1.5),
                                           ),
@@ -589,7 +598,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                             style: TextStyle(
                                                 fontSize: size.width *
                                                     AppDimensions.numD03,
-                                                color: Colors.black,
+                                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                                 fontWeight: FontWeight.w400,
                                                 height: 1.5),
                                           ),
@@ -598,7 +607,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                             style: TextStyle(
                                                 fontSize: size.width *
                                                     AppDimensions.numD03,
-                                                color: Colors.black,
+                                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                                 fontWeight: FontWeight.w400,
                                                 height: 1.5),
                                           ),
@@ -607,7 +616,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                             style: TextStyle(
                                                 fontSize: size.width *
                                                     AppDimensions.numD03,
-                                                color: Colors.black,
+                                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                                 fontWeight: FontWeight.w400,
                                                 height: 1.5),
                                           ),

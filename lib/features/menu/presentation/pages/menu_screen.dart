@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/extensions/context_extensions.dart';
 import 'package:presshop/core/services/background_location_service.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
@@ -17,11 +19,9 @@ import 'package:presshop/features/menu/presentation/bloc/menu_bloc.dart';
 import 'package:presshop/features/menu/presentation/pages/menu_config.dart';
 import 'package:presshop/features/menu/presentation/bloc/menu_ui_cubit.dart';
 import 'package:presshop/features/menu/presentation/widgets/currency_selector_sheet.dart';
-import 'package:presshop/core/extensions/context_extensions.dart';
-import 'package:go_router/go_router.dart';
-
 import 'package:presshop/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:presshop/features/profile/presentation/bloc/profile_event.dart';
+import 'package:presshop/core/theme/bloc/theme_bloc.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -284,8 +284,8 @@ class _MenuScreenState extends State<MenuScreen> {
     final size = context.mqSize;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        surfaceTintColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         leading: Center(
           child: InkWell(
@@ -339,61 +339,135 @@ class _MenuScreenState extends State<MenuScreen> {
           ),
           itemBuilder: (context, index) {
             if (index == 0) {
-              return Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: size.width * AppDimensions.numD02),
-                child: Row(
-                  children: [
-                    ImageIcon(
-                      const AssetImage("assets/markers/location1.webp"),
-                      size: size.width * AppDimensions.numD06,
-                      color: Colors.black,
-                    ),
-                    SizedBox(
-                      width: size.width * AppDimensions.numD03,
-                    ),
-                    Text(
-                      "Enable location",
-                      style: TextStyle(
-                          fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
-                          fontFamily: "AirbnbCereal",
-                          fontWeight: FontWeight.normal),
-                    ),
-                    const Spacer(),
-                    ValueListenableBuilder<bool>(
-                      valueListenable:
-                          BackgroundLocationService.isRunningNotifier,
-                      builder: (context, isRunning, child) {
-                        return FlutterSwitch(
-                          width: 55,
-                          height: 27,
-                          padding: 2,
-                          value: isRunning,
-                          inactiveColor: AppColorTheme.colorThemePink,
-                          activeColor: Colors.green,
-                          onToggle: (val) {
-                            _toggleLocationService(val, size);
+              return Column(
+                children: [
+                  // Theme Toggle
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: size.width * AppDimensions.numD02),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.palette_outlined,
+                          size: size.width * AppDimensions.numD06,
+                          color: Theme.of(context).iconTheme.color,
+                        ),
+                        SizedBox(
+                          width: size.width * AppDimensions.numD03,
+                        ),
+                        Text(
+                          "Dark Mode",
+                          style: TextStyle(
+                              fontSize: size.width * AppDimensions.numD035,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                              fontFamily: "AirbnbCereal",
+                              fontWeight: FontWeight.normal),
+                        ),
+                        const Spacer(),
+                        BlocBuilder<ThemeBloc, ThemeState>(
+                          builder: (context, state) {
+                            final isDark = state.themeMode == ThemeMode.dark;
+                            return GestureDetector(
+                              onTap: () {
+                                context
+                                    .read<ThemeBloc>()
+                                    .add(ToggleThemeEvent());
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                width: 60,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: isDark
+                                      ? Colors.blueGrey[800]
+                                      : Colors.blue[100],
+                                ),
+                                child: Stack(
+                                  children: [
+                                    AnimatedPositioned(
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut,
+                                      left: isDark ? 32 : 2,
+                                      top: 2,
+                                      child: Container(
+                                        width: 26,
+                                        height: 26,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.white,
+                                        ),
+                                        child: Icon(
+                                          isDark
+                                              ? Icons.nightlight_round
+                                              : Icons.wb_sunny,
+                                          size: 16,
+                                          color: isDark
+                                              ? Colors.blueGrey[800]
+                                              : Colors.orange,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
                           },
-                        );
-                      },
-                    )
-                    // SizedBox(
-                    //   height: 30,
-                    //   child: Transform.scale(
-                    //     scale: 0.8,
-                    //     child: Switch.adaptive(
-                    //       value: isTaskGrabbingOn,
-                    //       onChanged: (val) {
-                    //         _toggleLocationService(val);
-                    //       },
-                    //       activeColor: Colors.white,
-                    //       activeTrackColor: const Color(0xFF4BD37B),
-                    //     ),
-                    //   ),
-                    // )
-                  ],
-                ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(
+                    thickness: 2,
+                    color: AppColorTheme.colorLightGrey,
+                  ),
+                  // Location Toggle
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: size.width * AppDimensions.numD02),
+                    child: Row(
+                      children: [
+                        ImageIcon(
+                          const AssetImage("assets/markers/location1.webp"),
+                          size: size.width * AppDimensions.numD06,
+                          color: Theme.of(context).iconTheme.color,
+                        ),
+                        SizedBox(
+                          width: size.width * AppDimensions.numD03,
+                        ),
+                        Text(
+                          "Enable location",
+                          style: TextStyle(
+                              fontSize: size.width * AppDimensions.numD035,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                              fontFamily: "AirbnbCereal",
+                              fontWeight: FontWeight.normal),
+                        ),
+                        const Spacer(),
+                        ValueListenableBuilder<bool>(
+                          valueListenable:
+                              BackgroundLocationService.isRunningNotifier,
+                          builder: (context, isRunning, child) {
+                            return FlutterSwitch(
+                              width: 55,
+                              height: 27,
+                              padding: 2,
+                              value: isRunning,
+                              inactiveColor: AppColorTheme.colorThemePink,
+                              activeColor: Colors.green,
+                              onToggle: (val) {
+                                _toggleLocationService(val, size);
+                              },
+                            );
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                ],
               );
             }
 
@@ -437,7 +511,10 @@ class _MenuScreenState extends State<MenuScreen> {
                           Text(
                             AppStrings.youWIllBeMissedText,
                             style: TextStyle(
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontSize: size.width * AppDimensions.numD05,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -446,7 +523,7 @@ class _MenuScreenState extends State<MenuScreen> {
                               onPressed: () => context.pop(),
                               icon: Icon(
                                 Icons.close,
-                                color: Colors.black,
+                                color: Theme.of(context).iconTheme.color,
                                 size: size.width * AppDimensions.numD06,
                               ))
                         ],
@@ -455,8 +532,8 @@ class _MenuScreenState extends State<MenuScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: size.width * AppDimensions.numD04),
-                      child: const Divider(
-                        color: Colors.black,
+                      child: Divider(
+                        color: Theme.of(context).dividerColor,
                         thickness: 0.5,
                       ),
                     ),
@@ -471,7 +548,8 @@ class _MenuScreenState extends State<MenuScreen> {
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
-                                border: Border.all(color: Colors.black)),
+                                border: Border.all(
+                                    color: Theme.of(context).dividerColor)),
                             child: ClipRRect(
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
@@ -489,7 +567,10 @@ class _MenuScreenState extends State<MenuScreen> {
                               softWrap: true,
                               textAlign: TextAlign.justify,
                               style: TextStyle(
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontSize: size.width * AppDimensions.numD035,
                                   fontWeight: FontWeight.w500),
                             ),
@@ -512,7 +593,13 @@ class _MenuScreenState extends State<MenuScreen> {
                                 AppStrings.logoutText,
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, Colors.black), () {
+                                commonButtonStyle(
+                                    size,
+                                    Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color ??
+                                        Colors.black), () {
                               context.pop();
                               menuBloc.add(MenuLogoutRequested());
                             }),
@@ -612,7 +699,7 @@ class MenuTile extends StatelessWidget {
             ),
             Icon(
               Icons.arrow_forward_ios_rounded,
-              color: Colors.black,
+              color: Theme.of(context).iconTheme.color,
               size: size.width * AppDimensions.numD04,
             )
           ],
@@ -633,7 +720,7 @@ class MenuTile extends StatelessWidget {
           size: isSpecialSize
               ? size.width * AppDimensions.numD072
               : size.width * AppDimensions.numD06,
-          color: Colors.black,
+          color: Theme.of(context).iconTheme.color,
         ),
         if (item.showAlertBadge)
           BlocSelector<MenuBloc, MenuState, int>(
@@ -679,7 +766,7 @@ class MenuTile extends StatelessWidget {
             "Contact Press",
             style: TextStyle(
               fontSize: size.width * AppDimensions.numD035,
-              color: Colors.black,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
               fontFamily: "AirbnbCereal",
               fontWeight: FontWeight.normal,
             ),
@@ -688,7 +775,7 @@ class MenuTile extends StatelessWidget {
             "Hop",
             style: TextStyle(
               fontSize: size.width * AppDimensions.numD035,
-              color: Colors.black,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
               letterSpacing: 0,
               fontFamily: "AirbnbCereal",
               fontWeight: FontWeight.normal,
@@ -701,7 +788,7 @@ class MenuTile extends StatelessWidget {
       item.title,
       style: TextStyle(
         fontSize: size.width * AppDimensions.numD035,
-        color: Colors.black,
+        color: Theme.of(context).textTheme.bodyLarge?.color,
         fontFamily: "AirbnbCereal",
         fontWeight: FontWeight.normal,
       ),
@@ -728,7 +815,8 @@ class NotificationBadge extends StatelessWidget {
                 height: size.width * AppDimensions.numD06,
                 width: size.width * AppDimensions.numD06,
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black, width: 1.2),
+                  border: Border.all(
+                      color: Theme.of(context).dividerColor, width: 1.2),
                   borderRadius:
                       BorderRadius.circular(size.width * AppDimensions.numD015),
                 ),

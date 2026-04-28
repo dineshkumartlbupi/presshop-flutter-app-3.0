@@ -41,7 +41,7 @@ class CommonWidgetsNew {
                 style: commonTextStyle(
                     size: size,
                     fontSize: size.width * AppDimensions.numD08,
-                    color: Colors.black,
+                    color: Theme.of(navigatorKey.currentContext!).textTheme.bodyLarge?.color,
                     fontWeight: FontWeight.w700),
               ),
               TextSpan(
@@ -49,7 +49,7 @@ class CommonWidgetsNew {
                 style: commonTextStyle(
                     size: size,
                     fontSize: size.width * AppDimensions.numD04,
-                    color: Colors.black,
+                    color: Theme.of(navigatorKey.currentContext!).textTheme.bodyMedium?.color,
                     fontWeight: FontWeight.w600),
               ),
             ],
@@ -124,7 +124,7 @@ class CommonWidgetsNew {
               style: commonTextStyle(
                   size: size,
                   fontSize: size.width * AppDimensions.numD04,
-                  color: Colors.black,
+                  color: Theme.of(navigatorKey.currentContext!).textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.w500),
             ),
           ),
@@ -178,7 +178,8 @@ class CommonWidgetsNew {
           fit: BoxFit.contain,
           errorBuilder: (context, error, stackTrace) {
             return Icon(Icons.tune_rounded,
-                color: Colors.black, size: size.width * AppDimensions.numD06);
+                color: Theme.of(context).iconTheme.color,
+                size: size.width * AppDimensions.numD06);
           },
         ));
   }

@@ -150,7 +150,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD036,
-                                color: Colors.black,
+                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                 fontWeight: FontWeight.w500),
                           ),
                           Text(
@@ -168,7 +168,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                         .isBefore(DateTime.now()))
                                     ? Colors.grey
                                     : widget.taskStatus == "rejected"
-                                        ? Colors.black
+                                        ? (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black)
                                         : AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.w500),
                           )
@@ -186,7 +186,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                             child: Container(
                               decoration: BoxDecoration(
                                 border:
-                                    Border.all(width: 1, color: Colors.black),
+                                    Border.all(width: 1, color: Theme.of(context).dividerColor),
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD042),
                               ),
@@ -563,7 +563,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w500)),
                     SizedBox(
                       height: size.width * AppDimensions.numD018,
@@ -573,7 +573,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD04,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           lineHeight: 1.5,
                           fontWeight: FontWeight.w700),
                     ),
@@ -584,7 +584,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w500)),
                     SizedBox(
                       height: size.width * AppDimensions.numD018,
@@ -593,7 +593,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD03,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             lineHeight: 2,
                             fontWeight: FontWeight.normal)),
                     if (taskDetail!.task.specialRequirements.isNotEmpty) ...[
@@ -602,14 +602,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w500)),
                       SizedBox(height: size.width * AppDimensions.numD018),
                       Text(taskDetail!.task.specialRequirements,
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD03,
-                              color: Colors.black,
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                               lineHeight: 2,
                               fontWeight: FontWeight.normal)),
                     ],
@@ -631,7 +631,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD03,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           lineHeight: 1.8,
                           fontWeight: FontWeight.normal,
                         ),
@@ -649,7 +649,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w500)),
                     SizedBox(
                       height: size.width * AppDimensions.numD05,
@@ -680,7 +680,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD035,
-                                color: Colors.black,
+                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                 fontWeight: FontWeight.w500))
                         : Container(),
                     SizedBox(

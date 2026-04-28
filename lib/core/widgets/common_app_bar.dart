@@ -20,8 +20,8 @@ class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
       required this.actionWidget,
       required this.hideLeading,
       this.leadingLeftSPace,
-      this.appBarbackgroundColor = Colors.transparent,
-      this.leadingIconColor = Colors.black,
+      this.appBarbackgroundColor,
+      this.leadingIconColor,
       this.bottom});
 
   final double elevation;
@@ -30,8 +30,8 @@ class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool hideLeading;
   final double titleSpacing;
   final Size size;
-  final Color leadingIconColor;
-  final Color appBarbackgroundColor;
+  final Color? leadingIconColor;
+  final Color? appBarbackgroundColor;
   final bool showActions;
   final VoidCallback leadingFxn;
   final List<Widget>? actionWidget;
@@ -89,13 +89,16 @@ class CommonAppBarState extends State<CommonAppBar> {
                     )),
           )
         : AppBar(
-            systemOverlayStyle: const SystemUiOverlayStyle(
+            systemOverlayStyle: SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
-              statusBarIconBrightness: Brightness.dark,
-              statusBarBrightness: Brightness.light,
+              statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
+                  ? Brightness.light
+                  : Brightness.dark,
+              statusBarBrightness: Theme.of(context).brightness,
             ),
             elevation: widget.elevation,
-            backgroundColor: widget.appBarbackgroundColor,
+            backgroundColor: widget.appBarbackgroundColor ??
+                Theme.of(context).appBarTheme.backgroundColor,
             leading: !widget.hideLeading
                 ? InkWell(
                     onTap: widget.leadingFxn,
@@ -108,7 +111,8 @@ class CommonAppBarState extends State<CommonAppBar> {
                       child: Icon(
                         Icons.arrow_back_rounded,
                         size: widget.size.width * AppDimensions.numD06,
-                        color: widget.leadingIconColor,
+                        color: widget.leadingIconColor ??
+                            Theme.of(context).iconTheme.color,
                       ),
                     ),
                   )

@@ -16,11 +16,12 @@ class DashboardBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).bottomNavigationBarTheme.backgroundColor ??
+          Theme.of(context).cardColor,
       currentIndex: currentIndex,
       showUnselectedLabels: true,
       showSelectedLabels: true,
-      unselectedItemColor: Colors.black,
+      unselectedItemColor: Theme.of(context).unselectedWidgetColor,
       selectedItemColor: AppColorTheme.colorThemePink,
       elevation: 0,
       iconSize: size.width * AppDimensions.numD05,

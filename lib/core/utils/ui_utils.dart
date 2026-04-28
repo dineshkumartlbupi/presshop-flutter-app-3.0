@@ -48,7 +48,7 @@ bool get isIpad => sharedPreferences?.getBool("isIpad") ?? false;
 TextStyle commonTextStyle(
     {required Size size,
     required fontSize,
-    required Color color,
+    Color? color,
     double? lineHeight,
     required FontWeight fontWeight}) {
   return TextStyle(
@@ -59,7 +59,7 @@ TextStyle commonTextStyle(
   );
 }
 
-TextStyle commonBigTitleTextStyle(Size size, Color color) {
+TextStyle commonBigTitleTextStyle(Size size, Color? color) {
   return TextStyle(
       fontFamily: "AirbnbCereal",
       color: color,
@@ -67,12 +67,12 @@ TextStyle commonBigTitleTextStyle(Size size, Color color) {
       fontWeight: FontWeight.bold);
 }
 
-Widget commonLeading(Size size) {
+Widget commonLeading(BuildContext context, Size size) {
   return Row(
     children: [
       Icon(
         Icons.arrow_back_rounded,
-        color: Colors.black,
+        color: Theme.of(context).iconTheme.color,
         size: size.width * AppDimensions.numD08,
       ),
     ],

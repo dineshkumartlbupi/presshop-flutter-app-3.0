@@ -18,7 +18,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.bottom,
     this.appBarTitle,
     this.hideHamburger = false,
-    this.appBarbackgroundColor = Colors.white,
+    this.appBarbackgroundColor,
     this.isFromMap = false,
     this.latitude,
     this.longitude,
@@ -31,7 +31,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final PreferredSizeWidget? bottom;
   final String? appBarTitle;
   final bool hideHamburger;
-  final Color appBarbackgroundColor;
+  final Color? appBarbackgroundColor;
   final bool isFromMap;
   final double? latitude;
   final double? longitude;
@@ -47,7 +47,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           ? Text(
               appBarTitle!,
               style: TextStyle(
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontSize: size.width * AppDimensions.numD05,
                 fontWeight: FontWeight.w700,
                 fontFamily: "AirbnbCereal",
@@ -111,7 +111,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   child: Text(
                     "Click to view local news",
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontWeight: FontWeight.w500,
                       fontSize: size.width * 0.03,
                       decoration: TextDecoration.underline,

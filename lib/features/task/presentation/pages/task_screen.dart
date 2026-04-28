@@ -254,20 +254,29 @@ class MyTaskScreenState extends State<MyTaskScreen>
                       padding: EdgeInsets.symmetric(
                           horizontal: size.width * AppDimensions.numD04),
                       child: TabBar(
+                        indicatorPadding: EdgeInsets.zero,
+                        indicatorSize: TabBarIndicatorSize.tab,
                         controller: _tabController,
                         physics: const NeverScrollableScrollPhysics(),
                         labelColor: Colors.white,
-                        dividerColor: AppColorTheme.colorThemePink,
+                        dividerColor: Colors.transparent,
                         unselectedLabelColor: Colors.black,
                         indicator: BoxDecoration(
                           color: AppColorTheme.colorThemePink,
                           borderRadius: BorderRadius.circular(
-                              size.width * AppDimensions.numD02),
+                              size.width * AppDimensions.numD01),
                         ),
                         labelStyle: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD038,
-                          color: Colors.black,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        unselectedLabelStyle: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD038,
+                          color: Theme.of(context).textTheme.bodyLarge?.color ??
+                              Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                         tabs: [
@@ -364,7 +373,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
           vertical: size.width * AppDimensions.numD02),
       padding: EdgeInsets.all(size.width * AppDimensions.numD03),
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius:
               BorderRadius.circular(size.width * AppDimensions.numD02),
           boxShadow: [
@@ -396,7 +405,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD035,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color ??
+                          Colors.black,
                       fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: size.width * AppDimensions.numD01),
@@ -432,7 +442,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
               style: commonTextStyle(
                   size: size,
                   fontSize: size.width * AppDimensions.numD03,
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color ??
+                      Colors.black,
                   fontWeight: FontWeight.bold),
             ),
         ],
@@ -542,7 +553,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   right: size.width * AppDimensions.numD03,
                                   top: size.width * AppDimensions.numD03),
                               decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: Theme.of(context).cardColor,
                                   boxShadow: [
                                     BoxShadow(
                                         color: Colors.grey.shade200,
@@ -631,7 +642,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD03,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.w500),
                                   ),
 
@@ -659,7 +673,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             size: size,
                                             fontSize: size.width *
                                                 AppDimensions.numD024,
-                                            color: Colors.black,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color,
                                             fontWeight: FontWeight.normal),
                                       ),
                                       SizedBox(
@@ -684,7 +701,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             size: size,
                                             fontSize: size.width *
                                                 AppDimensions.numD024,
-                                            color: Colors.black,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color,
                                             fontWeight: FontWeight.normal),
                                       ),
                                     ],
@@ -772,10 +792,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   right: size.width * AppDimensions.numD03,
                                   top: size.width * AppDimensions.numD03),
                               decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: Theme.of(context).cardColor,
                                   boxShadow: [
                                     BoxShadow(
-                                        color: Colors.grey.shade200,
+                                        color: Colors.grey.withOpacity(0.2),
                                         spreadRadius: 2,
                                         blurRadius: 1)
                                   ],
@@ -843,7 +863,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD03,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.w500),
                                   ),
 
@@ -871,7 +894,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             size: size,
                                             fontSize: size.width *
                                                 AppDimensions.numD024,
-                                            color: Colors.black,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color,
                                             fontWeight: FontWeight.normal),
                                       ),
                                       SizedBox(
@@ -896,7 +922,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             size: size,
                                             fontSize: size.width *
                                                 AppDimensions.numD024,
-                                            color: Colors.black,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color,
                                             fontWeight: FontWeight.normal),
                                       ),
                                     ],
@@ -928,10 +957,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                   AppDimensions.numD025,
                                               color: _parseColor(
                                                   item.statusColor,
-                                                  defaultColor: (item.taskDetail
-                                                              ?.deadLine
-                                                              .isBefore(DateTime
-                                                                  .now()) ??
+                                                  defaultColor: (item.taskDetail?.deadLine.isBefore(
+                                                              DateTime.now()) ??
                                                           false)
                                                       ? Colors.grey
                                                       : (item.status ==
@@ -940,7 +967,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                                   "completed")
                                                           ? AppColorTheme
                                                               .colorThemePink
-                                                          : Colors.black),
+                                                          : Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyLarge
+                                                                  ?.color ??
+                                                              Colors.black),
                                               fontWeight: FontWeight.normal)),
                                       item.status == "accepted"
                                           ? Container(
@@ -994,7 +1025,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                   vertical: size.width *
                                                       AppDimensions.numD01),
                                               decoration: BoxDecoration(
-                                                  color: Colors.black,
+                                                  color: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyLarge
+                                                          ?.color ??
+                                                      Colors.black,
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           size.width *
@@ -1132,7 +1167,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                               right: size.width * AppDimensions.numD03,
                               top: size.width * AppDimensions.numD03),
                           decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: Theme.of(context).cardColor,
                               boxShadow: [
                                 BoxShadow(
                                     color: Colors.grey.shade200,
@@ -1203,7 +1238,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                 style: commonTextStyle(
                                     size: size,
                                     fontSize: size.width * AppDimensions.numD03,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color ??
+                                        Colors.black,
                                     fontWeight: FontWeight.w500),
                               ),
 
@@ -1230,7 +1269,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD024,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color ??
+                                            Colors.black,
                                         fontWeight: FontWeight.normal),
                                   ),
                                   SizedBox(
@@ -1253,7 +1296,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD024,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color ??
+                                            Colors.black,
                                         fontWeight: FontWeight.normal),
                                   ),
                                 ],
@@ -1375,7 +1422,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                   ? item.isAvailableForAccept
                                                       ? item.status ==
                                                               "rejected"
-                                                          ? Colors.black
+                                                          ? Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyLarge
+                                                                  ?.color ??
+                                                              Colors.black
                                                           : AppColorTheme
                                                               .colorThemePink
                                                       : Colors.black
@@ -1425,7 +1476,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   //                 AppDimensions.numD01),
                                   //         alignment: Alignment.center,
                                   //         decoration: BoxDecoration(
-                                  //             color: Colors.black,
+                                  //             color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
                                   //             borderRadius:
                                   //                 BorderRadius.circular(size
                                   //                         .width *
@@ -1436,7 +1487,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   //               size: size,
                                   //               fontSize: size.width *
                                   //                   AppDimensions.numD025,
-                                  //               color: Colors.white,
+                                  //               color: Theme.of(context).cardColor,
                                   //               fontWeight: FontWeight.w600),
                                   //         ),
                                   //       )
@@ -1480,7 +1531,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   //               size: size,
                                   //               fontSize: size.width *
                                   //                   AppDimensions.numD025,
-                                  //               color: Colors.white,
+                                  //               color: Theme.of(context).cardColor,
                                   //               fontWeight: FontWeight.w600),
                                   //         ),
                                   //       ),
@@ -1548,7 +1599,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                           },
                           icon: Icon(
                             Icons.close,
-                            color: Colors.black,
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color ??
+                                    Colors.black,
                             size: size.width * AppDimensions.numD07,
                           ),
                         ),
@@ -1558,7 +1611,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                               size: size,
                               fontSize: size.width *
                                   AppDimensions.appBarHeadingFontSizeNew,
-                              color: Colors.black,
+                              color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color ??
+                                  Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
                         TextButton(
@@ -1590,7 +1647,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                     //   style: commonTextStyle(
                     //       size: size,
                     //       fontSize: size.width * AppDimensions.numD05,
-                    //       color: Colors.black,
+                    //       color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
                     //       fontWeight: FontWeight.w500),
                     // ),
 
@@ -1607,7 +1664,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD05,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color ??
+                              Colors.black,
                           fontWeight: FontWeight.w500),
                     ),
 
@@ -1691,7 +1749,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
               children: [
                 Image.asset(
                   "$iconsPath${list[index].icon}",
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color ??
+                      Colors.black,
                   height: list[index].name == AppStrings.soldContentText
                       ? size.width * AppDimensions.numD06
                       : size.width * AppDimensions.numD05,
@@ -1744,15 +1803,23 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD032,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color ??
+                                            Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     width: size.width * AppDimensions.numD015,
                                   ),
-                                  const Icon(
+                                  Icon(
                                     Icons.arrow_drop_down_sharp,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color ??
+                                        Colors.black,
                                   )
                                 ],
                               ),
@@ -1815,15 +1882,23 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD032,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color ??
+                                            Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     width: size.width * AppDimensions.numD02,
                                   ),
-                                  const Icon(
+                                  Icon(
                                     Icons.arrow_drop_down_sharp,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color ??
+                                        Colors.black,
                                   )
                                 ],
                               ),
@@ -1834,7 +1909,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                     : Text(list[index].name,
                         style: TextStyle(
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color ??
+                                    Colors.black,
                             fontWeight: FontWeight.w400,
                             fontFamily: "AirbnbCereal_W_Bk"))
               ],

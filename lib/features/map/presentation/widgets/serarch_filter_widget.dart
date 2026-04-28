@@ -50,7 +50,7 @@ class SearchAndFilterBar extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: const Color(0xFFBDBDBD)),
                     boxShadow: [
@@ -182,7 +182,7 @@ class _FilterDropdown extends StatelessWidget {
       height: 34,
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey.shade400, width: 1.2),
         boxShadow: [

@@ -26,10 +26,10 @@ class ContentItemWidget extends StatelessWidget {
           top: size.width * AppDimensions.numD03,
         ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.shade200,
+              color: Colors.grey.withOpacity(0.2),
               spreadRadius: 2,
               blurRadius: 1,
             ),
@@ -42,9 +42,9 @@ class ContentItemWidget extends StatelessWidget {
           children: [
             MediaThumbnailWidget(item: item, size: size),
             SizedBox(height: size.width * AppDimensions.numD02),
-            _buildInfoRow(),
+            _buildInfoRow(context),
             const Spacer(),
-            _buildStatusRow(),
+            _buildStatusRow(context),
             SizedBox(height: size.width * AppDimensions.numD02),
           ],
         ),
@@ -52,7 +52,7 @@ class ContentItemWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow() {
+  Widget _buildInfoRow(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -67,7 +67,7 @@ class ContentItemWidget extends StatelessWidget {
             style: commonTextStyle(
               size: size,
               fontSize: size.width * AppDimensions.numD03,
-              color: Colors.black,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -86,10 +86,10 @@ class ContentItemWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusRow() {
+  Widget _buildStatusRow(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [_buildMetricsColumn(), _buildPriceBadge()],
+      children: [_buildMetricsColumn(), _buildPriceBadge(context)],
     );
   }
 
@@ -147,7 +147,7 @@ class ContentItemWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildPriceBadge() {
+  Widget _buildPriceBadge(BuildContext context) {
     bool isPendingOrRejected = item.status.toLowerCase() == "pending" ||
         item.status.toLowerCase() == "rejected";
 
@@ -208,7 +208,10 @@ class ContentItemWidget extends StatelessWidget {
               style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD022,
-                color: item.paidStatus == false ? Colors.white : Colors.black,
+                color: item.paidStatus == false
+                    ? Colors.white
+                    : (Theme.of(context).textTheme.bodyLarge?.color ??
+                        Colors.black),
                 fontWeight: FontWeight.w400,
               ),
             ),
@@ -219,7 +222,10 @@ class ContentItemWidget extends StatelessWidget {
             style: commonTextStyle(
               size: size,
               fontSize: size.width * AppDimensions.numD022,
-              color: item.paidStatus == false ? Colors.white : Colors.black,
+              color: item.paidStatus == false
+                  ? Colors.white
+                  : (Theme.of(context).textTheme.bodyLarge?.color ??
+                      Colors.black),
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -318,9 +324,8 @@ class MediaThumbnailWidget extends StatelessWidget {
       );
     }
 
-    final effectiveType = isAudio
-        ? 'audio'
-        : (isVideo ? 'video' : (item.mediaType ?? 'photo'));
+    final effectiveType =
+        isAudio ? 'audio' : (isVideo ? 'video' : (item.mediaType ?? 'photo'));
 
     return _showImage(effectiveType, item.mediaUrls.first);
   }

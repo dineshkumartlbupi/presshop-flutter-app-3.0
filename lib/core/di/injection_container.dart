@@ -37,6 +37,7 @@ import 'package:presshop/features/splash/data/repositories/splash_repository_imp
 import 'package:presshop/features/splash/domain/repositories/splash_repository.dart';
 import 'package:presshop/features/splash/domain/usecases/check_splash_version.dart';
 import 'package:presshop/features/chatbot/presentation/bloc/chatbot_bloc.dart';
+import 'package:presshop/core/theme/bloc/theme_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/notification/presentation/bloc/notification_bloc.dart';
 import 'package:presshop/features/notification/data/datasources/notification_remote_datasource.dart';
@@ -265,6 +266,7 @@ Future<void> init() async {
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
   sl.registerLazySingleton(() => ApiClient(sl(), sl(), sl()));
   sl.registerLazySingleton(() => LocationService());
+  sl.registerLazySingleton(() => ThemeBloc(sl()));
 
   //! Data Sources - Register first
   sl.registerLazySingleton<AuthRemoteDataSource>(

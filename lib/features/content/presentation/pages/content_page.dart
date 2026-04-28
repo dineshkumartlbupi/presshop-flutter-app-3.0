@@ -233,7 +233,7 @@ class MyContentViewState extends State<MyContentView>
     super.build(context);
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: NewHomeAppBar(
         size: size,
         hideLeading: widget.hideLeading,
@@ -298,8 +298,8 @@ class MyContentViewState extends State<MyContentView>
                 controller: _tabController,
                 physics: const NeverScrollableScrollPhysics(),
                 labelColor: Colors.white,
-                dividerColor: AppColorTheme.colorThemePink,
-                unselectedLabelColor: Colors.black,
+                dividerColor: Colors.transparent,
+                unselectedLabelColor: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
                 indicator: BoxDecoration(
                   color: AppColorTheme.colorThemePink,
                   borderRadius:
@@ -308,7 +308,13 @@ class MyContentViewState extends State<MyContentView>
                 labelStyle: commonTextStyle(
                   size: size,
                   fontSize: size.width * AppDimensions.numD038,
-                  color: Colors.black,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+                unselectedLabelStyle: commonTextStyle(
+                  size: size,
+                  fontSize: size.width * AppDimensions.numD038,
+                  color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
                 tabs: [

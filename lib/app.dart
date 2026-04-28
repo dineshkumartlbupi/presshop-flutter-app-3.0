@@ -15,6 +15,8 @@ import 'package:presshop/features/earning/presentation/bloc/earning_bloc.dart';
 import 'package:presshop/features/content/presentation/bloc/content_bloc.dart';
 import 'package:presshop/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:presshop/core/router/app_router.dart';
+import 'package:presshop/core/theme/app_themes.dart';
+import 'package:presshop/core/theme/bloc/theme_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class MyApp extends StatelessWidget {
@@ -29,28 +31,31 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => sl<ContentBloc>()),
         BlocProvider(create: (_) => sl<AuthBloc>()),
         BlocProvider(create: (_) => sl<DashboardBloc>()),
+        BlocProvider(create: (_) => sl<ThemeBloc>()..add(LoadThemeEvent())),
       ],
-      child: MaterialApp.router(
-        routerConfig: AppRouter.router,
-        builder: (context, child) {
-          return ForceUpdateWidget(
-            navigatorKey: navigatorKey,
-            forceUpdateClient: ForceUpdateClient(
-              fetchRequiredVersion: _fetchRequiredVersion,
-              iosAppStoreId: '6744651614',
-            ),
-            allowCancel: false,
-            showForceUpdateAlert: ForceUpdateService.showForceUpdateDialog,
-            showStoreListing: (storeUrl) async {},
-            child: ConnectivityWrapper(child: child ?? const SizedBox()),
+      child: BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, themeState) {
+          return MaterialApp.router(
+            routerConfig: AppRouter.router,
+            themeMode: themeState.themeMode,
+            theme: AppThemes.lightTheme,
+            darkTheme: AppThemes.darkTheme,
+            builder: (context, child) {
+              return ForceUpdateWidget(
+                navigatorKey: navigatorKey,
+                forceUpdateClient: ForceUpdateClient(
+                  fetchRequiredVersion: _fetchRequiredVersion,
+                  iosAppStoreId: '6744651614',
+                ),
+                allowCancel: false,
+                showForceUpdateAlert: ForceUpdateService.showForceUpdateDialog,
+                showStoreListing: (storeUrl) async {},
+                child: ConnectivityWrapper(child: child ?? const SizedBox()),
+              );
+            },
+            debugShowCheckedModeBanner: false,
           );
         },
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          fontFamily: "AirbnbCereal",
-          scaffoldBackgroundColor: Colors.white,
-          useMaterial3: false,
-        ),
       ),
     );
   }
