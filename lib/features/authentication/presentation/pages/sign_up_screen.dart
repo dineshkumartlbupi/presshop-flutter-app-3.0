@@ -200,7 +200,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
     return BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthAuthenticated) {
-            context.goNamed(AppRoutes.permissionName);
+            context.goNamed(AppRoutes.dashboardName);
           } else if (state is AuthSocialSignUpRequired) {
             setState(() {
               widget.socialLogin = true;
@@ -240,7 +240,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                 'emailAddressValue': emailController.text.trim(),
               });
             } else if (state is SignUpSuccess) {
-              context.goNamed(AppRoutes.permissionName);
+              context.goNamed(AppRoutes.dashboardName);
             } else if (state is AvatarsLoading) {
               _avatarsNotifier.value = true;
             } else if (state is AvatarsLoaded) {

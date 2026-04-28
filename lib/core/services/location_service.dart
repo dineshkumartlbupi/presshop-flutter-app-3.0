@@ -53,13 +53,8 @@ class LocationService {
       if (status.isGranted) {
         AppLogger.info("Permission ${permission.toString()} granted");
         return true;
-      } else if (status.isDenied) {
-        AppLogger.warning("Permission ${permission.toString()} denied");
-        return false;
-      } else if (status.isPermanentlyDenied) {
-        AppLogger.error(
-            "Permission ${permission.toString()} permanently denied",
-            trackAnalytics: true);
+      } else if (status.isDenied || status.isPermanentlyDenied) {
+        AppLogger.warning("Permission ${permission.toString()} denied or permanently denied");
         if (_lastSettingsOpen == null ||
             DateTime.now().difference(_lastSettingsOpen!) >
                 const Duration(seconds: 2)) {

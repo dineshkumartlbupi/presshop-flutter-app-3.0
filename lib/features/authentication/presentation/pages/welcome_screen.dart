@@ -231,8 +231,7 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
                     //   firstName: sharedPreferences!.getString(firstNameKey),
                     //   lastName: sharedPreferences!.getString(lastNameKey),
                     // );
-                    // );
-                    context.goNamed(AppRoutes.permissionName, extra: {
+                    context.goNamed(AppRoutes.dashboardName, extra: {
                       'initialPosition': 2,
                       'sourceDataIsOpened': widget.sourceDataIsOpened,
                       'sourceDataType': widget.sourceDataType,

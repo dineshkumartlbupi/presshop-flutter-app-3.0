@@ -737,9 +737,9 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
     if (source.containsKey('bank_detail_missing') &&
         source['bank_detail_missing'] == true) {
       // Handle logic if needed, or simply navigate
-      context.goNamed(AppRoutes.permissionName);
+      context.goNamed(AppRoutes.dashboardName);
     } else {
-      context.goNamed(AppRoutes.permissionName);
+      context.goNamed(AppRoutes.dashboardName);
     }
   }
 
