@@ -226,7 +226,32 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     Emitter<MapState> emit,
   ) async {
     try {
-      final incident = Incident.fromJson(event.data);
+      final newIncident = Incident.fromJson(event.data);
+
+      // Merge with existing data to preserve fields like username/avatar not present in socket update
+      final existingIndex =
+          state.newsList.indexWhere((i) => i.id == newIncident.id);
+      Incident incident;
+
+      if (existingIndex != -1) {
+        final existing = state.newsList[existingIndex];
+        incident = newIncident.copyWith(
+          username: (newIncident.username == null ||
+                  newIncident.username == "Anonymous")
+              ? existing.username
+              : newIncident.username,
+          avatar: (newIncident.avatar == null || newIncident.avatar!.isEmpty)
+              ? existing.avatar
+              : newIncident.avatar,
+          address: newIncident.address ?? existing.address,
+          title: newIncident.title ?? existing.title,
+          description: newIncident.description ?? existing.description,
+          time: newIncident.time ?? existing.time,
+        );
+      } else {
+        incident = newIncident;
+      }
+
       final markerId = _getMarkerId(incident);
 
       BitmapDescriptor icon;
