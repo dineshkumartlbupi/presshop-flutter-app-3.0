@@ -96,7 +96,7 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
     bool showDone = selectedList.any((element) => element);
     return WillPopScope(
       onWillPop: () async {
-        context.goNamed(AppRoutes.dashboardName, extra: {'initialPosition': 2});
+        context.pop();
 
         return false;
       },
@@ -116,8 +116,7 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
             size: size,
             showActions: showDone,
             leadingFxn: () {
-              context.goNamed(AppRoutes.dashboardName,
-                  extra: {'initialPosition': 2});
+              context.pop();
             },
             actionWidget: [
               !isSelectedImageProcessing

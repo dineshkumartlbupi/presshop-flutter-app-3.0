@@ -1017,6 +1017,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       // showSnackBar(
       //     "Permission Denied", "Please Allow Location permission", Colors.red);
     }
+    ;
   }
 
   Future<void> openUrl() async {
