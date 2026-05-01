@@ -16,7 +16,6 @@ import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/utils/current_user.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-
   AuthBloc({
     required this.loginUser,
     required this.socialLoginUser,
@@ -56,26 +55,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SocialLoginRequested>((event, emit) async {
       emit(AuthLoading());
 
-      debugPrint("DEBUG: [AuthBloc] SocialLoginRequested for email: ${event.email}");
+      debugPrint(
+          "🚀 [AuthBloc] SocialLoginRequested for email: ${event.email}");
 
-      // STEP 1: Check if user exists by email first (Very reliable for new users)
-      final checkResult = await checkEmail(event.email);
-      
-      bool isNewUser = false;
-      checkResult.fold(
-        (failure) {
-          debugPrint("DEBUG: [AuthBloc] checkEmail failed: ${failure.message}. Proceeding to socialLogin as fallback.");
-        },
-        (isAvailable) {
-          if (isAvailable) {
+      // STEP 1: Check if user exists by email (The primary check)
+      bool isExistingUser = false;
+
+      if (event.email.isNotEmpty) {
+        final checkResult = await checkEmail(event.email);
+        checkResult.fold(
+          (failure) {
+            debugPrint(
+                "⚠️ [AuthBloc] checkEmail API failed: ${failure.message}. Fallback to socialLogin.");
+          },
+          (isAvailable) {
             // isAvailable == true means email is NOT in DB -> New User
-            isNewUser = true;
-          }
-        },
-      );
+            // isAvailable == false means email IS in DB -> Existing User
+            isExistingUser = !isAvailable;
+            debugPrint(
+                "🔍 [AuthBloc] CheckEmail Result: ${isExistingUser ? 'EXISTS' : 'NEW USER'}");
+          },
+        );
+      }
 
-      if (isNewUser) {
-        debugPrint("DEBUG: [AuthBloc] New user confirmed by email check. Redirecting to SocialSignUp.");
+      // STEP 2: Branch based on existence
+      if (!isExistingUser) {
+        debugPrint(
+            "➡️ [AuthBloc] Emitting AuthSocialSignUpRequired for New User");
         emit(AuthSocialSignUpRequired(
           socialType: event.socialType,
           socialId: event.socialId,
@@ -86,7 +92,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         return;
       }
 
-      // STEP 2: Proceed with social login for existing (or potentially existing) users
+      // STEP 3: Proceed with social login for existing users
+      debugPrint("➡️ [AuthBloc] Proceeding with socialLogin for Existing User");
       final result = await socialLoginUser(SocialLoginParams(
         socialType: event.socialType,
         socialId: event.socialId,
@@ -98,7 +105,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       result.fold(
         (failure) {
           if (failure is UserNotRegisteredFailure) {
-            debugPrint("DEBUG: [AuthBloc] Social login confirmed registration required.");
+            debugPrint(
+                "⚠️ [AuthBloc] socialLogin failed (UserNotRegistered). Redirecting to SignUp.");
             emit(AuthSocialSignUpRequired(
               socialType: event.socialType,
               socialId: event.socialId,
@@ -107,21 +115,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               photoUrl: event.photoUrl,
             ));
           } else {
-            debugPrint("DEBUG: [AuthBloc] Social login failed with error: ${failure.message}");
+            debugPrint("❌ [AuthBloc] socialLogin Error: ${failure.message}");
             emit(AuthError(message: failure.message));
           }
         },
         (user) {
-          debugPrint("DEBUG: [AuthBloc] Social login success for user: ${user.id}");
+          debugPrint("✅ [AuthBloc] socialLogin Success for: ${user.email}");
           AppLogger.setUserIdentity(
             userId: user.id,
             email: user.email,
             name: "${user.firstName} ${user.lastName}",
           );
-          AppLogger.trackEvent(EventNames.userLogin, parameters: {
-            'method': event.socialType,
-            'user_id': user.id,
-          });
           CurrentUser.user = user;
           emit(AuthAuthenticated(user: user));
         },

@@ -141,12 +141,8 @@ class _SocialSignUpState extends State<SocialSignUp>
     super.initState();
     if (widget.socialLogin) {
       emailController.text = widget.email;
-      if (widget.name.isNotEmpty) {
-        // Pre-fill username with a sanitized version to satisfy logic
-        String sanitized = widget.name.toLowerCase().replaceAll(' ', '');
-        if (sanitized.length > 10) sanitized = sanitized.substring(0, 10);
-        userNameController.text = sanitized;
-      }
+      // Removed auto-fill of username with name/email as requested.
+      userNameController.text = ""; 
     }
     // WidgetsBinding.instance.addPostFrameCallback((_) => getAvatarsApi());
   }
@@ -944,6 +940,16 @@ class _SocialSignUpState extends State<SocialSignUp>
       );
     }
 
+    // NEW: Check if username contains email sequence
+    String emailLocalPart = widget.email.split('@')[0].toLowerCase();
+    List<String> emailSubstrings = generateSubstrings(emailLocalPart);
+    if (containsAnySubstring(username, emailSubstrings)) {
+      return const Icon(
+        Icons.highlight_remove,
+        color: Colors.red,
+      );
+    }
+
     return const Icon(
       Icons.check_circle,
       color: Colors.green,
@@ -1011,6 +1017,13 @@ class _SocialSignUpState extends State<SocialSignUp>
     if (lastName.isNotEmpty &&
         containsAnySubstring(username, lastNameSubstrings)) {
       return "Your username cannot contain any sequence from your last name.";
+    }
+
+    // NEW: Check if username contains email sequence
+    String emailLocalPart = widget.email.split('@')[0].toLowerCase();
+    List<String> emailSubstrings = generateSubstrings(emailLocalPart);
+    if (containsAnySubstring(username, emailSubstrings)) {
+      return "Your username cannot contain any sequence from your email address.";
     }
 
     if (value.length < 4) {

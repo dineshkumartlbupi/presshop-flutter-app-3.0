@@ -95,11 +95,11 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
               context.pop();
             });
           } else if (state is AuthAuthenticated) {
-            debugPrint("DEBUG: Login success, navigating to dashboard");
+            debugPrint("🏁 [LoginScreen] AuthAuthenticated received. Navigating to Dashboard.");
             _handleLoginSuccess(state.user.source ?? {});
           } else if (state is AuthSocialSignUpRequired) {
-            debugPrint("DEBUG: [LoginScreen] Social signup required state detected.");
-            debugPrint("DEBUG: [LoginScreen] Navigating to SocialSignUp with name: ${state.name}, email: ${state.email}");
+            debugPrint("🏁 [LoginScreen] AuthSocialSignUpRequired received.");
+            debugPrint("📧 Email: ${state.email} | Name: ${state.name}");
             
             context.pushNamed(
               AppRoutes.socialSignUpName,
@@ -415,8 +415,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                               borderRadius: BorderRadius.circular(
                                   size.width * AppDimensions.numD04),
                               onTap: () async {
-                                await googleSignIn.signOut();
-                                googleLogin(context);
+                                await googleLogin(context);
                               },
                               child: Container(
                                 width: size.width,
@@ -534,14 +533,16 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
 
   Future<void> googleLogin(BuildContext context) async {
     try {
-      // Always start clean
+      debugPrint("🚀 LoginScreen: Starting Google Sign-In...");
+
+      // Always start clean to force account selection
       await googleSignIn.signOut();
 
       // STEP 1: Google Sign-In UI
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
       if (googleUser == null) {
-        debugPrint("❌ Google Sign-In cancelled by user");
+        debugPrint("❌ LoginScreen: Google Sign-In cancelled by user");
         return;
       }
 
@@ -559,7 +560,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
         accessToken: googleAuth.accessToken,
       );
 
-      // STEP 4: Firebase sign-in (THIS WAS MISSING ❌)
+      // STEP 4: Firebase sign-in
       final UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
 
@@ -576,13 +577,12 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
           user.displayName ?? googleUser.displayName ?? "";
       final String socialProfileImage = user.photoURL ?? "";
 
-      debugPrint("✅ Google Firebase UID: $socialId");
-      debugPrint("Email: $socialEmail");
-      debugPrint("Name: $socialName");
+      debugPrint("✅ LoginScreen: Google Firebase Login Success");
+      debugPrint("📧 Email: $socialEmail | UID: $socialId");
 
-      // STEP 6: Call your backend via BLoC
       if (!mounted) return;
 
+      // STEP 6: Call AuthBloc - The Bloc handles the Check-If-Exists logic
       context.read<AuthBloc>().add(
             SocialLoginRequested(
               socialType: "google",
@@ -593,14 +593,15 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
             ),
           );
     } catch (e, s) {
-      debugPrint("❌ Google Login Error: $e");
+      debugPrint("❌ LoginScreen: Google Login Error: $e");
       debugPrintStack(stackTrace: s);
 
-      // showSnackBar(
-      //   "Google Sign-In Failed",
-      //   e.toString(),
-      //   Colors.red,
-      // );
+      if (mounted) {
+        // Optionally show an error if sign-in fails before reaching the Bloc
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Google Sign-In failed: $e")),
+        );
+      }
     }
   }
 
