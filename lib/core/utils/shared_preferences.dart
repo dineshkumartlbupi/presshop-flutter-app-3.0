@@ -86,6 +86,7 @@ class SharedPreferencesKeys {
   static const isTaskGrabbingActiveKey = "is_task_grabbing_active";
   static const alertInfoPopupShownKey = "alert_info_popup_shown";
   static const isLocationPopupEnabledKey = "is_location_popup_enabled";
+  static const permissionsAskedKey = "permissions_asked";
 
   // Caching Keys
   static const tutorialCategoriesCacheKey = "tutorial_categories_cache";

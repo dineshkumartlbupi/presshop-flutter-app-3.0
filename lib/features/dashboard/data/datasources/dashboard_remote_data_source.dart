@@ -67,7 +67,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
 
   @override
   Future<void> addDevice(Map<String, dynamic> params) async {
-    debugPrint("🚀 Add Device API Request Body: $params");
+    //debugPrint("🚀 Add Device API Request Body: $params");
     try {
       final response = await apiClient.post(ApiConstantsNew.profile.addDevice,
           data: params, showLoader: false);

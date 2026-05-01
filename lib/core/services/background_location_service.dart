@@ -44,8 +44,7 @@ void onStart(ServiceInstance service) async {
     initializationSettings,
     onDidReceiveBackgroundNotificationResponse:
         internalNotificationTapBackground,
-    onDidReceiveNotificationResponse:
-        (notificationResponse) async {
+    onDidReceiveNotificationResponse: (notificationResponse) async {
       // Forward foreground taps to the same handler
       internalNotificationTapBackground(notificationResponse);
     },
@@ -304,7 +303,8 @@ Future<LocationSettings> _buildLocationSettings(SharedPreferences prefs) async {
       accuracy: LocationAccuracy.high,
       activityType: ActivityType.other,
       distanceFilter: distanceFilter.toInt(),
-      pauseLocationUpdatesAutomatically: true, // Allow iOS to pause when stationary
+      pauseLocationUpdatesAutomatically:
+          true, // Allow iOS to pause when stationary
       showBackgroundLocationIndicator: true,
     );
   }
@@ -403,7 +403,8 @@ class BackgroundLocationService {
 
     if (showPrePermissionDialog && context != null) {
       if (_isDialogShowing) {
-        debugPrint("DEBUG: Location dialog already showing, skipping duplicate.");
+        debugPrint(
+            "DEBUG: Location dialog already showing, skipping duplicate.");
         return false;
       }
       _isDialogShowing = true;

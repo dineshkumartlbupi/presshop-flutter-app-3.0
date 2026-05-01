@@ -116,8 +116,8 @@ class DashboardPageState extends State<Dashboard>
   late List<Widget> bottomNavigationScreens;
   final Set<int> _loadedIndices = {};
   DateTime? _lastLocationUpdateTime;
-
   late AppLinks linkStream;
+  bool _isDeniedInSession = false;
 
   @override
   String get pageName => PageNames.dashboard;
@@ -136,15 +136,13 @@ class DashboardPageState extends State<Dashboard>
     debugPrint(
         "🚀 Dashboard: Initializing with position ${widget.initialPosition}");
     GlobalLoader.forceHide();
-
-    // Future.delayed(const Duration(seconds: 1), () {
-    //   if (mounted) _handlePermissionSequence();
-    // });
-    _handlePermissionSequence();
+    _locationService = sl<LocationService>();
     _dashboardBloc = context.read<DashboardBloc>();
     currentIndex = widget.initialPosition;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _handlePermissionSequence(forceRequest: true);
+    });
     myProfileApi();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkUpdateAndShowPopup();
     });
@@ -152,7 +150,6 @@ class DashboardPageState extends State<Dashboard>
     _updateBottomNavigationScreens();
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-    _locationService = sl<LocationService>();
 
     _dashboardBloc.add(CheckAppVersionEvent());
 
@@ -164,7 +161,7 @@ class DashboardPageState extends State<Dashboard>
 
     _dashboardBloc.add(FetchRoomIdEvent(roomParams));
 
-    _loadedIndices.add(widget.initialPosition); // Only load the starting tab
+    _loadedIndices.add(widget.initialPosition);
 
     if (widget.taskStatus != 'rejected') {
       if (widget.broadCastId != null) {
@@ -229,11 +226,20 @@ class DashboardPageState extends State<Dashboard>
       });
       // Handle camera initialization if switching to camera tab
       if (currentIndex == 2) {
-        _handlePermissionSequence();
+        // _handlePermissionSequence();
         _cameraKey.currentState?.resumeCamera();
       }
       // Reset isClick to prevent continuous snapping back
       widget.isClick = false;
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      debugPrint("🚀 Dashboard: App resumed, re-checking permissions...");
+      _handlePermissionSequence(forceRequest: false);
     }
   }
 
@@ -255,6 +261,7 @@ class DashboardPageState extends State<Dashboard>
         key: _cameraKey,
         picAgain: false,
         previousScreen: ScreenNameEnum.dashboardScreen,
+        autoInitialize: false,
       ),
       // BlocProvider(
       //   create: (context) => sl<NewsBloc>()..add(const GetAllNewsEvent()),
@@ -414,7 +421,7 @@ class DashboardPageState extends State<Dashboard>
       });
     } else if (state is DashboardRoomIdLoaded) {
       var data = state.roomData;
-      debugPrint("📦 Dashboard Received Room Data: $data");
+      // debugPrint("📦 Dashboard Received Room Data: $data");
 
       String roomId = "";
       if (data.containsKey("_id")) {
@@ -426,7 +433,7 @@ class DashboardPageState extends State<Dashboard>
       if (roomId.isNotEmpty) {
         sharedPreferences!
             .setString(SharedPreferencesKeys.adminRoomIdKey, roomId);
-        debugPrint("✅ Room Id Saved: $roomId");
+        // debugPrint("✅ Room Id Saved: $roomId");
       } else {
         debugPrint("❌ Room Id NOT found in response");
       }
@@ -616,7 +623,7 @@ class DashboardPageState extends State<Dashboard>
   Future<void> getFcmToken() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     fcmToken = await FirebaseMessaging.instance.getToken() ?? "";
-    debugPrint("FCM Token:::: $fcmToken");
+    // debugPrint("FCM Token:::: $fcmToken");
 
     if (Platform.isAndroid) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
@@ -693,16 +700,17 @@ class DashboardPageState extends State<Dashboard>
       'tab_name': _getTabName(index),
     });
 
-    if (index == 2) {
-      _handlePermissionSequence();
-    } else {
-      updateLocationData();
-    }
-
     setState(() {
       currentIndex = index;
       _loadedIndices.add(currentIndex);
     });
+
+    // Always check permissions on tab switch to ensure immediate enforcement
+    _handlePermissionSequence(forceRequest: true);
+
+    if (currentIndex != 2 && currentIndex != 3) {
+      updateLocationData();
+    }
   }
 
   void _launchStudentBeansUrl(String url) async {
@@ -775,56 +783,122 @@ class DashboardPageState extends State<Dashboard>
     _dashboardBloc.add(FetchActiveAdmins());
   }
 
-  Future<void> _handlePermissionSequence() async {
-    debugPrint("Starting Comprehensive Permission Sequence...");
-
-    bool allGranted = true;
-
-    List<Permission> requiredPermissions = [
-      Permission.camera,
-      Permission.microphone,
-      Permission.location,
-    ];
-
-    if (Platform.isAndroid) {
-      requiredPermissions.add(Permission.notification);
-    }
-
-    Map<Permission, bool> permissionsStatus = {};
-
-    for (var permission in requiredPermissions) {
-      var status = await permission.status;
-      if (!status.isGranted) {
-        status = await permission.request();
-      }
-      permissionsStatus[permission] = status.isGranted;
-      if (status.isDenied || status.isPermanentlyDenied) {
-        allGranted = false;
-      }
-    }
-
-    if (!allGranted) {
-      if (mounted) {
-        context.pushNamed(
-          AppRoutes.permissionErrorName,
-          extra: {'permissionsStatus': permissionsStatus},
-        );
-      }
+  bool _isPermissionSequenceRunning = false;
+  Future<void> _handlePermissionSequence({bool forceRequest = true}) async {
+    if (_isPermissionSequenceRunning) {
+      debugPrint(
+          "🚀 Dashboard: Permission sequence already running, skipping...");
       return;
     }
+    _isPermissionSequenceRunning = true;
 
-    forceUpdateCheck();
+    try {
+      // Settle delay to ensure UI is visible before popups
+      await Future.delayed(const Duration(milliseconds: 800));
+      if (!mounted) return;
 
-    // Resume camera if we are on camera tab
-    if (currentIndex == 2) {
-      if (mounted) {
-        final delay = Platform.isIOS ? 1200 : 500;
-        await Future.delayed(Duration(milliseconds: delay));
-        if (_cameraKey.currentState != null) {
-          debugPrint("Resuming Camera after permissions...");
-          _cameraKey.currentState!.resumeCamera();
+      Map<Permission, bool> statusMap = {};
+      List<Permission> mandatoryPermissions = [
+        Permission.camera,
+        Permission.microphone,
+        Permission.location,
+        Permission.notification,
+      ];
+
+      // Request each mandatory permission in sequence
+      for (var p in mandatoryPermissions) {
+        debugPrint("🚀 Dashboard: Processing mandatory permission $p...");
+
+        final statusBefore = await p.status;
+        final stopwatch = Stopwatch()..start();
+
+        // Only request if forceRequest is true or if not already granted
+        bool result = false;
+        if (forceRequest || statusBefore != PermissionStatus.granted) {
+          result = await _locationService.requestPermission(p, showUI: false);
+        } else {
+          result = true;
+        }
+        
+        stopwatch.stop();
+        
+        // Give the OS a tiny moment to update status internally
+        await Future.delayed(const Duration(milliseconds: 100));
+        final statusAfter = await p.status;
+
+        debugPrint("🚀 Dashboard: $p | Before: $statusBefore | After: $statusAfter | Time: ${stopwatch.elapsedMilliseconds}ms");
+
+        // If granted, continue to next
+        if (result) {
+          statusMap[p] = true;
+          continue;
+        }
+
+        // If NOT granted, determine if we should redirect
+        statusMap[p] = false;
+
+        // REDIRECT LOGIC (Mirroring demo_presshop_project):
+        // 1. dialogWasShownAndDenied: If it was denied before and is still not granted after a request that took time.
+        bool dialogWasShownAndDenied =
+            (statusBefore == PermissionStatus.denied &&
+                statusAfter != PermissionStatus.granted &&
+                stopwatch.elapsedMilliseconds > 200);
+        
+        if (dialogWasShownAndDenied) {
+           debugPrint("🚀 Dashboard: User explicitly clicked 'Don't Allow' for $p");
+           _isDeniedInSession = true;
+        }
+
+        bool isPermanentlyDenied = statusAfter.isPermanentlyDenied;
+        bool isSensitiveTab = (currentIndex == 2 || currentIndex == 3);
+
+        if (mounted &&
+            (_isDeniedInSession || isPermanentlyDenied || isSensitiveTab)) {
+          debugPrint(
+              "🚀 Dashboard: Redirecting to Error Screen. Reason: SessionDenied=$_isDeniedInSession, Permanent=$isPermanentlyDenied, Sensitive=$isSensitiveTab");
+
+          // Populate the rest of the map for the error screen
+          for (var otherP in mandatoryPermissions) {
+            if (statusMap[otherP] == null) {
+              statusMap[otherP] = await otherP.isGranted;
+            }
+          }
+
+          context.goNamed(
+            AppRoutes.permissionErrorName,
+            extra: {'permissionsStatus': statusMap},
+          );
+          return; // Exit sequence immediately
+        } else {
+          debugPrint(
+              "🚀 Dashboard: Permission $p not granted, but staying on dashboard (Non-sensitive tab & not yet explicitly denied in session).");
         }
       }
+
+      // Non-mandatory but requested permissions
+      await _locationService.requestPermission(Permission.notification,
+          showUI: false);
+
+      if (Platform.isAndroid) {
+        DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        if (androidInfo.version.sdkInt < 33) {
+          await _locationService.requestPermission(Permission.storage,
+              showUI: false);
+        }
+      } else {
+        await _locationService.requestPermission(Permission.storage,
+            showUI: false);
+      }
+
+      debugPrint("🚀 Dashboard: Permission sequence completed successfully.");
+
+      // Resume camera if needed
+      if (currentIndex == 2 && mounted) {
+        _cameraKey.currentState?.resumeCamera();
+      }
+    } finally {
+      _isPermissionSequenceRunning = false;
     }
   }
 }

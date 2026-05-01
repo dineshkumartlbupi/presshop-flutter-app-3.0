@@ -56,25 +56,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SocialLoginRequested>((event, emit) async {
       emit(AuthLoading());
 
-      // STEP 1: Search for user by email first
-      final checkResult = await checkEmail(event.email);
+      debugPrint("DEBUG: [AuthBloc] SocialLoginRequested for email: ${event.email}");
 
+      // STEP 1: Check if user exists by email first (Very reliable for new users)
+      final checkResult = await checkEmail(event.email);
+      
       bool isNewUser = false;
       checkResult.fold(
         (failure) {
-          // If check fails, we proceed with socialLogin anyway as fallback
-          AppLogger.error("Check email failed: ${failure.message}");
+          debugPrint("DEBUG: [AuthBloc] checkEmail failed: ${failure.message}. Proceeding to socialLogin as fallback.");
         },
         (isAvailable) {
           if (isAvailable) {
-            // isAvailable == true means user DOES NOT exist in DB
+            // isAvailable == true means email is NOT in DB -> New User
             isNewUser = true;
           }
         },
       );
 
       if (isNewUser) {
-        debugPrint("DEBUG: [AuthBloc] New user detected by email search. Redirecting to SocialSignUp.");
+        debugPrint("DEBUG: [AuthBloc] New user confirmed by email check. Redirecting to SocialSignUp.");
         emit(AuthSocialSignUpRequired(
           socialType: event.socialType,
           socialId: event.socialId,
@@ -82,10 +83,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           name: event.name,
           photoUrl: event.photoUrl,
         ));
-        return; // Stop here for new users
+        return;
       }
 
-      // STEP 2: Proceed with social login for existing users
+      // STEP 2: Proceed with social login for existing (or potentially existing) users
       final result = await socialLoginUser(SocialLoginParams(
         socialType: event.socialType,
         socialId: event.socialId,
@@ -93,10 +94,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         name: event.name,
         photoUrl: event.photoUrl,
       ));
+
       result.fold(
         (failure) {
           if (failure is UserNotRegisteredFailure) {
-            AppLogger.info("Social login - registration required");
+            debugPrint("DEBUG: [AuthBloc] Social login confirmed registration required.");
             emit(AuthSocialSignUpRequired(
               socialType: event.socialType,
               socialId: event.socialId,
@@ -105,12 +107,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               photoUrl: event.photoUrl,
             ));
           } else {
-            AppLogger.error("Social login failed: ${failure.message}",
-                trackAnalytics: true);
+            debugPrint("DEBUG: [AuthBloc] Social login failed with error: ${failure.message}");
             emit(AuthError(message: failure.message));
           }
         },
         (user) {
+          debugPrint("DEBUG: [AuthBloc] Social login success for user: ${user.id}");
           AppLogger.setUserIdentity(
             userId: user.id,
             email: user.email,

@@ -73,7 +73,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
               title: Text(
                 AppStrings.myDraftText,
                 style: TextStyle(
-                    color: Colors.black,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                     fontWeight: FontWeight.bold,
                     fontSize: size.width * AppDimensions.appBarHeadingFontSize),
               ),
@@ -89,7 +89,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                     onTap: () {
                       showBottomSheet(size);
                     },
-                    child: commonFilterIcon(size)),
+                    child: commonFilterIcon(context, size)),
                 SizedBox(
                   width: size.width * AppDimensions.numD02,
                 ),
@@ -105,8 +105,9 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                     },
                     child: Image.asset(
                       "${commonImagePath}rabbitLogo.png",
-                      height: size.width * AppDimensions.numD07,
-                      width: size.width * AppDimensions.numD07,
+                      height: size.width * AppDimensions.numD095,
+                      width: size.width * AppDimensions.numD095,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
                 ),
@@ -198,7 +199,10 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                                               size: size,
                                               fontSize: size.width *
                                                   AppDimensions.numD035,
-                                              color: Colors.black,
+                                              color: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.color,
                                               fontWeight: FontWeight.normal),
                                         )
                                       ],
@@ -501,7 +505,9 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                           },
                           icon: Icon(
                             Icons.close,
-                            color: Colors.black,
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color ??
+                                    Colors.black,
                             size: size.width * AppDimensions.numD07,
                           ),
                         ),
@@ -511,7 +517,11 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                               size: size,
                               fontSize: size.width *
                                   AppDimensions.appBarHeadingFontSizeNew,
-                              color: Colors.black,
+                              color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color ??
+                                  Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
                         TextButton(

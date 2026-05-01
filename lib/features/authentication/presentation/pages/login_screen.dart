@@ -98,10 +98,11 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
             debugPrint("DEBUG: Login success, navigating to dashboard");
             _handleLoginSuccess(state.user.source ?? {});
           } else if (state is AuthSocialSignUpRequired) {
-            debugPrint(
-                "DEBUG: Social signup required, navigating to SocialSignUp");
-            context.push(
-              AppRoutes.socialSignUpPath,
+            debugPrint("DEBUG: [LoginScreen] Social signup required state detected.");
+            debugPrint("DEBUG: [LoginScreen] Navigating to SocialSignUp with name: ${state.name}, email: ${state.email}");
+            
+            context.pushNamed(
+              AppRoutes.socialSignUpName,
               extra: {
                 'socialLogin': true,
                 'socialId': state.socialId,

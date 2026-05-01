@@ -57,7 +57,7 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
           onPressed: () => context.pop(),
           icon: Icon(
             Icons.close,
-            color: Colors.black,
+            color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
             size: widget.size.width * AppDimensions.numD07,
           ),
         ),
@@ -70,7 +70,8 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
                   size: widget.size,
                   fontSize: widget.size.width *
                       AppDimensions.appBarHeadingFontSizeNew,
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color ??
+                      Colors.black,
                   fontWeight: FontWeight.bold),
             ),
           ),
@@ -98,7 +99,8 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
           style: commonTextStyle(
               size: widget.size,
               fontSize: widget.size.width * AppDimensions.numD05,
-              color: Colors.black,
+              color:
+                  Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
               fontWeight: FontWeight.w500),
         ),
         _buildFilterList(list, isSort),
@@ -135,7 +137,11 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
                             style: TextStyle(
                                 fontSize:
                                     widget.size.width * AppDimensions.numD035,
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color ??
+                                    Colors.black,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: "AirbnbCereal_W_Bk")),
                       )
@@ -152,7 +158,7 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
   Widget _buildItemIcon(FilterModel item) {
     return Image.asset(
       "$iconsPath${item.icon}",
-      color: Colors.black,
+      color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
       height: item.name == AppStrings.soldContentText
           ? widget.size.width * AppDimensions.numD06
           : widget.size.width * AppDimensions.numD05,
@@ -229,12 +235,17 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
                 style: commonTextStyle(
                     size: widget.size,
                     fontSize: widget.size.width * AppDimensions.numD035,
-                    color: Colors.black,
+                    color: Theme.of(context).textTheme.bodyLarge?.color ??
+                        Colors.black,
                     fontWeight: FontWeight.w400),
               ),
             ),
             SizedBox(width: widget.size.width * AppDimensions.numD015),
-            const Icon(Icons.arrow_drop_down_sharp, color: Colors.black)
+            Icon(
+              Icons.arrow_drop_down_sharp,
+              color:
+                  Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
+            )
           ],
         ),
       ),
@@ -242,23 +253,25 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
   }
 
   Widget _buildApplyButton() {
-    return Container(
-      width: widget.size.width,
-      height: widget.size.width * AppDimensions.numD13,
-      margin: EdgeInsets.symmetric(
-          horizontal: widget.size.width * AppDimensions.numD04),
-      padding: EdgeInsets.symmetric(
-          horizontal: widget.size.width * AppDimensions.numD04),
-      child: commonElevatedButton(
-        AppStrings.applyText,
-        widget.size,
-        commonTextStyle(
-            size: widget.size,
-            fontSize: widget.size.width * AppDimensions.numD035,
-            color: Colors.white,
-            fontWeight: FontWeight.w700),
-        commonButtonStyle(widget.size, AppColorTheme.colorThemePink),
-        widget.onApply,
+    return SafeArea(
+      child: Container(
+        width: widget.size.width,
+        height: widget.size.width * AppDimensions.numD13,
+        margin: EdgeInsets.symmetric(
+            horizontal: widget.size.width * AppDimensions.numD04),
+        padding: EdgeInsets.symmetric(
+            horizontal: widget.size.width * AppDimensions.numD04),
+        child: commonElevatedButton(
+          AppStrings.applyText,
+          widget.size,
+          commonTextStyle(
+              size: widget.size,
+              fontSize: widget.size.width * AppDimensions.numD035,
+              color: Colors.white,
+              fontWeight: FontWeight.w700),
+          commonButtonStyle(widget.size, AppColorTheme.colorThemePink),
+          widget.onApply,
+        ),
       ),
     );
   }

@@ -128,9 +128,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                       child: Container(
                                         padding:
                                             EdgeInsets.all(size.width * 0.005),
-                                        decoration: const BoxDecoration(
+                                        decoration: BoxDecoration(
                                             shape: BoxShape.circle,
-                                            color: Colors.white),
+                                            color: Theme.of(context)
+                                                .scaffoldBackgroundColor),
                                         child: Icon(
                                           Icons.circle,
                                           color: AppColorTheme.colorOnlineGreen,
@@ -167,9 +168,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                       child: Container(
                                         padding:
                                             EdgeInsets.all(size.width * 0.005),
-                                        decoration: const BoxDecoration(
+                                        decoration: BoxDecoration(
                                             shape: BoxShape.circle,
-                                            color: Colors.white),
+                                            color: Theme.of(context)
+                                                .scaffoldBackgroundColor),
                                         child: Icon(
                                           Icons.circle,
                                           color: AppColorTheme.colorOnlineGreen,
@@ -206,9 +208,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                       child: Container(
                                         padding:
                                             EdgeInsets.all(size.width * 0.005),
-                                        decoration: const BoxDecoration(
+                                        decoration: BoxDecoration(
                                             shape: BoxShape.circle,
-                                            color: Colors.white),
+                                            color: Theme.of(context)
+                                                .scaffoldBackgroundColor),
                                         child: Icon(
                                           Icons.circle,
                                           color: AppColorTheme.colorOnlineGreen,
@@ -231,11 +234,15 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                           size.width * AppDimensions.numD04),
                                       margin: const EdgeInsets.only(bottom: 5),
                                       decoration: BoxDecoration(
-                                          color: Colors.white,
+                                          color: Theme.of(context).cardColor,
                                           shape: BoxShape.circle,
                                           boxShadow: [
                                             BoxShadow(
-                                                color: Colors.grey.shade200,
+                                                color: Theme.of(context)
+                                                            .brightness ==
+                                                        Brightness.light
+                                                    ? Colors.grey.shade200
+                                                    : Colors.black54,
                                                 spreadRadius: 2,
                                                 blurRadius: 2)
                                           ]),
@@ -248,9 +255,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                       child: Container(
                                         padding:
                                             EdgeInsets.all(size.width * 0.005),
-                                        decoration: const BoxDecoration(
+                                        decoration: BoxDecoration(
                                             shape: BoxShape.circle,
-                                            color: Colors.white),
+                                            color: Theme.of(context)
+                                                .scaffoldBackgroundColor),
                                         child: Icon(
                                           Icons.circle,
                                           color: AppColorTheme.colorOnlineGreen,
@@ -270,7 +278,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD05,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.bold),
                         ),
                         SizedBox(
@@ -286,7 +295,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                 style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD034,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight
                                       .w300, // Set fontWeight to normal
                                 ),
@@ -306,7 +318,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                 style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD033,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight
                                       .w300, // Set fontWeight to normal
                                 ),
@@ -367,7 +382,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                 style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD032,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight
                                       .w300, // Set fontWeight to normal
                                 ),
@@ -395,7 +413,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                 style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD032,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight
                                       .w300, // Set fontWeight to normal
                                 ),
@@ -410,7 +431,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD033,
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontWeight: FontWeight.normal)),
                         SizedBox(
                           height: size.width * AppDimensions.numD02,
@@ -419,7 +443,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                           size: size,
                           maxLines: 1,
                           textInputFormatters: null,
-                          borderColor: AppColorTheme.colorTextFieldBorder,
+                          borderColor: Theme.of(context).dividerColor,
                           controller: nameController,
                           hintText: "Enter name",
                           prefixIcon: null,
@@ -432,7 +456,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                           enableValidations: true,
                           autofocus: false,
                           filled: false,
-                          filledColor: AppColorTheme.colorLightGrey,
+                          filledColor:
+                              Theme.of(context).brightness == Brightness.light
+                                  ? AppColorTheme.colorLightGrey
+                                  : Colors.grey.shade900,
                         ),
                         SizedBox(
                           height: size.width * AppDimensions.numD06,
@@ -441,7 +468,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD035,
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontWeight: FontWeight.normal)),
                         SizedBox(
                           height: size.width * AppDimensions.numD02,
@@ -450,7 +480,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                           size: size,
                           maxLines: 1,
                           textInputFormatters: null,
-                          borderColor: AppColorTheme.colorTextFieldBorder,
+                          borderColor: Theme.of(context).dividerColor,
                           controller: emailAddressController,
                           hintText: AppStrings.emailAddressHintText,
                           prefixIcon: null,
@@ -463,7 +493,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                           validator: checkEmailValidator,
                           enableValidations: true,
                           filled: false,
-                          filledColor: AppColorTheme.colorLightGrey,
+                          filledColor:
+                              Theme.of(context).brightness == Brightness.light
+                                  ? AppColorTheme.colorLightGrey
+                                  : Colors.grey.shade900,
                         ),
                         SizedBox(
                           height: size.width * AppDimensions.numD06,
@@ -473,7 +506,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD035,
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontWeight: FontWeight.normal)),
                         SizedBox(
                           height: size.width * AppDimensions.numD02,
@@ -482,7 +518,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                           controller: phoneNumberController,
                           size: size,
                           textInputFormatters: null,
-                          borderColor: AppColorTheme.colorTextFieldBorder,
+                          borderColor: Theme.of(context).dividerColor,
                           hintText: AppStrings.phoneHintText,
                           prefixIcon: null,
                           prefixIconHeight: size.width * AppDimensions.numD06,
@@ -495,7 +531,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                           validator: checkRequiredValidator,
                           enableValidations: true,
                           filled: false,
-                          filledColor: AppColorTheme.colorLightGrey,
+                          filledColor:
+                              Theme.of(context).brightness == Brightness.light
+                                  ? AppColorTheme.colorLightGrey
+                                  : Colors.grey.shade900,
                           maxLines: 5,
                         ),
                         SizedBox(
@@ -505,7 +544,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD035,
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontWeight: FontWeight.normal)),
                         SizedBox(
                           height: size.width * AppDimensions.numD02,
@@ -513,9 +555,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                         TextFormField(
                           maxLines: 5,
                           controller: messageController,
-                          cursorColor: AppColorTheme.colorTextFieldIcon,
+                          cursorColor:
+                              Theme.of(context).textTheme.bodyLarge?.color,
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontSize: size.width * AppDimensions.numD032,
                             fontFamily: 'AirbnbCereal_W_Md',
                           ),
@@ -524,48 +567,48 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                           },
                           decoration: InputDecoration(
                             counterText: "",
-                            fillColor: Colors.white,
+                            fillColor: Theme.of(context).cardColor,
                             hintText:
                                 "${AppStrings.enterText.toTitleCase()} ${AppStrings.messageText}",
                             hintStyle: TextStyle(
-                              color: AppColorTheme.colorHint,
+                              color: Theme.of(context).hintColor,
                               fontSize: size.width * AppDimensions.numD035,
                               fontFamily: 'AirbnbCereal_W_Md',
                             ),
                             disabledBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.03),
-                              borderSide: const BorderSide(
+                              borderSide: BorderSide(
                                   width: 1,
-                                  color: AppColorTheme.colorTextFieldBorder),
+                                  color: Theme.of(context).dividerColor),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.03),
-                              borderSide: const BorderSide(
+                              borderSide: BorderSide(
                                   width: 1,
-                                  color: AppColorTheme.colorTextFieldBorder),
+                                  color: Theme.of(context).dividerColor),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.03),
-                              borderSide: const BorderSide(
+                              borderSide: BorderSide(
                                   width: 1,
-                                  color: AppColorTheme.colorTextFieldBorder),
+                                  color: Theme.of(context).dividerColor),
                             ),
                             errorBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.03),
-                              borderSide: const BorderSide(
+                              borderSide: BorderSide(
                                   width: 1,
-                                  color: AppColorTheme.colorTextFieldBorder),
+                                  color: Theme.of(context).dividerColor),
                             ),
                             focusedErrorBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.03),
-                              borderSide: const BorderSide(
+                              borderSide: BorderSide(
                                   width: 1,
-                                  color: AppColorTheme.colorTextFieldBorder),
+                                  color: Theme.of(context).dividerColor),
                             ),
                             prefixIconColor: AppColorTheme.colorTextFieldIcon,
                           ),
@@ -594,7 +637,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                               commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.white,
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
                                   fontWeight: FontWeight.w700),
                               commonButtonStyle(
                                   size, AppColorTheme.colorThemePink), () {
@@ -624,9 +668,16 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                               commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.white,
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
                                   fontWeight: FontWeight.w700),
-                              commonButtonStyle(size, Colors.black), () async {
+                              commonButtonStyle(
+                                  size,
+                                  Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color ??
+                                      Colors.black), () async {
                             if (adminEmail.isEmpty) {
                               showSnackBar(
                                   'Error',
@@ -660,7 +711,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD035,
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontWeight: FontWeight.normal),
                           ),
                         ),
@@ -674,7 +728,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontWeight: FontWeight.normal),
                           ),
                         ),
@@ -696,7 +753,12 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                 height: size.width * AppDimensions.numD1,
                                 width: size.width * AppDimensions.numD11,
                                 decoration: BoxDecoration(
-                                    color: Colors.black,
+                                    color: Colors.grey,
+                                    // Theme.of(context)
+                                    //         .textTheme
+                                    //         .bodyLarge
+                                    //         ?.color ??
+                                    //     Colors.black,
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD02)),
                                 padding: EdgeInsets.all(
@@ -720,7 +782,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                 height: size.width * AppDimensions.numD1,
                                 width: size.width * AppDimensions.numD11,
                                 decoration: BoxDecoration(
-                                    color: Colors.black,
+                                    color: Colors.grey,
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD02)),
                                 padding: EdgeInsets.all(
@@ -744,7 +806,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                 height: size.width * AppDimensions.numD1,
                                 width: size.width * AppDimensions.numD11,
                                 decoration: BoxDecoration(
-                                    color: Colors.black,
+                                    color: Colors.grey,
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD02)),
                                 padding: EdgeInsets.all(
@@ -766,7 +828,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                 height: size.width * AppDimensions.numD1,
                                 width: size.width * AppDimensions.numD11,
                                 decoration: BoxDecoration(
-                                    color: Colors.black,
+                                    color: Colors.grey,
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD02)),
                                 padding: EdgeInsets.all(

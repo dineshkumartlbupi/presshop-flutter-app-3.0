@@ -37,7 +37,7 @@ class CommonBrandedAppBar extends StatelessWidget
       title: Text(
         title,
         style: TextStyle(
-            color: Colors.black,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
             fontWeight: FontWeight.w600,
             fontSize: size.width * AppDimensions.appBarHeadingFontSize),
       ),

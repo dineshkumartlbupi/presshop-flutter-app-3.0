@@ -110,7 +110,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         Text(
                           AppStrings.changePasswordSubTitleText,
                           style: TextStyle(
-                              color: const Color.fromARGB(255, 26, 24, 24),
+                              color: Theme.of(context).textTheme.bodyMedium?.color,
                               fontSize: size.width * AppDimensions.numD033),
                         ),
                         SizedBox(
@@ -123,7 +123,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w400),
                         ),
                         SizedBox(
@@ -165,7 +165,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           validator: checkPasswordValidator,
                           enableValidations: true,
                           filled: false,
-                          filledColor: Colors.transparent,
+                          filledColor: Theme.of(context).cardColor,
                           maxLines: 1,
                           borderColor: AppColorTheme.colorTextFieldBorder,
                           autofocus: false,
@@ -180,7 +180,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w400),
                         ),
                         SizedBox(
@@ -288,7 +288,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           },
                           enableValidations: true,
                           filled: false,
-                          filledColor: Colors.transparent,
+                          filledColor: Theme.of(context).cardColor,
                           autofocus: false,
                         ),
                         SizedBox(height: size.width * AppDimensions.numD02),
@@ -302,7 +302,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             Text(
                               "Minimum password requirement",
                               style: TextStyle(
-                                color: Colors.black,
+                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                 fontSize: size.width * 0.035,
                               ),
                             ),
@@ -448,7 +448,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w400),
                         ),
                         SizedBox(
@@ -500,7 +500,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           },
                           enableValidations: true,
                           filled: false,
-                          filledColor: Colors.transparent,
+                          filledColor: Theme.of(context).cardColor,
                           autofocus: false,
                         ),
 

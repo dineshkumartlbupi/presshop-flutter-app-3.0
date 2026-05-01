@@ -46,7 +46,8 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                   },
                   icon: Icon(
                     Icons.close,
-                    color: Colors.black,
+                    color: Theme.of(context).textTheme.bodyLarge?.color ??
+                        Colors.black,
                     size: size.width * AppDimensions.numD07,
                   ),
                 ),
@@ -56,7 +57,8 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                       size: size,
                       fontSize:
                           size.width * AppDimensions.appBarHeadingFontSizeNew,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color ??
+                          Colors.black,
                       fontWeight: FontWeight.bold),
                 ),
                 TextButton(

@@ -69,12 +69,12 @@ class CommonTextFieldState extends State<CommonTextField> {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
-      cursorColor: AppColorTheme.colorTextFieldIcon,
+      cursorColor: Theme.of(context).textTheme.bodyLarge?.color,
       obscureText: widget.hidePassword,
       keyboardType: widget.keyboardType,
       maxLines: widget.maxLines,
       style: TextStyle(
-          color: Colors.black,
+          color: Theme.of(context).textTheme.bodyLarge?.color,
           fontSize: widget.size.width * AppDimensions.numD032,
           fontFamily: 'AirbnbCereal'),
       inputFormatters: widget.textInputFormatters,
@@ -92,7 +92,7 @@ class CommonTextFieldState extends State<CommonTextField> {
           errorStyle: const TextStyle(
               color: AppColorTheme.colorThemePink, fontFamily: "AirbnbCereal"),
           hintStyle: TextStyle(
-              color: AppColorTheme.colorHint,
+              color: Theme.of(context).hintColor,
               fontSize: widget.size.width * AppDimensions.numD035,
               fontFamily: 'AirbnbCereal'),
           disabledBorder: OutlineInputBorder(
@@ -118,7 +118,9 @@ class CommonTextFieldState extends State<CommonTextField> {
           prefix: widget.prefix,
           prefixIconConstraints:
               BoxConstraints(maxHeight: widget.prefixIconHeight),
-          prefixIconColor: AppColorTheme.colorTextFieldIcon,
+          prefixIconColor: Theme.of(context).brightness == Brightness.light
+              ? AppColorTheme.colorTextFieldIcon
+              : Theme.of(context).textTheme.bodyLarge?.color,
           suffixIcon: Padding(
             padding: EdgeInsets.symmetric(
                 horizontal: widget.size.width * AppDimensions.numD02),

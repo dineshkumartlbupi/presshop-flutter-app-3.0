@@ -44,27 +44,10 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
       child: BlocListener<AccountSettingsBloc, AccountSettingsState>(
         listener: _handleAccountSettingsState,
         child: Scaffold(
-          appBar: CommonAppBar(
-            elevation: 0,
-            hideLeading: false,
-            title: Text(
-              "Delete account",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-            ),
-            centerTitle: false,
-            titleSpacing: 0,
+          appBar: CommonBrandedAppBar(
+            title: "Delete account",
             size: size,
-            showActions: true,
-            leadingFxn: () {
-              /*  if (widget.editProfileScreen) {
-              widget.editProfileScreen = false;
-            }*/
-              context.pop();
-            },
-            actionWidget: [],
+            showLogo: true,
           ),
           body: Padding(
             padding: EdgeInsets.all(size.width * AppDimensions.numD045),
@@ -89,7 +72,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD04,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontWeight: FontWeight.w500),
                 ),
                 SizedBox(
@@ -98,8 +81,8 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                 Expanded(
                   child: ListView.separated(
                     shrinkWrap: true,
-                    separatorBuilder: (context, index) =>
-                        const Divider(height: 1, color: Colors.grey),
+                    separatorBuilder: (context, index) => Divider(
+                        height: 1, color: Theme.of(context).dividerColor),
                     padding: isIpad
                         ? EdgeInsets.symmetric(
                             vertical: size.width * AppDimensions.numD012)
@@ -123,7 +106,8 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                               setState(() {});
                             },
                             activeColor: AppColorTheme.colorThemePink,
-                            checkColor: Colors.white,
+                            checkColor:
+                                Theme.of(context).scaffoldBackgroundColor,
                           ),
                         ),
                         title: Text(
@@ -131,7 +115,8 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD034,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w400),
                         ),
                       );
@@ -154,7 +139,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                               (isIpad
                                   ? AppDimensions.numD032
                                   : AppDimensions.numD038),
-                          color: Colors.white,
+                          color: Theme.of(context).scaffoldBackgroundColor,
                           fontWeight: FontWeight.w700),
                       commonButtonStyle(size, AppColorTheme.colorThemePink),
                       () {
@@ -189,7 +174,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                 builder: (context, setState) {
                   return Container(
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(
                             size.width * AppDimensions.numD045)),
                     child: Column(
@@ -204,7 +189,10 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                               Text(
                                 AppStrings.youWIllBeMissedText,
                                 style: TextStyle(
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                     fontSize: size.width * AppDimensions.numD05,
                                     fontWeight: FontWeight.bold),
                               ),
@@ -215,7 +203,10 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                                   },
                                   icon: Icon(
                                     Icons.close,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                     size: size.width * AppDimensions.numD06,
                                   ))
                             ],
@@ -224,8 +215,8 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                         Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: size.width * AppDimensions.numD04),
-                          child: const Divider(
-                            color: Colors.black,
+                          child: Divider(
+                            color: Theme.of(context).dividerColor,
                             thickness: 0.5,
                           ),
                         ),
@@ -242,7 +233,8 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD04),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(
+                                        color: Theme.of(context).dividerColor)),
                                 child: ClipRRect(
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD04),
@@ -260,7 +252,10 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                                 child: Text(
                                   AppStrings.deleteAccountPopupMessageText,
                                   style: TextStyle(
-                                      color: Colors.black,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
                                       fontWeight: FontWeight.w500),
@@ -288,8 +283,20 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                                 child: commonElevatedButton(
                                     "Procced",
                                     size,
-                                    commonButtonTextStyle(size),
-                                    commonButtonStyle(size, Colors.black), () {
+                                    commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD037,
+                                        color: Theme.of(context)
+                                            .scaffoldBackgroundColor,
+                                        fontWeight: FontWeight.bold),
+                                    commonButtonStyle(
+                                        size,
+                                        Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color ??
+                                            Colors.black), () {
                                   context.pop();
                                   _accountSettingsBloc.add(
                                     DeleteAccountEvent(reason: selectReason),

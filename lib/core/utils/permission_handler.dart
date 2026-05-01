@@ -27,6 +27,58 @@ Future<bool> checkGps() async {
   }
 }
 
+class PermissionUI {
+  static void show({
+    required String message,
+    required bool isPermanent,
+  }) {
+    final context = navigatorKey.currentContext;
+    if (context == null) return;
+
+    if (isPermanent) {
+      // 👉 Dialog for "Don't ask again"
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Row(
+            children: const [
+              Icon(Icons.lock, color: Colors.red),
+              SizedBox(width: 8),
+              Text("Permission Required"),
+            ],
+          ),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                permission.openAppSettings();
+              },
+              child: const Text("Open Settings"),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // 👉 Snackbar for normal deny
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.lock, color: Colors.white),
+              const SizedBox(width: 10),
+              Expanded(child: Text(message)),
+            ],
+          ),
+        ),
+      );
+    }
+  }
+}
+
 Future<bool> locationPermission() async {
   var status = await permission.Permission.location.status;
   switch (status) {

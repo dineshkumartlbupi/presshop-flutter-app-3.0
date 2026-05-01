@@ -103,7 +103,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
           debugPrint("🚀 CameraBloc: Disposing previous controller...");
           await existingController.dispose().timeout(const Duration(seconds: 3),
               onTimeout: () {
-            debugPrint("⚠️ CameraBloc: Previous controller disposal timed out.");
+            debugPrint(
+                "⚠️ CameraBloc: Previous controller disposal timed out.");
           });
         } catch (e) {
           debugPrint("Error disposing previous controller during init: $e");
@@ -131,7 +132,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       if (toRequest.isNotEmpty) {
         final locService = LocationService();
         for (final p in toRequest) {
-          await locService.requestPermission(p).timeout(const Duration(seconds: 30), onTimeout: () => false);
+          await locService
+              .requestPermission(p, showUI: false)
+              .timeout(const Duration(seconds: 30), onTimeout: () => false);
         }
         cameraGranted = await Permission.camera.isGranted;
         micGranted = await Permission.microphone.isGranted;
@@ -142,10 +145,11 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
       debugPrint("🚀 CameraBloc: Camera: $cameraStatus, Mic: $micStatus");
 
-      if (!cameraStatus) {
+      if (!cameraStatus || !micStatus) {
+        debugPrint("🚀 CameraBloc: Permission denied. Emitting failure for redirection...");
         emit(state.copyWith(
             status: CameraStatus.failure,
-            errorMessage: "Camera permission denied",
+            errorMessage: !cameraStatus ? "Camera permission denied" : "Microphone permission denied",
             recorderController: recorderController));
         _isInitializing = false;
         return;
@@ -209,7 +213,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         } catch (e) {
           debugPrint("⚠️ resumePreview error (ignored): $e");
         }
-        
+
         debugPrint("🚀 CameraBloc: Preview resumed.");
 
         emit(state.copyWith(
@@ -224,8 +228,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
             status: CameraStatus.failure,
             errorMessage: "Camera failed to initialize: $e",
             recorderController: recorderController,
-            cameraController: null
-            ));
+            cameraController: null));
       }
     } finally {
       _isInitializing = false;
@@ -356,7 +359,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     bool shouldInitCamera = false;
     bool isFront = state.isFrontCamera;
 
-    if (event.mode == AppStrings.photoText || event.mode == AppStrings.videoText) {
+    if (event.mode == AppStrings.photoText ||
+        event.mode == AppStrings.videoText) {
       isFront = false;
       shouldInitCamera = true;
     }

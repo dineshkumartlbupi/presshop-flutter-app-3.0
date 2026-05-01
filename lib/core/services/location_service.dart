@@ -4,68 +4,107 @@ import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:presshop/core/utils/app_logger.dart';
+import 'package:presshop/core/utils/permission_handler.dart';
 
 class LocationService {
   final Location _location = Location();
 
-  // ── Static (shared across ALL instances) permission gate ──────────────────
-  // This prevents concurrent permission requests whether the caller uses
-  // sl<LocationService>() or LocationService() directly.
+  // ── Production-Grade Permission Management ────────────────────────────────
+  // Map to track active requests per permission to prevent race conditions
+  static final Map<Permission, Completer<bool>> _activeRequests = {};
 
-  static Future<void> _lastRequest = Future.value();
-  static bool _isRequestInProgress = false;
-  // ─────────────────────────────────────────────────────────────────────────
+  // Track last request time to avoid spamming the OS (cooldown)
+  static final Map<Permission, DateTime> _lastRequestTime = {};
+  static const Duration _requestCooldown = Duration(seconds: 1);
 
-  /// Check and request any permission safely — queued & de-duplicated.
-  Future<bool> requestPermission(Permission permission) async {
-    // Fast-path: already granted
+  /// Check and request any permission safely — production level de-duplication.
+  Future<bool> requestPermission(Permission permission,
+      {bool showUI = true}) async {
+    // 1. Fast-path: already granted
     if (await permission.isGranted) return true;
 
-    // Chain this request so concurrent callers queue up
-    final completer = Completer<void>();
-    final previousRequest = _lastRequest;
-    _lastRequest = completer.future;
+    // 2. Check if a request for THIS permission is already in progress
+    if (_activeRequests.containsKey(permission)) {
+      debugPrint(
+          "🚀 PermissionService: Request for $permission already in progress, joining...");
+      return _activeRequests[permission]!.future;
+    }
 
-    try {
-      if (_isRequestInProgress) {
+    // 3. Cooldown check: prevent rapid-fire requests that the OS might ignore
+    final now = DateTime.now();
+    if (_lastRequestTime.containsKey(permission)) {
+      final difference = now.difference(_lastRequestTime[permission]!);
+      if (difference < _requestCooldown) {
         debugPrint(
-            "LocationService: A permission request is already in progress, waiting in queue...");
+            "🚀 PermissionService: Cooldown active for $permission. Waiting ${_requestCooldown.inMilliseconds - difference.inMilliseconds}ms");
+        await Future.delayed(_requestCooldown - difference);
       }
-      await previousRequest;
-    } catch (_) {}
+    }
 
-    _isRequestInProgress = true;
+    // 4. Create a new completer and mark as active
+    final completer = Completer<bool>();
+    _activeRequests[permission] = completer;
+    _lastRequestTime[permission] = DateTime.now();
+
     try {
-      // Re-check after waiting
-      if (await permission.isGranted) return true;
-      return await _executePermissionRequest(permission);
+      // Final check before requesting
+      if (await permission.isGranted) {
+        completer.complete(true);
+        return true;
+      }
+
+      final result =
+          await _executePermissionRequest(permission, showUI: showUI);
+      completer.complete(result);
+      return result;
+    } catch (e) {
+      debugPrint("🚀 PermissionService: Error requesting $permission: $e");
+      completer.complete(false);
+      return false;
     } finally {
-      _isRequestInProgress = false;
-      completer.complete();
+      // Remove from active requests
+      _activeRequests.remove(permission);
     }
   }
 
   DateTime? _lastSettingsOpen;
-
-  Future<bool> _executePermissionRequest(Permission permission) async {
+  Future<bool> _executePermissionRequest(Permission permission,
+      {bool showUI = true}) async {
     try {
-      var status = await permission.request();
+      // Small delay to allow the OS to clean up previous dialogs/transitions
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      final status = await permission.request();
       if (status.isGranted) {
-        AppLogger.info("Permission ${permission.toString()} granted");
+        AppLogger.info("Permission $permission granted");
         return true;
-      } else if (status.isDenied || status.isPermanentlyDenied) {
-        AppLogger.warning("Permission ${permission.toString()} denied or permanently denied");
-        if (_lastSettingsOpen == null ||
-            DateTime.now().difference(_lastSettingsOpen!) >
-                const Duration(seconds: 2)) {
-          _lastSettingsOpen = DateTime.now();
-          await openAppSettings();
+      }
+
+      if (status.isDenied) {
+        // ❗ User tapped "Don't Allow"
+        if (showUI) {
+          PermissionUI.show(
+            message: "Permission denied. Please allow to continue.",
+            isPermanent: false,
+          );
+        }
+        return false;
+      }
+
+      if (status.isPermanentlyDenied) {
+        // ❗ User tapped "Don't ask again"
+        if (showUI) {
+          PermissionUI.show(
+            message: "Permission permanently denied. Enable from settings.",
+            isPermanent: true,
+          );
         }
         return false;
       }
     } catch (e) {
-      debugPrint("LocationService: Permission request error (ignored): $e");
+      debugPrint("Permission error: $e");
     }
+
     return false;
   }
 

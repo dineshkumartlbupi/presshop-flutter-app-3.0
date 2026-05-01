@@ -242,7 +242,9 @@ class _NewsPageState extends State<NewsPage>
                       child: TabBar(
                         controller: _tabController,
                         labelColor: Colors.white,
-                        unselectedLabelColor: Colors.black,
+                        unselectedLabelColor:
+                            Theme.of(context).textTheme.bodyLarge?.color,
+                        indicatorSize: TabBarIndicatorSize.tab,
                         indicator: BoxDecoration(
                           color: AppColorTheme.colorThemePink,
                           borderRadius: BorderRadius.circular(
@@ -251,13 +253,13 @@ class _NewsPageState extends State<NewsPage>
                         labelStyle: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD038,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.bold,
                         ),
                         unselectedLabelStyle: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD038,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.bold,
                         ),
                         tabs: const [
@@ -1011,7 +1013,8 @@ class _FilterBottomSheetContentState extends State<_FilterBottomSheetContent> {
                 },
                 icon: Icon(
                   Icons.close,
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color ??
+                      Colors.black,
                   size: widget.size.width * AppDimensions.numD07,
                 ),
               ),
@@ -1021,7 +1024,8 @@ class _FilterBottomSheetContentState extends State<_FilterBottomSheetContent> {
                     size: widget.size,
                     fontSize: widget.size.width *
                         AppDimensions.appBarHeadingFontSizeNew,
-                    color: Colors.black,
+                    color: Theme.of(context).textTheme.bodyLarge?.color ??
+                        Colors.black,
                     fontWeight: FontWeight.bold),
               ),
               TextButton(

@@ -92,7 +92,7 @@ class FeedScreenState extends State<FeedScreen>
             onTap: () {
               showSortedBottomSheet();
             },
-            child: commonFilterIcon(size),
+            child: commonFilterIcon(context, size),
           ),
           SizedBox(
             width: size.width * AppDimensions.numD02,

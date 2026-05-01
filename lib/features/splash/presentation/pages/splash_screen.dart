@@ -143,7 +143,7 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> getFcmToken() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     String fcmToken = await FirebaseMessaging.instance.getToken() ?? "";
-    debugPrint("FCM Token:::: $fcmToken");
+    // debugPrint("FCM Token:::: $fcmToken");
 
     String deviceId = "";
     if (Platform.isAndroid) {

@@ -299,7 +299,10 @@ class MyContentViewState extends State<MyContentView>
                 physics: const NeverScrollableScrollPhysics(),
                 labelColor: Colors.white,
                 dividerColor: Colors.transparent,
-                unselectedLabelColor: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
+                indicatorSize: TabBarIndicatorSize.tab,
+                unselectedLabelColor:
+                    Theme.of(context).textTheme.bodyLarge?.color ??
+                        Colors.black,
                 indicator: BoxDecoration(
                   color: AppColorTheme.colorThemePink,
                   borderRadius:
@@ -314,7 +317,8 @@ class MyContentViewState extends State<MyContentView>
                 unselectedLabelStyle: commonTextStyle(
                   size: size,
                   fontSize: size.width * AppDimensions.numD038,
-                  color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color ??
+                      Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
                 tabs: [
@@ -439,8 +443,8 @@ class MyContentViewState extends State<MyContentView>
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         childAspectRatio: 0.75,
-                        mainAxisSpacing: size.width * AppDimensions.numD04,
-                        crossAxisSpacing: size.width * AppDimensions.numD04,
+                        mainAxisSpacing: size.width * AppDimensions.numD03,
+                        crossAxisSpacing: size.width * AppDimensions.numD03,
                       ),
                       itemCount: currentList.length,
                       itemBuilder: (context, index) {

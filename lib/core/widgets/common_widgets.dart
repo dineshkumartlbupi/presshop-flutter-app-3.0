@@ -40,7 +40,10 @@ Widget priceImageWithButton(Size size, String amount, String hour,
               style: commonTextStyle(
                   size: size,
                   fontSize: size.width * AppDimensions.numD08,
-                  color: Theme.of(navigatorKey.currentContext!).textTheme.bodyLarge?.color,
+                  color: Theme.of(navigatorKey.currentContext!)
+                      .textTheme
+                      .bodyLarge
+                      ?.color,
                   fontWeight: FontWeight.w700),
             ),
             TextSpan(
@@ -48,7 +51,10 @@ Widget priceImageWithButton(Size size, String amount, String hour,
               style: commonTextStyle(
                   size: size,
                   fontSize: size.width * AppDimensions.numD04,
-                  color: Theme.of(navigatorKey.currentContext!).textTheme.bodyMedium?.color,
+                  color: Theme.of(navigatorKey.currentContext!)
+                      .textTheme
+                      .bodyMedium
+                      ?.color,
                   fontWeight: FontWeight.w600),
             ),
           ],
@@ -111,9 +117,14 @@ Widget showLoader({bool isForLocation = false}) {
     mainAxisSize: MainAxisSize.max,
     children: [
       Center(
-        child: Lottie.asset("assets/lottieFiles/loader_new.json",
+        child: ColorFiltered(
+          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+          child: Lottie.asset(
+            "assets/lottieFiles/loader_new.json",
             height: size.width * AppDimensions.numD28,
-            width: size.width * AppDimensions.numD28),
+            width: size.width * AppDimensions.numD28,
+          ),
+        ),
       ),
       if (isForLocation) ...[
         SizedBox(height: size.width * AppDimensions.numD005),
@@ -125,7 +136,10 @@ Widget showLoader({bool isForLocation = false}) {
             style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD04,
-                color: Theme.of(navigatorKey.currentContext!).textTheme.bodyLarge?.color,
+                color: Theme.of(navigatorKey.currentContext!)
+                    .textTheme
+                    .bodyLarge
+                    ?.color,
                 fontWeight: FontWeight.w500),
           ),
         ),
@@ -136,9 +150,12 @@ Widget showLoader({bool isForLocation = false}) {
 
 Widget showAnimatedLoader(Size size) {
   return Center(
-      child: Lottie.asset("assets/lottieFiles/loader_new.json",
-          height: size.width * AppDimensions.numD25,
-          width: size.width * AppDimensions.numD25));
+      child: ColorFiltered(
+          colorFilter:
+              const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+          child: Lottie.asset("assets/lottieFiles/loader_new.json",
+              height: size.width * AppDimensions.numD25,
+              width: size.width * AppDimensions.numD25)));
 }
 
 /// Calender
@@ -169,17 +186,19 @@ Future<String?> commonDatePicker({String? date}) async {
 }
 
 /// FilterIcon
-Container commonFilterIcon(Size size) {
+Container commonFilterIcon(BuildContext context, Size size) {
   return Container(
       padding: EdgeInsets.all(size.width * AppDimensions.numD025),
       child: Image.asset(
         "assets/icons/filter_new.png",
         width: size.width * AppDimensions.numD06,
         height: size.width * AppDimensions.numD06,
+        color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
         fit: BoxFit.contain,
         errorBuilder: (context, error, stackTrace) {
           return Icon(Icons.tune_rounded,
-              color: Theme.of(context).iconTheme.color, size: size.width * AppDimensions.numD06);
+              color: Theme.of(context).iconTheme.color,
+              size: size.width * AppDimensions.numD06);
         },
       ));
 }

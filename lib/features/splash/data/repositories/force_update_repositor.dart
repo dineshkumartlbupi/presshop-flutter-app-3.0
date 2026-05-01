@@ -33,8 +33,8 @@ class ForceUpdateRepository {
       if (response.data["code"] != 200) return false;
 
       final data = response.data["data"];
-      print("forceupdateddata");
-      print(data);
+      // print("forceupdateddata");
+      // print(data);
 
       bool updateAvailable = await VersionService.isUpdateAvailable(
         androidPackage: "com.presshop.app",

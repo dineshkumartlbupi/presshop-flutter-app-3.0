@@ -4,7 +4,6 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:go_router/go_router.dart';
 
-// ignore: must_be_immutable
 class PermissionErrorScreen extends StatefulWidget {
   PermissionErrorScreen({super.key, required this.permissionsStatus});
   Map<Permission, bool> permissionsStatus;
@@ -22,6 +21,12 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     checkPermissions();
+    // Immediate action: request missing permissions on entry
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        requestPermissions();
+      }
+    });
     super.initState();
   }
 
@@ -60,33 +65,57 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
     }
   }
 
+  bool _isRequesting = false;
   Future<void> requestPermissions() async {
-    for (var permission in permissionsStatus.keys) {
-      if (!permissionsStatus[permission]!) {
-        var data = await permission.request();
-        if (data.isDenied || data.isPermanentlyDenied) {
-          if (mounted) {
-            commonErrorDialogDialog(
-              isFromNetworkError: false,
-              actionButton: "Open Settings",
-              MediaQuery.of(context).size,
-              "This app needs access to your ${permission.toString().split('.').last.toTitleCase()} to provide its features. Please enable the permission in your app settings.",
-              "${permission.toString().split('.').last.toTitleCase()} Permission Required",
-              () {
-                openAppSettings().then((value) {
-                  if (context.canPop()) {
-                    context.pop(true);
-                  }
-                });
-              },
-            );
+    if (_isRequesting) return;
+    _isRequesting = true;
+    
+    try {
+      debugPrint("🚀 PermissionErrorScreen: Starting batch request...");
+      
+      final service = LocationService(); // Or sl<LocationService>()
+      
+      for (var permission in permissionsStatus.keys) {
+        if (!permissionsStatus[permission]!) {
+          debugPrint("🚀 PermissionErrorScreen: Requesting $permission...");
+          
+          var status = await service.requestPermission(permission, showUI: false);
+          
+          if (!status) {
+            final permissionStatus = await permission.status;
+            
+            if (permissionStatus.isPermanentlyDenied) {
+              if (mounted) {
+                commonErrorDialogDialog(
+                  MediaQuery.of(context).size,
+                  "This app needs access to your ${permission.toString().split('.').last.toTitleCase()} to provide its features. Please enable the permission in your app settings.",
+                  "${permission.toString().split('.').last.toTitleCase()} Permission Required",
+                  () {
+                    openAppSettings().then((value) {
+                      if (context.canPop()) {
+                        context.pop(true);
+                      }
+                    });
+                  },
+                  actionButton: "Open Settings",
+                  isFromNetworkError: false,
+                  shouldShowClosedButton: false,
+                );
+              }
+              // If permanently denied, we must stop and wait for user to come back from settings
+              break; 
+            } else {
+              // If just denied, the OS might have shown a dialog or ignored it.
+              // We'll move to the next one in this batch.
+            }
           }
-          break;
         }
       }
+      
+      await checkPermissions();
+    } finally {
+      _isRequesting = false;
     }
-
-    await checkPermissions();
   }
 
   @override
@@ -132,71 +161,69 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
                 ),
                 SizedBox(height: size.height * AppDimensions.numD03),
                 Column(
-                  spacing: size.height * AppDimensions.numD015,
-                  children: permissionsStatus.keys.map((permission) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          flex: 5,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                permission == Permission.camera
-                                    ? "Camera"
-                                    : permission == Permission.microphone
-                                        ? "Microphone"
-                                        : permission == Permission.location
-                                            ? "Location"
-                                            : permission == Permission.notification
-                                                ? "Notifications"
-                                                : "Gallery",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * AppDimensions.numD04,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              Text(
-                                permission == Permission.camera
-                                    ? "Allow PressHop to use the camera for taking photos and videos for news content submissions."
-                                    : permission == Permission.microphone
-                                        ? "Allow PressHop to record audio during video capture or interviews."
-                                        : permission == Permission.location
-                                            ? "Allow PressHop to use your location for finding nearby news and alerts."
-                                            : permission == Permission.notification
-                                                ? "Allow PressHop to send you real-time alerts and news updates."
-                                                : "Allow saving captured content to your device's gallery.",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize:
-                                        size.width * AppDimensions.numD035,
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                            ],
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: permissionsStatus.keys.expand((permission) {
+                    return [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            flex: 5,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  permission == Permission.camera
+                                      ? "Camera"
+                                      : permission == Permission.microphone
+                                          ? "Microphone"
+                                          : permission == Permission.location
+                                              ? "Location"
+                                              : permission ==
+                                                      Permission.notification
+                                                  ? "Notifications"
+                                                  : "Gallery",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD04,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                Text(
+                                  permission == Permission.camera
+                                      ? "Allow PressHop to use the camera for taking photos and videos for news content submissions."
+                                      : permission == Permission.microphone
+                                          ? "Allow PressHop to record audio during video capture or interviews."
+                                          : permission == Permission.location
+                                              ? "Allow PressHop to use your location for finding nearby news and alerts."
+                                              : permission ==
+                                                      Permission.notification
+                                                  ? "Allow PressHop to send you real-time alerts and news updates."
+                                                  : "Allow saving captured content to your device's gallery.",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        Icon(
-                          permissionsStatus[permission]!
-                              ? Icons.check_circle
-                              : Icons.cancel,
-                          color: permissionsStatus[permission]!
-                              ? Colors.green
-                              : Colors.red,
-                          size: size.width * AppDimensions.numD08,
-                        ),
-                        // SizedBox(
-                        //   width: size.width * AppDimensions.numD04,
-                        //   child: CupertinoSwitch(
-                        //     value: permissionsStatus[permission]!,
-                        //     onChanged: (value) {},
-                        //   ),
-                        // ),
-                        //),
-                      ],
-                    );
+                          Icon(
+                            permissionsStatus[permission]!
+                                ? Icons.check_circle
+                                : Icons.cancel,
+                            color: permissionsStatus[permission]!
+                                ? Colors.green
+                                : Colors.red,
+                            size: size.width * AppDimensions.numD08,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: size.height * AppDimensions.numD015),
+                    ];
                   }).toList(),
                 ),
                 SizedBox(height: size.height * AppDimensions.numD04),

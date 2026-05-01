@@ -274,48 +274,13 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     debugPrint("Building MyProfileScreen with size: $size");
     return Scaffold(
       appBar: CommonBrandedAppBar(
-        title: widget.screenType,
+        title: '', //widget.screenType,
         size: size,
       ),
-      // appBar: CommonAppBar(
-      //   elevation: 0,
-      //   hideLeading: false,
-      //   title: Text(
-      //     widget.screenType,
-      //     style: TextStyle(
-      //         color: Colors.black,
-      //         fontWeight: FontWeight.bold,
-      //         fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-      //   ),
-      //   centerTitle: false,
-      //   titleSpacing: 0,
-      //   size: size,
-      //   showActions: true,
-      //   leadingFxn: () {
-      //     /*  if (widget.editProfileScreen) {
-      //         widget.editProfileScreen = false;
-      //       }*/
-      //     context.pop();
-      //   },
-      //   actionWidget: [
-      //     InkWell(
-      //       onTap: () {
-      //         context.goNamed(
-      //           AppRoutes.dashboardName,
-      //           extra: {'initialPosition': 2},
-      //         );
-      //       },
-      //       child: Image.asset(
-      //         "${commonImagePath}rabbitLogo.png",
-      //         height: size.width * AppDimensions.numD07,
-      //         width: size.width * AppDimensions.numD07,
-      //       ),
-      //     ),
-      //     SizedBox(
-      //       width: size.width * AppDimensions.numD04,
-      //     )
-      //   ],
-      // ),
+      //Theme.of(context)
+      // .textTheme
+      // .bodyLarge
+      // ?.color,
 
       body: Stack(
         children: [
@@ -803,7 +768,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD032,
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.normal)),
         SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
@@ -843,7 +808,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD032,
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.normal)),
         SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(

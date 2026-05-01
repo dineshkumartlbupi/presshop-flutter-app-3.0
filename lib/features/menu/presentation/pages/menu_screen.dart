@@ -496,7 +496,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   horizontal: size.width * AppDimensions.numD04),
               content: Container(
                 decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(
                         size.width * AppDimensions.numD045)),
                 child: Column(
@@ -592,7 +592,13 @@ class _MenuScreenState extends State<MenuScreen> {
                             child: commonElevatedButton(
                                 AppStrings.logoutText,
                                 size,
-                                commonButtonTextStyle(size),
+                                commonTextStyle(
+                                    size: size,
+                                    fontSize:
+                                        size.width * AppDimensions.numD037,
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor,
+                                    fontWeight: FontWeight.bold),
                                 commonButtonStyle(
                                     size,
                                     Theme.of(context)

@@ -301,45 +301,53 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
               return false;
             },
             child: Scaffold(
-                appBar: CommonAppBar(
-                  elevation: 0,
-                  hideLeading: false,
-                  title: Text(
-                    widget.contentMedia != null && widget.contentHeader != null
-                        ? AppStringsNew2.manageContentText
-                        : AppStringsNew2.manageTaskText,
-                    style: TextStyle(
-                        color: Theme.of(context).textTheme.bodyLarge?.color,
-                        fontWeight: FontWeight.bold,
-                        fontSize:
-                            size.width * AppDimensions.appBarHeadingFontSize),
-                  ),
-                  centerTitle: false,
-                  titleSpacing: 0,
+                appBar: CommonBrandedAppBar(
+                  title: widget.contentMedia != null &&
+                          widget.contentHeader != null
+                      ? AppStringsNew2.manageContentText
+                      : AppStringsNew2.manageTaskText,
                   size: size,
-                  showActions: true,
-                  leadingFxn: () {
-                    context.pop();
-                  },
-                  actionWidget: [
-                    InkWell(
-                      onTap: () {
-                        context.goNamed(
-                          AppRoutes.dashboardName,
-                          extra: {'initialPosition': 2},
-                        );
-                      },
-                      child: Image.asset(
-                        "${commonImagePath}ic_black_rabbit.png",
-                        height: size.width * AppDimensions.numD07,
-                        width: size.width * AppDimensions.numD07,
-                      ),
-                    ),
-                    SizedBox(
-                      width: size.width * AppDimensions.numD04,
-                    )
-                  ],
+                  showLogo: true,
                 ),
+                // appBar: CommonAppBar(
+                //   elevation: 0,
+                //   hideLeading: false,
+                //   title: Text(
+                //     widget.contentMedia != null && widget.contentHeader != null
+                //         ? AppStringsNew2.manageContentText
+                //         : AppStringsNew2.manageTaskText,
+                //     style: TextStyle(
+                //         color: Theme.of(context).textTheme.bodyLarge?.color,
+                //         fontWeight: FontWeight.bold,
+                //         fontSize:
+                //             size.width * AppDimensions.appBarHeadingFontSize),
+                //   ),
+                //   centerTitle: false,
+                //   titleSpacing: 0,
+                //   size: size,
+                //   showActions: true,
+                //   leadingFxn: () {
+                //     context.pop();
+                //   },
+                //   actionWidget: [
+                //     InkWell(
+                //       onTap: () {
+                //         context.goNamed(
+                //           AppRoutes.dashboardName,
+                //           extra: {'initialPosition': 2},
+                //         );
+                //       },
+                //       child: Image.asset(
+                //         "${commonImagePath}ic_black_rabbit.png",
+                //         height: size.width * AppDimensions.numD07,
+                //         width: size.width * AppDimensions.numD07,
+                //       ),
+                //     ),
+                //     SizedBox(
+                //       width: size.width * AppDimensions.numD04,
+                //     )
+                //   ],
+                // ),
                 body:
                     ((state.actionStatus == TaskStatus.loading ||
                                     state.taskDetailStatus ==
@@ -425,7 +433,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                   "${commonImagePath}ic_black_rabbit.png",
                                                                   color: Theme.of(
                                                                           context)
-                                                                      .cardColor,
+                                                                      .textTheme
+                                                                      .bodyLarge
+                                                                      ?.color,
                                                                   width: size
                                                                           .width *
                                                                       AppDimensions
@@ -1426,6 +1436,11 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                 child:
                                                                     Image.asset(
                                                                   "${commonImagePath}ic_black_rabbit.png",
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .textTheme
+                                                                      .bodyLarge
+                                                                      ?.color,
                                                                   width: size
                                                                           .width *
                                                                       AppDimensions
@@ -1633,6 +1648,11 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                 child:
                                                                     Image.asset(
                                                                   "${commonImagePath}ic_black_rabbit.png",
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .textTheme
+                                                                      .bodyLarge
+                                                                      ?.color,
                                                                   width: size
                                                                           .width *
                                                                       AppDimensions
@@ -2043,6 +2063,11 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                   child: Image
                                                                       .asset(
                                                                     "${commonImagePath}ic_black_rabbit.png",
+                                                                    color: Theme.of(
+                                                                            context)
+                                                                        .textTheme
+                                                                        .bodyLarge
+                                                                        ?.color,
                                                                     width: size
                                                                             .width *
                                                                         AppDimensions
@@ -2722,7 +2747,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
               style: commonTextStyle(
                   size: size,
                   fontSize: size.width * AppDimensions.numD033,
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.w400),
             ),
             const Spacer(),
@@ -2744,7 +2769,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD035,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontWeight: FontWeight.normal),
                 ),
               ],
@@ -2773,7 +2798,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD04,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         lineHeight: 1.5,
                         fontWeight: FontWeight.w700),
                   ),
@@ -3155,6 +3180,10 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                               (context, error, stackTrace) {
                                             return Image.asset(
                                               "${commonImagePath}rabbitLogo.png",
+                                              color: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.color,
                                               width: double.infinity,
                                               height: size.width *
                                                   AppDimensions.numD50,
@@ -6594,6 +6623,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                 backgroundColor: Colors.white,
                 child: Image.asset(
                   "${commonImagePath}rabbitLogo.png",
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                   height: size.width * AppDimensions.numD09,
                   width: size.width * AppDimensions.numD09,
                 ),

@@ -102,7 +102,6 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                       state.status == FAQStatus.initial)) {
                 return showAnimatedLoader(size);
               }
-              
 
               return SmartRefresher(
                 controller: _refreshController,
@@ -121,9 +120,12 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                             decoration: InputDecoration(
                               hintText: AppStrings.searchText,
                               filled: true,
-                              fillColor: AppColorTheme.colorLightGrey,
+                              fillColor: Theme.of(context).cardColor,
                               hintStyle: TextStyle(
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontSize: size.width * AppDimensions.numD035),
                               disabledBorder: OutlineInputBorder(
                                   borderRadius:
@@ -163,12 +165,17 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                               suffixIcon: Padding(
                                 padding: EdgeInsets.only(
                                     right: size.width * AppDimensions.numD04),
-                                child: const ImageIcon(
+                                child: ImageIcon(
                                   AssetImage("${iconsPath}ic_search.png"),
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color ??
+                                      Colors.black,
                                 ),
                               ),
-                              suffixIconColor: Colors.black,
+                              suffixIconColor:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               suffixIconConstraints: BoxConstraints(
                                   maxHeight: size.width * AppDimensions.numD07),
                               contentPadding: EdgeInsets.symmetric(
@@ -191,56 +198,64 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                         )
                       else
                         Container(
-                              height: size.width * AppDimensions.numD15,
-                              margin: EdgeInsets.only(
-                                  left: size.width * AppDimensions.numD035),
-                              child: ListView.separated(
-                                  controller: _listController,
-                                  scrollDirection: Axis.horizontal,
-                                  itemBuilder: (context, index) {
-                                    final category = state.categories[index];
-                                    return InkWell(
-                                      onTap: () {
-                                        _bloc.add(FAQSelectCategory(index));
-                                        _listController.animateTo(index * 100.0,
-                                            duration: const Duration(
-                                                milliseconds: 200),
-                                            curve: Curves.ease);
-                                      },
-                                      child: Chip(
-                                        backgroundColor: category.selected
-                                            ? Colors.black
-                                            : AppColorTheme.colorLightGrey,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: size.width *
-                                                AppDimensions.numD025,
-                                            vertical: size.width *
-                                                AppDimensions.numD02),
-                                        label: Text(
-                                          category.name.toTitleCase(),
-                                          style: TextStyle(
-                                              color: category.selected
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                              fontFamily: "AirbnbCereal",
-                                              fontSize: size.width *
-                                                  AppDimensions.numD036,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ),
-                                    );
+                          height: size.width * AppDimensions.numD15,
+                          margin: EdgeInsets.only(
+                              left: size.width * AppDimensions.numD035),
+                          child: ListView.separated(
+                              controller: _listController,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                final category = state.categories[index];
+                                return InkWell(
+                                  onTap: () {
+                                    _bloc.add(FAQSelectCategory(index));
+                                    _listController.animateTo(index * 100.0,
+                                        duration:
+                                            const Duration(milliseconds: 200),
+                                        curve: Curves.ease);
                                   },
-                                  separatorBuilder: (context, index) {
-                                    return SizedBox(
-                                      width: size.width * AppDimensions.numD04,
-                                    );
-                                  },
-                                  itemCount: state.categories.length),
-                            ),
+                                  child: Chip(
+                                    backgroundColor: category.selected
+                                        ? Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color ??
+                                            Colors.black
+                                        : Theme.of(context).cardColor,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            size.width * AppDimensions.numD025,
+                                        vertical:
+                                            size.width * AppDimensions.numD02),
+                                    label: Text(
+                                      category.name.toTitleCase(),
+                                      style: TextStyle(
+                                          color: category.selected
+                                              ? Theme.of(context)
+                                                  .scaffoldBackgroundColor
+                                              : Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.color,
+                                          fontFamily: "AirbnbCereal",
+                                          fontSize: size.width *
+                                              AppDimensions.numD036,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return SizedBox(
+                                  width: size.width * AppDimensions.numD04,
+                                );
+                              },
+                              itemCount: state.categories.length),
+                        ),
                       if ((state.status == FAQStatus.loading ||
-                                  state.status == FAQStatus.initial) &&
-                              state.items.isEmpty &&
-                              state.categories.isNotEmpty)
+                              state.status == FAQStatus.initial) &&
+                          state.items.isEmpty &&
+                          state.categories.isNotEmpty)
                         Padding(
                           padding:
                               EdgeInsets.symmetric(vertical: size.height * 0.1),
@@ -248,152 +263,152 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                         )
                       else if (state.items.isNotEmpty)
                         ListView.separated(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal:
-                                      size.width * AppDimensions.numD035),
-                              itemBuilder: (context, index) {
-                                var item = state.items[index];
-                                return Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * AppDimensions.numD02),
-                                      border: Border.all(
-                                          color: Colors.grey.shade300)),
-                                  child: ExpansionTile(
-                                    title: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                              top: size.width *
-                                                  AppDimensions.numD01),
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: size.width *
-                                                  AppDimensions.numD02,
-                                              vertical: size.width *
-                                                  AppDimensions.numD01),
-                                          decoration: BoxDecoration(
-                                              color:
-                                                  AppColorTheme.colorThemePink,
-                                              borderRadius:
-                                                  BorderRadius.circular(size
-                                                          .width *
-                                                      AppDimensions.numD01)),
-                                          child: Text(
-                                            "Q",
-                                            style: TextStyle(
-                                                fontSize: size.width *
-                                                    AppDimensions.numD036,
-                                                color: Colors.white,
-                                                fontFamily: "AirbnbCereal",
-                                                fontWeight: FontWeight.bold),
-                                          ),
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: size.width * AppDimensions.numD035),
+                            itemBuilder: (context, index) {
+                              var item = state.items[index];
+                              return Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * AppDimensions.numD02),
+                                    border: Border.all(
+                                        color: Theme.of(context).dividerColor)),
+                                child: ExpansionTile(
+                                  title: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            top: size.width *
+                                                AppDimensions.numD01),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: size.width *
+                                                AppDimensions.numD02,
+                                            vertical: size.width *
+                                                AppDimensions.numD01),
+                                        decoration: BoxDecoration(
+                                            color: AppColorTheme.colorThemePink,
+                                            borderRadius: BorderRadius.circular(
+                                                size.width *
+                                                    AppDimensions.numD01)),
+                                        child: Text(
+                                          "Q",
+                                          style: TextStyle(
+                                              fontSize: size.width *
+                                                  AppDimensions.numD036,
+                                              color: Colors.white,
+                                              fontFamily: "AirbnbCereal",
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                        SizedBox(
-                                          width:
-                                              size.width * AppDimensions.numD02,
-                                        ),
+                                      ),
+                                      SizedBox(
+                                        width:
+                                            size.width * AppDimensions.numD02,
+                                      ),
                                         Text(
                                           item.question,
                                           style: TextStyle(
                                               fontSize: size.width *
                                                   AppDimensions.numD035,
-                                              color: Colors.black,
+                                              color: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.color,
                                               fontFamily: "AirbnbCereal",
                                               fontWeight: FontWeight.bold),
                                         )
-                                      ],
+                                    ],
+                                  ),
+                                  iconColor:
+                                      Theme.of(context).textTheme.bodyLarge?.color,
+                                  onExpansionChanged: (value) {
+                                    _bloc.add(FAQToggleItem(index));
+                                  },
+                                  initiallyExpanded: item.selected,
+                                  children: [
+                                    Container(
+                                      height: 1,
+                                      margin: EdgeInsets.only(
+                                          bottom:
+                                              size.width * AppDimensions.numD04,
+                                          left:
+                                              size.width * AppDimensions.numD04,
+                                          right: size.width *
+                                              AppDimensions.numD04),
+                                      width: size.width,
+                                      color: Theme.of(context).dividerColor,
                                     ),
-                                    iconColor: Colors.black,
-                                    onExpansionChanged: (value) {
-                                      _bloc.add(FAQToggleItem(index));
-                                    },
-                                    initiallyExpanded: item.selected,
-                                    children: [
-                                      Container(
-                                        height: 1,
-                                        margin: EdgeInsets.only(
-                                            bottom: size.width *
-                                                AppDimensions.numD04,
-                                            left: size.width *
-                                                AppDimensions.numD04,
-                                            right: size.width *
-                                                AppDimensions.numD04),
-                                        width: size.width,
-                                        color: Colors.grey.shade300,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: size.width *
-                                                AppDimensions.numD04),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              margin: EdgeInsets.only(
-                                                  top: size.width *
-                                                      AppDimensions.numD01),
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: size.width *
-                                                      AppDimensions.numD02,
-                                                  vertical: size.width *
-                                                      AppDimensions.numD01),
-                                              decoration: BoxDecoration(
-                                                  color: AppColorTheme
-                                                      .colorThemePink,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          size.width *
-                                                              AppDimensions
-                                                                  .numD01)),
-                                              child: Text(
-                                                "A",
-                                                style: TextStyle(
-                                                    fontSize: size.width *
-                                                        AppDimensions.numD035,
-                                                    color: Colors.white,
-                                                    fontFamily: "AirbnbCereal",
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: size.width *
+                                              AppDimensions.numD04),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                                top: size.width *
+                                                    AppDimensions.numD01),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: size.width *
+                                                    AppDimensions.numD02,
+                                                vertical: size.width *
+                                                    AppDimensions.numD01),
+                                            decoration: BoxDecoration(
+                                                color: AppColorTheme
+                                                    .colorThemePink,
+                                                borderRadius:
+                                                    BorderRadius.circular(size
+                                                            .width *
+                                                        AppDimensions.numD01)),
+                                            child: Text(
+                                              "A",
+                                              style: TextStyle(
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD035,
+                                                  color: Colors.white,
+                                                  fontFamily: "AirbnbCereal",
+                                                  fontWeight: FontWeight.bold),
                                             ),
-                                            SizedBox(
-                                              width: size.width *
-                                                  AppDimensions.numD02,
-                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: size.width *
+                                                AppDimensions.numD02,
+                                          ),
                                             Expanded(
                                               child: Text(
                                                 item.answer,
                                                 style: TextStyle(
-                                                    color: Colors.black,
+                                                    color: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium
+                                                        ?.color,
                                                     fontFamily: "AirbnbCereal",
                                                     fontSize: size.width *
                                                         AppDimensions.numD035),
                                               ),
                                             ),
-                                          ],
-                                        ),
+                                        ],
                                       ),
-                                      SizedBox(
-                                        height:
-                                            size.width * AppDimensions.numD04,
-                                      )
-                                    ],
-                                  ),
-                                );
-                              },
-                              separatorBuilder: (context, index) {
-                                return SizedBox(
-                                  height: size.width * AppDimensions.numD04,
-                                );
-                              },
-                              itemCount: state.items.length)
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD04,
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                            separatorBuilder: (context, index) {
+                              return SizedBox(
+                                height: size.width * AppDimensions.numD04,
+                              );
+                            },
+                            itemCount: state.items.length)
                       else if (state.categories.isNotEmpty)
                         (state.status == FAQStatus.loading ||
                                 state.status == FAQStatus.initial)

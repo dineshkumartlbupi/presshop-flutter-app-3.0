@@ -46,9 +46,9 @@ void main() async {
   String? token = await storage.read(key: SharedPreferencesKeys.tokenKey);
   if (token == null || token.isEmpty) {
     token = sharedPreferences?.getString(SharedPreferencesKeys.tokenKey);
-    debugPrint("🔍 CHECKING TOKEN (SharedPreferences Fallback): $token");
+    // debugPrint("🔍 CHECKING TOKEN (SharedPreferences Fallback): $token");
   } else {
-    debugPrint("🔍 CHECKING TOKEN (SecureStorage): $token");
+    // debugPrint("🔍 CHECKING TOKEN (SecureStorage): $token");
   }
 
   runApp(const MyApp());

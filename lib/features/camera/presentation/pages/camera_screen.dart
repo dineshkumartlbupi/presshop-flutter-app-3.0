@@ -177,20 +177,9 @@ class CameraScreenState extends State<CameraScreen>
           }
 
           if (state.status == CameraStatus.failure) {
-            if (state.errorMessage.contains("Permission") ||
-                state.errorMessage.contains("denied")) {
-              if (mounted) {
-                context.goNamed(
-                  AppRoutes.permissionErrorName,
-                  extra: {
-                    'permissionsStatus': {
-                      Permission.camera: false,
-                      Permission.microphone: false
-                    }
-                  },
-                );
-              }
-            }
+            // Permission handling is now centralized in Dashboard.dart
+            // We just log the error here if needed.
+            debugPrint("📸 CameraScreen: Camera failure: ${state.errorMessage}");
           }
 
           if (state.status == CameraStatus.success) {
@@ -228,16 +217,8 @@ class CameraScreenState extends State<CameraScreen>
           }
 
           if (state.status == CameraStatus.permissionDenied) {
-            // Handle specific permission denial (audio)
-            // Handle specific permission denial (audio)
-            if (mounted) {
-              context.goNamed(
-                AppRoutes.permissionErrorName,
-                extra: {
-                  'permissionsStatus': {Permission.microphone: false}
-                },
-              );
-            }
+            // Handled by Dashboard
+            debugPrint("📸 CameraScreen: Permission denied status received");
           }
         },
         builder: (context, state) {

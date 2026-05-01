@@ -110,9 +110,13 @@ class CommonWidgetsNew {
       mainAxisSize: MainAxisSize.max,
       children: [
         Center(
-          child: Lottie.asset("assets/lottieFiles/loader_new.json",
-              height: size.width * AppDimensions.numD28,
-              width: size.width * AppDimensions.numD28),
+          child: ColorFiltered(
+            colorFilter:
+                const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+            child: Lottie.asset("assets/lottieFiles/loader_new.json",
+                height: size.width * AppDimensions.numD28,
+                width: size.width * AppDimensions.numD28),
+          ),
         ),
         if (isForLocation) ...[
           SizedBox(height: size.width * AppDimensions.numD005),
@@ -135,9 +139,12 @@ class CommonWidgetsNew {
 
   static Widget showAnimatedLoader(Size size) {
     return Center(
-        child: Lottie.asset("assets/lottieFiles/loader_new.json",
-            height: size.width * AppDimensions.numD25,
-            width: size.width * AppDimensions.numD25));
+        child: ColorFiltered(
+            colorFilter:
+                const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+            child: Lottie.asset("assets/lottieFiles/loader_new.json",
+                height: size.width * AppDimensions.numD25,
+                width: size.width * AppDimensions.numD25)));
   }
 
   /// Calender

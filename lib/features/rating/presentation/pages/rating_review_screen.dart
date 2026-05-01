@@ -117,7 +117,15 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
               if (state.status == RatingStatus.initial ||
                   (state.status == RatingStatus.loading &&
                       state.reviews.isEmpty)) {
-                return const SizedBox.shrink();
+                return Center(
+                  child: Image.asset(
+                    "${commonImagePath}rabbitLogo.png",
+                    height: size.width * AppDimensions.numD20,
+                    width: size.width * AppDimensions.numD20,
+                    color: Theme.of(context).textTheme.bodyLarge?.color ??
+                        Colors.black,
+                  ),
+                );
               }
 
               return Column(
@@ -136,7 +144,11 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD036,
-                              color: Colors.black,
+                              color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color ??
+                                  Colors.black,
                               fontWeight: FontWeight.w500),
                         ),
                         // const Spacer(),
@@ -206,7 +218,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
           horizontal: size.width * AppDimensions.numD03,
           vertical: size.width * AppDimensions.numD04),
       decoration: BoxDecoration(
-          color: AppColorTheme.colorLightGrey,
+          color: Theme.of(context).cardColor,
           borderRadius:
               BorderRadius.circular(size.width * AppDimensions.numD04)),
       child: Row(
@@ -224,7 +236,9 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                         size.width * AppDimensions.numD04),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.shade200,
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? Colors.grey.shade200
+                            : Colors.black38,
                         blurRadius: 1,
                       )
                     ]),
@@ -241,8 +255,15 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                               ),
                             ),
                           ),
-                      placeholder: (context, url) =>
-                          const CircularProgressIndicator(),
+                      placeholder: (context, url) => Center(
+                        child: Image.asset(
+                          "${commonImagePath}rabbitLogo.png",
+                          height: size.width * AppDimensions.numD10,
+                          width: size.width * AppDimensions.numD10,
+                          color: Theme.of(context).textTheme.bodyLarge?.color ??
+                              Colors.black,
+                        ),
+                      ),
                       errorWidget: (context, url, error) => Container(
                             height: size.width * AppDimensions.numD20,
                             width: size.width * AppDimensions.numD20,
@@ -264,7 +285,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                         horizontal: size.width * AppDimensions.numD016),
                     width: size.width * AppDimensions.numD20,
                     decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(.1),
+                      color: Theme.of(context).dividerColor.withOpacity(.05),
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD02),
                     ),
@@ -273,7 +294,11 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                         Text(
                           "Total Earning",
                           style: TextStyle(
-                              color: Colors.black,
+                              color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color ??
+                                  Colors.black,
                               fontSize: size.width * 0.02,
                               fontWeight: FontWeight.w400),
                           textAlign: TextAlign.center,
@@ -281,7 +306,11 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                         Text(
                           "$currencySymbol${formatDouble(double.tryParse(review.totalEarning) ?? 0.0)}",
                           style: TextStyle(
-                              color: Colors.black,
+                              color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color ??
+                                  Colors.black,
                               fontSize: size.width * 0.026,
                               fontWeight: FontWeight.w700),
                           textAlign: TextAlign.center,
@@ -359,7 +388,11 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD04,
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color ??
+                                    Colors.black,
                                 fontWeight: FontWeight.bold),
                           ),
                           if (review.hopperCreatedAt.isNotEmpty)
@@ -381,7 +414,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                         horizontal: size.width * AppDimensions.numD02,
                         vertical: size.width * AppDimensions.numD02),
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(
                             size.width * AppDimensions.numD025)),
                     child: Row(
@@ -391,7 +424,11 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD03,
-                              color: Colors.black,
+                              color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color ??
+                                  Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
                         // SizedBox(
@@ -458,7 +495,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                 child: Text(
                   review.review,
                   style: TextStyle(
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color ??
+                          Colors.black,
                       fontWeight: FontWeight.w400,
                       fontSize: size.width * 0.033),
                 ),
@@ -476,7 +514,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
         context: parentContext,
         isScrollControlled: true,
         useSafeArea: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
           topLeft: Radius.circular(size.width * AppDimensions.numD085),
@@ -506,7 +544,11 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                             },
                             icon: Icon(
                               Icons.close,
-                              color: Colors.black,
+                              color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color ??
+                                  Colors.black,
                               size: size.width * AppDimensions.numD07,
                             ),
                           ),
@@ -516,7 +558,11 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                                 size: size,
                                 fontSize: size.width *
                                     AppDimensions.appBarHeadingFontSizeNew,
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color ??
+                                    Colors.black,
                                 fontWeight: FontWeight.bold),
                           ),
                           TextButton(
@@ -552,7 +598,9 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD05,
-                            color: Colors.black,
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color ??
+                                    Colors.black,
                             fontWeight: FontWeight.w500),
                       ),
 
@@ -570,7 +618,9 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD05,
-                            color: Colors.black,
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color ??
+                                    Colors.black,
                             fontWeight: FontWeight.w500),
                       ),
                       SizedBox(
@@ -600,7 +650,10 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                                         size.width * AppDimensions.numD01),
                                 decoration: BoxDecoration(
                                     color: filterRatingList[index].selected
-                                        ? Colors.grey.shade400
+                                        ? (Theme.of(context).brightness ==
+                                                Brightness.light
+                                            ? Colors.grey.shade400
+                                            : Colors.grey.shade800)
                                         : Colors.transparent),
                                 child: Row(
                                   children: [
@@ -633,7 +686,11 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                                           size: size,
                                           fontSize:
                                               size.width * AppDimensions.numD04,
-                                          color: Colors.black,
+                                          color: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.color ??
+                                              Colors.black,
                                           fontWeight: FontWeight.normal),
                                     )
                                   ],
@@ -658,7 +715,9 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD05,
-                            color: Colors.black,
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color ??
+                                    Colors.black,
                             fontWeight: FontWeight.w500),
                       ),
 
@@ -688,7 +747,9 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                       height: size.width * AppDimensions.numD14,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
+                          backgroundColor:
+                              Theme.of(context).textTheme.bodyLarge?.color ??
+                                  Colors.black,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
                                 size.width * AppDimensions.numD02),
@@ -707,7 +768,9 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                         child: Text(
                           "Show Results",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Theme.of(context).brightness == Brightness.light
+                                ? Colors.white
+                                : Colors.black,
                             fontSize: size.width * AppDimensions.numD045,
                             fontWeight: FontWeight.bold,
                           ),
@@ -767,7 +830,11 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
               left: size.width * AppDimensions.numD02,
               right: size.width * AppDimensions.numD02,
             ),
-            color: list[index].isSelected ? Colors.grey.shade400 : null,
+            color: list[index].isSelected
+                ? (Theme.of(context).brightness == Brightness.light
+                    ? Colors.grey.shade400
+                    : Colors.grey.shade800)
+                : null,
             child: Row(
               children: [
                 list[index].name == AppStrings.filterDateText
@@ -799,7 +866,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
                                 border: Border.all(
-                                    width: 1, color: const Color(0xFFDEE7E6)),
+                                    width: 1, color: Theme.of(context).dividerColor),
                               ),
                               child: Row(
                                 mainAxisAlignment:
@@ -814,15 +881,23 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD032,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color ??
+                                            Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     width: size.width * AppDimensions.numD015,
                                   ),
-                                  const Icon(
+                                  Icon(
                                     Icons.arrow_drop_down_sharp,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color ??
+                                        Colors.black,
                                   )
                                 ],
                               ),
@@ -870,7 +945,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
                                 border: Border.all(
-                                    width: 1, color: const Color(0xFFDEE7E6)),
+                                    width: 1, color: Theme.of(context).dividerColor),
                               ),
                               child: Row(
                                 mainAxisAlignment:
@@ -885,15 +960,23 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD032,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color ??
+                                            Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     width: size.width * AppDimensions.numD02,
                                   ),
-                                  const Icon(
+                                  Icon(
                                     Icons.arrow_drop_down_sharp,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color ??
+                                        Colors.black,
                                   )
                                 ],
                               ),
@@ -904,7 +987,9 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                     : Text(list[index].name,
                         style: TextStyle(
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color ??
+                                    Colors.black,
                             fontWeight: FontWeight.w400,
                             fontFamily: "AirbnbCereal_W_Bk"))
               ],

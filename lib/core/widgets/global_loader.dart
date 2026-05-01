@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:presshop/core/theme/app_colors.dart';
 import 'package:presshop/main.dart';
 
 class GlobalLoader {
@@ -22,7 +23,11 @@ class GlobalLoader {
                 child: SizedBox(
                   width: 120,
                   height: 120,
-                  child: Lottie.asset("assets/lottieFiles/emily_loader.json"),
+                  child: ColorFiltered(
+                    colorFilter: ColorFilter.mode(
+                        AppColorTheme.colorThemePink, BlendMode.srcIn),
+                    child: Lottie.asset("assets/lottieFiles/emily_loader.json"),
+                  ),
                 ),
               ),
             ),

@@ -811,7 +811,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD032,
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.normal)),
         SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
@@ -851,7 +851,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD032,
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.normal)),
         SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
@@ -891,7 +891,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD032,
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.normal)),
         SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
@@ -931,7 +931,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD032,
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.normal)),
         SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
@@ -997,7 +997,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD032,
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.normal)),
         SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
@@ -1052,7 +1052,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD032,
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.normal)),
         SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
@@ -1089,7 +1089,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD032,
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.normal)),
         SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
@@ -1129,7 +1129,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD032,
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.normal)),
         SizedBox(height: size.width * AppDimensions.numD02),
         widget.editProfileScreen
@@ -1247,7 +1247,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD032,
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.normal)),
         SizedBox(height: size.width * AppDimensions.numD02),
         widget.editProfileScreen
@@ -1372,7 +1372,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD032,
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.normal)),
         SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
@@ -1412,7 +1412,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD032,
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.normal)),
         SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(

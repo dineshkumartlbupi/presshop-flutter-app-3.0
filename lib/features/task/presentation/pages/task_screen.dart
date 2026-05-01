@@ -260,7 +260,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                         physics: const NeverScrollableScrollPhysics(),
                         labelColor: Colors.white,
                         dividerColor: Colors.transparent,
-                        unselectedLabelColor: Colors.black,
+                        unselectedLabelColor: Theme.of(context).textTheme.bodyLarge?.color,
                         indicator: BoxDecoration(
                           color: AppColorTheme.colorThemePink,
                           borderRadius: BorderRadius.circular(

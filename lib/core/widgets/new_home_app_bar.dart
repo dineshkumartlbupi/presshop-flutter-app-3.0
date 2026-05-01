@@ -56,9 +56,8 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           : (showLogo)
               ? Padding(
                   padding: EdgeInsets.only(
-                      left: hideLeading
-                          ? size.width * AppDimensions.numD018
-                          : 0),
+                      left:
+                          hideLeading ? size.width * AppDimensions.numD018 : 0),
                   child: InkWell(
                     onTap: () {
                       print("logo tapped");
@@ -100,13 +99,12 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           Center(
               child: GestureDetector(
                   onTap: () {
-                    context.pushNamed(AppRoutes.newsName,
-                        extra: {
-                          'hideFilters': true,
-                          'fromMap': isFromMap,
-                          'latitude': latitude,
-                          'longitude': longitude
-                        });
+                    context.pushNamed(AppRoutes.newsName, extra: {
+                      'hideFilters': true,
+                      'fromMap': isFromMap,
+                      'latitude': latitude,
+                      'longitude': longitude
+                    });
                   },
                   child: Text(
                     "Click to view local news",
@@ -122,12 +120,11 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: InkWell(
               onTap: () {
                 // context.pushNamed(AppRoutes.menuName);
-                    context.pushNamed(AppRoutes.newsName,
-                        extra: {
-                          'fromMap': isFromMap,
-                          'latitude': latitude,
-                          'longitude': longitude
-                        });
+                context.pushNamed(AppRoutes.newsName, extra: {
+                  'fromMap': isFromMap,
+                  'latitude': latitude,
+                  'longitude': longitude
+                });
               },
               child: Container(
                 padding: EdgeInsets.all(size.width * AppDimensions.numD025),
@@ -139,6 +136,8 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 child: Image.asset(
                   // 'assets/icons/menu3.png',
                   'assets/icons/ic_news2.png',
+                  color: Theme.of(context).textTheme.bodyLarge?.color ??
+                      Colors.black,
                   width: size.width * AppDimensions.numD06,
                   height: size.width * AppDimensions.numD06,
                 ),
@@ -169,7 +168,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 onFilterTap!();
               }
             },
-            child: commonFilterIcon(size),
+            child: commonFilterIcon(context, size),
           ),
         SizedBox(
           width: size.width * AppDimensions.numD04,

@@ -135,7 +135,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD048,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w600),
                       ),
                     ],
@@ -152,7 +152,8 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD03,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               lineHeight: 2,
                               fontWeight: FontWeight.normal),
                         ),
@@ -161,7 +162,8 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD03,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               lineHeight: 2,
                               fontWeight: FontWeight.bold),
                         ),
@@ -171,7 +173,8 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD03,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               lineHeight: 2,
                               fontWeight: FontWeight.normal),
                         ),
@@ -181,7 +184,8 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD03,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               lineHeight: 2,
                               fontWeight: FontWeight.normal),
                         ),
@@ -206,7 +210,10 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD04,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.bold)),
                                 // ClipRRect(
                                 //   borderRadius: BorderRadius.circular(
@@ -237,7 +244,10 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD04,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.bold)),
                                 // ClipRRect(
                                 //   borderRadius: BorderRadius.circular(
@@ -290,7 +300,10 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD044,
-                                      color: Colors.black,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color,
                                       fontWeight: FontWeight.bold))),
                           InkWell(
                             onTap: () {
@@ -375,7 +388,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                         style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD03,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400,
                         ),
                         children: [
@@ -386,7 +399,8 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                             style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD03,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w800,
                             ),
                           ),
@@ -399,7 +413,8 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                             style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD03,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -415,7 +430,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD03,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w400),
                         children: [
                           TextSpan(

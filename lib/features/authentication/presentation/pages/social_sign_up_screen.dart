@@ -49,8 +49,14 @@ class _SocialSignUpState extends State<SocialSignUp>
   var scrollController = ScrollController();
 
   late AnimationController controller;
-  Timer? debounce;
-  // final ImagePicker _picker = ImagePicker();
+  Timer? _phoneDebounce;
+  Timer? _userDebounce;
+  Timer? _referralDebounce;
+
+  String userNameApiError = "";
+  String phoneApiError = "";
+  String referralCodeApiError = "";
+
   final RegExp _restrictPattern = RegExp(
     r"@(gmail\.com|yahoo\.com|hotmail\.com|outlook\.com)$",
     caseSensitive: true,
@@ -58,6 +64,30 @@ class _SocialSignUpState extends State<SocialSignUp>
   final RegExp _restrictPatter2 = RegExp(r'@(gmail|yahoo|hotmail|outlook)\.');
   final RegExp _restrictPatter3 =
       RegExp('gmail|yahoo|hotmail|outlook', caseSensitive: false);
+
+  void _onUserNameChanged(String? value) {
+    if (value == null || value.trim().isEmpty) return;
+
+    _userDebounce?.cancel();
+
+    _userDebounce = Timer(const Duration(milliseconds: 800), () {
+      if (value.trim().length >= 4) {
+        checkUserNameApi();
+      }
+    });
+  }
+
+  void _onPhoneChanged(String? value) {
+    if (value == null || value.trim().isEmpty) return;
+
+    _phoneDebounce?.cancel();
+
+    _phoneDebounce = Timer(const Duration(milliseconds: 600), () {
+      if (value.trim().length >= 7) {
+        checkPhoneApi();
+      }
+    });
+  }
 
   ///TextEditingController
   TextEditingController userNameController = TextEditingController();
@@ -96,9 +126,7 @@ class _SocialSignUpState extends State<SocialSignUp>
       showNumber = false,
       isSelectCheck = true;
   bool validUserName = false;
-
   List<AvatarData> avatarList = [];
-
   // final bool _isLoggedIn = false;
   String socialEmail = "";
   String socialId = "";
@@ -111,7 +139,6 @@ class _SocialSignUpState extends State<SocialSignUp>
     controller = AnimationController(
         duration: const Duration(milliseconds: 700), vsync: this);
     super.initState();
-
     if (widget.socialLogin) {
       emailController.text = widget.email;
       if (widget.name.isNotEmpty) {
@@ -121,12 +148,14 @@ class _SocialSignUpState extends State<SocialSignUp>
         userNameController.text = sanitized;
       }
     }
-
     // WidgetsBinding.instance.addPostFrameCallback((_) => getAvatarsApi());
   }
 
   @override
   void dispose() {
+    _userDebounce?.cancel();
+    _phoneDebounce?.cancel();
+    _referralDebounce?.cancel();
     controller.dispose();
     userNameController.dispose();
     emailController.dispose();
@@ -176,20 +205,25 @@ class _SocialSignUpState extends State<SocialSignUp>
             _avatarsNotifier.value = false;
           } else if (state is UserNameCheckResult) {
             userNameAlreadyExists = !state.isAvailable;
+            userNameApiError = state.errorMessage;
             setState(() {});
           } else if (state is PhoneCheckResult) {
             phoneAlreadyExists = !state.isAvailable;
+            phoneApiError = state.errorMessage;
             setState(() {});
           } else if (state is ReferralCodeVerified) {
             isRefferalCodeValid = true;
             showReferralCodeError = false;
+            referralCodeApiError = "";
             setState(() {});
           } else if (state is ReferralCodeVerificationFailed) {
             isRefferalCodeValid = false;
             showReferralCodeError = true;
+            referralCodeApiError = state.message;
             setState(() {});
           }
         },
+      
         builder: (context, state) {
           return Scaffold(
             appBar: CommonAppBar(
@@ -310,10 +344,9 @@ class _SocialSignUpState extends State<SocialSignUp>
                                             children: [
                                               ClipRRect(
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        size.width *
-                                                            AppDimensions
-                                                                .numD04),
+                                                    BorderRadius.circular(size
+                                                            .width *
+                                                        AppDimensions.numD04),
                                                 child: Image.network(
                                                   selectedAvatar,
                                                   height: size.width *
@@ -346,10 +379,9 @@ class _SocialSignUpState extends State<SocialSignUp>
                                                     setState(() {});
                                                   },
                                                   child: Container(
-                                                    padding: EdgeInsets.all(
-                                                        size.width *
-                                                            AppDimensions
-                                                                .numD01),
+                                                    padding: EdgeInsets.all(size
+                                                            .width *
+                                                        AppDimensions.numD01),
                                                     decoration:
                                                         const BoxDecoration(
                                                             color: Colors.white,
@@ -414,8 +446,8 @@ class _SocialSignUpState extends State<SocialSignUp>
                                           RegExp(r'[ \\]')),
                                     ],
                                     suffixIcon: getUsernameSuffixIcon(),
-                                    prefixIcon: const Icon(
-                                        Icons.person_outline_sharp),
+                                    prefixIcon:
+                                        const Icon(Icons.person_outline_sharp),
                                     prefixIconHeight:
                                         size.width * AppDimensions.numD06,
                                     suffixIconIconHeight:
@@ -428,9 +460,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                                     filledColor: Colors.transparent,
                                     autofocus: false,
                                     onChanged: (v) {
-                                      if (v!.trim().length >= 4) {
-                                        checkUserNameApi();
-                                      }
+                                      _onUserNameChanged(v);
                                       setState(() {});
                                       return null;
                                     },
@@ -442,36 +472,39 @@ class _SocialSignUpState extends State<SocialSignUp>
                                     AppStrings.userNameNoteText,
                                     style: TextStyle(
                                         color: AppColorTheme.colorHint,
-                                        fontSize: size.width *
-                                            AppDimensions.numD025),
+                                        fontSize:
+                                            size.width * AppDimensions.numD025),
                                   ),
-                                  SizedBox(
-                                    height: size.height * AppDimensions.numD02,
-                                  ),
-                                  CommonTextField(
-                                    size: size,
-                                    maxLines: 1,
-                                    borderColor:
-                                        AppColorTheme.colorTextFieldBorder,
-                                    controller: emailController,
-                                    hintText: AppStrings.emailHintText,
-                                    textInputFormatters: null,
-                                    prefixIcon:
-                                        const Icon(Icons.email_outlined),
-                                    prefixIconHeight:
-                                        size.width * AppDimensions.numD06,
-                                    suffixIconIconHeight:
-                                        size.width * AppDimensions.numD085,
-                                    suffixIcon: null,
-                                    hidePassword: false,
-                                    keyboardType: TextInputType.emailAddress,
-                                    validator: null,
-                                    enableValidations: false,
-                                    filled: true,
-                                    filledColor: Colors.grey.shade100,
-                                    readOnly: true,
-                                    autofocus: false,
-                                  ),
+
+                                  // SizedBox(
+                                  //   height: size.height * AppDimensions.numD02,
+                                  // ),
+
+                                  // CommonTextField(
+                                  //   size: size,
+                                  //   maxLines: 1,
+                                  //   borderColor:
+                                  //       AppColorTheme.colorTextFieldBorder,
+                                  //   controller: emailController,
+                                  //   hintText: AppStrings.emailHintText,
+                                  //   textInputFormatters: null,
+                                  //   prefixIcon:
+                                  //       const Icon(Icons.email_outlined),
+                                  //   prefixIconHeight:
+                                  //       size.width * AppDimensions.numD06,
+                                  //   suffixIconIconHeight:
+                                  //       size.width * AppDimensions.numD085,
+                                  //   suffixIcon: null,
+                                  //   hidePassword: false,
+                                  //   keyboardType: TextInputType.emailAddress,
+                                  //   validator: null,
+                                  //   enableValidations: false,
+                                  //   filled: true,
+                                  //   filledColor: Colors.grey.shade100,
+                                  //   readOnly: true,
+                                  //   autofocus: false,
+                                  // ),
+
                                   SizedBox(
                                     height: size.height * AppDimensions.numD02,
                                   ),
@@ -534,7 +567,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                                     filledColor: Colors.transparent,
                                     autofocus: false,
                                     onChanged: (val) {
-                                      checkPhoneApi();
+                                      _onPhoneChanged(val);
                                       setState(() {});
                                       return null;
                                     },
@@ -569,10 +602,17 @@ class _SocialSignUpState extends State<SocialSignUp>
                                     autofocus: false,
                                     onChanged: (v) {
                                       showReferralCodeError = false;
-                                      if (v!.trim().length >= 5) {
-                                        verifyReferredCode();
-                                      } else {
-                                        isRefferalCodeValid = false;
+                                      referralCodeApiError = "";
+                                      isRefferalCodeValid = false;
+
+                                      _referralDebounce?.cancel();
+
+                                      if (v != null && v.trim().length >= 5) {
+                                        _referralDebounce = Timer(
+                                            const Duration(milliseconds: 600),
+                                            () {
+                                          verifyReferredCode();
+                                        });
                                       }
                                       setState(() {});
                                       return null;
@@ -582,12 +622,28 @@ class _SocialSignUpState extends State<SocialSignUp>
                                   SizedBox(
                                     height: size.width * AppDimensions.numD01,
                                   ),
+                                  if (showReferralCodeError &&
+                                      referralCodeApiError.isNotEmpty)
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          bottom: size.width *
+                                              AppDimensions.numD01),
+                                      child: Text(
+                                        referralCodeApiError,
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width *
+                                                AppDimensions.numD03,
+                                            color: Colors.red.shade700,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                    ),
                                   Text(
                                     AppStrings.referralcodeNoteText,
                                     style: TextStyle(
                                         color: AppColorTheme.colorHint,
-                                        fontSize: size.width *
-                                            AppDimensions.numD025),
+                                        fontSize:
+                                            size.width * AppDimensions.numD025),
                                   ),
                                   SizedBox(
                                     height: size.width * AppDimensions.numD04,
@@ -598,10 +654,10 @@ class _SocialSignUpState extends State<SocialSignUp>
                                           .requestFocus(FocusNode());
                                       rememberMe = false;
 
-                                      context
-                                          .pushNamed(AppRoutes.termCheckName,
-                                              extra: {'type': "legal"})
-                                          .then((value) {
+                                      context.pushNamed(AppRoutes.termCheckName,
+                                          extra: {
+                                            'type': "legal"
+                                          }).then((value) {
                                         if (value != null && value is bool) {
                                           debugPrint("value::::$value");
                                           termConditionsChecked = value;
@@ -633,8 +689,8 @@ class _SocialSignUpState extends State<SocialSignUp>
                                                         AppDimensions.numD06),
                                               ),
                                         SizedBox(
-                                          width: size.width *
-                                              AppDimensions.numD02,
+                                          width:
+                                              size.width * AppDimensions.numD02,
                                         ),
                                         Expanded(
                                           child: Text(
@@ -667,8 +723,9 @@ class _SocialSignUpState extends State<SocialSignUp>
                                                 AppDimensions.numD035,
                                             color: Colors.white,
                                             fontWeight: FontWeight.w700),
-                                        commonButtonStyle(size,
-                                            AppColorTheme.colorThemePink), () {
+                                        commonButtonStyle(
+                                            size, AppColorTheme.colorThemePink),
+                                        () {
                                       if (formKey.currentState!.validate()) {
                                         if (!isSelectCheck) {
                                           // showSnackBar(
@@ -699,10 +756,10 @@ class _SocialSignUpState extends State<SocialSignUp>
                                                   .receiveTaskNotificationKey] =
                                               isSelectCheck.toString();
                                           params[SharedPreferencesKeys
-                                              .phoneKey] =
+                                                  .phoneKey] =
                                               phoneController.text.trim();
-                                          params[SharedPreferencesKeys.roleKey] =
-                                              "Hopper";
+                                          params[SharedPreferencesKeys
+                                              .roleKey] = "Hopper";
                                           params[SharedPreferencesKeys
                                               .avatarIdKey] = selectedAvatarId;
                                           if (isRefferalCodeValid) {
@@ -813,9 +870,8 @@ class _SocialSignUpState extends State<SocialSignUp>
   }
 
   void checkPhoneApi() {
-    context
-        .read<SignUpBloc>()
-        .add(CheckPhoneEvent(phoneController.text.trim()));
+    context.read<SignUpBloc>().add(CheckPhoneEvent(
+        selectedCountryCodePicker + phoneController.text.trim()));
   }
 
   Icon? getUsernameSuffixIcon() {
@@ -836,16 +892,52 @@ class _SocialSignUpState extends State<SocialSignUp>
       );
     }
 
-    if (userNameValidator(userNameController.text) != null) {
+    if (_restrictPattern.hasMatch(username) ||
+        _restrictPatter2.hasMatch(username) ||
+        _restrictPatter3.hasMatch(username)) {
       return const Icon(
         Icons.highlight_remove,
         color: Colors.red,
       );
     }
 
-    if (_restrictPattern.hasMatch(username) ||
-        _restrictPatter2.hasMatch(username) ||
-        _restrictPatter3.hasMatch(username)) {
+    List<String> nameParts = widget.name.trim().split(' ');
+    String firstName = nameParts[0].toLowerCase();
+    String lastName = nameParts.length > 1
+        ? nameParts.sublist(1).join(" ").toLowerCase()
+        : "";
+
+    List<String> generateSubstrings(String text) {
+      List<String> substrings = [];
+      for (int i = 0; i < text.length; i++) {
+        for (int j = i + 4; j <= text.length; j++) {
+          substrings.add(text.substring(i, j));
+        }
+      }
+      return substrings;
+    }
+
+    List<String> firstNameSubstrings = generateSubstrings(firstName);
+    List<String> lastNameSubstrings = generateSubstrings(lastName);
+
+    bool containsAnySubstring(String username, List<String> substrings) {
+      for (var substring in substrings) {
+        if (username.contains(substring)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    if (containsAnySubstring(username, firstNameSubstrings)) {
+      return const Icon(
+        Icons.highlight_remove,
+        color: Colors.red,
+      );
+    }
+
+    if (lastName.isNotEmpty &&
+        containsAnySubstring(username, lastNameSubstrings)) {
       return const Icon(
         Icons.highlight_remove,
         color: Colors.red,
@@ -878,10 +970,13 @@ class _SocialSignUpState extends State<SocialSignUp>
       return AppStrings.requiredText;
     }
 
-    String firstName = widget.name.trim().toLowerCase();
-    String username = value.trim().toLowerCase();
+    List<String> nameParts = widget.name.trim().split(' ');
+    String firstName = nameParts[0].toLowerCase();
+    String lastName = nameParts.length > 1
+        ? nameParts.sublist(1).join(" ").toLowerCase()
+        : "";
 
-    print("firstName = $firstName");
+    String username = value.trim().toLowerCase();
 
     if (firstName.isEmpty) {
       return "First name must be filled.";
@@ -898,6 +993,7 @@ class _SocialSignUpState extends State<SocialSignUp>
     }
 
     List<String> firstNameSubstrings = generateSubstrings(firstName);
+    List<String> lastNameSubstrings = generateSubstrings(lastName);
 
     bool containsAnySubstring(String username, List<String> substrings) {
       for (var substring in substrings) {
@@ -912,6 +1008,11 @@ class _SocialSignUpState extends State<SocialSignUp>
       return "Your username cannot contain any sequence from your first name.";
     }
 
+    if (lastName.isNotEmpty &&
+        containsAnySubstring(username, lastNameSubstrings)) {
+      return "Your username cannot contain any sequence from your last name.";
+    }
+
     if (value.length < 4) {
       return "Your username must be at least 4 characters in length.";
     }
@@ -921,8 +1022,9 @@ class _SocialSignUpState extends State<SocialSignUp>
       return "Domain names are not allowed for security reasons.";
     }
     if (userNameAlreadyExists) {
-      isRefferalCodeValid = false;
-      return "This username is already taken. Please choose another one.";
+      return userNameApiError.isNotEmpty
+          ? userNameApiError
+          : "This username is already taken. Please choose another one.";
     }
 
     return null;
@@ -981,7 +1083,9 @@ class _SocialSignUpState extends State<SocialSignUp>
     }
 
     if (phoneAlreadyExists) {
-      return AppStrings.phoneExistsErrorText;
+      return phoneApiError.isNotEmpty
+          ? phoneApiError
+          : AppStrings.phoneExistsErrorText;
     }
 
     return null;
@@ -1018,4 +1122,3 @@ class _SocialSignUpState extends State<SocialSignUp>
     context.goNamed(AppRoutes.dashboardName);
   }
 }
-

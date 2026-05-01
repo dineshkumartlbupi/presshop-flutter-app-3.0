@@ -298,7 +298,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                             size: size,
                                             fontSize: size.width *
                                                 AppDimensions.numD03,
-                                            color: Colors.black,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color,
                                             lineHeight: 2,
                                             fontWeight: FontWeight.normal),
                                       ),
@@ -322,7 +325,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                                   size: size,
                                                   fontSize: size.width *
                                                       AppDimensions.numD035,
-                                                  color: Colors.black,
+                                                  color: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge
+                                                      ?.color,
                                                   fontWeight: FontWeight.w700)),
                                         if (isOwner)
                                           SizedBox(
@@ -443,7 +449,11 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                                           fontSize: size.width *
                                                               AppDimensions
                                                                   .numD03,
-                                                          color: Colors.black,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyLarge
+                                                                  ?.color,
                                                           fontWeight:
                                                               FontWeight.w400),
                                                       children: [
@@ -627,7 +637,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
               style: commonTextStyle(
                   size: size,
                   fontSize: size.width * AppDimensions.numD033,
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.w400),
             ),
             const Spacer(),
@@ -649,7 +659,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD035,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontWeight: FontWeight.normal),
                 ),
               ],
@@ -678,7 +688,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                     style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD04,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         lineHeight: 1.5,
                         fontWeight: FontWeight.w700),
                   ),
@@ -888,7 +898,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                               fontSize: size.width * AppDimensions.numD035,
                               color: contentItem!.paidStatus == false
                                   ? Colors.white
-                                  : Colors.black,
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                               fontWeight: FontWeight.w400)),
                       FittedBox(
                         child: Container(
@@ -903,7 +916,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                 fontSize: size.width * AppDimensions.numD05,
                                 color: contentItem!.paidStatus == false
                                     ? Colors.white
-                                    : Colors.black,
+                                    : Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -929,7 +945,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w400),
                       ),
                       FittedBox(
@@ -943,7 +959,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD05,
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -976,7 +995,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(
                         size.width * AppDimensions.numD05),
-                    border: Border.all(color: Colors.black)),
+                    border: Border.all(
+                        color: Theme.of(context).textTheme.bodyLarge?.color ??
+                            Theme.of(context).textTheme.bodyLarge?.color ??
+                            Colors.white)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -1029,7 +1051,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD033,
-                                      color: Colors.black,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color,
                                       fontWeight: FontWeight.w500),
                                 ),
 
@@ -1124,7 +1149,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD035,
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontWeight: FontWeight.w400),
                           ),
                           Text(
@@ -1134,7 +1162,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD05,
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontWeight: FontWeight.bold),
                           ),
                         ],

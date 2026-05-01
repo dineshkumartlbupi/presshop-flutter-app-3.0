@@ -87,7 +87,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                 onTap: () {
                   showBottomSheet(context, size);
                 },
-                child: commonFilterIcon(size),
+                child: commonFilterIcon(context, size),
               )
             ],
           ),
@@ -1011,7 +1011,11 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                             },
                             icon: Icon(
                               Icons.close,
-                              color: Colors.black,
+                              color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color ??
+                                  Colors.black,
                               size: size.width * AppDimensions.numD07,
                             ),
                           ),
@@ -1021,7 +1025,11 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                 size: size,
                                 fontSize: size.width *
                                     AppDimensions.appBarHeadingFontSizeNew,
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color ??
+                                    Colors.black,
                                 fontWeight: FontWeight.bold),
                           ),
                           TextButton(

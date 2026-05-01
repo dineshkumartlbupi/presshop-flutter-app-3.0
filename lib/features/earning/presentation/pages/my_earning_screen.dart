@@ -615,16 +615,24 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                 controller: _tabController,
                                 labelColor: Colors.white,
                                 dividerColor: AppColorTheme.colorThemePink,
-                                unselectedLabelColor: Colors.black,
+                                unselectedLabelColor: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
+                                indicatorSize: TabBarIndicatorSize.tab,
                                 indicator: BoxDecoration(
                                   color: AppColorTheme.colorThemePink,
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD02),
                                 ),
+                                unselectedLabelStyle: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * AppDimensions.numD038,
+                                  fontWeight: FontWeight.bold,
+                                ),
                                 labelStyle: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD038,
-                                  color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 tabs: [
@@ -684,7 +692,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                         fontSize: size.width *
                                                             AppDimensions
                                                                 .numD045,
-                                                        color: Colors.black,
+                                                        color: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyLarge
+                                                            ?.color,
                                                         fontWeight:
                                                             FontWeight.w600),
                                                   ),
@@ -762,7 +773,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD03,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.normal),
                                   ),
                                   WidgetSpan(
@@ -790,7 +804,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD03,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.normal),
                                   ),
                                   TextSpan(
@@ -799,7 +816,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD03,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.normal),
                                   ),
                                   WidgetSpan(
@@ -832,7 +852,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD03,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.normal),
                                   ),
                                   WidgetSpan(
@@ -860,12 +883,18 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD03,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.normal),
                                   ),
                                 ],
                                 style: TextStyle(
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                     fontSize: size.width * AppDimensions.numD03,
                                     fontWeight: FontWeight.w300,
                                     height: 1.5),
@@ -1697,7 +1726,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                         },
                         icon: Icon(
                           Icons.close,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color ??
+                              Colors.black,
                           size: size.width * AppDimensions.numD07,
                         ),
                       ),
@@ -1707,7 +1737,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             size: size,
                             fontSize: size.width *
                                 AppDimensions.appBarHeadingFontSizeNew,
-                            color: Colors.black,
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color ??
+                                    Colors.black,
                             fontWeight: FontWeight.bold),
                       ),
                       TextButton(
