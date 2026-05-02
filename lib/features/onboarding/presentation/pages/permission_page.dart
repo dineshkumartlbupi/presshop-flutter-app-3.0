@@ -30,12 +30,6 @@ class _PermissionPageState extends State<PermissionPage>
       icon: Icons.camera_alt_outlined,
     ),
     PermissionInfo(
-      permission: Permission.notification,
-      title: "Notifications",
-      description: "Stay updated with real-time alerts and news.",
-      icon: Icons.notifications_none_outlined,
-    ),
-    PermissionInfo(
       permission: Permission.microphone,
       title: "Microphone",
       description: "Required for recording audio and videos.",
@@ -84,7 +78,14 @@ class _PermissionPageState extends State<PermissionPage>
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     if (androidInfo.version.sdkInt >= 33) {
-      statuses[Permission.photos] = await Permission.photos.status;
+      final photoStatus = await Permission.photos.status;
+      final videoStatus = await Permission.videos.status;
+      // For Android 14+, limited access might be returned
+      statuses[Permission.photos] = (photoStatus.isGranted || videoStatus.isGranted)
+          ? PermissionStatus.granted
+          : (photoStatus.isLimited || videoStatus.isLimited)
+              ? PermissionStatus.limited
+              : photoStatus;
     } else {
       statuses[Permission.photos] = await Permission.storage.status;
     }
@@ -242,7 +243,18 @@ class _PermissionPageState extends State<PermissionPage>
                                   AndroidDeviceInfo androidInfo =
                                       await deviceInfo.androidInfo;
                                   if (androidInfo.version.sdkInt >= 33) {
-                                    result = await Permission.photos.request();
+                                    // Request both photos and videos on Android 13+
+                                    Map<Permission, PermissionStatus> resultGroup = await [
+                                      Permission.photos,
+                                      Permission.videos,
+                                    ].request();
+                                    
+                                    result = resultGroup[Permission.photos]!;
+                                    if (resultGroup[Permission.videos]!.isGranted) {
+                                      result = PermissionStatus.granted;
+                                    } else if (resultGroup[Permission.videos]!.isLimited) {
+                                      result = PermissionStatus.limited;
+                                    }
                                   } else {
                                     result = await Permission.storage.request();
                                   }

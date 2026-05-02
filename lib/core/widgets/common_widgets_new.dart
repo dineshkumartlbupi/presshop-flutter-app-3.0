@@ -110,13 +110,16 @@ class CommonWidgetsNew {
       mainAxisSize: MainAxisSize.max,
       children: [
         Center(
-          child: ColorFiltered(
-            colorFilter:
-                const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-            child: Lottie.asset("assets/lottieFiles/loader_new.json",
-                height: size.width * AppDimensions.numD28,
-                width: size.width * AppDimensions.numD28),
-          ),
+          child: Builder(builder: (context) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+            final loaderColor = isDark ? Colors.red : Colors.black;
+            return ColorFiltered(
+              colorFilter: ColorFilter.mode(loaderColor, BlendMode.srcIn),
+              child: Lottie.asset("assets/lottieFiles/loader_new.json",
+                  height: size.width * AppDimensions.numD28,
+                  width: size.width * AppDimensions.numD28),
+            );
+          }),
         ),
         if (isForLocation) ...[
           SizedBox(height: size.width * AppDimensions.numD005),
@@ -139,12 +142,17 @@ class CommonWidgetsNew {
 
   static Widget showAnimatedLoader(Size size) {
     return Center(
-        child: ColorFiltered(
-            colorFilter:
-                const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-            child: Lottie.asset("assets/lottieFiles/loader_new.json",
-                height: size.width * AppDimensions.numD25,
-                width: size.width * AppDimensions.numD25)));
+      child: Builder(builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final loaderColor = isDark ? Colors.red : Colors.black;
+        return ColorFiltered(
+          colorFilter: ColorFilter.mode(loaderColor, BlendMode.srcIn),
+          child: Lottie.asset("assets/lottieFiles/loader_new.json",
+              height: size.width * AppDimensions.numD25,
+              width: size.width * AppDimensions.numD25),
+        );
+      }),
+    );
   }
 
   /// Calender

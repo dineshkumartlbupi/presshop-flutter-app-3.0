@@ -31,6 +31,9 @@ class LeadershipTableWidget extends StatelessWidget {
 
     Size size = MediaQuery.of(context).size;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black;
+
     return SizedBox(
       height: size.height * AppDimensions.numD30,
       width: double.infinity,
@@ -45,6 +48,7 @@ class LeadershipTableWidget extends StatelessWidget {
               size: size,
               member: safeList[1],
               currencySymbol: currencySymbol,
+              textColor: textColor,
             ),
           ),
 
@@ -52,22 +56,26 @@ class LeadershipTableWidget extends StatelessWidget {
           Positioned(
             left: size.width * AppDimensions.numD32,
             bottom: 15,
-            child: Image.asset('${iconsPath}leader_circle.png', scale: 3),
+            child: Image.asset('${iconsPath}leader_circle.png',
+                scale: 3, color: isDark ? Colors.red.withOpacity(0.3) : null),
           ),
           Positioned(
             left: size.width * AppDimensions.numD28,
             top: 0,
-            child: Image.asset('${iconsPath}leader_triangle.png', scale: 2),
+            child: Image.asset('${iconsPath}leader_triangle.png',
+                scale: 2, color: isDark ? Colors.red.withOpacity(0.3) : null),
           ),
           Positioned(
             top: 15,
             left: 10,
-            child: Image.asset('${iconsPath}leader_rectangle.png', scale: 3),
+            child: Image.asset('${iconsPath}leader_rectangle.png',
+                scale: 3, color: isDark ? Colors.red.withOpacity(0.3) : null),
           ),
           Positioned(
             top: size.height * AppDimensions.numD02,
             right: 40,
-            child: Image.asset('${iconsPath}leader_star.png', scale: 3),
+            child: Image.asset('${iconsPath}leader_star.png',
+                scale: 3, color: isDark ? Colors.red.withOpacity(0.3) : null),
           ),
 
           // CENTER (1st place)
@@ -78,6 +86,7 @@ class LeadershipTableWidget extends StatelessWidget {
               size: size,
               member: safeList[0],
               currencySymbol: currencySymbol,
+              textColor: textColor,
             ),
           ),
 
@@ -90,6 +99,7 @@ class LeadershipTableWidget extends StatelessWidget {
               size: size,
               member: safeList[2],
               currencySymbol: currencySymbol,
+              textColor: textColor,
             ),
           ),
 
@@ -98,7 +108,7 @@ class LeadershipTableWidget extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             child: Image.asset(
               "${iconsPath}leader_table_icon.png",
-              color: const Color.fromARGB(255, 234, 234, 234),
+              color: isDark ? Colors.grey.shade800 : const Color(0xFFEAEAEA),
               fit: BoxFit.scaleDown,
             ),
           ),
@@ -112,6 +122,7 @@ class LeadershipTableWidget extends StatelessWidget {
     required Size size,
     MemberEntity? member,
     required String currencySymbol,
+    required Color textColor,
   }) {
     final hasData = member != null;
     final name = hasData ? member.userName : "--";
@@ -140,7 +151,7 @@ class LeadershipTableWidget extends StatelessWidget {
                     style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD04,
-                      color: Colors.black,
+                      color: textColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -160,6 +171,7 @@ class LeadershipTableWidget extends StatelessWidget {
                                   "${commonImagePath}rabbitLogo.png",
                                   height: size.width * AppDimensions.numD06,
                                   width: size.width * AppDimensions.numD06,
+                                  color: textColor.withOpacity(0.5),
                                 );
                               },
                               fit: BoxFit.cover,
@@ -169,6 +181,7 @@ class LeadershipTableWidget extends StatelessWidget {
                               height: size.width * AppDimensions.numD06,
                               width: size.width * AppDimensions.numD06,
                               fit: BoxFit.cover,
+                              color: textColor.withOpacity(0.5),
                             ),
                     ),
                   ),
@@ -180,7 +193,7 @@ class LeadershipTableWidget extends StatelessWidget {
                     style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD035,
-                      color: Colors.black,
+                      color: textColor,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

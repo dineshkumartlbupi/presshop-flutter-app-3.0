@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
+import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/widgets/common_widgets_new.dart';
 import 'package:presshop/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../core/widgets/common_widgets.dart';
 import '../bloc/leaderboard_bloc.dart';
 import '../bloc/leaderboard_event.dart';
 import '../bloc/leaderboard_state.dart';
@@ -166,8 +168,14 @@ class _LeaderboardViewState extends State<LeaderboardView> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black;
+    final cardColor = isDark ? Colors.grey.shade900 : Colors.white;
+    final activeColor = isDark ? Colors.red : AppColorTheme.colorThemePink;
+    final secondaryTextColor = isDark ? Colors.grey.shade400 : Colors.grey;
 
     return Scaffold(
+      backgroundColor: isDark ? Colors.black : Colors.white,
       appBar: CommonBrandedAppBar(
         title: 'Leaderboard',
         size: size,
@@ -238,7 +246,9 @@ class _LeaderboardViewState extends State<LeaderboardView> {
 
           if (showOverlayLoader) {
             return Container(
-              color: Colors.white.withOpacity(0.5),
+              color: isDark
+                  ? Colors.black.withOpacity(0.5)
+                  : Colors.white.withOpacity(0.5),
               child: Center(
                 child: CommonWidgetsNew.showAnimatedLoader(size),
               ),
@@ -247,7 +257,9 @@ class _LeaderboardViewState extends State<LeaderboardView> {
 
           return Stack(
             children: [
-              if (_cachedLeaderboard != null) _buildBody(_cachedLeaderboard!),
+              if (_cachedLeaderboard != null)
+                _buildBody(_cachedLeaderboard!, textColor, cardColor,
+                    activeColor, secondaryTextColor, isDark),
               if (showMainLoader)
                 Center(
                     child: Center(
@@ -261,13 +273,13 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                         "${commonImagePath}rabbitLogo.png",
                         height: size.width * 0.2,
                         width: size.width * 0.2,
-                        color: Colors.grey.withOpacity(0.5),
+                        color: secondaryTextColor.withOpacity(0.5),
                       ),
                       SizedBox(height: size.width * AppDimensions.numD04),
                       Text(
                         "Oops! Failed to load leaderboard",
                         style: commonTextStyle(
-                          color: Colors.black,
+                          color: textColor,
                           size: size,
                           fontSize: size.width * AppDimensions.numD045,
                           fontWeight: FontWeight.bold,
@@ -283,7 +295,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                           style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.grey,
+                            color: secondaryTextColor,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -296,7 +308,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                               .add(const GetLeaderboard(""));
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColorTheme.colorThemePink,
+                          backgroundColor: activeColor,
                           padding: EdgeInsets.symmetric(
                             horizontal: size.width * AppDimensions.numD08,
                             vertical: size.width * AppDimensions.numD03,
@@ -326,7 +338,13 @@ class _LeaderboardViewState extends State<LeaderboardView> {
     );
   }
 
-  Widget _buildBody(LeaderboardEntity leaderboard) {
+  Widget _buildBody(
+      LeaderboardEntity leaderboard,
+      Color textColor,
+      Color cardColor,
+      Color activeColor,
+      Color secondaryTextColor,
+      bool isDark) {
     return Padding(
       padding: EdgeInsets.all(size.width * AppDimensions.numD04),
       child: Column(
@@ -360,8 +378,10 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                                   countryItem.countryCode.toLowerCase() ||
                               (selectedCountryCode == "" &&
                                   countryItem.country == "Global"))
-                          ? AppColorTheme.colorThemePink
-                          : Colors.grey[300],
+                          ? activeColor
+                          : isDark
+                              ? Colors.grey.shade800
+                              : Colors.grey[300],
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD02),
                     ),
@@ -376,7 +396,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                                       (selectedCountryCode == "" &&
                                           countryItem.country == "Global"))
                                   ? Colors.white
-                                  : Colors.black,
+                                  : textColor,
                               fontWeight: FontWeight.w500)),
                     ),
                   ),
@@ -399,7 +419,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color: textColor,
                             fontWeight: FontWeight.w500),
                       ),
                     ),
@@ -416,14 +436,14 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                     style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD035,
-                      color: Colors.black,
+                      color: textColor,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   Divider(
                     height: size.height * AppDimensions.numD02,
                     thickness: 0.5,
-                    color: Colors.black,
+                    color: isDark ? Colors.grey.shade800 : Colors.black,
                   ),
                   Expanded(
                     child: ListView.builder(
@@ -454,6 +474,8 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                                           width:
                                               size.width * AppDimensions.numD06,
                                           fit: BoxFit.cover,
+                                          color: secondaryTextColor
+                                              .withOpacity(0.5),
                                         );
                                       },
                                       fit: BoxFit.cover,
@@ -470,7 +492,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD04,
-                                        color: Colors.black,
+                                        color: textColor,
                                         fontWeight: FontWeight.w500),
                                   ),
                                   SizedBox(
@@ -482,7 +504,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD032,
-                                        color: Colors.grey,
+                                        color: secondaryTextColor,
                                         fontWeight: FontWeight.w400),
                                   ),
                                 ],
@@ -497,7 +519,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                                 style: commonTextStyle(
                                     size: size,
                                     fontSize: size.width * AppDimensions.numD04,
-                                    color: Colors.black,
+                                    color: textColor,
                                     fontWeight: FontWeight.bold),
                               )
                             ],
