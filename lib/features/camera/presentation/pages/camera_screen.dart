@@ -65,6 +65,7 @@ class CameraScreenState extends State<CameraScreen>
   double _currentZoom = 1.0;
 
   CameraBloc? _bloc;
+  CameraStatus? _lastStatus;
 
   @override
   void initState() {
@@ -149,10 +150,14 @@ class CameraScreenState extends State<CameraScreen>
       child: BlocConsumer<CameraBloc, CameraState>(
         listener: (context, state) async {
           // Update local limits when camera is ready
+          // ONLY run this if status changed to ready to avoid redundant calls (blinking)
           if (state.status == CameraStatus.ready &&
+              _lastStatus != CameraStatus.ready &&
               state.cameraController != null &&
               state.cameraController!.value.isInitialized) {
             try {
+              debugPrint(
+                  "📸 CameraScreen: Camera ready, initializing UI limits");
               // Wrap property access in try-catch to avoid Disposed CameraController errors
               _minAvailableExposureOffset =
                   await state.cameraController!.getMinExposureOffset();
@@ -175,11 +180,13 @@ class CameraScreenState extends State<CameraScreen>
               debugPrint("Error getting camera info (ignored): $e");
             }
           }
+          _lastStatus = state.status;
 
           if (state.status == CameraStatus.failure) {
             // Permission handling is now centralized in Dashboard.dart
             // We just log the error here if needed.
-            debugPrint("📸 CameraScreen: Camera failure: ${state.errorMessage}");
+            debugPrint(
+                "📸 CameraScreen: Camera failure: ${state.errorMessage}");
           }
 
           if (state.status == CameraStatus.success) {
@@ -301,9 +308,15 @@ class CameraScreenState extends State<CameraScreen>
             label ?? mode,
             textAlign: TextAlign.center,
             style: TextStyle(
-                color: isSelected ? AppColorTheme.colorThemePink : Colors.black,
+                color: isSelected
+                    ? (Theme.of(context).brightness == Brightness.dark
+                        ? Colors.red
+                        : AppColorTheme.colorThemePink)
+                    : (Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black),
                 fontSize: size.width * AppDimensions.numD035,
-                fontWeight: FontWeight.w500),
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500),
           ),
         ),
       ),
@@ -684,7 +697,9 @@ class CameraScreenState extends State<CameraScreen>
             style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD15,
-                color: Colors.black,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.red
+                    : AppColorTheme.colorThemePink,
                 fontWeight: FontWeight.w500)),
         const Spacer(),
         Padding(

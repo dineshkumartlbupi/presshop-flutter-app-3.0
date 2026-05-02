@@ -65,7 +65,7 @@ class CommonBrandedAppBar extends StatelessWidget
                     height: size.width * AppDimensions.numD06,
                     width: size.width * AppDimensions.numD06,
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 1.2),
+                      border: Border.all(color: Theme.of(context).dividerColor, width: 1.2),
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD015),
                     ),

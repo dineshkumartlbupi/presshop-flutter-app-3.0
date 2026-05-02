@@ -6,7 +6,6 @@ import 'package:presshop/core/core_export.dart';
 
 // ignore: must_be_immutable
 class AudioWaveFormWidgetScreen extends StatefulWidget {
-
   AudioWaveFormWidgetScreen({super.key, required this.mediaPath});
   String mediaPath = "";
 
@@ -74,7 +73,9 @@ class AudioWaveFormWidgetScreenState extends State<AudioWaveFormWidgetScreen>
                   alignment: Alignment.center,
                   children: [
                     Lottie.asset("assets/lottieFiles/audio_waves.json",
-                        width: isIpad ? size.width * AppDimensions.num2 : double.infinity,
+                        width: isIpad
+                            ? size.width * AppDimensions.num2
+                            : double.infinity,
                         fit: BoxFit.fill,
                         controller: _controller),
                     Align(
@@ -92,13 +93,18 @@ class AudioWaveFormWidgetScreenState extends State<AudioWaveFormWidgetScreen>
                           setState(() {});
                         },
                         child: Container(
-                          padding: EdgeInsets.all(
-                              size.width * (isIpad ? AppDimensions.numD01 : AppDimensions.numD018)),
+                          padding: EdgeInsets.all(size.width *
+                              (isIpad
+                                  ? AppDimensions.numD01
+                                  : AppDimensions.numD018)),
                           decoration: const BoxDecoration(
-                              color: AppColorTheme.colorThemePink, shape: BoxShape.circle),
+                              color: AppColorTheme.colorThemePink,
+                              shape: BoxShape.circle),
                           child: Container(
-                            padding: EdgeInsets.all(
-                                size.width * (isIpad ? AppDimensions.numD01 : AppDimensions.numD04)),
+                            padding: EdgeInsets.all(size.width *
+                                (isIpad
+                                    ? AppDimensions.numD01
+                                    : AppDimensions.numD04)),
                             decoration: BoxDecoration(
                                 color: Colors.transparent,
                                 shape: BoxShape.circle,
@@ -108,7 +114,10 @@ class AudioWaveFormWidgetScreenState extends State<AudioWaveFormWidgetScreen>
                               audioPlaying
                                   ? Icons.pause
                                   : Icons.play_arrow_rounded,
-                              size: size.width * (isIpad ? AppDimensions.numD1 : AppDimensions.numD16),
+                              size: size.width *
+                                  (isIpad
+                                      ? AppDimensions.numD1
+                                      : AppDimensions.numD16),
                               color: Colors.white,
                             ),
                           ),

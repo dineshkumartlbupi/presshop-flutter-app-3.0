@@ -819,14 +819,15 @@ class DashboardPageState extends State<Dashboard>
         } else {
           result = true;
         }
-        
+
         stopwatch.stop();
-        
+
         // Give the OS a tiny moment to update status internally
         await Future.delayed(const Duration(milliseconds: 100));
         final statusAfter = await p.status;
 
-        debugPrint("🚀 Dashboard: $p | Before: $statusBefore | After: $statusAfter | Time: ${stopwatch.elapsedMilliseconds}ms");
+        debugPrint(
+            "🚀 Dashboard: $p | Before: $statusBefore | After: $statusAfter | Time: ${stopwatch.elapsedMilliseconds}ms");
 
         // If granted, continue to next
         if (result) {
@@ -843,10 +844,11 @@ class DashboardPageState extends State<Dashboard>
             (statusBefore == PermissionStatus.denied &&
                 statusAfter != PermissionStatus.granted &&
                 stopwatch.elapsedMilliseconds > 200);
-        
+
         if (dialogWasShownAndDenied) {
-           debugPrint("🚀 Dashboard: User explicitly clicked 'Don't Allow' for $p");
-           _isDeniedInSession = true;
+          debugPrint(
+              "🚀 Dashboard: User explicitly clicked 'Don't Allow' for $p");
+          _isDeniedInSession = true;
         }
 
         bool isPermanentlyDenied = statusAfter.isPermanentlyDenied;

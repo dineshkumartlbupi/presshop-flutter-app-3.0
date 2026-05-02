@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:go_router/go_router.dart';
@@ -81,47 +80,22 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
     bool isUserOutSideOfUnitedKingdom = widget.publishData?.country !=
             "United Kingdom" ||
         sharedPreferences!.getString(SharedPreferencesKeys.contryCode) != "GB";
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black;
+    final cardColor =
+        isDark ? Colors.grey.shade900 : AppColorTheme.colorLightGrey;
+    final activeColor = isDark ? Colors.red : AppColorTheme.colorThemePink;
+    final iconColor = isDark ? Colors.white : Colors.black;
     return WillPopScope(
       onWillPop: () async {
         context.goNamed(AppRoutes.dashboardName, extra: {'initialPosition': 0});
         return false;
       },
       child: Scaffold(
-          appBar: CommonAppBar(
-            elevation: 0,
-            hideLeading: true,
-            title: Text(
-              AppStrings.contentSubmittedText,
-              style: commonTextStyle(
-                  size: size,
-                  color: Colors.black,
-                  fontSize: size.width * AppDimensions.appBarHeadingFontSize,
-                  fontWeight: FontWeight.bold),
-            ),
-            centerTitle: false,
-            titleSpacing: size.width * AppDimensions.numD04,
+          appBar: CommonBrandedAppBar(
+            title: AppStrings.contentSubmittedText,
             size: size,
-            showActions: true,
-            leadingFxn: () {
-              context.goNamed(AppRoutes.dashboardName,
-                  extra: {'initialPosition': 0});
-            },
-            actionWidget: [
-              InkWell(
-                onTap: () {
-                  context.goNamed(AppRoutes.dashboardName,
-                      extra: {'initialPosition': 0});
-                },
-                child: Image.asset(
-                  "${commonImagePath}ic_black_rabbit.png",
-                  height: size.width * AppDimensions.numD07,
-                  width: size.width * AppDimensions.numD07,
-                ),
-              ),
-              SizedBox(
-                width: size.width * AppDimensions.numD04,
-              )
-            ],
+            showLogo: true,
           ),
           body: SafeArea(
             child: Column(
@@ -134,7 +108,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                         horizontal: size.width * AppDimensions.numD04,
                         vertical: size.width * AppDimensions.numD04),
                     decoration: BoxDecoration(
-                        color: AppColorTheme.colorLightGrey,
+                        color: cardColor,
                         borderRadius: BorderRadius.circular(
                             size.width * AppDimensions.numD04)),
                     child: Column(
@@ -147,7 +121,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                     child: Container(
                                       height: size.width * AppDimensions.numD35,
                                       decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.black),
+                                        border: Border.all(color: textColor),
                                         borderRadius: BorderRadius.circular(
                                             size.width * AppDimensions.numD06),
                                       ),
@@ -352,8 +326,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                             padding: EdgeInsets.all(size.width *
                                                 AppDimensions.numD01),
                                             decoration: BoxDecoration(
-                                              color:
-                                                  AppColorTheme.colorThemePink,
+                                              color: activeColor,
                                               border: Border.all(
                                                   color: AppColorTheme
                                                       .colorGreyNew),
@@ -739,7 +712,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD038,
-                                      color: Colors.black,
+                                      color: textColor,
                                       fontWeight: FontWeight.w600),
                                 ),
                               ),
@@ -756,7 +729,9 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                 child: Container(
                                   height: size.width * AppDimensions.numD15,
                                   decoration: BoxDecoration(
-                                      color: Colors.black,
+                                      color: isDark
+                                          ? Colors.grey.shade800
+                                          : Colors.black,
                                       borderRadius: BorderRadius.circular(
                                           size.width * AppDimensions.numD04)),
                                   child: Column(
@@ -791,7 +766,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                 child: Container(
                                   height: size.width * AppDimensions.numD15,
                                   decoration: BoxDecoration(
-                                      color: AppColorTheme.colorThemePink,
+                                      color: activeColor,
                                       borderRadius: BorderRadius.circular(
                                           size.width * AppDimensions.numD04)),
                                   child: Column(
@@ -847,7 +822,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.black,
+                                color: textColor,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -857,7 +832,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.black,
+                                color: textColor,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -866,7 +841,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.black,
+                                color: textColor,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -881,7 +856,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: AppColorTheme.colorThemePink,
+                                color: activeColor,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.w600),
                           ),
@@ -890,7 +865,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.black,
+                                color: textColor,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -910,7 +885,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: AppColorTheme.colorThemePink,
+                                color: activeColor,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.w600),
                           ),
@@ -919,7 +894,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.black,
+                                color: textColor,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -932,7 +907,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: AppColorTheme.colorThemePink,
+                                color: activeColor,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.w600),
                           ),
@@ -942,7 +917,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.black,
+                                color: textColor,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -963,7 +938,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                 //             style: commonTextStyle(
                 //                 size: size,
                 //                 fontSize: size.width * AppDimensions.numD03,
-                //                 color: Colors.black,
+                //                 color: textColor,
                 //                 lineHeight: 2,
                 //                 fontWeight: FontWeight.normal),
                 //           ),
@@ -972,7 +947,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                 //             style: commonTextStyle(
                 //                 size: size,
                 //                 fontSize: size.width * AppDimensions.numD03,
-                //                 color: Colors.black,
+                //                 color: textColor,
                 //                 lineHeight: 2,
                 //                 fontWeight: FontWeight.normal),
                 //           ),
@@ -992,7 +967,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                 //             style: commonTextStyle(
                 //                 size: size,
                 //                 fontSize: size.width * AppDimensions.numD03,
-                //                 color: AppColorTheme.colorThemePink,
+                //                 color: activeColor,
                 //                 lineHeight: 2,
                 //                 fontWeight: FontWeight.w600),
                 //           ),
@@ -1001,7 +976,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                 //             style: commonTextStyle(
                 //                 size: size,
                 //                 fontSize: size.width * AppDimensions.numD03,
-                //                 color: Colors.black,
+                //                 color: textColor,
                 //                 lineHeight: 2,
                 //                 fontWeight: FontWeight.normal),
                 //           ),
@@ -1017,7 +992,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                 //             style: commonTextStyle(
                 //                 size: size,
                 //                 fontSize: size.width * AppDimensions.numD03,
-                //                 color: AppColorTheme.colorThemePink,
+                //                 color: activeColor,
                 //                 lineHeight: 2,
                 //                 fontWeight: FontWeight.w600),
                 //           ),
@@ -1027,7 +1002,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                 //             style: commonTextStyle(
                 //                 size: size,
                 //                 fontSize: size.width * AppDimensions.numD03,
-                //                 color: Colors.black,
+                //                 color: textColor,
                 //                 lineHeight: 2,
                 //                 fontWeight: FontWeight.normal),
                 //           ),
@@ -1047,7 +1022,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.black,
+                                color: textColor,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -1064,7 +1039,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD03,
-                                  color: Colors.black,
+                                  color: textColor,
                                   lineHeight: 2,
                                   fontWeight: FontWeight.normal),
                             ),
@@ -1075,7 +1050,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.black,
+                                color: textColor,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -1084,7 +1059,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.black,
+                                color: textColor,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -1104,7 +1079,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: AppColorTheme.colorThemePink,
+                                color: activeColor,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.w600),
                           ),
@@ -1113,7 +1088,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.black,
+                                color: textColor,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -1126,7 +1101,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: AppColorTheme.colorThemePink,
+                                color: activeColor,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.w600),
                           ),
@@ -1135,7 +1110,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.black,
+                                color: textColor,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -1176,7 +1151,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                   AppStrings.myContentText.toTitleCase(),
                                   size,
                                   commonButtonTextStyle(size),
-                                  commonButtonStyle(size, Colors.black), () {
+                                  commonButtonStyle(size, textColor), () {
                                 context.goNamed(
                                   AppRoutes.dashboardName,
                                   extra: {'initialPosition': 0},
@@ -1193,8 +1168,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                   "Home",
                                   size,
                                   commonButtonTextStyle(size),
-                                  commonButtonStyle(
-                                      size, AppColorTheme.colorThemePink), () {
+                                  commonButtonStyle(size, activeColor), () {
                                 context.goNamed(
                                   AppRoutes.dashboardName,
                                   extra: {'initialPosition': 2},
@@ -1214,10 +1188,12 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
   }
 
   Widget showImage(String type, String url) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final activeColor = isDark ? Colors.red : AppColorTheme.colorThemePink;
     return type == "audio"
         ? Icon(
             Icons.play_circle,
-            color: AppColorTheme.colorThemePink,
+            color: activeColor,
             size: MediaQuery.of(context).size.width * AppDimensions.numD15,
           )
         : type == "pdf"

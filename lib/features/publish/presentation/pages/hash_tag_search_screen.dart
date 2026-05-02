@@ -246,98 +246,101 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                           ),
                         )
                       : ListView.separated(
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {
-                            final tag = hashtagSearchList[index];
-                            if (tag.id.isNotEmpty) {
-                              if (!tag.selected) {
-                                hashtagSearchList[index] =
-                                    tag.copyWith(selected: true);
-                                if (!selectedHashTagList.contains(tag)) {
-                                  selectedHashTagList
-                                      .add(hashtagSearchList[index]);
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () {
+                                final tag = hashtagSearchList[index];
+                                if (tag.id.isNotEmpty) {
+                                  if (!tag.selected) {
+                                    hashtagSearchList[index] =
+                                        tag.copyWith(selected: true);
+                                    if (!selectedHashTagList.contains(tag)) {
+                                      selectedHashTagList
+                                          .add(hashtagSearchList[index]);
+                                    }
+                                  } else {
+                                    hashtagSearchList[index] =
+                                        tag.copyWith(selected: false);
+                                    selectedHashTagList.remove(tag);
+                                  }
+                                  setState(() {});
                                 }
-                              } else {
-                                hashtagSearchList[index] =
-                                    tag.copyWith(selected: false);
-                                selectedHashTagList.remove(tag);
-                              }
-                              setState(() {});
-                            }
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: AppColorTheme.colorLightGrey,
-                                borderRadius: BorderRadius.circular(
-                                    size.width * AppDimensions.numD02)),
-                            padding: EdgeInsets.symmetric(
-                                vertical: size.width * AppDimensions.numD02,
-                                horizontal: size.width * AppDimensions.numD02),
-                            child: Row(
-                              children: [
-                                Text(
-                                  "#${hashtagSearchList[index].name}",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize:
-                                          size.width * AppDimensions.numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                                const Spacer(),
-                                hashtagSearchList[index].id.isEmpty
-                                    ? InkWell(
-                                        onTap: () {
-                                          final tagName =
-                                              hashtagSearchList[index].name;
-                                          if (tagName.isNotEmpty) {
-                                            addHashTagsApi(tagName);
-                                          }
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: size.width *
-                                                  AppDimensions.numD02,
-                                              vertical: size.width *
-                                                  AppDimensions.numD005),
-                                          decoration: BoxDecoration(
-                                              color:
-                                                  AppColorTheme.colorThemePink,
-                                              borderRadius:
-                                                  BorderRadius.circular(size
-                                                          .width *
-                                                      AppDimensions.numD025)),
-                                          child: Text(
-                                            "Add",
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width *
-                                                    AppDimensions.numD03,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                        ),
-                                      )
-                                    : (hashtagSearchList[index].selected
-                                        ? Icon(
-                                            Icons.check,
-                                            color: Colors.black,
-                                            size: size.width *
-                                                AppDimensions.numD06,
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: AppColorTheme.colorLightGrey,
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * AppDimensions.numD02)),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: size.width * AppDimensions.numD02,
+                                    horizontal:
+                                        size.width * AppDimensions.numD02),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "#${hashtagSearchList[index].name}",
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width *
+                                              AppDimensions.numD035,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                    const Spacer(),
+                                    hashtagSearchList[index].id.isEmpty
+                                        ? InkWell(
+                                            onTap: () {
+                                              final tagName =
+                                                  hashtagSearchList[index].name;
+                                              if (tagName.isNotEmpty) {
+                                                addHashTagsApi(tagName);
+                                              }
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: size.width *
+                                                      AppDimensions.numD02,
+                                                  vertical: size.width *
+                                                      AppDimensions.numD005),
+                                              decoration: BoxDecoration(
+                                                  color: AppColorTheme
+                                                      .colorThemePink,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          size.width *
+                                                              AppDimensions
+                                                                  .numD025)),
+                                              child: Text(
+                                                "Add",
+                                                style: commonTextStyle(
+                                                    size: size,
+                                                    fontSize: size.width *
+                                                        AppDimensions.numD03,
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              ),
+                                            ),
                                           )
-                                        : Container())
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return SizedBox(
-                          height: size.width * AppDimensions.numD02,
-                        );
-                      },
-                      itemCount: hashtagSearchList.length)),
+                                        : (hashtagSearchList[index].selected
+                                            ? Icon(
+                                                Icons.check,
+                                                color: Colors.black,
+                                                size: size.width *
+                                                    AppDimensions.numD06,
+                                              )
+                                            : Container())
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return SizedBox(
+                              height: size.width * AppDimensions.numD02,
+                            );
+                          },
+                          itemCount: hashtagSearchList.length)),
               SizedBox(
                 height: size.width * AppDimensions.numD13,
                 width: size.width,

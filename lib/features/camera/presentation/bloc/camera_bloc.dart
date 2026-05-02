@@ -66,6 +66,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   double _latitude = 0;
   double _longitude = 0;
   bool _isInitializing = false;
+  bool _isFetchingLocation = false;
 
   @override
   Future<void> close() {
@@ -245,6 +246,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
   /// Non-blocking location initialization
   Future<void> _initLocation() async {
+    if (_isFetchingLocation) return;
+    _isFetchingLocation = true;
     try {
       if (navigatorKey.currentContext != null) {
         final loc = await _locationService.getCurrentLocation(
@@ -259,6 +262,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       }
     } catch (e) {
       debugPrint("🚀 CameraBloc: Location error (silenced): $e");
+    } finally {
+      _isFetchingLocation = false;
     }
   }
 
@@ -267,9 +272,13 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     if (event.state == AppLifecycleState.inactive ||
         event.state == AppLifecycleState.paused ||
         event.state == AppLifecycleState.detached) {
-      // IGNORING lifecycle dispose if we are actively initializing.
-      // This prevents permission dialogs from triggering destructive disposal cycles.
-      if (_isInitializing) return;
+      // IGNORING lifecycle dispose if we are actively initializing or fetching location.
+      // This prevents permission dialogs and GPS popups from triggering destructive disposal cycles.
+      if (_isInitializing || _isFetchingLocation) {
+        debugPrint(
+            "🚀 CameraBloc: Lifecycle ignore - Init: $_isInitializing, Loc: $_isFetchingLocation");
+        return;
+      }
 
       // Avoid redundant disposal cycles
       if (state.status == CameraStatus.disposing) return;

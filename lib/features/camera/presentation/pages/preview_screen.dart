@@ -735,152 +735,158 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                         ],
                       ),
                     )
-                  : Container(
-                      color: Colors.white,
-                      padding: EdgeInsets.only(
-                          left: size.width * AppDimensions.numD03,
-                          top: size.width * AppDimensions.numD04,
-                          bottom: size.width * AppDimensions.numD08,
-                          right: size.width * AppDimensions.numD03),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: SizedBox(
-                              height: size.width * AppDimensions.numD13,
-                              child: commonElevatedButton(
-                                  "Add More",
-                                  size,
-                                  commonTextStyle(
-                                      size: size,
-                                      fontSize:
-                                          size.width * AppDimensions.numD035,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700),
-                                  commonButtonStyle(
-                                      size,
-                                      isMoreDisable
-                                          ? Colors.grey
-                                          : Colors.black), () {
-                                if (mediaList.length == 10) {
-                                  isMoreDisable = true;
-                                  setState(() {});
-//                                   showSnackBar("PressHop", "Only 10 contents allowed!", AppColorTheme.colorThemePink);
-                                } else {
-                                  context.pushNamed(
-                                    AppRoutes.cameraName,
-                                    extra: {
-                                      'picAgain': true,
-                                      'previousScreen':
-                                          ScreenNameEnum.previewScreen,
-                                    },
-                                  ).then((value) {
-                                    debugPrint(
-                                        ":::: Inside Picked Again Image :::: $value");
-                                    if (value != null) {
-                                      addMediaDataList(
-                                          value as List<CameraData>);
-                                    }
-                                  });
-                                }
-                              }),
+                  : SafeArea(
+                      child: Container(
+                        color: Colors.white,
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: size.width * AppDimensions.numD13,
+                                child: commonElevatedButton(
+                                    "Add More",
+                                    size,
+                                    commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700),
+                                    commonButtonStyle(
+                                        size,
+                                        isMoreDisable
+                                            ? Colors.grey
+                                            : Colors.black), () {
+                                  if (mediaList.length == 10) {
+                                    isMoreDisable = true;
+                                    setState(() {});
+                                    //                                   showSnackBar("PressHop", "Only 10 contents allowed!", AppColorTheme.colorThemePink);
+                                  } else {
+                                    context.pushNamed(
+                                      AppRoutes.cameraName,
+                                      extra: {
+                                        'picAgain': true,
+                                        'previousScreen':
+                                            ScreenNameEnum.previewScreen,
+                                      },
+                                    ).then((value) {
+                                      debugPrint(
+                                          ":::: Inside Picked Again Image :::: $value");
+                                      if (value != null) {
+                                        addMediaDataList(
+                                            value as List<CameraData>);
+                                      }
+                                    });
+                                  }
+                                }),
+                              ),
                             ),
-                          ),
-                          SizedBox(width: size.width * AppDimensions.numD04),
-                          Expanded(
-                            child: SizedBox(
-                              height: size.width * AppDimensions.numD13,
-                              child: commonElevatedButton(
-                                  "Next",
-                                  size,
-                                  commonTextStyle(
-                                      size: size,
-                                      fontSize:
-                                          size.width * AppDimensions.numD035,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700),
-                                  commonButtonStyle(
-                                      size, AppColorTheme.colorThemePink), () {
-                                if (widget.pickAgain) {
-                                  context.pop();
-                                  if (widget.type == "draft") {
-                                    for (int i = 0; i < mediaList.length; i++) {
-                                      var mediaItem = mediaList[i];
-                                      PublishData(
-                                          imagePath: mediaItem.mediaPath,
-                                          address: mediaItem.location,
-                                          date: mediaItem.dateTime,
-                                          city: "",
-                                          state: "",
-                                          country: "",
-                                          latitude: mediaItem.latitude,
-                                          longitude: mediaItem.longitude,
-                                          mimeType: mediaItem.mimeType,
-                                          videoImagePath: mediaItem.mediaPath,
-                                          mediaList: mediaList);
+                            SizedBox(width: size.width * AppDimensions.numD04),
+                            Expanded(
+                              child: SizedBox(
+                                height: size.width * AppDimensions.numD13,
+                                child: commonElevatedButton(
+                                    "Next",
+                                    size,
+                                    commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700),
+                                    commonButtonStyle(
+                                        size, AppColorTheme.colorThemePink),
+                                    () {
+                                  if (widget.pickAgain) {
+                                    context.pop();
+                                    if (widget.type == "draft") {
+                                      for (int i = 0;
+                                          i < mediaList.length;
+                                          i++) {
+                                        var mediaItem = mediaList[i];
+                                        PublishData(
+                                            imagePath: mediaItem.mediaPath,
+                                            address: mediaItem.location,
+                                            date: mediaItem.dateTime,
+                                            city: "",
+                                            state: "",
+                                            country: "",
+                                            latitude: mediaItem.latitude,
+                                            longitude: mediaItem.longitude,
+                                            mimeType: mediaItem.mimeType,
+                                            videoImagePath: mediaItem.mediaPath,
+                                            mediaList: mediaList);
+                                      }
+                                    } else {
+                                      context.pop(PublishData(
+                                          imagePath: widget.cameraData != null
+                                              ? widget.cameraData!.path
+                                              : widget
+                                                  .cameraListData.first.path,
+                                          address: mediaList.first.location,
+                                          date: mediaList.first.dateTime,
+                                          city: mediaList.first.city,
+                                          state: mediaList.first.state,
+                                          country: mediaList.first.country,
+                                          latitude: mediaList.first.latitude,
+                                          longitude: mediaList.first.longitude,
+                                          mimeType: mediaList.first.mimeType,
+                                          videoImagePath:
+                                              mediaList.first.thumbnail,
+                                          mediaList: mediaList));
                                     }
                                   } else {
-                                    context.pop(PublishData(
-                                        imagePath: widget.cameraData != null
-                                            ? widget.cameraData!.path
-                                            : widget.cameraListData.first.path,
-                                        address: mediaList.first.location,
-                                        date: mediaList.first.dateTime,
-                                        city: mediaList.first.city,
-                                        state: mediaList.first.state,
-                                        country: mediaList.first.country,
-                                        latitude: mediaList.first.latitude,
-                                        longitude: mediaList.first.longitude,
-                                        mimeType: mediaList.first.mimeType,
-                                        videoImagePath:
-                                            mediaList.first.thumbnail,
-                                        mediaList: mediaList));
-                                  }
-                                } else {
-                                  if (mediaList.first.location.isEmpty ||
-                                      mediaList.first.latitude.isEmpty) {
-                                    requestLocationPermissions(
-                                        shouldShowSettingPopup: false,
-                                        showErrorLocationPage: true);
-                                    return;
-                                  }
-                                  if (mediaList.isNotEmpty) {
-                                    if (widget.cameraListData.isNotEmpty) {
-                                      context.pushNamed(
-                                          AppRoutes.publishContentName,
-                                          extra: {
-                                            'publishData': PublishData(
-                                                imagePath: widget.cameraData !=
-                                                        null
-                                                    ? widget.cameraData!.path
-                                                    : widget.cameraListData
-                                                        .first.path,
-                                                address:
-                                                    mediaList.first.location,
-                                                date: mediaList.first.dateTime,
-                                                city: mediaList.first.city,
-                                                state: mediaList.first.state,
-                                                country:
-                                                    mediaList.first.country,
-                                                latitude:
-                                                    mediaList.first.latitude,
-                                                longitude:
-                                                    mediaList.first.longitude,
-                                                mimeType:
-                                                    mediaList.first.mimeType,
-                                                videoImagePath:
-                                                    mediaList.first.thumbnail,
-                                                mediaList: mediaList),
-                                            'myContentData': null,
-                                            'hideDraft': false,
-                                            'docType': widget.type
-                                          });
+                                    if (mediaList.first.location.isEmpty ||
+                                        mediaList.first.latitude.isEmpty) {
+                                      requestLocationPermissions(
+                                          shouldShowSettingPopup: false,
+                                          showErrorLocationPage: true);
+                                      return;
+                                    }
+                                    if (mediaList.isNotEmpty) {
+                                      if (widget.cameraListData.isNotEmpty) {
+                                        context.pushNamed(
+                                            AppRoutes.publishContentName,
+                                            extra: {
+                                              'publishData': PublishData(
+                                                  imagePath:
+                                                      widget.cameraData != null
+                                                          ? widget
+                                                              .cameraData!.path
+                                                          : widget
+                                                              .cameraListData
+                                                              .first
+                                                              .path,
+                                                  address:
+                                                      mediaList.first.location,
+                                                  date:
+                                                      mediaList.first.dateTime,
+                                                  city: mediaList.first.city,
+                                                  state: mediaList.first.state,
+                                                  country:
+                                                      mediaList.first.country,
+                                                  latitude:
+                                                      mediaList.first.latitude,
+                                                  longitude:
+                                                      mediaList.first.longitude,
+                                                  mimeType:
+                                                      mediaList.first.mimeType,
+                                                  videoImagePath:
+                                                      mediaList.first.thumbnail,
+                                                  mediaList: mediaList),
+                                              'myContentData': null,
+                                              'hideDraft': false,
+                                              'docType': widget.type
+                                            });
+                                      }
                                     }
                                   }
-                                }
-                              }),
-                            ),
-                          )
-                        ],
+                                }),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
             ],

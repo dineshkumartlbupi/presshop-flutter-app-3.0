@@ -94,6 +94,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
   int docCount = 0;
   int pdfCount = 0;
 
+  int get totalContentCount =>
+      imageCount + videoCount + audioCount + docCount + pdfCount;
+
   Map<String, String> params = {};
 
   int offset = 0;
@@ -118,7 +121,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
       // debugPrint("filePath::::${widget.publishData!.mediaList.length}");
 
       audioPath = filePath;
-
       setState(() {});
 
       /*emit(state.copyWith(
@@ -290,6 +292,16 @@ class PublishContentScreenState extends State<PublishContentScreen>
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color textColor = isDark ? Colors.white : Colors.black;
+    final Color activeColor =
+        isDark ? Colors.red : AppColorTheme.colorThemePink;
+    final Color unselectedColor = isDark ? Colors.white70 : Colors.black;
+    final Color cardColor =
+        isDark ? Colors.grey[900]! : AppColorTheme.colorLightGrey;
+    final Color iconColor =
+        isDark ? Colors.white : AppColorTheme.colorTextFieldIcon;
+
     debugPrint('screen-name:::::::::PublishContentScreen');
 
     if (widget.myContentData != null) {
@@ -361,7 +373,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
           }
 
           return Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             appBar: CommonBrandedAppBar(
               title: 'Submit content',
               size: size,
@@ -424,13 +436,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 AppDimensions
                                                                     .numD06),
                                                   ),
-                                                  child: Image.asset(
-                                                    "${dummyImagePath}doc_black_icon.png",
-                                                    width: size.width *
-                                                        AppDimensions.numD30,
-                                                    height: size.width *
-                                                        AppDimensions.numD35,
-                                                  ),
                                                 ),
                                               ),
                                               Visibility(
@@ -458,13 +463,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             size.width *
                                                                 AppDimensions
                                                                     .numD06),
-                                                  ),
-                                                  child: Image.asset(
-                                                    "${dummyImagePath}pngImage.png",
-                                                    width: size.width *
-                                                        AppDimensions.numD30,
-                                                    height: size.width *
-                                                        AppDimensions.numD35,
                                                   ),
                                                 ),
                                               ),
@@ -502,12 +500,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             size.width *
                                                                 AppDimensions
                                                                     .numD06),
-                                                  ),
-                                                  child: Icon(
-                                                    Icons.play_arrow_rounded,
-                                                    size: size.width *
-                                                        AppDimensions.numD18,
-                                                    color: Colors.white,
                                                   ),
                                                 ),
                                               ),
@@ -561,11 +553,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             height: size.width *
                                                                 AppDimensions
                                                                     .numD35,
-                                                            color: Colors.black,
-                                                            child: const Icon(
-                                                                Icons.videocam,
-                                                                color: Colors
-                                                                    .white),
+                                                            color: cardColor,
                                                           )
                                                     : Image.network(
                                                         widget
@@ -675,184 +663,18 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                     .width *
                                                                 AppDimensions
                                                                     .numD013)),
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        if (imageCount > 0)
-                                                          Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: [
-                                                              Image.asset(
-                                                                "${iconsPath}ic_camera1.png",
-                                                                height: size
-                                                                        .width *
-                                                                    AppDimensions
-                                                                        .numD03,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 4),
-                                                              Text(
-                                                                  imageCount
-                                                                      .toString(),
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontSize: size
-                                                                              .width *
-                                                                          AppDimensions
-                                                                              .numD03,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600)),
-                                                            ],
-                                                          ),
-                                                        if (videoCount > 0) ...[
-                                                          const SizedBox(
-                                                              height: 4),
-                                                          Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: [
-                                                              Image.asset(
-                                                                "${iconsPath}ic_video_cam.png",
-                                                                height: 9,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 4),
-                                                              Text(
-                                                                  videoCount
-                                                                      .toString(),
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontSize: size
-                                                                              .width *
-                                                                          AppDimensions
-                                                                              .numD03,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600)),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                        if (audioCount > 0) ...[
-                                                          const SizedBox(
-                                                              height: 4),
-                                                          Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              Image.asset(
-                                                                "${iconsPath}ic_mic1.png",
-                                                                height: size
-                                                                        .width *
-                                                                    AppDimensions
-                                                                        .numD04,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 4),
-                                                              Text(
-                                                                  audioCount
-                                                                      .toString(),
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontSize: size
-                                                                              .width *
-                                                                          AppDimensions
-                                                                              .numD03,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600)),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                        if (docCount > 0) ...[
-                                                          const SizedBox(
-                                                              height: 4),
-                                                          Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: [
-                                                              Image.asset(
-                                                                "${iconsPath}doc_icon.png",
-                                                                height: size
-                                                                        .width *
-                                                                    AppDimensions
-                                                                        .numD03,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 4),
-                                                              Text(
-                                                                  docCount
-                                                                      .toString(),
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontSize: size
-                                                                              .width *
-                                                                          AppDimensions
-                                                                              .numD03,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600)),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                        if (pdfCount > 0) ...[
-                                                          const SizedBox(
-                                                              height: 4),
-                                                          Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: [
-                                                              Image.asset(
-                                                                "${iconsPath}pdfIcon.png",
-                                                                height: size
-                                                                        .width *
-                                                                    AppDimensions
-                                                                        .numD03,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 4),
-                                                              Text(
-                                                                  pdfCount
-                                                                      .toString(),
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontSize: size
-                                                                              .width *
-                                                                          AppDimensions
-                                                                              .numD03,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600)),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ],
-                                                    ),
+                                                    child: Text(
+                                                        totalContentCount
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: size
+                                                                    .width *
+                                                                AppDimensions
+                                                                    .numD03,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600)),
                                                   ),
                                                 ],
                                               ),
@@ -965,12 +787,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                             maxLines: 100,
                                             keyboardType:
                                                 TextInputType.multiline,
-                                            cursorColor: Colors.black,
+                                            cursorColor: textColor,
                                             style: commonTextStyle(
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD03,
-                                                color: Colors.black,
+                                                color: textColor,
                                                 fontWeight: FontWeight.normal),
                                             decoration: InputDecoration(
                                               hintText: AppStrings
@@ -988,11 +810,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                               size.width *
                                                                   AppDimensions
                                                                       .numD04),
-                                                      borderSide:
-                                                          const BorderSide(
-                                                              width: 1,
-                                                              color: Colors
-                                                                  .black)),
+                                                      borderSide: BorderSide(
+                                                          width: 1,
+                                                          color: textColor)),
                                               focusedBorder: OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(size
@@ -1024,11 +844,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                               size.width *
                                                                   AppDimensions
                                                                       .numD04),
-                                                      borderSide:
-                                                          const BorderSide(
-                                                              width: 1,
-                                                              color: Colors
-                                                                  .black)),
+                                                      borderSide: BorderSide(
+                                                          width: 1,
+                                                          color: textColor)),
                                             ),
                                             // validator: checkRequiredValidator,
                                           ),
@@ -1113,7 +931,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                     .numD06),
                                                   ),
                                                   child: Image.asset(
-                                                    "${dummyImagePath}doc_black_icon.png",
+                                                    "${iconsPath}ic_doc_new.png",
+                                                    color: textColor,
                                                     width: size.width *
                                                         AppDimensions.numD30,
                                                     height: size.width *
@@ -1143,7 +962,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                     .numD06),
                                                   ),
                                                   child: Image.asset(
-                                                    "${dummyImagePath}pngImage.png",
+                                                    "${iconsPath}ic_pdf_new.png",
+                                                    color: textColor,
                                                     width: size.width *
                                                         AppDimensions.numD30,
                                                     height: size.width *
@@ -1284,8 +1104,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                     audioCount)
                                                                 .toString(),
                                                             style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
+                                                                color:
+                                                                    textColor,
                                                                 fontSize: size
                                                                         .width *
                                                                     AppDimensions
@@ -1293,98 +1113,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600)),
-                                                        // if (imageCount > 0) ...[
-                                                        //   Row(
-                                                        //     children: [
-                                                        //       Text(imageCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * AppDimensions.numD03, fontWeight: FontWeight.w600)),
-                                                        //       SizedBox(
-                                                        //         width: size.width * AppDimensions.numD005,
-                                                        //       ),
-                                                        //       Image.asset("${iconsPath}ic_camera_publish.png", color: Colors.white, height: size.width * AppDimensions.numD028),
-                                                        //     ],
-                                                        //   ),
-                                                        //   SizedBox(
-                                                        //     height: size.width * AppDimensions.numD005,
-                                                        //   ),
-                                                        // ],
-                                                        // if (videoCount > 0) ...[
-                                                        //   Row(
-                                                        //     children: [
-                                                        //       Text(videoCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * AppDimensions.numD03, fontWeight: FontWeight.w700)),
-                                                        //       SizedBox(
-                                                        //         width: size.width * AppDimensions.numD005,
-                                                        //       ),
-                                                        //       Image.asset("${iconsPath}ic_v_cam.png", color: Colors.white, height: size.width * AppDimensions.numD035),
-                                                        //     ],
-                                                        //   ),
-                                                        //   SizedBox(
-                                                        //     height: size.width * AppDimensions.numD005,
-                                                        //   ),
-                                                        // ],
-                                                        // if (audioCount > 0) ...[
-                                                        //   Row(
-                                                        //     children: [
-                                                        //       Text(audioCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * AppDimensions.numD03, fontWeight: FontWeight.w700)),
-                                                        //       SizedBox(
-                                                        //         width: size.width * AppDimensions.numD005,
-                                                        //       ),
-                                                        //       Image.asset(
-                                                        //         "${iconsPath}ic_mic.png",
-                                                        //         color: Colors.white.withValues(alpha: 0.8),
-                                                        //         height: size.width * AppDimensions.numD03,
-                                                        //         width: size.width * AppDimensions.numD022,
-                                                        //       ),
-                                                        //     ],
-                                                        //   ),
-                                                        //   SizedBox(
-                                                        //     height: size.width * AppDimensions.numD005,
-                                                        //   ),
-                                                        // ],
-                                                        // if (docCount > 0) ...[
-                                                        //   Row(
-                                                        //     children: [
-                                                        //       Text(docCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * AppDimensions.numD03, fontWeight: FontWeight.w700)),
-                                                        //       SizedBox(
-                                                        //         width: size.width * AppDimensions.numD005,
-                                                        //       ),
-                                                        //       Image.asset(
-                                                        //         "${iconsPath}doc_icon.png",
-                                                        //         color: Colors.red,
-                                                        //         height: size.width * AppDimensions.numD03,
-                                                        //         width: size.width * AppDimensions.numD022,
-                                                        //       ),
-                                                        //     ],
-                                                        //   ),
-                                                        //   SizedBox(
-                                                        //     height: size.width * AppDimensions.numD005,
-                                                        //   ),
-                                                        // ],
-                                                        // if (pdfCount > 0) ...[
-                                                        //   Row(
-                                                        //     children: [
-                                                        //       Text(pdfCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * AppDimensions.numD03, fontWeight: FontWeight.w700)),
-                                                        //       SizedBox(
-                                                        //         width: size.width * AppDimensions.numD005,
-                                                        //       ),
-                                                        //       Image.asset(
-                                                        //         "${iconsPath}doc_icon.png",
-                                                        //         color: Colors.red,
-                                                        //         height: size.width * AppDimensions.numD03,
-                                                        //         width: size.width * AppDimensions.numD022,
-                                                        //       ),
-                                                        //     ],
-                                                        //   ),
-                                                        //   SizedBox(
-                                                        //     height: size.width * AppDimensions.numD005,
-                                                        //   ),
-                                                        // ],
                                                       ],
                                                     ),
                                                   ),
                                                 ],
                                               ),
 
-                                              widget.hideDraft &&
+                                              false &&
                                                       widget.myContentData !=
                                                           null
                                                   ? Positioned(
@@ -1492,12 +1227,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                             maxLines: 100,
                                             keyboardType:
                                                 TextInputType.multiline,
-                                            cursorColor: Colors.black,
+                                            cursorColor: textColor,
                                             style: commonTextStyle(
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD03,
-                                                color: Colors.black,
+                                                color: textColor,
                                                 fontWeight: FontWeight.normal),
                                             decoration: InputDecoration(
                                               hintText: AppStrings
@@ -1515,27 +1250,25 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                               size.width *
                                                                   AppDimensions
                                                                       .numD04),
-                                                      borderSide:
-                                                          const BorderSide(
-                                                              width: 1,
-                                                              color: Colors
-                                                                  .black)),
+                                                      borderSide: BorderSide(
+                                                          width: 1,
+                                                          color: textColor)),
                                               focusedBorder: OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(size
                                                               .width *
                                                           AppDimensions.numD04),
-                                                  borderSide: const BorderSide(
+                                                  borderSide: BorderSide(
                                                       width: 1,
-                                                      color: Colors.black)),
+                                                      color: textColor)),
                                               enabledBorder: OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(size
                                                               .width *
                                                           AppDimensions.numD04),
-                                                  borderSide: const BorderSide(
+                                                  borderSide: BorderSide(
                                                       width: 1,
-                                                      color: Colors.black)),
+                                                      color: textColor)),
                                               errorBorder: OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(size
@@ -1543,7 +1276,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                           AppDimensions.numD04),
                                                   borderSide: const BorderSide(
                                                       width: 1,
-                                                      color: Colors.black)),
+                                                      color: Colors.red)),
                                               focusedErrorBorder:
                                                   OutlineInputBorder(
                                                       borderRadius:
@@ -1551,11 +1284,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                               size.width *
                                                                   AppDimensions
                                                                       .numD04),
-                                                      borderSide:
-                                                          const BorderSide(
-                                                              width: 1,
-                                                              color: Colors
-                                                                  .black)),
+                                                      borderSide: BorderSide(
+                                                          width: 1,
+                                                          color: textColor)),
                                             ),
                                             // validator: checkRequiredValidator,
                                           ),
@@ -1567,8 +1298,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       SizedBox(
                         height: size.width * AppDimensions.numD02,
                       ),
-                      const Divider(
-                        color: AppColorTheme.colorLightGrey,
+                      Divider(
+                        color: textColor.withValues(alpha: 0.2),
                         thickness: 1,
                       ),
                       SizedBox(
@@ -1589,7 +1320,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     size: size,
                                     fontSize:
                                         size.width * AppDimensions.numD035,
-                                    color: Colors.black,
+                                    color: textColor,
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1617,7 +1348,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     horizontal:
                                         size.width * AppDimensions.numD05),
                                 decoration: BoxDecoration(
-                                    color: AppColorTheme.colorLightGrey,
+                                    color: cardColor,
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD06)),
                                 child: Row(
@@ -1642,6 +1373,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         child: audioPath.isEmpty
                                             ? Image.asset(
                                                 "${iconsPath}ic_mic.png",
+                                                color: iconColor,
                                                 width: size.width *
                                                     AppDimensions.numD04,
                                                 height: size.width *
@@ -1651,7 +1383,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 audioPlaying
                                                     ? Icons.pause_circle
                                                     : Icons.play_circle,
-                                                color: Colors.black,
+                                                color: textColor,
                                                 size: size.width *
                                                     AppDimensions.numD06,
                                               ),
@@ -1670,9 +1402,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                               waveformType: WaveformType.long,
                                               continuousWaveform: true,
                                               playerWaveStyle: PlayerWaveStyle(
-                                                fixedWaveColor: Colors.black,
-                                                liveWaveColor: AppColorTheme
-                                                    .colorThemePink,
+                                                fixedWaveColor: unselectedColor,
+                                                liveWaveColor: activeColor,
                                                 spacing: 6,
                                                 liveWaveGradient:
                                                     ui.Gradient.linear(
@@ -1702,8 +1433,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                     Colors.white70
                                                   ],
                                                 ),
-                                                seekLineColor: AppColorTheme
-                                                    .colorThemePink,
+                                                seekLineColor: activeColor,
                                                 seekLineThickness: 2,
                                                 showSeekLine: true,
                                                 showBottom: true,
@@ -1720,7 +1450,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                   size: size,
                                                   fontSize: size.width *
                                                       AppDimensions.numD03,
-                                                  color: Colors.black,
+                                                  color: textColor,
                                                   fontWeight:
                                                       FontWeight.normal),
                                             ),
@@ -1735,8 +1465,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       SizedBox(
                         height: size.width * AppDimensions.numD025,
                       ),
-                      const Divider(
-                        color: AppColorTheme.colorLightGrey,
+                      Divider(
+                        color: textColor.withValues(alpha: 0.2),
                         thickness: 1,
                       ),
                       SizedBox(
@@ -1757,7 +1487,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     size: size,
                                     fontSize:
                                         size.width * AppDimensions.numD035,
-                                    color: Colors.black,
+                                    color: textColor,
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1770,11 +1500,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD028,
-                                  color: Colors.black,
+                                  color: textColor,
                                   fontWeight: FontWeight.normal),
                               decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: AppColorTheme.colorLightGrey,
+                                  fillColor: cardColor,
                                   hintText: "",
                                   hintStyle: commonTextStyle(
                                       size: size,
@@ -1787,15 +1517,16 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         left: size.width * AppDimensions.numD04,
                                         right:
                                             size.width * AppDimensions.numD02),
-                                    child: const ImageIcon(AssetImage(
-                                        "${iconsPath}ic_location.png")),
+                                    child: ImageIcon(
+                                        AssetImage(
+                                            "${iconsPath}ic_location.png"),
+                                        color: iconColor),
                                   ),
                                   prefixIconConstraints: BoxConstraints(
                                     maxHeight:
                                         size.width * AppDimensions.numD05,
                                   ),
-                                  prefixIconColor:
-                                      AppColorTheme.colorTextFieldIcon,
+                                  prefixIconColor: iconColor,
                                   disabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(
                                           size.width * AppDimensions.numD08),
@@ -1841,8 +1572,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       SizedBox(
                         height: size.width * AppDimensions.numD02,
                       ),
-                      const Divider(
-                        color: AppColorTheme.colorLightGrey,
+                      Divider(
+                        color: textColor.withValues(alpha: 0.2),
                         thickness: 1,
                       ),
                       SizedBox(
@@ -1863,7 +1594,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     size: size,
                                     fontSize:
                                         size.width * AppDimensions.numD035,
-                                    color: Colors.black,
+                                    color: textColor,
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1873,12 +1604,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               controller: timestampController,
                               style: commonTextStyle(
                                   fontSize: size.width * AppDimensions.numD028,
-                                  color: Colors.black,
+                                  color: textColor,
                                   fontWeight: FontWeight.normal,
                                   size: size),
                               decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: AppColorTheme.colorLightGrey,
+                                  fillColor: cardColor,
                                   hintText: "Grenfell Tower, London",
                                   hintStyle: commonTextStyle(
                                       size: size,
@@ -1891,15 +1622,15 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         left: size.width * AppDimensions.numD04,
                                         right:
                                             size.width * AppDimensions.numD02),
-                                    child: const ImageIcon(
-                                        AssetImage("${iconsPath}ic_clock.png")),
+                                    child: ImageIcon(
+                                        AssetImage("${iconsPath}ic_clock.png"),
+                                        color: iconColor),
                                   ),
                                   prefixIconConstraints: BoxConstraints(
                                     maxHeight:
                                         size.width * AppDimensions.numD04,
                                   ),
-                                  prefixIconColor:
-                                      AppColorTheme.colorTextFieldIcon,
+                                  prefixIconColor: iconColor,
                                   disabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(
                                           size.width * AppDimensions.numD08),
@@ -1945,8 +1676,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       SizedBox(
                         height: size.width * AppDimensions.numD02,
                       ),
-                      const Divider(
-                        color: AppColorTheme.colorLightGrey,
+                      Divider(
+                        color: textColor.withValues(alpha: 0.2),
                         thickness: 1,
                       ),
                       SizedBox(height: size.width * AppDimensions.numD02),
@@ -1967,7 +1698,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     size: size,
                                     fontSize:
                                         size.width * AppDimensions.numD035,
-                                    color: Colors.black,
+                                    color: textColor,
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1994,14 +1725,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD03,
-                                                color: Colors.black,
+                                                color: textColor,
                                                 fontWeight: FontWeight.normal),
                                           ),
-                                          backgroundColor:
-                                              AppColorTheme.colorLightGrey,
+                                          backgroundColor: cardColor,
                                           deleteIcon: Icon(
                                             Icons.close,
-                                            color: Colors.black,
+                                            color: textColor,
                                             size: size.width *
                                                 AppDimensions.numD045,
                                           ),
@@ -2058,7 +1788,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD03,
-                                        color: Colors.black,
+                                        color: textColor,
                                         fontWeight: FontWeight.normal),
                                     decoration: InputDecoration(
                                         hintText: "Add hashtags",
@@ -2072,20 +1802,20 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                             borderRadius: BorderRadius.circular(
                                                 size.width *
                                                     AppDimensions.numD08),
-                                            borderSide: const BorderSide(
-                                                width: 1,
-                                                color: AppColorTheme
-                                                    .colorGoogleButtonBorder)),
+                                            borderSide: BorderSide(
+                                                width: 1, color: textColor)),
                                         focusedBorder: OutlineInputBorder(
                                             borderRadius: BorderRadius.circular(
                                                 size.width *
                                                     AppDimensions.numD08),
-                                            borderSide: const BorderSide(
-                                                width: 1,
-                                                color: AppColorTheme.colorGoogleButtonBorder)),
-                                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * AppDimensions.numD08), borderSide: const BorderSide(width: 1, color: AppColorTheme.colorGoogleButtonBorder)),
-                                        errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * AppDimensions.numD08), borderSide: const BorderSide(width: 1, color: AppColorTheme.colorGoogleButtonBorder)),
-                                        focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * AppDimensions.numD08), borderSide: const BorderSide(width: 1, color: AppColorTheme.colorGoogleButtonBorder)),
+                                            borderSide: BorderSide(
+                                                width: 1, color: textColor)),
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                size.width * AppDimensions.numD08),
+                                            borderSide: BorderSide(width: 1, color: textColor)),
+                                        errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * AppDimensions.numD08), borderSide: const BorderSide(width: 1, color: Colors.red)),
+                                        focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * AppDimensions.numD08), borderSide: BorderSide(width: 1, color: textColor)),
                                         contentPadding: EdgeInsets.only(left: size.width * AppDimensions.numD06)),
                                     /* validator: (value) {
                                 if (hashtagList.isEmpty) {
@@ -2103,8 +1833,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       SizedBox(
                         height: size.width * AppDimensions.numD02,
                       ),
-                      const Divider(
-                        color: AppColorTheme.colorLightGrey,
+                      Divider(
+                        color: textColor.withValues(alpha: 0.2),
                         thickness: 1,
                       ),
                       SizedBox(
@@ -2120,7 +1850,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.black,
+                                  color: textColor,
                                   fontWeight: FontWeight.bold),
                             ),
                             const Spacer(),
@@ -2141,12 +1871,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                             size: size,
                                             fontSize: size.width *
                                                 AppDimensions.numD03,
-                                            color: Colors.black,
+                                            color: textColor,
                                             fontWeight: FontWeight.w600),
                                       ),
                                       Icon(
                                         Icons.keyboard_arrow_down_rounded,
-                                        color: Colors.black,
+                                        color: textColor,
                                         size: size.width * AppDimensions.numD06,
                                       ),
                                     ],
@@ -2160,8 +1890,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       SizedBox(
                         height: size.width * AppDimensions.numD02,
                       ),
-                      const Divider(
-                        color: AppColorTheme.colorLightGrey,
+                      Divider(
+                        color: textColor.withValues(alpha: 0.2),
                         thickness: 1,
                       ),
                       SizedBox(
@@ -2172,7 +1902,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD04,
-                            color: Colors.black,
+                            color: textColor,
                             fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
@@ -2203,7 +1933,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           color: selectedSellType ==
                                                   AppStrings.sharedText
                                               ? Colors.white
-                                              : Colors.black,
+                                              : textColor,
                                           width: 1.5),
                                       borderRadius: BorderRadius.circular(
                                           size.width * AppDimensions.numD04)),
@@ -2220,8 +1950,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           child: Container(
                                             color: selectedSellType ==
                                                     AppStrings.sharedText
-                                                ? AppColorTheme.colorThemePink
-                                                : Colors.white,
+                                                ? activeColor
+                                                : cardColor,
                                             alignment: Alignment.topCenter,
                                           ),
                                         ),
@@ -2241,7 +1971,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 color: selectedSellType ==
                                                         AppStrings.sharedText
                                                     ? Colors.black
-                                                    : Colors.white,
+                                                    : cardColor,
                                               ),
                                               child: Text(
                                                 AppStrings.recommendedPriceText,
@@ -2259,6 +1989,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                             ),
                                             Image.asset(
                                               "${iconsPath}ic_share.png",
+                                              color: selectedSellType ==
+                                                      AppStrings.sharedText
+                                                  ? Colors.white
+                                                  : (isDark
+                                                      ? Colors.white
+                                                      : Colors.black),
                                               height: size.width *
                                                   AppDimensions.numD07,
                                             )
@@ -2279,7 +2015,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             AppStrings
                                                                 .sharedText
                                                         ? Colors.white
-                                                        : Colors.black,
+                                                        : textColor,
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
@@ -2307,7 +2043,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             AppStrings
                                                                 .sharedText
                                                         ? Colors.black
-                                                        : Colors.white,
+                                                        : cardColor,
                                                   ),
                                                   child: Text(
                                                     _formatPrice(sharedPrice),
@@ -2316,7 +2052,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 AppStrings
                                                                     .sharedText
                                                             ? Colors.white
-                                                            : Colors.black,
+                                                            : textColor,
                                                         fontSize: size.width *
                                                             AppDimensions
                                                                 .numD03,
@@ -2357,7 +2093,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           color: selectedSellType ==
                                                   AppStrings.exclusiveText
                                               ? Colors.white
-                                              : Colors.black,
+                                              : textColor,
                                           width: 1.5),
                                       borderRadius: BorderRadius.circular(
                                           size.width * AppDimensions.numD04)),
@@ -2374,8 +2110,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           child: Container(
                                             color: selectedSellType ==
                                                     AppStrings.exclusiveText
-                                                ? AppColorTheme.colorThemePink
-                                                : Colors.white,
+                                                ? activeColor
+                                                : cardColor,
                                             alignment: Alignment.topCenter,
                                           ),
                                         ),
@@ -2395,7 +2131,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 color: selectedSellType ==
                                                         AppStrings.exclusiveText
                                                     ? Colors.black
-                                                    : Colors.white,
+                                                    : cardColor,
                                               ),
                                               child: Text(
                                                 AppStrings.recommendedPriceText,
@@ -2413,6 +2149,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                             ),
                                             Image.asset(
                                               "${iconsPath}ic_exclusive.png",
+                                              color: selectedSellType ==
+                                                      AppStrings.exclusiveText
+                                                  ? Colors.white
+                                                  : (isDark
+                                                      ? Colors.white
+                                                      : Colors.black),
                                               height: size.width *
                                                   AppDimensions.numD07,
                                             )
@@ -2433,7 +2175,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             AppStrings
                                                                 .exclusiveText
                                                         ? Colors.white
-                                                        : Colors.black,
+                                                        : textColor,
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
@@ -2461,7 +2203,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             AppStrings
                                                                 .exclusiveText
                                                         ? Colors.black
-                                                        : Colors.white,
+                                                        : cardColor,
                                                   ),
                                                   child: Text(
                                                     _formatPrice(
@@ -2471,7 +2213,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 AppStrings
                                                                     .exclusiveText
                                                             ? Colors.white
-                                                            : Colors.black,
+                                                            : textColor,
                                                         fontSize: size.width *
                                                             AppDimensions
                                                                 .numD03,
@@ -2505,7 +2247,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD03,
-                              color: Colors.black,
+                              color: textColor,
                               fontWeight: FontWeight.normal),
                           textAlign: TextAlign.justify,
                         ),
@@ -2518,7 +2260,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color: textColor,
                             fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
@@ -2530,21 +2272,17 @@ class PublishContentScreenState extends State<PublishContentScreen>
                         child: TextFormField(
                           controller: priceController,
                           textAlign: TextAlign.center,
-                          cursorColor: Colors.black,
+                          cursorColor: textColor,
                           keyboardType: const TextInputType.numberWithOptions(
                               signed: true, decimal: false),
                           inputFormatters: [
-                            // CurrencyTextInputFormatter(NumberFormat.compactCurrency(
-                            //   decimalDigits: 0,
-                            //   symbol: localCurrencySymbol,
-                            // )),
                             CurrencyTextInputFormatter(NumberFormat.currency(
                                 decimalDigits: 0, symbol: localCurrencySymbol))
                           ],
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD06,
-                              color: Colors.black,
+                              color: textColor,
                               fontWeight: FontWeight.normal),
                           decoration: InputDecoration(
                             hintText: "${localCurrencySymbol}0",
@@ -2553,32 +2291,32 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                 fontSize: size.width * AppDimensions.numD06,
                                 color: AppColorTheme.colorHint,
                                 fontWeight: FontWeight.normal),
-                            prefixIconColor: AppColorTheme.colorTextFieldIcon,
+                            prefixIconColor: iconColor,
                             disabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
-                                borderSide: const BorderSide(
-                                    width: 1, color: Colors.black)),
+                                borderSide:
+                                    BorderSide(width: 1, color: textColor)),
                             focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
-                                borderSide: const BorderSide(
-                                    width: 1, color: Colors.black)),
+                                borderSide:
+                                    BorderSide(width: 1, color: textColor)),
                             enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
-                                borderSide: const BorderSide(
-                                    width: 1, color: Colors.black)),
+                                borderSide:
+                                    BorderSide(width: 1, color: textColor)),
                             errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
                                 borderSide: const BorderSide(
-                                    width: 1, color: Colors.black)),
+                                    width: 1, color: Colors.red)),
                             focusedErrorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
-                                borderSide: const BorderSide(
-                                    width: 1, color: Colors.black)),
+                                borderSide:
+                                    BorderSide(width: 1, color: textColor)),
                           ),
                           //validator: checkRequiredValidator,
                         ),
@@ -2598,7 +2336,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               height: size.width * AppDimensions.numD13,
                               width: size.width * AppDimensions.numD08,
                               child: Checkbox(
-                                activeColor: AppColorTheme.colorThemePink,
+                                activeColor: activeColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD013),
@@ -2607,7 +2345,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                   (states) => BorderSide(
                                     width: 1.0,
                                     color: _checkCharityBoxVal
-                                        ? AppColorTheme.colorThemePink
+                                        ? activeColor
                                         : Colors.grey.withValues(alpha: 0.5),
                                   ),
                                 ),
@@ -2626,7 +2364,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  color: AppColorTheme.colorThemePink,
+                                  color: activeColor,
                                   fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -2642,7 +2380,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                 style: commonTextStyle(
                                     size: size,
                                     fontSize: size.width * AppDimensions.numD03,
-                                    color: Colors.black,
+                                    color: textColor,
                                     fontWeight: FontWeight.w400),
                                 children: [
                                   const TextSpan(
@@ -2669,8 +2407,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD03,
-                                                color: AppColorTheme
-                                                    .colorThemePink,
+                                                color: activeColor,
                                                 fontWeight: FontWeight.w500)),
                                       )),
                                   const TextSpan(
@@ -2692,8 +2429,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD03,
-                                                color: AppColorTheme
-                                                    .colorThemePink,
+                                                color: activeColor,
                                                 fontWeight: FontWeight.w500)),
                                       )),
                                   const TextSpan(
@@ -2718,8 +2454,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD03,
-                                                color: AppColorTheme
-                                                    .colorThemePink,
+                                                color: activeColor,
                                                 fontWeight: FontWeight.w500)),
                                       )),
                                   const TextSpan(
@@ -2739,8 +2474,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD03,
-                                                color: AppColorTheme
-                                                    .colorThemePink,
+                                                color: activeColor,
                                                 fontWeight: FontWeight.w500)),
                                       )),
                                   const TextSpan(
@@ -2768,7 +2502,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       "${AppStrings.saveText.toTitleCase()} ${AppStrings.draftText.toTitleCase()}",
                                       size,
                                       commonButtonTextStyle(size),
-                                      commonButtonStyle(size, Colors.black),
+                                      commonButtonStyle(size, textColor),
                                       () {
                                         draftSelected = true;
                                         isSelectLetsGo = false;
@@ -2783,32 +2517,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           extra: {'initialPosition': 2},
                                         );
                                       },
-
-                                      /* if (descriptionController.text.trim().isEmpty &&
-                                    audioPath.isEmpty) {
-                                  showSnackBar(
-                                      "Error",
-                                      "Description or speak is required",
-                                      Colors.red);
-                                } else if (locationController.text
-                                    .trim()
-                                    .isEmpty) {
-                                  showSnackBar("Error", "Location is required",
-                                      Colors.red);
-                                } else if (timestampController.text
-                                    .trim()
-                                    .isEmpty) {
-                                  showSnackBar("Error", "TimeStamp is required",
-                                      Colors.red);
-                                } else if (priceController.text
-                                        .trim()
-                                        .isEmpty ||
-                                    priceController.text == '0') {
-                                  showSnackBar(
-                                      "Error", "Price is required", Colors.red);
-                                } else {
-
-                                }*/
                                     ),
                                   ))
                                 : Container(),
@@ -2826,8 +2534,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                   "Submit",
                                   size,
                                   commonButtonTextStyle(size),
-                                  commonButtonStyle(
-                                      size, AppColorTheme.colorThemePink),
+                                  commonButtonStyle(size, activeColor),
                                   () async {
                                 FocusScope.of(context)
                                     .requestFocus(FocusNode());
@@ -2835,12 +2542,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                 debugPrint("HideDraft-> ${widget.hideDraft}");
                                 if (descriptionController.text.trim().isEmpty &&
                                     audioPath.isEmpty) {
-/*
-                                  showSnackBar(
-                                      "Description",
-                                      "Please type or record what you saw",
-                                      Colors.red);
-                                      */
                                 } else if (priceController.text
                                         .replaceAll(RegExp(r'[^0-9.]'), '')
                                         .trim()
@@ -2849,7 +2550,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                             .replaceAll(RegExp(r'[^0-9.]'), '')
                                             .trim() ==
                                         '0') {
-//                                   showSnackBar("Price", "Please enter your price", Colors.red);
                                 } else {
                                   if (widget.hideDraft) {
                                     await updateDraftListAPI(
@@ -2872,43 +2572,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
                 ),
               ),
             ),
-            /*if (_showCelebrationJson)
-            Positioned.fill(
-              child: Align(
-                alignment: Alignment.center,
-                child: Lottie.asset(
-                  'assets/lottieFiles/celebration.json',
-                  controller: _controller,
-                  repeat: false,
-                  onLoaded: (composition) {
-                    _controller!
-                      ..duration = composition.duration
-                      ..forward();
-                    _controller?.addStatusListener((status) {
-                      if (status == AnimationStatus.completed) {
-                        setState(() {
-                          _showCelebrationJson = false;
-                          debugPrint(
-                              '_showCelebrationJson::::$_showCelebrationJson');
-                        });
-                        // Navigator.pop(context);
-                      }
-                    });
-                  },
-                  // onLoaded: (composition) {
-                  //   _controller?.duration = composition.duration;
-                  //   _controller?.addStatusListener((status) {
-                  //     if (status == AnimationStatus.completed) {
-                  //       setState(() {
-                  //         _showCelebrationJson = false;
-                  //       });
-                  //       Navigator.pop(context);
-                  //     }
-                  //   });
-                  // },
-                ),
-              ),
-            ),*/
           );
         },
       ),
@@ -2923,6 +2586,14 @@ class PublishContentScreenState extends State<PublishContentScreen>
           return BlocProvider.value(
               value: publishBloc,
               child: StatefulBuilder(builder: (context, sheetState) {
+                final isDark = Theme.of(context).brightness == Brightness.dark;
+                final textColor = isDark ? Colors.white : Colors.black;
+                final activeColor =
+                    isDark ? Colors.red : AppColorTheme.colorThemePink;
+                final cardColor = isDark
+                    ? Colors.grey.shade900
+                    : AppColorTheme.colorLightGrey;
+
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -2936,7 +2607,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD04,
-                                color: Colors.black,
+                                color: textColor,
                                 fontWeight: FontWeight.w700),
                           ),
                           const Spacer(),
@@ -2948,6 +2619,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               icon: Icon(
                                 Icons.cancel_outlined,
                                 size: size.width * AppDimensions.numD08,
+                                color: textColor,
                               ))
                         ],
                       ),
@@ -2984,7 +2656,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     selectedSellType = category.name;
                                   }
 
-                                  // Local update for immediate feedback if needed
                                   setState(() {
                                     selectedCategory = category;
                                   });
@@ -3004,8 +2675,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         fontWeight: FontWeight.w500),
                                   ),
                                   backgroundColor: isSelected
-                                      ? Colors.black
-                                      : AppColorTheme.colorLightGrey,
+                                      ? (isDark ? Colors.red : Colors.black)
+                                      : cardColor,
                                 ),
                               );
                             },
@@ -3039,19 +2710,26 @@ class PublishContentScreenState extends State<PublishContentScreen>
         return BlocProvider.value(
           value: bloc,
           child: StatefulBuilder(builder: (context, stateSetter) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+            final textColor = isDark ? Colors.white : Colors.black;
+            final activeColor =
+                isDark ? Colors.red : AppColorTheme.colorThemePink;
+            final cardColor =
+                isDark ? Colors.grey.shade900 : AppColorTheme.colorLightGrey;
+
             return Stack(
               alignment: Alignment.center,
               children: [
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.only(
                       topLeft:
                           Radius.circular(size.width * AppDimensions.numD07),
                       topRight:
                           Radius.circular(size.width * AppDimensions.numD07),
-                    ), // Optional: for rounded border
+                    ),
                   ),
                   child: Padding(
                     padding: EdgeInsets.symmetric(
@@ -3075,7 +2753,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD045,
-                                        color: Colors.black,
+                                        color: textColor,
                                         fontWeight: FontWeight.w700),
                                   ),
                                   SizedBox(
@@ -3084,6 +2762,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                   Image.asset(
                                     'assets/icons/ic_charity.png',
                                     height: size.width * AppDimensions.numD06,
+                                    color: activeColor,
                                   ),
                                 ],
                                 const Spacer(),
@@ -3094,12 +2773,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     });
                                     context.pop();
                                   },
-                                  icon: const Icon(Icons.close),
+                                  icon: Icon(Icons.close, color: textColor),
                                 ),
                               ],
                             ),
-                            const Divider(
-                              color: Colors.black,
+                            Divider(
+                              color: textColor,
                               thickness: 1.3,
                             ),
                             SizedBox(
@@ -3132,9 +2811,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           child: Container(
                                             decoration: BoxDecoration(
                                                 color: item.isSelectCharity
-                                                    ? AppColorTheme
-                                                        .colorGreyChat
-                                                    : Colors.white,
+                                                    ? (isDark
+                                                        ? Colors.grey.shade800
+                                                        : AppColorTheme
+                                                            .colorGreyChat)
+                                                    : Theme.of(context)
+                                                        .cardColor,
                                                 borderRadius:
                                                     BorderRadius.circular(size
                                                             .width *
@@ -3211,7 +2893,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                         TextOverflow.ellipsis,
                                                     maxLines: 2,
                                                     style: TextStyle(
-                                                        color: Colors.black,
+                                                        color: textColor,
                                                         fontWeight:
                                                             FontWeight.normal,
                                                         fontSize: size.width *
@@ -3231,11 +2913,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         );
                                       },
                                     ),
-                                    showCelebration
-                                        ? Lottie.asset(
-                                            "assets/lottieFiles/celebrate.json",
-                                          )
-                                        : Container(),
                                   ],
                                 );
                               }),
@@ -3245,6 +2922,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               children: [
                                 Image.asset(
                                   "${iconsPath}ic_donation.png",
+                                  color: activeColor,
                                   height: size.width * AppDimensions.numD06,
                                   width: size.width * AppDimensions.numD06,
                                   fit: BoxFit.cover,
@@ -3257,7 +2935,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD045,
-                                      color: Colors.black,
+                                      color: textColor,
                                       fontWeight: FontWeight.w700),
                                 ),
                               ],
@@ -3265,7 +2943,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                             Slider(
                               value: currentSliderValue,
                               max: 100,
-                              activeColor: AppColorTheme.colorThemePink,
+                              activeColor: activeColor,
                               inactiveColor: AppColorTheme.colorGreyChat,
                               divisions: 100,
                               label: currentSliderValue.round().toString(),
@@ -3282,7 +2960,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               height: size.width * AppDimensions.numD13,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColorTheme.colorThemePink,
+                                  backgroundColor: activeColor,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD03),

@@ -142,7 +142,7 @@ class _SocialSignUpState extends State<SocialSignUp>
     if (widget.socialLogin) {
       emailController.text = widget.email;
       // Removed auto-fill of username with name/email as requested.
-      userNameController.text = ""; 
+      userNameController.text = "";
     }
     // WidgetsBinding.instance.addPostFrameCallback((_) => getAvatarsApi());
   }
@@ -219,7 +219,6 @@ class _SocialSignUpState extends State<SocialSignUp>
             setState(() {});
           }
         },
-      
         builder: (context, state) {
           return Scaffold(
             appBar: CommonAppBar(
