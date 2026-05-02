@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:get_it/get_it.dart';
+import 'package:presshop/core/services/permission_service.dart';
 import 'package:app_links/app_links.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -266,6 +267,7 @@ Future<void> init() async {
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
   sl.registerLazySingleton(() => ApiClient(sl(), sl(), sl()));
   sl.registerLazySingleton(() => LocationService());
+  sl.registerLazySingleton(() => PermissionService());
   sl.registerLazySingleton(() => ThemeBloc(sl()));
 
   //! Data Sources - Register first
@@ -516,7 +518,7 @@ Future<void> init() async {
     ),
   );
   // sl.registerFactory(() => AlertBloc(apiClient: sl()));
-  sl.registerFactory(() => CameraBloc(sl()));
+  sl.registerFactory(() => CameraBloc(sl(), sl()));
   sl.registerFactory(
     () => ChatBloc(
       getChatListUseCase: sl(),

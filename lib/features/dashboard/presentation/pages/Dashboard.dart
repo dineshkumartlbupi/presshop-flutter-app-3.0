@@ -8,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/services/permission_service.dart';
 import 'package:presshop/core/widgets/global_loader.dart';
 import 'package:presshop/features/camera/presentation/pages/camera_screen.dart';
 import 'package:presshop/features/content/presentation/pages/content_page.dart';
@@ -100,6 +101,7 @@ class DashboardPageState extends State<Dashboard>
 
   lc.LocationData? locationData;
   late LocationService _locationService;
+  final PermissionService _permissionService = sl<PermissionService>();
   String mediaAddress = "", mediaDate = "", country = "", state = "", city = "";
   int totalEntitiesCount = 0;
   double x = 0, y = 0, latitude = 22.5744, longitude = 88.3629;
@@ -117,7 +119,6 @@ class DashboardPageState extends State<Dashboard>
   final Set<int> _loadedIndices = {};
   DateTime? _lastLocationUpdateTime;
   late AppLinks linkStream;
-  bool _isDeniedInSession = false;
 
   @override
   String get pageName => PageNames.dashboard;
@@ -133,15 +134,14 @@ class DashboardPageState extends State<Dashboard>
 
   @override
   void initState() {
+    super.initState();
     debugPrint(
         "🚀 Dashboard: Initializing with position ${widget.initialPosition}");
     GlobalLoader.forceHide();
     _locationService = sl<LocationService>();
     _dashboardBloc = context.read<DashboardBloc>();
     currentIndex = widget.initialPosition;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _handlePermissionSequence(forceRequest: true);
-    });
+    _checkInitialPermissions();
     myProfileApi();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkUpdateAndShowPopup();
@@ -212,7 +212,6 @@ class DashboardPageState extends State<Dashboard>
       _dashboardBloc.add(DashboardCheckStudentBeansEvent());
     }
     initializeDeepLinks(sl<AppLinks>());
-    super.initState();
   }
 
   @override
@@ -224,12 +223,15 @@ class DashboardPageState extends State<Dashboard>
         currentIndex = widget.initialPosition;
         _loadedIndices.add(currentIndex);
       });
-      // Handle camera initialization if switching to camera tab
+
+      // Strict check if new position is Camera
       if (currentIndex == 2) {
-        // _handlePermissionSequence();
-        _cameraKey.currentState?.resumeCamera();
+        // Only trigger if we aren't already on the camera or if forced
+        _checkPermissionsAndInitializeCamera();
+      } else if (oldWidget.initialPosition == 2) {
+        _cameraKey.currentState?.closeCamera();
       }
-      // Reset isClick to prevent continuous snapping back
+
       widget.isClick = false;
     }
   }
@@ -237,9 +239,21 @@ class DashboardPageState extends State<Dashboard>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.resumed) {
-      debugPrint("🚀 Dashboard: App resumed, re-checking permissions...");
-      _handlePermissionSequence(forceRequest: false);
+    if (state == AppLifecycleState.resumed && currentIndex == 2) {
+      debugPrint("🚀 Dashboard: App resumed on Camera tab, verifying status...");
+      
+      _permissionService.checkCameraAndGalleryPermissions().then((result) async {
+        if (result != PermissionResult.granted) {
+          _redirectToPermissionScreen();
+        } else {
+          // Since we removed auto-init from CameraBloc, we trigger it here
+          // with a small delay to ensure surface is ready.
+          await Future.delayed(const Duration(milliseconds: 300));
+          if (mounted && currentIndex == 2) {
+            _cameraKey.currentState?.resumeCamera();
+          }
+        }
+      });
     }
   }
 
@@ -684,14 +698,21 @@ class DashboardPageState extends State<Dashboard>
   void _onBottomBarItemTapped(int index) async {
     if (currentIndex == index) return;
 
-    // Pause camera when leaving camera tab
-    if (currentIndex == 2 && index != 2) {
-      _cameraKey.currentState?.closeCamera();
+    if (index == 2) {
+      // Trying to switch to Camera tab - request permissions first
+      // This will show the OS dialog if not already decided.
+      final result =
+          await _permissionService.requestCameraAndGalleryPermissions();
+      if (result != PermissionResult.granted) {
+        // Only redirect if they explicitly didn't grant it after the request
+        _redirectToPermissionScreen();
+        return;
+      }
     }
-    // Resume/clear camera when returning to camera tab
-    else if (currentIndex != 2 && index == 2) {
-      _cameraKey.currentState?.clearCapturedMedia();
-      _cameraKey.currentState?.resumeCamera();
+
+    // Safely stop camera when leaving tab 2
+    if (currentIndex == 2) {
+      _cameraKey.currentState?.closeCamera();
     }
 
     trackAction(ActionNames.tabSwitch, parameters: {
@@ -705,11 +726,53 @@ class DashboardPageState extends State<Dashboard>
       _loadedIndices.add(currentIndex);
     });
 
-    // Always check permissions on tab switch to ensure immediate enforcement
-    _handlePermissionSequence(forceRequest: true);
+    // If we just landed on Camera, initialize it
+    if (currentIndex == 2) {
+      _cameraKey.currentState?.clearCapturedMedia();
+      _cameraKey.currentState?.resumeCamera();
+    }
 
     if (currentIndex != 2 && currentIndex != 3) {
       updateLocationData();
+    }
+  }
+
+  Future<void> _checkInitialPermissions() async {
+    if (currentIndex == 2) {
+      await _checkPermissionsAndInitializeCamera();
+    }
+  }
+
+  Future<void> _checkPermissionsAndInitializeCamera() async {
+    final result = await _permissionService.checkCameraAndGalleryPermissions();
+    if (result == PermissionResult.granted) {
+      if (mounted) {
+        _cameraKey.currentState?.resumeCamera();
+      }
+    } else {
+      // If not granted, try to request. This will show OS dialog if possible.
+      final requestResult = await _permissionService.requestCameraAndGalleryPermissions();
+      if (requestResult == PermissionResult.granted) {
+        if (mounted) {
+          _cameraKey.currentState?.resumeCamera();
+        }
+      } else {
+        _redirectToPermissionScreen();
+      }
+    }
+  }
+
+  void _redirectToPermissionScreen() {
+    if (mounted) {
+      context.goNamed(
+        AppRoutes.permissionErrorName,
+        extra: {
+          'permissionsStatus': {
+            Permission.camera: false,
+            Permission.photos: false,
+          }
+        },
+      );
     }
   }
 
@@ -783,124 +846,5 @@ class DashboardPageState extends State<Dashboard>
     _dashboardBloc.add(FetchActiveAdmins());
   }
 
-  bool _isPermissionSequenceRunning = false;
-  Future<void> _handlePermissionSequence({bool forceRequest = true}) async {
-    if (_isPermissionSequenceRunning) {
-      debugPrint(
-          "🚀 Dashboard: Permission sequence already running, skipping...");
-      return;
-    }
-    _isPermissionSequenceRunning = true;
-
-    try {
-      // Settle delay to ensure UI is visible before popups
-      await Future.delayed(const Duration(milliseconds: 800));
-      if (!mounted) return;
-
-      Map<Permission, bool> statusMap = {};
-      List<Permission> mandatoryPermissions = [
-        Permission.camera,
-        Permission.microphone,
-        Permission.location,
-        Permission.notification,
-      ];
-
-      // Request each mandatory permission in sequence
-      for (var p in mandatoryPermissions) {
-        debugPrint("🚀 Dashboard: Processing mandatory permission $p...");
-
-        final statusBefore = await p.status;
-        final stopwatch = Stopwatch()..start();
-
-        // Only request if forceRequest is true or if not already granted
-        bool result = false;
-        if (forceRequest || statusBefore != PermissionStatus.granted) {
-          result = await _locationService.requestPermission(p, showUI: false);
-        } else {
-          result = true;
-        }
-
-        stopwatch.stop();
-
-        // Give the OS a tiny moment to update status internally
-        await Future.delayed(const Duration(milliseconds: 100));
-        final statusAfter = await p.status;
-
-        debugPrint(
-            "🚀 Dashboard: $p | Before: $statusBefore | After: $statusAfter | Time: ${stopwatch.elapsedMilliseconds}ms");
-
-        // If granted, continue to next
-        if (result) {
-          statusMap[p] = true;
-          continue;
-        }
-
-        // If NOT granted, determine if we should redirect
-        statusMap[p] = false;
-
-        // REDIRECT LOGIC (Mirroring demo_presshop_project):
-        // 1. dialogWasShownAndDenied: If it was denied before and is still not granted after a request that took time.
-        bool dialogWasShownAndDenied =
-            (statusBefore == PermissionStatus.denied &&
-                statusAfter != PermissionStatus.granted &&
-                stopwatch.elapsedMilliseconds > 200);
-
-        if (dialogWasShownAndDenied) {
-          debugPrint(
-              "🚀 Dashboard: User explicitly clicked 'Don't Allow' for $p");
-          _isDeniedInSession = true;
-        }
-
-        bool isPermanentlyDenied = statusAfter.isPermanentlyDenied;
-        bool isSensitiveTab = (currentIndex == 2 || currentIndex == 3);
-
-        if (mounted &&
-            (_isDeniedInSession || isPermanentlyDenied || isSensitiveTab)) {
-          debugPrint(
-              "🚀 Dashboard: Redirecting to Error Screen. Reason: SessionDenied=$_isDeniedInSession, Permanent=$isPermanentlyDenied, Sensitive=$isSensitiveTab");
-
-          // Populate the rest of the map for the error screen
-          for (var otherP in mandatoryPermissions) {
-            if (statusMap[otherP] == null) {
-              statusMap[otherP] = await otherP.isGranted;
-            }
-          }
-
-          context.goNamed(
-            AppRoutes.permissionErrorName,
-            extra: {'permissionsStatus': statusMap},
-          );
-          return; // Exit sequence immediately
-        } else {
-          debugPrint(
-              "🚀 Dashboard: Permission $p not granted, but staying on dashboard (Non-sensitive tab & not yet explicitly denied in session).");
-        }
-      }
-
-      // Non-mandatory but requested permissions
-      await _locationService.requestPermission(Permission.notification,
-          showUI: false);
-
-      if (Platform.isAndroid) {
-        DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-        if (androidInfo.version.sdkInt < 33) {
-          await _locationService.requestPermission(Permission.storage,
-              showUI: false);
-        }
-      } else {
-        await _locationService.requestPermission(Permission.storage,
-            showUI: false);
-      }
-
-      debugPrint("🚀 Dashboard: Permission sequence completed successfully.");
-
-      // Resume camera if needed
-      if (currentIndex == 2 && mounted) {
-        _cameraKey.currentState?.resumeCamera();
-      }
-    } finally {
-      _isPermissionSequenceRunning = false;
-    }
-  }
+  // Redundant _handlePermissionSequence removed in favor of clean architecture
 }

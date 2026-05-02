@@ -8,6 +8,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/services/permission_service.dart'
+    show PermissionService;
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
@@ -96,8 +98,8 @@ class CameraScreenState extends State<CameraScreen>
 
   void resumeCamera() {
     if (_bloc != null && !_bloc!.isClosed) {
-      debugPrint("🔄 CameraScreen: Forcing camera re-initialization");
-      _bloc!.add(const CameraInitializeEvent(force: true));
+      debugPrint("🔄 CameraScreen: Ensuring camera is initialized");
+      _bloc!.add(const CameraInitializeEvent());
     }
   }
 
@@ -183,10 +185,20 @@ class CameraScreenState extends State<CameraScreen>
           _lastStatus = state.status;
 
           if (state.status == CameraStatus.failure) {
-            // Permission handling is now centralized in Dashboard.dart
-            // We just log the error here if needed.
-            debugPrint(
-                "📸 CameraScreen: Camera failure: ${state.errorMessage}");
+            debugPrint("📸 CameraScreen: Camera failure: ${state.errorMessage}");
+            
+            // If it's a permission error, redirect to the centralized error screen
+            if (state.errorMessage == "permission_denied" || 
+                state.errorMessage == "permanently_denied") {
+              if (mounted) {
+                context.goNamed(AppRoutes.permissionErrorName, extra: {
+                  'permissionsStatus': {
+                    Permission.camera: false,
+                    Permission.photos: false,
+                  }
+                });
+              }
+            }
           }
 
           if (state.status == CameraStatus.success) {
@@ -588,35 +600,64 @@ class CameraScreenState extends State<CameraScreen>
 
   Widget _buildCameraPreview(
       BuildContext context, CameraState state, Size size) {
-    if (state.status == CameraStatus.failure) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, size: 50, color: Colors.grey),
-            const SizedBox(height: 10),
-            Text(
-                state.errorMessage.isNotEmpty
-                    ? state.errorMessage
-                    : "Camera not found",
-                style: const TextStyle(color: Colors.black)),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                context
-                    .read<CameraBloc>()
-                    .add(const CameraInitializeEvent(force: true));
-              },
-              child: const Text("Retry"),
-            )
-          ],
+    if (state.status == CameraStatus.failure || 
+        (state.status == CameraStatus.initial && state.cameraController == null && 
+         state.selectedMode != AppStrings.audioText)) {
+      
+      final isPermanentlyDenied = state.errorMessage == "permanently_denied";
+
+      return Container(
+        color: Colors.white,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: size.width * 0.1),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.lock_outline,
+                size: 100,
+                color: Colors.grey,
+              ),
+              SizedBox(height: size.height * 0.04),
+              Text(
+                isPermanentlyDenied
+                    ? 'Permissions are permanently denied. Please enable them in system settings to continue.'
+                    : 'Camera and Microphone permissions are required to use this feature. Please allow them to continue.',
+                textAlign: TextAlign.center,
+                style: commonTextStyle(
+                  size: size,
+                  fontSize: size.width * 0.045,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              SizedBox(height: size.height * 0.04),
+              SizedBox(
+                width: size.width * 0.6,
+                height: 50,
+                child: commonElevatedButton(
+                  isPermanentlyDenied ? "Open Settings" : "Retry",
+                  size,
+                  commonButtonTextStyle(size),
+                  commonButtonStyle(size, AppColorTheme.colorThemePink),
+                  () {
+                    if (isPermanentlyDenied) {
+                      di.sl<PermissionService>().openSettings();
+                    } else {
+                      context
+                          .read<CameraBloc>()
+                          .add(const CameraInitializeEvent(force: true));
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
 
-    if (state.status == CameraStatus.loading ||
-        state.cameraController == null ||
-        !state.cameraController!.value.isInitialized) {
+    if (state.status == CameraStatus.loading) {
       return Center(
           child:
               CircularProgressIndicator(color: AppColorTheme.colorThemePink));
@@ -664,7 +705,9 @@ class CameraScreenState extends State<CameraScreen>
                 alignment: Alignment.center,
                 child: SizedBox(
                   width: size.width,
-                  child: CameraPreview(state.cameraController!),
+                  child: state.cameraController != null && state.cameraController!.value.isInitialized
+                    ? CameraPreview(state.cameraController!)
+                    : Container(color: Colors.black),
                 ),
               ),
             ),
@@ -678,7 +721,7 @@ class CameraScreenState extends State<CameraScreen>
     return Column(
       children: [
         const Spacer(),
-        state.isRecording
+        state.isRecording && state.recorderController != null
             ? AudioWaveforms(
                 size: Size(size.width, 100),
                 recorderController: state.recorderController!,

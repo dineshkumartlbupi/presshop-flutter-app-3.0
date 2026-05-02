@@ -82,23 +82,11 @@ class LocationService {
 
       if (status.isDenied) {
         // ❗ User tapped "Don't Allow"
-        if (showUI) {
-          PermissionUI.show(
-            message: "Permission denied. Please allow to continue.",
-            isPermanent: false,
-          );
-        }
         return false;
       }
 
       if (status.isPermanentlyDenied) {
         // ❗ User tapped "Don't ask again"
-        if (showUI) {
-          PermissionUI.show(
-            message: "Permission permanently denied. Enable from settings.",
-            isPermanent: true,
-          );
-        }
         return false;
       }
     } catch (e) {

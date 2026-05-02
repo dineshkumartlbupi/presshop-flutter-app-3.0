@@ -9,6 +9,7 @@ import 'package:native_exif/native_exif.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:presshop/core/services/permission_service.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/main.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
@@ -25,7 +26,7 @@ import 'camera_event.dart';
 import 'camera_state.dart';
 
 class CameraBloc extends Bloc<CameraEvent, CameraState> {
-  CameraBloc(this._locationService,
+  CameraBloc(this._locationService, this._permissionService,
       {CameraState? initialState,
       CameraControllerBuilder? cameraControllerBuilder})
       : _cameraControllerBuilder =
@@ -57,6 +58,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   DateTime? _startTime;
   // Duration? _stopDurationDifference;
   // double _currentZoom = 1.0;
+
+  // Permissions
+  final PermissionService _permissionService;
 
   // Dependency Injection for testing
   final CameraControllerBuilder _cameraControllerBuilder;
@@ -92,11 +96,42 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       return;
     }
 
-    debugPrint("🚀 CameraBloc: Starting initialization...");
-    _isInitializing = true;
-    emit(state.copyWith(status: CameraStatus.loading));
+    debugPrint("🚀 CameraBloc: Starting initialization sequence...");
 
+    _isInitializing = true;
     try {
+      // Setup recorder first (fast)
+      RecorderController? recorderController = state.recorderController;
+      recorderController ??= RecorderController()
+        ..androidEncoder = AndroidEncoder.aac
+        ..androidOutputFormat = AndroidOutputFormat.mpeg4
+        ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
+        ..sampleRate = 44100
+        ..bitRate = 48000;
+
+      final permissionResult =
+          await _permissionService.requestCameraAndGalleryPermissions();
+
+      if (permissionResult != PermissionResult.granted) {
+        debugPrint("🚀 CameraBloc: Permission denied. Stopping init.");
+
+        // Check if it's permanently denied to provide better UI feedback
+        final isPermanent = await Permission.camera.isPermanentlyDenied ||
+            await Permission.microphone.isPermanentlyDenied ||
+            (await _permissionService.checkCameraAndGalleryPermissions() ==
+                PermissionResult.permanentlyDenied);
+
+        emit(state.copyWith(
+          status: CameraStatus.failure,
+          errorMessage:
+              isPermanent ? "permanently_denied" : "permission_denied",
+        ));
+        _isInitializing = false;
+        return;
+      }
+
+      // 2. Permissions are granted! NOW we show the loader for hardware init.
+      emit(state.copyWith(status: CameraStatus.loading));
       // Ensure previous controller is fully disposed before starting new one
       final existingController = state.cameraController;
       if (existingController != null) {
@@ -112,52 +147,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         }
       }
 
-      // Parallelize initialization tasks
-      // 1. Setup recorder (fast)
-      RecorderController? recorderController = state.recorderController;
-      recorderController ??= RecorderController()
-        ..androidEncoder = AndroidEncoder.aac
-        ..androidOutputFormat = AndroidOutputFormat.mpeg4
-        ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
-        ..sampleRate = 44100
-        ..bitRate = 48000;
-
-      // Check permission status first before calling .request() to avoid OS lifecycle interruptions
-      bool cameraGranted = await Permission.camera.isGranted;
-      bool micGranted = await Permission.microphone.isGranted;
-
-      List<Permission> toRequest = [];
-      if (!cameraGranted) toRequest.add(Permission.camera);
-      if (!micGranted) toRequest.add(Permission.microphone);
-
-      if (toRequest.isNotEmpty) {
-        final locService = LocationService();
-        for (final p in toRequest) {
-          await locService
-              .requestPermission(p, showUI: false)
-              .timeout(const Duration(seconds: 30), onTimeout: () => false);
-        }
-        cameraGranted = await Permission.camera.isGranted;
-        micGranted = await Permission.microphone.isGranted;
-      }
-
-      final cameraStatus = cameraGranted;
-      final micStatus = micGranted;
-
-      debugPrint("🚀 CameraBloc: Camera: $cameraStatus, Mic: $micStatus");
-
-      if (!cameraStatus || !micStatus) {
-        debugPrint("🚀 CameraBloc: Permission denied. Emitting failure for redirection...");
-        emit(state.copyWith(
-            status: CameraStatus.failure,
-            errorMessage: !cameraStatus ? "Camera permission denied" : "Microphone permission denied",
-            recorderController: recorderController));
-        _isInitializing = false;
-        return;
-      }
-
-      // Give the OS a moment to catch up after permission changes
-      await Future.delayed(const Duration(milliseconds: 300));
+      // Permissions already checked above
 
       // 4. Init Camera list if empty (fast usually)
       if (cameras.isEmpty) {
@@ -310,10 +300,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         emit(state.copyWith(status: CameraStatus.initial));
       }
     } else if (event.state == AppLifecycleState.resumed) {
-      // If we were disposing, wait a bit or ensure we can re-init
-      // Debounce slightly to ensure surface is ready
-      await Future.delayed(const Duration(milliseconds: 200));
-      add(CameraInitializeEvent());
+      // Auto-initialization on resume is now handled by the UI layer (Dashboard)
+      // to prevent redundant calls and blinking. 
+      debugPrint("🚀 CameraBloc: App resumed, waiting for UI trigger.");
     }
   }
 
