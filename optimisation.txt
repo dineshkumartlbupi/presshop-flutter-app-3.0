@@ -1,0 +1,48 @@
+ Battery Draining Optimisation 
+ Network Optimisation
+ Size Optimisation
+
+
+
+
+Who Do not have Clean and DDD
+
+1. Referal 
+2. Onboarding
+3. Media 
+4. Chatbot 
+5. Camera 
+6. Alert
+
+
+
+App Optimization Report: PressHop
+This report outlines identifies bottlenecks and provides recommendations across three key categories: Battery, Network, and Size.
+
+🔋 Battery Optimization
+Bottleneck: Current background location tracking and long network timeouts.
+
+Location Tracking Frequency: 
+background_location_service.dart
+ needs verification for polling frequency. Recommendation: Use "low power" mode when the app is in the background and increase intervals.
+Network Timeouts: ApiClient.dart currently has 2-minute timeouts. Recommendation: Reduce to 30 seconds to prevent radio power from being held unnecessarily long.
+Map Rendering: Google Map redraws can be expensive. Recommendation: Ensure RepaintBoundary is used to isolate map painting.
+🌐 Network Optimization
+Bottleneck: Lack of explicit caching and large response payloads.
+
+API Caching: Implement dio_cache_interceptor or a custom cache-control strategy in ApiClient.dart for static data (e.g., categories, profile info).
+Asset Loading: Some markers are large .webp files (up to 2.2MB). Recommendation: Compress marker GIFs/Images and use cached_network_image effectively.
+Logging: Ensure PrettyDioLogger is strictly disabled in production (already handled in 
+ApiClient
+ via kDebugMode).
+📦 Size Optimization
+Bottleneck: Unused or large media assets.
+
+Asset Overhaul:
+assets/markers/gifs/knife.webp
+ (2.2MB)
+assets/commonImages/dog2.jpg
+ (1.7MB)
+Recommendation: Convert these to optimized/resized versions or move them to remote storage (Firebase Storage).
+ProGuard/R8: Ensure these are enabled in android/app/build.gradle for obfuscation and dead code removal.
+Splitting APKs: Use flutter build apk --split-per-abi to reduce individual download sizes for users

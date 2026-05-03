@@ -1,0 +1,22 @@
+Running Gradle task 'assembleDebug'...                          
+Error detected in pubspec.yaml:
+No file or variants found for asset: assets/dialog_flow_auth.json.
+
+Target debug_android_application failed: Exception: Failed to bundle asset files.
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileFlutterBuildDebug'.
+> Process 'command '/opt/homebrew/share/flutter/bin/flutter'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 20s
+Running Gradle task 'assembleDebug'...                             20.9s
+Gradle task assembleDebug failed with exit code 1

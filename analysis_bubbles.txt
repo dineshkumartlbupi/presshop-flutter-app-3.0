@@ -1,0 +1,14 @@
+Analyzing chat_action_bubbles.dart...                           
+
+   info • The import of 'package:presshop/features/task/data/models/manage_task_chat_model.dart' is unnecessary because all of the used elements are also provided by the import of 'package:presshop/core/core_export.dart' • lib/features/task/presentation/pages/broadcast_chat/widgets/chat_action_bubbles.dart:5:8 • unnecessary_import
+   info • Constructor declarations should be before non-constructor declarations • lib/features/task/presentation/pages/broadcast_chat/widgets/chat_action_bubbles.dart:15:9 • sort_constructors_first
+   info • Constructor declarations should be before non-constructor declarations • lib/features/task/presentation/pages/broadcast_chat/widgets/chat_action_bubbles.dart:81:9 • sort_constructors_first
+   info • Constructor declarations should be before non-constructor declarations • lib/features/task/presentation/pages/broadcast_chat/widgets/chat_action_bubbles.dart:201:9 • sort_constructors_first
+   info • Constructor declarations should be before non-constructor declarations • lib/features/task/presentation/pages/broadcast_chat/widgets/chat_action_bubbles.dart:307:9 • sort_constructors_first
+   info • Constructor declarations should be before non-constructor declarations • lib/features/task/presentation/pages/broadcast_chat/widgets/chat_action_bubbles.dart:420:9 • sort_constructors_first
+   info • Constructor declarations should be before non-constructor declarations • lib/features/task/presentation/pages/broadcast_chat/widgets/chat_action_bubbles.dart:496:9 • sort_constructors_first
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/task/presentation/pages/broadcast_chat/widgets/chat_action_bubbles.dart:512:51 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/task/presentation/pages/broadcast_chat/widgets/chat_action_bubbles.dart:513:50 • deprecated_member_use
+   info • Constructor declarations should be before non-constructor declarations • lib/features/task/presentation/pages/broadcast_chat/widgets/chat_action_bubbles.dart:600:9 • sort_constructors_first
+   info • Constructor declarations should be before non-constructor declarations • lib/features/task/presentation/pages/broadcast_chat/widgets/chat_action_bubbles.dart:681:9 • sort_constructors_first
+

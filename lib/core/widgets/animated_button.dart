@@ -1,0 +1,118 @@
+import 'package:flutter/material.dart';
+import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/widgets/common_widgets.dart';
+
+// ignore: must_be_immutable
+class AnimatedButtonWidget extends StatefulWidget {
+  AnimatedButtonWidget(
+      {super.key,
+      required this.onPressed,
+      required this.buttonText,
+      required this.shouldRestartAnimation,
+      required this.size});
+  VoidCallback onPressed;
+  String buttonText;
+  Size size;
+  bool shouldRestartAnimation = false;
+
+  @override
+  _AnimatedButtonState createState() => _AnimatedButtonState();
+}
+
+class _AnimatedButtonState extends State<AnimatedButtonWidget>
+    with SingleTickerProviderStateMixin {
+  bool _hasTriggered = false;
+  late AnimationController _controller;
+  late Animation<double> _revealAnimation;
+  late Animation<double> _opacityAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 10),
+      vsync: this,
+    );
+    _revealAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOutCubic,
+      ),
+    );
+    _opacityAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.forward();
+    });
+
+    _revealAnimation.addListener(() {
+      if (_revealAnimation.isCompleted) {
+        if (mounted &&
+            !_hasTriggered &&
+            (ModalRoute.of(context)?.isCurrent ?? false)) {
+          _hasTriggered = true;
+          widget.onPressed();
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.shouldRestartAnimation) {
+      widget.shouldRestartAnimation = false;
+      if (_controller.isCompleted) {
+        _controller.reset();
+      }
+      if (!_controller.isAnimating) {
+        _controller.forward();
+      }
+    }
+    return Center(
+      child: RepaintBoundary(
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return ClipRect(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                widthFactor: _hasTriggered
+                    ? 1.0
+                    : _revealAnimation.value, // Left-to-right reveal
+                child: AnimatedOpacity(
+                  opacity: _hasTriggered ? 1.0 : _opacityAnimation.value,
+                  duration: const Duration(microseconds: 350),
+                  child: SizedBox(
+                    width: widget.size.width,
+                    height: widget.size.width * AppDimensions.numD13,
+                    child: commonElevatedButton(
+                        widget.buttonText,
+                        widget.size,
+                        commonButtonTextStyle(widget.size),
+                        commonButtonStyle(
+                            widget.size, AppColorTheme.colorThemePink), () {
+                      _controller.stop();
+                      _hasTriggered = true;
+                      widget.onPressed();
+                    }),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}

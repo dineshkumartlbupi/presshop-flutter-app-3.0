@@ -1,0 +1,243 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+// Check if needed, maybe for global vars like iconsPath?
+import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/widgets/common_widgets.dart'; // Check path
+// for avatarImageUrl
+import '../../domain/entities/leaderboard_entity.dart';
+
+class LeadershipTableWidget extends StatelessWidget {
+
+  const LeadershipTableWidget({
+    super.key,
+    required this.memberList,
+    this.currencySymbol = "",
+  });
+  final List<MemberEntity> memberList;
+  final String currencySymbol;
+
+  @override
+  Widget build(BuildContext context) {
+    // print('👥 memberList count: ${memberList.length}');
+
+    final activeList =
+        memberList; // Removed dummyMembers for now, or I can recreate instances of MemberEntity
+
+    final safeList = List<MemberEntity?>.generate(
+      3,
+      (index) => index < activeList.length ? activeList[index] : null,
+    );
+
+    Size size = MediaQuery.of(context).size;
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black;
+
+    return SizedBox(
+      height: size.height * AppDimensions.numD30,
+      width: double.infinity,
+      child: Stack(
+        children: [
+          // LEFT (2nd place)
+          Positioned(
+            top: size.height * AppDimensions.numD02,
+            left: 0,
+            child: profileImageWidget(
+              isLeader: false,
+              size: size,
+              member: safeList[1],
+              currencySymbol: currencySymbol,
+              textColor: textColor,
+            ),
+          ),
+
+          // Background shapes
+          Positioned(
+            left: size.width * AppDimensions.numD32,
+            bottom: 15,
+            child: Image.asset('${iconsPath}leader_circle.png',
+                scale: 3, color: isDark ? Colors.red.withOpacity(0.3) : null),
+          ),
+          Positioned(
+            left: size.width * AppDimensions.numD28,
+            top: 0,
+            child: Image.asset('${iconsPath}leader_triangle.png',
+                scale: 2, color: isDark ? Colors.red.withOpacity(0.3) : null),
+          ),
+          Positioned(
+            top: 15,
+            left: 10,
+            child: Image.asset('${iconsPath}leader_rectangle.png',
+                scale: 3, color: isDark ? Colors.red.withOpacity(0.3) : null),
+          ),
+          Positioned(
+            top: size.height * AppDimensions.numD02,
+            right: 40,
+            child: Image.asset('${iconsPath}leader_star.png',
+                scale: 3, color: isDark ? Colors.red.withOpacity(0.3) : null),
+          ),
+
+          // CENTER (1st place)
+          Align(
+            alignment: Alignment.topCenter,
+            child: profileImageWidget(
+              isLeader: true,
+              size: size,
+              member: safeList[0],
+              currencySymbol: currencySymbol,
+              textColor: textColor,
+            ),
+          ),
+
+          // RIGHT (3rd place)
+          Positioned(
+            top: size.height * AppDimensions.numD05,
+            right: 0,
+            child: profileImageWidget(
+              isLeader: false,
+              size: size,
+              member: safeList[2],
+              currencySymbol: currencySymbol,
+              textColor: textColor,
+            ),
+          ),
+
+          // Bottom table decoration
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Image.asset(
+              "${iconsPath}leader_table_icon.png",
+              color: isDark ? Colors.grey.shade800 : const Color(0xFFEAEAEA),
+              fit: BoxFit.scaleDown,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget profileImageWidget({
+    bool isLeader = false,
+    required Size size,
+    MemberEntity? member,
+    required String currencySymbol,
+    required Color textColor,
+  }) {
+    final hasData = member != null;
+    final name = hasData ? member.userName : "--";
+    final earnings = hasData ? member.totalEarnings : 0.0;
+    final avatar = hasData ? member.avatar : "";
+
+    // print('🧍 Member Debug -> Name: $name | Earnings: $earnings | Avatar: $avatar');
+
+    return SizedBox(
+      height: size.height * AppDimensions.numD18,
+      width: size.width * AppDimensions.numD34,
+      child: Stack(
+        alignment: Alignment.centerLeft,
+        children: [
+          Center(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    hasData
+                        ? formatCurrency(earnings, currencySymbol)
+                        : formatCurrency(0, currencySymbol),
+                    style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * AppDimensions.numD04,
+                      color: textColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: size.height * AppDimensions.numD005),
+                  Container(
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD01),
+                    height: size.width * AppDimensions.numD24,
+                    width: size.width * AppDimensions.numD24,
+                    decoration: const BoxDecoration(shape: BoxShape.circle),
+                    child: ClipOval(
+                      clipBehavior: Clip.antiAlias,
+                      child: hasData && avatar.isNotEmpty
+                          ? CachedNetworkImage(
+                              imageUrl: avatar,
+                              errorWidget: (context, url, error) {
+                                return Image.asset(
+                                  "${commonImagePath}rabbitLogo.png",
+                                  height: size.width * AppDimensions.numD06,
+                                  width: size.width * AppDimensions.numD06,
+                                  color: textColor.withOpacity(0.5),
+                                );
+                              },
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              "${commonImagePath}rabbitLogo.png",
+                              height: size.width * AppDimensions.numD06,
+                              width: size.width * AppDimensions.numD06,
+                              fit: BoxFit.cover,
+                              color: textColor.withOpacity(0.5),
+                            ),
+                    ),
+                  ),
+                  SizedBox(height: size.height * AppDimensions.numD005),
+                  Text(
+                    name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * AppDimensions.numD035,
+                      color: textColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Crown for leader
+          if (isLeader)
+            Positioned(
+              left: -2,
+              top: 20,
+              child: Image.asset(
+                "${iconsPath}leader_king.png",
+                scale: 3.5,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  String formatCurrency(dynamic amount, String currencySymbol) {
+    double value = double.tryParse(amount.toString()) ?? 0.0;
+    String locale;
+    switch (currencySymbol) {
+      case '₹':
+        locale = 'en_IN';
+        break;
+      case '\$':
+        locale = 'en_US';
+        break;
+      case '£':
+        locale = 'en_GB';
+        break;
+      case '€':
+        locale = 'en_EU';
+        break;
+      default:
+        locale = 'en_US';
+    }
+    final format =
+        NumberFormat.currency(locale: locale, symbol: currencySymbol);
+    return format.format(value);
+  }
+}

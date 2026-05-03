@@ -1,0 +1,4 @@
+Analyzing rating_review_bubble.dart...                          
+
+   info • Constructor declarations should be before non-constructor declarations • lib/features/task/presentation/pages/broadcast_chat/widgets/rating_review_bubble.dart:15:9 • sort_constructors_first
+

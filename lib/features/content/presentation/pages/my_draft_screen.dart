@@ -1,0 +1,983 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
+import 'package:flutter/material.dart';
+import 'package:presshop/core/api/api_client.dart';
+import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/widgets/common_app_bar.dart';
+import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/features/content/data/models/my_content_data_model.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:hive/hive.dart';
+import '../../../../core/di/injection_container.dart';
+
+// ignore: must_be_immutable
+class MyDraftScreen extends StatefulWidget {
+  MyDraftScreen(
+      {super.key, required this.publishedContent, required this.screenType});
+  bool publishedContent = false;
+  String screenType = "";
+
+  @override
+  State<StatefulWidget> createState() {
+    return MyDraftScreenState();
+  }
+}
+
+class MyDraftScreenState extends State<MyDraftScreen> {
+  late Size size;
+  List<MyContentData> myDraftList = [];
+  String selectedSellType = AppStrings.sharedText;
+  ScrollController listController = ScrollController();
+  List<FilterModel> sortList = [];
+  List<FilterModel> filterList = [];
+  bool showData = false;
+  bool showLoader = false;
+  int limit = 10, offset = 0;
+  int draftIndex = 0;
+  int selectedIndex = 0;
+  final RefreshController _refreshController = RefreshController();
+
+  @override
+  void initState() {
+    debugPrint("screenType::::::$runtimeType");
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      myDraftApi();
+      initializeFilter();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    size = MediaQuery.of(context).size;
+    return WillPopScope(
+      onWillPop: () async {
+        if (widget.publishedContent || widget.screenType == "welcome") {
+          context.goNamed(
+            AppRoutes.dashboardName,
+            extra: {'initialPosition': 2},
+          );
+        } else {
+          context.pop();
+        }
+
+        return false;
+      },
+      child: Stack(
+        children: [
+          Scaffold(
+            appBar: CommonAppBar(
+              elevation: 0,
+              title: Text(
+                AppStrings.myDraftText,
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: size.width * AppDimensions.appBarHeadingFontSize),
+              ),
+              centerTitle: false,
+              titleSpacing: 0,
+              size: size,
+              showActions: true,
+              leadingFxn: () {
+                context.pop();
+              },
+              actionWidget: [
+                InkWell(
+                    onTap: () {
+                      showBottomSheet(size);
+                    },
+                    child: commonFilterIcon(context, size)),
+                SizedBox(
+                  width: size.width * AppDimensions.numD02,
+                ),
+                Container(
+                  margin: EdgeInsets.only(
+                      bottom: size.width * AppDimensions.numD02),
+                  child: InkWell(
+                    onTap: () {
+                      context.goNamed(
+                        AppRoutes.dashboardName,
+                        extra: {'initialPosition': 2},
+                      );
+                    },
+                    child: Image.asset(
+                      "${commonImagePath}rabbitLogo.png",
+                      height: size.width * AppDimensions.numD095,
+                      width: size.width * AppDimensions.numD095,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: size.width * AppDimensions.numD04,
+                )
+              ],
+              hideLeading: false,
+            ),
+            body: SafeArea(
+              child: myDraftList.isNotEmpty
+                  ? SmartRefresher(
+                      enablePullDown: true,
+                      enablePullUp: true,
+                      onLoading: _onLoading,
+                      onRefresh: _onRefresh,
+                      controller: _refreshController,
+                      child: ListView.separated(
+                          itemBuilder: (context, index) {
+                            var item = myDraftList[index];
+                            return InkWell(
+                              onTap: () {
+                                selectedIndex = index;
+                                context.pushNamed(
+                                  AppRoutes.publishContentName,
+                                  extra: {
+                                    'publishData': null,
+                                    'myContentData': myDraftList[selectedIndex],
+                                    'hideDraft': true,
+                                    'docType': '',
+                                  },
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal:
+                                        AppDimensions.commonPaddingSize(size),
+                                    vertical:
+                                        size.width * AppDimensions.numD04),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    item.contentMediaList.isNotEmpty
+                                        ? mediaWidget(item)
+                                        : Text("No media found."),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD02,
+                                    ),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                              myDraftList[index]
+                                                  .textValue
+                                                  .toCapitalized(),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD035,
+                                                  color: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge
+                                                      ?.color,
+                                                  lineHeight: 1.5,
+                                                  fontWeight: FontWeight.w600)),
+                                        ),
+                                        SizedBox(
+                                            height: size.width *
+                                                AppDimensions.numD02),
+                                        Image.asset(
+                                          myDraftList[index].exclusive
+                                              ? "${iconsPath}ic_exclusive.png"
+                                              : "${iconsPath}ic_share.png",
+                                          height: size.width *
+                                              AppDimensions.numD035,
+                                          color:
+                                              AppColorTheme.colorTextFieldIcon,
+                                        ),
+                                        SizedBox(
+                                          width:
+                                              size.width * AppDimensions.numD02,
+                                        ),
+                                        Text(
+                                          myDraftList[index].exclusive
+                                              ? AppStrings.exclusiveText
+                                              : AppStrings.sharedText,
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD035,
+                                              color: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.color,
+                                              fontWeight: FontWeight.normal),
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD02,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Image.asset(
+                                          "${iconsPath}ic_clock.png",
+                                          height:
+                                              size.width * AppDimensions.numD04,
+                                          color:
+                                              AppColorTheme.colorTextFieldIcon,
+                                        ),
+                                        SizedBox(
+                                          width:
+                                              size.width * AppDimensions.numD01,
+                                        ),
+                                        Text(
+                                          dateTimeFormatter(
+                                              dateTime: item.time.toString(),
+                                              format: "hh:mm a, dd MMM yyyy",
+                                              utc: true),
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD028,
+                                              color: AppColorTheme.colorHint,
+                                              fontWeight: FontWeight.normal),
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD02,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Image.asset(
+                                          "${iconsPath}ic_location.png",
+                                          height: size.width *
+                                              AppDimensions.numD045,
+                                          color:
+                                              AppColorTheme.colorTextFieldIcon,
+                                        ),
+                                        SizedBox(
+                                          width:
+                                              size.width * AppDimensions.numD01,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            item.location,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD028,
+                                                color: AppColorTheme.colorHint,
+                                                fontWeight: FontWeight.normal),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD02,
+                                    ),
+                                    Text(
+                                      "${myDraftList[index].leftPercent}% left to complete",
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize:
+                                              size.width * AppDimensions.numD03,
+                                          color: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.color ??
+                                              Colors.black,
+                                          lineHeight: 1.5,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD02,
+                                    ),
+                                    SliderTheme(
+                                      data: SliderTheme.of(context).copyWith(
+                                        overlayShape:
+                                            SliderComponentShape.noThumb,
+                                        thumbColor: Colors.transparent,
+                                        trackHeight:
+                                            size.width * AppDimensions.numD025,
+                                      ),
+                                      child: Slider(
+                                        value: 100.0 -
+                                            double.parse(myDraftList[index]
+                                                .leftPercent
+                                                .toString()),
+                                        min: 0.0,
+                                        max: 100.0,
+                                        inactiveColor:
+                                            AppColorTheme.colorLightGrey,
+                                        activeColor:
+                                            AppColorTheme.colorThemePink,
+                                        onChanged: (newValue) {},
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: size.width * AppDimensions.numD02,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return Divider(
+                              thickness: 1,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? AppColorTheme.colorItemDividerForDarkTheme
+                                  : Theme.of(context).dividerColor,
+                            );
+                          },
+                          itemCount: myDraftList.length),
+                    )
+                  : showData
+                      ? errorMessageWidget("No Saved Content")
+                      : Container(),
+            ),
+          ),
+          if (showLoader) showAnimatedLoader(size),
+        ],
+      ),
+    );
+  }
+
+  void initializeFilter() {
+    sortList.addAll([
+      FilterModel(
+          name: AppStrings.viewMonthlyText,
+          icon: "ic_monthly_calendar.png",
+          isSelected: false),
+      FilterModel(
+          name: AppStrings.viewYearlyText,
+          icon: "ic_yearly_calendar.png",
+          isSelected: false),
+      FilterModel(
+          name: AppStrings.filterDateText,
+          icon: "ic_eye_outlined.png",
+          isSelected: false),
+    ]);
+    filterList.addAll([
+      FilterModel(
+          name: AppStrings.allExclusiveContentText,
+          icon: "ic_exclusive.png",
+          isSelected: false),
+      FilterModel(
+          name: AppStrings.allSharedContentText,
+          icon: "ic_share.png",
+          isSelected: false),
+    ]);
+  }
+
+  void _onRefresh() async {
+    await Future.delayed(const Duration(milliseconds: 1000));
+    setState(() {
+      showData = false;
+      offset = 0;
+      myDraftList.clear();
+      myDraftApi();
+    });
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async {
+    await Future.delayed(const Duration(milliseconds: 1000));
+    setState(() {
+      offset += 10;
+      myDraftApi();
+    });
+    _refreshController.loadComplete();
+  }
+
+  Widget mediaWidget(item) {
+    debugPrint("MediaWidget: ${item.contentMediaList.toString()}");
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+      child: Stack(
+        children: [
+          showImage(
+            item.contentMediaList.first.mediaType,
+            item.contentMediaList.first.mediaType == "video"
+                ? item.contentMediaList.first.thumbNail
+                : item.contentMediaList.first.media,
+          ), // item.contentMediaList
+          Positioned(
+              right: size.width * AppDimensions.numD02,
+              top: size.width * AppDimensions.numD02,
+              child: Column(
+                children: getMediaCount(item.contentMediaList, size),
+              )),
+          Visibility(
+            visible: false,
+            child: Positioned(
+              right: size.width * AppDimensions.numD02,
+              bottom: size.width * AppDimensions.numD02,
+              child: Text(
+                "+${item.contentMediaList.length - 1}",
+                style: commonTextStyle(
+                    size: size,
+                    fontSize: size.width * AppDimensions.numD04,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+          Visibility(
+            visible: true,
+            child: Image.asset(
+              "${commonImagePath}watermark1.png",
+              height: size.width * AppDimensions.numD50,
+              width: size.width,
+              fit: BoxFit.cover,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget showImage(String type, String url) {
+    debugPrint("url::::${getMediaImageUrl(url)}");
+    return type == "audio"
+        ? Container(
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.width * AppDimensions.numD50,
+            color: AppColorTheme.colorThemePink,
+            child: Icon(
+              Icons.play_arrow_rounded,
+              color: Colors.white,
+              size: MediaQuery.of(context).size.width * AppDimensions.numD15,
+            ),
+          )
+        : type == "pdf"
+            ? Image.asset(
+                "${dummyImagePath}pngImage.png",
+                fit: BoxFit.contain,
+                height: size.width * AppDimensions.numD50,
+                width: size.width,
+              )
+            : type == "doc"
+                ? Image.asset(
+                    "${dummyImagePath}doc_black_icon.png",
+                    height: size.width * AppDimensions.numD50,
+                    fit: BoxFit.contain,
+                    width: size.width,
+                  )
+                : Image.network(
+                    url.startsWith('http') || url.startsWith('https')
+                        ? url
+                        : getMediaImageUrl(url),
+                    height: size.width * AppDimensions.numD50,
+                    width: size.width,
+                    fit: BoxFit.cover,
+                    errorBuilder: (c, s, o) {
+                      return Container(
+                        color: AppColorTheme.colorLightGrey,
+                        height: size.width * AppDimensions.numD50,
+                        width: size.width,
+                      );
+                    },
+                  );
+  }
+
+  Future<void> showBottomSheet(Size size) async {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        useSafeArea: true,
+        backgroundColor: Theme.of(context).cardColor,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(size.width * AppDimensions.numD085),
+          topRight: Radius.circular(size.width * AppDimensions.numD085),
+        )),
+        builder: (context) {
+          return StatefulBuilder(builder: (context, stateSetter) {
+            return Padding(
+              padding: EdgeInsets.only(
+                top: size.width * AppDimensions.numD06,
+                left: size.width * AppDimensions.numD05,
+                right: size.width * AppDimensions.numD05,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// Header
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          splashRadius: size.width * AppDimensions.numD07,
+                          onPressed: () {
+                            context.pop();
+                          },
+                          icon: Icon(
+                            Icons.close,
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color ??
+                                    Colors.black,
+                            size: size.width * AppDimensions.numD07,
+                          ),
+                        ),
+                        Text(
+                          "Sort and Filter",
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width *
+                                  AppDimensions.appBarHeadingFontSizeNew,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            filterList.clear();
+                            sortList.clear();
+                            initializeFilter();
+                            stateSetter(() {});
+                          },
+                          child: Text(
+                            "Clear all",
+                            style: TextStyle(
+                                color: AppColorTheme.colorThemePink,
+                                fontWeight: FontWeight.w400,
+                                fontSize: size.width * AppDimensions.numD035),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    /// Sort
+                    SizedBox(
+                      height: size.width * AppDimensions.numD085,
+                    ),
+
+                    /// Sort Heading
+                    Text(
+                      AppStrings.sortText,
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD05,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                          fontWeight: FontWeight.w500),
+                    ),
+
+                    filterListWidget(sortList, stateSetter, size, true),
+
+                    /// Filter
+                    SizedBox(
+                      height: size.width * AppDimensions.numD05,
+                    ),
+
+                    /// Filter Heading
+                    Text(
+                      AppStrings.filterText,
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD05,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                          fontWeight: FontWeight.w500),
+                    ),
+
+                    filterListWidget(filterList, stateSetter, size, false),
+                    SizedBox(
+                      height: size.width * AppDimensions.numD06,
+                    ),
+
+                    /// Button
+                    SafeArea(
+                      child: Container(
+                        width: size.width,
+                        height: size.width * AppDimensions.numD13,
+                        margin: EdgeInsets.symmetric(
+                            horizontal: size.width * AppDimensions.numD04),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD04,
+                        ),
+                        child: commonElevatedButton(
+                            AppStrings.applyText,
+                            size,
+                            commonTextStyle(
+                                size: size,
+                                fontSize: size.width * AppDimensions.numD035,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700),
+                            commonButtonStyle(
+                                size, AppColorTheme.colorThemePink), () {
+                          context.pop();
+                          myDraftApi();
+                        }),
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.width * AppDimensions.numD02,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          });
+        });
+  }
+
+  Widget filterListWidget(
+      List<FilterModel> list, StateSetter stateSetter, Size size, bool isSort) {
+    return ListView.separated(
+      padding: EdgeInsets.only(top: size.width * AppDimensions.numD03),
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: list.length,
+      itemBuilder: (context, index) {
+        var item = list[index];
+        return InkWell(
+          onTap: () {
+            if (isSort) {
+              int pos = list.indexWhere((element) => element.isSelected);
+              if (pos != -1) {
+                list[pos].isSelected = false;
+                list[pos].fromDate = null;
+                list[pos].toDate = null;
+              }
+            }
+            item.isSelected = !item.isSelected;
+            stateSetter(() {});
+            setState(() {});
+          },
+          child: Container(
+            padding: EdgeInsets.only(
+              top: list[index].name == AppStrings.filterDateText
+                  ? size.width * 0
+                  : size.width * AppDimensions.numD025,
+              bottom: list[index].name == AppStrings.filterDateText
+                  ? size.width * 0
+                  : size.width * AppDimensions.numD025,
+              left: size.width * AppDimensions.numD02,
+              right: size.width * AppDimensions.numD02,
+            ),
+            color: item.isSelected
+                ? (Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white.withOpacity(0.1)
+                    : Colors.grey.shade400)
+                : null,
+            child: Row(
+              children: [
+                Image.asset(
+                  "$iconsPath${list[index].icon}",
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                  height: list[index].name == AppStrings.soldContentText
+                      ? size.width * AppDimensions.numD06
+                      : size.width * AppDimensions.numD05,
+                  width: list[index].name == AppStrings.soldContentText
+                      ? size.width * AppDimensions.numD06
+                      : size.width * AppDimensions.numD05,
+                ),
+                SizedBox(
+                  width: size.width * AppDimensions.numD03,
+                ),
+                item.name == AppStrings.filterDateText
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          InkWell(
+                            onTap: () async {
+                              item.fromDate = await commonDatePicker();
+                              item.toDate = null;
+                              int pos = list
+                                  .indexWhere((element) => element.isSelected);
+                              if (pos != -1) {
+                                list[pos].isSelected = false;
+                              }
+                              item.isSelected = !item.isSelected;
+                              stateSetter(() {});
+                              setState(() {});
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD01,
+                                bottom: size.width * AppDimensions.numD01,
+                                left: size.width * AppDimensions.numD03,
+                                right: size.width * AppDimensions.numD01,
+                              ),
+                              width: size.width * AppDimensions.numD32,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
+                                border: Border.all(
+                                    width: 1,
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? AppColorTheme
+                                            .colorItemDividerForDarkTheme
+                                        : const Color(0xFFDEE7E6)),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    item.fromDate != null
+                                        ? dateTimeFormatter(
+                                            dateTime: item.fromDate.toString())
+                                        : AppStrings.fromText,
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD032,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  SizedBox(
+                                    width: size.width * AppDimensions.numD015,
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_drop_down_sharp,
+                                    color: Colors.black,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: size.width * AppDimensions.numD03,
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              if (item.fromDate != null) {
+                                String? pickedDate = await commonDatePicker();
+
+                                DateTime parseFromDate =
+                                    DateTime.parse(item.fromDate!);
+                                DateTime parseToDate =
+                                    DateTime.parse(pickedDate!);
+
+                                debugPrint("parseFromDate : $parseFromDate");
+                                debugPrint("parseToDate : $parseToDate");
+
+                                if (parseToDate.isAfter(parseFromDate) ||
+                                    parseToDate
+                                        .isAtSameMomentAs(parseFromDate)) {
+                                  item.toDate = pickedDate;
+                                } else {
+                                  showSnackBar(
+                                      "Date Error",
+                                      "Please select to date above from date",
+                                      Colors.red);
+                                }
+                              }
+                              stateSetter(() {});
+                              setState(() {});
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD01,
+                                bottom: size.width * AppDimensions.numD01,
+                                left: size.width * AppDimensions.numD03,
+                                right: size.width * AppDimensions.numD01,
+                              ),
+                              width: size.width * AppDimensions.numD32,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
+                                border: Border.all(
+                                    width: 1,
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? AppColorTheme
+                                            .colorItemDividerForDarkTheme
+                                        : const Color(0xFFDEE7E6)),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    item.toDate != null
+                                        ? dateTimeFormatter(
+                                            dateTime: item.toDate.toString())
+                                        : AppStrings.toText,
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD032,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  SizedBox(
+                                    width: size.width * AppDimensions.numD02,
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_drop_down_sharp,
+                                    color: Colors.black,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Text(list[index].name,
+                        style: TextStyle(
+                            fontSize: size.width * AppDimensions.numD035,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: "AirbnbCereal_W_Bk"))
+              ],
+            ),
+          ),
+        );
+      },
+      separatorBuilder: (context, index) {
+        return SizedBox(
+          height: size.width * AppDimensions.numD01,
+        );
+      },
+    );
+  }
+
+  ///--------Apis Section------------
+
+  ///--------Apis Section------------
+
+  Future<void> myDraftApi() async {
+    final cacheBox = Hive.box('sync_cache');
+    final String cacheKey = 'my_drafts';
+
+    if (offset == 0) {
+      final cachedData = cacheBox.get(cacheKey);
+      if (cachedData != null && cachedData is List) {
+        try {
+          final list =
+              cachedData.map((e) => MyContentData.fromJson(e)).toList();
+          if (list.isNotEmpty) {
+            setState(() {
+              myDraftList = list;
+              showData = true;
+            });
+          }
+        } catch (e) {
+          debugPrint("Error loading drafts from cache: $e");
+        }
+      }
+
+      if (myDraftList.isEmpty) {
+        setState(() {
+          showLoader = true;
+        });
+      }
+    }
+
+    Map<String, dynamic> params = {"is_draft": 'true'};
+
+    int pos = sortList.indexWhere((element) => element.isSelected);
+
+    if (pos != -1) {
+      if (offset == 0) {
+        myDraftList.clear();
+      }
+      if (sortList[pos].name == AppStrings.filterDateText) {
+        params["startdate"] = sortList[pos].fromDate!;
+        params["endDate"] = sortList[pos].toDate!;
+      } else if (sortList[pos].name == AppStrings.viewMonthlyText) {
+        params["posted_date"] = "31";
+      } else if (sortList[pos].name == AppStrings.viewYearlyText) {
+        params["posted_date"] = "365";
+      }
+    } else {
+      params["limit"] = limit.toString();
+      params["offset"] = offset.toString();
+    }
+
+    for (var element in filterList) {
+      if (element.isSelected) {
+        switch (element.name) {
+          case AppStrings.allSharedContentText:
+            params["sharedtype"] = "shared";
+            break;
+
+          case AppStrings.allExclusiveContentText:
+            params["type"] = "exclusive";
+            break;
+        }
+      }
+    }
+
+    try {
+      final response = await sl<ApiClient>()
+          .get(ApiConstantsNew.content.draftContent, queryParameters: params);
+
+      if (response.statusCode == 200) {
+        var data = response.data;
+        if (data is String) data = jsonDecode(data);
+        log("myDraftUrlRequest success: $data");
+        if (data != null) {
+          var contentList = [];
+          if (data['data'] != null) {
+            if (data['data'] is List) {
+              contentList = data['data'];
+            } else if (data['data'] is Map &&
+                data['data']['contentList'] != null) {
+              contentList = data['data']['contentList'];
+            }
+          } else if (data['contentList'] != null) {
+            contentList = data['contentList'];
+          }
+
+          var listModel = contentList;
+          var list = listModel.map((e) => MyContentData.fromJson(e)).toList();
+          if (list.isNotEmpty) {
+            _refreshController.loadComplete();
+          } else if (list.isEmpty) {
+            _refreshController.loadNoData();
+          } else {
+            _refreshController.loadFailed();
+          }
+
+          if (offset == 0) {
+            myDraftList.clear();
+            cacheBox.put(cacheKey, list.map((e) => e.toJson()).toList());
+          }
+
+          myDraftList.addAll(list);
+        }
+        showData = true;
+        showLoader = false;
+        if (mounted) setState(() {});
+      } else {
+        _refreshController.loadFailed();
+        if (mounted) {
+          setState(() {
+            showData = true;
+            showLoader = false;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Exception::::::::$e");
+      _refreshController.loadFailed();
+      if (mounted) {
+        setState(() {
+          showData = true;
+          showLoader = false;
+        });
+      }
+    }
+  }
+
+  Future<void> updateDraftListAPI(String contentId) async {
+    debugPrint("updateDraftListAPI contentId: $contentId");
+    Map<String, String> map = {
+      'content_id': contentId,
+    };
+
+    try {
+      final response = await sl<ApiClient>()
+          .patch(ApiConstantsNew.content.removeFromDraft, data: map);
+      log("reqRemoveFromDraftContentAPI===> ${response.data}");
+    } catch (e) {
+      debugPrint("ApiError::::$e");
+    }
+  }
+}

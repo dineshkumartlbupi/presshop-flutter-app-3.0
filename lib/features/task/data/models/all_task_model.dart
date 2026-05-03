@@ -1,0 +1,217 @@
+import '../../domain/entities/task_all.dart';
+
+class AllTaskModel extends TaskAll {
+  const AllTaskModel({
+    super.id = "",
+    super.userId = "",
+    super.deadlineDate,
+    super.heading = "",
+    super.createdAt = "",
+    super.description = "",
+    super.location = "",
+    super.status = "",
+    super.mediaHouseDetails,
+    super.acceptedTasks = const [],
+    super.uploadContents,
+    super.isNeedPhoto = false,
+    super.isNeedVideo = false,
+    super.isNeedInterview = false,
+    super.photoPrice = "0",
+    super.videoPrice = "0",
+    super.interviewPrice = "0",
+    super.currency = "",
+    super.currencySymbol = "",
+    super.isAvailableForAccept = false,
+    super.isLive = false,
+    super.ctaColorCode = "",
+    super.ctaName = "",
+    super.taskAcceptedCount = "",
+    super.ctaTextColorCode = "",
+    super.latitude = 0.0,
+    super.longitude = 0.0,
+    super.statusColor = "",
+    super.statusText = "",
+  });
+
+  factory AllTaskModel.fromJson(Map<String, dynamic> json) {
+    return AllTaskModel(
+      id: (json['_id'] ?? "").toString(),
+      userId: (json['hopper_id'] ?? "").toString(),
+      deadlineDate: json['deadline_date'] != null
+          ? DateTime.parse(json['deadline_date'])
+          : null,
+      heading: (json['heading'] ?? "").toString(),
+      createdAt: (json['createdAt'] ?? "").toString(),
+      description: (json['task_description'] ?? "").toString(),
+      location: (json['location'] ?? "").toString(),
+      status: (json['status'] ?? "").toString(),
+      isAvailableForAccept: json['is_available_for_accept'] ?? false,
+      ////=====>>
+      isLive: json['isLive'] ?? false,
+      ctaColorCode: (json['ctaColorCode'] ?? "").toString(),
+      ctaName: (json['ctaName'] ?? "").toString(),
+      ctaTextColorCode: (json['ctaTextColorCode'] ?? "").toString(),
+      ////======>>
+      taskAcceptedCount: (json['task_accepted_count'] ?? "").toString(),
+      mediaHouseDetails: json['mediahouse_id'] != null
+          ? MediaHouseDetails.fromJson(
+              Map<String, dynamic>.from(json['mediahouse_id'] as Map))
+          : null,
+      acceptedTasks: json['acceptedTasks'] != null
+          ? (json['acceptedTasks'] as List)
+              .map((v) =>
+                  AcceptedTask.fromJson(Map<String, dynamic>.from(v as Map)))
+              .toList()
+          : [],
+      uploadContents: json['uploadContents'] != null
+          ? UploadContents.fromJson(
+              Map<String, dynamic>.from(json['uploadContents'] as Map))
+          : null,
+      isNeedPhoto: (json['need_photos'] ?? false) is bool
+          ? (json['need_photos'] ?? false)
+          : (json['need_photos'] == "true" || json['need_photos'] == "1"),
+      isNeedVideo: (json['need_videos'] ?? false) is bool
+          ? (json['need_videos'] ?? false)
+          : (json['need_videos'] == "true" || json['need_videos'] == "1"),
+      isNeedInterview: (json['need_interview'] ?? false) is bool
+          ? (json['need_interview'] ?? false)
+          : (json['need_interview'] == "true" || json['need_interview'] == "1"),
+      photoPrice:
+          (json['hopper_photo_price'] ?? json['photo_price'] ?? "0").toString(),
+      videoPrice: (json['hopper_videos_price'] ??
+              json['hopper_video_price'] ??
+              json['videos_price'] ??
+              "0")
+          .toString(),
+      interviewPrice:
+          (json['hopper_interview_price'] ?? json['interview_price'] ?? "0")
+              .toString(),
+      currency: (json['currency'] ?? "").toString(),
+      currencySymbol:
+          (json['currency_symbol'] ?? json['currencySymbol'] ?? "").toString(),
+      latitude: json["address_location"] != null &&
+              json["address_location"]["coordinates"] != null
+          ? (json["address_location"]["coordinates"] as List).first.toDouble()
+          : 0.0,
+      longitude: json["address_location"] != null &&
+              json["address_location"]["coordinates"] != null
+          ? (json["address_location"]["coordinates"] as List).last.toDouble()
+          : 0.0,
+      statusColor: (json['status_color'] ?? "").toString(),
+      statusText: (json['status_text'] ?? "").toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'hopper_id': userId,
+      'deadline_date': deadlineDate?.toIso8601String(),
+      'heading': heading,
+      'createdAt': createdAt,
+      'task_description': description,
+      'location': location,
+      'status': status,
+      'is_available_for_accept': isAvailableForAccept,
+      'mediahouse_id': (mediaHouseDetails as MediaHouseDetails?)?.toJson(),
+      'acceptedTasks':
+          acceptedTasks.map((e) => (e as AcceptedTask).toJson()).toList(),
+      'uploadContents': (uploadContents as UploadContents?)?.toJson(),
+      'need_photos': isNeedPhoto,
+      'need_videos': isNeedVideo,
+      'need_interview': isNeedInterview,
+      'hopper_photo_price': photoPrice,
+      'hopper_videos_price': videoPrice,
+      'hopper_interview_price': interviewPrice,
+      'currency': currency,
+      'currency_symbol': currencySymbol,
+      'address_location': {
+        'coordinates': [latitude, longitude]
+      },
+    };
+  }
+}
+
+class UploadContents extends UploadContentsEntity {
+  const UploadContents({
+    super.id = "",
+    super.videothubnail = "",
+    super.type = "",
+    super.imageAndVideo = "",
+  });
+
+  factory UploadContents.fromJson(Map<String, dynamic> json) {
+    return UploadContents(
+      id: (json['_id'] ?? "").toString(),
+      videothubnail: (json['videothubnail'] ?? "").toString(),
+      type: (json['type'] ?? "").toString(),
+      imageAndVideo: (json['imageAndVideo'] ?? "").toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'videothubnail': videothubnail,
+      'type': type,
+      'imageAndVideo': imageAndVideo,
+    };
+  }
+}
+
+class AcceptedTask extends AcceptedTaskEntity {
+  const AcceptedTask({
+    super.id = "",
+    super.taskId = "",
+    super.taskStatus = "",
+    super.hopperId = "",
+    super.createdAt = "",
+    super.updatedAt = "",
+  });
+
+  factory AcceptedTask.fromJson(Map<String, dynamic> json) {
+    return AcceptedTask(
+      id: (json['_id'] ?? "").toString(),
+      taskId: (json['task_id'] ?? "").toString(),
+      taskStatus: (json['task_status'] ?? "").toString(),
+      hopperId: (json['hopper_id'] ?? "").toString(),
+      createdAt: (json['createdAt'] ?? "").toString(),
+      updatedAt: (json['updatedAt'] ?? "").toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'task_id': taskId,
+      'task_status': taskStatus,
+      'hopper_id': hopperId,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+    };
+  }
+}
+
+class MediaHouseDetails extends MediaHouseDetailsEntity {
+  const MediaHouseDetails({
+    super.id = "",
+    super.fullName = "",
+    super.profileImage = "",
+  });
+
+  factory MediaHouseDetails.fromJson(Map<String, dynamic> json) {
+    return MediaHouseDetails(
+      id: (json['_id'] ?? "").toString(),
+      fullName: (json['full_name'] ?? "").toString(),
+      profileImage: (json['profile_image'] ?? "").toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'full_name': fullName,
+      'profile_image': profileImage,
+    };
+  }
+}

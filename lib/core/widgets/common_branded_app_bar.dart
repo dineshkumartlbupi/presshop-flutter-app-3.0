@@ -1,0 +1,137 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/widgets/common_app_bar.dart';
+import 'package:presshop/core/widgets/logo_widget.dart';
+import 'package:presshop/main.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class CommonBrandedAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
+  const CommonBrandedAppBar({
+    super.key,
+    required this.title,
+    required this.size,
+    this.actionWidgets,
+    this.leadingFxn,
+    this.elevation = 0,
+    this.hideLeading = false,
+    this.notificationCount,
+    this.showLogo = true,
+  });
+  final String title;
+  final Size size;
+  final List<Widget>? actionWidgets;
+  final VoidCallback? leadingFxn;
+  final double elevation;
+  final bool hideLeading;
+  final int? notificationCount;
+  final bool showLogo;
+
+  @override
+  Widget build(BuildContext context) {
+    return CommonAppBar(
+      elevation: elevation,
+      title: Text(
+        title,
+        style: TextStyle(
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+            fontWeight: FontWeight.w600,
+            fontSize: size.width * AppDimensions.appBarHeadingFontSize),
+      ),
+      centerTitle: false,
+      titleSpacing: 0,
+      size: size,
+      showActions: true,
+      leadingFxn: leadingFxn ??
+          () {
+            context.pop();
+          },
+      actionWidget: [
+        if (actionWidgets != null)
+          ...actionWidgets!.map((w) => Center(child: w)),
+        if (notificationCount != null)
+          Center(
+            child: Container(
+              // margin: EdgeInsets.only(right: size.width * AppDimensions.numD04),
+              width: size.width * AppDimensions.numD075,
+              height: size.width * AppDimensions.numD075,
+              child: Stack(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 5),
+                    height: size.width * AppDimensions.numD06,
+                    width: size.width * AppDimensions.numD06,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? AppColorTheme.colorItemDividerForDarkTheme
+                              : Theme.of(context).dividerColor,
+                          width: 1.2),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD015),
+                    ),
+                  ),
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                            padding: EdgeInsets.all(3),
+                            decoration: const BoxDecoration(
+                                color: AppColorTheme.colorThemePink,
+                                shape: BoxShape.circle),
+                            child: Text(
+                              notificationCount.toString(),
+                              style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * AppDimensions.numD025,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
+                            )),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        if (showLogo)
+          Center(
+            child: InkWell(
+              onTap: () {
+                print('click------------------------>');
+                try {
+                  context
+                      .read<DashboardBloc>()
+                      .add(const ChangeDashboardTabEvent(2));
+                } catch (e) {
+                  debugPrint("DashboardBloc not found in context: $e");
+                }
+                context.goNamed(AppRoutes.dashboardName,
+                    extra: {'initialPosition': 2, 'isClick': true});
+              },
+              child: LogoWidget.buildLogo(size),
+            ),
+          ),
+        if (showLogo)
+          SizedBox(
+            width: size.width * AppDimensions.numD02,
+          )
+      ],
+      hideLeading: hideLeading,
+    );
+  }
+
+  @override
+  Size get preferredSize =>
+      Size.fromHeight(sharedPreferences?.getBool('isIpad') ?? false
+          ? kToolbarHeightIpad
+          : kToolbarHeight);
+}

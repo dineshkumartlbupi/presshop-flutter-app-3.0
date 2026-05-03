@@ -1,0 +1,1451 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import 'package:presshop/features/earning/domain/entities/earning_transaction.dart';
+import 'package:presshop/features/earning/presentation/pages/tansaction_detail_screen.dart';
+
+import 'package:presshop/main.dart';
+import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/widgets/common_app_bar.dart';
+import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:presshop/core/di/injection_container.dart' as di;
+import '../bloc/publication_bloc.dart';
+import '../bloc/publication_event.dart';
+import '../bloc/publication_state.dart';
+import '../../domain/entities/publication_earning_stats.dart';
+import 'package:go_router/go_router.dart';
+
+// ignore: must_be_immutable
+class PublicationListScreen extends StatefulWidget {
+  PublicationListScreen(
+      {super.key,
+      required this.contentId,
+      required this.publicationCount,
+      required this.contentType});
+  String contentId = "";
+  String contentType = "";
+  String publicationCount = "";
+
+  @override
+  State<PublicationListScreen> createState() => _PublicationListScreenState();
+}
+
+class _PublicationListScreenState extends State<PublicationListScreen> {
+  late Size size;
+  final currencyFormat = NumberFormat("#,##0.00", "en_US");
+
+  String publicationCount = "";
+  String totalEarning = "";
+  String fromDate = "";
+  String toDate = "";
+  String totalPublicationAmount = "";
+
+  List<FilterModel> sortList = [];
+  List<FilterModel> filterList = [];
+  List<EarningTransaction> publicationTransactionList = [];
+  PublicationEarningStats? earningData;
+
+  @override
+  void initState() {
+    initializeFilter();
+    publicationCount = widget.publicationCount;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    size = MediaQuery.of(context).size;
+    return BlocProvider(
+      create: (context) => di.sl<PublicationBloc>()
+        ..add(LoadPublicationInitialData(
+          contentId: widget.contentId,
+          contentType: widget.contentType,
+        )),
+      child: Builder(builder: (context) {
+        return Scaffold(
+          appBar: CommonAppBar(
+            elevation: 0,
+            hideLeading: false,
+            title: Text(
+              AppStrings.publicationsListText,
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: size.width * AppDimensions.appBarHeadingFontSize),
+            ),
+            centerTitle: false,
+            titleSpacing: 0,
+            size: size,
+            showActions: true,
+            leadingFxn: () {
+              context.pop();
+            },
+            actionWidget: [
+              InkWell(
+                onTap: () {
+                  showBottomSheet(context, size);
+                },
+                child: commonFilterIcon(context, size),
+              )
+            ],
+          ),
+          body: BlocConsumer<PublicationBloc, PublicationState>(
+            listener: (context, state) {
+              if (state is PublicationLoaded) {
+                // Update local variables if needed for UI consistency with legacy code
+                earningData = state.stats;
+                publicationTransactionList =
+                    state.transactionsResult.transactions;
+                publicationCount = state.transactionsResult.publicationCount;
+                totalPublicationAmount = state.transactionsResult.totalAmount;
+
+                // Initialize filters if empty
+                if (filterList.isEmpty) {
+                  filterList = state.mediaHouses
+                      .map((e) => FilterModel(
+                          name: e.name,
+                          icon: e.icon,
+                          id: e.id, // Ensure FilterModel has id field map
+                          isSelected: false))
+                      .toList();
+                }
+              } else if (state is PublicationError) {
+//                 showSnackBar("Error", state.message, Colors.red);
+              }
+            },
+            builder: (context, state) {
+              if (state is PublicationLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (earningData == null && state is! PublicationLoaded) {
+                return Container(); // Or loading/empty
+              }
+
+              return ListView(
+                padding: EdgeInsets.only(
+                  left: size.width * AppDimensions.numD06,
+                  right: size.width * AppDimensions.numD06,
+                ),
+                children: [
+                  /// My Earnings
+                  Container(
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD05),
+                    decoration: BoxDecoration(
+                        color: AppColorTheme.colorLightGrey,
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD05)),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 1.2, color: Colors.black),
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * AppDimensions.numD04)),
+                              child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * AppDimensions.numD04),
+                                  child: CachedNetworkImage(
+                                    imageUrl: earningData!.avatar,
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                      height: size.width * AppDimensions.numD32,
+                                      width: size.width * AppDimensions.numD35,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            image: imageProvider,
+                                            fit: BoxFit.cover),
+                                      ),
+                                    ),
+                                    placeholder: (context, url) =>
+                                        const CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        Image.asset(
+                                      "${commonImagePath}rabbitLogo.png",
+                                      fit: BoxFit.cover,
+                                      height: size.width * AppDimensions.numD32,
+                                      width: size.width * AppDimensions.numD35,
+                                    ),
+                                  )),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: size.width * AppDimensions.numD06),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    AppStrings.publicationsText,
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(
+                                    publicationCount.isNotEmpty
+                                        ? publicationCount
+                                        : '0',
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD08,
+                                        color: AppColorTheme.colorThemePink,
+                                        fontWeight: FontWeight.w800),
+                                  ),
+                                  SizedBox(
+                                    height: size.width * AppDimensions.numD01,
+                                  ),
+                                  Text(
+                                    AppStrings.youHaveEarnedText,
+                                    //"Total amount",
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  FittedBox(
+                                    child: Text(
+                                      totalPublicationAmount.isNotEmpty
+                                          ? "$currencySymbol${formatDouble(double.parse(totalPublicationAmount))}"
+                                          : '£0',
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width *
+                                              AppDimensions.numD075,
+                                          color: AppColorTheme.colorThemePink,
+                                          fontWeight: FontWeight.w800),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: size.width * AppDimensions.numD03,
+                        ),
+                        widget.contentType == "exclusive"
+                            ? Container()
+                            : Row(
+                                children: [
+                                  Expanded(
+                                    child: InkWell(
+                                      onTap: () async {
+                                        fromDate =
+                                            await commonDatePicker() ?? "";
+                                        toDate = '';
+                                        sortList[4].fromDate = fromDate;
+                                        if (mounted) {
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical:
+                                              size.width * AppDimensions.numD02,
+                                          horizontal:
+                                              size.width * AppDimensions.numD02,
+                                        ),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                width: 1.2,
+                                                color: Colors.black),
+                                            borderRadius: BorderRadius.circular(
+                                                size.width *
+                                                    AppDimensions.numD02)),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              fromDate.isNotEmpty
+                                                  ? dateTimeFormatter(
+                                                      dateTime:
+                                                          fromDate.toString())
+                                                  : "From date",
+                                              style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD035,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            const Icon(
+                                              Icons.arrow_drop_down_sharp,
+                                              color: Colors.black,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: size.width * AppDimensions.numD05,
+                                  ),
+                                  Expanded(
+                                    child: InkWell(
+                                      onTap: () async {
+                                        if (fromDate.isNotEmpty) {
+                                          toDate =
+                                              await commonDatePicker() ?? '';
+                                          if (toDate.isNotEmpty) {
+                                            DateTime parseFromDate =
+                                                DateTime.parse(fromDate);
+                                            DateTime parseToDate =
+                                                DateTime.parse(toDate);
+                                            debugPrint(
+                                                "parseFromDate : $parseFromDate");
+                                            debugPrint(
+                                                "parseToDate : $parseToDate");
+
+                                            if (parseToDate
+                                                    .isAfter(parseFromDate) ||
+                                                parseToDate.isAtSameMomentAs(
+                                                    parseFromDate)) {
+                                              sortList.indexWhere((element) =>
+                                                  element.isSelected = false);
+                                              sortList[4].toDate = toDate;
+                                              sortList[4].isSelected = true;
+                                              _applyFilter(context);
+                                            } else {
+//                                               showSnackBar("Date Error", "Please select to date above from date", Colors.red);
+                                            }
+                                          }
+                                          if (mounted) {
+                                            setState(() {});
+                                          }
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical:
+                                              size.width * AppDimensions.numD02,
+                                          horizontal:
+                                              size.width * AppDimensions.numD02,
+                                        ),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                width: 1.2,
+                                                color: Colors.black),
+                                            borderRadius: BorderRadius.circular(
+                                                size.width *
+                                                    AppDimensions.numD02)),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              toDate.isNotEmpty
+                                                  ? dateTimeFormatter(
+                                                      dateTime:
+                                                          toDate.toString())
+                                                  : "To date",
+                                              style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD035,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w700),
+                                            ),
+                                            const Icon(
+                                              Icons.arrow_drop_down_sharp,
+                                              color: Colors.black,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(
+                    height: size.width * AppDimensions.numD04,
+                  ),
+
+                  Text(
+                    AppStrings.publicationsListHeadingText,
+                    style: commonTextStyle(
+                        size: size,
+                        fontSize: size.width * AppDimensions.numD035,
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal),
+                  ),
+
+                  Divider(
+                    color: Colors.grey.shade300,
+                    thickness: 1.5,
+                  ),
+
+                  SizedBox(
+                    height: size.width * AppDimensions.numD04,
+                  ),
+
+                  paymentReceivedWidget(),
+
+                  SizedBox(
+                    height: size.width * AppDimensions.numD04,
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget paymentReceivedWidget() {
+    return publicationTransactionList.isNotEmpty
+        ? ListView.separated(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              var item = publicationTransactionList[index];
+              return item.paidStatus
+                  ? Container(
+                      padding: EdgeInsets.only(
+                        top: size.width * AppDimensions.numD05,
+                        bottom: size.width * AppDimensions.numD025,
+                        left: size.width * AppDimensions.numD05,
+                        right: size.width * AppDimensions.numD05,
+                      ),
+                      decoration: BoxDecoration(
+                          color: AppColorTheme.colorLightGrey,
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD02)),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: size.width * AppDimensions.numD01,
+                                    horizontal:
+                                        size.width * AppDimensions.numD04),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * AppDimensions.numD015),
+                                    border: Border.all(
+                                        color: AppColorTheme.colorGrey3,
+                                        width: 1)),
+                                child: Text(
+                                  item.payableT0Hopper.isNotEmpty
+                                      ? "$currencySymbol${currencyFormat.format(double.parse(item.payableT0Hopper))}"
+                                      : "£0",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD04,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  Image.asset(
+                                    item.typesOfContent
+                                        ? "${iconsPath}ic_exclusive.png"
+                                        : "${iconsPath}ic_share.png",
+                                    height: item.typesOfContent
+                                        ? size.width * AppDimensions.numD075
+                                        : size.width * AppDimensions.numD07,
+                                    width: size.width * AppDimensions.numD09,
+                                    color: AppColorTheme.colorTextFieldIcon,
+                                  ),
+                                  SizedBox(
+                                    width: size.width * AppDimensions.numD03,
+                                  ),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * AppDimensions.numD03),
+                                    child: CachedNetworkImage(
+                                      imageUrl: item.contentImage,
+                                      height: size.width * AppDimensions.numD11,
+                                      width: size.width * AppDimensions.numD12,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          Image.asset(
+                                        "assets/dummyImages/placeholderImage.png",
+                                        fit: BoxFit.cover,
+                                        height:
+                                            size.width * AppDimensions.numD11,
+                                        width:
+                                            size.width * AppDimensions.numD12,
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Image.asset(
+                                        "${commonImagePath}rabbitLogo.png",
+                                        fit: BoxFit.cover,
+                                        height:
+                                            size.width * AppDimensions.numD11,
+                                        width:
+                                            size.width * AppDimensions.numD12,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: size.width * AppDimensions.numD03,
+                                  ),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * AppDimensions.numD03),
+                                    child: Image.network(item.companyLogo,
+                                        height:
+                                            size.width * AppDimensions.numD11,
+                                        width:
+                                            size.width * AppDimensions.numD12,
+                                        fit: BoxFit.contain,
+                                        errorBuilder: (context, i, b) =>
+                                            Image.asset(
+                                              "${commonImagePath}rabbitLogo.png",
+                                              fit: BoxFit.cover,
+                                              height: size.width *
+                                                  AppDimensions.numD11,
+                                              width: size.width *
+                                                  AppDimensions.numD12,
+                                            )),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+
+                          /// Payment Detail
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD04),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  AppStrings.paymentDetailText,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                Text(
+                                  item.createdAT,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          /// Payment made time
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD02),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  AppStrings.paymentMadeTimeText,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                Text(
+                                  dateTimeFormatter(
+                                      dateTime: item.createdAT,
+                                      time: true,
+                                      format: "hh:mm a"),
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          /// Transaction ID
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD02),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  AppStrings.transactionIdText,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                Text(
+                                  item.id,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          /// Divider
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: size.width * AppDimensions.numD01,
+                            ),
+                            child: Divider(
+                              color: Theme.of(context).dividerColor,
+                              thickness: 1.5,
+                            ),
+                          ),
+
+                          InkWell(
+                            onTap: () {
+                              context.pushNamed(
+                                AppRoutes.transactionDetailName,
+                                extra: {
+                                  'pageType': PageType.CONTENT,
+                                  'type': "received",
+                                  'transactionData':
+                                      publicationTransactionList[index],
+                                },
+                              );
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "View transaction details",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: AppColorTheme.colorThemePink,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                                Icon(
+                                  Icons.keyboard_arrow_right,
+                                  color: Colors.black,
+                                  size: size.width * AppDimensions.numD045,
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  : Container(
+                      padding: EdgeInsets.only(
+                        top: size.width * AppDimensions.numD05,
+                        bottom: size.width * AppDimensions.numD025,
+                        left: size.width * AppDimensions.numD05,
+                        right: size.width * AppDimensions.numD05,
+                      ),
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).cardColor,
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD02)),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: size.width * AppDimensions.numD01,
+                                    horizontal:
+                                        size.width * AppDimensions.numD04),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: AppColorTheme.colorThemePink,
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * AppDimensions.numD015),
+                                ),
+                                child: Text(
+                                  item.amount.isNotEmpty
+                                      ? "$currencySymbol${currencyFormat.format(double.parse(item.payableT0Hopper))}"
+                                      : "",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD04,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  Image.asset(
+                                    item.typesOfContent
+                                        ? "${iconsPath}ic_exclusive.png"
+                                        : "${iconsPath}ic_share.png",
+                                    height: item.typesOfContent
+                                        ? size.width * AppDimensions.numD075
+                                        : size.width * AppDimensions.numD07,
+                                    color: AppColorTheme.colorTextFieldIcon,
+                                  ),
+                                  SizedBox(
+                                    width: size.width * AppDimensions.numD03,
+                                  ),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * AppDimensions.numD03),
+                                    child: Image.network(item.companyLogo,
+                                        height:
+                                            size.width * AppDimensions.numD11,
+                                        width:
+                                            size.width * AppDimensions.numD12,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, i, b) =>
+                                            Image.asset(
+                                              "${commonImagePath}rabbitLogo.png",
+                                              fit: BoxFit.cover,
+                                              height: size.width *
+                                                  AppDimensions.numD11,
+                                              width: size.width *
+                                                  AppDimensions.numD12,
+                                            )),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+
+                          /// Your earnings
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD04),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Content Sold',
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                Text(
+                                  item.totalEarningAmt != "null"
+                                      ? "$currencySymbol${formatDouble(double.parse(item.totalEarningAmt))}"
+                                      : "0",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          /// PressHop fees
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD02),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  AppStrings.presshopCommissionText,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                Text(
+                                  item.payableCommission.isNotEmpty
+                                      ? "$currencySymbol${formatDouble(double.parse(item.payableCommission))}"
+                                      : "",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD02),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  AppStrings.processingFeeText,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                Text(
+                                  item.payableCommission.isNotEmpty
+                                      ? "$currencySymbol${formatDouble(double.parse(item.stripefee))}"
+                                      : "",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          /// Amount pending
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD02),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  AppStrings.amountPendingText,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                Text(
+                                  item.amount.isNotEmpty
+                                      ? "$currencySymbol${formatDouble(double.parse(item.payableT0Hopper))}"
+                                      : "",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          /// Payment due date
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD02),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  AppStrings.paymentDueDateText,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                Text(
+                                  dateTimeFormatter(
+                                      dateTime: item.dueDate,
+                                      format: "dd MMM yyyy"),
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          /// Divider
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: size.width * AppDimensions.numD01,
+                            ),
+                            child: Divider(
+                              color: Theme.of(context).dividerColor,
+                              thickness: 1.5,
+                            ),
+                          ),
+
+                          InkWell(
+                            onTap: () {
+                              context.pushNamed(
+                                AppRoutes.transactionDetailName,
+                                extra: {
+                                  'pageType': PageType.CONTENT,
+                                  'type': "pending",
+                                  'transactionData':
+                                      publicationTransactionList[index],
+                                },
+                              );
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "View transaction details",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: AppColorTheme.colorThemePink,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                                Icon(
+                                  Icons.keyboard_arrow_right,
+                                  color: Colors.black,
+                                  size: size.width * AppDimensions.numD045,
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+            },
+            separatorBuilder: (context, index) {
+              return SizedBox(
+                height: size.width * AppDimensions.numD05,
+              );
+            },
+            itemCount: publicationTransactionList.length)
+        : Container();
+  }
+
+  void initializeFilter() {
+    sortList.addAll([
+      FilterModel(
+          name: "View first payment received",
+          icon: "ic_up.png",
+          isSelected: false),
+      FilterModel(
+          name: "View last payment received",
+          icon: "ic_down.png",
+          isSelected: false),
+      FilterModel(
+          name: "View highest payment received",
+          icon: "ic_graph_up.png",
+          isSelected: false),
+      FilterModel(
+          name: "View lowest payment received",
+          icon: "ic_graph_down.png",
+          isSelected: false),
+      FilterModel(
+          name: AppStrings.filterDateText,
+          icon: "ic_eye_outlined.png",
+          isSelected: false),
+    ]);
+  }
+
+  Future<void> showBottomSheet(BuildContext context, Size size) async {
+    final bloc = context.read<PublicationBloc>();
+    await showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        useSafeArea: true,
+        backgroundColor: Theme.of(context).cardColor,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(size.width * AppDimensions.numD085),
+          topRight: Radius.circular(size.width * AppDimensions.numD085),
+        )),
+        builder: (context) {
+          return BlocProvider.value(
+            value: bloc,
+            child: StatefulBuilder(builder: (context, stateSetter) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  top: size.width * AppDimensions.numD06,
+                  left: size.width * AppDimensions.numD05,
+                  right: size.width * AppDimensions.numD05,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      /// Header
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            splashRadius: size.width * AppDimensions.numD07,
+                            onPressed: () {
+                              context.pop();
+                            },
+                            icon: Icon(
+                              Icons.close,
+                              color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color ??
+                                  Colors.black,
+                              size: size.width * AppDimensions.numD07,
+                            ),
+                          ),
+                          Text(
+                            "Sort and Filter",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width *
+                                    AppDimensions.appBarHeadingFontSizeNew,
+                                color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              filterList.indexWhere(
+                                  (element) => element.isSelected = false);
+                              fromDate = "";
+                              toDate = "";
+                              sortList.clear();
+                              initializeFilter();
+                              _applyFilter(context);
+                              stateSetter(() {});
+                              setState(() {});
+                            },
+                            child: Text(
+                              "Clear all",
+                              style: TextStyle(
+                                  color: AppColorTheme.colorThemePink,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: size.width * AppDimensions.numD035),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      /// Sort
+                      SizedBox(
+                        height: size.width * AppDimensions.numD085,
+                      ),
+
+                      /// Sort Heading
+                      Text(
+                        AppStrings.sortText,
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * AppDimensions.numD05,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                            fontWeight: FontWeight.w500),
+                      ),
+
+                      filterListWidget(sortList, stateSetter, size, true),
+
+                      /// Filter
+                      SizedBox(
+                        height: size.width * AppDimensions.numD05,
+                      ),
+
+                      /// Filter Heading
+                      Text(
+                        AppStrings.filterText,
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * AppDimensions.numD05,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                            fontWeight: FontWeight.w500),
+                      ),
+
+                      filterListWidget(filterList, stateSetter, size, false),
+                      SizedBox(
+                        height: size.width * AppDimensions.numD05,
+                      ),
+
+                      Container(
+                        width: size.width,
+                        height: size.width * AppDimensions.numD13,
+                        margin: EdgeInsets.symmetric(
+                            horizontal: size.width * AppDimensions.numD04),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD04,
+                        ),
+                        child: commonElevatedButton(
+                            AppStrings.applyText,
+                            size,
+                            commonTextStyle(
+                                size: size,
+                                fontSize: size.width * AppDimensions.numD035,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700),
+                            commonButtonStyle(
+                                size, AppColorTheme.colorThemePink), () {
+                          context.pop();
+                          _applyFilter(context);
+                        }),
+                      ),
+
+                      SizedBox(
+                        height: size.width * AppDimensions.numD04,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          );
+        });
+  }
+
+  Widget filterListWidget(
+      List<FilterModel> list, StateSetter stateSetter, Size size, bool isSort) {
+    return SizedBox(
+      height: size.height * AppDimensions.numD30,
+      child: ListView.separated(
+        padding: EdgeInsets.only(top: size.width * AppDimensions.numD03),
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          var item = list[index];
+          return InkWell(
+            onTap: () {
+              if (isSort) {
+                int pos = list.indexWhere((element) => element.isSelected);
+                if (pos != -1) {
+                  list[pos].isSelected = false;
+                  list[pos].fromDate = null;
+                  list[pos].toDate = null;
+                } else {
+                  int pos = list.indexWhere((element) => element.isSelected);
+                  if (pos != -1) {
+                    list[pos].isSelected = false;
+                  }
+                }
+                filterList.indexWhere((element) => element.isSelected = false);
+              }
+              sortList.indexWhere((element) => element.isSelected = false);
+
+              list[index].isSelected = !list[index].isSelected;
+
+              stateSetter(() {});
+              setState(() {});
+            },
+            child: Container(
+              padding: EdgeInsets.only(
+                top: list[index].name == AppStrings.filterDateText
+                    ? size.width * 0
+                    : size.width * AppDimensions.numD025,
+                bottom: list[index].name == AppStrings.filterDateText
+                    ? size.width * 0
+                    : size.width * AppDimensions.numD025,
+                left: size.width * AppDimensions.numD02,
+                right: size.width * AppDimensions.numD02,
+              ),
+              color: list[index].isSelected 
+                ? (Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.1) : Colors.grey.shade400) 
+                : null,
+              child: Row(
+                children: [
+                  list[index].icon.isNotEmpty
+                      ? list[index].icon.contains('https')
+                          ? Image.network(list[index].icon,
+                              height:
+                                  list[index].name == AppStrings.soldContentText
+                                      ? size.width * AppDimensions.numD06
+                                      : size.width * AppDimensions.numD05,
+                              width:
+                                  list[index].name == AppStrings.soldContentText
+                                      ? size.width * AppDimensions.numD06
+                                      : size.width * AppDimensions.numD05,
+                              errorBuilder: (context, i, d) => Image.asset(
+                                    "${commonImagePath}rabbitLogo.png",
+                                    height: list[index].name ==
+                                            AppStrings.soldContentText
+                                        ? size.width * AppDimensions.numD06
+                                        : size.width * AppDimensions.numD05,
+                                    width: list[index].name ==
+                                            AppStrings.soldContentText
+                                        ? size.width * AppDimensions.numD06
+                                        : size.width * AppDimensions.numD05,
+                                  ))
+                          : Image.asset(
+                              "$iconsPath${list[index].icon}",
+                            color: Theme.of(context).iconTheme.color,
+                              height:
+                                  list[index].name == AppStrings.soldContentText
+                                      ? size.width * AppDimensions.numD06
+                                      : size.width * AppDimensions.numD05,
+                              width:
+                                  list[index].name == AppStrings.soldContentText
+                                      ? size.width * AppDimensions.numD06
+                                      : size.width * AppDimensions.numD05,
+                              errorBuilder: (context, i, d) => Image.asset(
+                                "${commonImagePath}rabbitLogo.png",
+                                height: list[index].name ==
+                                        AppStrings.soldContentText
+                                    ? size.width * AppDimensions.numD06
+                                    : size.width * AppDimensions.numD05,
+                                width: list[index].name ==
+                                        AppStrings.soldContentText
+                                    ? size.width * AppDimensions.numD06
+                                    : size.width * AppDimensions.numD05,
+                              ),
+                            )
+                      : Container(),
+                  SizedBox(
+                    width: size.width * AppDimensions.numD03,
+                  ),
+                  item.name == AppStrings.filterDateText
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            InkWell(
+                              onTap: () async {
+                                item.fromDate = await commonDatePicker();
+                                item.toDate = null;
+                                int pos = list.indexWhere(
+                                    (element) => element.isSelected);
+                                if (pos != -1) {
+                                  list[pos].isSelected = false;
+                                }
+                                fromDate = item.fromDate ?? '';
+                                item.isSelected = !item.isSelected;
+                                stateSetter(() {});
+                                setState(() {});
+                              },
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                  top: size.width * AppDimensions.numD01,
+                                  bottom: size.width * AppDimensions.numD01,
+                                  left: size.width * AppDimensions.numD03,
+                                  right: size.width * AppDimensions.numD01,
+                                ),
+                                width: size.width * AppDimensions.numD32,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * AppDimensions.numD04),
+                                  border: Border.all(
+                                      width: 1, color: Theme.of(context).dividerColor),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      item.fromDate != null
+                                          ? dateTimeFormatter(
+                                              dateTime:
+                                                  item.fromDate.toString())
+                                          : AppStrings.fromText,
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width *
+                                              AppDimensions.numD032,
+                                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                    SizedBox(
+                                      width: size.width * AppDimensions.numD015,
+                                    ),
+                                    Icon(
+                                      Icons.arrow_drop_down_sharp,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: size.width * AppDimensions.numD03,
+                            ),
+                            InkWell(
+                              onTap: () async {
+                                if (item.fromDate != null) {
+                                  String? pickedDate = await commonDatePicker();
+
+                                  if (pickedDate != null) {
+                                    DateTime parseFromDate =
+                                        DateTime.parse(item.fromDate!);
+                                    DateTime parseToDate =
+                                        DateTime.parse(pickedDate);
+
+                                    debugPrint(
+                                        "parseFromDate : $parseFromDate");
+                                    debugPrint("parseToDate : $parseToDate");
+
+                                    if (parseToDate.isAfter(parseFromDate) ||
+                                        parseToDate
+                                            .isAtSameMomentAs(parseFromDate)) {
+                                      item.toDate = pickedDate;
+                                      toDate = pickedDate;
+                                    } else {
+                                      showSnackBar(
+                                          "Date Error",
+                                          "Please select to date above from date",
+                                          Colors.red);
+                                    }
+                                  }
+                                }
+                                stateSetter(() {});
+                                setState(() {});
+                              },
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                  top: size.width * AppDimensions.numD01,
+                                  bottom: size.width * AppDimensions.numD01,
+                                  left: size.width * AppDimensions.numD03,
+                                  right: size.width * AppDimensions.numD01,
+                                ),
+                                width: size.width * AppDimensions.numD32,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * AppDimensions.numD04),
+                                  border: Border.all(
+                                      width: 1, color: Theme.of(context).dividerColor),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      item.toDate != null
+                                          ? dateTimeFormatter(
+                                              dateTime: item.toDate.toString())
+                                          : AppStrings.toText,
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width *
+                                              AppDimensions.numD032,
+                                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                    SizedBox(
+                                      width: size.width * AppDimensions.numD02,
+                                    ),
+                                    Icon(
+                                      Icons.arrow_drop_down_sharp,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Text(item.name,
+                          style: TextStyle(
+                            fontSize: size.width * AppDimensions.numD035,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                            fontWeight: FontWeight.w400,
+                          ))
+                ],
+              ),
+            ),
+          );
+        },
+        separatorBuilder: (context, index) {
+          return SizedBox(
+            height: size.width * AppDimensions.numD01,
+          );
+        },
+      ),
+    );
+  }
+
+/*
+  void transactionShortByDate() {
+    fromDate = DateTime.now().subtract(const Duration(days: 7)).toString();
+    toDate = DateTime.now().toString();
+    sortList[3].toDate = toDate;
+    sortList[3].fromDate = fromDate;
+    sortList[3].isSelected = true;
+    callGetAllTransactionDetail();
+    setState(() {});
+  }
+*/
+
+  void _applyFilter(BuildContext context) {
+    // Logic to collect params and dispatch event
+    Map<String, dynamic> map = {
+      "content_id": widget.contentId,
+    };
+
+    int pos = sortList.indexWhere((element) => element.isSelected);
+
+    if (pos != -1) {
+      if (sortList[pos].fromDate != null) {
+        map["startdate"] = sortList[pos].fromDate!.trim();
+        map["endDate"] = sortList[pos].toDate!.trim();
+      } else if (sortList[pos].name == 'View first payment received') {
+        map["firstpaymentrecived"] = 'true';
+      } else if (sortList[pos].name == 'View last payment received') {
+        map["firstpaymentrecived"] = 'false';
+      } else if (sortList[pos].name == 'View highest payment received') {
+        map["highpaymentrecived"] = 'true';
+      } else if (sortList[pos].name == 'View lowest payment received') {
+        map["highpaymentrecived"] = 'false';
+      }
+    }
+
+    /// Filter
+    // Note: filterList should now be populated from MediaHouses
+    for (var element in filterList) {
+      if (element.isSelected) {
+        map['publication'] = element.id ?? "";
+      }
+    }
+
+    context.read<PublicationBloc>().add(FilterPublicationTransactions(map));
+  }
+}
+
+class FilterModel {
+  FilterModel({
+    this.fromDate,
+    this.toDate,
+    this.id,
+    required this.name,
+    required this.icon,
+    required this.isSelected,
+  });
+  String name = "";
+  String icon = "";
+  String? fromDate;
+  String? toDate;
+  bool isSelected = false;
+  String? id = "";
+}

@@ -1,0 +1,250 @@
+import 'package:flutter/material.dart';
+import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/widgets/common_widgets.dart';
+import '../../domain/entities/commission.dart';
+import 'package:presshop/main.dart';
+
+// ignore: must_be_immutable
+class CommissionWidget extends StatelessWidget {
+  CommissionWidget({
+    super.key,
+    required this.commissionData,
+  });
+  final Commission commissionData;
+  late Size size;
+
+  @override
+  Widget build(BuildContext context) {
+    size = MediaQuery.of(context).size;
+    return Container(
+      margin: EdgeInsets.symmetric(
+        vertical: size.width * AppDimensions.numD02,
+      ),
+      padding: EdgeInsets.only(
+        top: size.width * AppDimensions.numD04,
+        bottom: size.width * AppDimensions.numD04,
+        left: size.width * AppDimensions.numD04,
+        right: size.width * AppDimensions.numD04,
+      ),
+      decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius:
+              BorderRadius.circular(size.width * AppDimensions.numD02)),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    commissionData.firstName.isNotEmpty
+                        ? "${commissionData.firstName.toTitleCase()} ${commissionData.lastName.toTitleCase()}"
+                        : "",
+                    style: commonTextStyle(
+                        size: size,
+                        fontSize: size.width * 0.045,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Container(
+                      margin: EdgeInsets.symmetric(
+                        vertical: size.width * AppDimensions.numD02,
+                      ),
+                      padding: EdgeInsets.only(
+                        top: size.width * AppDimensions.numD02,
+                        bottom: size.width * AppDimensions.numD02,
+                        left: size.width * AppDimensions.numD04,
+                        right: size.width * AppDimensions.numD04,
+                      ),
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD02)),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Date of Joining",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * 0.024,
+                                color: Theme.of(context).textTheme.bodyLarge?.color,
+                                fontWeight: FontWeight.w300),
+                          ),
+                          Text(
+                            commissionData.dateOfJoining,
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * 0.025,
+                                color: Theme.of(context).textTheme.bodyLarge?.color,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ))
+                ],
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
+                child: Image.network(commissionData.avatar,
+                    height: size.width * AppDimensions.numD20,
+                    width: size.width * AppDimensions.numD24,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, i, b) => Image.asset(
+                          "${commonImagePath}rabbitLogo.png",
+                          fit: BoxFit.cover,
+                          color: Theme.of(context).iconTheme.color,
+                          height: size.width * AppDimensions.numD11,
+                          width: size.width * AppDimensions.numD12,
+                        )),
+              ),
+            ],
+          ),
+          SizedBox(height: size.height * AppDimensions.numD01),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "Total earning by the Hopper",
+                style: commonTextStyle(
+                    size: size,
+                    fontSize: size.width * AppDimensions.numD035,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    fontWeight: FontWeight.w400),
+              ),
+              Container(
+                width: size.width * AppDimensions.numD25,
+                padding: EdgeInsets.symmetric(
+                    vertical: size.width * AppDimensions.numD01,
+                    horizontal: size.width * AppDimensions.numD02),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD015),
+                  color: AppColorTheme.colorThemePink,
+                ),
+                child: Text(
+                  "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.parse(commissionData.totalEarning.toString()))}",
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * AppDimensions.numD04,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600),
+                ),
+              )
+            ],
+          ),
+          SizedBox(height: size.height * AppDimensions.numD01),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "Your 5% commission",
+                style: commonTextStyle(
+                    size: size,
+                    fontSize: size.width * AppDimensions.numD035,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    fontWeight: FontWeight.w400),
+              ),
+              Container(
+                width: size.width * AppDimensions.numD25,
+                padding: EdgeInsets.symmetric(
+                    vertical: size.width * AppDimensions.numD01,
+                    horizontal: size.width * AppDimensions.numD02),
+                alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD015),
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white.withOpacity(0.1)
+                        : Colors.black,
+                  ),
+                child: Text(
+                  "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.parse(commissionData.commission.toString()))}",
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * AppDimensions.numD04,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Theme.of(context).textTheme.bodyLarge?.color
+                          : Colors.white,
+                      fontWeight: FontWeight.w600),
+                ),
+              )
+            ],
+          ),
+          SizedBox(height: size.height * AppDimensions.numD01),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "Paid on",
+                style: commonTextStyle(
+                    size: size,
+                    fontSize: size.width * AppDimensions.numD035,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    fontWeight: FontWeight.w400),
+              ),
+              Text(
+                commissionData.paidOn ?? "-",
+                style: commonTextStyle(
+                    size: size,
+                    fontSize: size.width * AppDimensions.numD035,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    fontWeight: FontWeight.w400),
+              ),
+            ],
+          ),
+          SizedBox(height: size.height * AppDimensions.numD01),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "Commission received",
+                style: commonTextStyle(
+                    size: size,
+                    fontSize: size.width * AppDimensions.numD035,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    fontWeight: FontWeight.w400),
+              ),
+              Text(
+                "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.parse(commissionData.commissionReceived.toString()))}",
+                style: commonTextStyle(
+                    size: size,
+                    fontSize: size.width * AppDimensions.numD035,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    fontWeight: FontWeight.w400),
+              ),
+            ],
+          ),
+          SizedBox(height: size.height * AppDimensions.numD01),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "Commission pending",
+                style: commonTextStyle(
+                    size: size,
+                    fontSize: size.width * AppDimensions.numD035,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    fontWeight: FontWeight.w400),
+              ),
+              Text(
+                "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.parse(commissionData.commissionPending.toString()))}",
+                style: commonTextStyle(
+                    size: size,
+                    fontSize: size.width * AppDimensions.numD035,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    fontWeight: FontWeight.w400),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}

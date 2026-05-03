@@ -1,0 +1,372 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:presshop/core/widgets/common_app_bar.dart';
+import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:go_router/go_router.dart';
+
+import 'package:presshop/main.dart';
+import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/di/injection_container.dart';
+import '../bloc/account_settings_bloc.dart';
+import '../bloc/account_settings_event.dart';
+import '../bloc/account_settings_state.dart';
+
+class AccountDeleteScreen extends StatefulWidget {
+  const AccountDeleteScreen({super.key});
+
+  @override
+  State<AccountDeleteScreen> createState() => _AccountDeleteScreenState();
+}
+
+class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
+  late AccountSettingsBloc _accountSettingsBloc;
+  List<dynamic> purposeData = [...AppStrings.purposeForDeleteAccount];
+  Map<String, String> selectReason = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _accountSettingsBloc = sl<AccountSettingsBloc>();
+  }
+
+  @override
+  void dispose() {
+    _accountSettingsBloc.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    return BlocProvider.value(
+      value: _accountSettingsBloc,
+      child: BlocListener<AccountSettingsBloc, AccountSettingsState>(
+        listener: _handleAccountSettingsState,
+        child: Scaffold(
+          appBar: CommonBrandedAppBar(
+            title: "Delete account",
+            size: size,
+            showLogo: true,
+          ),
+          body: Padding(
+            padding: EdgeInsets.all(size.width * AppDimensions.numD045),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  softWrap: true,
+                  AppStrings.deleteAccountText,
+                  textAlign: TextAlign.justify,
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * AppDimensions.numD035,
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600),
+                ),
+                SizedBox(
+                  height: size.height * AppDimensions.numD02,
+                ),
+                Text(
+                  "Please let us know your reason for deleting the app :- ",
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * AppDimensions.numD04,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                      fontWeight: FontWeight.w500),
+                ),
+                SizedBox(
+                  height: size.height * AppDimensions.numD01,
+                ),
+                Expanded(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    separatorBuilder: (context, index) => Divider(
+                        height: 1,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? AppColorTheme.colorItemDividerForDarkTheme
+                            : Theme.of(context).dividerColor),
+                    padding: isIpad
+                        ? EdgeInsets.symmetric(
+                            vertical: size.width * AppDimensions.numD012)
+                        : EdgeInsets.zero,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: purposeData.length,
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (ctx, int) {
+                      return ListTile(
+                        contentPadding: isIpad
+                            ? EdgeInsets.symmetric(
+                                vertical: size.width * AppDimensions.numD02)
+                            : EdgeInsets.zero,
+                        leading: Transform.scale(
+                          scale: isIpad ? 1.8 : 1,
+                          child: Checkbox(
+                            visualDensity: VisualDensity.compact,
+                            value: selectReason == purposeData[int],
+                            onChanged: (value) {
+                              selectReason = purposeData[int];
+                              setState(() {});
+                            },
+                            activeColor: AppColorTheme.colorThemePink,
+                            checkColor:
+                                Theme.of(context).scaffoldBackgroundColor,
+                            side: BorderSide(
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white54
+                                    : Colors.grey,
+                                width: 1.5),
+                          ),
+                        ),
+                        title: Text(
+                          purposeData[int]['title'],
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * AppDimensions.numD034,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                              fontWeight: FontWeight.w400),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                SafeArea(
+                  child: Container(
+                    width: double.infinity,
+                    height: size.height *
+                        (isIpad ? AppDimensions.numD1 : AppDimensions.numD08),
+                    padding: EdgeInsets.symmetric(
+                        vertical: size.height * AppDimensions.numD015),
+                    child: commonElevatedButton(
+                      'Delete Account',
+                      size,
+                      commonTextStyle(
+                          size: size,
+                          fontSize: size.width *
+                              (isIpad
+                                  ? AppDimensions.numD032
+                                  : AppDimensions.numD038),
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          fontWeight: FontWeight.w700),
+                      commonButtonStyle(size, AppColorTheme.colorThemePink),
+                      () {
+                        if (selectReason.isNotEmpty) {
+                          showDeleteDialog(size);
+                        } else {
+                          showToast("Please select reason...");
+                        }
+                      },
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void showDeleteDialog(Size size) {
+    showDialog(
+        context: navigatorKey.currentState!.context,
+        builder: (context) {
+          return AlertDialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              contentPadding: EdgeInsets.zero,
+              insetPadding: EdgeInsets.symmetric(
+                  horizontal: size.width * AppDimensions.numD04),
+              content: StatefulBuilder(
+                builder: (context, setState) {
+                  return Container(
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD045)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: size.width * AppDimensions.numD04),
+                          child: Row(
+                            children: [
+                              Text(
+                                AppStrings.youWIllBeMissedText,
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
+                                    fontSize: size.width * AppDimensions.numD05,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                  onPressed: () {
+                                    context.pop();
+                                  },
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
+                                    size: size.width * AppDimensions.numD06,
+                                  ))
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD04),
+                          child: Divider(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? AppColorTheme.colorItemDividerForDarkTheme
+                                : Theme.of(context).dividerColor,
+                            thickness: 0.5,
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.width * AppDimensions.numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD04),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * AppDimensions.numD04),
+                                    border: Border.all(
+                                        color: Theme.of(context).brightness == Brightness.dark
+                                            ? AppColorTheme.colorItemDividerForDarkTheme
+                                            : Theme.of(context).dividerColor)),
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * AppDimensions.numD04),
+                                    child: Image.asset(
+                                      "assets/rabbits/delete_rabbit2.png",
+                                      height: size.width * AppDimensions.numD30,
+                                      width: size.width * AppDimensions.numD35,
+                                      fit: BoxFit.cover,
+                                    )),
+                              ),
+                              SizedBox(
+                                width: size.width * AppDimensions.numD04,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  AppStrings.deleteAccountPopupMessageText,
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.width * AppDimensions.numD02,
+                        ),
+                        SizedBox(
+                          height: size.width * AppDimensions.numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD04,
+                              vertical: size.width * AppDimensions.numD04),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Expanded(
+                                  child: SizedBox(
+                                height: size.width * AppDimensions.numD12,
+                                child: commonElevatedButton(
+                                    "Procced",
+                                    size,
+                                    commonTextStyle(
+                                        size: size,
+                                        fontSize:
+                                            size.width * AppDimensions.numD037,
+                                        color: Theme.of(context)
+                                            .scaffoldBackgroundColor,
+                                        fontWeight: FontWeight.bold),
+                                    commonButtonStyle(
+                                        size,
+                                        Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Colors.white
+                                            : Colors.black), () {
+                                  context.pop();
+                                  _accountSettingsBloc.add(
+                                    DeleteAccountEvent(reason: selectReason),
+                                  );
+                                }),
+                              )),
+                              SizedBox(
+                                width: size.width * AppDimensions.numD04,
+                              ),
+                              Expanded(
+                                  child: SizedBox(
+                                height: size.width * AppDimensions.numD12,
+                                child: commonElevatedButton(
+                                    "Cancel",
+                                    size,
+                                    commonButtonTextStyle(size),
+                                    commonButtonStyle(
+                                        size, AppColorTheme.colorThemePink),
+                                    () async {
+                                  context.pop();
+                                }),
+                              )),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ));
+        });
+  }
+
+  void _handleAccountSettingsState(
+      BuildContext context, AccountSettingsState state) async {
+    if (state is AccountDeleted) {
+      // Log Firebase Analytics
+      await FirebaseAnalytics.instance.logEvent(
+        name: 'account deleted successfully',
+        parameters: {
+          'error': 'Account deleted successfully',
+          'timestamp': DateTime.now().toIso8601String(),
+        },
+      );
+
+      // Clear data
+      await sharedPreferences!.clear();
+      await googleSignIn.signOut();
+
+      // Show message
+      showToast(state.message);
+
+      // Navigate to login
+      if (mounted) {
+        context.goNamed(AppRoutes.loginName);
+      }
+    } else if (state is AccountSettingsError) {
+      showSnackBar("Error", state.message, Colors.red);
+    }
+  }
+}

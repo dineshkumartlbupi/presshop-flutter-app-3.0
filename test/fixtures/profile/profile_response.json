@@ -1,0 +1,43 @@
+{
+    "code": 200,
+    "success": true,
+    "message": "Profile fetched successfully",
+    "data": {
+        "id": "123",
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@example.com",
+        "phone": "1234567890",
+        "user_name": "johndoe",
+        "role": "hopper",
+        "status": "active",
+        "hopperStatus": "approved",
+        "chat_status": "online",
+        "profile_image": "https://example.com/avatar.png",
+        "isVerified": true,
+        "is_onboard": true,
+        "is_deleted": false,
+        "latitude": 40.7128,
+        "longitude": -74.0060,
+        "totalEarnings": 100,
+        "totalHopperArmy": 50,
+        "location": {
+            "type": "Point",
+            "coordinates": [
+                -74.0060,
+                40.7128
+            ]
+        },
+        "preferred_currency_sign": {
+            "symbol": "$",
+            "code": "USD",
+            "name": "Dollar",
+            "country_name": "USA",
+            "country_code": "US",
+            "dial_code": "+1"
+        },
+        "createdAt": "2023-01-01T00:00:00.000Z",
+        "updatedAt": "2023-01-02T00:00:00.000Z",
+        "lastLogin": "2023-01-03T00:00:00.000Z"
+    }
+}

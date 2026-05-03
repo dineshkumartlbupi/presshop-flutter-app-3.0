@@ -1,0 +1,127 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/usecases/get_content_categories.dart';
+import '../../domain/usecases/get_charities.dart';
+import '../../domain/usecases/get_share_exclusive_price.dart';
+import '../../domain/usecases/submit_content.dart';
+import '../../../../core/usecases/usecase.dart';
+import 'publish_event.dart';
+import 'publish_state.dart';
+
+class PublishBloc extends Bloc<PublishEvent, PublishState> {
+  PublishBloc({
+    required this.getContentCategories,
+    required this.getCharities,
+    required this.getShareExclusivePrice,
+    required this.submitContent,
+  }) : super(const PublishState()) {
+    on<LoadPublishDataEvent>(_onLoadPublishData);
+    on<SelectCategoryEvent>(_onSelectCategory);
+    on<FetchCharitiesEvent>(_onFetchCharities);
+    on<ToggleCharityEvent>(_onToggleCharity);
+    on<SelectCharityEvent>(_onSelectCharity);
+    on<SubmitContentEvent>(_onSubmitContent);
+  }
+  final GetContentCategories getContentCategories;
+  final GetCharities getCharities;
+  final GetShareExclusivePrice getShareExclusivePrice;
+  final SubmitContent submitContent;
+
+  Future<void> _onLoadPublishData(
+      LoadPublishDataEvent event, Emitter<PublishState> emit) async {
+    debugPrint("DEBUG: PublishBloc _onLoadPublishData called");
+    emit(state.copyWith(status: PublishStatus.loading));
+
+    // Fetch categories
+    final failureOrCategories = await getContentCategories(NoParams());
+
+    // Fetch prices with country
+    final failureOrPrices = await getShareExclusivePrice(
+        GetShareExclusivePriceParams(country: event.country));
+
+    // Combine results
+    // Simpler sequential handling for now
+    // List<dynamic> results = [failureOrCategories, failureOrPrices];
+
+    failureOrCategories.fold((failure) {
+      debugPrint(
+          "DEBUG: PublishBloc categories fetch FAILED: ${failure.message}");
+      emit(state.copyWith(
+          status: PublishStatus.failure, errorMessage: failure.message));
+    }, (categories) {
+      debugPrint("DEBUG: PublishBloc categories fetched: ${categories.length}");
+      for (var cat in categories) {
+        debugPrint("DEBUG: Category: ${cat.id} - ${cat.name}");
+      }
+      // Select first by default if available and map selection state
+      if (categories.isNotEmpty) {
+        final mappedCategories = categories.map((c) {
+          return c.copyWith(selected: c.id == categories.first.id);
+        }).toList();
+        final selected = mappedCategories.first;
+        emit(state.copyWith(
+            categories: mappedCategories, selectedCategory: selected));
+      } else {
+        emit(state.copyWith(categories: categories, selectedCategory: null));
+      }
+    });
+
+    failureOrPrices.fold(
+        (failure) => null, // Ignore price error for now or handle
+        (prices) => emit(state.copyWith(prices: prices)));
+
+    if (state.status != PublishStatus.failure) {
+      emit(state.copyWith(status: PublishStatus.loaded));
+    }
+  }
+
+  void _onSelectCategory(
+      SelectCategoryEvent event, Emitter<PublishState> emit) {
+    final updatedCategories = state.categories.map((category) {
+      return category.copyWith(selected: category.id == event.categoryId);
+    }).toList();
+
+    try {
+      final selectedCategory =
+          updatedCategories.firstWhere((c) => c.id == event.categoryId);
+      emit(state.copyWith(
+        categories: updatedCategories,
+        selectedCategory: selectedCategory,
+      ));
+    } catch (_) {
+      emit(state.copyWith(categories: updatedCategories));
+    }
+  }
+
+  Future<void> _onFetchCharities(
+      FetchCharitiesEvent event, Emitter<PublishState> emit) async {
+    // Logic for pagination if needed
+    final failureOrCharities = await getCharities(
+        GetCharitiesParams(offset: event.offset, limit: event.limit));
+    failureOrCharities.fold(
+        (failure) => emit(state.copyWith(errorMessage: failure.message)),
+        (charities) => emit(state.copyWith(charities: charities)));
+  }
+
+  void _onToggleCharity(ToggleCharityEvent event, Emitter<PublishState> emit) {
+    emit(state.copyWith(isCharitySelected: event.isSelected));
+  }
+
+  void _onSelectCharity(SelectCharityEvent event, Emitter<PublishState> emit) {
+    final updatedCharities = state.charities.map((c) {
+      return c.copyWith(isSelectCharity: c.id == event.charityId);
+    }).toList();
+    emit(state.copyWith(charities: updatedCharities, isCharitySelected: true));
+  }
+
+  Future<void> _onSubmitContent(
+      SubmitContentEvent event, Emitter<PublishState> emit) async {
+    emit(state.copyWith(status: PublishStatus.submitting));
+    final result = await submitContent(
+        SubmitContentParams(params: event.params, filePaths: event.filePaths));
+    result.fold(
+        (failure) => emit(state.copyWith(
+            status: PublishStatus.failure, errorMessage: failure.message)),
+        (_) => emit(state.copyWith(status: PublishStatus.success)));
+  }
+}
