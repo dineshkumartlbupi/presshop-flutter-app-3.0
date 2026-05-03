@@ -335,7 +335,7 @@ class _MenuScreenState extends State<MenuScreen> {
           itemCount: menuList.length,
           separatorBuilder: (context, index) => const Divider(
             thickness: 2,
-            color: AppColorTheme.colorLightGrey,
+            color: AppColorTheme.colorGrey2,
           ),
           itemBuilder: (context, index) {
             if (index == 0) {
@@ -421,7 +421,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                   const Divider(
                     thickness: 2,
-                    color: AppColorTheme.colorLightGrey,
+                    color: AppColorTheme.colorGrey2,
                   ),
                   // Location Toggle
                   Padding(

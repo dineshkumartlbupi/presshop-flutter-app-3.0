@@ -91,7 +91,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             elevation: 0,
             title: Text(
               "",
-              style: commonBigTitleTextStyle(size, Colors.black),
+              style: commonBigTitleTextStyle(size, Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black),
             ),
             centerTitle: false,
             titleSpacing: 0,
@@ -121,7 +121,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                           child: Text(
                             AppStrings.forgotPasswordText.toTitleCase(),
                             style: TextStyle(
-                                color: Colors.black,
+                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                 fontWeight: FontWeight.w600,
                                 fontFamily: 'AirbnbCereal',
                                 fontSize: size.width * AppDimensions.numD07),
@@ -136,7 +136,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                           child: Text(AppStrings.forgotPasswordSubHeading,
                               style: TextStyle(
                                   fontFamily: 'AirbnbCereal',
-                                  color: Colors.black,
+                                  color: Theme.of(context).textTheme.bodyLarge?.color,
                                   fontSize:
                                       size.width * AppDimensions.numD035)),
                         ),
@@ -264,9 +264,10 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       isScrollControlled: true,
       isDismissible: false,
       enableDrag: false,
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
+      backgroundColor: Theme.of(context).cardColor,
       builder: (bottomSheetContext) {
         return BlocProvider.value(
           value: authBloc,
@@ -357,7 +358,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
               children: [
                 const Spacer(),
                 IconButton(
-                  icon: const Icon(Icons.close, color: Colors.black54),
+                  icon: Icon(Icons.close, color: Theme.of(context).hintColor),
                   onPressed: () {
                     context.pop();
                   },
@@ -382,6 +383,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                     fontFamily: 'AirbnbCereal_W_Bd',
                     fontSize: size.width * AppDimensions.numD06,
                     fontWeight: FontWeight.w700,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                 ),
                 SizedBox(height: size.width * AppDimensions.numD02),
@@ -392,7 +394,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                       TextSpan(
                         text: "We’ve sent a 5-digit verification code to ",
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontSize: size.width * AppDimensions.numD035,
                           fontFamily: 'AirbnbCereal_W_Lt',
                         ),
@@ -416,8 +418,8 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                   otpPinFieldStyle: OtpPinFieldStyle(
                     defaultFieldBorderColor: AppColorTheme.colorTextFieldBorder,
                     activeFieldBorderColor: AppColorTheme.colorTextFieldIcon,
-                    defaultFieldBackgroundColor: AppColorTheme.colorLightGrey,
-                    activeFieldBackgroundColor: AppColorTheme.colorLightGrey,
+                    defaultFieldBackgroundColor: Theme.of(context).cardColor,
+                    activeFieldBackgroundColor: Theme.of(context).cardColor,
                     fieldBorderRadius: size.width * AppDimensions.numD02,
                     fieldBorderWidth: 0.5,
                   ),
@@ -479,7 +481,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                           "${AppStrings.otpExpireText} $expireTimeValue ${AppStrings.minutesText}",
                           style: TextStyle(
                               fontFamily: 'AirbnbCereal',
-                              color: Colors.black,
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                               fontSize: size.width * AppDimensions.numD035)),
                     ],
                   ),
@@ -496,7 +498,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                               text: AppStrings.otpNotReceivedText,
                               style: TextStyle(
                                   fontFamily: 'AirbnbCereal',
-                                  color: Colors.black,
+                                  color: Theme.of(context).textTheme.bodyLarge?.color,
                                   fontSize:
                                       size.width * AppDimensions.numD035)),
                           WidgetSpan(child: SizedBox(width: size.width * 0.01)),
@@ -513,7 +515,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                             text: AppStrings.anotherOneText,
                             style: TextStyle(
                                 fontFamily: 'AirbnbCereal',
-                                color: Colors.black,
+                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                 fontSize: size.width * AppDimensions.numD035),
                           ),
                         ],

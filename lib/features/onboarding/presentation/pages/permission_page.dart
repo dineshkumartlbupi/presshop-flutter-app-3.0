@@ -112,7 +112,7 @@ class _PermissionPageState extends State<PermissionPage>
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: size.width * 0.06),
@@ -138,7 +138,7 @@ class _PermissionPageState extends State<PermissionPage>
                   size: size,
                   fontSize: size.width * 0.08,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
               SizedBox(height: size.height * 0.01),
@@ -148,7 +148,7 @@ class _PermissionPageState extends State<PermissionPage>
                   fontWeight: FontWeight.w500,
                   size: size,
                   fontSize: size.width * 0.038,
-                  color: Colors.grey[600]!,
+                  color: Theme.of(context).hintColor,
                 ),
               ),
               SizedBox(height: size.height * 0.04),
@@ -175,12 +175,12 @@ class _PermissionPageState extends State<PermissionPage>
                       decoration: BoxDecoration(
                         color: isGranted
                             ? Colors.green.withOpacity(0.03)
-                            : Colors.grey[50],
+                            : Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: isGranted
                               ? Colors.green.withOpacity(0.2)
-                              : Colors.grey[200]!,
+                              : Theme.of(context).dividerColor,
                           width: 1,
                         ),
                       ),
@@ -211,7 +211,7 @@ class _PermissionPageState extends State<PermissionPage>
                                 Text(
                                   item.title,
                                   style: commonTextStyle(
-                                    color: Colors.black,
+                                    color: Theme.of(context).textTheme.bodyLarge?.color,
                                     size: size,
                                     fontSize: size.width * 0.04,
                                     fontWeight: FontWeight.w600,
@@ -223,7 +223,7 @@ class _PermissionPageState extends State<PermissionPage>
                                     size: size,
                                     fontWeight: FontWeight.w500,
                                     fontSize: size.width * 0.032,
-                                    color: Colors.grey[600]!,
+                                    color: Theme.of(context).hintColor,
                                   ),
                                 ),
                               ],
@@ -315,7 +315,7 @@ class _PermissionPageState extends State<PermissionPage>
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _allRequiredGranted
                           ? AppColorTheme.colorThemePink
-                          : Colors.grey[400],
+                          : Theme.of(context).disabledColor,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),

@@ -227,7 +227,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             padding: EdgeInsets.all(
                                 size.width * AppDimensions.numD03),
                             decoration: BoxDecoration(
-                                color: AppColorTheme.colorLightGrey,
+                                color: Theme.of(context).cardColor,
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD05)),
                             child: Column(
@@ -237,7 +237,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                     Container(
                                       decoration: BoxDecoration(
                                           border: Border.all(
-                                              width: 1.2, color: Colors.black),
+                                              width: 1.2, color: Theme.of(context).dividerColor),
                                           borderRadius: BorderRadius.circular(
                                               size.width *
                                                   AppDimensions.numD04)),
@@ -265,6 +265,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                               Image.asset(
                                             "${commonImagePath}rabbitLogo.png",
                                             fit: BoxFit.cover,
+                                            color: Theme.of(context).iconTheme.color,
                                             height: size.width *
                                                 AppDimensions.numD32,
                                             width: size.width *
@@ -289,7 +290,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD045,
-                                                color: Colors.black,
+                                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           SizedBox(
@@ -320,7 +321,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD045,
-                                                color: Colors.black,
+                                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           SizedBox(
@@ -406,7 +407,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                           decoration: BoxDecoration(
                                               border: Border.all(
                                                   width: 1.2,
-                                                  color: Colors.black),
+                                                  color: Theme.of(context).dividerColor),
                                               borderRadius:
                                                   BorderRadius.circular(size
                                                           .width *
@@ -423,13 +424,13 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                     size: size,
                                                     fontSize: size.width *
                                                         AppDimensions.numD035,
-                                                    color: Colors.black,
+                                                    color: Theme.of(context).textTheme.bodyLarge?.color,
                                                     fontWeight:
                                                         FontWeight.w600),
                                               ),
-                                              const Icon(
+                                              Icon(
                                                 Icons.arrow_drop_down_sharp,
-                                                color: Colors.black,
+                                                color: Theme.of(context).iconTheme.color,
                                               )
                                             ],
                                           ),
@@ -492,8 +493,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                                   color: selectedMonth == month
                                                                       ? AppColorTheme
                                                                           .colorThemePink
-                                                                      : Colors.grey[
-                                                                          200],
+                                                                      : Theme.of(context).scaffoldBackgroundColor,
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .circular(
@@ -517,10 +517,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                                             .numD035,
                                                                     color: selectedMonth ==
                                                                             month
-                                                                        ? Colors
-                                                                            .white
-                                                                        : Colors
-                                                                            .black,
+                                                                        ? Colors.white
+                                                                        : Theme.of(context).textTheme.bodyLarge?.color,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w600,
@@ -564,7 +562,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                           decoration: BoxDecoration(
                                               border: Border.all(
                                                   width: 1.2,
-                                                  color: Colors.black),
+                                                  color: Theme.of(context).dividerColor),
                                               borderRadius:
                                                   BorderRadius.circular(size
                                                           .width *
@@ -583,13 +581,13 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                     size: size,
                                                     fontSize: size.width *
                                                         AppDimensions.numD035,
-                                                    color: Colors.black,
+                                                    color: Theme.of(context).textTheme.bodyLarge?.color,
                                                     fontWeight:
                                                         FontWeight.w700),
                                               ),
-                                              const Icon(
+                                              Icon(
                                                 Icons.arrow_drop_down_sharp,
-                                                color: Colors.black,
+                                                color: Theme.of(context).iconTheme.color,
                                               )
                                             ],
                                           ),
@@ -614,7 +612,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                 physics: const NeverScrollableScrollPhysics(),
                                 controller: _tabController,
                                 labelColor: Colors.white,
-                                dividerColor: AppColorTheme.colorThemePink,
+                                dividerColor: Colors.transparent,
                                 unselectedLabelColor: Theme.of(context)
                                     .textTheme
                                     .bodyLarge
@@ -642,10 +640,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   Tab(text: AppStrings.commissionEarnedText),
                                 ],
                               ),
-                              const Divider(
-                                color: Color(0xFFD8D8D8),
-                                thickness: 1.5,
-                              ),
+                              const SizedBox.shrink(),
                               Column(children: [
                                 if (_selectedTabbar == 0) ...[
                                   state.transactions.isEmpty &&
@@ -703,8 +698,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                     height: size.width *
                                                         AppDimensions.numD02,
                                                   ),
-                                                  const Divider(
-                                                    color: Color(0xFFD8D8D8),
+                                                  Divider(
+                                                    color: Theme.of(context).dividerColor,
                                                     thickness: 1.5,
                                                   ),
                                                   SizedBox(
@@ -757,8 +752,6 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               ]),
                             ],
                           ),
-                          // Footer logic (Contact/FAQ/Tutorials) preserved conceptually but simplified for length constraint if needed
-                          // Including it properly:
                           Padding(
                             padding: EdgeInsets.only(
                                 top: size.width * AppDimensions.numD06,
@@ -934,7 +927,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                         right: size.width * AppDimensions.numD05,
                       ),
                       decoration: BoxDecoration(
-                          color: AppColorTheme.colorLightGrey,
+                          color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(
                               size.width * AppDimensions.numD02)),
                       child: Column(
@@ -995,6 +988,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                 AppDimensions.numD08,
                                             width: size.width *
                                                 AppDimensions.numD08,
+                                            color: Theme.of(context).iconTheme.color,
                                           ),
                                         )
                                       : const SizedBox.shrink(),
@@ -1006,7 +1000,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                     width: size.width * AppDimensions.numD11,
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                          color: Colors.white, width: 2),
+                                          color: Theme.of(context).dividerColor, width: 2),
                                       borderRadius: BorderRadius.circular(
                                           size.width * AppDimensions.numD03),
                                     ),
@@ -1034,6 +1028,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                             Image.asset(
                                           "${commonImagePath}rabbitLogo.png",
                                           fit: BoxFit.cover,
+                                          color: Theme.of(context).iconTheme.color,
                                           height:
                                               size.width * AppDimensions.numD11,
                                           width:
@@ -1058,6 +1053,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                             Image.asset(
                                               "${commonImagePath}rabbitLogo.png",
                                               fit: BoxFit.cover,
+                                              color: Theme.of(context).iconTheme.color,
                                               height: size.width *
                                                   AppDimensions.numD11,
                                               width: size.width *
@@ -1069,7 +1065,6 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             ],
                           ),
 
-                          /// Your earnings
                           Padding(
                             padding: EdgeInsets.only(
                                 top: size.width * AppDimensions.numD04),
@@ -1082,7 +1077,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
-                                      color: Colors.black,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
                                       fontWeight: FontWeight.w400),
                                 ),
                                 Text(
@@ -1097,20 +1092,19 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
-                                      color: Colors.black,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
                                       fontWeight: FontWeight.w400),
                                 ),
                               ],
                             ),
                           ),
 
-                          /// Divider
                           Padding(
                             padding: EdgeInsets.only(
                               top: size.width * AppDimensions.numD01,
                             ),
-                            child: const Divider(
-                              color: Colors.white,
+                            child: Divider(
+                              color: Theme.of(context).dividerColor,
                               thickness: 1.5,
                             ),
                           ),
@@ -1139,7 +1133,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                 ),
                                 Icon(
                                   Icons.keyboard_arrow_right,
-                                  color: Colors.black,
+                                  color: Theme.of(context).iconTheme.color,
                                   size: size.width * AppDimensions.numD045,
                                 )
                               ],
@@ -1177,7 +1171,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                     right: size.width * AppDimensions.numD05,
                   ),
                   decoration: BoxDecoration(
-                      color: AppColorTheme.colorLightGrey,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD02)),
                   child: Column(
@@ -1192,7 +1186,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               border: Border.all(
-                                  color: AppColorTheme.colorGrey3, width: 1),
+                                  color: Theme.of(context).dividerColor, width: 1),
                               borderRadius: BorderRadius.circular(
                                   size.width * AppDimensions.numD015),
                             ),
@@ -1203,7 +1197,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD04,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight.w600),
                             ),
                           ),
@@ -1218,12 +1215,13 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                           ? size.width * AppDimensions.numD075
                                           : size.width * AppDimensions.numD07,
                                       width: size.width * AppDimensions.numD09,
-                                      color: AppColorTheme.colorTextFieldIcon,
+                                      color: Theme.of(context).iconTheme.color,
                                     )
                                   : Image.asset(
                                       "${iconsPath}ic_task.png",
                                       width: size.width * AppDimensions.numD07,
                                       height: size.width * AppDimensions.numD07,
+                                      color: Theme.of(context).iconTheme.color,
                                     ),
                               SizedBox(
                                 width: size.width * AppDimensions.numD03,
@@ -1290,7 +1288,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight.w400),
                             ),
                             Text(
@@ -1304,7 +1305,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight.w400),
                             ),
                           ],
@@ -1323,7 +1327,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight.w400),
                             ),
                             Text(
@@ -1333,7 +1340,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight.w400),
                             ),
                           ],
@@ -1351,7 +1361,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight.w400),
                             ),
                             Text(
@@ -1359,7 +1372,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight.w400),
                             ),
                           ],
@@ -1378,7 +1394,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight.w400),
                             ),
                             Text(
@@ -1388,7 +1407,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight.w400),
                             ),
                           ],
@@ -1410,7 +1432,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight.w400),
                             ),
                             Text(
@@ -1421,7 +1446,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight.w400),
                             ),
                           ],
@@ -1433,8 +1461,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                         padding: EdgeInsets.only(
                           top: size.width * AppDimensions.numD01,
                         ),
-                        child: const Divider(
-                          color: Colors.white,
+                        child: Divider(
+                          color: Theme.of(context).dividerColor,
                           thickness: 1.5,
                         ),
                       ),
@@ -1465,7 +1493,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             ),
                             Icon(
                               Icons.keyboard_arrow_right,
-                              color: Colors.black,
+                              color: Theme.of(context).iconTheme.color,
                               size: size.width * AppDimensions.numD045,
                             )
                           ],
@@ -1528,12 +1556,16 @@ class _MyEarningScreenState extends State<MyEarningScreen>
               left: size.width * AppDimensions.numD02,
               right: size.width * AppDimensions.numD02,
             ),
-            color: list[index].isSelected ? Colors.grey.shade400 : null,
+            color: list[index].isSelected
+                ? (Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white.withOpacity(0.1)
+                    : Colors.grey.shade400)
+                : null,
             child: Row(
               children: [
                 Image.asset(
                   "$iconsPath${list[index].icon}",
-                  color: Colors.black,
+                  color: Theme.of(context).iconTheme.color,
                   height: list[index].name == AppStrings.soldContentText
                       ? size.width * AppDimensions.numD06
                       : size.width * AppDimensions.numD05,
@@ -1574,7 +1606,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
                                 border: Border.all(
-                                    width: 1, color: const Color(0xFFDEE7E6)),
+                                    width: 1,
+                                    color: Theme.of(context).dividerColor),
                               ),
                               child: Row(
                                 mainAxisAlignment:
@@ -1589,15 +1622,21 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD032,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     width: size.width * AppDimensions.numD015,
                                   ),
-                                  const Icon(
+                                  Icon(
                                     Icons.arrow_drop_down_sharp,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                   )
                                 ],
                               ),
@@ -1645,7 +1684,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
                                 border: Border.all(
-                                    width: 1, color: const Color(0xFFDEE7E6)),
+                                    width: 1,
+                                    color: Theme.of(context).dividerColor),
                               ),
                               child: Row(
                                 mainAxisAlignment:
@@ -1660,15 +1700,21 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD032,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     width: size.width * AppDimensions.numD02,
                                   ),
-                                  const Icon(
+                                  Icon(
                                     Icons.arrow_drop_down_sharp,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                   )
                                 ],
                               ),
@@ -1679,7 +1725,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                     : Text(list[index].name,
                         style: TextStyle(
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w400,
                             fontFamily: "AirbnbCereal_W_Bk"))
               ],
@@ -1701,6 +1747,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
         context: context,
         isScrollControlled: true,
         useSafeArea: true,
+        backgroundColor: Theme.of(context).cardColor,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
           topLeft: Radius.circular(size.width * AppDimensions.numD085),
@@ -1726,8 +1773,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                         },
                         icon: Icon(
                           Icons.close,
-                          color: Theme.of(context).textTheme.bodyLarge?.color ??
-                              Colors.black,
+                          color: Theme.of(context).iconTheme.color,
                           size: size.width * AppDimensions.numD07,
                         ),
                       ),
@@ -1737,9 +1783,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             size: size,
                             fontSize: size.width *
                                 AppDimensions.appBarHeadingFontSizeNew,
-                            color:
-                                Theme.of(context).textTheme.bodyLarge?.color ??
-                                    Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.bold),
                       ),
                       TextButton(
@@ -1771,7 +1815,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD05,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w500)),
                   filterListWidget(
                       context,
@@ -1787,7 +1831,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD05,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w500)),
                   filterListWidget(
                       context, filterList, stateSetter, size, false),
@@ -1829,9 +1873,12 @@ class _MyEarningScreenState extends State<MyEarningScreen>
       lastDate: DateTime.now(),
       builder: (context, child) {
         return Theme(
-          data: ThemeData.light().copyWith(
-              colorScheme: const ColorScheme.light()
-                  .copyWith(primary: AppColorTheme.colorThemePink)),
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: AppColorTheme.colorThemePink,
+                  onPrimary: Colors.white,
+                ),
+          ),
           child: child!,
         );
       },

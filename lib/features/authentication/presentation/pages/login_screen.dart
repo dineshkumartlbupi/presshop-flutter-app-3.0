@@ -135,7 +135,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                             Text(
                               greeting(),
                               style: TextStyle(
-                                  color: Colors.black,
+                                  color: Theme.of(context).textTheme.bodyLarge?.color,
                                   fontFamily: "AirbnbCereal",
                                   fontWeight: FontWeight.w600,
                                   fontSize: size.width * AppDimensions.numD07),
@@ -154,7 +154,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                           style: TextStyle(
                                               fontSize: size.width *
                                                   AppDimensions.numD035,
-                                              color: Colors.black,
+                                              color: Theme.of(context).textTheme.bodyLarge?.color,
                                               fontFamily: "AirbnbCereal",
                                               fontWeight: FontWeight.w400,
                                               height: 1.5),
@@ -164,7 +164,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                               style: TextStyle(
                                                   fontSize: size.width *
                                                       AppDimensions.numD035,
-                                                  color: Colors.black,
+                                                  color: Theme.of(context).textTheme.bodyLarge?.color,
                                                   fontFamily: "AirbnbCereal",
                                                   fontWeight: FontWeight.w400,
                                                   height: 1.5),
@@ -174,7 +174,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                               style: TextStyle(
                                                   fontSize: size.width *
                                                       AppDimensions.numD038,
-                                                  color: Colors.black,
+                                                  color: Theme.of(context).textTheme.bodyLarge?.color,
                                                   fontFamily: "AirbnbCereal",
                                                   fontWeight: FontWeight.w400,
                                                   height: 1.5),
@@ -184,7 +184,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                       )
                                     : Text(AppStrings.loginSubTitleText,
                                         style: TextStyle(
-                                            color: Colors.black,
+                                            color: Theme.of(context).textTheme.bodyLarge?.color,
                                             fontSize: size.width *
                                                 AppDimensions.numD035))),
 
@@ -343,7 +343,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                               child: Text(
                                 AppStrings.orText,
                                 style: TextStyle(
-                                    color: Colors.black,
+                                    color: Theme.of(context).textTheme.bodyLarge?.color,
                                     fontSize:
                                         size.width * AppDimensions.numD04),
                               ),
@@ -445,7 +445,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                     Text(
                                       AppStrings.continueGoogleText,
                                       style: TextStyle(
-                                          color: Colors.black,
+                                          color: Theme.of(context).textTheme.bodyLarge?.color,
                                           fontSize: size.width *
                                               AppDimensions.numD036,
                                           fontWeight: FontWeight.w500),
@@ -466,7 +466,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                   TextSpan(
                                       text: AppStrings.donotHaveAccountText,
                                       style: TextStyle(
-                                          color: Colors.black,
+                                          color: Theme.of(context).textTheme.bodyLarge?.color,
                                           fontSize: size.width *
                                               AppDimensions.numD035,
                                           fontWeight: FontWeight.normal)),

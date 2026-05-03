@@ -131,26 +131,26 @@ class _WalkthroughState extends State<Walkthrough> {
                                 "assets/commonImages/walkTitleBackGround.png"),
                             fit: BoxFit.fitWidth,
                           )),
-                          child: Text(
-                            walkthroughList[index].title1,
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: "AirbnbCereal_W_Bd",
-                                fontSize: size.width * AppDimensions.numD07),
-                          ),
+                            child: Text(
+                              walkthroughList[index].title1,
+                              style: TextStyle(
+                                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: "AirbnbCereal_W_Bd",
+                                  fontSize: size.width * AppDimensions.numD07),
+                            ),
                         ),
                         Text(
                           walkthroughList[index].title2,
                           style: TextStyle(
-                              color: Colors.black,
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                               fontFamily: "AirbnbCereal_W_Bd",
                               fontWeight: FontWeight.w600,
                               fontSize: size.width * AppDimensions.numD07),
                         ),
                         Text(walkthroughList[index].description,
                             style: TextStyle(
-                                color: Colors.black,
+                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                 fontFamily: 'AirbnbCereal_W_Bk',
                                 fontSize: size.width * AppDimensions.numD035)),
                         SizedBox(
@@ -186,15 +186,15 @@ class _WalkthroughState extends State<Walkthrough> {
                                               size.width * AppDimensions.numD02,
                                           vertical: size.width *
                                               AppDimensions.numD03),
-                                      child: Text(
-                                        AppStrings.skipText,
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.normal,
-                                            fontFamily: 'AirbnbCereal_W_Md',
-                                            fontSize: size.width *
-                                                AppDimensions.numD03),
-                                      ),
+                                        child: Text(
+                                          AppStrings.skipText,
+                                          style: TextStyle(
+                                              color: Theme.of(context).textTheme.bodyLarge?.color,
+                                              fontWeight: FontWeight.normal,
+                                              fontFamily: 'AirbnbCereal_W_Md',
+                                              fontSize: size.width *
+                                                  AppDimensions.numD03),
+                                        ),
                                     ))
                                 : Container(),
                             const Spacer(),
@@ -248,14 +248,14 @@ class _WalkthroughState extends State<Walkthrough> {
                                           size.width * AppDimensions.numD02,
                                       vertical:
                                           size.width * AppDimensions.numD03),
-                                  child: Text(
-                                    AppStrings.nextText,
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize:
-                                            size.width * AppDimensions.numD03,
-                                        fontWeight: FontWeight.normal),
-                                  ),
+                                    child: Text(
+                                      AppStrings.nextText,
+                                      style: TextStyle(
+                                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                                          fontSize:
+                                              size.width * AppDimensions.numD03,
+                                          fontWeight: FontWeight.normal),
+                                    ),
                                 )),
                           ],
                         ),

@@ -43,11 +43,13 @@ Future<bool?> showLocationPermissionDialogWithImage({
               insetPadding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
               content: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(size.width * 0.045),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Colors.black.withOpacity(0.1)
+                          : Colors.white.withOpacity(0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
@@ -69,7 +71,7 @@ Future<bool?> showLocationPermissionDialogWithImage({
                               child: Text(
                                 displayHeading,
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color: Theme.of(context).textTheme.bodyLarge?.color,
                                   fontSize: size.width * 0.04,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -82,7 +84,7 @@ Future<bool?> showLocationPermissionDialogWithImage({
                                 },
                                 icon: Icon(
                                   Icons.close,
-                                  color: Colors.black,
+                                  color: Theme.of(context).iconTheme.color,
                                   size: size.width * 0.06,
                                 ),
                               ),
@@ -96,8 +98,8 @@ Future<bool?> showLocationPermissionDialogWithImage({
                           horizontal: size.width * 0.04,
                           vertical: 10,
                         ),
-                        child: const Divider(
-                          color: Colors.grey,
+                        child: Divider(
+                          color: Theme.of(context).dividerColor,
                           thickness: 0.5,
                         ),
                       ),
@@ -116,7 +118,7 @@ Future<bool?> showLocationPermissionDialogWithImage({
                               height: 120, // fixed height
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.grey[300]!),
+                                border: Border.all(color: Theme.of(context).dividerColor),
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
@@ -153,7 +155,7 @@ Future<bool?> showLocationPermissionDialogWithImage({
                                 style: {
                                   "body": Style(
                                     textAlign: TextAlign.justify,
-                                    color: Colors.black87,
+                                    color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8) ?? Colors.black87,
                                     fontSize: FontSize(size.width * 0.035),
                                     fontWeight: FontWeight.w500,
                                     lineHeight: LineHeight(1.2),
@@ -180,7 +182,7 @@ Future<bool?> showLocationPermissionDialogWithImage({
                             Container(
                               width: size.width * 0.08,
                               height: size.width * 0.06,
-                              color: Colors.white,
+                              color: Theme.of(context).cardColor,
                               child: Checkbox(
                                 value: isChecked,
                                 activeColor: AppColorTheme.colorThemePink,
@@ -202,7 +204,7 @@ Future<bool?> showLocationPermissionDialogWithImage({
                                   text: TextSpan(
                                     style: TextStyle(
                                       fontSize: size.width * 0.035,
-                                      color: Colors.black87,
+                                      color: Theme.of(context).textTheme.bodyMedium?.color,
                                     ),
                                     children: [
                                       const TextSpan(
@@ -261,7 +263,9 @@ Future<bool?> showLocationPermissionDialogWithImage({
                                 child: Text(
                                   cancelText ?? "Don't Allow",
                                   style: TextStyle(
-                                    color: Colors.grey[600],
+                                    color: Theme.of(context).brightness == Brightness.light
+                                        ? Colors.grey[600]
+                                        : Colors.grey[400],
                                     fontSize: size.width * 0.04,
                                     fontWeight: FontWeight.w600,
                                   ),

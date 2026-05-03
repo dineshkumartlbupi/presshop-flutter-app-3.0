@@ -92,11 +92,11 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(40),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
+                            color: Theme.of(context).shadowColor.withOpacity(0.1),
                             blurRadius: 5,
                             offset: const Offset(0, 3),
                           ),
@@ -118,7 +118,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                               key: ValueKey<bool>(isSelectUpArrow),
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: const Color(0xFF4F4F4F),
+                                color: Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF4F4F4F),
                                 fontSize: size.width * AppDimensions.numD04,
                               ),
                             ),
@@ -131,7 +131,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                               width: 46,
                               height: 46,
                               decoration: const BoxDecoration(
-                                color: Colors.redAccent,
+                                color: AppColorTheme.colorThemePink,
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
@@ -179,7 +179,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                           textAlign: TextAlign.justify,
                                           softWrap: true,
                                           style: TextStyle(
-                                              color: Colors.black,
+                                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                                               fontSize: size.width *
                                                   AppDimensions.numD035,
                                               fontWeight: FontWeight.bold),
@@ -218,7 +218,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                                     vertical: size.width *
                                                         AppDimensions.numD01)),
                                             "h2": Style(
-                                                color: Colors.black,
+                                                color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                                                 whiteSpace: WhiteSpace.normal,
                                                 fontSize: FontSize(size.width *
                                                     AppDimensions.numD04),
@@ -227,7 +227,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                                     vertical: size.width *
                                                         AppDimensions.numD01)),
                                             "h3": Style(
-                                                color: Colors.black,
+                                                color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                                                 whiteSpace: WhiteSpace.pre,
                                                 textAlign: TextAlign.justify,
                                                 fontSize: FontSize(size.width *
@@ -236,7 +236,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                                     vertical: size.width *
                                                         AppDimensions.numD01)),
                                             "h4": Style(
-                                                color: Colors.black,
+                                                color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                                                 fontSize: FontSize(size.width *
                                                     AppDimensions.numD035),
                                                 padding: HtmlPaddings.symmetric(
@@ -293,7 +293,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
             if (state is TermsLoading)
               Positioned.fill(
                 child: Container(
-                  color: Colors.white,
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   child: showAnimatedLoader(size),
                 ),
               ),
@@ -601,7 +601,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                       text: "I have read and agree to Press",
                       style: TextStyle(
                           fontSize: size.width * AppDimensions.numD038,
-                          color: Colors.black,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                           fontFamily: "AirbnbCereal",
                           fontWeight: FontWeight.w400,
                           height: 1.5),
@@ -610,7 +610,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                           text: "Hop's",
                           style: TextStyle(
                               fontSize: size.width * AppDimensions.numD038,
-                              color: Colors.black,
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400,
                               height: 1.5),
@@ -620,7 +620,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                               "  terms & conditions as set out in the user agreement.",
                           style: TextStyle(
                               fontSize: size.width * AppDimensions.numD038,
-                              color: Colors.black,
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400,
                               height: 1.5),
@@ -668,7 +668,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                       text: "I have read and agree to Press",
                       style: TextStyle(
                           fontSize: size.width * AppDimensions.numD038,
-                          color: Colors.black,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                           fontFamily: "AirbnbCereal",
                           fontWeight: FontWeight.w400,
                           height: 1.5),
@@ -677,7 +677,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                           text: "Hop's",
                           style: TextStyle(
                               fontSize: size.width * AppDimensions.numD038,
-                              color: Colors.black,
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400,
                               height: 1.5),
@@ -686,7 +686,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                           text: " privacy policy.",
                           style: TextStyle(
                               fontSize: size.width * AppDimensions.numD038,
-                              color: Colors.black,
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400,
                               height: 1.5),
@@ -734,7 +734,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                       text: "By uploading content on the Press",
                       style: TextStyle(
                           fontSize: size.width * AppDimensions.numD038,
-                          color: Colors.black,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                           fontFamily: "AirbnbCereal",
                           fontWeight: FontWeight.w400,
                           height: 1.5),
@@ -743,7 +743,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                           text: "Hop",
                           style: TextStyle(
                               fontSize: size.width * AppDimensions.numD038,
-                              color: Colors.black,
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400,
                               height: 1.5),
@@ -753,7 +753,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                               " app and platform, you are warranting that you own all proprietary rights, or are the authorised representative of the applicable copyright owner(s) of such content, including copyright.",
                           style: TextStyle(
                               fontSize: size.width * AppDimensions.numD038,
-                              color: Colors.black,
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400,
                               height: 1.5),
@@ -801,7 +801,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                       text: "By using the Press",
                       style: TextStyle(
                           fontSize: size.width * AppDimensions.numD038,
-                          color: Colors.black,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                           fontFamily: "AirbnbCereal",
                           fontWeight: FontWeight.w400,
                           height: 1.5),
@@ -810,7 +810,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                           text: "Hop",
                           style: TextStyle(
                               fontSize: size.width * AppDimensions.numD038,
-                              color: Colors.black,
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400,
                               height: 1.5),
@@ -820,7 +820,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                               " app and platform, you warrant that you are 18 years of age or older, and have the legal authority to enter into these Terms.",
                           style: TextStyle(
                               fontSize: size.width * AppDimensions.numD038,
-                              color: Colors.black,
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400,
                               height: 1.5),
@@ -852,7 +852,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                 AppStrings.declineText.toTitleCase(),
                 size,
                 commonButtonTextStyle(size),
-                commonButtonStyle(size, Colors.black), () {
+                commonButtonStyle(size, Theme.of(context).brightness == Brightness.dark ? AppColorTheme.colorGreyNew : Colors.black), () {
               declinedDialog("", size, () {});
             }),
           )),
@@ -896,7 +896,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                 builder: (context, setState) {
                   return Container(
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(
                             size.width * AppDimensions.numD045)),
                     child: Column(
@@ -911,7 +911,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                               Text(
                                 "${AppStrings.tcText} ${AppStrings.declinedText}?",
                                 style: TextStyle(
-                                    color: Colors.black,
+                                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                                     fontSize: size.width * AppDimensions.numD05,
                                     fontWeight: FontWeight.bold),
                               ),
@@ -922,7 +922,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                   },
                                   icon: Icon(
                                     Icons.close,
-                                    color: Colors.black,
+                                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                                     size: size.width * AppDimensions.numD06,
                                   ))
                             ],
@@ -931,8 +931,8 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                         Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: size.width * AppDimensions.numD04),
-                          child: const Divider(
-                            color: Colors.black,
+                          child: Divider(
+                            color: Theme.of(context).dividerColor,
                             thickness: 0.5,
                           ),
                         ),
@@ -945,7 +945,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                           child: Text(
                             AppStrings.tcDeclinedNoteText,
                             style: TextStyle(
-                                color: Colors.black,
+                                color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                                 fontSize: size.width * AppDimensions.numD04,
                                 fontWeight: FontWeight.w400),
                           ),
@@ -967,7 +967,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                     AppStrings.declineText.toTitleCase(),
                                     size,
                                     commonButtonTextStyle(size),
-                                    commonButtonStyle(size, Colors.black), () {
+                                    commonButtonStyle(size, Theme.of(context).brightness == Brightness.dark ? AppColorTheme.colorGreyNew : Colors.black), () {
                                   dialogContext.pop();
                                   this.context.pop(false);
                                 }),

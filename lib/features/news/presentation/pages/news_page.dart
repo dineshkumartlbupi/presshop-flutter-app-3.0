@@ -215,7 +215,7 @@ class _NewsPageState extends State<NewsPage>
     var size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: NewHomeAppBar(
         size: size,
         hideLeading: widget.hideLeading,
@@ -267,10 +267,6 @@ class _NewsPageState extends State<NewsPage>
                           Tab(text: "Local News"),
                         ],
                       ),
-                    ),
-                    const Divider(
-                      color: Color(0xFFD8D8D8),
-                      thickness: 1.5,
                     ),
                   ],
                 ),
@@ -333,7 +329,10 @@ class _NewsPageState extends State<NewsPage>
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: size.width * AppDimensions.numD04,
-                            color: Colors.black,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
                           ),
                         ),
                       ),
@@ -399,11 +398,11 @@ class _NewsPageState extends State<NewsPage>
                     maxHeight: size.height * 0.4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Theme.of(context).shadowColor.withOpacity(0.1),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -532,7 +531,7 @@ class _NewsPageState extends State<NewsPage>
                     child: Text(
                       item.userName ?? "Unknown",
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontWeight: FontWeight.w500,
                         fontSize: size.width * AppDimensions.numD035,
                         fontFamily: "AirbnbCereal",
@@ -553,7 +552,7 @@ class _NewsPageState extends State<NewsPage>
             style: commonTextStyle(
                 size: size,
                 fontSize: size.width * AppDimensions.numD04,
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 lineHeight: 1.5,
                 fontWeight: FontWeight.w700)),
         SizedBox(height: size.width * AppDimensions.numD02),
@@ -565,14 +564,13 @@ class _NewsPageState extends State<NewsPage>
           style: commonTextStyle(
               size: size,
               fontSize: size.width * AppDimensions.numD03,
-              color: Colors.black,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
               lineHeight: 2,
               fontWeight: FontWeight.normal),
           maxLines: 4,
           overflow: TextOverflow.ellipsis,
         ),
         SizedBox(height: size.width * AppDimensions.numD04),
-
         Row(
           children: [
             _buildStatItem(
@@ -582,12 +580,12 @@ class _NewsPageState extends State<NewsPage>
                     : "assets/icons/news_heart.png",
                 width: size.width * AppDimensions.numD03,
                 height: size.width * AppDimensions.numD03,
-                color: Colors.grey[600],
+                color: Theme.of(context).hintColor,
               ),
               "${item.likesCount ?? 0}",
               item.likesCount == 1 || item.likesCount == 0 ? 'like' : 'likes',
               size,
-              color: Colors.grey[500],
+              color: Theme.of(context).hintColor,
             ),
 
             SizedBox(width: size.width * AppDimensions.numD02),
@@ -596,12 +594,12 @@ class _NewsPageState extends State<NewsPage>
                 "assets/icons/news_eye.png",
                 width: size.width * AppDimensions.numD04,
                 height: size.width * AppDimensions.numD04,
-                color: Colors.grey[500],
+                color: Theme.of(context).hintColor,
               ),
               "${item.viewCount ?? 0}",
               item.viewCount == 1 || item.viewCount == 0 ? 'view' : 'views',
               size,
-              color: Colors.grey[500],
+              color: Theme.of(context).hintColor,
             ),
             SizedBox(width: size.width * AppDimensions.numD02),
 
@@ -611,7 +609,7 @@ class _NewsPageState extends State<NewsPage>
                 Image.asset(
                   "${iconsPath}ic_clock.png",
                   height: size.width * AppDimensions.numD03,
-                  color: Colors.grey[500],
+                  color: Theme.of(context).hintColor,
                 ),
                 SizedBox(width: size.width * AppDimensions.numD01),
                 Builder(builder: (context) {
@@ -623,7 +621,7 @@ class _NewsPageState extends State<NewsPage>
                     return Text(
                       DateFormat('hh:mm a').format(parsed),
                       style: TextStyle(
-                        color: Colors.grey[500],
+                        color: Theme.of(context).hintColor,
                         fontWeight: FontWeight.w400,
                         fontSize: size.width * AppDimensions.numD032,
                         fontFamily: "AirbnbCereal",
@@ -633,7 +631,7 @@ class _NewsPageState extends State<NewsPage>
                   return Text(
                     timeStr,
                     style: TextStyle(
-                      color: Colors.grey[500],
+                      color: Theme.of(context).hintColor,
                       fontWeight: FontWeight.w400,
                       fontSize: size.width * AppDimensions.numD032,
                       fontFamily: "AirbnbCereal",
@@ -650,7 +648,7 @@ class _NewsPageState extends State<NewsPage>
                 Image.asset(
                   "${iconsPath}ic_yearly_calendar.png",
                   height: size.width * AppDimensions.numD03,
-                  color: Colors.grey[500],
+                  color: Theme.of(context).hintColor,
                 ),
                 SizedBox(width: size.width * AppDimensions.numD01),
                 Builder(builder: (context) {
@@ -664,7 +662,7 @@ class _NewsPageState extends State<NewsPage>
                         ? DateFormat("dd MMM yyyy").format(parsedDate)
                         : (item.createdAt ?? ""),
                     style: TextStyle(
-                      color: Colors.grey[500],
+                      color: Theme.of(context).hintColor,
                       fontWeight: FontWeight.w400,
                       fontSize: size.width * AppDimensions.numD032,
                       fontFamily: "AirbnbCereal",
@@ -676,13 +674,12 @@ class _NewsPageState extends State<NewsPage>
           ],
         ),
         SizedBox(height: size.width * AppDimensions.numD02),
-
         // Date and Location
         Row(
           children: [
             Image.asset("assets/icons/news_location.png",
                 height: size.width * AppDimensions.numD04,
-                color: Colors.grey[500]),
+                color: Theme.of(context).hintColor),
             SizedBox(width: size.width * AppDimensions.numD01),
             Expanded(
               child: Text(
@@ -690,7 +687,7 @@ class _NewsPageState extends State<NewsPage>
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: size.width * AppDimensions.numD03,
-                    color: Colors.grey[500],
+                    color: Theme.of(context).hintColor,
                     fontFamily: "AirbnbCereal"),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -743,7 +740,7 @@ class _NewsPageState extends State<NewsPage>
               child: Text(
                 "Read More",
                 style: TextStyle(
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.w500,
                   fontSize: size.width * AppDimensions.numD035,
                   // decoration: TextDecoration.underline,
@@ -771,7 +768,7 @@ class _NewsPageState extends State<NewsPage>
               TextSpan(
                 text: "$value ",
                 style: TextStyle(
-                  color: color ?? Colors.black,
+                  color: color ?? Theme.of(context).textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.w400,
                   fontSize: size.width * AppDimensions.numD032,
                   fontFamily: "AirbnbCereal",
@@ -780,7 +777,7 @@ class _NewsPageState extends State<NewsPage>
               TextSpan(
                 text: label,
                 style: TextStyle(
-                  color: color ?? Colors.black,
+                  color: color ?? Theme.of(context).textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.w400,
                   fontSize: size.width * AppDimensions.numD032,
                   fontFamily: "AirbnbCereal",
@@ -992,7 +989,7 @@ class _FilterBottomSheetContentState extends State<_FilterBottomSheetContent> {
             widget.size.width * AppDimensions.numD05,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(widget.size.width * AppDimensions.numD05),
           topRight: Radius.circular(widget.size.width * AppDimensions.numD05),
@@ -1013,8 +1010,7 @@ class _FilterBottomSheetContentState extends State<_FilterBottomSheetContent> {
                 },
                 icon: Icon(
                   Icons.close,
-                  color: Theme.of(context).textTheme.bodyLarge?.color ??
-                      Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                   size: widget.size.width * AppDimensions.numD07,
                 ),
               ),
@@ -1024,8 +1020,7 @@ class _FilterBottomSheetContentState extends State<_FilterBottomSheetContent> {
                     size: widget.size,
                     fontSize: widget.size.width *
                         AppDimensions.appBarHeadingFontSizeNew,
-                    color: Theme.of(context).textTheme.bodyLarge?.color ??
-                        Colors.black,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                     fontWeight: FontWeight.bold),
               ),
               TextButton(
@@ -1088,11 +1083,11 @@ class _FilterBottomSheetContentState extends State<_FilterBottomSheetContent> {
                       maxHeight: widget.size.height * 0.4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Theme.of(context).shadowColor.withOpacity(0.1),
                           blurRadius: 10,
                           offset: const Offset(0, 5),
                         ),

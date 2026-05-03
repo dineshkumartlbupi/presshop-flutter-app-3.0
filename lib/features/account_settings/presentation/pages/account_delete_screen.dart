@@ -292,11 +292,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                                         fontWeight: FontWeight.bold),
                                     commonButtonStyle(
                                         size,
-                                        Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.color ??
-                                            Colors.black), () {
+                                        Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black), () {
                                   context.pop();
                                   _accountSettingsBloc.add(
                                     DeleteAccountEvent(reason: selectReason),

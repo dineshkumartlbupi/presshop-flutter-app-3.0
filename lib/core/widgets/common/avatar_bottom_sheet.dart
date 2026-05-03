@@ -22,6 +22,13 @@ class AvatarBottomSheet {
               return Container(
                 height: size.height * 0.6,
                 padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -36,7 +43,7 @@ class AvatarBottomSheet {
                             style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD05,
-                              color: Colors.black,
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -46,7 +53,7 @@ class AvatarBottomSheet {
                             onPressed: () => context.pop(),
                             icon: Icon(
                               Icons.close,
-                              color: Colors.black,
+                              color: Theme.of(context).iconTheme.color,
                               size: size.width * AppDimensions.numD06,
                             ),
                           ),
@@ -117,17 +124,19 @@ class AvatarBottomSheet {
                                                     return child;
                                                   }
                                                   return Shimmer.fromColors(
-                                                    baseColor:
-                                                        Colors.grey[300]!,
-                                                    highlightColor:
-                                                        Colors.grey[100]!,
+                                                    baseColor: Theme.of(context).brightness == Brightness.light
+                                                        ? Colors.grey[300]!
+                                                        : Colors.grey[800]!,
+                                                    highlightColor: Theme.of(context).brightness == Brightness.light
+                                                        ? Colors.grey[100]!
+                                                        : Colors.grey[700]!,
                                                     child: Container(
                                                       width: size.width *
                                                           AppDimensions.numD20,
                                                       height: size.width *
                                                           AppDimensions.numD20,
                                                       decoration: BoxDecoration(
-                                                        color: Colors.white,
+                                                        color: Theme.of(context).scaffoldBackgroundColor,
                                                         borderRadius:
                                                             BorderRadius.circular(
                                                                 8),
@@ -142,7 +151,7 @@ class AvatarBottomSheet {
                                                   alignment: Alignment.topRight,
                                                   child: Icon(
                                                     Icons.check,
-                                                    color: Colors.black,
+                                                    color: Theme.of(context).iconTheme.color,
                                                     size: size.width *
                                                         AppDimensions.numD06,
                                                   ),

@@ -599,7 +599,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
-                                      color: Colors.black,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
                                       fontWeight: FontWeight.w400),
                                 ),
                                 Text(
@@ -608,7 +608,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
-                                      color: Colors.black,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
                                       fontWeight: FontWeight.w400),
                                 ),
                               ],
@@ -620,8 +620,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                             padding: EdgeInsets.only(
                               top: size.width * AppDimensions.numD01,
                             ),
-                            child: const Divider(
-                              color: Colors.white,
+                            child: Divider(
+                              color: Theme.of(context).dividerColor,
                               thickness: 1.5,
                             ),
                           ),
@@ -669,7 +669,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                         right: size.width * AppDimensions.numD05,
                       ),
                       decoration: BoxDecoration(
-                          color: AppColorTheme.colorLightGrey,
+                          color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(
                               size.width * AppDimensions.numD02)),
                       child: Column(
@@ -751,7 +751,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
-                                      color: Colors.black,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
                                       fontWeight: FontWeight.w400),
                                 ),
                                 Text(
@@ -762,7 +762,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
-                                      color: Colors.black,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
                                       fontWeight: FontWeight.w400),
                                 ),
                               ],
@@ -782,7 +782,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
-                                      color: Colors.black,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
                                       fontWeight: FontWeight.w400),
                                 ),
                                 Text(
@@ -793,7 +793,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
-                                      color: Colors.black,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
                                       fontWeight: FontWeight.w400),
                                 ),
                               ],
@@ -812,7 +812,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
-                                      color: Colors.black,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
                                       fontWeight: FontWeight.w400),
                                 ),
                                 Text(
@@ -823,7 +823,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
-                                      color: Colors.black,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
                                       fontWeight: FontWeight.w400),
                                 ),
                               ],
@@ -843,7 +843,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
-                                      color: Colors.black,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
                                       fontWeight: FontWeight.w400),
                                 ),
                                 Text(
@@ -854,7 +854,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
-                                      color: Colors.black,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
                                       fontWeight: FontWeight.w400),
                                 ),
                               ],
@@ -874,7 +874,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
-                                      color: Colors.black,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
                                       fontWeight: FontWeight.w400),
                                 ),
                                 Text(
@@ -885,7 +885,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
-                                      color: Colors.black,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
                                       fontWeight: FontWeight.w400),
                                 ),
                               ],
@@ -897,8 +897,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                             padding: EdgeInsets.only(
                               top: size.width * AppDimensions.numD01,
                             ),
-                            child: const Divider(
-                              color: Colors.white,
+                            child: Divider(
+                              color: Theme.of(context).dividerColor,
                               thickness: 1.5,
                             ),
                           ),
@@ -979,7 +979,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
         context: context,
         isScrollControlled: true,
         useSafeArea: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).cardColor,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
           topLeft: Radius.circular(size.width * AppDimensions.numD085),
@@ -1028,8 +1028,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                 color: Theme.of(context)
                                         .textTheme
                                         .bodyLarge
-                                        ?.color ??
-                                    Colors.black,
+                                        ?.color,
                                 fontWeight: FontWeight.bold),
                           ),
                           TextButton(
@@ -1066,7 +1065,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD05,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w500),
                       ),
 
@@ -1083,7 +1082,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD05,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w500),
                       ),
 
@@ -1170,7 +1169,9 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                 left: size.width * AppDimensions.numD02,
                 right: size.width * AppDimensions.numD02,
               ),
-              color: list[index].isSelected ? Colors.grey.shade400 : null,
+              color: list[index].isSelected 
+                ? (Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.1) : Colors.grey.shade400) 
+                : null,
               child: Row(
                 children: [
                   list[index].icon.isNotEmpty
@@ -1197,7 +1198,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   ))
                           : Image.asset(
                               "$iconsPath${list[index].icon}",
-                              color: Colors.black,
+                            color: Theme.of(context).iconTheme.color,
                               height:
                                   list[index].name == AppStrings.soldContentText
                                       ? size.width * AppDimensions.numD06
@@ -1252,7 +1253,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD04),
                                   border: Border.all(
-                                      width: 1, color: const Color(0xFFDEE7E6)),
+                                      width: 1, color: Theme.of(context).dividerColor),
                                 ),
                                 child: Row(
                                   mainAxisAlignment:
@@ -1268,15 +1269,18 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                           size: size,
                                           fontSize: size.width *
                                               AppDimensions.numD032,
-                                          color: Colors.black,
+                                          color: Theme.of(context).textTheme.bodyLarge?.color,
                                           fontWeight: FontWeight.w400),
                                     ),
                                     SizedBox(
                                       width: size.width * AppDimensions.numD015,
                                     ),
-                                    const Icon(
+                                    Icon(
                                       Icons.arrow_drop_down_sharp,
-                                      color: Colors.black,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color,
                                     )
                                   ],
                                 ),
@@ -1328,7 +1332,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD04),
                                   border: Border.all(
-                                      width: 1, color: const Color(0xFFDEE7E6)),
+                                      width: 1, color: Theme.of(context).dividerColor),
                                 ),
                                 child: Row(
                                   mainAxisAlignment:
@@ -1343,15 +1347,18 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                           size: size,
                                           fontSize: size.width *
                                               AppDimensions.numD032,
-                                          color: Colors.black,
+                                          color: Theme.of(context).textTheme.bodyLarge?.color,
                                           fontWeight: FontWeight.w400),
                                     ),
                                     SizedBox(
                                       width: size.width * AppDimensions.numD02,
                                     ),
-                                    const Icon(
+                                    Icon(
                                       Icons.arrow_drop_down_sharp,
-                                      color: Colors.black,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color,
                                     )
                                   ],
                                 ),
@@ -1362,7 +1369,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                       : Text(item.name,
                           style: TextStyle(
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w400,
                           ))
                 ],

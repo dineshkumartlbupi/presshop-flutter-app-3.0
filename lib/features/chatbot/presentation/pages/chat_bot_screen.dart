@@ -225,11 +225,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                                 AppDimensions.numD03,
                                           ),
                                           decoration: BoxDecoration(
-                                              color: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge
-                                                      ?.color ??
-                                                  Colors.black,
+                                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                                               shape: BoxShape.circle,
                                               boxShadow: [
                                                 BoxShadow(
@@ -479,11 +475,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                       top: size.width * AppDimensions.numD02,
                                     ),
                                     decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.color ??
-                                            Colors.black,
+                                        color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                                         shape: BoxShape.circle,
                                         boxShadow: [
                                           BoxShadow(
@@ -598,7 +590,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                           alignment: Alignment.center,
                           child: Image.asset(
                             "${iconsPath}ic_arrow_right.png",
-                            color: Colors.black,
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                           ),
                         ),
                       ),

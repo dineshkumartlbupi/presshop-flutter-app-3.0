@@ -278,8 +278,8 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                   /// Referral Code Box
                   Container(
                       decoration: BoxDecoration(
-                          border: Border.all(color: AppColorTheme.colorGrey6),
-                          color: Colors.grey[300],
+                          border: Border.all(color: Theme.of(context).dividerColor),
+                          color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(
                               size.width * AppDimensions.numD03)),
                       padding: EdgeInsets.only(
@@ -315,7 +315,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                               children: [
                                 Icon(
                                   Icons.copy,
-                                  color: AppColorTheme.colorGrey6,
+                                  color: Theme.of(context).textTheme.bodySmall?.color,
                                   size: size.width * AppDimensions.numD05,
                                 ),
                                 Text("Tap to copy",
@@ -323,7 +323,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD035,
-                                        color: AppColorTheme.colorGrey6,
+                                        color: Theme.of(context).textTheme.bodySmall?.color,
                                         fontWeight: FontWeight.w400)),
                               ],
                             ),

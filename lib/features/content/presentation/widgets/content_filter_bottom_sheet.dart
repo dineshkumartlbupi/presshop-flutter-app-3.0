@@ -57,7 +57,7 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
           onPressed: () => context.pop(),
           icon: Icon(
             Icons.close,
-            color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
+            color: Theme.of(context).iconTheme.color,
             size: widget.size.width * AppDimensions.numD07,
           ),
         ),
@@ -70,8 +70,7 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
                   size: widget.size,
                   fontSize: widget.size.width *
                       AppDimensions.appBarHeadingFontSizeNew,
-                  color: Theme.of(context).textTheme.bodyLarge?.color ??
-                      Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.bold),
             ),
           ),
@@ -100,7 +99,7 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
               size: widget.size,
               fontSize: widget.size.width * AppDimensions.numD05,
               color:
-                  Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
+                  Theme.of(context).textTheme.bodyLarge?.color,
               fontWeight: FontWeight.w500),
         ),
         _buildFilterList(list, isSort),
@@ -125,7 +124,9 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
                   : widget.size.width * AppDimensions.numD025,
               horizontal: widget.size.width * AppDimensions.numD02,
             ),
-            color: item.isSelected ? Colors.grey.shade400 : null,
+            color: item.isSelected 
+                ? (Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.1) : Colors.grey.shade400) 
+                : null,
             child: Row(
               children: [
                 _buildItemIcon(item),
@@ -140,8 +141,7 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
                                 color: Theme.of(context)
                                         .textTheme
                                         .bodyLarge
-                                        ?.color ??
-                                    Colors.black,
+                                        ?.color,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: "AirbnbCereal_W_Bk")),
                       )
@@ -158,7 +158,7 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
   Widget _buildItemIcon(FilterModel item) {
     return Image.asset(
       "$iconsPath${item.icon}",
-      color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
+      color: Theme.of(context).iconTheme.color,
       height: item.name == AppStrings.soldContentText
           ? widget.size.width * AppDimensions.numD06
           : widget.size.width * AppDimensions.numD05,
@@ -223,7 +223,7 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
         decoration: BoxDecoration(
           borderRadius:
               BorderRadius.circular(widget.size.width * AppDimensions.numD04),
-          border: Border.all(width: 1, color: const Color(0xFFDEE7E6)),
+          border: Border.all(width: 1, color: Theme.of(context).dividerColor),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -235,8 +235,7 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
                 style: commonTextStyle(
                     size: widget.size,
                     fontSize: widget.size.width * AppDimensions.numD035,
-                    color: Theme.of(context).textTheme.bodyLarge?.color ??
-                        Colors.black,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                     fontWeight: FontWeight.w400),
               ),
             ),

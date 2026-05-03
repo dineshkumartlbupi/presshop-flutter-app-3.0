@@ -171,7 +171,10 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                                                   size: size,
                                                   fontSize: size.width *
                                                       AppDimensions.numD035,
-                                                  color: Colors.black,
+                                                  color: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge
+                                                      ?.color,
                                                   lineHeight: 1.5,
                                                   fontWeight: FontWeight.w600)),
                                         ),
@@ -276,7 +279,11 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                                           size: size,
                                           fontSize:
                                               size.width * AppDimensions.numD03,
-                                          color: Colors.black,
+                                          color: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.color ??
+                                              Colors.black,
                                           lineHeight: 1.5,
                                           fontWeight: FontWeight.normal),
                                     ),
@@ -314,9 +321,9 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                             );
                           },
                           separatorBuilder: (context, index) {
-                            return const Divider(
+                            return Divider(
                               thickness: 1,
-                              color: AppColorTheme.colorLightGrey,
+                              color: Theme.of(context).dividerColor,
                             );
                           },
                           itemCount: myDraftList.length),
@@ -476,6 +483,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
         context: context,
         isScrollControlled: true,
         useSafeArea: true,
+        backgroundColor: Theme.of(context).cardColor,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
           topLeft: Radius.circular(size.width * AppDimensions.numD085),
@@ -517,11 +525,8 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                               size: size,
                               fontSize: size.width *
                                   AppDimensions.appBarHeadingFontSizeNew,
-                              color: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.color ??
-                                  Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.bold),
                         ),
                         TextButton(
@@ -553,7 +558,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD05,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w500),
                     ),
 
@@ -570,7 +575,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD05,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w500),
                     ),
 
@@ -580,27 +585,29 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                     ),
 
                     /// Button
-                    Container(
-                      width: size.width,
-                      height: size.width * AppDimensions.numD13,
-                      margin: EdgeInsets.symmetric(
-                          horizontal: size.width * AppDimensions.numD04),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: size.width * AppDimensions.numD04,
+                    SafeArea(
+                      child: Container(
+                        width: size.width,
+                        height: size.width * AppDimensions.numD13,
+                        margin: EdgeInsets.symmetric(
+                            horizontal: size.width * AppDimensions.numD04),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD04,
+                        ),
+                        child: commonElevatedButton(
+                            AppStrings.applyText,
+                            size,
+                            commonTextStyle(
+                                size: size,
+                                fontSize: size.width * AppDimensions.numD035,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700),
+                            commonButtonStyle(
+                                size, AppColorTheme.colorThemePink), () {
+                          context.pop();
+                          myDraftApi();
+                        }),
                       ),
-                      child: commonElevatedButton(
-                          AppStrings.applyText,
-                          size,
-                          commonTextStyle(
-                              size: size,
-                              fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, AppColorTheme.colorThemePink),
-                          () {
-                        context.pop();
-                        myDraftApi();
-                      }),
                     ),
                     SizedBox(
                       height: size.width * AppDimensions.numD02,
@@ -647,12 +654,16 @@ class MyDraftScreenState extends State<MyDraftScreen> {
               left: size.width * AppDimensions.numD02,
               right: size.width * AppDimensions.numD02,
             ),
-            color: item.isSelected ? Colors.grey.shade400 : null,
+            color: item.isSelected
+                ? (Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white.withOpacity(0.1)
+                    : Colors.grey.shade400)
+                : null,
             child: Row(
               children: [
                 Image.asset(
                   "$iconsPath${list[index].icon}",
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                   height: list[index].name == AppStrings.soldContentText
                       ? size.width * AppDimensions.numD06
                       : size.width * AppDimensions.numD05,

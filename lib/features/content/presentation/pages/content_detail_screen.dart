@@ -287,7 +287,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                       headerWidget(),
 
                                       const Divider(
-                                        color: AppColorTheme.colorGrey1,
+                                        color: AppColorTheme.colorGrey2,
                                       ),
 
                                       /// Description
@@ -312,7 +312,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                         ),
                                         if (isOwner)
                                           const Divider(
-                                              color: AppColorTheme.colorGrey1),
+                                            color: AppColorTheme.colorGrey2,
+                                          ),
                                         SizedBox(
                                           height:
                                               size.width * AppDimensions.numD02,
@@ -353,7 +354,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                       ),
                                       if (isOwner)
                                         const Divider(
-                                            color: AppColorTheme.colorGrey1),
+                                            color: AppColorTheme.colorGrey2),
 
                                       Column(
                                           mainAxisSize: MainAxisSize.min,
@@ -647,6 +648,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   (contentItem!.isExclusive ?? false)
                       ? "${iconsPath}ic_exclusive.png"
                       : "${iconsPath}ic_share.png",
+                  color: AppColorTheme.colorGrey2,
                   height: size.width * AppDimensions.numD035,
                 ),
                 SizedBox(
@@ -709,7 +711,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                           ? localPurchasedCount
                                           : widget.purchasedMediahouseCount) ==
                                       0
-                                  ? Colors.grey
+                                  ? AppColorTheme.colorTextFieldIcon
                                   : AppColorTheme.colorThemePink,
                               size: size.width * AppDimensions.numD042),
                           SizedBox(width: size.width * AppDimensions.numD018),
@@ -739,7 +741,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                           ? localOfferCount
                                           : widget.offerCount) ==
                                       0
-                                  ? Colors.grey
+                                  ? AppColorTheme.colorTextFieldIcon
                                   : AppColorTheme.colorThemePink,
                               size: size.width * AppDimensions.numD042),
                           SizedBox(width: size.width * AppDimensions.numD018),
@@ -752,7 +754,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                             ? localOfferCount
                                             : widget.offerCount) ==
                                         0
-                                    ? Colors.grey
+                                    ? AppColorTheme.colorTextFieldIcon
                                     : AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -1377,11 +1379,11 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
           Image.asset(
             iconPath,
             height: type == "image"
-                ? size.width * 0.035
+                ? size.width * 0.036
                 : type == "video"
                     ? size.width * 0.041
                     : type == "audio"
-                        ? size.width * 0.04
+                        ? size.width * 0.043
                         : size.width * 0.04,
             color: Colors.white,
           ),

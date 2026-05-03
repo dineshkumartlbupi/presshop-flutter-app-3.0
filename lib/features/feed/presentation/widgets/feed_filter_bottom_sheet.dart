@@ -46,8 +46,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                   },
                   icon: Icon(
                     Icons.close,
-                    color: Theme.of(context).textTheme.bodyLarge?.color ??
-                        Colors.black,
+                    color: Theme.of(context).iconTheme.color,
                     size: size.width * AppDimensions.numD07,
                   ),
                 ),
@@ -57,8 +56,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                       size: size,
                       fontSize:
                           size.width * AppDimensions.appBarHeadingFontSizeNew,
-                      color: Theme.of(context).textTheme.bodyLarge?.color ??
-                          Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontWeight: FontWeight.bold),
                 ),
                 TextButton(
@@ -88,7 +86,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
               style: commonTextStyle(
                   size: size,
                   fontSize: size.width * AppDimensions.numD05,
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.w500),
             ),
 
@@ -200,7 +198,9 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
               left: size.width * AppDimensions.numD02,
               right: size.width * AppDimensions.numD02,
             ),
-            color: list[index].isSelected ? Colors.grey.shade400 : null,
+            color: list[index].isSelected 
+                ? (Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.1) : Colors.grey.shade400) 
+                : null,
             child: Row(
               children: [
                 list[index].name == AppStrings.filterDateText
@@ -231,7 +231,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
                                 border: Border.all(
-                                    width: 1, color: const Color(0xFFDEE7E6)),
+                                    width: 1, color: Theme.of(context).dividerColor),
                               ),
                               child: Row(
                                 mainAxisAlignment:
@@ -246,7 +246,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD032,
-                                        color: Colors.black,
+                                        color: Theme.of(context).textTheme.bodyLarge?.color,
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
@@ -254,7 +254,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                                   ),
                                   const Icon(
                                     Icons.arrow_drop_down_sharp,
-                                    color: Colors.black,
+                                    color: Colors.grey,
                                   )
                                 ],
                               ),
@@ -298,7 +298,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
                                 border: Border.all(
-                                    width: 1, color: const Color(0xFFDEE7E6)),
+                                    width: 1, color: Theme.of(context).dividerColor),
                               ),
                               child: Row(
                                 mainAxisAlignment:
@@ -313,7 +313,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD032,
-                                        color: Colors.black,
+                                        color: Theme.of(context).textTheme.bodyLarge?.color,
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
@@ -321,7 +321,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                                   ),
                                   const Icon(
                                     Icons.arrow_drop_down_sharp,
-                                    color: Colors.black,
+                                    color: Colors.grey,
                                   )
                                 ],
                               ),
@@ -332,7 +332,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                     : Text(list[index].name,
                         style: TextStyle(
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w400,
                             fontFamily: "AirbnbCereal_W_Bk"))
               ],
