@@ -366,7 +366,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         horizontal: size.width * AppDimensions.numD02,
                         vertical: size.width * AppDimensions.numD02),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD04),
                     ),
@@ -388,14 +388,17 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     size: size,
                                     fontSize:
                                         size.width * AppDimensions.numD035,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                     fontWeight: FontWeight.normal),
                               ),
                             ),
                             Container(
                               width: 1,
                               height: size.width * AppDimensions.numD04,
-                              color: Colors.grey,
+                              color: Theme.of(context).dividerColor,
                             ),
                             SizedBox(
                               width: size.width * AppDimensions.numD02,
@@ -411,14 +414,17 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight.normal),
                             ),
                             const Spacer(),
                             // Container(
                             //   width: 1,
                             //   height: size.width * AppDimensions.numD04,
-                            //   color: Colors.grey,
+                            //   color: Theme.of(context).dividerColor,
                             // ),
                           ],
                         ),
@@ -442,14 +448,17 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     size: size,
                                     fontSize:
                                         size.width * AppDimensions.numD035,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                     fontWeight: FontWeight.normal),
                               ),
                             ),
                             Container(
                               width: 1,
                               height: size.width * AppDimensions.numD04,
-                              color: Colors.grey,
+                              color: Theme.of(context).dividerColor,
                             ),
                             SizedBox(
                               width: size.width * AppDimensions.numD02,
@@ -465,7 +474,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight.normal),
                             ),
                           ],
@@ -507,7 +519,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD04,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w600),
                       ),
                     ],
@@ -525,7 +537,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                     style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD04,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         lineHeight: 1.5,
                         fontWeight: FontWeight.w600),
                   ),
@@ -540,7 +552,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                     style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD03,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       lineHeight: 1.8,
                       fontWeight: FontWeight.normal,
                     ),
@@ -554,7 +566,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                       style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD035,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -564,7 +576,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                       style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD03,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         lineHeight: 1.8,
                         fontWeight: FontWeight.normal,
                       ),
@@ -588,7 +600,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                       style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD03,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         lineHeight: 1.8,
                         fontWeight: FontWeight.normal,
                       ),
@@ -597,9 +609,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                   ],
 
                   /// Divider
-                  const Divider(
+                  Divider(
                     thickness: 1,
-                    color: AppColorTheme.colorLightGrey,
+                    color: Theme.of(context).dividerColor.withOpacity(0.2),
                   ),
 
                   Container(
@@ -616,7 +628,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                 vertical: size.width * AppDimensions.numD03,
                                 horizontal: size.width * AppDimensions.numD02),
                             decoration: BoxDecoration(
-                                color: AppColorTheme.colorLightGrey,
+                                color: Theme.of(context).cardColor,
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD03)),
                             child: Column(
@@ -627,7 +639,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     Image.asset(
                                       "${iconsPath}ic_yearly_calendar.png",
                                       width: size.width * AppDimensions.numD035,
-                                      color: Colors.black,
+                                      color: Theme.of(context).iconTheme.color,
                                     ),
                                     SizedBox(
                                         width:
@@ -640,7 +652,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                         format: "dd MMM yyyy",
                                       ),
                                       style: TextStyle(
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontSize:
                                             size.width * AppDimensions.numD03,
                                         fontWeight: FontWeight.bold,
@@ -656,7 +671,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     Icon(
                                       Icons.access_time,
                                       size: size.width * AppDimensions.numD035,
-                                      color: Colors.black54,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.color,
                                     ),
                                     SizedBox(
                                         width:
@@ -664,7 +682,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     Text(
                                       "From : ${dateTimeFormatter(dateTime: taskDetail?.createdAt ?? "", format: "hh:mm a")}",
                                       style: TextStyle(
-                                        color: Colors.black54,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.color,
                                         fontSize:
                                             size.width * AppDimensions.numD028,
                                         fontWeight: FontWeight.w500,
@@ -680,7 +701,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     Icon(
                                       Icons.access_time,
                                       size: size.width * AppDimensions.numD035,
-                                      color: Colors.black54,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.color,
                                     ),
                                     SizedBox(
                                         width:
@@ -688,7 +712,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     Text(
                                       "To      : ${dateTimeFormatter(dateTime: taskDetail?.deadLine.toString() ?? '', format: "hh:mm a")}",
                                       style: TextStyle(
-                                        color: Colors.black54,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.color,
                                         fontSize:
                                             size.width * AppDimensions.numD028,
                                         fontWeight: FontWeight.w500,
@@ -709,7 +736,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                 vertical: size.width * AppDimensions.numD03,
                                 horizontal: size.width * AppDimensions.numD02),
                             decoration: BoxDecoration(
-                                color: AppColorTheme.colorLightGrey,
+                                color: Theme.of(context).cardColor,
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD03)),
                             child: Column(
@@ -721,6 +748,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     Image.asset(
                                       "${iconsPath}ic_location.png",
                                       width: size.width * AppDimensions.numD03,
+                                      color: Theme.of(context).iconTheme.color,
                                     ),
                                     SizedBox(
                                       width: size.width * AppDimensions.numD01,
@@ -731,7 +759,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                           size: size,
                                           fontSize:
                                               size.width * AppDimensions.numD03,
-                                          color: Colors.black,
+                                          color: Theme.of(context).textTheme.bodyLarge?.color,
                                           fontWeight: FontWeight.w600),
                                     ),
                                   ],
@@ -749,7 +777,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD03,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.w400),
                                   ),
                                 ),
@@ -776,24 +807,16 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                           vertical: size.width * AppDimensions.numD04),
                       decoration: BoxDecoration(
                           color: taskDetail!.deadLine.isBefore(DateTime.now())
-                              ? AppColorTheme.colorLightGrey
+                              ? Theme.of(context).dividerColor.withOpacity(0.2)
                               : AppColorTheme.colorThemePink,
                           borderRadius: BorderRadius.circular(
                               size.width * AppDimensions.numD04)),
                       child: GestureDetector(
                         onTap: taskDetail!.deadLine.isBefore(DateTime.now())
                             ? () {
-                                // showSnackBar(
-                                //     "Task Expired",
-                                //     "The deadline for this task has passed and it can no longer be accepted.",
-                                //     Colors.red);
                               }
                             : () {
                                 if (_hasSubmittedAction) {
-                                  // showSnackBar(
-                                  //     "Action already submitted",
-                                  //     "You have already performed an action on this task.",
-                                  //     Colors.red);
                                   return;
                                 }
 
@@ -807,10 +830,6 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                 SharedPreferencesKeys
                                                     .hopperIdKey) ??
                                             "")) {
-                                  // showSnackBar(
-                                  //     "Already Accepted",
-                                  //     "You have already accepted this task.",
-                                  //     Colors.red);
                                   return;
                                 }
 
@@ -844,7 +863,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     fontSize: size.width * AppDimensions.numD04,
                                     color: taskDetail!.deadLine
                                             .isBefore(DateTime.now())
-                                        ? Colors.black
+                                        ? Theme.of(context).textTheme.bodyLarge?.color
                                         : Colors.white,
                                     fontWeight: FontWeight.w700),
                               ),
@@ -872,12 +891,14 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                     top: size.width * AppDimensions.numD14,
                     left: size.width * AppDimensions.numD04),
                 padding: EdgeInsets.all(size.width * AppDimensions.numD02),
-                decoration: const BoxDecoration(
-                    color: Colors.white, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    shape: BoxShape.circle),
                 child: Image.asset(
                   "${iconsPath}ic_arrow_left.png",
                   height: size.width * AppDimensions.numD06,
                   width: size.width * AppDimensions.numD06,
+                  color: Theme.of(context).iconTheme.color,
                 ),
               ),
             ),
@@ -916,12 +937,14 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                     top: size.width * AppDimensions.numD14,
                     left: size.width * AppDimensions.numD04),
                 padding: EdgeInsets.all(size.width * AppDimensions.numD02),
-                decoration: const BoxDecoration(
-                    color: Colors.white, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    shape: BoxShape.circle),
                 child: Image.asset(
                   "${iconsPath}ic_share_now.png",
                   height: size.width * AppDimensions.numD06,
                   width: size.width * AppDimensions.numD06,
+                  color: Theme.of(context).iconTheme.color,
                 ),
               ),
             ),
@@ -1047,14 +1070,14 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         horizontal: size.width * AppDimensions.numD03,
                         vertical: size.width * AppDimensions.numD03),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD02),
-                      boxShadow: const [
+                      boxShadow: [
                         BoxShadow(
-                          color: Colors.black12,
+                          color: Colors.black.withOpacity(0.1),
                           blurRadius: 4,
-                          offset: Offset(0, 2),
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
@@ -1066,7 +1089,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD03,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w500,
                         ),
                         children: [
@@ -1097,7 +1120,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
   /// show-share-bottom-sheet
   Future<void> showShareBottomSheet() async {
     showModalBottomSheet(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).cardColor,
         context: context,
         isScrollControlled: true,
         useSafeArea: true,
@@ -1130,7 +1153,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         splashRadius: size.width * AppDimensions.numD05,
                         icon: Icon(
                           Icons.close,
-                          color: Colors.black,
+                          color: Theme.of(context).iconTheme.color,
                           size: size.width * AppDimensions.numD06,
                         ),
                       ),
@@ -1141,7 +1164,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD045,
-                                color: Colors.black,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontWeight: FontWeight.w700),
                           ),
                         ),
@@ -1179,7 +1205,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w400),
                       ),
                       SizedBox(
@@ -1203,7 +1229,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                           stateSetter(() {});
                         },
                         decoration: InputDecoration(
-                          fillColor: AppColorTheme.colorLightGrey,
+                          fillColor: Theme.of(context).scaffoldBackgroundColor,
                           isDense: true,
                           filled: true,
                           hintText: AppStrings.searchHintText,
@@ -1245,7 +1271,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                 horizontal: size.width * AppDimensions.numD02),
                             child: Image.asset(
                               "${iconsPath}ic_search.png",
-                              color: Colors.black,
+                              color: Theme.of(context).iconTheme.color,
                             ),
                           ),
                           suffixIconConstraints: BoxConstraints(
@@ -1279,7 +1305,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     padding: EdgeInsets.all(
                                         size.width * AppDimensions.numD02),
                                     color: item.isContactSelected
-                                        ? AppColorTheme.colorLightGrey
+                                        ? Theme.of(context)
+                                            .dividerColor
+                                            .withOpacity(0.1)
                                         : Colors.transparent,
                                     child: Row(
                                       mainAxisAlignment:
@@ -1368,7 +1396,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                         fontSize: size.width *
                                                             AppDimensions
                                                                 .numD037,
-                                                        color: Colors.black,
+                                                        color: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyLarge
+                                                            ?.color,
                                                         fontWeight:
                                                             FontWeight.w600),
                                                   ),
@@ -1383,7 +1414,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                       size: size,
                                                       fontSize: size.width *
                                                           AppDimensions.numD035,
-                                                      color: Colors.black,
+                                                      color: Theme.of(context).iconTheme.color,
                                                       fontWeight:
                                                           FontWeight.w400),
                                                 ),

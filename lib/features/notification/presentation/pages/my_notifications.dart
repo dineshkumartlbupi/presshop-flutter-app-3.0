@@ -71,7 +71,10 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                 style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD04,
-                                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -92,7 +95,8 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                           padding: EdgeInsets.symmetric(
                               horizontal: size.width * AppDimensions.numD04),
                           child: Divider(
-                            color: Theme.of(context).dividerColor.withOpacity(0.2),
+                            color:
+                                Theme.of(context).dividerColor.withOpacity(0.2),
                             thickness: 0.5,
                           ),
                         ),
@@ -110,7 +114,10 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                 height: 120, // fixed height
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.2)),
+                                  border: Border.all(
+                                      color: Theme.of(context)
+                                          .dividerColor
+                                          .withOpacity(0.2)),
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
@@ -133,7 +140,10 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                     size: size,
                                     fontSize:
                                         size.width * AppDimensions.numD035,
-                                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -237,7 +247,11 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                             width: size.width * AppDimensions.numD45,
                             margin: EdgeInsets.only(top: size.width * 0.05),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
+                              color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color ??
+                                  Colors.black,
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.02),
                             ),
@@ -251,7 +265,8 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                     fontSize:
                                         MediaQuery.of(context).size.width *
                                             AppDimensions.numD037,
-                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor,
                                     fontWeight: FontWeight.bold),
                                 textAlign: TextAlign.center,
                               ),
@@ -346,14 +361,14 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                 SafeArea(
                   child: Column(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: size.width * AppDimensions.numD05),
-                        child: Divider(
-                          color: Theme.of(context).dividerColor.withOpacity(0.2),
-                          thickness: 1.5,
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: EdgeInsets.symmetric(
+                      //       horizontal: size.width * AppDimensions.numD05),
+                      //   child: Divider(
+                      //     color: Theme.of(context).dividerColor.withOpacity(0.2),
+                      //     thickness: 1.5,
+                      //   ),
+                      // ),
                       Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: size.width * AppDimensions.numD05,
@@ -508,8 +523,10 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                                           AppDimensions.numD03),
                                                 ),
                                                 color: item.unread
-                                                    ? Theme.of(context).cardColor
-                                                    : Theme.of(context).scaffoldBackgroundColor,
+                                                    ? Theme.of(context)
+                                                        .cardColor
+                                                    : Theme.of(context)
+                                                        .scaffoldBackgroundColor,
                                               ),
                                               child: Row(
                                                 crossAxisAlignment:
@@ -524,12 +541,21 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                                                 .numD02,
                                                       ),
                                                       decoration: BoxDecoration(
-                                                          color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
+                                                          color:
+                                                              Theme.of(context)
+                                                                      .textTheme
+                                                                      .bodyLarge
+                                                                      ?.color ??
+                                                                  Colors.black,
                                                           shape:
                                                               BoxShape.circle,
                                                           boxShadow: [
                                                             BoxShadow(
-                                                                color: Theme.of(context).dividerColor.withOpacity(0.2),
+                                                                color: Theme.of(
+                                                                        context)
+                                                                    .dividerColor
+                                                                    .withOpacity(
+                                                                        0.2),
                                                                 spreadRadius: 2)
                                                           ]),
                                                       child: ClipOval(
@@ -542,7 +568,9 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                                                       .numD01),
                                                           child: Image.asset(
                                                             "${commonImagePath}ic_black_rabbit.png",
-                                                            color: Theme.of(context).scaffoldBackgroundColor,
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .scaffoldBackgroundColor,
                                                             width: size.width *
                                                                 AppDimensions
                                                                     .numD07,
@@ -608,8 +636,11 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                                                       .width *
                                                                   AppDimensions
                                                                       .numD035,
-                                                              color:
-                                                                  Theme.of(context).textTheme.bodyLarge?.color,
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyLarge
+                                                                  ?.color,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w600),
@@ -699,8 +730,11 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                                                       .width *
                                                                   AppDimensions
                                                                       .numD03,
-                                                              color:
-                                                                  Theme.of(context).textTheme.bodyLarge?.color,
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyLarge
+                                                                  ?.color,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .normal),
@@ -724,7 +758,9 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                               Container(
                                                 height: size.width *
                                                     AppDimensions.numD004,
-                                                color: Theme.of(context).dividerColor.withOpacity(0.2),
+                                                color: Theme.of(context)
+                                                    .dividerColor
+                                                    .withOpacity(0.2),
                                               ),
                                               SizedBox(
                                                 height: size.width *

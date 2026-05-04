@@ -165,7 +165,7 @@ class AllDialogs {
                 builder: (context, setState) {
                   return Container(
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(
                             size.width * AppDimensions.numD045)),
                     child: Column(
@@ -179,8 +179,12 @@ class AllDialogs {
                             children: [
                               Text(
                                 "Don’t Miss Nearby Opportunities",
-                                style: TextStyle(
-                                    color: Colors.black,
+                                style: commonTextStyle(
+                                    size: size,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                     fontSize: size.width * AppDimensions.numD04,
                                     fontWeight: FontWeight.bold),
                               ),
@@ -191,7 +195,7 @@ class AllDialogs {
                                   },
                                   icon: Icon(
                                     Icons.close,
-                                    color: Colors.black,
+                                    color: Theme.of(context).iconTheme.color,
                                     size: size.width * AppDimensions.numD06,
                                   ))
                             ],
@@ -200,8 +204,9 @@ class AllDialogs {
                         Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: size.width * AppDimensions.numD04),
-                          child: const Divider(
-                            color: Colors.black,
+                          child: Divider(
+                            color:
+                                Theme.of(context).dividerColor.withOpacity(0.2),
                             thickness: 0.5,
                           ),
                         ),
@@ -218,7 +223,10 @@ class AllDialogs {
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD04),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(
+                                        color: Theme.of(context)
+                                            .dividerColor
+                                            .withOpacity(0.2))),
                                 child: ClipRRect(
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD04),
@@ -237,8 +245,12 @@ class AllDialogs {
                                   "💰 Location helps us send you tasks near you in real time. Turn it off and you may miss chances to capture news and earn. Are you sure you want to turn it off?",
                                   softWrap: true,
                                   textAlign: TextAlign.justify,
-                                  style: TextStyle(
-                                      color: Colors.black,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
                                       fontWeight: FontWeight.w500),
@@ -266,8 +278,16 @@ class AllDialogs {
                                 child: commonElevatedButton(
                                     "Turn It Off",
                                     size,
-                                    commonButtonTextStyle(size),
-                                    commonButtonStyle(size, Colors.black),
+                                    commonButtonTextStyle(size,
+                                        color: Theme.of(context)
+                                            .scaffoldBackgroundColor),
+                                    commonButtonStyle(
+                                        size,
+                                        Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color ??
+                                            Colors.black),
                                     () async {
                                   Navigator.pop(context);
 
