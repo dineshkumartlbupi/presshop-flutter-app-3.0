@@ -29,3 +29,4 @@ export 'package:presshop/core/analytics/analytics_constants.dart';
 export 'package:presshop/core/analytics/analytics_mixin.dart';
 export 'package:presshop/core/utils/app_logger.dart';
 export 'package:presshop/core/router/router_constants.dart';
+export 'package:presshop/core/widgets/error/location_error_screen_map_news.dart';

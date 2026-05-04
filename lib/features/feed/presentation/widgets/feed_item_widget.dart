@@ -159,7 +159,7 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                           right: size.width * AppDimensions.numD02,
                           top: size.width * AppDimensions.numD02,
                           child: Column(
-                            children: getMediaCount2(feed.contentList, size),
+                            children: getMediaCount2(feed.contentList, size, context),
                           ),
                         ),
                       ],

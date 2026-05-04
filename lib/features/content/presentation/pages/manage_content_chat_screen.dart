@@ -405,18 +405,16 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                   AppDimensions
                                                                       .numD04),
                                                           decoration: BoxDecoration(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .textTheme
-                                                                  .bodyLarge
-                                                                  ?.color,
-                                                              shape: BoxShape
-                                                                  .circle,
+                                                              color: Theme.of(context)
+                                                                          .brightness ==
+                                                                      Brightness.dark
+                                                                  ? Colors.white
+                                                                  : Colors.black,
+                                                              shape: BoxShape.circle,
                                                               boxShadow: [
                                                                 BoxShadow(
                                                                     color: Colors
-                                                                        .grey
-                                                                        .shade300,
+                                                                        .black12,
                                                                     spreadRadius:
                                                                         2)
                                                               ]),
@@ -431,11 +429,14 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                 child:
                                                                     Image.asset(
                                                                   "${commonImagePath}ic_black_rabbit.png",
-                                                                  color: Theme.of(
-                                                                          context)
-                                                                      .textTheme
-                                                                      .bodyLarge
-                                                                      ?.color,
+                                                                  color: Theme.of(context)
+                                                                              .brightness ==
+                                                                          Brightness
+                                                                              .dark
+                                                                      ? Colors
+                                                                          .black
+                                                                      : Colors
+                                                                          .white,
                                                                   width: size
                                                                           .width *
                                                                       AppDimensions
@@ -472,11 +473,21 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                           width: size.width,
                                                           decoration:
                                                               BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
+                                                                  color: Theme.of(context).brightness ==
+                                                                          Brightness
+                                                                              .dark
+                                                                      ? AppColorTheme
+                                                                          .colorDarkThemeCard
+                                                                      : Colors
+                                                                          .white,
                                                                   border: Border.all(
-                                                                      color: AppColorTheme
-                                                                          .colorGoogleButtonBorder),
+                                                                      color: Theme.of(context).brightness ==
+                                                                              Brightness
+                                                                                  .dark
+                                                                          ? AppColorTheme
+                                                                              .colorGrey5
+                                                                          : AppColorTheme
+                                                                              .colorGoogleButtonBorder),
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .only(
@@ -857,12 +868,14 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                             AppDimensions
                                                                                 .numD04),
                                                                     decoration: BoxDecoration(
-                                                                        color: Colors
-                                                                            .black,
+                                                                        color: Theme.of(context).brightness ==
+                                                                                Brightness.dark
+                                                                            ? Colors.white
+                                                                            : Colors.black,
                                                                         shape: BoxShape.circle,
-                                                                        boxShadow: [
+                                                                        boxShadow: const [
                                                                           BoxShadow(
-                                                                              color: Colors.grey.shade300,
+                                                                              color: Colors.black12,
                                                                               spreadRadius: 2)
                                                                         ]),
                                                                     child:
@@ -877,8 +890,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                         child: Image
                                                                             .asset(
                                                                           "${commonImagePath}ic_black_rabbit.png",
-                                                                          color:
-                                                                              Colors.white,
+                                                                          color: Theme.of(context).brightness == Brightness.dark
+                                                                              ? Colors.black
+                                                                              : Colors.white,
                                                                           width:
                                                                               size.width * AppDimensions.numD07,
                                                                           height:
@@ -913,10 +927,10 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                       .width,
                                                                   decoration:
                                                                       BoxDecoration(
-                                                                          color: Colors
-                                                                              .white,
-                                                                          border:
-                                                                              Border.all(color: AppColorTheme.colorGoogleButtonBorder),
+                                                                          color: Theme.of(context).brightness == Brightness.dark
+                                                                              ? AppColorTheme.colorDarkThemeCard
+                                                                              : Colors.white,
+                                                                          border: Border.all(color: Theme.of(context).brightness == Brightness.dark ? AppColorTheme.colorGrey5 : AppColorTheme.colorGoogleButtonBorder),
                                                                           borderRadius: BorderRadius.only(
                                                                             topRight:
                                                                                 Radius.circular(size.width * AppDimensions.numD04),
@@ -2063,11 +2077,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                   child: Image
                                                                       .asset(
                                                                     "${commonImagePath}ic_black_rabbit.png",
-                                                                    color: Theme.of(
-                                                                            context)
-                                                                        .textTheme
-                                                                        .bodyLarge
-                                                                        ?.color,
+                                                                    color: Theme.of(context).brightness ==
+                                                                            Brightness
+                                                                                .dark
+                                                                        ? Colors
+                                                                            .black
+                                                                        : Colors
+                                                                            .white,
                                                                     width: size
                                                                             .width *
                                                                         AppDimensions
@@ -2988,11 +3004,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                       color: widget.myContentData!.paidStatus ==
                               AppStringsNew2.unPaidText
                           ? AppColorTheme.colorThemePink
-                          : /*myContentData!.paidStatus == AppStringsNew2.paidText &&
-                                  !myContentData!.isPaidStatusToHopper
-                              ? AppColorTheme.colorThemePink
-                              :*/
-                          AppColorTheme.colorLightGrey,
+                          : (Theme.of(context).brightness == Brightness.dark
+                              ? AppColorTheme.colorDarkThemeCard
+                              : AppColorTheme.colorLightGrey),
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD03)),
                   child: Column(
@@ -3012,7 +3026,10 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             color: widget.myContentData!.paidStatus ==
                                     AppStringsNew2.unPaidText
                                 ? Colors.white
-                                : Colors.black,
+                                : (Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black),
                             fontWeight: FontWeight.w400),
                       ),
                       FittedBox(
@@ -3029,7 +3046,10 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                 color: widget.myContentData!.paidStatus ==
                                         AppStringsNew2.unPaidText
                                     ? Colors.white
-                                    : Colors.black,
+                                    : (Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black),
                                 fontWeight: FontWeight.bold),
                             /*myContentData!.paidStatus == AppStringsNew2.paidText &&
                                             myContentData!.isPaidStatusToHopper
@@ -3049,7 +3069,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   padding: EdgeInsets.symmetric(
                       vertical: size.width * AppDimensions.numD012),
                   decoration: BoxDecoration(
-                      color: AppColorTheme.colorGreyChat,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColorTheme.colorDarkThemeCard
+                          : AppColorTheme.colorGreyChat,
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD03)),
                   child: Column(
@@ -3220,7 +3242,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                           child: Column(
                               children: getMediaCount(
                                   widget.myContentData!.contentMediaList,
-                                  size))),
+                                  size,
+                                  context))),
                       // Positioned(
                       //   right: size.width * AppDimensions.numD02,
                       //   bottom: size.width * AppDimensions.numD02,
@@ -3372,10 +3395,12 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
       children: [
         Container(
             decoration: BoxDecoration(
-                color: Colors.black,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black,
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(color: Colors.grey.shade300, spreadRadius: 2)
+                boxShadow: const [
+                  BoxShadow(color: Colors.black12, spreadRadius: 2)
                 ]),
             child: ClipOval(
               clipBehavior: Clip.antiAlias,
@@ -3383,7 +3408,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                 padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                 child: Image.asset(
                   "${commonImagePath}ic_black_rabbit.png",
-                  color: Colors.white,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.black
+                      : Colors.white,
                   width: size.width * AppDimensions.numD07,
                   height: size.width * AppDimensions.numD07,
                 ),
@@ -3399,8 +3426,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
               vertical: size.width * AppDimensions.numD02),
           width: size.width,
           decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: AppColorTheme.colorGoogleButtonBorder),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? AppColorTheme.colorDarkThemeCard
+                  : Colors.white,
+              border: Border.all(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColorTheme.colorGrey5
+                      : AppColorTheme.colorGoogleButtonBorder),
               borderRadius: BorderRadius.only(
                 topRight: Radius.circular(size.width * AppDimensions.numD04),
                 bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
@@ -3765,8 +3797,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
               vertical: size.width * AppDimensions.numD02),
           width: size.width,
           decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.black),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? AppColorTheme.colorDarkThemeCard
+                  : Colors.white,
+              border: Border.all(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColorTheme.colorGrey5
+                      : Colors.black),
               borderRadius: BorderRadius.only(
                   topRight: Radius.circular(size.width * AppDimensions.numD04),
                   bottomLeft:
@@ -3784,7 +3821,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                 style: commonTextStyle(
                     size: size,
                     fontSize: size.width * AppDimensions.numD036,
-                    color: Colors.black,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                     fontWeight: FontWeight.w600),
               ),
               SizedBox(
@@ -4703,10 +4740,12 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
           children: [
             Container(
                 decoration: BoxDecoration(
-                    color: Colors.black,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
                     shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(color: Colors.grey.shade300, spreadRadius: 2)
+                    boxShadow: const [
+                      BoxShadow(color: Colors.black12, spreadRadius: 2)
                     ]),
                 child: ClipOval(
                   clipBehavior: Clip.antiAlias,
@@ -4714,7 +4753,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                     child: Image.asset(
                       "${commonImagePath}ic_black_rabbit.png",
-                      color: Theme.of(context).cardColor,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.black
+                          : Colors.white,
                       width: size.width * AppDimensions.numD07,
                       height: size.width * AppDimensions.numD07,
                     ),
@@ -4731,9 +4772,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  border:
-                      Border.all(color: AppColorTheme.colorGoogleButtonBorder),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColorTheme.colorDarkThemeCard
+                      : Colors.white,
+                  border: Border.all(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColorTheme.colorGrey5
+                          : AppColorTheme.colorGoogleButtonBorder),
                   borderRadius: BorderRadius.only(
                     topRight:
                         Radius.circular(size.width * AppDimensions.numD04),
@@ -4853,9 +4898,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  border:
-                      Border.all(color: AppColorTheme.colorGoogleButtonBorder),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColorTheme.colorDarkThemeCard
+                      : Colors.white,
+                  border: Border.all(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColorTheme.colorGrey5
+                          : AppColorTheme.colorGoogleButtonBorder),
                   borderRadius: BorderRadius.only(
                     topRight:
                         Radius.circular(size.width * AppDimensions.numD04),
@@ -4996,9 +5045,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  border:
-                      Border.all(color: AppColorTheme.colorGoogleButtonBorder),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColorTheme.colorDarkThemeCard
+                      : Colors.white,
+                  border: Border.all(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColorTheme.colorGrey5
+                          : AppColorTheme.colorGoogleButtonBorder),
                   borderRadius: BorderRadius.only(
                     topRight:
                         Radius.circular(size.width * AppDimensions.numD04),
@@ -5084,9 +5137,15 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
     return Container(
         //margin: EdgeInsets.only(top: size.width * AppDimensions.numD03),
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors
+                    .white, // Keep white for profile pics usually, or maybe light grey
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.grey.shade400)),
+            border: Border.all(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? AppColorTheme.colorGrey5
+                    : Colors.grey.shade400)),
         child: ClipOval(
           clipBehavior: Clip.antiAlias,
           child: Image.network(
@@ -5112,8 +5171,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
         decoration: BoxDecoration(
             color: Colors.white,
             shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(color: Colors.grey.shade300, spreadRadius: 2)
+            boxShadow: const [
+              BoxShadow(color: Colors.black12, spreadRadius: 2)
             ]),
         child: ClipOval(
           clipBehavior: Clip.antiAlias,
@@ -5733,8 +5792,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.black),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColorTheme.colorDarkThemeCard
+                      : Colors.white,
+                  border: Border.all(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColorTheme.colorGrey5
+                          : Colors.black),
                   borderRadius: BorderRadius.only(
                       topRight:
                           Radius.circular(size.width * AppDimensions.numD04),
@@ -5753,7 +5817,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD035,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontWeight: FontWeight.w600),
                   ),
                   SizedBox(
@@ -5813,7 +5877,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD035,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontWeight: FontWeight.w600),
                   ),
                   SizedBox(
@@ -6279,7 +6343,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD035,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontWeight: FontWeight.w600),
                   ),
                   SizedBox(
@@ -6583,7 +6647,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                     style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD035,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontWeight: FontWeight.w600),
                   ),
                   SizedBox(

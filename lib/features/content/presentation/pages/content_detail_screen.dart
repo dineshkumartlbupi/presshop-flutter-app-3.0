@@ -584,10 +584,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                         right: size.width * AppDimensions.numD02,
                         top: size.width * AppDimensions.numD02,
                         child: Column(
-                          children: getMediaCount(contentItem!.mediaList,
-                              size), // Assuming getMediaCount can handle List<ContentMedia> or dynamic
-                          // If getMediaCount expects strict type, I might need to update it too or cast.
-                          // Check getMediaCount definition in next step if it errors.
+                          children: getMediaCount(
+                              contentItem!.mediaList, size, context),
                         ),
                       ),
                       item.mediaType == "image"
@@ -883,7 +881,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   decoration: BoxDecoration(
                       color: contentItem!.paidStatus == false
                           ? AppColorTheme.colorThemePink
-                          : AppColorTheme.colorLightGrey,
+                          : (Theme.of(context).brightness == Brightness.dark
+                              ? AppColorTheme.colorDarkThemeCard
+                              : AppColorTheme.colorLightGrey),
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD03)),
                   child: Column(
@@ -937,7 +937,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   padding: EdgeInsets.symmetric(
                       vertical: size.width * AppDimensions.numD012),
                   decoration: BoxDecoration(
-                      color: AppColorTheme.colorGreyChat,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColorTheme.colorDarkThemeCard
+                          : AppColorTheme.colorGreyChat,
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD03)),
                   child: Column(
@@ -1309,86 +1311,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
               ),
             )
           : const SizedBox.shrink(),
-    );
-  }
-
-  List<Widget> getMediaCount(List<ContentMetadata> mediaList, Size size) {
-    if (mediaList.isEmpty) return [];
-
-    int imageCount = 0;
-    int videoCount = 0;
-    int audioCount = 0;
-    int docCount = 0;
-
-    for (var item in mediaList) {
-      if (item.mediaType == "image") {
-        imageCount++;
-      } else if (item.mediaType == "video") {
-        videoCount++;
-      } else if (item.mediaType == "audio") {
-        audioCount++;
-      } else if (item.mediaType == "pdf" || item.mediaType == "doc") {
-        docCount++;
-      }
-    }
-
-    List<Widget> widgets = [];
-
-    if (imageCount > 0) {
-      widgets.add(mediaCountCard(
-          size, "${iconsPath}ic_camera_publish.png", imageCount, "image"));
-    }
-    if (videoCount > 0) {
-      widgets.add(mediaCountCard(
-          size, "${iconsPath}ic_v_cam.png", videoCount, "video"));
-    }
-    if (audioCount > 0) {
-      widgets.add(mediaCountCard(
-          size, "${iconsPath}new_audio.png", audioCount, "audio"));
-    }
-    if (docCount > 0) {
-      widgets.add(
-          mediaCountCard(size, "${iconsPath}doc_icon.png", docCount, "doc"));
-    }
-
-    return widgets;
-  }
-
-  Widget mediaCountCard(Size size, String iconPath, int count, String type) {
-    return Container(
-      margin: EdgeInsets.only(bottom: size.width * AppDimensions.numD01),
-      padding: EdgeInsets.symmetric(
-          horizontal: size.width * AppDimensions.numD015,
-          vertical: size.width * 0.005),
-      decoration: BoxDecoration(
-          color: AppColorTheme.colorLightGreen.withOpacity(0.8),
-          borderRadius:
-              BorderRadius.circular(size.width * AppDimensions.numD015)),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            "$count ",
-            textAlign: TextAlign.center,
-            style: commonTextStyle(
-                size: size,
-                fontSize: size.width * AppDimensions.numD03,
-                color: Colors.white,
-                fontWeight: FontWeight.w600),
-          ),
-          Image.asset(
-            iconPath,
-            height: type == "image"
-                ? size.width * 0.036
-                : type == "video"
-                    ? size.width * 0.041
-                    : type == "audio"
-                        ? size.width * 0.043
-                        : size.width * 0.04,
-            color: Colors.white,
-          ),
-        ],
-      ),
     );
   }
 

@@ -68,7 +68,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
         hideLeading: false,
         title: Text(AppStrings.transactionDetailsText,
             style: TextStyle(
-              color: Colors.black,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
               fontWeight: FontWeight.bold,
               fontSize: size.width * AppDimensions.appBarHeadingFontSize,
             )),
@@ -141,7 +141,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD033,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontWeight: FontWeight.w400),
                   textAlign: TextAlign.center,
                 ),
@@ -163,16 +163,24 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
             vertical: size.width * AppDimensions.numD03,
           ),
           decoration: BoxDecoration(
-              color: AppColorTheme.colorLightGrey,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? AppColorTheme.colorDarkThemeCard
+                  : AppColorTheme.colorLightGrey,
               boxShadow: [
                 BoxShadow(
-                    color: Colors.grey.shade300,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black12
+                        : Colors.grey.shade300,
                     blurRadius: 0,
                     spreadRadius: 0.5)
               ],
               borderRadius:
                   BorderRadius.circular(size.width * AppDimensions.numD03),
-              border: Border.all(width: 1, color: Colors.black)),
+              border: Border.all(
+                  width: 1,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColorTheme.colorGrey5
+                      : Colors.black)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -276,7 +284,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                     widget.transactionData!.contentDataList
                                         .cast<ContentDataModel>()
                                         .toList(),
-                                    size),
+                                    size,
+                                    context),
                               ),
                             ),
                             /*Positioned(
@@ -322,7 +331,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     //   style: commonTextStyle(
                     //       size: size,
                     //       fontSize: size.width * AppDimensions.numD035,
-                    //       color: Colors.black,
+                    //       color: Theme.of(context).textTheme.bodyLarge?.color,
                     //       fontWeight: FontWeight.w500),
                     // ),
                     widget.transactionData!.contentDataList.length > 1
@@ -352,7 +361,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w400),
                         ),
                         widget.transactionData!.type == "content"
@@ -379,7 +389,10 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD035,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.w400),
                                   ),
                                 ],
@@ -399,7 +412,10 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD035,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.w400),
                                   ),
                                 ],
@@ -419,7 +435,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w400),
                         ),
                         Text(
@@ -429,7 +446,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w400),
                         ),
                       ],
@@ -445,7 +463,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w400),
                         ),
                         Text(
@@ -455,7 +474,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w400),
                         ),
                       ],
@@ -473,7 +493,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w400),
                         ),
                         Text(
@@ -489,7 +510,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w400),
                         ),
                       ],
@@ -507,7 +529,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w400),
                         ),
                         Text(
@@ -515,7 +538,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w400),
                         ),
                       ],
@@ -569,7 +593,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD04,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w600),
                     ),
                     // SizedBox(
@@ -577,7 +601,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     // ),
                     // Text(
                     //   widget.transactionData!.adminFullName,
-                    //   style: commonTextStyle(size: size, fontSize: size.width * AppDimensions.numD035, color: Colors.black, fontWeight: FontWeight.w400),
+                    //   style: commonTextStyle(size: size, fontSize: size.width * AppDimensions.numD035, color: Theme.of(context).textTheme.bodyLarge?.color, fontWeight: FontWeight.w400),
                     // ),
                   ],
                 ),
@@ -608,7 +632,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
@@ -616,7 +640,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                   ],
@@ -638,7 +662,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
@@ -648,7 +672,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                   ],
@@ -677,7 +701,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD03,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontWeight: FontWeight.w500),
                 ),
               ),
@@ -697,7 +721,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
@@ -710,7 +734,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                   ],
@@ -732,7 +756,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
@@ -740,7 +764,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                   ],
@@ -761,7 +785,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
@@ -769,7 +793,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                   ],
@@ -791,7 +815,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
@@ -804,7 +828,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                   ],
@@ -1003,16 +1027,24 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
             vertical: size.width * AppDimensions.numD03,
           ),
           decoration: BoxDecoration(
-              color: AppColorTheme.colorLightGrey,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? AppColorTheme.colorDarkThemeCard
+                  : AppColorTheme.colorLightGrey,
               boxShadow: [
                 BoxShadow(
-                    color: Colors.grey.shade300,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black12
+                        : Colors.grey.shade300,
                     blurRadius: 0,
                     spreadRadius: 0.5)
               ],
               borderRadius:
                   BorderRadius.circular(size.width * AppDimensions.numD03),
-              border: Border.all(width: 1, color: Colors.black)),
+              border: Border.all(
+                  width: 1,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColorTheme.colorGrey5
+                      : Colors.black)),
           child: Column(
             children: [
               Row(
@@ -1038,7 +1070,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           AppStrings.pendingText,
                           style: TextStyle(
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w400,
                               fontFamily: "AirbnbCereal"),
                         ),
@@ -1047,7 +1080,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w500),
                         ),
                       ],
@@ -1160,7 +1194,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                       widget.transactionData!.contentDataList
                                           .cast<ContentDataModel>()
                                           .toList(),
-                                      size),
+                                      size,
+                                      context),
                                 ),
                               ),
                               /* Positioned(
@@ -1224,7 +1259,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w400)),
                     widget.transactionData!.type == "content"
                         ? Row(
@@ -1249,7 +1284,10 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                     size: size,
                                     fontSize:
                                         size.width * AppDimensions.numD035,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                     fontWeight: FontWeight.w400),
                               ),
                             ],
@@ -1269,7 +1307,10 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                     size: size,
                                     fontSize:
                                         size.width * AppDimensions.numD035,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                     fontWeight: FontWeight.w400),
                               ),
                             ],
@@ -1293,7 +1334,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
@@ -1301,7 +1342,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                   ],
@@ -1344,7 +1385,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD042,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontWeight: FontWeight.w500),
                 ),
               ),
@@ -1374,7 +1415,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
@@ -1387,7 +1428,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                   ],
@@ -1409,7 +1450,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
@@ -1417,7 +1458,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                   ],
@@ -1437,7 +1478,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
@@ -1447,7 +1488,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                   ],
@@ -1469,7 +1510,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
@@ -1477,7 +1518,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                   ],
@@ -1496,7 +1537,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
@@ -1506,7 +1547,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w400),
                     ),
                   ],

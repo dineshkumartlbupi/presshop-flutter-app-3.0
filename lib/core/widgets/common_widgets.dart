@@ -218,102 +218,97 @@ Container commonFilterIcon(BuildContext context, Size size) {
 
 /// aditya
 
-Widget getMediaCountCard(String mediaType, int count, Size size) {
+Widget getMediaCountCard(
+    String mediaType, int count, Size size, BuildContext context) {
   return Container(
-    width: size.width * AppDimensions.numD11,
-    padding: EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD01),
+    width: size.width * 0.13,
+    height: size.width * 0.06,
+    margin: EdgeInsets.only(bottom: size.width * AppDimensions.numD01),
     decoration: BoxDecoration(
-        color: AppColorTheme.colorLightGreen.withOpacity(0.8),
-        borderRadius:
-            BorderRadius.circular(size.width * AppDimensions.numD021)),
-    child: Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: size.width * 0.005,
-        vertical: size.width * 0.005,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "$count ",
-            style: commonTextStyle(
-                size: size,
-                fontSize: size.width * AppDimensions.numD038,
-                color: Colors.white,
-                fontWeight: FontWeight.w600),
-          ),
-          const Padding(padding: EdgeInsets.only(left: 1.5)),
-          Container(
-            child: Image.asset(
-              alignment: Alignment.center,
-              mediaType == "image"
-                  ? "${iconsPath}ic_camera_publish.png"
-                  : mediaType == "video"
-                      ? "${iconsPath}ic_v_cam.png"
-                      : mediaType == "audio"
-                          ? "${iconsPath}new_audio.png"
-                          : "${iconsPath}doc_icon.png",
+        color: (Theme.of(context).brightness == Brightness.dark
+                ? AppColorTheme.colorBlack
+                : AppColorTheme.colorGrey5)
+            .withOpacity(0.7),
+        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD01)),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          "$count",
+          textAlign: TextAlign.center,
+          style: commonTextStyle(
+              size: size,
+              fontSize: size.width * AppDimensions.numD03,
               color: Colors.white,
-              height: mediaType == "image"
-                  ? size.width * 0.029
-                  : mediaType == "video"
-                      ? size.width * 0.041
-                      : mediaType == "audio"
-                          ? size.width * 0.04
-                          : size.width * 0.04,
-            ),
-          ),
-        ],
-      ),
+              fontWeight: FontWeight.w600),
+        ),
+        SizedBox(width: size.width * 0.01),
+        Image.asset(
+          mediaType == "image"
+              ? "${iconsPath}ic_camera_publish.png"
+              : mediaType == "video"
+                  ? "${iconsPath}ic_v_cam.png"
+                  : mediaType == "audio"
+                      ? "${iconsPath}new_audio.png"
+                      : "${iconsPath}doc_icon.png",
+          height: size.width * 0.035,
+          color: Colors.white,
+        ),
+      ],
     ),
   );
 }
 
-List<Widget> getMediaCount(List<ContentMediaData> contentMediaList, Size size) {
-  final imageCount =
-      contentMediaList.where((item) => item.mediaType == "image").length;
-  final videoCount =
-      contentMediaList.where((item) => item.mediaType == "video").length;
-  final audioCount =
-      contentMediaList.where((item) => item.mediaType == "audio").length;
-  debugPrint("MediaCount $imageCount, $videoCount, $audioCount");
+List<Widget> getMediaCount(
+    List<dynamic> contentMediaList, Size size, BuildContext context) {
+  int imageCount = 0;
+  int videoCount = 0;
+  int audioCount = 0;
+  int docCount = 0;
+
+  for (var item in contentMediaList) {
+    String type = "";
+    if (item is Map) {
+      type = (item['media_type'] ?? item['type'] ?? "").toString();
+    } else {
+      // Handle objects with mediaType or type property
+      try {
+        type = (item.mediaType ?? item.type ?? "").toString();
+      } catch (_) {}
+    }
+
+    if (type == "image") {
+      imageCount++;
+    } else if (type == "video") {
+      videoCount++;
+    } else if (type == "audio") {
+      audioCount++;
+    } else if (type == "pdf" || type == "doc") {
+      docCount++;
+    }
+  }
+
   final widgetList = <Widget>[];
   if (imageCount > 0) {
-    widgetList.add(getMediaCountCard("image", imageCount, size));
-    widgetList.add(SizedBox(height: 6));
+    widgetList.add(getMediaCountCard("image", imageCount, size, context));
+    widgetList.add(const SizedBox(height: 6));
   }
   if (videoCount > 0) {
-    widgetList.add(getMediaCountCard("video", videoCount, size));
-    widgetList.add(SizedBox(height: 6));
+    widgetList.add(getMediaCountCard("video", videoCount, size, context));
+    widgetList.add(const SizedBox(height: 6));
   }
   if (audioCount > 0) {
-    widgetList.add(getMediaCountCard("audio", audioCount, size));
-    widgetList.add(SizedBox(height: 6));
+    widgetList.add(getMediaCountCard("audio", audioCount, size, context));
+    widgetList.add(const SizedBox(height: 6));
+  }
+  if (docCount > 0) {
+    widgetList.add(getMediaCountCard("doc", docCount, size, context));
+    widgetList.add(const SizedBox(height: 6));
   }
   return widgetList;
 }
 
-List<Widget> getMediaCount2(List<dynamic> contentMediaList, Size size) {
-  final imageCount =
-      contentMediaList.where((item) => item.mediaType == "image").length;
-  final videoCount =
-      contentMediaList.where((item) => item.mediaType == "video").length;
-  final audioCount =
-      contentMediaList.where((item) => item.mediaType == "audio").length;
-  debugPrint("MediaCount $imageCount, $videoCount, $audioCount");
-  final widgetList = <Widget>[];
-  if (imageCount > 0) {
-    widgetList.add(getMediaCountCard("image", imageCount, size));
-    widgetList.add(SizedBox(height: 6));
-  }
-  if (videoCount > 0) {
-    widgetList.add(getMediaCountCard("video", videoCount, size));
-    widgetList.add(SizedBox(height: 6));
-  }
-  if (audioCount > 0) {
-    widgetList.add(getMediaCountCard("audio", audioCount, size));
-    widgetList.add(SizedBox(height: 6));
-  }
-  return widgetList;
+List<Widget> getMediaCount2(
+    List<dynamic> contentMediaList, Size size, BuildContext context) {
+  return getMediaCount(contentMediaList, size, context);
 }

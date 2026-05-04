@@ -45,11 +45,11 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                           extra: {'initialPosition': 0});
                     },
                     icon: Container(
-                      decoration: const BoxDecoration(
-                          color: Colors.black, shape: BoxShape.circle),
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black, shape: BoxShape.circle),
                       child: Icon(
                         Icons.close,
-                        color: Colors.white,
+                        color: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
                         size: size.width * AppDimensions.numD06,
                       ),
                     ),
@@ -61,7 +61,7 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                         horizontal: size.width * AppDimensions.numD04,
                         vertical: size.width * AppDimensions.numD04),
                     decoration: BoxDecoration(
-                        color: AppColorTheme.colorLightGrey,
+                        color: Theme.of(context).brightness == Brightness.dark ? AppColorTheme.colorDarkThemeCard : AppColorTheme.colorLightGrey,
                         borderRadius: BorderRadius.circular(
                             size.width * AppDimensions.numD04)),
                     child: Row(
@@ -82,7 +82,7 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD04,
-                                color: Colors.black,
+                                color: Theme.of(context).textTheme.bodyLarge?.color,
                                 fontWeight: FontWeight.w500),
                           ),
                         ),
@@ -94,7 +94,7 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD035,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                       fontWeight: FontWeight.w400),
                 ),
                 SizedBox(height: size.height * AppDimensions.numD04),
@@ -107,8 +107,10 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                       child: commonElevatedButton(
                         "Back",
                         size,
-                        commonButtonTextStyle(size),
-                        commonButtonStyle(size, Colors.black),
+                        commonButtonTextStyle(size, 
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white),
+                        commonButtonStyle(size, 
+                          Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),
                         () async {
                           context.goNamed(AppRoutes.dashboardName,
                               extra: {'initialPosition': 0});

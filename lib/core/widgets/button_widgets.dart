@@ -23,9 +23,9 @@ ButtonStyle commonButtonStyle(Size size, Color color) {
               BorderRadius.circular(size.width * AppDimensions.numD03)));
 }
 
-TextStyle commonButtonTextStyle(Size size) {
+TextStyle commonButtonTextStyle(Size size, {Color color = Colors.white}) {
   return TextStyle(
-      color: Colors.white,
+      color: color,
       fontSize: size.width * AppDimensions.numD037,
       fontFamily: "AirbnbCereal",
       fontWeight: FontWeight.bold);

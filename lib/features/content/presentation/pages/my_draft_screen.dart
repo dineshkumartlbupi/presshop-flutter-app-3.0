@@ -405,7 +405,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
               right: size.width * AppDimensions.numD02,
               top: size.width * AppDimensions.numD02,
               child: Column(
-                children: getMediaCount(item.contentMediaList, size),
+                children: getMediaCount(item.contentMediaList, size, context),
               )),
           Visibility(
             visible: false,

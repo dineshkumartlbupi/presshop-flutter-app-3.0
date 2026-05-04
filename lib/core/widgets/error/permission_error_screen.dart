@@ -18,8 +18,9 @@ class PermissionErrorScreen extends StatefulWidget {
 class _PermissionErrorScreenState extends State<PermissionErrorScreen>
     with WidgetsBindingObserver {
   final PermissionService _permissionService = sl<PermissionService>();
-  late Map<Permission, bool> _currentStatuses;
+  Map<Permission, bool> _currentStatuses = {};
   bool _isPermanentlyDenied = false;
+  bool _isGalleryGranted = false;
 
   @override
   void initState() {
@@ -43,6 +44,20 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
   }
 
   Future<void> _checkInitialState() async {
+    final cameraStatus = await Permission.camera.status;
+    final micStatus = await Permission.microphone.status;
+    final isGalleryGranted =
+        await _permissionService.checkCameraAndGalleryPermissions() ==
+            PermissionResult.granted;
+
+    if (mounted) {
+      setState(() {
+        _currentStatuses[Permission.camera] = cameraStatus.isGranted;
+        _currentStatuses[Permission.microphone] = micStatus.isGranted;
+        _isGalleryGranted = isGalleryGranted;
+      });
+    }
+
     final result = await _permissionService.checkCameraAndGalleryPermissions();
 
     if (result == PermissionResult.granted) {
@@ -79,7 +94,8 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
     }
   }
 
-  Widget _buildPermissionItem(Size size, String title, String description, bool isError) {
+  Widget _buildPermissionItem(
+      Size size, String title, String description, bool isError) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -93,6 +109,7 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
                   size: size,
                   fontSize: size.width * 0.045,
                   fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
               const SizedBox(height: 4),
@@ -101,7 +118,8 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
                 style: commonTextStyle(
                   size: size,
                   fontSize: size.width * 0.032,
-                  color: Colors.grey[600]!,
+                  color: Theme.of(context).textTheme.bodySmall?.color ??
+                      Colors.grey[600]!,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -124,7 +142,7 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: SafeArea(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: size.width * 0.08),
@@ -143,6 +161,7 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
                     size: size,
                     fontSize: size.width * 0.055,
                     fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                 ),
                 SizedBox(height: size.height * 0.015),
@@ -152,35 +171,44 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
                   style: commonTextStyle(
                     size: size,
                     fontSize: size.width * 0.038,
-                    color: Colors.black87,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
                 SizedBox(height: size.height * 0.04),
-                
+
                 // Permission List Items
                 _buildPermissionItem(
                   size,
                   "Camera",
                   "Allow PressHop to use the camera for taking photos and videos for news content submissions",
-                  true,
+                  !(_currentStatuses[Permission.camera] ?? false),
                 ),
                 SizedBox(height: size.height * 0.02),
                 _buildPermissionItem(
                   size,
                   "Microphone",
                   "Allow PressHop to record audio during video capture or interviews.",
-                  true,
+                  !(_currentStatuses[Permission.microphone] ?? false),
                 ),
-                
+                SizedBox(height: size.height * 0.02),
+                _buildPermissionItem(
+                  size,
+                  "Photos & Gallery",
+                  "Allow PressHop to access your gallery to upload existing photos and videos.",
+                  !_isGalleryGranted,
+                ),
+
                 SizedBox(height: size.height * 0.05),
-                
+
                 // Buttons
                 SizedBox(
                   width: double.infinity,
                   height: 55,
                   child: commonElevatedButton(
-                    _isPermanentlyDenied ? "Open Settings" : "Allow Permissions",
+                    _isPermanentlyDenied
+                        ? "Open Settings"
+                        : "Allow Permissions",
                     size,
                     commonButtonTextStyle(size),
                     commonButtonStyle(size, AppColorTheme.colorThemePink),
@@ -192,12 +220,20 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
                   width: double.infinity,
                   height: 55,
                   child: commonElevatedButton(
-                    "Return to Feed",
+                    "My Content",
                     size,
-                    commonButtonTextStyle(size),
-                    commonButtonStyle(size, Colors.black),
+                    commonButtonTextStyle(size,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black
+                            : Colors.white),
+                    commonButtonStyle(
+                        size,
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black),
                     () {
-                      context.goNamed(AppRoutes.dashboardName, extra: {'initialPosition': 0});
+                      context.goNamed(AppRoutes.dashboardName,
+                          extra: {'initialPosition': 0});
                     },
                   ),
                 ),

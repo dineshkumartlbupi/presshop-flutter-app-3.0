@@ -56,9 +56,14 @@ class _NewsPageState extends State<NewsPage>
   late TabController _tabController;
   Function()? _showFeedBottomSheet;
 
+  double? localLatitude;
+  double? localLongitude;
+
   @override
   void initState() {
     super.initState();
+    localLatitude = widget.latitude;
+    localLongitude = widget.longitude;
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
@@ -150,8 +155,8 @@ class _NewsPageState extends State<NewsPage>
   }
 
   void _onRefresh() async {
-    if (widget.latitude == null &&
-        widget.longitude == null &&
+    if (localLatitude == null &&
+        localLongitude == null &&
         widget.prioritizedContentId == null) {
       context.read<NewsBloc>().add(GetAllNewsEvent(
             km: _convertDistanceToKm(selectedDistance),
@@ -189,8 +194,8 @@ class _NewsPageState extends State<NewsPage>
 
   void _applyFilters() {
     double km = _convertDistanceToKm(selectedDistance);
-    if (widget.latitude == null &&
-        widget.longitude == null &&
+    if (localLatitude == null &&
+        localLongitude == null &&
         widget.prioritizedContentId == null) {
       context.read<NewsBloc>().add(GetAllNewsEvent(
             km: km,
@@ -199,8 +204,8 @@ class _NewsPageState extends State<NewsPage>
           ));
     } else {
       context.read<NewsBloc>().add(GetAggregatedNewsEvent(
-            lat: widget.latitude ?? 0.0,
-            lng: widget.longitude ?? 0.0,
+            lat: localLatitude ?? 0.0,
+            lng: localLongitude ?? 0.0,
             km: km,
             category: selectedCategory == 'Category' ? 'all' : selectedCategory,
             alertType: selectedAlertType == 'Alert' ? null : selectedAlertType,
@@ -281,7 +286,17 @@ class _NewsPageState extends State<NewsPage>
                   showAppBar: false,
                   onShowFilter: (fn) => _showFeedBottomSheet = fn,
                 ),
-                _buildLocalNewsContent(context, size),
+                (localLatitude == null || localLongitude == null)
+                    ? LocationErrorScreenMapNews(
+                        onLocationEnabled: (locationData) {
+                          setState(() {
+                            localLatitude = locationData.latitude;
+                            localLongitude = locationData.longitude;
+                          });
+                          _onRefresh();
+                        },
+                      )
+                    : _buildLocalNewsContent(context, size),
               ],
             ),
     );

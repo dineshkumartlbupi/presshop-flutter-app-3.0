@@ -782,13 +782,11 @@ class _MapPageContentState extends State<_MapPageContent>
       listenWhen: (previous, current) => true,
       builder: (context, state) {
         if (state.myLocation == null) {
-          return Scaffold(
-              body: Container(
-            color: Colors.white.withOpacity(0.5),
-            child: Center(
-              child: CommonWidgetsNew.showAnimatedLoader(size),
-            ),
-          ));
+          return LocationErrorScreenMapNews(
+            onLocationEnabled: (locationData) {
+              context.read<MapBloc>().add(const GetCurrentLocationEvent());
+            },
+          );
         }
         // if (state.myLocation == null) {
         //   if (_locationTimeout) {
