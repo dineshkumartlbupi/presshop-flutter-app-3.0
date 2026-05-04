@@ -756,11 +756,14 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                           return Column(
                                             children: [
                                               Container(
-                                                height: size.width *
-                                                    AppDimensions.numD004,
+                                                height: 1,
                                                 color: Theme.of(context)
-                                                    .dividerColor
-                                                    .withOpacity(0.2),
+                                                            .brightness ==
+                                                        Brightness.dark
+                                                    ? AppColorTheme
+                                                        .colorItemDividerForDarkTheme
+                                                    : AppColorTheme
+                                                        .colorLightGrey,
                                               ),
                                               SizedBox(
                                                 height: size.width *

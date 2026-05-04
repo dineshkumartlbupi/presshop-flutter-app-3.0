@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:presshop/core/theme/app_colors.dart';
 
 class RouteInfoWindow extends StatelessWidget {
   const RouteInfoWindow({
@@ -13,6 +14,9 @@ class RouteInfoWindow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final borderColor = isDark ? Colors.white24 : Colors.grey.shade400;
+
     return Material(
       color: Colors.transparent,
       elevation: 0,
@@ -24,8 +28,9 @@ class RouteInfoWindow extends StatelessWidget {
             width: 200,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: borderColor),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
@@ -40,22 +45,22 @@ class RouteInfoWindow extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       "Trip Details",
                       style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black54),
+                          color: Theme.of(context).hintColor),
                     ),
                     GestureDetector(
                       onTap: onClose,
-                      child:
-                          const Icon(Icons.close, size: 20, color: Colors.grey),
+                      child: Icon(Icons.close,
+                          size: 20, color: Theme.of(context).iconTheme.color),
                     )
                   ],
                 ),
                 const SizedBox(height: 8),
-                Container(height: 1, color: Colors.grey.shade200),
+                Container(height: 1, color: borderColor),
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -64,10 +69,10 @@ class RouteInfoWindow extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       distance,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
                   ],
@@ -79,10 +84,10 @@ class RouteInfoWindow extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       duration,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
                   ],
@@ -95,7 +100,9 @@ class RouteInfoWindow extends StatelessWidget {
           Padding(
             padding: EdgeInsets.zero,
             child: CustomPaint(
-                size: const Size(20, 12), painter: _TrianglePainter()),
+              size: const Size(20, 12),
+              painter: _TrianglePainter(Theme.of(context).cardColor),
+            ),
           ),
         ],
       ),
@@ -104,9 +111,12 @@ class RouteInfoWindow extends StatelessWidget {
 }
 
 class _TrianglePainter extends CustomPainter {
+  final Color color;
+  _TrianglePainter(this.color);
+
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.white;
+    final paint = Paint()..color = color;
     final path = Path()
       ..moveTo(0, 0)
       ..lineTo(size.width / 2, size.height)

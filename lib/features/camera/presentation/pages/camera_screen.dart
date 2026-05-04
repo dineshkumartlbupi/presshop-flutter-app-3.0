@@ -188,18 +188,7 @@ class CameraScreenState extends State<CameraScreen>
             debugPrint(
                 "📸 CameraScreen: Camera failure: ${state.errorMessage}");
 
-            // If it's a permission error, redirect to the centralized error screen
-            if (state.errorMessage == "permission_denied" ||
-                state.errorMessage == "permanently_denied") {
-              if (mounted) {
-                context.goNamed(AppRoutes.permissionErrorName, extra: {
-                  'permissionsStatus': {
-                    Permission.camera: false,
-                    Permission.photos: false,
-                  }
-                });
-              }
-            }
+            // Redirect logic removed to show internal failure UI instead
           }
 
           if (state.status == CameraStatus.success) {
@@ -583,7 +572,8 @@ class CameraScreenState extends State<CameraScreen>
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Theme.of(context).brightness == Brightness.dark
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
                                   ? Colors.white
                                   : Colors.black,
                               fontWeight: FontWeight.w500)),
@@ -625,7 +615,9 @@ class CameraScreenState extends State<CameraScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                isPermissionError ? Icons.lock_outline : Icons.camera_alt_outlined,
+                isPermissionError
+                    ? Icons.lock_outline
+                    : Icons.camera_alt_outlined,
                 size: 100,
                 color: Colors.grey,
               ),

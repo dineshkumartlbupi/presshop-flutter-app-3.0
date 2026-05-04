@@ -378,7 +378,6 @@ class DashboardPageState extends State<Dashboard>
             ),
             body: Stack(
               children: [
-                const Center(child: Text("This is the center Text for popup")),
                 Visibility(
                   visible: !isGetLatLong,
                   replacement: showLoader(isForLocation: false),
@@ -699,15 +698,7 @@ class DashboardPageState extends State<Dashboard>
     if (currentIndex == index) return;
 
     if (index == 2) {
-      // Trying to switch to Camera tab - request permissions first
-      // This will show the OS dialog if not already decided.
-      final result =
-          await _permissionService.requestCameraAndGalleryPermissions();
-      if (result != PermissionResult.granted) {
-        // Only redirect if they explicitly didn't grant it after the request
-        _redirectToPermissionScreen();
-        return;
-      }
+      // Cleaned up dashboard tab-tap logic to allow navigation to the Camera tab without pre-blocking
     }
 
     // Safely stop camera when leaving tab 2

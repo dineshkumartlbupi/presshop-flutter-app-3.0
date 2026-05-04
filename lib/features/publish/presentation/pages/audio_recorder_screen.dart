@@ -59,36 +59,11 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
         return true;
       },
       child: Scaffold(
-        appBar: CommonAppBar(
-            elevation: 0,
-            title: Text(
-              "Record Audio",
-              style: commonTextStyle(
-                  size: size,
-                  fontSize: size.width * AppDimensions.numD05,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w700),
-            ),
-            centerTitle: false,
-            titleSpacing: size.width * AppDimensions.numD02,
-            size: size,
-            showActions: true,
-            leadingFxn: () {
-              context.pop();
-            },
-            actionWidget: [
-              InkWell(
-                child: Image.asset(
-                  "${commonImagePath}rabbitLogo.png",
-                  height: size.width * AppDimensions.numD07,
-                  width: size.width * AppDimensions.numD07,
-                ),
-              ),
-              SizedBox(
-                width: size.width * AppDimensions.numD04,
-              )
-            ],
-            hideLeading: false),
+        appBar: CommonBrandedAppBar(
+          title: 'Record Audio',
+          size: size,
+          showLogo: true,
+        ),
         body: SafeArea(
             child: Column(
           children: [
@@ -118,7 +93,8 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
               style: commonTextStyle(
                   size: size,
                   fontSize: size.width * AppDimensions.numD15,
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color ??
+                      Colors.black,
                   fontWeight: FontWeight.w500),
             ),
             const Spacer(),

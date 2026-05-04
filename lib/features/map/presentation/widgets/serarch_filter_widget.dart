@@ -106,7 +106,7 @@ class SearchAndFilterBar extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
+                    color: Colors.black,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                         color: Theme.of(context).brightness == Brightness.dark
@@ -124,7 +124,9 @@ class SearchAndFilterBar extends StatelessWidget {
                   child: IconButton(
                     icon: Icon(
                       LucideIcons.corner_up_right,
-                      color: const Color(0xFFEC4E54),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFFEC4E54)
+                          : Colors.white,
                     ),
                     onPressed: onPressedOnNavigation,
                   ),
@@ -211,11 +213,31 @@ class _FilterDropdown extends StatelessWidget {
           value: selected,
           isExpanded: true,
           icon: const Icon(Icons.arrow_drop_down, size: 20),
+          selectedItemBuilder: (context) {
+            return items.map((String item) {
+              return Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  item,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              );
+            }).toList();
+          },
           items: items
               .map(
                 (e) => DropdownMenuItem<String>(
                   value: e,
-                  child: Text(e, style: const TextStyle(fontSize: 14)),
+                  child: Text(
+                    e,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
               )
               .toList(),

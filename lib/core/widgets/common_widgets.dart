@@ -76,7 +76,7 @@ Widget errorMessageWidget(String message) {
         style: commonTextStyle(
           size: globalSize,
           fontSize: globalSize.width * AppDimensions.numD04,
-          color: Colors.grey,
+          color: Theme.of(navigatorKey.currentContext!).hintColor,
           fontWeight: FontWeight.w400,
         ),
       ),

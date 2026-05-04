@@ -213,12 +213,17 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
   }
 
   Widget _buildReviewItem(Size size, Review review) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBgColor = isDark
+        ? AppColorTheme.colorDarkThemeCard
+        : AppColorTheme.colorLightGrey;
+
     return Container(
       padding: EdgeInsets.symmetric(
           horizontal: size.width * AppDimensions.numD03,
           vertical: size.width * AppDimensions.numD04),
       decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
+          color: cardBgColor,
           borderRadius:
               BorderRadius.circular(size.width * AppDimensions.numD04)),
       child: Row(
@@ -285,7 +290,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                         horizontal: size.width * AppDimensions.numD016),
                     width: size.width * AppDimensions.numD20,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).dividerColor.withOpacity(.05),
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD02),
                     ),
@@ -326,6 +331,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                     Image.asset(
                       "${iconsPath}ic_clock.png",
                       height: size.width * AppDimensions.numD036,
+                      color: Theme.of(context).iconTheme.color,
                     ),
                     SizedBox(
                       width: size.width * AppDimensions.numD01,
@@ -350,6 +356,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                     Image.asset(
                       "${iconsPath}calendar.png",
                       height: size.width * AppDimensions.numD035,
+                      color: Theme.of(context).iconTheme.color,
                     ),
                     SizedBox(
                       width: size.width * AppDimensions.numD01,

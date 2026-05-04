@@ -25,8 +25,14 @@ class DashboardBottomNavBar extends StatelessWidget {
       selectedItemColor: AppColorTheme.colorThemePink,
       elevation: 0,
       iconSize: size.width * AppDimensions.numD05,
-      selectedFontSize: size.width * AppDimensions.numD03,
-      unselectedFontSize: size.width * AppDimensions.numD03,
+      selectedLabelStyle: TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: size.width * AppDimensions.numD03,
+      ),
+      unselectedLabelStyle: TextStyle(
+        fontWeight: FontWeight.w400,
+        fontSize: size.width * AppDimensions.numD03,
+      ),
       type: BottomNavigationBarType.fixed,
       onTap: onTap,
       items: [

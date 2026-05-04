@@ -232,13 +232,13 @@ class _NewsPageState extends State<NewsPage>
             _showFeedBottomSheet!();
           }
         },
-        appBarTitle: widget.appBarTitle,
+        appBarTitle: widget.appBarTitle ?? "News",
 
         // hideHamburger: widget.appBarTitle != null,
         bottom: widget.fromMap
             ? null
             : PreferredSize(
-                preferredSize: const Size.fromHeight(70),
+                preferredSize: const Size.fromHeight(80),
                 child: Column(
                   children: [
                     Padding(
@@ -247,32 +247,39 @@ class _NewsPageState extends State<NewsPage>
                       child: TabBar(
                         controller: _tabController,
                         labelColor: Colors.white,
-                        unselectedLabelColor:
-                            Theme.of(context).textTheme.bodyLarge?.color,
+                        dividerColor: Colors.transparent,
                         indicatorSize: TabBarIndicatorSize.tab,
+                        unselectedLabelColor:
+                            Theme.of(context).textTheme.bodyLarge?.color ??
+                                Colors.black,
                         indicator: BoxDecoration(
                           color: AppColorTheme.colorThemePink,
                           borderRadius: BorderRadius.circular(
-                              size.width * AppDimensions.numD02),
+                              size.width * AppDimensions.numD01),
                         ),
                         labelStyle: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD038,
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                         unselectedLabelStyle: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD038,
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                          color: Theme.of(context).textTheme.bodyLarge?.color ??
+                              Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                         tabs: const [
                           Tab(text: "PressHop News"),
                           Tab(text: "Local News"),
                         ],
+                        onTap: (index) {
+                          setState(() {});
+                        },
                       ),
                     ),
+                    SizedBox(height: size.width * AppDimensions.numD04),
                   ],
                 ),
               ),
@@ -344,10 +351,10 @@ class _NewsPageState extends State<NewsPage>
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: size.width * AppDimensions.numD04,
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
+                            color: Theme.of(context).brightness ==
+                                    Brightness.dark
+                                ? Colors.white
+                                : Theme.of(context).textTheme.bodyLarge?.color,
                           ),
                         ),
                       ),
@@ -487,12 +494,12 @@ class _NewsPageState extends State<NewsPage>
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Container(
                   height: size.width * AppDimensions.numD50,
-                  color: Colors.grey[200],
+                  color: Theme.of(context).cardColor,
                   child: const Center(child: CircularProgressIndicator()),
                 ),
                 errorWidget: (context, url, error) => Container(
                   height: size.width * AppDimensions.numD50,
-                  color: Colors.grey[300],
+                  color: Theme.of(context).cardColor,
                   child: const Icon(Icons.error),
                 ),
               ),
@@ -539,7 +546,7 @@ class _NewsPageState extends State<NewsPage>
                         ? NetworkImage(item.userImage!)
                         : const NetworkImage(
                             "https://i.pravatar.cc/150?u=a042581f4e29026704d"),
-                    backgroundColor: Colors.grey[300],
+                    backgroundColor: Theme.of(context).cardColor,
                   ),
                   SizedBox(width: size.width * AppDimensions.numD02),
                   Flexible(

@@ -21,9 +21,7 @@ import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart'
-    hide DashboardPageState;
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:presshop/features/publish/presentation/pages/hash_tag_search_screen.dart';
 import 'package:presshop/core/api/api_client.dart';
@@ -301,6 +299,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
         isDark ? Colors.grey[900]! : AppColorTheme.colorLightGrey;
     final Color iconColor =
         isDark ? Colors.white : AppColorTheme.colorTextFieldIcon;
+    final Color borderColor = isDark ? Colors.white24 : AppColorTheme.colorGreyNew;
 
     debugPrint('screen-name:::::::::PublishContentScreen');
 
@@ -428,8 +427,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                           AppDimensions.numD01),
                                                   decoration: BoxDecoration(
                                                     border: Border.all(
-                                                        color: AppColorTheme
-                                                            .colorGreyNew),
+                                                        color: borderColor),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             size.width *
@@ -812,23 +810,23 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                       .numD04),
                                                       borderSide: BorderSide(
                                                           width: 1,
-                                                          color: textColor)),
+                                                          color: borderColor)),
                                               focusedBorder: OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(size
                                                               .width *
                                                           AppDimensions.numD04),
-                                                  borderSide: const BorderSide(
+                                                  borderSide: BorderSide(
                                                       width: 1,
-                                                      color: Colors.black)),
+                                                      color: borderColor)),
                                               enabledBorder: OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(size
                                                               .width *
                                                           AppDimensions.numD04),
-                                                  borderSide: const BorderSide(
+                                                  borderSide: BorderSide(
                                                       width: 1,
-                                                      color: Colors.black)),
+                                                      color: borderColor)),
                                               errorBorder: OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(size
@@ -836,7 +834,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                           AppDimensions.numD04),
                                                   borderSide: const BorderSide(
                                                       width: 1,
-                                                      color: Colors.black)),
+                                                      color: Colors.red)),
                                               focusedErrorBorder:
                                                   OutlineInputBorder(
                                                       borderRadius:
@@ -846,7 +844,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                       .numD04),
                                                       borderSide: BorderSide(
                                                           width: 1,
-                                                          color: textColor)),
+                                                          color: borderColor)),
                                             ),
                                             // validator: checkRequiredValidator,
                                           ),
@@ -1252,7 +1250,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                       .numD04),
                                                       borderSide: BorderSide(
                                                           width: 1,
-                                                          color: textColor)),
+                                                          color: borderColor)),
                                               focusedBorder: OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(size
@@ -1260,7 +1258,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                           AppDimensions.numD04),
                                                   borderSide: BorderSide(
                                                       width: 1,
-                                                      color: textColor)),
+                                                      color: borderColor)),
                                               enabledBorder: OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(size
@@ -1268,7 +1266,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                           AppDimensions.numD04),
                                                   borderSide: BorderSide(
                                                       width: 1,
-                                                      color: textColor)),
+                                                      color: borderColor)),
                                               errorBorder: OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(size
@@ -1286,7 +1284,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                       .numD04),
                                                       borderSide: BorderSide(
                                                           width: 1,
-                                                          color: textColor)),
+                                                          color: borderColor)),
                                             ),
                                             // validator: checkRequiredValidator,
                                           ),
@@ -1803,19 +1801,19 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 size.width *
                                                     AppDimensions.numD08),
                                             borderSide: BorderSide(
-                                                width: 1, color: textColor)),
+                                                width: 1, color: borderColor)),
                                         focusedBorder: OutlineInputBorder(
                                             borderRadius: BorderRadius.circular(
                                                 size.width *
                                                     AppDimensions.numD08),
                                             borderSide: BorderSide(
-                                                width: 1, color: textColor)),
+                                                width: 1, color: borderColor)),
                                         enabledBorder: OutlineInputBorder(
                                             borderRadius: BorderRadius.circular(
                                                 size.width * AppDimensions.numD08),
-                                            borderSide: BorderSide(width: 1, color: textColor)),
+                                            borderSide: BorderSide(width: 1, color: borderColor)),
                                         errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * AppDimensions.numD08), borderSide: const BorderSide(width: 1, color: Colors.red)),
-                                        focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * AppDimensions.numD08), borderSide: BorderSide(width: 1, color: textColor)),
+                                        focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * AppDimensions.numD08), borderSide: BorderSide(width: 1, color: borderColor)),
                                         contentPadding: EdgeInsets.only(left: size.width * AppDimensions.numD06)),
                                     /* validator: (value) {
                                 if (hashtagList.isEmpty) {
@@ -1933,7 +1931,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           color: selectedSellType ==
                                                   AppStrings.sharedText
                                               ? Colors.white
-                                              : textColor,
+                                              : borderColor,
                                           width: 1.5),
                                       borderRadius: BorderRadius.circular(
                                           size.width * AppDimensions.numD04)),
@@ -2093,7 +2091,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           color: selectedSellType ==
                                                   AppStrings.exclusiveText
                                               ? Colors.white
-                                              : textColor,
+                                              : borderColor,
                                           width: 1.5),
                                       borderRadius: BorderRadius.circular(
                                           size.width * AppDimensions.numD04)),
@@ -2296,17 +2294,17 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
                                 borderSide:
-                                    BorderSide(width: 1, color: textColor)),
+                                    BorderSide(width: 1, color: borderColor)),
                             focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
                                 borderSide:
-                                    BorderSide(width: 1, color: textColor)),
+                                    BorderSide(width: 1, color: borderColor)),
                             enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
                                 borderSide:
-                                    BorderSide(width: 1, color: textColor)),
+                                    BorderSide(width: 1, color: borderColor)),
                             errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
@@ -2316,7 +2314,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
                                 borderSide:
-                                    BorderSide(width: 1, color: textColor)),
+                                    BorderSide(width: 1, color: borderColor)),
                           ),
                           //validator: checkRequiredValidator,
                         ),
@@ -2346,7 +2344,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     width: 1.0,
                                     color: _checkCharityBoxVal
                                         ? activeColor
-                                        : Colors.grey.withValues(alpha: 0.5),
+                                        : borderColor,
                                   ),
                                 ),
                                 value: _checkCharityBoxVal,
@@ -2501,8 +2499,18 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     child: commonElevatedButton(
                                       "${AppStrings.saveText.toTitleCase()} ${AppStrings.draftText.toTitleCase()}",
                                       size,
-                                      commonButtonTextStyle(size),
-                                      commonButtonStyle(size, textColor),
+                                      commonButtonTextStyle(size, color: textColor),
+                                      ElevatedButton.styleFrom(
+                                          backgroundColor: cardColor,
+                                          elevation: 0.0,
+                                          side: BorderSide(
+                                              color: borderColor, width: 1),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      size.width *
+                                                          AppDimensions
+                                                              .numD03))),
                                       () {
                                         draftSelected = true;
                                         isSelectLetsGo = false;
@@ -2593,6 +2601,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                 final cardColor = isDark
                     ? Colors.grey.shade900
                     : AppColorTheme.colorLightGrey;
+                final Color borderColor =
+                    isDark ? Colors.white24 : AppColorTheme.colorGreyNew;
 
                 return Column(
                   mainAxisSize: MainAxisSize.min,
@@ -2630,57 +2640,58 @@ class PublishContentScreenState extends State<PublishContentScreen>
                           final categories = state.categories;
                           final currentSelected = state.selectedCategory;
 
-                          return GridView.builder(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * AppDimensions.numD04),
-                            shrinkWrap: true,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 4,
-                              crossAxisSpacing:
-                                  size.width * AppDimensions.numD04,
+                          return SingleChildScrollView(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: size.width * AppDimensions.numD04),
+                              child: Wrap(
+                                spacing: size.width * AppDimensions.numD02,
+                                runSpacing: size.width * AppDimensions.numD02,
+                                children: categories.map((category) {
+                                  final isSelected =
+                                      category.id == currentSelected?.id;
+
+                                  return InkWell(
+                                    onTap: () {
+                                      context.read<PublishBloc>().add(
+                                          SelectCategoryEvent(category.id));
+
+                                      if (category.name == "Shared" ||
+                                          category.name == "Exclusive") {
+                                        selectedSellType = category.name;
+                                      }
+
+                                      setState(() {
+                                        selectedCategory = category;
+                                      });
+
+                                      context.pop();
+                                    },
+                                    child: Chip(
+                                      side: BorderSide(
+                                          color: isSelected
+                                              ? Colors.transparent
+                                              : borderColor,
+                                          width: 1),
+                                      label: Text(
+                                        category.name,
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width *
+                                                AppDimensions.numD03,
+                                            color: isSelected
+                                                ? Colors.white
+                                                : AppColorTheme.colorHint,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      backgroundColor: isSelected
+                                          ? (isDark ? Colors.red : Colors.black)
+                                          : cardColor,
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
                             ),
-                            itemBuilder: (context, index) {
-                              final category = categories[index];
-                              final isSelected =
-                                  category.id == currentSelected?.id;
-
-                              return InkWell(
-                                onTap: () {
-                                  context
-                                      .read<PublishBloc>()
-                                      .add(SelectCategoryEvent(category.id));
-
-                                  if (category.name == "Shared" ||
-                                      category.name == "Exclusive") {
-                                    selectedSellType = category.name;
-                                  }
-
-                                  setState(() {
-                                    selectedCategory = category;
-                                  });
-
-                                  context.pop();
-                                },
-                                child: Chip(
-                                  label: Text(
-                                    category.name,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD03,
-                                        color: isSelected
-                                            ? Colors.white
-                                            : AppColorTheme.colorHint,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  backgroundColor: isSelected
-                                      ? (isDark ? Colors.red : Colors.black)
-                                      : cardColor,
-                                ),
-                              );
-                            },
-                            itemCount: categories.length,
                           );
                         },
                       ),
@@ -2716,6 +2727,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                 isDark ? Colors.red : AppColorTheme.colorThemePink;
             final cardColor =
                 isDark ? Colors.grey.shade900 : AppColorTheme.colorLightGrey;
+            final Color borderColor =
+                isDark ? Colors.white24 : AppColorTheme.colorGreyNew;
 
             return Stack(
               alignment: Alignment.center,
@@ -2822,8 +2835,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             .width *
                                                         AppDimensions.numD03),
                                                 border: Border.all(
-                                                    color:
-                                                        Colors.grey.shade300)),
+                                                    color: borderColor)),
                                             child: Row(
                                               children: [
                                                 SizedBox(

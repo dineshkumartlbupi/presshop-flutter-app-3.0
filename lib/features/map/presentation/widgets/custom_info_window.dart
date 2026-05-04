@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:presshop/core/theme/app_colors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:presshop/features/map/constants/map_news_constants.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:intl/intl.dart';
 
 class CustomInfoWindow extends StatelessWidget {
-
   const CustomInfoWindow({
     super.key,
     required this.incident,
@@ -77,7 +77,7 @@ class CustomInfoWindow extends StatelessWidget {
     try {
       DateTime? parsed = DateTime.tryParse(timeStr);
       if (parsed == null) return "some time ago";
-      
+
       final diff = DateTime.now().difference(parsed);
       if (diff.inDays > 365) return "${(diff.inDays / 365).floor()} years ago";
       if (diff.inDays > 30) return "${(diff.inDays / 30).floor()} months ago";
@@ -94,6 +94,8 @@ class CustomInfoWindow extends StatelessWidget {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     final double responsiveWidth = size.width > 600 ? 650 : size.width;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final borderColor = isDark ? Colors.white24 : Colors.grey.shade400;
 
     return Transform.translate(
       offset: const Offset(0, 0),
@@ -126,10 +128,7 @@ class CustomInfoWindow extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white12
-                            : Colors.transparent),
+                    border: Border.all(color: borderColor),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.15),
@@ -151,9 +150,13 @@ class CustomInfoWindow extends StatelessWidget {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               image: DecorationImage(
-                                image: (incident.avatar != null && incident.avatar!.isNotEmpty)
-                                    ? CachedNetworkImageProvider(incident.avatar!)
-                                    : const AssetImage('assets/markers/avatar.png') as ImageProvider,
+                                image: (incident.avatar != null &&
+                                        incident.avatar!.isNotEmpty)
+                                    ? CachedNetworkImageProvider(
+                                        incident.avatar!)
+                                    : const AssetImage(
+                                            'assets/markers/avatar.png')
+                                        as ImageProvider,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -186,57 +189,61 @@ class CustomInfoWindow extends StatelessWidget {
                           ),
                         ],
                       ),
-                      
+
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Divider(
-                            height: 1,
-                            thickness: 1,
-                            color: Theme.of(context).dividerColor),
+                            height: 1, thickness: 1, color: borderColor),
                       ),
 
                       // Header Row
                       Row(
                         children: [
                           Image.asset(
-                            burstIcons[incident.type] ?? markerIcons[incident.type] ?? markerIcons["nomarker"]!,
+                            burstIcons[incident.type] ??
+                                markerIcons[incident.type] ??
+                                markerIcons["nomarker"]!,
                             height: 36,
                             width: 36,
-                            errorBuilder: (context, error, stackTrace) => const Icon(Icons.warning_amber_rounded, size: 36, color: Colors.orange),
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.warning_amber_rounded,
+                                    size: 36, color: Colors.orange),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              incident.heading ?? _getDisplayTitle(incident.type, incident.address),
-                               style: TextStyle(
-                                 fontSize: 16,
-                                 fontWeight: FontWeight.bold,
-                                 color: Theme.of(context)
-                                     .textTheme
-                                     .bodyLarge
-                                     ?.color,
-                               ),
+                              incident.heading ??
+                                  _getDisplayTitle(
+                                      incident.type, incident.address),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
                       ),
-                      
+
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Divider(
-                            height: 1,
-                            thickness: 1,
-                            color: Theme.of(context).dividerColor),
+                            height: 1, thickness: 1, color: borderColor),
                       ),
 
                       // Details
-                      if (incident.address != null && incident.address!.isNotEmpty) ...[
+                      if (incident.address != null &&
+                          incident.address!.isNotEmpty) ...[
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.location_on_outlined, size: 18, color: Colors.grey[600]),
+                            Icon(Icons.location_on_outlined,
+                                size: 18, color: Colors.grey[600]),
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
@@ -256,11 +263,13 @@ class CustomInfoWindow extends StatelessWidget {
                       ],
 
                       // Description
-                      if (incident.description != null && incident.description!.isNotEmpty) ...[
+                      if (incident.description != null &&
+                          incident.description!.isNotEmpty) ...[
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.info_outline, size: 18, color: Colors.grey[600]),
+                            Icon(Icons.info_outline,
+                                size: 18, color: Colors.grey[600]),
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
@@ -282,32 +291,38 @@ class CustomInfoWindow extends StatelessWidget {
                       // Time and Views
                       Row(
                         children: [
-                          Icon(Icons.access_time, size: 18, color: Colors.grey[600]),
+                          Icon(Icons.access_time,
+                              size: 18, color: Colors.grey[600]),
                           const SizedBox(width: 6),
                           Text(
                             _formatTime(incident.time),
-                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                            style: TextStyle(
+                                fontSize: 12, color: Colors.grey[600]),
                           ),
                           const SizedBox(width: 16),
-                          Icon(Icons.visibility_outlined, size: 18, color: Colors.grey[600]),
+                          Icon(Icons.visibility_outlined,
+                              size: 18, color: Colors.grey[600]),
                           const SizedBox(width: 6),
                           Text(
                             "${incident.viewCount ?? 0}",
-                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                            style: TextStyle(
+                                fontSize: 12, color: Colors.grey[600]),
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 4),
 
                       // Date
                       Row(
                         children: [
-                          Icon(Icons.calendar_today_outlined, size: 16, color: Colors.grey[600]),
+                          Icon(Icons.calendar_today_outlined,
+                              size: 16, color: Colors.grey[600]),
                           const SizedBox(width: 6),
                           Text(
                             _formatDate(incident.date, incident.time),
-                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                            style: TextStyle(
+                                fontSize: 12, color: Colors.grey[600]),
                           ),
                         ],
                       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:presshop/core/core_export.dart';
 
 class CommentInputWidget extends StatelessWidget {
 
@@ -26,7 +27,7 @@ class CommentInputWidget extends StatelessWidget {
           : null, // Min height only if dynamic
       padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F6),
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -43,12 +44,12 @@ class CommentInputWidget extends StatelessWidget {
               minLines: height != null ? null : 3,
               keyboardType: TextInputType.multiline,
               textAlignVertical: TextAlignVertical.top, // Start text at top
-              style: const TextStyle(fontSize: 14, color: Colors.black),
+              style: TextStyle(fontSize: 14, color: Theme.of(context).textTheme.bodyMedium?.color),
               decoration: InputDecoration(
                 hintText: hintText ?? "Leave your comment",
                 hintStyle: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey[500],
+                  color: Theme.of(context).hintColor,
                   fontWeight: FontWeight.w400,
                 ),
                 border: InputBorder.none,
@@ -66,11 +67,12 @@ class CommentInputWidget extends StatelessWidget {
               width: 24,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: AppColorTheme.colorThemePink,
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Image.asset(
                 "assets/icons/comment_send.png",
+                color: Colors.white,
                 height: 16,
                 width: 16,
               ),

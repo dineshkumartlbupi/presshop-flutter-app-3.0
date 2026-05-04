@@ -623,175 +623,187 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                       child: Row(
                         children: [
                           Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: size.width * AppDimensions.numD03,
-                                horizontal: size.width * AppDimensions.numD02),
-                            decoration: BoxDecoration(
-                                color: Theme.of(context).cardColor,
-                                borderRadius: BorderRadius.circular(
-                                    size.width * AppDimensions.numD03)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      "${iconsPath}ic_yearly_calendar.png",
-                                      width: size.width * AppDimensions.numD035,
-                                      color: Theme.of(context).iconTheme.color,
-                                    ),
-                                    SizedBox(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: size.width * AppDimensions.numD03,
+                                  horizontal:
+                                      size.width * AppDimensions.numD02),
+                              decoration: BoxDecoration(
+                                  color: Theme.of(context).cardColor,
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * AppDimensions.numD03)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Image.asset(
+                                        "${iconsPath}ic_yearly_calendar.png",
                                         width:
-                                            size.width * AppDimensions.numD02),
-                                    Text(
-                                      dateTimeFormatter(
-                                        dateTime:
-                                            taskDetail?.createdAt.toString() ??
-                                                '',
-                                        format: "dd MMM yyyy",
+                                            size.width * AppDimensions.numD035,
+                                        color:
+                                            Theme.of(context).iconTheme.color,
                                       ),
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.color,
-                                        fontSize:
-                                            size.width * AppDimensions.numD03,
-                                        fontWeight: FontWeight.bold,
+                                      SizedBox(
+                                          width: size.width *
+                                              AppDimensions.numD02),
+                                      Text(
+                                        dateTimeFormatter(
+                                          dateTime: taskDetail?.createdAt
+                                                  .toString() ??
+                                              '',
+                                          format: "dd MMM yyyy",
+                                        ),
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.color,
+                                          fontSize:
+                                              size.width * AppDimensions.numD03,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: size.height * AppDimensions.numD005,
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.access_time,
-                                      size: size.width * AppDimensions.numD035,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.color,
-                                    ),
-                                    SizedBox(
-                                        width:
-                                            size.width * AppDimensions.numD02),
-                                    Text(
-                                      "From : ${dateTimeFormatter(dateTime: taskDetail?.createdAt ?? "", format: "hh:mm a")}",
-                                      style: TextStyle(
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: size.height * AppDimensions.numD005,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.access_time,
+                                        size:
+                                            size.width * AppDimensions.numD035,
                                         color: Theme.of(context)
                                             .textTheme
                                             .bodyMedium
                                             ?.color,
-                                        fontSize:
-                                            size.width * AppDimensions.numD028,
-                                        fontWeight: FontWeight.w500,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: size.height * AppDimensions.numD003,
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.access_time,
-                                      size: size.width * AppDimensions.numD035,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.color,
-                                    ),
-                                    SizedBox(
-                                        width:
-                                            size.width * AppDimensions.numD02),
-                                    Text(
-                                      "To      : ${dateTimeFormatter(dateTime: taskDetail?.deadLine.toString() ?? '', format: "hh:mm a")}",
-                                      style: TextStyle(
+                                      SizedBox(
+                                          width: size.width *
+                                              AppDimensions.numD02),
+                                      Text(
+                                        "From : ${dateTimeFormatter(dateTime: taskDetail?.createdAt ?? "", format: "hh:mm a")}",
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.color,
+                                          fontSize: size.width *
+                                              AppDimensions.numD028,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: size.height * AppDimensions.numD003,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.access_time,
+                                        size:
+                                            size.width * AppDimensions.numD035,
                                         color: Theme.of(context)
                                             .textTheme
                                             .bodyMedium
                                             ?.color,
-                                        fontSize:
-                                            size.width * AppDimensions.numD028,
-                                        fontWeight: FontWeight.w500,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                      SizedBox(
+                                          width: size.width *
+                                              AppDimensions.numD02),
+                                      Text(
+                                        "To      : ${dateTimeFormatter(dateTime: taskDetail?.deadLine.toString() ?? '', format: "hh:mm a")}",
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.color,
+                                          fontSize: size.width *
+                                              AppDimensions.numD028,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          width: size.width * AppDimensions.numD05,
-                        ),
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: size.width * AppDimensions.numD03,
-                                horizontal: size.width * AppDimensions.numD02),
-                            decoration: BoxDecoration(
-                                color: Theme.of(context).cardColor,
-                                borderRadius: BorderRadius.circular(
-                                    size.width * AppDimensions.numD03)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Image.asset(
-                                      "${iconsPath}ic_location.png",
-                                      width: size.width * AppDimensions.numD03,
-                                      color: Theme.of(context).iconTheme.color,
+                          SizedBox(
+                            width: size.width * AppDimensions.numD05,
+                          ),
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: size.width * AppDimensions.numD03,
+                                  horizontal:
+                                      size.width * AppDimensions.numD02),
+                              decoration: BoxDecoration(
+                                  color: Theme.of(context).cardColor,
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * AppDimensions.numD03)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Image.asset(
+                                        "${iconsPath}ic_location.png",
+                                        width:
+                                            size.width * AppDimensions.numD03,
+                                        color:
+                                            Theme.of(context).iconTheme.color,
+                                      ),
+                                      SizedBox(
+                                        width:
+                                            size.width * AppDimensions.numD01,
+                                      ),
+                                      Text(
+                                        AppStrings.locationText.toUpperCase(),
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width *
+                                                AppDimensions.numD03,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      left: size.width * AppDimensions.numD01,
+                                      top: size.width * AppDimensions.numD01,
                                     ),
-                                    SizedBox(
-                                      width: size.width * AppDimensions.numD01,
-                                    ),
-                                    Text(
-                                      AppStrings.locationText.toUpperCase(),
+                                    child: Text(
+                                      taskDetail!.location,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
                                       style: commonTextStyle(
                                           size: size,
                                           fontSize:
                                               size.width * AppDimensions.numD03,
-                                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                                          fontWeight: FontWeight.w600),
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.color,
+                                          fontWeight: FontWeight.w400),
                                     ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    left: size.width * AppDimensions.numD01,
-                                    top: size.width * AppDimensions.numD01,
                                   ),
-                                  child: Text(
-                                    taskDetail!.location,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD03,
-                                        color: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.color,
-                                        fontWeight: FontWeight.w400),
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
 
                   priceOfferWidget(),
 
@@ -813,8 +825,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                               size.width * AppDimensions.numD04)),
                       child: GestureDetector(
                         onTap: taskDetail!.deadLine.isBefore(DateTime.now())
-                            ? () {
-                              }
+                            ? () {}
                             : () {
                                 if (_hasSubmittedAction) {
                                   return;
@@ -863,7 +874,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     fontSize: size.width * AppDimensions.numD04,
                                     color: taskDetail!.deadLine
                                             .isBefore(DateTime.now())
-                                        ? Theme.of(context).textTheme.bodyLarge?.color
+                                        ? Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color
                                         : Colors.white,
                                     fontWeight: FontWeight.w700),
                               ),
@@ -892,8 +906,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                     left: size.width * AppDimensions.numD04),
                 padding: EdgeInsets.all(size.width * AppDimensions.numD02),
                 decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    shape: BoxShape.circle),
+                    color: Theme.of(context).cardColor, shape: BoxShape.circle),
                 child: Image.asset(
                   "${iconsPath}ic_arrow_left.png",
                   height: size.width * AppDimensions.numD06,
@@ -922,7 +935,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                       "Please click this $appUrl to download PressHop and review the task. Cheers";
 
                   debugPrint("🚀 Sharing text: $shareText");
-                  final RenderBox? box = context.findRenderObject() as RenderBox?;
+                  final RenderBox? box =
+                      context.findRenderObject() as RenderBox?;
                   await Share.share(
                     shareText,
                     sharePositionOrigin:
@@ -938,8 +952,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                     left: size.width * AppDimensions.numD04),
                 padding: EdgeInsets.all(size.width * AppDimensions.numD02),
                 decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    shape: BoxShape.circle),
+                    color: Theme.of(context).cardColor, shape: BoxShape.circle),
                 child: Image.asset(
                   "${iconsPath}ic_share_now.png",
                   height: size.width * AppDimensions.numD06,
@@ -1414,7 +1427,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                       size: size,
                                                       fontSize: size.width *
                                                           AppDimensions.numD035,
-                                                      color: Theme.of(context).iconTheme.color,
+                                                      color: Theme.of(context)
+                                                          .iconTheme
+                                                          .color,
                                                       fontWeight:
                                                           FontWeight.w400),
                                                 ),

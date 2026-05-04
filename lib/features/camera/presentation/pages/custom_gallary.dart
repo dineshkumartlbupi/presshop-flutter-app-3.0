@@ -101,99 +101,88 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
         return false;
       },
       child: Scaffold(
-          appBar: CommonAppBar(
-            elevation: 0,
-            hideLeading: false,
-            title: Text(
-              AppStrings.galleryText,
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: size.width *
-                      (isIpad ? AppDimensions.numD04 : AppDimensions.numD06)),
-            ),
-            centerTitle: false,
-            titleSpacing: 0,
+          appBar: CommonBrandedAppBar(
+            title: AppStrings.galleryText,
             size: size,
-            showActions: showDone,
-            leadingFxn: () {
-              context.pop();
-            },
-            actionWidget: [
-              !isSelectedImageProcessing
-                  ? Center(
-                      child: Text(
-                        "Processing...",
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width *
-                                (isIpad
-                                    ? AppDimensions.numD02
-                                    : AppDimensions.numD03),
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w700),
-                      ),
-                    )
-                  : Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: size.width *
-                              (isIpad
-                                  ? AppDimensions.numD004
-                                  : AppDimensions.numD03)),
-                      child: commonElevatedButton(
-                          "Done",
-                          size,
-                          commonTextStyle(
-                              size: size,
-                              fontSize: size.width *
-                                  (isIpad
-                                      ? AppDimensions.numD02
-                                      : AppDimensions.numD03),
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, AppColorTheme.colorThemePink),
-                          () async {
-                        /// Prince
-                        if (widget.picAgain) {
-                          context.pop(camListData);
-                        } else {
-                          var validationVideoLenght = true;
-                          for (var item in camListData) {
-                            if (item.mimeType == "video") {
-                              VideoPlayerController controller =
-                                  VideoPlayerController.file(File(item.path));
-                              try {
-                                await controller.initialize();
-                                if (controller.value.duration.inSeconds >
-                                    (sharedPreferences?.getInt(
-                                            SharedPreferencesKeys
-                                                .videoLimitKey) ??
-                                        120)) {
-                                  showToast(
-                                      "Videos can be up to 2 minutes long — keep it quick, punchy, and straight to the point🎥");
-                                  validationVideoLenght = false;
-                                  break;
+            showLogo: true,
+            actionWidgets: showDone
+                ? [
+                    !isSelectedImageProcessing
+                        ? Center(
+                            child: Text(
+                              "Processing...",
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width *
+                                      (isIpad
+                                          ? AppDimensions.numD02
+                                          : AppDimensions.numD03),
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                          )
+                        : Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: size.width *
+                                    (isIpad
+                                        ? AppDimensions.numD004
+                                        : AppDimensions.numD015)),
+                            child: commonElevatedButton(
+                                "Done",
+                                size,
+                                commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width *
+                                        (isIpad
+                                            ? AppDimensions.numD02
+                                            : AppDimensions.numD03),
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700),
+                                commonButtonStyle(
+                                    size, AppColorTheme.colorThemePink),
+                                () async {
+                              /// Prince
+                              if (widget.picAgain) {
+                                context.pop(camListData);
+                              } else {
+                                var validationVideoLenght = true;
+                                for (var item in camListData) {
+                                  if (item.mimeType == "video") {
+                                    VideoPlayerController controller =
+                                        VideoPlayerController.file(
+                                            File(item.path));
+                                    try {
+                                      await controller.initialize();
+                                      if (controller.value.duration.inSeconds >
+                                          (sharedPreferences?.getInt(
+                                                  SharedPreferencesKeys
+                                                      .videoLimitKey) ??
+                                              120)) {
+                                        showToast(
+                                            "Videos can be up to 2 minutes long — keep it quick, punchy, and straight to the point🎥");
+                                        validationVideoLenght = false;
+                                        break;
+                                      }
+                                    } finally {
+                                      await controller.dispose();
+                                    }
+                                  }
                                 }
-                              } finally {
-                                await controller.dispose();
+                                if (validationVideoLenght) {
+                                  context
+                                      .pushNamed(AppRoutes.previewName, extra: {
+                                    'cameraData': null,
+                                    'pickAgain': widget.picAgain,
+                                    'type': "gallery",
+                                    'cameraListData': camListData,
+                                    'mediaList': [],
+                                  });
+                                }
                               }
-                            }
-                          }
-                          if (validationVideoLenght) {
-                            context.pushNamed(AppRoutes.previewName, extra: {
-                              'cameraData': null,
-                              'pickAgain': widget.picAgain,
-                              'type': "gallery",
-                              'cameraListData': camListData,
-                              'mediaList': [],
-                            });
-                          }
-                        }
-                      }),
-                    ),
-              SizedBox(
-                width: size.width * AppDimensions.numD04,
-              )
-            ],
+                            }),
+                          ),
+                  ]
+                : null,
           ),
           body: GridView.builder(
               itemCount: _mediaList.length,

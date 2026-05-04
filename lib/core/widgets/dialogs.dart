@@ -18,9 +18,14 @@ class AllDialogs {
                   horizontal: size.width * AppDimensions.numD04),
               content: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
+                  final isDark = Theme.of(context).brightness == Brightness.dark;
+                  final textColor = isDark ? Colors.white : Colors.black;
+                  final borderColor =
+                      isDark ? Colors.white24 : AppColorTheme.colorGreyNew;
+
                   return Container(
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(
                             size.width * AppDimensions.numD045)),
                     child: Column(
@@ -38,7 +43,7 @@ class AllDialogs {
                               Text(
                                 "Alert",
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color: textColor,
                                   fontSize: size.width * AppDimensions.numD04,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -48,9 +53,9 @@ class AllDialogs {
                                   onTap: () {
                                     Navigator.pop(context);
                                   },
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.close,
-                                    color: Colors.black,
+                                    color: textColor,
                                   )),
                               SizedBox(
                                 width: size.width * AppDimensions.numD02,
@@ -61,9 +66,9 @@ class AllDialogs {
                         Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: size.width * AppDimensions.numD04),
-                          child: const Divider(
-                            color: Colors.black,
-                            thickness: 0.5,
+                          child: Divider(
+                            color: borderColor,
+                            thickness: 1.0,
                           ),
                         ),
                         SizedBox(
@@ -80,7 +85,7 @@ class AllDialogs {
                                 height: 120, // fixed height
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Colors.black),
+                                  border: Border.all(color: borderColor),
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
@@ -100,7 +105,7 @@ class AllDialogs {
                                   textAlign: TextAlign.justify,
                                   "These alerts are for informational purposes only, and are not connected with law enforcement. For any emergencies, dial 999, 911, 100, or your local emergency number.",
                                   style: TextStyle(
-                                    color: Colors.black87,
+                                    color: textColor.withValues(alpha: 0.8),
                                     fontSize:
                                         size.width * AppDimensions.numD035,
                                     fontWeight: FontWeight.w500,
@@ -163,6 +168,11 @@ class AllDialogs {
                   horizontal: size.width * AppDimensions.numD04),
               content: StatefulBuilder(
                 builder: (context, setState) {
+                  final isDark =
+                      Theme.of(context).brightness == Brightness.dark;
+                  final borderColor =
+                      isDark ? Colors.white24 : AppColorTheme.colorGreyNew;
+
                   return Container(
                     decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
@@ -205,9 +215,8 @@ class AllDialogs {
                           padding: EdgeInsets.symmetric(
                               horizontal: size.width * AppDimensions.numD04),
                           child: Divider(
-                            color:
-                                Theme.of(context).dividerColor.withOpacity(0.2),
-                            thickness: 0.5,
+                            color: borderColor,
+                            thickness: 1.0,
                           ),
                         ),
                         SizedBox(
@@ -223,13 +232,11 @@ class AllDialogs {
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD04),
-                                    border: Border.all(
-                                        color: Theme.of(context)
-                                            .dividerColor
-                                            .withOpacity(0.2))),
+                                    border: Border.all(color: borderColor)),
                                 child: ClipRRect(
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD04),
+
                                     child: Image.asset(
                                       "assets/rabbits/turnofflocationrabbit.png",
                                       height: size.width * AppDimensions.numD30,

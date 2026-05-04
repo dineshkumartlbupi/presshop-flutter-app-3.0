@@ -756,7 +756,7 @@ void commonErrorDialogDialog(
               builder: (context, setState) {
                 return Container(
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD045)),
                   child: Column(
@@ -774,7 +774,10 @@ void commonErrorDialogDialog(
                                   ? "${AppStrings.errorDialogText} $errorCode!"
                                   : errorCode,
                               style: TextStyle(
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontSize: size.width * AppDimensions.numD04,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -786,7 +789,7 @@ void commonErrorDialogDialog(
                                   },
                                   icon: Icon(
                                     Icons.close,
-                                    color: Colors.black,
+                                    color: Theme.of(context).iconTheme.color,
                                     size: size.width * AppDimensions.numD06,
                                   ))
                           ],
@@ -795,8 +798,8 @@ void commonErrorDialogDialog(
                       Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: size.width * AppDimensions.numD04),
-                        child: const Divider(
-                          color: Colors.black,
+                        child: Divider(
+                          color: Theme.of(context).dividerColor,
                           thickness: 0.5,
                         ),
                       ),
@@ -831,7 +834,10 @@ void commonErrorDialogDialog(
                               child: Text(
                                 message,
                                 style: TextStyle(
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                     fontSize:
                                         size.width * AppDimensions.numD035,
                                     fontWeight: FontWeight.normal),
@@ -880,7 +886,7 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
               builder: (context, setState) {
                 return Container(
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD045)),
                   child: Column(
@@ -898,7 +904,10 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
                             Text(
                               "Complete your onboarding",
                               style: TextStyle(
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontSize: size.width * AppDimensions.numD05,
                                   fontFamily: "AirbnbCereal",
                                   fontWeight: FontWeight.bold),
@@ -912,13 +921,13 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
                                   "${iconsPath}cross.png",
                                   width: size.width * AppDimensions.numD065,
                                   height: size.width * AppDimensions.numD065,
-                                  color: Colors.black,
+                                  color: Theme.of(context).iconTheme.color,
                                 ))
                           ],
                         ),
                       ),
-                      const Divider(
-                        color: Colors.black,
+                      Divider(
+                        color: Theme.of(context).dividerColor,
                         thickness: 0.5,
                       ),
                       SizedBox(
@@ -935,7 +944,10 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
                                   "Please complete your pending onboarding process to register on ",
                               style: TextStyle(
                                   fontSize: size.width * AppDimensions.numD038,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontFamily: "AirbnbCereal",
                                   fontWeight: FontWeight.w400,
                                   height: 1.5),
@@ -945,7 +957,10 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
                                   style: TextStyle(
                                       fontSize:
                                           size.width * AppDimensions.numD038,
-                                      color: Colors.black,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color,
                                       fontFamily: "AirbnbCereal",
                                       fontWeight: FontWeight.w400,
                                       height: 1.5),
@@ -955,7 +970,10 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
                                   style: TextStyle(
                                       fontSize:
                                           size.width * AppDimensions.numD038,
-                                      color: Colors.black,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color,
                                       fontFamily: "AirbnbCereal",
                                       fontWeight: FontWeight.w400,
                                       height: 1.5),

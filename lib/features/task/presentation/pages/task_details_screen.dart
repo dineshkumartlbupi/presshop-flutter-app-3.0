@@ -14,7 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/main.dart';
-import 'package:presshop/core/widgets/animated_button.dart';
+
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
@@ -44,7 +44,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   String myId = "";
   BitmapDescriptor? mapIcon;
   List<Marker> marker = [];
-  bool shouldRestartAnimation = false;
+
   LatLng? _latLng;
   bool isDirection = false;
   final Completer<GoogleMapController> _controller =
@@ -888,11 +888,16 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                       ),
                       if (isOwner)
                         widget.taskStatus != "rejected"
-                            ? AnimatedButtonWidget(
-                                shouldRestartAnimation: shouldRestartAnimation,
-                                size: size,
-                                buttonText: AppStringsNew2.manageTaskText,
-                                onPressed: () {
+                            ? SizedBox(
+                                height: size.width * AppDimensions.numD13,
+                                width: size.width,
+                                child: commonElevatedButton(
+                                    AppStringsNew2.manageTaskText,
+                                    size,
+                                    commonButtonTextStyle(size),
+                                    commonButtonStyle(
+                                        size, AppColorTheme.colorThemePink),
+                                    () {
                                   context
                                       .read<TaskBloc>()
                                       .add(const ResetTaskActionStatusEvent());
@@ -903,7 +908,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                       }).then((value) {
                                     _fetchTaskDetail(showLoader: false);
                                   });
-                                },
+                                }),
                               )
                             : Container(
                                 width: size.width,

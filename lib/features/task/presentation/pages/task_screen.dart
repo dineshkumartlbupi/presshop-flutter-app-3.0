@@ -375,12 +375,14 @@ class MyTaskScreenState extends State<MyTaskScreen>
           vertical: size.width * AppDimensions.numD02),
       padding: EdgeInsets.all(size.width * AppDimensions.numD03),
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius:
               BorderRadius.circular(size.width * AppDimensions.numD02),
           boxShadow: [
             BoxShadow(
-                color: Colors.grey.shade200, spreadRadius: 1, blurRadius: 2)
+                color: Theme.of(context).shadowColor.withOpacity(0.1),
+                spreadRadius: 1,
+                blurRadius: 2)
           ]),
       child: Row(
         children: [
@@ -443,7 +445,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
               style: commonTextStyle(
                   size: size,
                   fontSize: size.width * AppDimensions.numD03,
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.bold),
             ),
         ],
@@ -553,10 +555,12 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   right: size.width * AppDimensions.numD03,
                                   top: size.width * AppDimensions.numD03),
                               decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: Theme.of(context).cardColor,
                                   boxShadow: [
                                     BoxShadow(
-                                        color: Colors.grey.shade200,
+                                        color: Theme.of(context)
+                                            .shadowColor
+                                            .withOpacity(0.1),
                                         spreadRadius: 2,
                                         blurRadius: 1)
                                   ],
@@ -1002,10 +1006,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                       AppDimensions.numD01),
                                               alignment: Alignment.center,
                                               decoration: BoxDecoration(
-                                                  color: ((item.taskDetail
-                                                                  ?.deadLine
-                                                                  .isBefore(DateTime
-                                                                      .now()) ??
+                                                  color: ((item.taskDetail?.deadLine.isBefore(DateTime.now()) ??
                                                               false) &&
                                                           item.status ==
                                                               "accepted")
@@ -1014,7 +1015,12 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                       : item.status == "accepted" &&
                                                               item.totalAmount ==
                                                                   "0"
-                                                          ? Colors.black
+                                                          ? (Theme.of(context)
+                                                                      .brightness ==
+                                                                  Brightness
+                                                                      .dark
+                                                              ? Colors.white
+                                                              : Colors.black)
                                                           : AppColorTheme
                                                               .colorLightGrey,
                                                   borderRadius:
@@ -1039,23 +1045,30 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                     size: size,
                                                     fontSize: size.width *
                                                         AppDimensions.numD025,
-                                                    color: ((item.taskDetail
-                                                                    ?.deadLine
-                                                                    .isBefore(
-                                                                        DateTime
-                                                                            .now()) ??
+                                                    color: ((item.taskDetail?.deadLine.isBefore(DateTime.now()) ??
                                                                 false) &&
                                                             item.status ==
                                                                 "accepted")
-                                                        ? Colors.black
-                                                        : item.status ==
-                                                                    "accepted" &&
+                                                        ? (Theme.of(context)
+                                                                    .brightness ==
+                                                                Brightness.dark
+                                                            ? Colors.white
+                                                            : Colors.black)
+                                                        : item.status == "accepted" &&
                                                                 item.totalAmount ==
                                                                     "0"
-                                                            ? Colors.white
-                                                            : Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.w600),
+                                                            ? (Theme.of(context)
+                                                                        .brightness ==
+                                                                    Brightness
+                                                                        .dark
+                                                                ? Colors.black
+                                                                : Colors.white)
+                                                            : (Theme.of(context)
+                                                                        .brightness ==
+                                                                    Brightness.dark
+                                                                ? Colors.white
+                                                                : Colors.black),
+                                                    fontWeight: FontWeight.w600),
                                               ),
                                             )
                                           : Container(
@@ -1068,7 +1081,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                   vertical: size.width *
                                                       AppDimensions.numD01),
                                               decoration: BoxDecoration(
-                                                  color: Colors.black,
+                                                  color: (Theme.of(context)
+                                                              .brightness ==
+                                                          Brightness.dark
+                                                      ? Colors.white
+                                                      : Colors.black),
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           size.width *
@@ -1080,7 +1097,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                     size: size,
                                                     fontSize: size.width *
                                                         AppDimensions.numD025,
-                                                    color: Colors.white,
+                                                    color: (Theme.of(context)
+                                                                .brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.black
+                                                        : Colors.white),
                                                     fontWeight:
                                                         FontWeight.w600),
                                               ),
@@ -1206,10 +1227,12 @@ class MyTaskScreenState extends State<MyTaskScreen>
                               right: size.width * AppDimensions.numD03,
                               top: size.width * AppDimensions.numD03),
                           decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: Theme.of(context).cardColor,
                               boxShadow: [
                                 BoxShadow(
-                                    color: Colors.grey.shade200,
+                                    color: Theme.of(context)
+                                        .shadowColor
+                                        .withOpacity(0.1),
                                     spreadRadius: 2,
                                     blurRadius: 1)
                               ],
@@ -1277,7 +1300,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                 style: commonTextStyle(
                                     size: size,
                                     fontSize: size.width * AppDimensions.numD03,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                     fontWeight: FontWeight.w500),
                               ),
 
@@ -1304,7 +1330,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD024,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.normal),
                                   ),
                                   SizedBox(
@@ -1313,21 +1342,23 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   Image.asset(
                                     "${iconsPath}ic_yearly_calendar.png",
                                     height: size.width * AppDimensions.numD028,
+                                    color: Theme.of(context).iconTheme.color,
                                   ),
                                   SizedBox(
                                     width: size.width * AppDimensions.numD01,
                                   ),
                                   Text(
                                     dateTimeFormatter(
-                                        // dateTime:
-                                        //     item.taskDetail!.createdAt.toString(),
                                         dateTime: item.createdAt.toString(),
                                         format: "dd MMM yyyy"),
                                     style: commonTextStyle(
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD024,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.normal),
                                   ),
                                 ],
@@ -1343,9 +1374,6 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       item.isLive
                                           ? item.isAvailableForAccept &&
                                                   item.status == "accepted"
-                                              //  &&
-                                              //    item.status != "accepted"
-                                              // ? item.status.toUpperCase()
                                               ? "ACCEPTED"
                                               : item.isAvailableForAccept &&
                                                       item.status == "pending"
@@ -1356,20 +1384,6 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                       ? ""
                                                       : ""
                                           : "",
-                                      // item.statusText.isNotEmpty
-                                      //     ? item.statusText.toUpperCase()
-                                      //     : (item.deadlineDate?.isBefore(
-                                      //                 DateTime.now()) ??
-                                      //             false)
-                                      //         ? "EXPIRED"
-                                      //         : isAcceptedByMe
-                                      //             ? "ACCEPTED"
-                                      //             : (isPendingForMe ||
-                                      //                     (item.isAvailableForAccept &&
-                                      //                         item.status ==
-                                      //                             "pending"))
-                                      //                 ? "TAP TO ACCEPT"
-                                      //                 : "",
                                       style: commonTextStyle(
                                           size: size,
                                           fontSize: size.width *
@@ -1423,8 +1437,16 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                 color: item.ctaName != "Expired"
                                                     ? item.status == "accepted"
                                                         // && item.totalAmount == "0"
-                                                        ? Colors.white
-                                                        : Colors.black
+                                                        ? (Theme.of(context)
+                                                                    .brightness ==
+                                                                Brightness.dark
+                                                            ? Colors.black
+                                                            : Colors.white)
+                                                        : (Theme.of(context)
+                                                                    .brightness ==
+                                                                Brightness.dark
+                                                            ? Colors.white
+                                                            : Colors.black)
                                                     : _parseColor(item
                                                             .ctaTextColorCode
                                                             .isNotEmpty
@@ -1449,10 +1471,19 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                   ? item.isAvailableForAccept
                                                       ? item.status ==
                                                               "rejected"
-                                                          ? Colors.black
+                                                          ? (Theme.of(context)
+                                                                      .brightness ==
+                                                                  Brightness
+                                                                      .dark
+                                                              ? Colors.white
+                                                              : Colors.black)
                                                           : AppColorTheme
                                                               .colorThemePink
-                                                      : Colors.black
+                                                      : (Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.white
+                                                          : Colors.black)
                                                   // : colorThemePink,
                                                   : _parseColor(
                                                       item.ctaColorCode),
@@ -1477,7 +1508,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                 fontSize: size.width *
                                                     AppDimensions.numD025,
                                                 color: item.ctaName != "Expired"
-                                                    ? Colors.white
+                                                    ? (Theme.of(context)
+                                                                .brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.black
+                                                        : Colors.white)
                                                     : _parseColor(item
                                                             .ctaTextColorCode
                                                             .isNotEmpty
@@ -1622,7 +1657,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                           },
                           icon: Icon(
                             Icons.close,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             size: size.width * AppDimensions.numD07,
                           ),
                         ),
@@ -1632,7 +1667,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                               size: size,
                               fontSize: size.width *
                                   AppDimensions.appBarHeadingFontSizeNew,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.bold),
                         ),
                         TextButton(
@@ -1681,7 +1717,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD05,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w500),
                     ),
 
@@ -1760,12 +1796,12 @@ class MyTaskScreenState extends State<MyTaskScreen>
               left: size.width * AppDimensions.numD02,
               right: size.width * AppDimensions.numD02,
             ),
-            color: item.isSelected ? Colors.grey.shade400 : null,
+            color: item.isSelected ? Theme.of(context).highlightColor : null,
             child: Row(
               children: [
                 Image.asset(
                   "$iconsPath${list[index].icon}",
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                   height: list[index].name == AppStrings.soldContentText
                       ? size.width * AppDimensions.numD06
                       : size.width * AppDimensions.numD05,
@@ -1818,7 +1854,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD032,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
@@ -1892,7 +1931,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD032,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(

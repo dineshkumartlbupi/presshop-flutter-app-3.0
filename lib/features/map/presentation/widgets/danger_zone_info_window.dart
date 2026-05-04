@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:presshop/core/theme/app_colors.dart';
 
 class DangerZoneInfoWindow extends StatelessWidget {
-
   const DangerZoneInfoWindow({
     super.key,
     required this.name,
@@ -14,6 +14,9 @@ class DangerZoneInfoWindow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final borderColor = isDark ? Colors.white24 : Colors.grey.shade400;
+
     return Material(
       elevation: 8,
       color: Colors.transparent,
@@ -25,8 +28,9 @@ class DangerZoneInfoWindow extends StatelessWidget {
             width: 220,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: borderColor),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
@@ -57,9 +61,10 @@ class DangerZoneInfoWindow extends StatelessWidget {
                     children: [
                       Text(
                         name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -69,7 +74,7 @@ class DangerZoneInfoWindow extends StatelessWidget {
                         description,
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey[600],
+                          color: Theme.of(context).hintColor,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -95,7 +100,10 @@ class DangerZoneInfoWindow extends StatelessWidget {
           ),
 
           //  POINTER TRIANGLE
-          CustomPaint(size: const Size(20, 10), painter: _TrianglePainter()),
+          CustomPaint(
+            size: const Size(20, 10),
+            painter: _TrianglePainter(Theme.of(context).cardColor),
+          ),
         ],
       ),
     );
@@ -103,9 +111,12 @@ class DangerZoneInfoWindow extends StatelessWidget {
 }
 
 class _TrianglePainter extends CustomPainter {
+  final Color color;
+  _TrianglePainter(this.color);
+
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.white;
+    final paint = Paint()..color = color;
     final path = Path()
       ..moveTo(0, 0)
       ..lineTo(size.width / 2, size.height)

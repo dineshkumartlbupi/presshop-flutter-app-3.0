@@ -309,7 +309,7 @@ class MyContentViewState extends State<MyContentView>
                   indicator: BoxDecoration(
                     color: AppColorTheme.colorThemePink,
                     borderRadius: BorderRadius.circular(
-                        size.width * AppDimensions.numD02),
+                        size.width * AppDimensions.numD01),
                   ),
                   labelStyle: commonTextStyle(
                     size: size,

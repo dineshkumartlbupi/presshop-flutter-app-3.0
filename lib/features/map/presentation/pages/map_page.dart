@@ -1153,7 +1153,7 @@ class _MapPageContentState extends State<_MapPageContent>
                     ),
                   ),
                 Positioned(
-                  top: 65,
+                  top: 67,
                   right: 10,
                   child: AnimatedOpacity(
                     duration: const Duration(milliseconds: 300),

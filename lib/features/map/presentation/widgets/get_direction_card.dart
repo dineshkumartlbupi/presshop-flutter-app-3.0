@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/theme/app_colors.dart';
 import 'package:presshop/features/map/presentation/bloc/map_bloc.dart';
 import 'package:presshop/features/map/presentation/bloc/map_event.dart';
 import 'package:presshop/features/map/presentation/bloc/map_state.dart';
@@ -227,6 +228,9 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final borderColor = isDark ? Colors.white24 : AppColorTheme.colorGreyNew;
+
     return BlocListener<MapBloc, MapState>(
       listener: (context, state) {
         if (state.mapSelectedLocation != null &&
@@ -251,17 +255,30 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
         child: Stack(
           clipBehavior: Clip.none,
           children: [
+            /// ------- POINTER TRIANGLE (Behind Card) -------
+            Positioned(
+              right: 16,
+              top: -8,
+              child: Transform.rotate(
+                angle: math.pi / 4,
+                child: Container(
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    border: Border.all(color: borderColor, width: 1.2),
+                  ),
+                ),
+              ),
+            ),
+
             Container(
               width: 260,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white24
-                        : Colors.grey.shade400,
-                    width: 1.2),
+                border: Border.all(color: borderColor, width: 1.2),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.15),
@@ -286,7 +303,7 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                   ),
 
                   const SizedBox(height: 8),
-                  Divider(height: 1, color: Theme.of(context).dividerColor),
+                  Divider(height: 1, color: borderColor),
                   const SizedBox(height: 10),
 
                   /// ------- LOCATION INPUTS -------
@@ -301,7 +318,7 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                             color: Colors.redAccent,
                           ),
                           const SizedBox(height: 8),
-                          dottedLine(),
+                          dottedLine(borderColor),
                           const SizedBox(height: 8),
                           const Icon(
                             Icons.location_on_outlined,
@@ -335,10 +352,7 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
                                     borderSide: BorderSide(
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.white24
-                                          : Colors.grey.shade400,
+                                      color: borderColor,
                                       width: 1.2,
                                     ),
                                   ),
@@ -373,10 +387,7 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
                                     borderSide: BorderSide(
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.white24
-                                          : Colors.grey.shade400,
+                                      color: borderColor,
                                       width: 1.2,
                                     ),
                                   ),
@@ -467,27 +478,6 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                     ),
                   ),
                 ],
-              ),
-            ),
-
-            /// ------- POINTER TRIANGLE -------
-            Positioned(
-              right: 16,
-              top: -8,
-              child: Transform.rotate(
-                angle: math.pi / 4,
-                child: Container(
-                  width: 22,
-                  height: 22,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    border: Border.all(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white24
-                            : Colors.grey.shade400,
-                        width: 1.2),
-                  ),
-                ),
               ),
             ),
 
@@ -587,30 +577,30 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
   }
 }
 
-Widget dottedLine() {
+Widget dottedLine(Color color) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       Container(
         width: 2,
         height: 3,
-        decoration: const BoxDecoration(
-          color: Colors.grey,
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(2),
             topRight: Radius.circular(2),
           ),
         ),
       ),
       const SizedBox(height: 1),
-      Container(width: 2, height: 6, color: Colors.grey),
+      Container(width: 2, height: 6, color: color),
       const SizedBox(height: 1),
       Container(
         width: 2,
         height: 3,
-        decoration: const BoxDecoration(
-          color: Colors.grey,
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(2),
             bottomRight: Radius.circular(2),
           ),

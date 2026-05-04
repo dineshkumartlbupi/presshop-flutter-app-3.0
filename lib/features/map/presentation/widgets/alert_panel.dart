@@ -53,6 +53,8 @@ class _AlertPanelState extends State<AlertPanel>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final borderColor = isDark ? Colors.white24 : Colors.grey.shade400;
 
     return FadeTransition(
       opacity: _opacityAnimation,
@@ -76,10 +78,7 @@ class _AlertPanelState extends State<AlertPanel>
                   color: Theme.of(context).cardColor,
                   borderRadius:
                       BorderRadius.circular(size.width * AppDimensions.numD05),
-                  border: Border.all(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white12
-                          : Colors.transparent),
+                  border: Border.all(color: borderColor),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
@@ -146,7 +145,7 @@ class _AlertPanelState extends State<AlertPanel>
                       margin: EdgeInsets.only(
                           bottom: size.width * AppDimensions.numD026),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).dividerColor,
+                        color: borderColor,
                         borderRadius: BorderRadius.circular(
                             size.width * AppDimensions.numD005),
                       ),
@@ -187,11 +186,7 @@ class _AlertPanelState extends State<AlertPanel>
                               borderRadius: BorderRadius.circular(
                                 size.width * AppDimensions.numD021,
                               ),
-                              border: Border.all(
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.white12
-                                      : Colors.grey.shade300),
+                              border: Border.all(color: borderColor),
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,

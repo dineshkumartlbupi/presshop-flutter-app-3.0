@@ -188,7 +188,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
           final isLiked = currentNews.isLiked ?? false;
 
           return Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             appBar: NewHomeAppBar(
               size: size,
               hideLeading: false,
@@ -222,7 +222,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                       style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD04,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         lineHeight: 1.5,
                         fontWeight: FontWeight.w700,
                       ),
@@ -238,14 +238,15 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                       key: _commentsKey,
                       style: TextStyle(
                         fontSize: size.width * AppDimensions.numD045,
+                        color: Theme.of(context).textTheme.titleLarge?.color,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     SizedBox(height: size.width * AppDimensions.numD05),
                     _buildCommentsList(context, state, size),
                     _buildLoadMoreComments(context, state, size),
-                    _buildMainCommentInput(context, size),
-                    SizedBox(height: size.width * AppDimensions.numD05),
+                     _buildMainCommentInput(context, size),
+                     SizedBox(height: size.width * AppDimensions.numD10 + MediaQuery.of(context).padding.bottom),
                   ],
                 ),
               ),
@@ -285,7 +286,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                 Text(
                   news.userName ?? 'Unknown',
                   style: TextStyle(
-                    color: Colors.grey[500],
+                    color: Theme.of(context).hintColor,
                     fontSize: size.width * AppDimensions.numD03,
                     fontWeight: FontWeight.w600,
                   ),
@@ -294,7 +295,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                 Image.asset(
                   "${iconsPath}ic_clock.png",
                   height: size.width * AppDimensions.numD03,
-                  color: Colors.grey[500],
+                  color: Theme.of(context).hintColor,
                 ),
                 SizedBox(width: size.width * AppDimensions.numD01),
                 _buildTimeText(news.createdAt, size),
@@ -302,7 +303,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                 Image.asset(
                   "${iconsPath}ic_yearly_calendar.png",
                   height: size.width * AppDimensions.numD03,
-                  color: Colors.grey[500],
+                  color: Theme.of(context).hintColor,
                 ),
                 SizedBox(width: size.width * AppDimensions.numD01),
                 _buildDateText(news.createdAt, size),
@@ -323,7 +324,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
     return Text(
       displayTime,
       style: TextStyle(
-          color: Colors.grey[500], fontSize: size.width * AppDimensions.numD03),
+          color: Theme.of(context).hintColor, fontSize: size.width * AppDimensions.numD03),
     );
   }
 
@@ -336,7 +337,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
     return Text(
       displayDate,
       style: TextStyle(
-          color: Colors.grey[500], fontSize: size.width * AppDimensions.numD03),
+          color: Theme.of(context).hintColor, fontSize: size.width * AppDimensions.numD03),
     );
   }
 
@@ -355,7 +356,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
           style: commonTextStyle(
             size: size,
             fontSize: size.width * AppDimensions.numD03,
-            color: Colors.black,
+            color: Theme.of(context).textTheme.bodyMedium?.color,
             lineHeight: 2,
             fontWeight: FontWeight.normal,
           ),
@@ -414,7 +415,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                 "$viewCount ${viewCount == 1 || viewCount == 0 ? 'view' : 'views'}",
                 size,
                 size.width * AppDimensions.numD035,
-                color: const Color(0xFF4A4A4A)),
+                color: Theme.of(context).hintColor),
           ],
         ),
         Row(
@@ -471,7 +472,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
           text,
           style: TextStyle(
             fontSize: size.width * AppDimensions.numD025,
-            color: const Color(0xFF4A4A4A),
+            color: Theme.of(context).hintColor,
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -549,7 +550,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
           child: Text(
             "Load more comments",
             style: TextStyle(
-              color: Colors.grey[500],
+              color: Theme.of(context).hintColor,
               fontSize: size.width * AppDimensions.numD03,
               fontWeight: FontWeight.w500,
             ),
@@ -566,7 +567,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
           horizontal: size.width * AppDimensions.numD04,
           vertical: size.width * AppDimensions.numD03),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(size.width * AppDimensions.numD02),
       ),
       child: CommentInputWidget(
@@ -616,18 +617,18 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                             commentData.userImage!.isNotEmpty)
                         ? NetworkImage(commentData.userImage!)
                         : null,
-                    backgroundColor: Colors.grey[200],
+                    backgroundColor: Theme.of(context).cardColor,
                     child: (commentData.userImage == null ||
                             commentData.userImage!.isEmpty)
                         ? Icon(Icons.person,
-                            color: Colors.grey,
+                            color: Theme.of(context).hintColor,
                             size: size.width * AppDimensions.numD04)
                         : null,
                   ),
                   Expanded(
                     child: Container(
                       width: size.width * AppDimensions.numD003,
-                      color: Colors.grey[300],
+                      color: Theme.of(context).dividerColor,
                     ),
                   ),
                 ],
@@ -646,7 +647,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                       style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD03,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
                         lineHeight: 2,
                         fontWeight: FontWeight.normal,
                       ),
@@ -674,7 +675,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
               height: size.width * AppDimensions.numD04,
               child: Container(
                   width: size.width * AppDimensions.numD003,
-                  color: Colors.grey[300]),
+                  color: Theme.of(context).dividerColor),
             ),
             Padding(
               padding: EdgeInsets.only(
@@ -712,7 +713,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                                           fontSize:
                                               size.width * AppDimensions.numD03,
                                           fontWeight: FontWeight.w600,
-                                          color: Colors.grey)),
+                                          color: Theme.of(context).hintColor)),
                                 ),
                                 size,
                                 isLast: true,
@@ -750,12 +751,12 @@ class _NewsDetailPageState extends State<NewsDetailPage>
               text: name,
               style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                   fontSize: size.width * AppDimensions.numD035)),
           TextSpan(
               text: " • ${formatCommentDate(date)}",
               style: TextStyle(
-                  color: Colors.grey[500],
+                  color: Theme.of(context).hintColor,
                   fontSize: size.width * AppDimensions.numD03)),
         ],
       ),
@@ -784,7 +785,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                 Text("$likes likes",
                     style: TextStyle(
                         fontSize: size.width * AppDimensions.numD028,
-                        color: Colors.grey[500])),
+                        color: Theme.of(context).hintColor)),
               ]),
             ),
             SizedBox(width: size.width * AppDimensions.numD04),
@@ -835,7 +836,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
           height: isLast ? size.width * AppDimensions.numD04 : null,
           child: Container(
               width: size.width * AppDimensions.numD003,
-              color: Colors.grey[300]),
+              color: Theme.of(context).dividerColor),
         ),
         if (showConnector)
           Positioned(
@@ -847,10 +848,10 @@ class _NewsDetailPageState extends State<NewsDetailPage>
               decoration: BoxDecoration(
                 border: Border(
                   left: BorderSide(
-                      color: Colors.grey[300]!,
+                      color: Theme.of(context).dividerColor,
                       width: size.width * AppDimensions.numD003),
                   bottom: BorderSide(
-                      color: Colors.grey[300]!,
+                      color: Theme.of(context).dividerColor,
                       width: size.width * AppDimensions.numD003),
                 ),
                 borderRadius: BorderRadius.only(
@@ -880,7 +881,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
           style: TextStyle(
               fontSize: size.width * AppDimensions.numD03,
               fontWeight: FontWeight.w600,
-              color: Colors.grey[600]),
+              color: Theme.of(context).hintColor),
         ),
       ),
     );
@@ -937,10 +938,10 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                 radius: size.width * AppDimensions.numD05,
                 backgroundImage:
                     avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : null,
-                backgroundColor: Colors.grey[200],
+                backgroundColor: Theme.of(context).cardColor,
                 child: avatarUrl.isEmpty
                     ? Icon(Icons.person,
-                        color: Colors.grey,
+                        color: Theme.of(context).hintColor,
                         size: size.width * AppDimensions.numD04)
                     : null,
               ),
@@ -957,7 +958,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                       style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD03,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
                         lineHeight: 2,
                         fontWeight: FontWeight.normal,
                       ),
@@ -1002,11 +1003,11 @@ class _NewsDetailPageState extends State<NewsDetailPage>
               radius: size.width * AppDimensions.numD03,
               backgroundImage:
                   avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : null,
-              backgroundColor: Colors.grey[200],
+              backgroundColor: Theme.of(context).cardColor,
               child: avatarUrl.isEmpty
                   ? Icon(Icons.person,
                       size: size.width * AppDimensions.numD04,
-                      color: Colors.grey)
+                      color: Theme.of(context).hintColor)
                   : null,
             ),
             SizedBox(width: size.width * AppDimensions.numD02),
@@ -1035,7 +1036,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD03,
-                              color: Colors.black,
+                              color: Theme.of(context).textTheme.bodyMedium?.color,
                               lineHeight: 2,
                               fontWeight: FontWeight.normal),
                         ),

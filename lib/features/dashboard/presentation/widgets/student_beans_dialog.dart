@@ -26,7 +26,7 @@ class StudentBeansDialog extends StatelessWidget {
           EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
       content: Container(
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius:
                 BorderRadius.circular(size.width * AppDimensions.numD045)),
         child: Column(
@@ -34,9 +34,9 @@ class StudentBeansDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             _buildDialogHeader(context),
-            _buildDialogDivider(),
-            _buildDialogBody(),
-            _buildDialogFooter(),
+            _buildDialogDivider(context),
+            _buildDialogBody(context),
+            _buildDialogFooter(context),
           ],
         ),
       ),
@@ -53,7 +53,7 @@ class StudentBeansDialog extends StatelessWidget {
                 ? heading
                 : "Brains, beans, and breaking news!")!,
             style: TextStyle(
-              color: Colors.black,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
               fontSize: size.width * AppDimensions.numD04,
               fontWeight: FontWeight.bold,
             ),
@@ -63,7 +63,7 @@ class StudentBeansDialog extends StatelessWidget {
             onPressed: () => context.pop(),
             icon: Icon(
               Icons.close,
-              color: Colors.black,
+              color: Theme.of(context).iconTheme.color,
               size: size.width * AppDimensions.numD06,
             ),
           )
@@ -72,18 +72,18 @@ class StudentBeansDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildDialogDivider() {
+  Widget _buildDialogDivider(BuildContext context) {
     return Padding(
       padding:
           EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
-      child: const Divider(
-        color: Colors.black,
+      child: Divider(
+        color: Theme.of(context).dividerColor,
         thickness: 0.5,
       ),
     );
   }
 
-  Widget _buildDialogBody() {
+  Widget _buildDialogBody(BuildContext context) {
     return Padding(
       padding:
           EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
@@ -95,7 +95,7 @@ class StudentBeansDialog extends StatelessWidget {
             height: 120,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.black),
+              border: Border.all(color: Theme.of(context).dividerColor),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
@@ -114,7 +114,7 @@ class StudentBeansDialog extends StatelessWidget {
                   ? description
                   : "Please confirm your student status to continue")!,
               style: TextStyle(
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
                 fontSize: size.width * AppDimensions.numD035,
                 fontWeight: FontWeight.w500,
               ),
@@ -125,7 +125,7 @@ class StudentBeansDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildDialogFooter() {
+  Widget _buildDialogFooter(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
           horizontal: size.width * AppDimensions.numD04,

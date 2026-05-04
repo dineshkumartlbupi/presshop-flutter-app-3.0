@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 
@@ -67,7 +68,7 @@ class _NewsMediaWidgetState extends State<NewsMediaWidget> {
   Widget build(BuildContext context) {
     if (widget.isVideo) {
       return Container(
-        height: widget.size.height * 0.3,
+        height: widget.size.width * AppDimensions.numD50,
         width: double.infinity,
         color: Colors.black,
         child: _chewieController != null &&
@@ -82,7 +83,7 @@ class _NewsMediaWidgetState extends State<NewsMediaWidget> {
                         width: double.infinity,
                         height: double.infinity,
                         fit: BoxFit.cover,
-                        cacheHeight: (widget.size.height * 0.3 * 2).toInt(),
+                        cacheHeight: (widget.size.width * AppDimensions.numD50 * 2).toInt(),
                       ),
                       const Icon(Icons.play_circle_fill,
                           color: Colors.white, size: 50),
@@ -94,13 +95,13 @@ class _NewsMediaWidgetState extends State<NewsMediaWidget> {
       return Image.network(
         widget.imageUrl,
         width: double.infinity,
-        height: widget.size.height * 0.3,
+        height: widget.size.width * AppDimensions.numD50,
         fit: BoxFit.cover,
-        cacheHeight: (widget.size.height * 0.3 * 2).toInt(),
+        cacheHeight: (widget.size.width * AppDimensions.numD50 * 2).toInt(),
         errorBuilder: (context, error, stackTrace) => Container(
-          height: widget.size.height * 0.3,
-          color: Colors.grey[200],
-          child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+          height: widget.size.width * AppDimensions.numD50,
+          color: Theme.of(context).cardColor,
+          child: Icon(Icons.broken_image, size: 50, color: Theme.of(context).hintColor),
         ),
       );
     }

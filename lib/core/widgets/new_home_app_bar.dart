@@ -111,7 +111,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                     style: TextStyle(
                       color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontWeight: FontWeight.w500,
-                      fontSize: size.width * 0.03,
+                      fontSize: size.width * AppDimensions.numD032,
                       decoration: TextDecoration.underline,
                     ),
                   ))),
