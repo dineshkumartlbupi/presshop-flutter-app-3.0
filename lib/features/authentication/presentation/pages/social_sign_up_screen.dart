@@ -251,7 +251,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                             Text(
                               "Almost there!",
                               style:
-                                  commonBigTitleTextStyle(size, Colors.black),
+                                  commonBigTitleTextStyle(size, Theme.of(context).colorScheme.onSurface),
                             ),
                             SizedBox(
                               height: size.width * AppDimensions.numD01,
@@ -259,7 +259,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                             Text(
                               "Hi ${widget.name}, please complete your profile to continue.",
                               style: TextStyle(
-                                  color: Colors.black,
+                                  color: Theme.of(context).colorScheme.onSurface,
                                   fontSize: size.width * AppDimensions.numD035,
                                   fontFamily: 'AirbnbCereal'),
                             ),
@@ -290,7 +290,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                                                 width: size.width *
                                                     AppDimensions.numD35,
                                                 decoration: BoxDecoration(
-                                                    color: Colors.white,
+                                                    color: Theme.of(context).cardColor,
                                                     border: Border.all(
                                                         color: AppColorTheme
                                                             .colorTextFieldBorder),
@@ -307,6 +307,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                                                       "${iconsPath}ic_user.png",
                                                       width: size.width *
                                                           AppDimensions.numD11,
+                                                      color: Theme.of(context).iconTheme.color,
                                                     ),
                                                     SizedBox(
                                                       height: size.width *
@@ -320,8 +321,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                                                           fontSize: size.width *
                                                               AppDimensions
                                                                   .numD03,
-                                                          color: AppColorTheme
-                                                              .colorHint,
+                                                          color: Theme.of(context).hintColor,
                                                           fontWeight: FontWeight
                                                               .normal),
                                                       textAlign:
@@ -383,7 +383,9 @@ class _SocialSignUpState extends State<SocialSignUp>
                                                             shape: BoxShape
                                                                 .circle),
                                                     child: Icon(Icons.cancel,
-                                                        color: Colors.black,
+                                                        color: Theme.of(context)
+                                                     .colorScheme
+                                                     .onSurface,
                                                         size: size.width *
                                                             AppDimensions
                                                                 .numD035),
@@ -419,7 +421,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                                   Text(
                                     AppStrings.chooseAvatarNoteText,
                                     style: TextStyle(
-                                      color: AppColorTheme.colorHint,
+                                      color: Theme.of(context).hintColor,
                                       fontSize:
                                           size.width * AppDimensions.numD025,
                                     ),
@@ -466,7 +468,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                                   Text(
                                     AppStrings.userNameNoteText,
                                     style: TextStyle(
-                                        color: AppColorTheme.colorHint,
+                                        color: Theme.of(context).hintColor,
                                         fontSize:
                                             size.width * AppDimensions.numD025),
                                   ),
@@ -536,7 +538,9 @@ class _SocialSignUpState extends State<SocialSignUp>
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD035,
-                                                color: Colors.black,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface,
                                                 fontWeight: FontWeight.normal),
                                           ),
                                           Icon(
@@ -636,7 +640,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                                   Text(
                                     AppStrings.referralcodeNoteText,
                                     style: TextStyle(
-                                        color: AppColorTheme.colorHint,
+                                        color: Theme.of(context).hintColor,
                                         fontSize:
                                             size.width * AppDimensions.numD025),
                                   ),
@@ -690,11 +694,15 @@ class _SocialSignUpState extends State<SocialSignUp>
                                         Expanded(
                                           child: Text(
                                             "Accept our T&Cs and Privacy Policy",
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontFamily: "AirbnbCereal",
+                                            style: commonTextStyle(
+                                                size: size,
                                                 fontSize: size.width *
-                                                    AppDimensions.numD035),
+                                                    AppDimensions.numD035,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface,
+                                                fontWeight: FontWeight.normal,
+                                              ),
                                           ),
                                         ),
                                       ],
@@ -846,6 +854,28 @@ class _SocialSignUpState extends State<SocialSignUp>
     showCountryPicker(
       context: context,
       showPhoneCode: true,
+      countryListTheme: CountryListThemeData(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        textStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+        searchTextStyle:
+            TextStyle(color: Theme.of(context).colorScheme.onSurface),
+        bottomSheetHeight: 500,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20.0),
+          topRight: Radius.circular(20.0),
+        ),
+        inputDecoration: InputDecoration(
+          labelText: 'Search',
+          hintStyle: TextStyle(color: Theme.of(context).hintColor),
+          prefixIcon:
+              Icon(Icons.search, color: Theme.of(context).iconTheme.color),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+            ),
+          ),
+        ),
+      ),
       onSelect: (country) {
         debugPrint('Select country: ${country.displayName}');
         debugPrint('Select country: ${country.countryCode}');

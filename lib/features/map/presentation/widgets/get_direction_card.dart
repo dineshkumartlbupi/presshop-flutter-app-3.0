@@ -259,8 +259,9 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                     color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white12
-                        : Colors.transparent),
+                        ? Colors.white24
+                        : Colors.grey.shade400,
+                    width: 1.2),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.15),
@@ -337,8 +338,8 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                       color: Theme.of(context).brightness ==
                                               Brightness.dark
                                           ? Colors.white24
-                                          : const Color(0xFFBDBDBD),
-                                      width: 1,
+                                          : Colors.grey.shade400,
+                                      width: 1.2,
                                     ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
@@ -363,7 +364,7 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                   hintText: 'Destination',
                                   hintStyle: const TextStyle(fontSize: 12),
                                   filled: true,
-                                  fillColor: Colors.grey.shade100,
+                                  fillColor: Theme.of(context).scaffoldBackgroundColor,
                                   contentPadding: const EdgeInsets.symmetric(
                                     vertical: 8,
                                     horizontal: 12,
@@ -371,9 +372,12 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                   isDense: true,
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
-                                    borderSide: const BorderSide(
-                                      color: Color(0xFFBDBDBD),
-                                      width: 1,
+                                    borderSide: BorderSide(
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white24
+                                          : Colors.grey.shade400,
+                                      width: 1.2,
                                     ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
@@ -475,7 +479,14 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                 child: Container(
                   width: 22,
                   height: 22,
-                  color: Theme.of(context).cardColor,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    border: Border.all(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white24
+                            : Colors.grey.shade400,
+                        width: 1.2),
+                  ),
                 ),
               ),
             ),

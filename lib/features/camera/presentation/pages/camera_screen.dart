@@ -393,7 +393,11 @@ class CameraScreenState extends State<CameraScreen>
               decoration: BoxDecoration(
                   color: Colors.transparent,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white)),
+                  border: Border.all(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white24
+                          : Colors.grey.shade400,
+                      width: 1.2)),
               child: Container(
                 padding: EdgeInsets.all(size.width * AppDimensions.numD02),
                 decoration: BoxDecoration(
@@ -438,7 +442,11 @@ class CameraScreenState extends State<CameraScreen>
               decoration: BoxDecoration(
                   color: Colors.transparent,
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColorTheme.colorThemePink)),
+                  border: Border.all(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white24
+                          : Colors.grey.shade400,
+                      width: 1.2)),
               child: state.isVideoLoading
                   ? SizedBox(
                       width: size.width * AppDimensions.numD13,
@@ -603,11 +611,11 @@ class CameraScreenState extends State<CameraScreen>
 
   Widget _buildCameraPreview(
       BuildContext context, CameraState state, Size size) {
-    if (state.status == CameraStatus.failure ||
-        (state.status == CameraStatus.initial &&
-            state.cameraController == null &&
-            state.selectedMode != AppStrings.audioText)) {
-      final isPermanentlyDenied = state.errorMessage == "permanently_denied";
+    if (state.status == CameraStatus.failure) {
+      final isPermissionError = state.errorMessage == "permanently_denied" ||
+          state.errorMessage == "permission_denied";
+      final isNoCamera = state.errorMessage.contains("No cameras available") ||
+          state.errorMessage.contains("No camera found");
 
       return Container(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -616,16 +624,20 @@ class CameraScreenState extends State<CameraScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.lock_outline,
+              Icon(
+                isPermissionError ? Icons.lock_outline : Icons.camera_alt_outlined,
                 size: 100,
                 color: Colors.grey,
               ),
               SizedBox(height: size.height * 0.04),
               Text(
-                isPermanentlyDenied
-                    ? 'Permissions are permanently denied. Please enable them in system settings to continue.'
-                    : 'Camera and Microphone permissions are required to use this feature. Please allow them to continue.',
+                isPermissionError
+                    ? (state.errorMessage == "permanently_denied"
+                        ? 'Permissions are permanently denied. Please enable them in system settings to continue.'
+                        : 'Camera and Microphone permissions are required to use this feature. Please allow them to continue.')
+                    : (isNoCamera
+                        ? 'Camera is not available on this device.'
+                        : 'Failed to initialize camera. Please try again.'),
                 textAlign: TextAlign.center,
                 style: commonTextStyle(
                   size: size,
@@ -635,35 +647,44 @@ class CameraScreenState extends State<CameraScreen>
                 ),
               ),
               SizedBox(height: size.height * 0.04),
-              SizedBox(
-                width: size.width * 0.6,
-                height: 50,
-                child: commonElevatedButton(
-                  isPermanentlyDenied ? "Open Settings" : "Retry",
-                  size,
-                  commonButtonTextStyle(size),
-                  commonButtonStyle(size, AppColorTheme.colorThemePink),
-                  () {
-                    if (isPermanentlyDenied) {
-                      di.sl<PermissionService>().openSettings();
-                    } else {
-                      context
-                          .read<CameraBloc>()
-                          .add(const CameraInitializeEvent(force: true));
-                    }
-                  },
+              if (isPermissionError || !isNoCamera)
+                SizedBox(
+                  width: size.width * 0.6,
+                  height: 50,
+                  child: commonElevatedButton(
+                    state.errorMessage == "permanently_denied"
+                        ? "Open Settings"
+                        : "Retry",
+                    size,
+                    commonButtonTextStyle(size),
+                    commonButtonStyle(size, AppColorTheme.colorThemePink),
+                    () {
+                      if (state.errorMessage == "permanently_denied") {
+                        di.sl<PermissionService>().openSettings();
+                      } else {
+                        context
+                            .read<CameraBloc>()
+                            .add(const CameraInitializeEvent(force: true));
+                      }
+                    },
+                  ),
                 ),
-              ),
             ],
           ),
         ),
       );
     }
 
-    if (state.status == CameraStatus.loading) {
-      return Center(
-          child:
-              CircularProgressIndicator(color: AppColorTheme.colorThemePink));
+    if (state.status == CameraStatus.loading ||
+        (state.status == CameraStatus.initial &&
+            state.cameraController == null &&
+            state.selectedMode != AppStrings.audioText)) {
+      return Container(
+        color: Colors.black,
+        child: Center(
+          child: CircularProgressIndicator(color: AppColorTheme.colorThemePink),
+        ),
+      );
     }
 
     return Listener(
@@ -785,7 +806,11 @@ class CameraScreenState extends State<CameraScreen>
                   decoration: BoxDecoration(
                       color: Colors.transparent,
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColorTheme.colorThemePink)),
+                      border: Border.all(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white24
+                              : Colors.grey.shade400,
+                          width: 1.2)),
                   child: Icon(
                       state.isRecording
                           ? Icons.stop_circle_outlined

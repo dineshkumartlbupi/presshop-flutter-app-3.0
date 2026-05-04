@@ -27,7 +27,7 @@ class AvatarSelectionBox extends StatelessWidget {
               height: size.width * AppDimensions.numD30,
               width: size.width * AppDimensions.numD35,
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   border: Border.all(color: AppColorTheme.colorTextFieldBorder),
                   borderRadius:
                       BorderRadius.circular(size.width * AppDimensions.numD04)),
@@ -37,6 +37,7 @@ class AvatarSelectionBox extends StatelessWidget {
                   Image.asset(
                     "${iconsPath}ic_user.png",
                     width: size.width * AppDimensions.numD11,
+                    color: Theme.of(context).iconTheme.color,
                   ),
                   SizedBox(
                     height: size.width * AppDimensions.numD01,
@@ -46,7 +47,7 @@ class AvatarSelectionBox extends StatelessWidget {
                     style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD03,
-                        color: AppColorTheme.colorHint,
+                        color: Theme.of(context).hintColor,
                         fontWeight: FontWeight.normal),
                     textAlign: TextAlign.center,
                   )
@@ -72,8 +73,10 @@ class AvatarSelectionBox extends StatelessWidget {
                 errorBuilder: (context, error, stackTrace) => Container(
                   height: size.width * AppDimensions.numD30,
                   width: size.width * AppDimensions.numD35,
-                  color: Colors.grey[300],
-                  child: Icon(Icons.error),
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.grey[300]
+                      : Colors.grey[800],
+                  child: Icon(Icons.error, color: Theme.of(context).iconTheme.color),
                 ),
               ),
             ),
@@ -84,10 +87,11 @@ class AvatarSelectionBox extends StatelessWidget {
                 onTap: onClear,
                 child: Container(
                   padding: EdgeInsets.all(size.width * AppDimensions.numD01),
-                  decoration: const BoxDecoration(
-                      color: Colors.white, shape: BoxShape.circle),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      shape: BoxShape.circle),
                   child: Icon(Icons.cancel,
-                      color: Colors.black,
+                      color: Theme.of(context).iconTheme.color,
                       size: size.width * AppDimensions.numD035),
                 ),
               ),

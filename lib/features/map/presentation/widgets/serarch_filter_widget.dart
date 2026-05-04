@@ -55,7 +55,8 @@ class SearchAndFilterBar extends StatelessWidget {
                     border: Border.all(
                         color: Theme.of(context).brightness == Brightness.dark
                             ? Colors.white24
-                            : Theme.of(context).dividerColor),
+                            : Colors.grey.shade400,
+                        width: 1.2),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.05),
@@ -105,10 +106,13 @@ class SearchAndFilterBar extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.black,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white24
+                            : Colors.grey.shade400,
+                        width: 1.2),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.05),
@@ -120,9 +124,7 @@ class SearchAndFilterBar extends StatelessWidget {
                   child: IconButton(
                     icon: Icon(
                       LucideIcons.corner_up_right,
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.black
-                          : Colors.white,
+                      color: const Color(0xFFEC4E54),
                     ),
                     onPressed: onPressedOnNavigation,
                   ),

@@ -23,8 +23,9 @@ class SideActionPanel extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
                   color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white12
-                      : Theme.of(context).dividerColor),
+                      ? Colors.white24
+                      : Colors.grey.shade400,
+                  width: 1.2),
             ),
             child: _buildButton(
                 context, Icons.my_location_sharp, onCurrentLocation)),
@@ -38,8 +39,9 @@ class SideActionPanel extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
                 color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white12
-                    : Theme.of(context).dividerColor),
+                    ? Colors.white24
+                    : Colors.grey.shade400,
+                width: 1.2),
           ),
           child: Column(
             children: [

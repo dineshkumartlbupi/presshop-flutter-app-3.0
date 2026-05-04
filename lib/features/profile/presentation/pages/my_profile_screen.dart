@@ -1518,6 +1518,28 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     showCountryPicker(
       context: context,
       showPhoneCode: true,
+      countryListTheme: CountryListThemeData(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        textStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+        searchTextStyle:
+            TextStyle(color: Theme.of(context).colorScheme.onSurface),
+        bottomSheetHeight: 500,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20.0),
+          topRight: Radius.circular(20.0),
+        ),
+        inputDecoration: InputDecoration(
+          labelText: 'Search',
+          hintStyle: TextStyle(color: Theme.of(context).hintColor),
+          prefixIcon:
+              Icon(Icons.search, color: Theme.of(context).iconTheme.color),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+            ),
+          ),
+        ),
+      ),
       // optional. Shows phone code before the country name.
       onSelect: (country) {
         debugPrint('Select country: ${country.displayName}');

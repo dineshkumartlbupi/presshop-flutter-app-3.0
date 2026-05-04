@@ -221,7 +221,7 @@ Container commonFilterIcon(BuildContext context, Size size) {
 Widget getMediaCountCard(
     String mediaType, int count, Size size, BuildContext context) {
   return Container(
-    width: size.width * 0.13,
+    width: size.width * AppDimensions.numD11,
     height: size.width * 0.06,
     margin: EdgeInsets.only(bottom: size.width * AppDimensions.numD01),
     decoration: BoxDecoration(

@@ -99,6 +99,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     debugPrint("🚀 CameraBloc: Starting initialization sequence...");
 
     _isInitializing = true;
+    emit(state.copyWith(status: CameraStatus.loading));
     try {
       // Setup recorder first (fast)
       RecorderController? recorderController = state.recorderController;

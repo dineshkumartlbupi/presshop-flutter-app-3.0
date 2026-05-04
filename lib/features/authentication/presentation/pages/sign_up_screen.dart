@@ -371,7 +371,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                     Text(
                                       AppStrings.chooseAvatarNoteText,
                                       style: TextStyle(
-                                        color: AppColorTheme.colorHint,
+                                        color: Theme.of(context).hintColor,
                                         fontSize:
                                             size.width * AppDimensions.numD025,
                                       ),
@@ -475,7 +475,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                     Text(
                                       AppStrings.userNameNoteText,
                                       style: TextStyle(
-                                          color: AppColorTheme.colorHint,
+                                          color: Theme.of(context).hintColor,
                                           fontSize: size.width *
                                               AppDimensions.numD025),
                                     ),
@@ -512,7 +512,9 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD035,
-                                                color: Colors.black,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface,
                                                 fontWeight: FontWeight.normal,
                                               ),
                                             ),
@@ -668,7 +670,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                     Text(
                                       AppStrings.referralcodeNoteText,
                                       style: TextStyle(
-                                          color: AppColorTheme.colorHint,
+                                          color: Theme.of(context).hintColor,
                                           fontSize: size.width *
                                               AppDimensions.numD025),
                                     ),
@@ -925,15 +927,17 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                           Expanded(
                                             child: Text(
                                               "Accept our T&Cs and Privacy Policy",
-                                              style: TextStyle(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onSurface,
-                                                  fontFamily: "AirbnbCereal",
-                                                  fontSize: size.width *
-                                                      AppDimensions.numD035),
+                                              style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD035,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface,
+                                                fontWeight: FontWeight.normal,
+                                              ),
                                             ),
-                                          ),
+                                          )
                                         ],
                                       ),
                                     ),
@@ -995,7 +999,10 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                                         text: AppStrings
                                                             .alreadyHaveAccountText,
                                                         style: TextStyle(
-                                                            color: Colors.black,
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .colorScheme
+                                                                .onSurface,
                                                             fontFamily:
                                                                 "AirbnbCereal",
                                                             fontSize: size
@@ -1550,6 +1557,28 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
     showCountryPicker(
       context: context,
       showPhoneCode: true,
+      countryListTheme: CountryListThemeData(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        textStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+        searchTextStyle:
+            TextStyle(color: Theme.of(context).colorScheme.onSurface),
+        bottomSheetHeight: 500,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20.0),
+          topRight: Radius.circular(20.0),
+        ),
+        inputDecoration: InputDecoration(
+          labelText: 'Search',
+          hintStyle: TextStyle(color: Theme.of(context).hintColor),
+          prefixIcon:
+              Icon(Icons.search, color: Theme.of(context).iconTheme.color),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+            ),
+          ),
+        ),
+      ),
       onSelect: (country) {
         debugPrint('Select country: ${country.displayName}');
         debugPrint('Select country: ${country.countryCode}');
