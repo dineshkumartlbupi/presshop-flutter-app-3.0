@@ -575,7 +575,9 @@ class CameraScreenState extends State<CameraScreen>
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
-                              color: Colors.black,
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black,
                               fontWeight: FontWeight.w500)),
                   ],
                 ),
@@ -608,7 +610,7 @@ class CameraScreenState extends State<CameraScreen>
       final isPermanentlyDenied = state.errorMessage == "permanently_denied";
 
       return Container(
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: size.width * 0.1),
           child: Column(
@@ -629,7 +631,7 @@ class CameraScreenState extends State<CameraScreen>
                   size: size,
                   fontSize: size.width * 0.045,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
               SizedBox(height: size.height * 0.04),

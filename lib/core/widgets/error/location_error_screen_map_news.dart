@@ -104,8 +104,17 @@ class _LocationErrorScreenStateMapNews
                             child: commonElevatedButton(
                               "Back",
                               size,
-                              commonButtonTextStyle(size, color: Colors.white),
-                              commonButtonStyle(size, Colors.black),
+                              commonButtonTextStyle(size,
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.black
+                                      : Colors.white),
+                              commonButtonStyle(
+                                  size,
+                                  Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black),
                               () async {
                                 context.goNamed(AppRoutes.dashboardName,
                                     extra: {'initialPosition': 0});
