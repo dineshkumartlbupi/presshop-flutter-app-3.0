@@ -323,8 +323,34 @@ class MyTaskScreenState extends State<MyTaskScreen>
                           });
                         }
 
-                        List<Task> currentLocalTasks = state.localTasks;
-                        List<TaskAll> currentAllTasks = state.allTasks;
+                        List<Task> currentLocalTasks =
+                            state.localTasks.where((item) {
+                          if (item.status == "accepted" ||
+                              item.status == "completed") {
+                            return true;
+                          }
+                          if (item is TaskPending && item.taskDetail != null) {
+                            return !item.taskDetail!.deadLine
+                                .isBefore(DateTime.now());
+                          } else if (item is TaskMy &&
+                              item.taskDetail != null) {
+                            return !item.taskDetail!.deadLine
+                                .isBefore(DateTime.now());
+                          }
+                          return true;
+                        }).toList();
+
+                        List<TaskAll> currentAllTasks =
+                            state.allTasks.where((item) {
+                          if (item.status == "accepted" ||
+                              item.status == "completed") {
+                            return true;
+                          }
+                          if (item.deadlineDate != null) {
+                            return !item.deadlineDate!.isBefore(DateTime.now());
+                          }
+                          return true;
+                        }).toList();
 
                         return _tabController.index == 0
                             ? allTaskWidget(currentAllTasks, context)
@@ -1131,7 +1157,6 @@ class MyTaskScreenState extends State<MyTaskScreen>
               child: ValueListenableBuilder(
                 valueListenable: MediaUploadService.uploadStatus,
                 builder: (context, status, child) {
-                  print("Status: ${status?['status']}");
                   if (status != null &&
                       (status['status'] == 'uploading' ||
                           status['status'] == 'starting' ||
@@ -1346,11 +1371,19 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                      item.statusText.isNotEmpty
-                                          ? item.statusText.toUpperCase()
-                                          : item.isAvailableForAccept
-                                              ? "TAP TO ACCEPT"
-                                              : item.status.toUpperCase(),
+                                      item.isLive
+                                          ? item.isAvailableForAccept &&
+                                                  item.status == "accepted"
+                                              ? "ACCEPTED"
+                                              : item.isAvailableForAccept &&
+                                                      item.status == "pending"
+                                                  ? "TAP TO ACCEPT"
+                                                  : !item.isAvailableForAccept &&
+                                                          item.status ==
+                                                              "pending"
+                                                      ? ""
+                                                      : ""
+                                          : "",
                                       style: commonTextStyle(
                                           size: size,
                                           fontSize: size.width *
@@ -1390,17 +1423,12 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                           .width *
                                                       AppDimensions.numD015)),
                                           child: Text(
-                                            item.statusText.isNotEmpty
-                                                ? item.statusText
-                                                : (item.status == "accepted" ||
-                                                        item.status ==
-                                                            "completed")
-                                                    ? item.status.toUpperCase()
-                                                    : item.isLive
-                                                        ? item.isAvailableForAccept
-                                                            ? "Available"
-                                                            : "Live"
-                                                        : item.ctaName,
+                                            item.isLive
+                                                ? item.status == "accepted"
+                                                    //  &&   item.totalAmount == "0"
+                                                    ? "Live"
+                                                    : "Amount"
+                                                : item.ctaName,
                                             // : "$currencySymbol${item.totalAmount}",
                                             style: commonTextStyle(
                                                 size: size,
@@ -1477,17 +1505,13 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             //     ? "Expired"
                                             //     :
 
-                                            item.statusText.isNotEmpty
-                                                ? item.statusText
-                                                : (item.status == "accepted" ||
-                                                        item.status ==
-                                                            "completed")
-                                                    ? item.status.toUpperCase()
-                                                    : item.isLive
-                                                        ? item.isAvailableForAccept
-                                                            ? "Available"
-                                                            : "Live"
-                                                        : item.ctaName,
+                                            item.isLive
+                                                ? item.isAvailableForAccept
+                                                    ? item.status == "rejected"
+                                                        ? "Live"
+                                                        : "Available"
+                                                    : "Live"
+                                                : item.ctaName,
                                             style: commonTextStyle(
                                                 size: size,
                                                 fontSize: size.width *
