@@ -744,7 +744,9 @@ class _MapPageContentState extends State<_MapPageContent>
           });
         }
 
-        if (state.isNavigating && state.myLocation != null) {
+        if (state.isNavigating &&
+            state.isAutoFollowEnabled &&
+            state.myLocation != null) {
           _controller.future.then((ctrl) async {
             try {
               if (mounted) {

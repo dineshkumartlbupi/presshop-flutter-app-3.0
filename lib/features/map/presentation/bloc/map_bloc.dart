@@ -927,6 +927,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   ) {
     emit(state.copyWith(
       isNavigating: true,
+      isAutoFollowEnabled: true,
       showGetDirectionCard: false,
     ));
   }
@@ -1009,7 +1010,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     SetDraggingEvent event,
     Emitter<MapState> emit,
   ) {
-    emit(state.copyWith(isDragging: event.isDragging));
+    emit(state.copyWith(
+      isDragging: event.isDragging,
+      isAutoFollowEnabled: event.isDragging ? false : state.isAutoFollowEnabled,
+    ));
   }
 
   Future<void> _onFetchIncidents(

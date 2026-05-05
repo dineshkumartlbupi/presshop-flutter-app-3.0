@@ -813,7 +813,6 @@ class MenuTile extends StatelessWidget {
 
 class NotificationBadge extends StatelessWidget {
   const NotificationBadge({super.key});
-
   @override
   Widget build(BuildContext context) {
     final size = context.mqSize;
