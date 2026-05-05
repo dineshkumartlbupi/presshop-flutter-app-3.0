@@ -285,7 +285,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       headerWidget(),
-
+                                      SizedBox(
+                                        height:
+                                            size.width * AppDimensions.numD04,
+                                      ),
                                       const Divider(
                                         color: AppColorTheme.colorGrey2,
                                       ),
@@ -855,7 +858,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                       Expanded(
                         child: Text(
                           contentItem!.location,
-                          overflow: TextOverflow.ellipsis,
+                          //overflow: TextOverflow.ellipsis,
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD028,

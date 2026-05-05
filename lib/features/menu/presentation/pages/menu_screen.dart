@@ -817,6 +817,8 @@ class NotificationBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = context.mqSize;
+    final themeColor =
+        Theme.of(context).iconTheme.color ?? AppColorTheme.colorBlack;
     return BlocSelector<MenuBloc, MenuState, int>(
       selector: (state) => state.notificationCount,
       builder: (context, count) {
@@ -830,8 +832,7 @@ class NotificationBadge extends StatelessWidget {
                 height: size.width * AppDimensions.numD06,
                 width: size.width * AppDimensions.numD06,
                 decoration: BoxDecoration(
-                  border: Border.all(
-                      color: Theme.of(context).dividerColor, width: 1.2),
+                  border: Border.all(color: themeColor, width: 1.2),
                   borderRadius:
                       BorderRadius.circular(size.width * AppDimensions.numD015),
                 ),
@@ -843,7 +844,7 @@ class NotificationBadge extends StatelessWidget {
                   alignment: Alignment.center,
                   children: [
                     Container(
-                        padding: EdgeInsets.all(3),
+                        padding: const EdgeInsets.all(3),
                         decoration: const BoxDecoration(
                             color: Colors.red, shape: BoxShape.circle),
                         child: Text(
