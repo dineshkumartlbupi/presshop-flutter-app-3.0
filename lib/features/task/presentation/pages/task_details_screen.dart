@@ -503,7 +503,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                     Container(
                                       width: 1,
                                       height: size.width * AppDimensions.numD04,
-                                      color: Colors.grey,
+                                      color: Theme.of(context).dividerColor,
                                     ),
                                     SizedBox(
                                       width: size.width * AppDimensions.numD02,
@@ -531,7 +531,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                     Container(
                                       width: 1,
                                       height: size.width * AppDimensions.numD04,
-                                      color: Colors.grey,
+                                      color: Theme.of(context).dividerColor,
                                     ),
                                     SizedBox(
                                       width: size.width * AppDimensions.numD02,
@@ -568,10 +568,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                       SizedBox(
                         height: size.width * AppDimensions.numD025,
                       ),
-                      const Divider(
-                        thickness: 1,
-                        color: AppColorTheme.colorGreyChat,
-                      ),
+                      const Divider(),
                       Text("HEADING",
                           style: commonTextStyle(
                               size: size,
@@ -660,10 +657,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           textAlign: TextAlign.justify,
                         ),
                       ],
-                      const Divider(
-                        thickness: 1,
-                        color: AppColorTheme.colorGreyChat,
-                      ),
+                      const Divider(),
                       SizedBox(
                         height: size.width * AppDimensions.numD025,
                       ),
@@ -691,10 +685,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                       SizedBox(
                         height: size.width * AppDimensions.numD025,
                       ),
-                      const Divider(
-                        thickness: 1,
-                        color: AppColorTheme.colorGreyChat,
-                      ),
+                      const Divider(),
                       SizedBox(
                         height: size.width * AppDimensions.numD025,
                       ),

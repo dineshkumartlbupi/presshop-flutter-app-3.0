@@ -1049,7 +1049,12 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 color: Theme.of(context).cardColor,
-                                border: Border.all(color: Theme.of(context).dividerColor),
+                                border: Border.all(
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? AppColorTheme
+                                            .colorItemDividerForDarkTheme
+                                        : Theme.of(context).dividerColor),
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
                               ),
@@ -1089,7 +1094,12 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                           child: Container(
                               decoration: BoxDecoration(
                                 color: Theme.of(context).cardColor,
-                                border: Border.all(color: Theme.of(context).dividerColor),
+                                border: Border.all(
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? AppColorTheme
+                                            .colorItemDividerForDarkTheme
+                                        : Theme.of(context).dividerColor),
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
                               ),

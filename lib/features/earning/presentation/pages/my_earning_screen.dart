@@ -238,11 +238,13 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                       decoration: BoxDecoration(
                                           border: Border.all(
                                               width: 1.2,
-                                              color: Theme.of(context).brightness ==
+                                              color: Theme.of(context)
+                                                          .brightness ==
                                                       Brightness.dark
                                                   ? AppColorTheme
                                                       .colorItemDividerForDarkTheme
-                                                  : Theme.of(context).dividerColor),
+                                                  : Theme.of(context)
+                                                      .dividerColor),
                                           borderRadius: BorderRadius.circular(
                                               size.width *
                                                   AppDimensions.numD04)),
@@ -270,7 +272,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                               Image.asset(
                                             "${commonImagePath}rabbitLogo.png",
                                             fit: BoxFit.cover,
-                                            color: Theme.of(context).iconTheme.color,
+                                            color: Theme.of(context)
+                                                .iconTheme
+                                                .color,
                                             height: size.width *
                                                 AppDimensions.numD32,
                                             width: size.width *
@@ -295,7 +299,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD045,
-                                                color: Theme.of(context).textTheme.bodyLarge?.color,
+                                                color: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge
+                                                    ?.color,
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           SizedBox(
@@ -326,7 +333,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD045,
-                                                color: Theme.of(context).textTheme.bodyLarge?.color,
+                                                color: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge
+                                                    ?.color,
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           SizedBox(
@@ -412,9 +422,13 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                           decoration: BoxDecoration(
                                               border: Border.all(
                                                   width: 1.2,
-                                                  color: Theme.of(context).brightness == Brightness.dark
-                                                      ? AppColorTheme.colorItemDividerForDarkTheme
-                                                      : Theme.of(context).dividerColor),
+                                                  color: Theme.of(context)
+                                                              .brightness ==
+                                                          Brightness.dark
+                                                      ? AppColorTheme
+                                                          .colorItemDividerForDarkTheme
+                                                      : Theme.of(context)
+                                                          .dividerColor),
                                               borderRadius:
                                                   BorderRadius.circular(size
                                                           .width *
@@ -431,13 +445,18 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                     size: size,
                                                     fontSize: size.width *
                                                         AppDimensions.numD035,
-                                                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                                                    color: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge
+                                                        ?.color,
                                                     fontWeight:
                                                         FontWeight.w600),
                                               ),
                                               Icon(
                                                 Icons.arrow_drop_down_sharp,
-                                                color: Theme.of(context).iconTheme.color,
+                                                color: Theme.of(context)
+                                                    .iconTheme
+                                                    .color,
                                               )
                                             ],
                                           ),
@@ -500,7 +519,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                                   color: selectedMonth == month
                                                                       ? AppColorTheme
                                                                           .colorThemePink
-                                                                      : Theme.of(context).scaffoldBackgroundColor,
+                                                                      : Theme.of(
+                                                                              context)
+                                                                          .scaffoldBackgroundColor,
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .circular(
@@ -524,8 +545,12 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                                             .numD035,
                                                                     color: selectedMonth ==
                                                                             month
-                                                                        ? Colors.white
-                                                                        : Theme.of(context).textTheme.bodyLarge?.color,
+                                                                        ? Colors
+                                                                            .white
+                                                                        : Theme.of(context)
+                                                                            .textTheme
+                                                                            .bodyLarge
+                                                                            ?.color,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w600,
@@ -569,9 +594,13 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                           decoration: BoxDecoration(
                                               border: Border.all(
                                                   width: 1.2,
-                                                  color: Theme.of(context).brightness == Brightness.dark
-                                                      ? AppColorTheme.colorItemDividerForDarkTheme
-                                                      : Theme.of(context).dividerColor),
+                                                  color: Theme.of(context)
+                                                              .brightness ==
+                                                          Brightness.dark
+                                                      ? AppColorTheme
+                                                          .colorItemDividerForDarkTheme
+                                                      : Theme.of(context)
+                                                          .dividerColor),
                                               borderRadius:
                                                   BorderRadius.circular(size
                                                           .width *
@@ -590,13 +619,18 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                     size: size,
                                                     fontSize: size.width *
                                                         AppDimensions.numD035,
-                                                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                                                    color: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge
+                                                        ?.color,
                                                     fontWeight:
                                                         FontWeight.w700),
                                               ),
                                               Icon(
                                                 Icons.arrow_drop_down_sharp,
-                                                color: Theme.of(context).iconTheme.color,
+                                                color: Theme.of(context)
+                                                    .iconTheme
+                                                    .color,
                                               )
                                             ],
                                           ),
@@ -708,11 +742,13 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                         AppDimensions.numD02,
                                                   ),
                                                   Divider(
-                                                    color: Theme.of(context).brightness ==
+                                                    color: Theme.of(context)
+                                                                .brightness ==
                                                             Brightness.dark
                                                         ? AppColorTheme
                                                             .colorItemDividerForDarkTheme
-                                                        : Theme.of(context).dividerColor,
+                                                        : Theme.of(context)
+                                                            .dividerColor,
                                                     thickness: 1.5,
                                                   ),
                                                   SizedBox(
@@ -1001,7 +1037,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                 AppDimensions.numD08,
                                             width: size.width *
                                                 AppDimensions.numD08,
-                                            color: Theme.of(context).iconTheme.color,
+                                            color: Theme.of(context)
+                                                .iconTheme
+                                                .color,
                                           ),
                                         )
                                       : const SizedBox.shrink(),
@@ -1013,8 +1051,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                     width: size.width * AppDimensions.numD11,
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                          color: Theme.of(context).brightness == Brightness.dark
-                                              ? AppColorTheme.colorItemDividerForDarkTheme
+                                          color: Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? AppColorTheme
+                                                  .colorItemDividerForDarkTheme
                                               : Theme.of(context).dividerColor,
                                           width: 2),
                                       borderRadius: BorderRadius.circular(
@@ -1044,7 +1084,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                             Image.asset(
                                           "${commonImagePath}rabbitLogo.png",
                                           fit: BoxFit.cover,
-                                          color: Theme.of(context).iconTheme.color,
+                                          color:
+                                              Theme.of(context).iconTheme.color,
                                           height:
                                               size.width * AppDimensions.numD11,
                                           width:
@@ -1069,7 +1110,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                             Image.asset(
                                               "${commonImagePath}rabbitLogo.png",
                                               fit: BoxFit.cover,
-                                              color: Theme.of(context).iconTheme.color,
+                                              color: Theme.of(context)
+                                                  .iconTheme
+                                                  .color,
                                               height: size.width *
                                                   AppDimensions.numD11,
                                               width: size.width *
@@ -1080,7 +1123,6 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               ),
                             ],
                           ),
-
                           Padding(
                             padding: EdgeInsets.only(
                                 top: size.width * AppDimensions.numD04),
@@ -1093,7 +1135,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
-                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color,
                                       fontWeight: FontWeight.w400),
                                 ),
                                 Text(
@@ -1108,19 +1153,22 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                       size: size,
                                       fontSize:
                                           size.width * AppDimensions.numD035,
-                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color,
                                       fontWeight: FontWeight.w400),
                                 ),
                               ],
                             ),
                           ),
-
                           Padding(
                             padding: EdgeInsets.only(
                               top: size.width * AppDimensions.numD01,
                             ),
                             child: Divider(
-                              color: Theme.of(context).brightness == Brightness.dark
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
                                   ? AppColorTheme.colorItemDividerForDarkTheme
                                   : Theme.of(context).dividerColor,
                               thickness: 1.5,
@@ -1204,8 +1252,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               border: Border.all(
-                                  color: Theme.of(context).brightness == Brightness.dark
-                                      ? AppColorTheme.colorItemDividerForDarkTheme
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? AppColorTheme
+                                          .colorItemDividerForDarkTheme
                                       : Theme.of(context).dividerColor,
                                   width: 1),
                               borderRadius: BorderRadius.circular(
@@ -1630,8 +1680,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                     size.width * AppDimensions.numD04),
                                 border: Border.all(
                                     width: 1,
-                                    color: Theme.of(context).brightness == Brightness.dark
-                                        ? AppColorTheme.colorItemDividerForDarkTheme
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? AppColorTheme
+                                            .colorItemDividerForDarkTheme
                                         : Theme.of(context).dividerColor),
                               ),
                               child: Row(
@@ -1710,8 +1762,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                     size.width * AppDimensions.numD04),
                                 border: Border.all(
                                     width: 1,
-                                    color: Theme.of(context).brightness == Brightness.dark
-                                        ? AppColorTheme.colorItemDividerForDarkTheme
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? AppColorTheme
+                                            .colorItemDividerForDarkTheme
                                         : Theme.of(context).dividerColor),
                               ),
                               child: Row(

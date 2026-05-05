@@ -1316,6 +1316,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   Image.asset(
                                     "${iconsPath}ic_clock.png",
                                     height: size.width * AppDimensions.numD029,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                   ),
                                   SizedBox(
                                     width: size.width * AppDimensions.numD01,
@@ -1412,8 +1416,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           decoration: BoxDecoration(
                                               color: item.isLive
                                                   ? item.status == "accepted"
-                                                      // && item.totalAmount == "0"
-                                                      ? Colors.black
+                                                      ? (Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.white
+                                                          : Colors.black)
                                                       : AppColorTheme
                                                           .colorLightGrey
                                                   : _parseColor(
@@ -1434,24 +1441,17 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD025,
-                                                color: item.ctaName != "Expired"
-                                                    ? item.status == "accepted"
-                                                        // && item.totalAmount == "0"
-                                                        ? (Theme.of(context)
-                                                                    .brightness ==
-                                                                Brightness.dark
-                                                            ? Colors.black
-                                                            : Colors.white)
-                                                        : (Theme.of(context)
-                                                                    .brightness ==
-                                                                Brightness.dark
-                                                            ? Colors.white
-                                                            : Colors.black)
-                                                    : _parseColor(item
-                                                            .ctaTextColorCode
-                                                            .isNotEmpty
-                                                        ? item.ctaTextColorCode
-                                                        : "000000"),
+                                                color: item.isLive
+                                                    ? (Theme.of(context)
+                                                                .brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.black
+                                                        : Colors.white)
+                                                    : (Theme.of(context)
+                                                                .brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.white
+                                                        : Colors.black),
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         )

@@ -144,8 +144,12 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                                                     item.mediaType == "video"),
                                             width: size.width,
                                             fit: BoxFit.cover,
-                                            cacheWidth: (size.width * 2).toInt(),
-                                            cacheHeight: (size.width * AppDimensions.numD50 * 2).toInt(),
+                                            cacheWidth:
+                                                (size.width * 2).toInt(),
+                                            cacheHeight: (size.width *
+                                                    AppDimensions.numD50 *
+                                                    2)
+                                                .toInt(),
                                             errorBuilder:
                                                 (context, error, stackTrace) {
                                               return Image.asset(
@@ -159,7 +163,8 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                           right: size.width * AppDimensions.numD02,
                           top: size.width * AppDimensions.numD02,
                           child: Column(
-                            children: getMediaCount2(feed.contentList, size, context),
+                            children:
+                                getMediaCount2(feed.contentList, size, context),
                           ),
                         ),
                       ],
@@ -206,8 +211,10 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                         width: size.width * AppDimensions.numD09,
                         height: size.width * AppDimensions.numD09,
                         fit: BoxFit.contain,
-                        cacheWidth: (size.width * AppDimensions.numD09 * 2).toInt(),
-                        cacheHeight: (size.width * AppDimensions.numD09 * 2).toInt(),
+                        cacheWidth:
+                            (size.width * AppDimensions.numD09 * 2).toInt(),
+                        cacheHeight:
+                            (size.width * AppDimensions.numD09 * 2).toInt(),
                         errorBuilder: (context, error, stackTrace) {
                           return Image.asset(
                             "${commonImagePath}rabbitLogo.png",
@@ -235,13 +242,14 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
               style: commonTextStyle(
                   size: size,
                   fontSize: size.width * AppDimensions.numD033,
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.w400),
             ),
             const Spacer(),
             Image.asset(
               "${iconsPath}ic_newspaper.png",
               height: size.width * AppDimensions.numD035,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
             SizedBox(
               width: size.width * AppDimensions.numD02,
@@ -253,7 +261,7 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
               style: commonTextStyle(
                   size: size,
                   fontSize: size.width * AppDimensions.numD033,
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.w400),
             ),
           ],
@@ -268,7 +276,7 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
           style: commonTextStyle(
               size: size,
               fontSize: size.width * AppDimensions.numD04,
-              color: Colors.black,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
               lineHeight: 1.5,
               fontWeight: FontWeight.w600),
         ),
@@ -362,7 +370,7 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD028,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.normal),
                       ),
                       SizedBox(
@@ -382,7 +390,7 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD028,
-                            color: Colors.black,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.normal),
                       ),
                     ],
@@ -407,7 +415,8 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD028,
-                              color: Colors.black,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.normal),
                         ),
                       )
@@ -439,6 +448,10 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                                 : Image.asset(
                                     "${iconsPath}heart_icon.png",
                                     height: size.width * AppDimensions.numD0575,
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : null,
                                   ),
                           ),
                         ),
@@ -461,6 +474,10 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                                       "${iconsPath}like_grey.png",
                                       height:
                                           size.width * AppDimensions.numD057,
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white
+                                          : null,
                                     ),
                             ),
                           ),
@@ -484,6 +501,10 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                                       "${iconsPath}ic_grey_sad_emoji.png",
                                       height:
                                           size.width * AppDimensions.numD058,
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white
+                                          : null,
                                     ),
                             ),
                           ),

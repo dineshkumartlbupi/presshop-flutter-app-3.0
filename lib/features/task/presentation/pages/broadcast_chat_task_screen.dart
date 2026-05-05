@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
+import 'package:presshop/core/widgets/common_widgets_new.dart';
+import 'package:presshop/core/widgets/logo_widget.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 import 'package:video_player/video_player.dart';
@@ -313,19 +315,13 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
             },
             actionWidget: [
               InkWell(
-                onTap: () {
-                  context.goNamed(
-                    AppRoutes.dashboardName,
-                    extra: {'initialPosition': 2},
-                  );
-                },
-                child: Image.asset(
-                  "${commonImagePath}ic_black_rabbit.png",
-                  height: size.width * AppDimensions.numD07,
-                  width: size.width * AppDimensions.numD07,
-                ),
-              ),
-              SizedBox(width: size.width * AppDimensions.numD04),
+                  onTap: () {
+                    context.goNamed(
+                      AppRoutes.dashboardName,
+                      extra: {'initialPosition': 2},
+                    );
+                  },
+                  child: LogoWidget.buildLogo(size)),
             ],
           ),
           bottomNavigationBar: (isDataLoading && chatList.isNotEmpty)
@@ -429,66 +425,68 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                   padding: EdgeInsets.all(size.width * AppDimensions.numD04),
                   child: Column(
                     children: [
-                TaskChatHeader(taskDetail: widget.taskDetail!),
-                SizedBox(height: size.width * AppDimensions.numD04),
-                SizedBox(height: size.width * AppDimensions.numD04),
-                const UploadInfoBubble(uploadTextType: ''),
-                SizedBox(height: size.width * AppDimensions.numD033),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ListView.separated(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        var item = chatList[index];
-                        debugPrint(
-                          "📨 Rendering message $index: type=${item.messageType}, sender=${item.senderType}, message=${item.message}",
-                        );
-                        return _buildChatBubble(item, size);
-                      },
-                      itemCount: chatList.length,
-                      separatorBuilder: (context, index) {
-                        return SizedBox(
-                          height: size.width * AppDimensions.numD035,
-                        );
-                      },
-                    ),
-                    widget.taskDetail!.task.paidStatus == "paid"
-                        ? CongratulationsBubble(
-                            roomId: widget.roomId,
-                            mediaHouseName:
-                                "${widget.taskDetail!.task.mediaHouse.firstName} ${widget.taskDetail!.task.mediaHouse.lastName}"
-                                    .toCapitalized(),
-                            mediaCount: "",
-                            amount:
-                                "-", // Or some actual amount if available in taskDetail
-                            transactionId:
-                                "", // Or some actual transactionId if available
-                          )
-                        : const SizedBox.shrink(),
-                    if (widget.taskDetail!.task.paidStatus == "paid") ...[
-                      SizedBox(height: size.width * AppDimensions.numD035),
-                      EarningBubble(
-                        amount: widget.taskDetail!.task.hopperTaskAmount,
-                      ),
-                      SizedBox(height: size.width * AppDimensions.numD035),
-                      RatingReviewBubble(
-                        likedFeatures: intList,
-                        isAlreadyRated: isRatingGiven,
-                        onSubmit: (rating, review, features) {
-                          ratings = rating;
-                          ratingReviewController1.text = review;
-                          dataList = features;
-                          _submitRating();
-                        },
+                      TaskChatHeader(taskDetail: widget.taskDetail!),
+                      SizedBox(height: size.width * AppDimensions.numD04),
+                      SizedBox(height: size.width * AppDimensions.numD04),
+                      const UploadInfoBubble(uploadTextType: ''),
+                      SizedBox(height: size.width * AppDimensions.numD033),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListView.separated(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              var item = chatList[index];
+                              debugPrint(
+                                "📨 Rendering message $index: type=${item.messageType}, sender=${item.senderType}, message=${item.message}",
+                              );
+                              return _buildChatBubble(item, size);
+                            },
+                            itemCount: chatList.length,
+                            separatorBuilder: (context, index) {
+                              return SizedBox(
+                                height: size.width * AppDimensions.numD035,
+                              );
+                            },
+                          ),
+                          widget.taskDetail!.task.paidStatus == "paid"
+                              ? CongratulationsBubble(
+                                  roomId: widget.roomId,
+                                  mediaHouseName:
+                                      "${widget.taskDetail!.task.mediaHouse.firstName} ${widget.taskDetail!.task.mediaHouse.lastName}"
+                                          .toCapitalized(),
+                                  mediaCount: "",
+                                  amount:
+                                      "-", // Or some actual amount if available in taskDetail
+                                  transactionId:
+                                      "", // Or some actual transactionId if available
+                                )
+                              : const SizedBox.shrink(),
+                          if (widget.taskDetail!.task.paidStatus == "paid") ...[
+                            SizedBox(
+                                height: size.width * AppDimensions.numD035),
+                            EarningBubble(
+                              amount: widget.taskDetail!.task.hopperTaskAmount,
+                            ),
+                            SizedBox(
+                                height: size.width * AppDimensions.numD035),
+                            RatingReviewBubble(
+                              likedFeatures: intList,
+                              isAlreadyRated: isRatingGiven,
+                              onSubmit: (rating, review, features) {
+                                ratings = rating;
+                                ratingReviewController1.text = review;
+                                dataList = features;
+                                _submitRating();
+                              },
+                            ),
+                          ],
+                        ],
                       ),
                     ],
-                  ],
+                  ),
                 ),
-              ],
-            ),
-          ),
         );
       },
     );
@@ -1000,9 +998,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(size.width * AppDimensions.numD04),
               topRight: Radius.circular(size.width * AppDimensions.numD04),
@@ -1023,7 +1022,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     Text(
                       "Select Option",
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontSize: size.width * AppDimensions.numD048,
                         fontFamily: "AirbnbCereal",
                         fontWeight: FontWeight.w500,
@@ -1036,12 +1035,18 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       },
                       icon: Icon(
                         Icons.close_rounded,
-                        color: Colors.black,
+                        color: Theme.of(context).iconTheme.color,
                         size: size.width * AppDimensions.numD08,
                       ),
                     ),
                   ],
                 ),
+              ),
+              Divider(
+                color: isDark
+                    ? AppColorTheme.colorItemDividerForDarkTheme
+                    : Theme.of(context).dividerColor,
+                thickness: 1,
               ),
               SizedBox(height: size.width * AppDimensions.numD04),
               Padding(
@@ -1060,8 +1065,12 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         child: Container(
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.black),
+                            color: Theme.of(context).cardColor,
+                            border: Border.all(
+                              color: isDark
+                                  ? AppColorTheme.colorItemDividerForDarkTheme
+                                  : Theme.of(context).dividerColor,
+                            ),
                             borderRadius: BorderRadius.circular(
                               size.width * AppDimensions.numD02,
                             ),
@@ -1076,6 +1085,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             children: [
                               Icon(
                                 Icons.upload,
+                                color: Theme.of(context).iconTheme.color,
                                 size: size.width * AppDimensions.numD08,
                               ),
                               SizedBox(
@@ -1084,7 +1094,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                               Text(
                                 "My Gallery",
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontSize: size.width * AppDimensions.numD035,
                                   fontFamily: "AirbnbCereal",
                                   fontWeight: FontWeight.bold,
@@ -1106,8 +1119,12 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         child: Container(
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.black),
+                            color: Theme.of(context).cardColor,
+                            border: Border.all(
+                              color: isDark
+                                  ? AppColorTheme.colorItemDividerForDarkTheme
+                                  : Theme.of(context).dividerColor,
+                            ),
                             borderRadius: BorderRadius.circular(
                               size.width * AppDimensions.numD02,
                             ),
@@ -1122,6 +1139,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             children: [
                               Icon(
                                 Icons.insert_drive_file,
+                                color: Theme.of(context).iconTheme.color,
                                 size: size.width * AppDimensions.numD08,
                               ),
                               SizedBox(
@@ -1130,7 +1148,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                               Text(
                                 "My Files",
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontSize: size.width * AppDimensions.numD035,
                                   fontFamily: "AirbnbCereal",
                                   fontWeight: FontWeight.bold,

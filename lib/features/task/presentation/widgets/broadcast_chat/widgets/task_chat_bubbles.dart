@@ -325,7 +325,7 @@ class RightMediaChatBubble extends StatelessWidget {
           "${iconsPath}ic_location.png",
           height: size.width * AppDimensions.numD035,
           color: Theme.of(context).brightness == Brightness.dark
-              ? Colors.white70
+              ? Colors.white
               : Colors.black,
         ),
         SizedBox(width: size.width * AppDimensions.numD01),

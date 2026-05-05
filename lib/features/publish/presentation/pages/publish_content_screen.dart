@@ -299,7 +299,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
         isDark ? Colors.grey[900]! : AppColorTheme.colorLightGrey;
     final Color iconColor =
         isDark ? Colors.white : AppColorTheme.colorTextFieldIcon;
-    final Color borderColor = isDark ? Colors.white24 : AppColorTheme.colorGreyNew;
+    final Color borderColor =
+        isDark ? Colors.white24 : AppColorTheme.colorGreyNew;
 
     debugPrint('screen-name:::::::::PublishContentScreen');
 
@@ -2499,7 +2500,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     child: commonElevatedButton(
                                       "${AppStrings.saveText.toTitleCase()} ${AppStrings.draftText.toTitleCase()}",
                                       size,
-                                      commonButtonTextStyle(size, color: textColor),
+                                      commonButtonTextStyle(size,
+                                          color: textColor),
                                       ElevatedButton.styleFrom(
                                           backgroundColor: cardColor,
                                           elevation: 0.0,
@@ -2507,10 +2509,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                               color: borderColor, width: 1),
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width *
-                                                          AppDimensions
-                                                              .numD03))),
+                                                  BorderRadius.circular(size
+                                                          .width *
+                                                      AppDimensions.numD03))),
                                       () {
                                         draftSelected = true;
                                         isSelectLetsGo = false;
@@ -2643,7 +2644,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                           return SingleChildScrollView(
                             child: Padding(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * AppDimensions.numD04),
+                                  horizontal:
+                                      size.width * AppDimensions.numD04),
                               child: Wrap(
                                 spacing: size.width * AppDimensions.numD02,
                                 runSpacing: size.width * AppDimensions.numD02,

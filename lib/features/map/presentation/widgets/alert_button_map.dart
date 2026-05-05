@@ -40,14 +40,14 @@ class AlertButtonMap extends StatelessWidget {
               color: const Color(0xffEC4E54),
               borderRadius:
                   BorderRadius.circular(size.width * AppDimensions.numD10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: size.width * AppDimensions.numD01,
-                  offset: Offset(size.width * AppDimensions.numD005,
-                      size.width * AppDimensions.numD005),
-                ),
-              ],
+              // boxShadow: [
+              //   BoxShadow(
+              //     color: Colors.black.withOpacity(0.1),
+              //     blurRadius: size.width * AppDimensions.numD01,
+              //     offset: Offset(size.width * AppDimensions.numD005,
+              //         size.width * AppDimensions.numD005),
+              //   ),
+              // ],
             ),
             child: Icon(
               LucideIcons.triangle_alert,
@@ -64,7 +64,7 @@ class AlertButtonMap extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(width: size.width * AppDimensions.numD02),
+          SizedBox(width: size.width * AppDimensions.numD04),
         ],
       ),
     );

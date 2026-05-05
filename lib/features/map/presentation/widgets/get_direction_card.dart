@@ -229,7 +229,7 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final borderColor = isDark ? Colors.white24 : AppColorTheme.colorGreyNew;
+    final borderColor = isDark ? Colors.white24 : Colors.grey.shade300;
 
     return BlocListener<MapBloc, MapState>(
       listener: (context, state) {
@@ -266,7 +266,9 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                   height: 22,
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
-                    border: Border.all(color: borderColor, width: 1.2),
+                    border: Border.all(
+                        color: isDark ? borderColor : Colors.transparent,
+                        width: 1.2),
                   ),
                 ),
               ),
@@ -278,7 +280,9 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: borderColor, width: 1.2),
+                border: Border.all(
+                    color: isDark ? borderColor : Colors.transparent,
+                    width: 1.2),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.15),
@@ -378,7 +382,8 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                   hintText: 'Destination',
                                   hintStyle: const TextStyle(fontSize: 12),
                                   filled: true,
-                                  fillColor: Theme.of(context).scaffoldBackgroundColor,
+                                  fillColor:
+                                      Theme.of(context).scaffoldBackgroundColor,
                                   contentPadding: const EdgeInsets.symmetric(
                                     vertical: 8,
                                     horizontal: 12,

@@ -31,7 +31,10 @@ class FeedScreen extends StatefulWidget {
 }
 
 class FeedScreenState extends State<FeedScreen>
-    with MediaControllerMixin, AnalyticsPageMixin {
+    with
+        MediaControllerMixin,
+        AnalyticsPageMixin,
+        AutomaticKeepAliveClientMixin {
   PageController pageController = PageController();
   ScrollController listController = ScrollController();
 
@@ -47,6 +50,9 @@ class FeedScreenState extends State<FeedScreen>
 
   @override
   String get pageName => PageNames.feedScreen;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -65,6 +71,7 @@ class FeedScreenState extends State<FeedScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     var size = MediaQuery.of(context).size;
     if (!widget.showAppBar) {
       return _buildBody(size);
@@ -160,7 +167,7 @@ class FeedScreenState extends State<FeedScreen>
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: size.width * AppDimensions.numD04,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                         ),
                       ),
                     ),

@@ -70,9 +70,7 @@ class UploadInfoBubble extends StatelessWidget {
                   TextSpan(
                     text: " buttons below",
                     style: TextStyle(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white70
-                          : Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
                 ],
@@ -249,8 +247,14 @@ class MoreContentRequestBubble extends StatelessWidget {
               vertical: size.width * AppDimensions.numD02,
             ),
             decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.grey.shade400),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? AppColorTheme.colorDarkThemeCard
+                  : Colors.white,
+              border: Border.all(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? AppColorTheme.colorItemDividerForDarkTheme
+                    : Colors.grey.shade400,
+              ),
               borderRadius: BorderRadius.only(
                 topRight: Radius.circular(size.width * AppDimensions.numD04),
                 bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
@@ -266,7 +270,7 @@ class MoreContentRequestBubble extends StatelessWidget {
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD035,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontWeight: FontWeight.normal),
                 ),
                 SizedBox(height: size.width * AppDimensions.numD04),
