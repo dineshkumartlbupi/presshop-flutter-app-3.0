@@ -44,7 +44,7 @@ class AllTaskModel extends TaskAll {
       createdAt: (json['createdAt'] ?? "").toString(),
       description: (json['task_description'] ?? "").toString(),
       location: (json['location'] ?? "").toString(),
-      status: (json['status'] ?? "").toString(),
+      status: (json['task_status'] ?? json['status'] ?? "").toString(),
       isAvailableForAccept: json['is_available_for_accept'] ?? false,
       ////=====>>
       isLive: json['isLive'] ?? false,

@@ -294,27 +294,23 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
 
         return Scaffold(
           appBar: CommonBrandedAppBar(
-            title: AppStringsNew2.manageTaskText,
-            size: size,
-<<<<<<< HEAD
-            showLogo: true,
-=======
-            showActions: true,
-            leadingFxn: () {
-              context.pop();
-            },
-            actionWidget: [
-              InkWell(
-                  onTap: () {
-                    context.goNamed(
-                      AppRoutes.dashboardName,
-                      extra: {'initialPosition': 2},
-                    );
-                  },
-                  child: LogoWidget.buildLogo(size)),
-            ],
->>>>>>> 024697f4060b8e2d999232bee70406f9f3e7a7ed
-          ),
+              title: AppStringsNew2.manageTaskText, size: size, showLogo: true
+              // showActions: true,
+              // leadingFxn: () {
+              //   context.pop();
+              // },
+              // actionWidget: [
+              //   InkWell(
+              //       onTap: () {
+              //         context.goNamed(
+              //           AppRoutes.dashboardName,
+              //           extra: {'initialPosition': 2},
+              //         );
+              //       },
+              //       child: LogoWidget.buildLogo(size)),
+              // ],
+
+              ),
           bottomNavigationBar: (isDataLoading && chatList.isNotEmpty)
               ? showLoader()
               : SafeArea(
