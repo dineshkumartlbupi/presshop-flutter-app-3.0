@@ -18,15 +18,15 @@ class Config {
   static const int env = 1;
 
   // ====================== Ngrok Url =====================
-  String get baseUrl =>
-      "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/";
-
-  String get socketUrl2 =>
-      "wss://lelia-anthracitic-ecclesiologically.ngrok-free.dev";
-
   // String get baseUrl =>
-  //     "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
-  // String get socketUrl2 => "wss://funnellike-subangular-sulema.ngrok-free.dev";
+  //     "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/";
+
+  // String get socketUrl2 =>
+  //     "wss://lelia-anthracitic-ecclesiologically.ngrok-free.dev";
+
+  String get baseUrl =>
+      "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
+  String get socketUrl2 => "wss://funnellike-subangular-sulema.ngrok-free.dev";
 
 // ====================== Localhost Url =====================
   // String get baseUrl => "http://localhost:8100/api/";
