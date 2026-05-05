@@ -1,11 +1,10 @@
-<manifest 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-  
+
     <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -20,19 +19,19 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" tools:replace="android:maxSdkVersion" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
-    <uses-feature android:name="android.hardware.camera" android:required="false"  />
-   
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-  
 
 
-      <queries>
+
+    <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
-                        <data android:scheme="googlechromes" />
+            <data android:scheme="googlechromes" />
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />
@@ -48,31 +47,12 @@
     </queries>
 
 
-    <application
-        android:label="Presshop"
-        android:name="${applicationName}"
-        android:requestLegacyExternalStorage="true"
-        android:enableOnBackInvokedCallback="true"
-        android:icon="@mipmap/ic_launcher">
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:launchMode="singleTop"
-            android:taskAffinity=""
-            android:theme="@style/LaunchTheme"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-            android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize">
+    <application android:label="Presshop" android:name="${applicationName}" android:requestLegacyExternalStorage="true" android:enableOnBackInvokedCallback="true" android:icon="@mipmap/ic_launcher">
+        <activity android:name=".MainActivity" android:exported="true" android:launchMode="singleTop" android:taskAffinity="" android:theme="@style/LaunchTheme" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" android:hardwareAccelerated="true" android:windowSoftInputMode="adjustResize">
 
-            <meta-data
-                android:name="io.flutter.embedding.android.NormalTheme"
-                android:resource="@style/NormalTheme" />
-            <meta-data
-                android:name="com.appsflyer.sdk.AF_DEV_KEY"
-                android:value="bxvwnv53n3J7eKMAiDmX7J" />
-            <meta-data
-                android:name="flutter_deeplinking_enabled"
-                android:value="true" />
+            <meta-data android:name="io.flutter.embedding.android.NormalTheme" android:resource="@style/NormalTheme" />
+            <meta-data android:name="com.appsflyer.sdk.AF_DEV_KEY" android:value="bxvwnv53n3J7eKMAiDmX7J" />
+            <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -88,52 +68,27 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="com.yalantis.ucrop.UCropActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Ucrop.CropTheme" />
-        
-<service
-    android:name="id.flutter.flutter_background_service.BackgroundService"
-    android:exported="false"
-    android:foregroundServiceType="location|dataSync"
-    tools:replace="android:exported" />
-            
-        <receiver
-            android:name="com.appsflyer.SingleInstallBroadcastReceiver"
-            android:exported="true">
+        <activity android:name="com.yalantis.ucrop.UCropActivity" android:screenOrientation="portrait" android:theme="@style/Ucrop.CropTheme" />
+
+        <service android:name="id.flutter.flutter_background_service.BackgroundService" android:exported="false" android:foregroundServiceType="location|dataSync" tools:replace="android:exported" />
+
+        <receiver android:name="com.appsflyer.SingleInstallBroadcastReceiver" android:exported="true">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
 
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="presshop" />
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI" />
-        <meta-data
-            android:name="flutterEmbedding"
-            android:value="2" />
-        <meta-data
-            android:name="com.appsflyer.ApiKey"
-            android:value="bxvwnv53n3J7eKMAiDmX7J" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_noti_logo" />
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
-        <meta-data
-            android:name="com.facebook.sdk.ClientToken"
-            android:value="@string/facebook_client_token"/>
-        <meta-data
-            android:name="flutterEmbedding"
-            android:value="2" />
+        <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="presshop" />
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI" />
+        <meta-data android:name="flutterEmbedding" android:value="2" />
+        <meta-data android:name="com.appsflyer.ApiKey" android:value="bxvwnv53n3J7eKMAiDmX7J" />
+        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_noti_logo" />
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
+        <meta-data android:name="flutterEmbedding" android:value="2" />
 
     </application>
-   
+
     <queries>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>

@@ -26,11 +26,9 @@ class Config {
 
   String get baseUrl =>
       "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
-
   String get socketUrl2 => "wss://funnellike-subangular-sulema.ngrok-free.dev";
 
 // ====================== Localhost Url =====================
-
   // String get baseUrl => "http://localhost:8100/api/";
   // String get socketUrl2 => "http://localhost:8100";
 
