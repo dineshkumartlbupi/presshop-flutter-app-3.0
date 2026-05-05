@@ -89,18 +89,32 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     }
 
     if (!event.force &&
-        state.status == CameraStatus.ready &&
         state.cameraController != null &&
         state.cameraController!.value.isInitialized) {
-      debugPrint("🚀 CameraBloc: Init skipped - Already ready.");
+      debugPrint("🚀 CameraBloc: Camera already initialized. Resuming preview.");
+      try {
+        await state.cameraController!.resumePreview();
+      } catch (e) {
+        debugPrint("⚠️ resumePreview error during init check: $e");
+      }
+      // Move status back to ready if it was success/failure but controller is fine
+      if (state.status != CameraStatus.ready && state.status != CameraStatus.recording) {
+        emit(state.copyWith(status: CameraStatus.ready));
+      }
       return;
     }
 
     debugPrint("🚀 CameraBloc: Starting initialization sequence...");
 
     _isInitializing = true;
-    emit(state.copyWith(status: CameraStatus.requestingPermission));
+    
     try {
+      // 1. Check existing permissions first to avoid UI blink
+      final existingResult = await _permissionService.checkCameraAndGalleryPermissions();
+      if (existingResult != PermissionResult.granted) {
+        emit(state.copyWith(status: CameraStatus.requestingPermission));
+      }
+
       // Setup recorder first (fast)
       RecorderController? recorderController = state.recorderController;
       recorderController ??= RecorderController()
@@ -110,8 +124,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         ..sampleRate = 44100
         ..bitRate = 48000;
 
-      final permissionResult =
-          await _permissionService.requestCameraAndGalleryPermissions();
+      final permissionResult = existingResult == PermissionResult.granted 
+          ? PermissionResult.granted 
+          : await _permissionService.requestCameraAndGalleryPermissions();
 
       if (permissionResult != PermissionResult.granted) {
         debugPrint("🚀 CameraBloc: Permission denied. Stopping init.");

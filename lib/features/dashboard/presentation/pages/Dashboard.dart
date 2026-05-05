@@ -382,7 +382,7 @@ class DashboardPageState extends State<Dashboard>
             body: Stack(
               children: [
                 Visibility(
-                  visible: !isGetLatLong,
+                  visible: true, // skip loader
                   replacement: showLoader(isForLocation: false),
                   child: IndexedStack(
                     index: currentIndex,
@@ -615,14 +615,14 @@ class DashboardPageState extends State<Dashboard>
           !_studentBeansCompleter!.isCompleted) {
         _studentBeansCompleter!.complete(studentBeansResponseUrl);
       }
-    } else if (state is DashboardStudentBeansInfoLoaded) {
-      final info = state.info;
-      if (info.shouldShow) {
-        final size = MediaQuery.of(navigatorKey.currentState!.context).size;
-        _showStudentBeansDialog(size,
-            sourceDataHeading: info.heading,
-            sourceDataDescription: info.description);
-      }
+    // } else if (state is DashboardStudentBeansInfoLoaded) {
+    //   final info = state.info;
+    //   if (info.shouldShow) {
+    //     final size = MediaQuery.of(navigatorKey.currentState!.context).size;
+    //     _showStudentBeansDialog(size,
+    //         sourceDataHeading: info.heading,
+    //         sourceDataDescription: info.description);
+    //   }
     } else if (state is DashboardMarkStudentBeansVisitedLoaded) {
     } else if (state is DashboardMyProfileLoaded) {
       var user = state.user;

@@ -788,13 +788,13 @@ class _MapPageContentState extends State<_MapPageContent>
       },
       listenWhen: (previous, current) => true,
       builder: (context, state) {
-        if (state.myLocation == null) {
-          return LocationErrorScreenMapNews(
-            onLocationEnabled: (locationData) {
-              context.read<MapBloc>().add(const GetCurrentLocationEvent());
-            },
-          );
-        }
+        // if (state.myLocation == null) {
+        //   return LocationErrorScreenMapNews(
+        //     onLocationEnabled: (locationData) {
+        //       context.read<MapBloc>().add(const GetCurrentLocationEvent());
+        //     },
+        //   );
+        // }
         // if (state.myLocation == null) {
         //   if (_locationTimeout) {
         //     return Scaffold(
@@ -849,11 +849,11 @@ class _MapPageContentState extends State<_MapPageContent>
               bool isShown = sharedPreferences
                       ?.getBool(SharedPreferencesKeys.alertInfoPopupShownKey) ??
                   false;
-              if (!isShown) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  AllDialogs.showAlertInfoPopupForMap(size);
-                });
-              }
+              // if (!isShown) {
+              //   WidgetsBinding.instance.addPostFrameCallback((_) {
+              //     AllDialogs.showAlertInfoPopupForMap(size);
+              //   });
+              // }
             } else {
               _pulseController.stop();
             }

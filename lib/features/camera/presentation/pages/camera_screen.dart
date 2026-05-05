@@ -356,258 +356,280 @@ class CameraScreenState extends State<CameraScreen>
   }
 
   Widget _buildBody(BuildContext context, CameraState state, Size size) {
+    // 1. Show permission UI if denied or requesting
     if (state.status == CameraStatus.permissionDenied ||
-        state.status == CameraStatus.requestingPermission ||
-        state.status == CameraStatus.initial) {
+        state.status == CameraStatus.requestingPermission) {
       return _buildPermissionDeniedUI(context, size, state);
     }
+
+    // 2. Show audio body if in audio mode
     if (state.selectedMode == AppStrings.audioText) {
       return _buildAudioBody(context, state, size);
     }
-    return Stack(
-      children: [
-        _buildCameraPreview(context, state, size),
-        // Exposure Controls
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: size.width * AppDimensions.numD25,
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: _exposureModeControlRowWidget(size, state),
-          ),
-        ),
 
-        // Doc Picker (Plus icon)
-        Align(
-          alignment: Alignment.bottomLeft,
-          child: InkWell(
-            onTap: () {
-              // Pick PDF/Doc
-              context.read<CameraBloc>().add(PickDocumentEvent());
-            },
-            child: Container(
-              margin: EdgeInsets.only(
-                  left: size.width * AppDimensions.numD1,
-                  bottom: size.width * AppDimensions.numD05),
-              padding: EdgeInsets.all(size.width * AppDimensions.numD02),
-              decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white24
-                          : Colors.grey.shade400,
-                      width: 1.2)),
-              child: Container(
-                padding: EdgeInsets.all(size.width * AppDimensions.numD02),
-                decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.3),
-                    shape: BoxShape.circle),
-                child: Image.asset("${iconsPath}ic_plus.png",
-                    color: Colors.white,
-                    height: size.width * AppDimensions.numD07),
-              ),
+    // 3. Show camera preview if controller is ready, even if status is loading/success
+    if (state.cameraController != null &&
+        state.cameraController!.value.isInitialized) {
+      return Stack(
+        children: [
+          _buildCameraPreview(context, state, size),
+          // Exposure Controls
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: size.width * AppDimensions.numD25,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: _exposureModeControlRowWidget(size, state),
             ),
           ),
-        ),
 
-        // Capture/Record Button
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: InkWell(
-            onTap: state.isVideoLoading || state.status == CameraStatus.loading
-                ? null
-                : () {
-                    if (state.selectedMode == AppStrings.videoText) {
-                      if (state.isRecording) {
-                        context
-                            .read<CameraBloc>()
-                            .add(CameraStopRecordingEvent());
-                      } else {
-                        context
-                            .read<CameraBloc>()
-                            .add(CameraStartRecordingEvent());
-                      }
-                    } else if (state.selectedMode == AppStrings.scanText) {
-                      context.read<CameraBloc>().add(CameraScanDocEvent());
-                    } else {
-                      // Photo
-                      context.read<CameraBloc>().add(CameraCaptureImageEvent());
-                    }
-                  },
-            child: Container(
-              margin:
-                  EdgeInsets.only(bottom: size.width * AppDimensions.numD05),
-              padding: EdgeInsets.all(size.width * AppDimensions.numD01),
-              decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white24
-                          : Colors.grey.shade400,
-                      width: 1.2)),
-              child: state.isVideoLoading
-                  ? SizedBox(
-                      width: size.width * AppDimensions.numD13,
-                      height: size.width * AppDimensions.numD13,
-                      child: Padding(
-                        padding:
-                            EdgeInsets.all(size.width * AppDimensions.numD03),
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppColorTheme.colorThemePink,
-                        ),
-                      ),
-                    )
-                  : Icon(
-                      (state.selectedMode == AppStrings.videoText &&
-                              state.isRecording)
-                          ? Icons.stop_circle_outlined
-                          : Icons.circle,
-                      color: AppColorTheme.colorThemePink,
-                      size: size.width * AppDimensions.numD13,
-                    ),
-            ),
-          ),
-        ),
-
-        // Gallery Thumbnail
-        if (state.selectedMode == AppStrings.photoText ||
-            state.selectedMode == AppStrings.videoText)
+          // Doc Picker (Plus icon)
           Align(
-            alignment: Alignment.bottomRight,
+            alignment: Alignment.bottomLeft,
             child: InkWell(
               onTap: () {
-                context.pushNamed(
-                  AppRoutes.customGalleryName,
-                  extra: {
-                    'picAgain': widget.picAgain,
-                  },
-                ).then((value) {
-                  if (value != null) {
-                    // ignore: use_build_context_synchronously
-                    if (!context.mounted) return;
-                    context.read<CameraBloc>().add(
-                        UpdateCapturedMediaEvent(value as List<CameraData>));
-                    if (widget.picAgain) context.pop(value);
-                  }
-                });
+                // Pick PDF/Doc
+                context.read<CameraBloc>().add(PickDocumentEvent());
               },
               child: Container(
-                width: size.width * AppDimensions.numD15,
-                height: size.width * AppDimensions.numD15,
                 margin: EdgeInsets.only(
-                    bottom: size.width * AppDimensions.numD05,
-                    right: size.width * AppDimensions.numD1),
-                child: ClipRRect(
-                  borderRadius:
-                      BorderRadius.circular(size.width * AppDimensions.numD025),
-                  child: PersistentGalleryThumbnail(
-                    galleryMedia: state.galleryMedia,
-                    fallbackLoader: _getLatestGalleryImageBytes,
-                  ),
+                    left: size.width * AppDimensions.numD1,
+                    bottom: size.width * AppDimensions.numD05),
+                padding: EdgeInsets.all(size.width * AppDimensions.numD02),
+                decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white24
+                            : Colors.grey.shade400,
+                        width: 1.2)),
+                child: Container(
+                  padding: EdgeInsets.all(size.width * AppDimensions.numD02),
+                  decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.3),
+                      shape: BoxShape.circle),
+                  child: Image.asset("${iconsPath}ic_plus.png",
+                      color: Colors.white,
+                      height: size.width * AppDimensions.numD07),
                 ),
               ),
             ),
           ),
 
-        // Focus Circle
-        if (showFocusCircle)
-          Positioned(
-            top: y - 20,
-            left: x - 20,
-            child: Image.asset("${iconsPath}ic_focus.png",
-                width: size.width * AppDimensions.numD15,
-                height: size.width * AppDimensions.numD15,
-                color: Colors.white),
+          // Capture/Record Button
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: InkWell(
+              onTap:
+                  state.isVideoLoading || state.status == CameraStatus.loading
+                      ? null
+                      : () {
+                          if (state.selectedMode == AppStrings.videoText) {
+                            if (state.isRecording) {
+                              context
+                                  .read<CameraBloc>()
+                                  .add(CameraStopRecordingEvent());
+                            } else {
+                              context
+                                  .read<CameraBloc>()
+                                  .add(CameraStartRecordingEvent());
+                            }
+                          } else if (state.selectedMode == AppStrings.scanText) {
+                            context.read<CameraBloc>().add(CameraScanDocEvent());
+                          } else {
+                            // Photo
+                            context
+                                .read<CameraBloc>()
+                                .add(CameraCaptureImageEvent());
+                          }
+                        },
+              child: Container(
+                margin:
+                    EdgeInsets.only(bottom: size.width * AppDimensions.numD05),
+                padding: EdgeInsets.all(size.width * AppDimensions.numD01),
+                decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white24
+                            : Colors.grey.shade400,
+                        width: 1.2)),
+                child: state.isVideoLoading
+                    ? SizedBox(
+                        width: size.width * AppDimensions.numD13,
+                        height: size.width * AppDimensions.numD13,
+                        child: Padding(
+                          padding:
+                              EdgeInsets.all(size.width * AppDimensions.numD03),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColorTheme.colorThemePink,
+                          ),
+                        ),
+                      )
+                    : Icon(
+                        (state.selectedMode == AppStrings.videoText &&
+                                state.isRecording)
+                            ? Icons.stop_circle_outlined
+                            : Icons.circle,
+                        color: AppColorTheme.colorThemePink,
+                        size: size.width * AppDimensions.numD13,
+                      ),
+              ),
+            ),
           ),
 
-        // Top Controls (Flash, Rotate, Settings)
-        if (state.selectedMode == AppStrings.photoText ||
-            state.selectedMode == AppStrings.videoText)
-          Positioned(
-            top: size.width * AppDimensions.numD06,
-            left: size.width * AppDimensions.numD1,
-            right: size.width * AppDimensions.numD1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (!state.isFrontCamera)
-                  InkWell(
-                    onTap: () => context
-                        .read<CameraBloc>()
-                        .add(CameraFlashToggleEvent()),
-                    child: Container(
-                      padding:
-                          EdgeInsets.all(size.width * AppDimensions.numD01),
-                      decoration: const BoxDecoration(
-                          color: Colors.white, shape: BoxShape.circle),
-                      child: Icon(
-                          state.isFlashOn ? Icons.flash_on : Icons.flash_off,
-                          color: Colors.black,
-                          size: size.width * AppDimensions.numD04),
+          // Gallery Thumbnail
+          if (state.selectedMode == AppStrings.photoText ||
+              state.selectedMode == AppStrings.videoText)
+            Align(
+              alignment: Alignment.bottomRight,
+              child: InkWell(
+                onTap: () {
+                  context.pushNamed(
+                    AppRoutes.customGalleryName,
+                    extra: {
+                      'picAgain': widget.picAgain,
+                    },
+                  ).then((value) {
+                    if (value != null) {
+                      // ignore: use_build_context_synchronously
+                      if (!context.mounted) return;
+                      context.read<CameraBloc>().add(
+                          UpdateCapturedMediaEvent(value as List<CameraData>));
+                      if (widget.picAgain) context.pop(value);
+                    }
+                  });
+                },
+                child: Container(
+                  width: size.width * AppDimensions.numD15,
+                  height: size.width * AppDimensions.numD15,
+                  margin: EdgeInsets.only(
+                      bottom: size.width * AppDimensions.numD05,
+                      right: size.width * AppDimensions.numD1),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD025),
+                    child: PersistentGalleryThumbnail(
+                      galleryMedia: state.galleryMedia,
+                      fallbackLoader: _getLatestGalleryImageBytes,
                     ),
-                  )
-                else
-                  SizedBox(width: size.width * AppDimensions.numD06),
+                  ),
+                ),
+              ),
+            ),
 
-                // Center Settings
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+          // Focus Circle
+          if (showFocusCircle)
+            Positioned(
+              top: y - 20,
+              left: x - 20,
+              child: Image.asset("${iconsPath}ic_focus.png",
+                  width: size.width * AppDimensions.numD15,
+                  height: size.width * AppDimensions.numD15,
+                  color: Colors.white),
+            ),
+
+          // Top Controls (Flash, Rotate, Settings)
+          if (state.selectedMode == AppStrings.photoText ||
+              state.selectedMode == AppStrings.videoText)
+            Positioned(
+              top: size.width * AppDimensions.numD06,
+              left: size.width * AppDimensions.numD1,
+              right: size.width * AppDimensions.numD1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (!state.isFrontCamera)
                     InkWell(
-                      onTap: () {
-                        if (_exposureModeControlRowAnimationController.value ==
-                            1) {
-                          _exposureModeControlRowAnimationController.reverse();
-                        } else {
-                          _exposureModeControlRowAnimationController.forward();
-                        }
-                      },
+                      onTap: () => context
+                          .read<CameraBloc>()
+                          .add(CameraFlashToggleEvent()),
                       child: Container(
                         padding:
                             EdgeInsets.all(size.width * AppDimensions.numD01),
                         decoration: const BoxDecoration(
                             color: Colors.white, shape: BoxShape.circle),
-                        child: Image.asset("${iconsPath}arrow_square_down.png",
+                        child: Icon(
+                            state.isFlashOn ? Icons.flash_on : Icons.flash_off,
                             color: Colors.black,
-                            height: size.width * AppDimensions.numD042),
+                            size: size.width * AppDimensions.numD04),
                       ),
-                    ),
-                    _exposureModeControlRowUpperWidget(size, state),
-                    SizedBox(height: size.width * AppDimensions.numD01),
-                    if (state.selectedMode == AppStrings.videoText)
-                      Text(state.recordingTime,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * AppDimensions.numD035,
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontWeight: FontWeight.w500)),
-                  ],
-                ),
+                    )
+                  else
+                    SizedBox(width: size.width * AppDimensions.numD06),
 
-                // Rotate Camera
-                InkWell(
-                  onTap: () =>
-                      context.read<CameraBloc>().add(CameraSwitchEvent()),
-                  child: Container(
-                    padding: EdgeInsets.all(size.width * AppDimensions.numD01),
-                    decoration: const BoxDecoration(
-                        color: Colors.white, shape: BoxShape.circle),
-                    child: Image.asset("${iconsPath}ic_rotate.png",
-                        height: size.width * AppDimensions.numD04),
+                  // Center Settings
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          if (_exposureModeControlRowAnimationController
+                                  .value ==
+                              1) {
+                            _exposureModeControlRowAnimationController
+                                .reverse();
+                          } else {
+                            _exposureModeControlRowAnimationController
+                                .forward();
+                          }
+                        },
+                        child: Container(
+                          padding:
+                              EdgeInsets.all(size.width * AppDimensions.numD01),
+                          decoration: const BoxDecoration(
+                              color: Colors.white, shape: BoxShape.circle),
+                          child: Image.asset("${iconsPath}arrow_square_down.png",
+                              color: Colors.black,
+                              height: size.width * AppDimensions.numD042),
+                        ),
+                      ),
+                      _exposureModeControlRowUpperWidget(size, state),
+                      SizedBox(height: size.width * AppDimensions.numD01),
+                      if (state.selectedMode == AppStrings.videoText)
+                        Text(state.recordingTime,
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * AppDimensions.numD035,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontWeight: FontWeight.w500)),
+                    ],
                   ),
-                ),
-              ],
+
+                  // Rotate Camera
+                  InkWell(
+                    onTap: () =>
+                        context.read<CameraBloc>().add(CameraSwitchEvent()),
+                    child: Container(
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD01),
+                      decoration: const BoxDecoration(
+                          color: Colors.white, shape: BoxShape.circle),
+                      child: Image.asset("${iconsPath}ic_rotate.png",
+                          height: size.width * AppDimensions.numD04),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-      ],
+        ],
+      );
+    }
+
+    // 4. Default fallback: show loader while hardware initializes
+    return Container(
+      color: Colors.black,
+      child: Center(
+        child: CircularProgressIndicator(color: AppColorTheme.colorThemePink),
+      ),
     );
   }
 
