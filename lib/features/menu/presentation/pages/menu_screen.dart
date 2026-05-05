@@ -346,7 +346,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   // Theme Toggle
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        vertical: size.width * AppDimensions.numD02),
+                        vertical: size.width * AppDimensions.numD035),
                     child: Row(
                       children: [
                         Icon(
@@ -435,7 +435,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   // Location Toggle
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        vertical: size.width * AppDimensions.numD02),
+                        vertical: size.width * AppDimensions.numD035),
                     child: Row(
                       children: [
                         ImageIcon(
@@ -696,8 +696,8 @@ class MenuTile extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(
             vertical: isNotification
-                ? size.width * AppDimensions.numD01
-                : size.width * AppDimensions.numD02),
+                ? size.width * AppDimensions.numD02
+                : size.width * AppDimensions.numD035),
         child: Row(
           children: [
             if (isNotification)

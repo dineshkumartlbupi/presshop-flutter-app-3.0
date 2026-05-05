@@ -16,7 +16,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 
 class NewsDetailPage extends StatefulWidget {
-
   const NewsDetailPage({
     super.key,
     required this.newsId,
@@ -245,8 +244,10 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                     SizedBox(height: size.width * AppDimensions.numD05),
                     _buildCommentsList(context, state, size),
                     _buildLoadMoreComments(context, state, size),
-                     _buildMainCommentInput(context, size),
-                     SizedBox(height: size.width * AppDimensions.numD10 + MediaQuery.of(context).padding.bottom),
+                    _buildMainCommentInput(context, size),
+                    SizedBox(
+                        height: size.width * AppDimensions.numD10 +
+                            MediaQuery.of(context).padding.bottom),
                   ],
                 ),
               ),
@@ -324,7 +325,8 @@ class _NewsDetailPageState extends State<NewsDetailPage>
     return Text(
       displayTime,
       style: TextStyle(
-          color: Theme.of(context).hintColor, fontSize: size.width * AppDimensions.numD03),
+          color: Theme.of(context).hintColor,
+          fontSize: size.width * AppDimensions.numD03),
     );
   }
 
@@ -337,7 +339,8 @@ class _NewsDetailPageState extends State<NewsDetailPage>
     return Text(
       displayDate,
       style: TextStyle(
-          color: Theme.of(context).hintColor, fontSize: size.width * AppDimensions.numD03),
+          color: Theme.of(context).hintColor,
+          fontSize: size.width * AppDimensions.numD03),
     );
   }
 
@@ -396,19 +399,22 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                 "assets/icons/news_heart.png",
                 "$likeCount ${likeCount == 1 || likeCount == 0 ? 'like' : 'likes'}",
                 size,
-                iconSize),
+                iconSize,
+                color: Theme.of(context).hintColor),
             SizedBox(width: size.width * AppDimensions.numD03),
             _buildStatItem(
                 "assets/icons/news_message1.png",
                 "$commentCount ${commentCount == 1 || commentCount == 0 ? 'comment' : 'comments'}",
                 size,
-                iconSize),
+                iconSize,
+                color: Theme.of(context).hintColor),
             SizedBox(width: size.width * AppDimensions.numD03),
             _buildStatItem(
                 "assets/icons/news_send1.png",
                 "$shareCount ${shareCount == 1 || shareCount == 0 ? 'share' : 'shares'}",
                 size,
-                iconSize),
+                iconSize,
+                color: Theme.of(context).hintColor),
             SizedBox(width: size.width * AppDimensions.numD03),
             _buildStatItem(
                 "assets/icons/news_eye.png",
@@ -431,6 +437,10 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                       : "assets/icons/news_heart.png",
                   width: size.width * AppDimensions.numD04,
                   height: size.width * AppDimensions.numD04,
+                  color: Theme.of(context).brightness == Brightness.dark &&
+                          !isLiked
+                      ? Colors.white
+                      : null,
                 ),
               ),
             ),
@@ -442,6 +452,9 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                   "assets/icons/news_send1.png",
                   width: size.width * AppDimensions.numD04,
                   height: size.width * AppDimensions.numD04,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : null,
                 ),
               ),
             ),
@@ -453,6 +466,9 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                   "assets/icons/news_message1.png",
                   width: size.width * AppDimensions.numD04,
                   height: size.width * AppDimensions.numD04,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : null,
                 ),
               ),
             ),
@@ -699,12 +715,9 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ...repliesWidgets
-                                  .skip(1)
-                                  .map((reply) => _buildThreadedReplyItem(
-                                      reply, size,
-                                      isLast: false))
-                                  ,
+                              ...repliesWidgets.skip(1).map((reply) =>
+                                  _buildThreadedReplyItem(reply, size,
+                                      isLast: false)),
                               _buildThreadedReplyItem(
                                 GestureDetector(
                                   onTap: onToggleExpand,
@@ -780,6 +793,10 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                       : "assets/icons/news_heart.png",
                   width: size.width * AppDimensions.numD04,
                   height: size.width * AppDimensions.numD04,
+                  color: Theme.of(context).brightness == Brightness.dark &&
+                          !isLiked
+                      ? Colors.white
+                      : null,
                 ),
                 SizedBox(width: size.width * AppDimensions.numD01),
                 Text("$likes likes",
@@ -799,7 +816,10 @@ class _NewsDetailPageState extends State<NewsDetailPage>
               child: Row(children: [
                 Image.asset("assets/icons/news_message1.png",
                     width: size.width * AppDimensions.numD04,
-                    height: size.width * AppDimensions.numD04),
+                    height: size.width * AppDimensions.numD04,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : null),
                 SizedBox(width: size.width * AppDimensions.numD01),
                 Text("Reply",
                     style: TextStyle(
@@ -1036,7 +1056,8 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD03,
-                              color: Theme.of(context).textTheme.bodyMedium?.color,
+                              color:
+                                  Theme.of(context).textTheme.bodyMedium?.color,
                               lineHeight: 2,
                               fontWeight: FontWeight.normal),
                         ),

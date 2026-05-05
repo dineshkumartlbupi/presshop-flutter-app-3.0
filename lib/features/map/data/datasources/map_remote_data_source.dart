@@ -118,17 +118,61 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
 
   @override
   Future<List<Map<String, dynamic>>> getPlaceSuggestions(String input) async {
-    // Mock Data
-    return [
-      {'description': 'Mock Place 1', 'place_id': '1'},
-      {'description': 'Mock Place 2', 'place_id': '2'},
-    ];
+    try {
+      final url =
+          'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=$googleApiKey&types=geocode';
+
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode != 200) {
+        throw ServerException('HTTP Error: ${response.statusCode}');
+      }
+
+      final data = json.decode(response.body);
+
+      if (data['status'] == 'ZERO_RESULTS') {
+        return [];
+      }
+
+      if (data['status'] != 'OK') {
+        throw ServerException('Google Places Error: ${data['status']}');
+      }
+
+      final predictions = data['predictions'] as List<dynamic>;
+      return predictions
+          .map((p) => {
+                'description': p['description'] as String,
+                'place_id': p['place_id'] as String,
+              })
+          .toList();
+    } catch (e) {
+      throw ServerException('Failed to get suggestions: $e');
+    }
   }
 
   @override
   Future<LatLng> getPlaceDetails(String placeId) async {
-    // Mock Data
-    return const LatLng(51.5074, -0.1278); // London
+    try {
+      final url =
+          'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$googleApiKey';
+
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode != 200) {
+        throw ServerException('HTTP Error: ${response.statusCode}');
+      }
+
+      final data = json.decode(response.body);
+
+      if (data['status'] != 'OK') {
+        throw ServerException('Google Place Details Error: ${data['status']}');
+      }
+
+      final location = data['result']['geometry']['location'];
+      return LatLng(location['lat'] as double, location['lng'] as double);
+    } catch (e) {
+      throw ServerException('Failed to get place details: $e');
+    }
   }
 
   @override

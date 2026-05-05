@@ -27,8 +27,16 @@ class CommentInputWidget extends StatelessWidget {
           : null, // Min height only if dynamic
       padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 12),
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white.withOpacity(0.05)
+            : Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white12
+              : Colors.grey.shade300,
+          width: 1,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end, // Aligns button to bottom

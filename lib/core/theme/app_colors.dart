@@ -24,5 +24,5 @@ class AppColorTheme {
   static const colorGreyChat = Color(0xFFCECECE);
   static const colorDarkThemeCard = Color(0xFF1D2020);
   static const lightGrey = Color(0xFFD3DDDC);
-  static const colorItemDividerForDarkTheme = Colors.white12;
+  static Color colorItemDividerForDarkTheme = Colors.white.withOpacity(0.08);
 }

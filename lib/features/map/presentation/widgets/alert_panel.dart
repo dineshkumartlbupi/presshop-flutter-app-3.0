@@ -140,7 +140,7 @@ class _AlertPanelState extends State<AlertPanel>
                     ),
                     SizedBox(height: size.width * AppDimensions.numD022),
                     Container(
-                      height: size.width * AppDimensions.numD005,
+                      height: size.width * AppDimensions.numD003,
                       width: double.infinity,
                       margin: EdgeInsets.only(
                           bottom: size.width * AppDimensions.numD026),

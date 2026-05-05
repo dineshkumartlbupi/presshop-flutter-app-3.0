@@ -33,9 +33,11 @@ class AppThemes {
       bodyMedium: TextStyle(color: Colors.black87),
     ),
     dividerTheme: const DividerThemeData(
-      color: Color(0xFFD8D8D8),
+      color: AppColorTheme.colorLightGrey,
       thickness: 1,
+      space: 1,
     ),
+    dividerColor: AppColorTheme.colorLightGrey,
   );
 
   static final darkTheme = ThemeData(
@@ -68,12 +70,15 @@ class AppThemes {
       bodyLarge: TextStyle(color: Colors.white),
       bodyMedium: TextStyle(color: Colors.white70),
     ),
-    dividerTheme: const DividerThemeData(
-      color: Color(0xFF333333),
+    dividerTheme: DividerThemeData(
+      color: AppColorTheme.colorItemDividerForDarkTheme,
       thickness: 1,
+      space: 1,
     ),
+    dividerColor: AppColorTheme.colorItemDividerForDarkTheme,
     progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: Colors.white,
     ),
+    hintColor: Colors.white60,
   );
 }

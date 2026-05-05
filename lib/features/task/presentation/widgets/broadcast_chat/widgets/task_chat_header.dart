@@ -145,7 +145,7 @@ class TaskChatHeader extends StatelessWidget {
         padding: EdgeInsets.all(size.width * AppDimensions.numD025),
         decoration: BoxDecoration(
           color: Theme.of(context).brightness == Brightness.dark
-              ? Colors.white12
+              ? const Color.fromARGB(255, 48, 53, 53)
               : Colors.black,
           shape: BoxShape.circle,
         ),

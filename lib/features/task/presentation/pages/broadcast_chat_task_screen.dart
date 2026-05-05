@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
+import 'package:presshop/core/widgets/common_widgets_new.dart';
+import 'package:presshop/core/widgets/logo_widget.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 import 'package:video_player/video_player.dart';
@@ -294,7 +296,24 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
           appBar: CommonBrandedAppBar(
             title: AppStringsNew2.manageTaskText,
             size: size,
+<<<<<<< HEAD
             showLogo: true,
+=======
+            showActions: true,
+            leadingFxn: () {
+              context.pop();
+            },
+            actionWidget: [
+              InkWell(
+                  onTap: () {
+                    context.goNamed(
+                      AppRoutes.dashboardName,
+                      extra: {'initialPosition': 2},
+                    );
+                  },
+                  child: LogoWidget.buildLogo(size)),
+            ],
+>>>>>>> 024697f4060b8e2d999232bee70406f9f3e7a7ed
           ),
           bottomNavigationBar: (isDataLoading && chatList.isNotEmpty)
               ? showLoader()
@@ -967,9 +986,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(size.width * AppDimensions.numD04),
               topRight: Radius.circular(size.width * AppDimensions.numD04),
@@ -990,7 +1010,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     Text(
                       "Select Option",
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontSize: size.width * AppDimensions.numD048,
                         fontFamily: "AirbnbCereal",
                         fontWeight: FontWeight.w500,
@@ -1003,12 +1023,18 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       },
                       icon: Icon(
                         Icons.close_rounded,
-                        color: Colors.black,
+                        color: Theme.of(context).iconTheme.color,
                         size: size.width * AppDimensions.numD08,
                       ),
                     ),
                   ],
                 ),
+              ),
+              Divider(
+                color: isDark
+                    ? AppColorTheme.colorItemDividerForDarkTheme
+                    : Theme.of(context).dividerColor,
+                thickness: 1,
               ),
               SizedBox(height: size.width * AppDimensions.numD04),
               Padding(
@@ -1027,8 +1053,12 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         child: Container(
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.black),
+                            color: Theme.of(context).cardColor,
+                            border: Border.all(
+                              color: isDark
+                                  ? AppColorTheme.colorItemDividerForDarkTheme
+                                  : Theme.of(context).dividerColor,
+                            ),
                             borderRadius: BorderRadius.circular(
                               size.width * AppDimensions.numD02,
                             ),
@@ -1043,6 +1073,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             children: [
                               Icon(
                                 Icons.upload,
+                                color: Theme.of(context).iconTheme.color,
                                 size: size.width * AppDimensions.numD08,
                               ),
                               SizedBox(
@@ -1051,7 +1082,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                               Text(
                                 "My Gallery",
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontSize: size.width * AppDimensions.numD035,
                                   fontFamily: "AirbnbCereal",
                                   fontWeight: FontWeight.bold,
@@ -1073,8 +1107,12 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         child: Container(
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.black),
+                            color: Theme.of(context).cardColor,
+                            border: Border.all(
+                              color: isDark
+                                  ? AppColorTheme.colorItemDividerForDarkTheme
+                                  : Theme.of(context).dividerColor,
+                            ),
                             borderRadius: BorderRadius.circular(
                               size.width * AppDimensions.numD02,
                             ),
@@ -1089,6 +1127,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             children: [
                               Icon(
                                 Icons.insert_drive_file,
+                                color: Theme.of(context).iconTheme.color,
                                 size: size.width * AppDimensions.numD08,
                               ),
                               SizedBox(
@@ -1097,7 +1136,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                               Text(
                                 "My Files",
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontSize: size.width * AppDimensions.numD035,
                                   fontFamily: "AirbnbCereal",
                                   fontWeight: FontWeight.bold,

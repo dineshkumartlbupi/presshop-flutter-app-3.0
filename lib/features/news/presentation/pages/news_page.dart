@@ -238,7 +238,7 @@ class _NewsPageState extends State<NewsPage>
         bottom: widget.fromMap
             ? null
             : PreferredSize(
-                preferredSize: const Size.fromHeight(80),
+                preferredSize: const Size.fromHeight(60),
                 child: Column(
                   children: [
                     Padding(
@@ -279,7 +279,11 @@ class _NewsPageState extends State<NewsPage>
                         },
                       ),
                     ),
-                    SizedBox(height: size.width * AppDimensions.numD04),
+                    const SizedBox(height: 8),
+                    const Divider(
+                      thickness: 1.5,
+                      height: 0,
+                    ),
                   ],
                 ),
               ),
@@ -729,7 +733,11 @@ class _NewsPageState extends State<NewsPage>
                       ? "assets/icons/new_heartfill.png"
                       : "assets/icons/news_heart.png",
                   width: size.width * AppDimensions.numD06,
-                  height: size.width * AppDimensions.numD05),
+                  height: size.width * AppDimensions.numD05,
+                  color: Theme.of(context).brightness == Brightness.dark &&
+                          !(item.isLiked ?? false)
+                      ? Colors.white
+                      : null),
             ),
             SizedBox(width: size.width * AppDimensions.numD04),
             Builder(builder: (context) {
@@ -739,7 +747,10 @@ class _NewsPageState extends State<NewsPage>
                 },
                 child: Image.asset("assets/icons/news_send.png",
                     width: size.width * AppDimensions.numD06,
-                    height: size.width * AppDimensions.numD05),
+                    height: size.width * AppDimensions.numD05,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : null),
               );
             }),
             SizedBox(width: size.width * AppDimensions.numD04),
@@ -749,7 +760,10 @@ class _NewsPageState extends State<NewsPage>
               },
               child: Image.asset("assets/icons/news_message.png",
                   width: size.width * AppDimensions.numD06,
-                  height: size.width * AppDimensions.numD05),
+                  height: size.width * AppDimensions.numD05,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : null),
             ),
 
             const Spacer(),

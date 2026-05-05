@@ -240,9 +240,12 @@ class DashboardPageState extends State<Dashboard>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed && currentIndex == 2) {
-      debugPrint("🚀 Dashboard: App resumed on Camera tab, verifying status...");
-      
-      _permissionService.checkCameraAndGalleryPermissions().then((result) async {
+      debugPrint(
+          "🚀 Dashboard: App resumed on Camera tab, verifying status...");
+
+      _permissionService
+          .checkCameraAndGalleryPermissions()
+          .then((result) async {
         if (result != PermissionResult.granted) {
           _redirectToPermissionScreen();
         } else {
@@ -742,7 +745,8 @@ class DashboardPageState extends State<Dashboard>
       }
     } else {
       // If not granted, try to request. This will show OS dialog if possible.
-      final requestResult = await _permissionService.requestCameraAndGalleryPermissions();
+      final requestResult =
+          await _permissionService.requestCameraAndGalleryPermissions();
       if (requestResult == PermissionResult.granted) {
         if (mounted) {
           _cameraKey.currentState?.resumeCamera();

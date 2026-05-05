@@ -47,15 +47,16 @@ class SearchAndFilterBar extends StatelessWidget {
             children: [
               Expanded(
                 child: Container(
+                  height: 40,
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
+                      const EdgeInsets.symmetric(horizontal: 3, vertical: 0),
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                         color: Theme.of(context).brightness == Brightness.dark
                             ? Colors.white24
-                            : Colors.grey.shade400,
+                            : Colors.transparent,
                         width: 1.2),
                     boxShadow: [
                       BoxShadow(
@@ -84,8 +85,8 @@ class SearchAndFilterBar extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        width: 35,
-                        height: 35,
+                        width: 34,
+                        height: 34,
                         decoration: BoxDecoration(
                           color: const Color(0xFFEC4E54),
                           borderRadius: BorderRadius.circular(6),
@@ -106,12 +107,14 @@ class SearchAndFilterBar extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.black,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black
+                        : Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                         color: Theme.of(context).brightness == Brightness.dark
                             ? Colors.white24
-                            : Colors.grey.shade400,
+                            : Colors.transparent,
                         width: 1.2),
                     boxShadow: [
                       BoxShadow(
@@ -126,7 +129,7 @@ class SearchAndFilterBar extends StatelessWidget {
                       LucideIcons.corner_up_right,
                       color: Theme.of(context).brightness == Brightness.dark
                           ? const Color(0xFFEC4E54)
-                          : Colors.white,
+                          : Colors.black,
                     ),
                     onPressed: onPressedOnNavigation,
                   ),
@@ -198,7 +201,7 @@ class _FilterDropdown extends StatelessWidget {
         border: Border.all(
             color: Theme.of(context).brightness == Brightness.dark
                 ? Colors.white24
-                : Colors.grey.shade400,
+                : Colors.transparent,
             width: 1.2),
         boxShadow: [
           BoxShadow(

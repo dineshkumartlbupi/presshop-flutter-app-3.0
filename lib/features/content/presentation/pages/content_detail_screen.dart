@@ -366,44 +366,73 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                             if (isOwner)
                                               SizedBox(
                                                 width: size.width,
-                                                height: size.width * AppDimensions.numD13,
+                                                height: size.width *
+                                                    AppDimensions.numD13,
                                                 child: commonElevatedButton(
                                                   AppStrings.manageContentText,
                                                   size,
                                                   commonButtonTextStyle(size),
-                                                  commonButtonStyle(size, AppColorTheme.colorThemePink),
+                                                  commonButtonStyle(
+                                                      size,
+                                                      AppColorTheme
+                                                          .colorThemePink),
                                                   () {
                                                     context.read<TaskBloc>().add(
                                                         const ResetTaskActionStatusEvent());
                                                     context.pushNamed(
-                                                        AppRoutes.manageTaskName,
+                                                        AppRoutes
+                                                            .manageTaskName,
                                                         extra: {
-                                                          'roomId': contentItem!.id,
-                                                          'contentId': contentItem!.id,
+                                                          'roomId':
+                                                              contentItem!.id,
+                                                          'contentId':
+                                                              contentItem!.id,
                                                           'type': 'content',
-                                                          'mediaHouseDetail': null,
-                                                          'contentMedia': showMediaWidget(),
-                                                          'contentHeader': headerWidget(),
-                                                          'offerCount': _mediaHouseList.isNotEmpty
-                                                              ? _mediaHouseList.length
-                                                              : widget.offerCount,
-                                                          'purchasedCount': publicationTransactionList.isNotEmpty
-                                                              ? publicationTransactionList.length
-                                                              : widget.purchasedMediahouseCount,
-                                                          'myContentData': contentItem!.toMyContentData(),
+                                                          'mediaHouseDetail':
+                                                              null,
+                                                          'contentMedia':
+                                                              showMediaWidget(),
+                                                          'contentHeader':
+                                                              headerWidget(),
+                                                          'offerCount': _mediaHouseList
+                                                                  .isNotEmpty
+                                                              ? _mediaHouseList
+                                                                  .length
+                                                              : widget
+                                                                  .offerCount,
+                                                          'purchasedCount':
+                                                              publicationTransactionList
+                                                                      .isNotEmpty
+                                                                  ? publicationTransactionList
+                                                                      .length
+                                                                  : widget
+                                                                      .purchasedMediahouseCount,
+                                                          'myContentData':
+                                                              contentItem!
+                                                                  .toMyContentData(),
                                                         }).then((value) {
                                                       // Add events with safety checks
                                                       try {
-                                                        if (!_contentBloc.isClosed) {
-                                                          _contentBloc.add(FetchContentDetailEvent(widget.contentId));
-                                                          _contentBloc.add(FetchMediaHouseOffersEvent(widget.contentId));
-                                                          _contentBloc.add(FetchContentTransactionsEvent(
-                                                              contentId: widget.contentId,
-                                                              limit: 10,
-                                                              offset: 0));
+                                                        if (!_contentBloc
+                                                            .isClosed) {
+                                                          _contentBloc.add(
+                                                              FetchContentDetailEvent(
+                                                                  widget
+                                                                      .contentId));
+                                                          _contentBloc.add(
+                                                              FetchMediaHouseOffersEvent(
+                                                                  widget
+                                                                      .contentId));
+                                                          _contentBloc.add(
+                                                              FetchContentTransactionsEvent(
+                                                                  contentId: widget
+                                                                      .contentId,
+                                                                  limit: 10,
+                                                                  offset: 0));
                                                         }
                                                       } catch (e) {
-                                                        debugPrint('Error adding events to ContentBloc after navigation: $e');
+                                                        debugPrint(
+                                                            'Error adding events to ContentBloc after navigation: $e');
                                                       }
                                                     });
                                                   },
