@@ -291,49 +291,14 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
         final bool isDataLoading = state.actionStatus == TaskStatus.loading;
 
         return Scaffold(
-          appBar: CommonAppBar(
-            elevation: 0,
-            hideLeading: false,
-            title: Text(
-              AppStringsNew2.manageTaskText,
-              style: TextStyle(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: size.width * AppDimensions.appBarHeadingFontSize,
-              ),
-            ),
-            centerTitle: false,
-            titleSpacing: 0,
+          appBar: CommonBrandedAppBar(
+            title: AppStringsNew2.manageTaskText,
             size: size,
-            showActions: true,
-            leadingFxn: () {
-              context.pop();
-            },
-            actionWidget: [
-              InkWell(
-                onTap: () {
-                  context.goNamed(
-                    AppRoutes.dashboardName,
-                    extra: {'initialPosition': 2},
-                  );
-                },
-                child: Image.asset(
-                  "${commonImagePath}ic_black_rabbit.png",
-                  height: size.width * AppDimensions.numD07,
-                  width: size.width * AppDimensions.numD07,
-                ),
-              ),
-              SizedBox(width: size.width * AppDimensions.numD04),
-            ],
+            showLogo: true,
           ),
           bottomNavigationBar: (isDataLoading && chatList.isNotEmpty)
               ? showLoader()
-              : Padding(
-                  padding: EdgeInsets.only(
-                    bottom: size.height * AppDimensions.numD03,
-                  ),
+              : SafeArea(
                   child: Row(
                     children: [
                       Expanded(
@@ -429,66 +394,68 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                   padding: EdgeInsets.all(size.width * AppDimensions.numD04),
                   child: Column(
                     children: [
-                TaskChatHeader(taskDetail: widget.taskDetail!),
-                SizedBox(height: size.width * AppDimensions.numD04),
-                SizedBox(height: size.width * AppDimensions.numD04),
-                const UploadInfoBubble(uploadTextType: ''),
-                SizedBox(height: size.width * AppDimensions.numD033),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ListView.separated(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        var item = chatList[index];
-                        debugPrint(
-                          "📨 Rendering message $index: type=${item.messageType}, sender=${item.senderType}, message=${item.message}",
-                        );
-                        return _buildChatBubble(item, size);
-                      },
-                      itemCount: chatList.length,
-                      separatorBuilder: (context, index) {
-                        return SizedBox(
-                          height: size.width * AppDimensions.numD035,
-                        );
-                      },
-                    ),
-                    widget.taskDetail!.task.paidStatus == "paid"
-                        ? CongratulationsBubble(
-                            roomId: widget.roomId,
-                            mediaHouseName:
-                                "${widget.taskDetail!.task.mediaHouse.firstName} ${widget.taskDetail!.task.mediaHouse.lastName}"
-                                    .toCapitalized(),
-                            mediaCount: "",
-                            amount:
-                                "-", // Or some actual amount if available in taskDetail
-                            transactionId:
-                                "", // Or some actual transactionId if available
-                          )
-                        : const SizedBox.shrink(),
-                    if (widget.taskDetail!.task.paidStatus == "paid") ...[
-                      SizedBox(height: size.width * AppDimensions.numD035),
-                      EarningBubble(
-                        amount: widget.taskDetail!.task.hopperTaskAmount,
-                      ),
-                      SizedBox(height: size.width * AppDimensions.numD035),
-                      RatingReviewBubble(
-                        likedFeatures: intList,
-                        isAlreadyRated: isRatingGiven,
-                        onSubmit: (rating, review, features) {
-                          ratings = rating;
-                          ratingReviewController1.text = review;
-                          dataList = features;
-                          _submitRating();
-                        },
+                      TaskChatHeader(taskDetail: widget.taskDetail!),
+                      SizedBox(height: size.width * AppDimensions.numD04),
+                      SizedBox(height: size.width * AppDimensions.numD04),
+                      const UploadInfoBubble(uploadTextType: ''),
+                      SizedBox(height: size.width * AppDimensions.numD033),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListView.separated(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              var item = chatList[index];
+                              debugPrint(
+                                "📨 Rendering message $index: type=${item.messageType}, sender=${item.senderType}, message=${item.message}",
+                              );
+                              return _buildChatBubble(item, size);
+                            },
+                            itemCount: chatList.length,
+                            separatorBuilder: (context, index) {
+                              return SizedBox(
+                                height: size.width * AppDimensions.numD035,
+                              );
+                            },
+                          ),
+                          widget.taskDetail!.task.paidStatus == "paid"
+                              ? CongratulationsBubble(
+                                  roomId: widget.roomId,
+                                  mediaHouseName:
+                                      "${widget.taskDetail!.task.mediaHouse.firstName} ${widget.taskDetail!.task.mediaHouse.lastName}"
+                                          .toCapitalized(),
+                                  mediaCount: "",
+                                  amount:
+                                      "-", // Or some actual amount if available in taskDetail
+                                  transactionId:
+                                      "", // Or some actual transactionId if available
+                                )
+                              : const SizedBox.shrink(),
+                          if (widget.taskDetail!.task.paidStatus == "paid") ...[
+                            SizedBox(
+                                height: size.width * AppDimensions.numD035),
+                            EarningBubble(
+                              amount: widget.taskDetail!.task.hopperTaskAmount,
+                            ),
+                            SizedBox(
+                                height: size.width * AppDimensions.numD035),
+                            RatingReviewBubble(
+                              likedFeatures: intList,
+                              isAlreadyRated: isRatingGiven,
+                              onSubmit: (rating, review, features) {
+                                ratings = rating;
+                                ratingReviewController1.text = review;
+                                dataList = features;
+                                _submitRating();
+                              },
+                            ),
+                          ],
+                        ],
                       ),
                     ],
-                  ],
+                  ),
                 ),
-              ],
-            ),
-          ),
         );
       },
     );

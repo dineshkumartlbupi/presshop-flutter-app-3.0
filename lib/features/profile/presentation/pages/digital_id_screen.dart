@@ -12,7 +12,6 @@ import 'package:go_router/go_router.dart';
 import '../../presentation/bloc/profile_event.dart';
 import '../../presentation/bloc/profile_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
-import '../../domain/entities/profile_data.dart';
 import 'package:presshop/core/widgets/common/avatar_bottom_sheet.dart';
 import 'dart:convert';
 import 'package:presshop/core/api/api_client.dart';
@@ -20,6 +19,8 @@ import 'dart:io';
 
 class DigitalIdScreen extends StatefulWidget {
   const DigitalIdScreen({super.key});
+
+  static MyProfileData? cachedProfileData;
 
   @override
   State<DigitalIdScreen> createState() => _DigitalIdScreenState();
@@ -52,16 +53,28 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
     userName =
         sharedPreferences!.getString(SharedPreferencesKeys.userNameKey) ??
             "Hopper";
-    // Setup initial image from prefs if available
-    String sessionAvatar =
-        sharedPreferences!.getString(SharedPreferencesKeys.profileImageKey) ??
-            sharedPreferences!.getString(SharedPreferencesKeys.avatarKey) ??
-            "";
-    if (sessionAvatar.isNotEmpty) {
-      userImage = fixS3Url(sessionAvatar);
+
+    // Use cached data if available to avoid reloading
+    if (DigitalIdScreen.cachedProfileData != null) {
+      myProfileData = DigitalIdScreen.cachedProfileData;
+      fullName = "${myProfileData!.firstName} ${myProfileData!.lastName}";
+      userName = myProfileData!.userName;
+      userImage = myProfileData!.realProfileImage.isNotEmpty
+          ? myProfileData!.realProfileImage
+          : myProfileData!.avatarImage;
+    } else {
+      // Setup initial image from prefs if available
+      String sessionAvatar =
+          sharedPreferences!.getString(SharedPreferencesKeys.profileImageKey) ??
+              "";
+      if (sessionAvatar.isNotEmpty) {
+        userImage = fixS3Url(sessionAvatar);
+      }
     }
+
     getAvatarsApi();
-    myProfileApi();
+    // Only show loader if we don't have any image yet
+    myProfileApi(showLoader: userImage.isEmpty);
   }
 
   Future<void> myProfileApi({bool showLoader = true}) async {
@@ -95,6 +108,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
             if (userData is Map) {
               myProfileData =
                   MyProfileData.fromJson(Map<String, dynamic>.from(userData));
+              DigitalIdScreen.cachedProfileData = myProfileData;
               if (myProfileData != null) {
                 fullName =
                     "${myProfileData!.firstName} ${myProfileData!.lastName}";
@@ -211,11 +225,11 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
             setState(() {
               isUploading = false;
             });
-            myProfileApi(showLoader: false);
+            // myProfileApi(showLoader: false);
             showSnackBar(
                 "Success", "Profile image uploaded successfully", Colors.green);
           } else if (state is ProfileUpdated) {
-            myProfileApi(showLoader: false);
+            // myProfileApi(showLoader: false);
             showSnackBar(
                 "Success", "Profile updated successfully", Colors.green);
           } else if (state is ProfileError) {
@@ -299,9 +313,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                             fit: BoxFit.cover,
                                           )
                                         : CachedNetworkImage(
-                                            imageUrl: userImage.isEmpty
-                                                ? "https://via.placeholder.com/300"
-                                                : userImage,
+                                            imageUrl: userImage,
                                             height: size.width *
                                                 AppDimensions.numD60,
                                             width: size.width *
@@ -324,17 +336,23 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                               width: size.width *
                                                   AppDimensions.numD70,
                                               decoration: BoxDecoration(
-                                                color: Colors.white,
+                                                color: Theme.of(context).cardColor,
                                                 border: Border.all(
-                                                    color: Theme.of(context).brightness == Brightness.dark
-                                                        ? AppColorTheme.colorItemDividerForDarkTheme
-                                                        : Theme.of(context).dividerColor),
+                                                    color: Theme.of(context)
+                                                                .brightness ==
+                                                            Brightness.dark
+                                                        ? AppColorTheme
+                                                            .colorItemDividerForDarkTheme
+                                                        : Theme.of(context)
+                                                            .dividerColor),
                                                 borderRadius:
                                                     BorderRadius.circular(size
                                                             .width *
                                                         AppDimensions.numD04),
                                               ),
-                                              child: Column(
+                                              child: (isLoading || isUploading)
+                                                  ? SizedBox()
+                                                  : Column(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 children: [
@@ -373,7 +391,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                             ),
                                           ),
                                   ),
-                                  if (isLoading || isUploading)
+                                  if ((isLoading && userImage.isEmpty) || isUploading)
                                     Container(
                                       height: size.width * AppDimensions.numD60,
                                       width: size.width * AppDimensions.numD70,

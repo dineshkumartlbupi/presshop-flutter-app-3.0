@@ -86,6 +86,13 @@ class CameraScreenState extends State<CameraScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     _bloc?.add(CameraLifecycleEvent(state));
+    if (state == AppLifecycleState.resumed) {
+      // Auto-retry if we were stuck on permission denied or requesting screen
+      if (_bloc?.state.status == CameraStatus.permissionDenied ||
+          _bloc?.state.status == CameraStatus.requestingPermission) {
+        _bloc?.add(const CameraInitializeEvent());
+      }
+    }
     super.didChangeAppLifecycleState(state);
   }
 
@@ -349,6 +356,11 @@ class CameraScreenState extends State<CameraScreen>
   }
 
   Widget _buildBody(BuildContext context, CameraState state, Size size) {
+    if (state.status == CameraStatus.permissionDenied ||
+        state.status == CameraStatus.requestingPermission ||
+        state.status == CameraStatus.initial) {
+      return _buildPermissionDeniedUI(context, size, state);
+    }
     if (state.selectedMode == AppStrings.audioText) {
       return _buildAudioBody(context, state, size);
     }
@@ -596,6 +608,85 @@ class CameraScreenState extends State<CameraScreen>
             ),
           ),
       ],
+    );
+  }
+
+  Widget _buildPermissionDeniedUI(
+      BuildContext context, Size size, CameraState state) {
+    final isPermanent = state.errorMessage == "permanently_denied";
+
+    return Container(
+      width: double.infinity,
+      color: Colors.black,
+      padding: EdgeInsets.symmetric(horizontal: size.width * 0.1),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.camera_alt_outlined,
+            size: size.width * 0.2,
+            color: Colors.white54,
+          ),
+          SizedBox(height: size.width * 0.05),
+          Text(
+            "Camera Permission Required",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: size.width * 0.045,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: size.width * 0.02),
+          Text(
+            isPermanent
+                ? "Camera and Gallery access is disabled. Please enable them in app settings to continue."
+                : "We need camera and gallery access to capture and share content.",
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: size.width * 0.035,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: size.width * 0.1),
+          SizedBox(
+            width: double.infinity,
+            height: size.width * 0.12,
+            child: ElevatedButton(
+              onPressed: () async {
+                if (isPermanent) {
+                  await openAppSettings();
+                } else {
+                  context.read<CameraBloc>().add(const CameraInitializeEvent());
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColorTheme.colorThemePink,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                isPermanent ? "Open Settings" : "Allow Access",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          if (!isPermanent) ...[
+            SizedBox(height: size.width * 0.04),
+            TextButton(
+              onPressed: () => context.pop(),
+              child: const Text(
+                "Not Now",
+                style: TextStyle(color: Colors.white54),
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 

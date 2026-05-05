@@ -99,7 +99,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     debugPrint("🚀 CameraBloc: Starting initialization sequence...");
 
     _isInitializing = true;
-    emit(state.copyWith(status: CameraStatus.loading));
+    emit(state.copyWith(status: CameraStatus.requestingPermission));
     try {
       // Setup recorder first (fast)
       RecorderController? recorderController = state.recorderController;
@@ -123,7 +123,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
                 PermissionResult.permanentlyDenied);
 
         emit(state.copyWith(
-          status: CameraStatus.failure,
+          status: CameraStatus.permissionDenied,
           errorMessage:
               isPermanent ? "permanently_denied" : "permission_denied",
         ));

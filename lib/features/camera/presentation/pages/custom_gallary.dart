@@ -14,7 +14,6 @@ import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:video_player/video_player.dart';
 import 'package:presshop/main.dart';

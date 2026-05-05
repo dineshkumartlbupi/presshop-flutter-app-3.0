@@ -7,6 +7,7 @@ import 'package:presshop/features/camera/data/models/camera_model.dart';
 enum CameraStatus {
   initial,
   loading,
+  requestingPermission,
   ready,
   failure,
   permissionDenied,

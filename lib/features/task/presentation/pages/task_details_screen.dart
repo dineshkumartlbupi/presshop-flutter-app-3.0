@@ -1057,18 +1057,19 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   }
 
   Future<void> openUrl() async {
-    String googleUrl = isDirection
+    String googleUrl = isDirection && _latLng != null
         ? 'https://www.google.com/maps/dir/?api=1&origin=${_latLng!.latitude},'
-            '${_latLng!.longitude}&destination=${taskDetail!.task.addressLocation.coordinates[0]},'
-            '${taskDetail!.task.addressLocation.coordinates[1]}&travelmode=driving&dir_action=navigate'
-        : 'https://www.google.com/maps/search/?api=1&query=${taskDetail!.task.addressLocation.coordinates[0]},${taskDetail!.task.addressLocation.coordinates[1]}';
+            '${_latLng!.longitude}&destination=${taskDetail!.task.addressLocation.coordinates[1]},'
+            '${taskDetail!.task.addressLocation.coordinates[0]}&travelmode=driving&dir_action=navigate'
+        : 'https://www.google.com/maps/search/?api=1&query=${taskDetail!.task.addressLocation.coordinates[1]},${taskDetail!.task.addressLocation.coordinates[0]}';
 
-    String appleUrl = isDirection
+    String appleUrl = isDirection && _latLng != null
         ? 'http://maps.apple.com/maps?saddr=${_latLng!.latitude},'
-            '${_latLng!.longitude}&daddr=${taskDetail!.task.addressLocation.coordinates[0]},'
-            '${taskDetail!.task.addressLocation.coordinates[1]}'
-        : 'http://maps.apple.com/?q=${taskDetail!.task.addressLocation.coordinates[0]},'
-            '${taskDetail!.task.addressLocation.coordinates[1]}';
+            '${_latLng!.longitude}&daddr=${taskDetail!.task.addressLocation.coordinates[1]},'
+            '${taskDetail!.task.addressLocation.coordinates[0]}'
+        : 'http://maps.apple.com/?q=${taskDetail!.task.addressLocation.coordinates[1]},'
+            '${taskDetail!.task.addressLocation.coordinates[0]}';
+
     if (await canLaunchUrl(Uri.parse(googleUrl))) {
       debugPrint('launching com googleUrl');
       await launchUrl(Uri.parse(googleUrl),

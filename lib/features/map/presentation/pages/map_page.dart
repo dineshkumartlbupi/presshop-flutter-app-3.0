@@ -338,12 +338,19 @@ class _MapPageContentState extends State<_MapPageContent>
 
   Future<void> _addBurst(LatLng position, String type) async {
     _particles.clear();
+    setState(() {
+      _burstImage = null;
+    });
 
     final assetPath = burstIcons[type] ?? burstIcons['accident']!;
 
-    _burstImage = await _loadImage(assetPath);
-
-    _burstController.forward(from: 0);
+    final img = await _loadImage(assetPath);
+    if (mounted) {
+      setState(() {
+        _burstImage = img;
+      });
+      _burstController.forward(from: 0);
+    }
   }
 
   Future<void> _updateInfoWindow() async {
@@ -1233,12 +1240,10 @@ class _MapPageContentState extends State<_MapPageContent>
                       },
                       onAlertSelected: (type) async {
                         try {
-                          if (!state.isSelectingAlertLocation) {
-                            context.read<MapBloc>().add(
-                                SetSelectingAlertLocationEvent(
-                                    isSelecting: true, type: type));
-                            _customInfoWindowController.hideInfoWindow?.call();
-                          }
+                          context.read<MapBloc>().add(
+                              SetSelectingAlertLocationEvent(
+                                  isSelecting: true, type: type));
+                          _customInfoWindowController.hideInfoWindow?.call();
                           debugPrint("AlertSelected: $type");
                           final myLoc =
                               context.read<MapBloc>().state.myLocation;
