@@ -1316,6 +1316,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   Image.asset(
                                     "${iconsPath}ic_clock.png",
                                     height: size.width * AppDimensions.numD029,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                   ),
                                   SizedBox(
                                     width: size.width * AppDimensions.numD01,
@@ -1371,31 +1375,26 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                      item.isLive
-                                          ? item.isAvailableForAccept &&
-                                                  item.status == "accepted"
-                                              ? "ACCEPTED"
-                                              : item.isAvailableForAccept &&
-                                                      item.status == "pending"
-                                                  ? "TAP TO ACCEPT"
-                                                  : !item.isAvailableForAccept &&
-                                                          item.status ==
-                                                              "pending"
-                                                      ? ""
-                                                      : ""
-                                          : "",
+                                      item.status == "accepted"
+                                          ? "ACCEPTED"
+                                          : item.status == "pending"
+                                              ? "TAP TO ACCEPT"
+                                              : "",
                                       style: commonTextStyle(
                                           size: size,
                                           fontSize: size.width *
                                               AppDimensions.numD025,
-                                          color: _parseColor(item.statusColor,
-                                              defaultColor: (item.deadlineDate
-                                                          ?.isBefore(
-                                                              DateTime.now()) ??
-                                                      false)
-                                                  ? Colors.grey
-                                                  : AppColorTheme
-                                                      .colorThemePink),
+                                          color: (isAcceptedByMe ||
+                                                  item.isAvailableForAccept)
+                                              ? AppColorTheme.colorThemePink
+                                              : _parseColor(item.statusColor,
+                                                  defaultColor: (item.deadlineDate
+                                                              ?.isBefore(
+                                                                  DateTime.now()) ??
+                                                          false)
+                                                      ? Colors.grey
+                                                      : AppColorTheme
+                                                          .colorThemePink),
                                           fontWeight: FontWeight.normal)),
                                   item.status == "accepted"
                                       ? Container(
@@ -1411,11 +1410,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           alignment: Alignment.center,
                                           decoration: BoxDecoration(
                                               color: item.isLive
-                                                  ? item.status == "accepted"
-                                                      // && item.totalAmount == "0"
-                                                      ? Colors.black
-                                                      : AppColorTheme
-                                                          .colorLightGrey
+                                                  ? (Theme.of(context)
+                                                              .brightness ==
+                                                          Brightness.dark
+                                                      ? Colors.white
+                                                      : Colors.black)
                                                   : _parseColor(
                                                       item.ctaColorCode),
                                               borderRadius:
@@ -1423,44 +1422,22 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                           .width *
                                                       AppDimensions.numD015)),
                                           child: Text(
-                                            item.isLive
-                                                ? item.status == "accepted"
-                                                    //  &&   item.totalAmount == "0"
-                                                    ? "Live"
-                                                    : "Amount"
-                                                : item.ctaName,
-                                            // : "$currencySymbol${item.totalAmount}",
+                                            item.isLive ? "Live" : item.ctaName,
                                             style: commonTextStyle(
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD025,
-                                                color: item.ctaName != "Expired"
-                                                    ? item.status == "accepted"
-                                                        // && item.totalAmount == "0"
-                                                        ? (Theme.of(context)
-                                                                    .brightness ==
-                                                                Brightness.dark
-                                                            ? Colors.black
-                                                            : Colors.white)
-                                                        : item.ctaName !=
-                                                                "Expired"
-                                                            ? (Theme.of(context)
-                                                                        .brightness ==
-                                                                    Brightness
-                                                                        .dark
-                                                                ? Colors.white
-                                                                : Colors.black)
-                                                            : (Theme.of(context)
-                                                                        .brightness ==
-                                                                    Brightness
-                                                                        .dark
-                                                                ? Colors.white
-                                                                : Colors.black)
-                                                    : _parseColor(item
-                                                            .ctaTextColorCode
-                                                            .isNotEmpty
-                                                        ? item.ctaTextColorCode
-                                                        : "000000"),
+                                                color: item.isLive
+                                                    ? (Theme.of(context)
+                                                                .brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.black
+                                                        : Colors.white)
+                                                    : (Theme.of(context)
+                                                                .brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.white
+                                                        : Colors.black),
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         )
@@ -1478,22 +1455,13 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           decoration: BoxDecoration(
                                               color: item.isLive
                                                   ? item.isAvailableForAccept
-                                                      ? item.status ==
-                                                              "rejected"
-                                                          ? (Theme.of(context)
-                                                                      .brightness ==
-                                                                  Brightness
-                                                                      .dark
-                                                              ? Colors.white
-                                                              : Colors.black)
-                                                          : AppColorTheme
-                                                              .colorThemePink
+                                                      ? AppColorTheme
+                                                          .colorThemePink
                                                       : (Theme.of(context)
                                                                   .brightness ==
                                                               Brightness.dark
                                                           ? Colors.white
                                                           : Colors.black)
-                                                  // : colorThemePink,
                                                   : _parseColor(
                                                       item.ctaColorCode),
                                               borderRadius:
@@ -1501,10 +1469,6 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                           .width *
                                                       AppDimensions.numD015)),
                                           child: Text(
-                                            // !item.isLive
-                                            //     ? "Expired"
-                                            //     :
-
                                             item.isLive
                                                 ? item.isAvailableForAccept
                                                     ? item.status == "rejected"
@@ -1516,12 +1480,14 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD025,
-                                                color: item.ctaName != "Expired"
-                                                    ? (Theme.of(context)
-                                                                .brightness ==
-                                                            Brightness.dark
-                                                        ? Colors.black
-                                                        : Colors.white)
+                                                color: item.isLive
+                                                    ? (item.isAvailableForAccept
+                                                        ? Colors.white
+                                                        : (Theme.of(context)
+                                                                    .brightness ==
+                                                                Brightness.dark
+                                                            ? Colors.black
+                                                            : Colors.white))
                                                     : _parseColor(item
                                                             .ctaTextColorCode
                                                             .isNotEmpty
@@ -1530,6 +1496,79 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         )
+
+                                  //////////////
+                                  // isAcceptedByMe || item.status == "accepted"
+                                  //     ? Container(
+                                  //         height: size.width *
+                                  //             AppDimensions.numD065,
+                                  //         padding: EdgeInsets.symmetric(
+                                  //             horizontal: size.width *
+                                  //                 AppDimensions.numD04,
+                                  //             vertical: size.width *
+                                  //                 AppDimensions.numD01),
+                                  //         alignment: Alignment.center,
+                                  //         decoration: BoxDecoration(
+                                  //             color: Colors.black,
+                                  //             borderRadius:
+                                  //                 BorderRadius.circular(size
+                                  //                         .width *
+                                  //                     AppDimensions.numD015)),
+                                  //         child: Text(
+                                  //           "Live",
+                                  //           style: commonTextStyle(
+                                  //               size: size,
+                                  //               fontSize: size.width *
+                                  //                   AppDimensions.numD025,
+                                  //               color: Colors.white,
+                                  //               fontWeight: FontWeight.w600),
+                                  //         ),
+                                  //       )
+                                  //     : // FadeTransition(
+                                  //     //     opacity: (item.isAvailableForAccept &&
+                                  //     //             item.status != "rejected")
+                                  //     //         ? _blinkingController
+                                  //     //         : const AlwaysStoppedAnimation(
+                                  //     //             1.0),
+                                  //     //     child:
+                                  //     Container(
+                                  //         alignment: Alignment.center,
+                                  //         height:
+                                  //             size.width * AppDimensions.numD06,
+                                  //         padding: EdgeInsets.symmetric(
+                                  //             horizontal: size.width *
+                                  //                 AppDimensions.numD025,
+                                  //             vertical: size.width *
+                                  //                 AppDimensions.numD003),
+                                  //         decoration: BoxDecoration(
+                                  //             color: ((isPendingForMe ||
+                                  //                         item
+                                  //                             .isAvailableForAccept) &&
+                                  //                     item.status !=
+                                  //                         "rejected" &&
+                                  //                     !isAcceptedByMe)
+                                  //                 ? AppColorTheme.colorThemePink
+                                  //                 : Colors.black,
+                                  //             borderRadius:
+                                  //                 BorderRadius.circular(size
+                                  //                         .width *
+                                  //                     AppDimensions.numD015)),
+                                  //         child: Text(
+                                  //           ((isPendingForMe ||
+                                  //                       item.isAvailableForAccept) &&
+                                  //                   item.status != "rejected" &&
+                                  //                   !isAcceptedByMe)
+                                  //               ? "Available"
+                                  //               : "Live",
+                                  //           style: commonTextStyle(
+                                  //               size: size,
+                                  //               fontSize: size.width *
+                                  //                   AppDimensions.numD025,
+                                  //               color: Colors.white,
+                                  //               fontWeight: FontWeight.w600),
+                                  //         ),
+                                  //       ),
+                                  // // )
                                 ],
                               ),
                               SizedBox(

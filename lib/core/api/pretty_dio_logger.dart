@@ -11,34 +11,34 @@ class PrettyDioLogger extends Interceptor {
   /// Set to false to print unformatted raw JSON (compact).
   final bool formatJson;
 
-  // void _printLong(String text) {
-  //   if (text.isEmpty) return;
-  //   final pattern = RegExp('.{1,800}');
-  //   for (var line in text.split('\n')) {
-  //     for (var match in pattern.allMatches(line)) {
-  //       debugPrint(match.group(0));
-  //     }
-  //   }
-  // }
+  void _printLong(String text) {
+    if (text.isEmpty) return;
+    final pattern = RegExp('.{1,800}');
+    for (var line in text.split('\n')) {
+      for (var match in pattern.allMatches(line)) {
+        debugPrint(match.group(0));
+      }
+    }
+  }
 
   @override
   void onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) {
-//     _printLong(
-//       '''
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ API REQUEST ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️
-// METHOD : ${options.method}
-// URL    : ${options.uri}
-// TIME   : ${_getFormattedTime()}
-// HEADERS: ${_maskHeaders(options.headers)}
-// QUERY  : ${options.queryParameters}
-// BODY   : ${_prettyJson(options.data)}
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// ''',
-//     );
+    _printLong(
+      '''
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ API REQUEST ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️
+METHOD : ${options.method}
+URL    : ${options.uri}
+TIME   : ${_getFormattedTime()}
+HEADERS: ${_maskHeaders(options.headers)}
+QUERY  : ${options.queryParameters}
+BODY   : ${_prettyJson(options.data)}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+''',
+    );
     super.onRequest(options, handler);
   }
 
@@ -47,17 +47,17 @@ class PrettyDioLogger extends Interceptor {
     Response response,
     ResponseInterceptorHandler handler,
   ) {
-//     _printLong(
-//       '''
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ API RESPONSE ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅
-// STATUS : ${response.statusCode}
-// URL    : ${response.realUri}
-// TIME   : ${_getFormattedTime()}
-// DATA   : ${_prettyJson(response.data)}
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// ''',
-//     );
+    _printLong(
+      '''
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ API RESPONSE ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅
+STATUS : ${response.statusCode}
+URL    : ${response.realUri}
+TIME   : ${_getFormattedTime()}
+DATA   : ${_prettyJson(response.data)}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+''',
+    );
     super.onResponse(response, handler);
   }
 
@@ -66,18 +66,18 @@ class PrettyDioLogger extends Interceptor {
     DioException err,
     ErrorInterceptorHandler handler,
   ) {
-//     _printLong(
-//       '''
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ API ERROR ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌
-// STATUS : ${err.response?.statusCode}
-// URL    : ${err.requestOptions.uri}
-// TIME   : ${_getFormattedTime()}
-// ERROR  : ${err.message}
-// DATA   : ${_prettyJson(err.response?.data)}
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// ''',
-//     );
+    _printLong(
+      '''
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ API ERROR ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌
+STATUS : ${err.response?.statusCode}
+URL    : ${err.requestOptions.uri}
+TIME   : ${_getFormattedTime()}
+ERROR  : ${err.message}
+DATA   : ${_prettyJson(err.response?.data)}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+''',
+    );
     super.onError(err, handler);
   }
 
