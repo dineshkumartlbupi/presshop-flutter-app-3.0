@@ -46,6 +46,7 @@ class MapState extends Equatable {
     this.pendingAlertType,
     this.showDropdown = false,
     this.locationTimeout = false,
+    this.isAutoFollowEnabled = true,
     this.isVisible = true,
   });
   final LatLng? myLocation;
@@ -90,6 +91,7 @@ class MapState extends Equatable {
   final String? pendingAlertType;
   final bool showDropdown;
   final bool locationTimeout;
+  final bool isAutoFollowEnabled;
   final bool isVisible;
 
   MapState copyWith({
@@ -134,6 +136,7 @@ class MapState extends Equatable {
     String? pendingAlertType,
     bool? showDropdown,
     bool? locationTimeout,
+    bool? isAutoFollowEnabled,
     bool? isVisible,
     bool clearDestination = false,
     bool clearRouteInfo = false,
@@ -220,6 +223,7 @@ class MapState extends Equatable {
       pendingAlertType: pendingAlertType ?? this.pendingAlertType,
       showDropdown: showDropdown ?? this.showDropdown,
       locationTimeout: locationTimeout ?? this.locationTimeout,
+      isAutoFollowEnabled: isAutoFollowEnabled ?? this.isAutoFollowEnabled,
       isVisible: isVisible ?? this.isVisible,
     );
   }
@@ -267,6 +271,7 @@ class MapState extends Equatable {
         pendingAlertType,
         showDropdown,
         locationTimeout,
+        isAutoFollowEnabled,
         isVisible,
       ];
 }
