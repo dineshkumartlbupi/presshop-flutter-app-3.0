@@ -30,22 +30,15 @@ void main() {
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({
-      SharedPreferencesKeys.hopperIdKey: "123", // Mock required keys
+      SharedPreferencesKeys.hopperIdKey: "123",
       SharedPreferencesKeys.tokenKey: "mock_token",
     });
-    sharedPreferences = await SharedPreferences
-        .getInstance(); // Initialize global var from main.dart
+    sharedPreferences = await SharedPreferences.getInstance();
 
-    HttpOverrides.global = MockHttpOverrides(); // Enable HTTP mocking
+    HttpOverrides.global = MockHttpOverrides();
     mockProfileBloc = MockProfileBloc();
     mockDashboardBloc = MockDashboardBloc();
 
-    // Setup Service Locator mocking if needed,
-    // but here the screen uses SL. We might need to mock SL or ensure it's not used directly in build if possible.
-    // Looking at MyProfile, it uses `myProfileApi()` in `initState` which calls `_dashboardBloc.add`.
-    // It also injects `DashboardBloc` via `sl<DashboardBloc>()`.
-
-    // We need to register the mock in GetIt (sl)
     if (sl.isRegistered<DashboardBloc>()) {
       sl.unregister<DashboardBloc>();
     }
@@ -70,16 +63,11 @@ void main() {
 
     // act
     await tester.pumpWidget(createWidgetUnderTest());
-    await tester.pump(
-        const Duration(milliseconds: 600)); // Advance past the InitState delay
-    await tester.pumpAndSettle(); // allow everything to settle
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.pumpAndSettle();
 
-    // assert
-    // Check if the screen title is present
     expect(find.text('Profile'), findsOneWidget);
 
-    // Check if CommonTextFields are present (implies form is rendered)
-    // We expect at least the username, firstname, lastname, email fields to be there.
     expect(find.byType(CommonTextField), findsAtLeastNWidgets(3));
   });
 
