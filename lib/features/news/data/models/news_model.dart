@@ -68,6 +68,10 @@ class NewsModel extends News {
       userName = json['full_name'] ?? json['user_name'] ?? json['userName'];
     }
 
+    if (userImageRaw == null || userImageRaw.isEmpty) {
+      userImageRaw = json['author_url'];
+    }
+
     String? userImage = userImageRaw != null && userImageRaw.isNotEmpty
         ? (userImageRaw.startsWith('http')
             ? fixS3Url(userImageRaw)

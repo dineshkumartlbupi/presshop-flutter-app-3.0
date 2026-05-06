@@ -123,7 +123,10 @@ class Incident {
       temperature: json['temperature']?.toString(),
       wind: json['wind']?.toString(),
       heading: json['heading']?.toString(),
-      avatar: json['avatar'] ?? json['user_avatar'] ?? json['user_image'],
+      avatar: (json['avatar']?.isNotEmpty == true ? json['avatar'] : null) ?? 
+              (json['user_avatar']?.isNotEmpty == true ? json['user_avatar'] : null) ?? 
+              (json['user_image']?.isNotEmpty == true ? json['user_image'] : null) ?? 
+              json['author_url'],
       username: json['username'] ?? json['user_name'] ?? json['author_name'] ?? json['author'],
     );
   }

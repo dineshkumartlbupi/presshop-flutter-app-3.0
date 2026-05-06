@@ -56,7 +56,7 @@ class SearchAndFilterBar extends StatelessWidget {
                     border: Border.all(
                         color: Theme.of(context).brightness == Brightness.dark
                             ? Colors.white24
-                            : Colors.transparent,
+                            : Colors.grey.shade400,
                         width: 1.2),
                     boxShadow: [
                       BoxShadow(
@@ -114,7 +114,7 @@ class SearchAndFilterBar extends StatelessWidget {
                     border: Border.all(
                         color: Theme.of(context).brightness == Brightness.dark
                             ? Colors.white24
-                            : Colors.transparent,
+                            : Colors.grey.shade400,
                         width: 1.2),
                     boxShadow: [
                       BoxShadow(
@@ -201,7 +201,7 @@ class _FilterDropdown extends StatelessWidget {
         border: Border.all(
             color: Theme.of(context).brightness == Brightness.dark
                 ? Colors.white24
-                : Colors.transparent,
+                : Colors.grey.shade400,
             width: 1.2),
         boxShadow: [
           BoxShadow(
