@@ -158,12 +158,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                   fontWeight: FontWeight.w500),
                             ),
                             Text(
-                              widget.totalEarning == "0" &&
-                                      widget.taskStatus == "accepted"
-                                  ? "TASK ACCEPTED"
-                                  : (taskDetail!.task.deadlineDate
-                                          .isBefore(DateTime.now())
-                                      ? "TASK EXPIRED"
+                              taskDetail!.task.deadlineDate
+                                      .isBefore(DateTime.now())
+                                  ? "TASK EXPIRED"
+                                  : (widget.totalEarning == "0" &&
+                                          widget.taskStatus == "accepted"
+                                      ? "TASK ACCEPTED"
                                       : "LIVE TASK"),
                               style: commonTextStyle(
                                   size: size,
@@ -977,7 +977,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                                   .textTheme
                                                   .bodyLarge
                                                   ?.color ??
-                                              Colors.black))
+                                              Colors.black)),
                                 ])),
                       ),
                       SafeArea(child: SizedBox()),

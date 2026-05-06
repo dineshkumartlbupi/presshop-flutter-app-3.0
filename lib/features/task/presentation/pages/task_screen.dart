@@ -1371,7 +1371,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                      item.status == "accepted" || isAcceptedByMe
+                                      item.status == "accepted" ||
+                                              isAcceptedByMe
                                           ? "ACCEPTED"
                                           : item.isLive
                                               ? item.isAvailableForAccept
