@@ -136,16 +136,16 @@ class _MapPageContentState extends State<_MapPageContent>
 
   void _animateToDistance(String distance) {
     double zoom = 12.0;
-    if (distance.contains('2')) {
-      zoom = 14.0;
-    } else if (distance.contains('5')) {
-      zoom = 12.5;
-    } else if (distance.contains('10')) {
-      zoom = 11.5;
-    } else if (distance.contains('25')) {
-      zoom = 10.0;
-    } else if (distance.contains('50')) {
+    if (distance.startsWith('50 ')) {
       zoom = 9.0;
+    } else if (distance.startsWith('25 ')) {
+      zoom = 10.0;
+    } else if (distance.startsWith('10 ')) {
+      zoom = 11.5;
+    } else if (distance.startsWith('5 ')) {
+      zoom = 12.5;
+    } else if (distance.startsWith('2 ')) {
+      zoom = 14.0;
     }
 
     _controller.future.then((ctrl) {

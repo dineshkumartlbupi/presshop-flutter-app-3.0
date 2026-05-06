@@ -1371,19 +1371,13 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                      item.isLive
-                                          ? item.isAvailableForAccept &&
-                                                  item.status == "accepted"
-                                              ? "ACCEPTED"
-                                              : item.isAvailableForAccept &&
-                                                      item.status == "pending"
+                                      item.status == "accepted" || isAcceptedByMe
+                                          ? "ACCEPTED"
+                                          : item.isLive
+                                              ? item.isAvailableForAccept
                                                   ? "TAP TO ACCEPT"
-                                                  : !item.isAvailableForAccept &&
-                                                          item.status ==
-                                                              "pending"
-                                                      ? ""
-                                                      : ""
-                                          : "",
+                                                  : ""
+                                              : "",
                                       style: commonTextStyle(
                                           size: size,
                                           fontSize: size.width *

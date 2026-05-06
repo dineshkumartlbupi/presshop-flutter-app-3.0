@@ -107,7 +107,11 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   @override
   void initState() {
     super.initState();
-    isEditMode = widget.editProfileScreen;
+    isEditMode = widget.editProfileScreen ||
+        widget.screenType == AppStrings.editProfileText;
+    if (widget.screenType == AppStrings.editProfileText) {
+      widget.editProfileScreen = true;
+    }
     _loadCachedData();
     setUserNameListener();
     setPhoneListener();
@@ -334,8 +338,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                               commonButtonStyle(
                                   size, AppColorTheme.colorThemePink), () {
                             if (!widget.editProfileScreen) {
-                              widget.editProfileScreen =
-                                  !widget.editProfileScreen;
+                              widget.editProfileScreen = true;
+                              isEditMode = true;
+                              getAvatarsApi(showLoader: true);
                               scrollController.animateTo(
                                   scrollController.position.minScrollExtent,
                                   duration: const Duration(milliseconds: 500),
@@ -349,6 +354,11 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                               if (formKey.currentState!.validate()) {
                                 editProfileApi();
                               }
+                            }
+                            if (widget.screenType ==
+                                AppStrings.editProfileText) {
+                              widget.editProfileScreen = true;
+                              isEditMode = true;
                             }
                             setState(() {});
                           }),
@@ -447,7 +457,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                     ),
                   ),
                 ),
-              isEditMode
+              widget.editProfileScreen
                   ? Positioned(
                       bottom: size.width * AppDimensions.numD01,
                       right: size.width * AppDimensions.numD01,
@@ -839,7 +849,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           enableValidations: false,
           filled: true,
           filledColor: widget.editProfileScreen
-              ? Theme.of(context).cardColor
+              ? (Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white12
+                  : Colors.grey.shade200)
               : Theme.of(context).scaffoldBackgroundColor,
           autofocus: userNameAutoFocus,
           readOnly: true,
@@ -1039,7 +1051,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           enableValidations: false,
           filled: true,
           filledColor: widget.editProfileScreen
-              ? Theme.of(context).cardColor
+              ? (Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white12
+                  : Colors.grey.shade200)
               : Theme.of(context).scaffoldBackgroundColor,
           autofocus: false,
           readOnly: true,
@@ -1878,8 +1892,13 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             sharedPreferences!.setString(
                 SharedPreferencesKeys.avatarKey, myProfileData!.avatarImage);
           }
-          isEditMode = false;
-          widget.editProfileScreen = false;
+          if (widget.screenType == AppStrings.editProfileText) {
+            isEditMode = true;
+            widget.editProfileScreen = true;
+          } else {
+            isEditMode = false;
+            widget.editProfileScreen = false;
+          }
         }
         setState(() {});
       }

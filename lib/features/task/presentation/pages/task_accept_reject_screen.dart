@@ -257,8 +257,25 @@ class _BroadCastScreenState extends State<BroadCastScreen>
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          body: taskDetail == null ? SizedBox() : _body(size, state),
+        return Stack(
+          children: [
+            Scaffold(
+              body: taskDetail == null
+                  ? (state.taskDetailStatus == TaskStatus.loading
+                      ? Center(child: showAnimatedLoader(size))
+                      : const SizedBox())
+                  : _body(size, state),
+            ),
+            if (state.actionStatus == TaskStatus.loading ||
+                (state.taskDetailStatus == TaskStatus.loading &&
+                    taskDetail != null))
+              Container(
+                color: Colors.black.withOpacity(0.3),
+                child: Center(
+                  child: showAnimatedLoader(size),
+                ),
+              ),
+          ],
         );
       },
     );
@@ -813,49 +830,43 @@ class _BroadCastScreenState extends State<BroadCastScreen>
 
                   /// Button
                   Center(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * AppDimensions.numD08,
-                          vertical: size.width * AppDimensions.numD04),
-                      decoration: BoxDecoration(
-                          color: taskDetail!.deadLine.isBefore(DateTime.now())
-                              ? Theme.of(context).dividerColor.withOpacity(0.2)
-                              : AppColorTheme.colorThemePink,
-                          borderRadius: BorderRadius.circular(
-                              size.width * AppDimensions.numD04)),
-                      child: GestureDetector(
-                        onTap: taskDetail!.deadLine.isBefore(DateTime.now())
-                            ? () {}
-                            : () {
-                                if (_hasSubmittedAction) {
-                                  return;
-                                }
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: taskDetail!.deadLine.isBefore(DateTime.now())
+                          ? () {}
+                          : () {
+                              if (_hasSubmittedAction) {
+                                return;
+                              }
 
-                                if (state.actionStatus == TaskStatus.loading) {
-                                  return;
-                                }
+                              if (state.actionStatus == TaskStatus.loading) {
+                                return;
+                              }
 
-                                if (sharedPreferences != null &&
-                                    taskDetail!.acceptedBy.contains(
-                                        sharedPreferences!.getString(
-                                                SharedPreferencesKeys
-                                                    .hopperIdKey) ??
-                                            "")) {
-                                  return;
-                                }
+                              _isAccepted = true;
+                              if (player.state == PlayerState.playing) {
+                                player.stop();
+                              }
+                              _hasSubmittedAction = true;
+                              callAcceptRejectApi();
 
-                                _isAccepted = true;
-                                if (player.state == PlayerState.playing) {
-                                  player.stop();
-                                }
-                                _hasSubmittedAction = true;
-                                callAcceptRejectApi();
-
-                                debugPrint("accepted====>");
-                                if (mounted) {
-                                  setState(() {});
-                                }
-                              },
+                              debugPrint("accepted====>");
+                              if (mounted) {
+                                setState(() {});
+                              }
+                            },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * AppDimensions.numD08,
+                            vertical: size.width * AppDimensions.numD04),
+                        decoration: BoxDecoration(
+                            color: taskDetail!.deadLine.isBefore(DateTime.now())
+                                ? Theme.of(context)
+                                    .dividerColor
+                                    .withOpacity(0.2)
+                                : AppColorTheme.colorThemePink,
+                            borderRadius: BorderRadius.circular(
+                                size.width * AppDimensions.numD04)),
                         child: state.actionStatus == TaskStatus.loading
                             ? SizedBox(
                                 height: size.width * AppDimensions.numD05,
