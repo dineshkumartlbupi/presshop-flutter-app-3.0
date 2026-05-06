@@ -33,11 +33,11 @@ class AppThemes {
       bodyMedium: TextStyle(color: Colors.black87),
     ),
     dividerTheme: const DividerThemeData(
-      color: AppColorTheme.colorLightGrey,
+      color: AppColorTheme.lightGrey,
       thickness: 1,
       space: 1,
     ),
-    dividerColor: AppColorTheme.colorLightGrey,
+    dividerColor: AppColorTheme.lightGrey,
   );
 
   static final darkTheme = ThemeData(

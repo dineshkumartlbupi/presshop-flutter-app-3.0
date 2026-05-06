@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:country_picker/country_picker.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -336,6 +335,10 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                             if (!widget.editProfileScreen) {
                               widget.editProfileScreen =
                                   !widget.editProfileScreen;
+                              isEditMode = widget.editProfileScreen;
+                              if (avatarList.isEmpty) {
+                                getAvatarsApi(showLoader: true);
+                              }
                               scrollController.animateTo(
                                   scrollController.position.minScrollExtent,
                                   duration: const Duration(milliseconds: 500),
@@ -380,9 +383,13 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Container(
       height: size.width * AppDimensions.numD35,
       decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius:
-              BorderRadius.circular(size.width * AppDimensions.numD04)),
+        color: Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xFF333333)
+            : AppColorTheme.colorLightGrey,
+        borderRadius: BorderRadius.circular(
+          size.width * AppDimensions.numD04,
+        ),
+      ),
       child: Row(
         children: [
           Stack(
@@ -447,7 +454,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                     ),
                   ),
                 ),
-              isEditMode
+              widget.editProfileScreen
                   ? Positioned(
                       bottom: size.width * AppDimensions.numD01,
                       right: size.width * AppDimensions.numD01,
@@ -497,7 +504,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD04,
-                              color: Theme.of(context).textTheme.bodyLarge?.color,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w600)),
                       if (myProfileData != null &&
                           (myProfileData!.stripeStatusActive == '1' ||
@@ -838,9 +846,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: null,
           enableValidations: false,
           filled: true,
-          filledColor: widget.editProfileScreen
-              ? Theme.of(context).cardColor
-              : Theme.of(context).scaffoldBackgroundColor,
+          filledColor: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF333333)
+              : AppColorTheme.colorLightGrey,
           autofocus: userNameAutoFocus,
           readOnly: true,
           onChanged: _onUserNameChanged,
@@ -886,7 +894,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           enableValidations: true,
           filled: true,
           filledColor: widget.editProfileScreen
-              ? Theme.of(context).cardColor
+              ? (Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white.withOpacity(0.03)
+                  : Theme.of(context).cardColor)
               : Theme.of(context).scaffoldBackgroundColor,
           readOnly: widget.editProfileScreen ? false : true,
         ),
@@ -929,7 +939,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           enableValidations: true,
           filled: true,
           filledColor: widget.editProfileScreen
-              ? Theme.of(context).cardColor
+              ? (Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white.withOpacity(0.03)
+                  : Theme.of(context).cardColor)
               : Theme.of(context).scaffoldBackgroundColor,
           readOnly: widget.editProfileScreen ? false : true,
         ),
@@ -963,7 +975,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.call_outlined, color: Theme.of(context).iconTheme.color),
+                Icon(Icons.call_outlined,
+                    color: Theme.of(context).iconTheme.color),
                 SizedBox(width: size.width * AppDimensions.numD01),
                 Text(
                   selectedCountryCode,
@@ -995,7 +1008,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           enableValidations: true,
           filled: true,
           filledColor: widget.editProfileScreen
-              ? Theme.of(context).cardColor
+              ? (Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white.withOpacity(0.03)
+                  : Theme.of(context).cardColor)
               : Theme.of(context).scaffoldBackgroundColor,
           autofocus: false,
           readOnly: widget.editProfileScreen ? false : true,
@@ -1038,9 +1053,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: null,
           enableValidations: false,
           filled: true,
-          filledColor: widget.editProfileScreen
-              ? Theme.of(context).cardColor
-              : Theme.of(context).scaffoldBackgroundColor,
+          filledColor: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF333333)
+              : AppColorTheme.colorLightGrey,
           autofocus: false,
           readOnly: true,
         ),
@@ -1097,9 +1112,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: null,
           enableValidations: false,
           filled: true,
-          filledColor: widget.editProfileScreen
-              ? Theme.of(context).cardColor
-              : Theme.of(context).scaffoldBackgroundColor,
+          filledColor: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF333333)
+              : AppColorTheme.colorLightGrey,
           readOnly: true,
         ),
       ],
@@ -1141,7 +1156,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           enableValidations: true,
           filled: true,
           filledColor: widget.editProfileScreen
-              ? Theme.of(context).cardColor
+              ? (Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white.withOpacity(0.03)
+                  : Theme.of(context).cardColor)
               : Theme.of(context).scaffoldBackgroundColor,
           readOnly: widget.editProfileScreen ? false : true,
         ),
@@ -1267,7 +1284,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 validator: null,
                 filled: true,
                 filledColor: widget.editProfileScreen
-                    ? Theme.of(context).cardColor
+                    ? (Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white.withOpacity(0.03)
+                        : Theme.of(context).cardColor)
                     : Theme.of(context).scaffoldBackgroundColor,
                 readOnly: true,
               ),
@@ -1390,7 +1409,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 validator: null,
                 filled: true,
                 filledColor: widget.editProfileScreen
-                    ? Theme.of(context).cardColor
+                    ? (Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white.withOpacity(0.03)
+                        : Theme.of(context).cardColor)
                     : Theme.of(context).scaffoldBackgroundColor,
                 readOnly: true,
               ),
@@ -1443,7 +1464,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           enableValidations: true,
           filled: true,
           filledColor: widget.editProfileScreen
-              ? Theme.of(context).cardColor
+              ? (Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white.withOpacity(0.03)
+                  : Theme.of(context).cardColor)
               : Theme.of(context).scaffoldBackgroundColor,
           readOnly: widget.editProfileScreen ? false : true,
         ),
@@ -1486,7 +1509,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           enableValidations: true,
           filled: true,
           filledColor: widget.editProfileScreen
-              ? Theme.of(context).cardColor
+              ? (Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white.withOpacity(0.03)
+                  : Theme.of(context).cardColor)
               : Theme.of(context).scaffoldBackgroundColor,
           readOnly: widget.editProfileScreen ? false : true,
         ),

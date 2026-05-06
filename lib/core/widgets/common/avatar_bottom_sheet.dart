@@ -195,7 +195,7 @@ class AvatarData {
   factory AvatarData.fromJson(Map<String, dynamic> json) {
     return AvatarData(
       id: (json["_id"] ?? json["id"] ?? "").toString(),
-      avatar: (json["avatar"] ?? "").toString(),
+      avatar: fixS3Url((json["avatar"] ?? "").toString()),
       selected: false,
     );
   }

@@ -73,7 +73,9 @@ class _MapPageState extends State<MapPage> {
     return BlocProvider.value(
       value: _mapBloc,
       child: _MapPageContent(
-          hideLeading: widget.hideLeading, showAppBar: widget.showAppBar),
+        hideLeading: widget.hideLeading,
+        showAppBar: widget.showAppBar,
+      ),
     );
   }
 }
@@ -238,7 +240,8 @@ class _MapPageContentState extends State<_MapPageContent>
       return;
     }
 
-    final url = "https://maps.googleapis.com/maps/api/place/autocomplete/json"
+    final url =
+        "https://maps.googleapis.com/maps/api/place/autocomplete/json"
         "?input=$input"
         "&key=$googleApiKey"
         "&types=geocode";
@@ -265,7 +268,8 @@ class _MapPageContentState extends State<_MapPageContent>
   }
 
   Future<void> _selectPlace(String placeId, String description) async {
-    final url = "https://maps.googleapis.com/maps/api/place/details/json"
+    final url =
+        "https://maps.googleapis.com/maps/api/place/details/json"
         "?place_id=$placeId"
         "&key=$googleApiKey";
 
@@ -381,8 +385,10 @@ class _MapPageContentState extends State<_MapPageContent>
 
         if (mounted) {
           setState(() {
-            _polygonInfoOffset =
-                Offset(screen.x.toDouble(), screen.y.toDouble());
+            _polygonInfoOffset = Offset(
+              screen.x.toDouble(),
+              screen.y.toDouble(),
+            );
           });
         }
       }
@@ -390,8 +396,9 @@ class _MapPageContentState extends State<_MapPageContent>
       if (state.routeMidpoint != null) {
         final controller = await _controller.future;
         if (!mounted) return;
-        final screen =
-            await controller.getScreenCoordinate(state.routeMidpoint!);
+        final screen = await controller.getScreenCoordinate(
+          state.routeMidpoint!,
+        );
 
         if (mounted) {
           setState(() {
@@ -449,10 +456,12 @@ class _MapPageContentState extends State<_MapPageContent>
     if (_isDisposed || !mounted) return;
 
     final currentAnimatedMarkers = state.newsList
-        .where((incident) =>
-            incident.markerType == 'icon' ||
-            incident.markerType == 'news' ||
-            incident.markerType == 'content')
+        .where(
+          (incident) =>
+              incident.markerType == 'icon' ||
+              incident.markerType == 'news' ||
+              incident.markerType == 'content',
+        )
         .toList();
 
     final currentIds = currentAnimatedMarkers.map((m) => m.id).toSet();
@@ -500,8 +509,13 @@ class _MapPageContentState extends State<_MapPageContent>
     if (mounted) setState(() {});
   }
 
-  void _tryAddInfoWindow(ciw.CustomInfoWindowController controller,
-      Incident incident, LatLng position, String markerId, int retryCount) {
+  void _tryAddInfoWindow(
+    ciw.CustomInfoWindowController controller,
+    Incident incident,
+    LatLng position,
+    String markerId,
+    int retryCount,
+  ) {
     if (_isDisposed || !mounted || _initializedMarkerIds.contains(markerId)) {
       return;
     }
@@ -515,14 +529,23 @@ class _MapPageContentState extends State<_MapPageContent>
       Future.delayed(const Duration(milliseconds: 100), () {
         if (mounted && !_isDisposed) {
           _tryAddInfoWindow(
-              controller, incident, position, markerId, retryCount + 1);
+            controller,
+            incident,
+            position,
+            markerId,
+            retryCount + 1,
+          );
         }
       });
     }
   }
 
-  void _addInfoWindowToController(ciw.CustomInfoWindowController controller,
-      Incident incident, LatLng position, String markerId) {
+  void _addInfoWindowToController(
+    ciw.CustomInfoWindowController controller,
+    Incident incident,
+    LatLng position,
+    String markerId,
+  ) {
     if (controller.addInfoWindow == null ||
         _initializedMarkerIds.contains(markerId)) {
       return;
@@ -548,7 +571,7 @@ class _MapPageContentState extends State<_MapPageContent>
                   color: Colors.black.withOpacity(0.1),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
-                )
+                ),
               ],
             ),
             child: Container(
@@ -599,13 +622,15 @@ class _MapPageContentState extends State<_MapPageContent>
       }
 
       _isProgrammaticMovement = true;
-      await controller.animateCamera(CameraUpdate.newLatLngBounds(
-        LatLngBounds(
-          southwest: LatLng(minLat, minLng),
-          northeast: LatLng(maxLat, maxLng),
+      await controller.animateCamera(
+        CameraUpdate.newLatLngBounds(
+          LatLngBounds(
+            southwest: LatLng(minLat, minLng),
+            northeast: LatLng(maxLat, maxLng),
+          ),
+          50,
         ),
-        50,
-      ));
+      );
       _isProgrammaticMovement = false;
     } catch (e) {
       debugPrint("Error fitting bounds: $e");
@@ -618,7 +643,8 @@ class _MapPageContentState extends State<_MapPageContent>
       builder: (context) => AlertDialog(
         title: const Text('Location Permission Required'),
         content: const Text(
-            'This app needs location access to function properly. Please enable it in settings.'),
+          'This app needs location access to function properly. Please enable it in settings.',
+        ),
         actions: [
           TextButton(
             onPressed: () => context.pop(),
@@ -741,7 +767,9 @@ class _MapPageContentState extends State<_MapPageContent>
               if (mounted) {
                 _isProgrammaticMovement = true;
                 LatLng adjusted = _adjustPositionForInfoWindow(
-                    state.selectedPosition!, _currentZoom);
+                  state.selectedPosition!,
+                  _currentZoom,
+                );
                 await ctrl.animateCamera(CameraUpdate.newLatLng(adjusted));
                 _isProgrammaticMovement = false;
                 _updateInfoWindow();
@@ -759,14 +787,16 @@ class _MapPageContentState extends State<_MapPageContent>
             try {
               if (mounted) {
                 _isProgrammaticMovement = true;
-                await ctrl.animateCamera(CameraUpdate.newCameraPosition(
-                  CameraPosition(
-                    target: state.myLocation!,
-                    zoom: 19,
-                    tilt: 60,
-                    bearing: 0,
+                await ctrl.animateCamera(
+                  CameraUpdate.newCameraPosition(
+                    CameraPosition(
+                      target: state.myLocation!,
+                      zoom: 19,
+                      tilt: 60,
+                      bearing: 0,
+                    ),
                   ),
-                ));
+                );
                 _isProgrammaticMovement = false;
               }
             } catch (e) {
@@ -856,8 +886,10 @@ class _MapPageContentState extends State<_MapPageContent>
               }
 
               // Show alert popup if not shown yet
-              bool isShown = sharedPreferences
-                      ?.getBool(SharedPreferencesKeys.alertInfoPopupShownKey) ??
+              bool isShown =
+                  sharedPreferences?.getBool(
+                    SharedPreferencesKeys.alertInfoPopupShownKey,
+                  ) ??
                   false;
               // if (!isShown) {
               //   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -914,9 +946,9 @@ class _MapPageContentState extends State<_MapPageContent>
                         onCameraMoveStarted: () {
                           if (!_isProgrammaticMovement) {
                             _isUserDragging = true;
-                            context
-                                .read<MapBloc>()
-                                .add(const SetDraggingEvent(true));
+                            context.read<MapBloc>().add(
+                              const SetDraggingEvent(true),
+                            );
                           }
                           _customInfoWindowController.onCameraMove?.call();
                         },
@@ -932,9 +964,9 @@ class _MapPageContentState extends State<_MapPageContent>
                             _updateInfoWindow();
                             _isProgrammaticMovement = false;
                             if (_isUserDragging) {
-                              context
-                                  .read<MapBloc>()
-                                  .add(const SetDraggingEvent(false));
+                              context.read<MapBloc>().add(
+                                const SetDraggingEvent(false),
+                              );
                               _isUserDragging = false;
                             }
                           }
@@ -945,19 +977,23 @@ class _MapPageContentState extends State<_MapPageContent>
                           if (mapState.isSelectingAlertLocation &&
                               mapState.pendingAlertType != null) {
                             context.read<MapBloc>().add(
-                                SetPreviewAlertMarkerEvent(
-                                    type: mapState.pendingAlertType!,
-                                    position: pos));
+                              SetPreviewAlertMarkerEvent(
+                                type: mapState.pendingAlertType!,
+                                position: pos,
+                              ),
+                            );
                             context.read<MapBloc>().add(
-                                const SetSelectingAlertLocationEvent(
-                                    isSelecting: false));
+                              const SetSelectingAlertLocationEvent(
+                                isSelecting: false,
+                              ),
+                            );
                             return;
                           }
 
                           if (mapState.showAlertPanel) {
-                            context
-                                .read<MapBloc>()
-                                .add(ToggleAlertPanelEvent());
+                            context.read<MapBloc>().add(
+                              ToggleAlertPanelEvent(),
+                            );
                             return;
                           }
 
@@ -966,23 +1002,29 @@ class _MapPageContentState extends State<_MapPageContent>
                             String address =
                                 "${pos.latitude}, ${pos.longitude}";
 
-                            final result =
-                                await repo.getAddressFromCoordinates(pos);
+                            final result = await repo.getAddressFromCoordinates(
+                              pos,
+                            );
                             result.fold(
                               (failure) => debugPrint(
-                                  "Failed to get address: ${failure.message}"),
+                                "Failed to get address: ${failure.message}",
+                              ),
                               (addr) => address = addr,
                             );
 
                             context.read<MapBloc>().add(
-                                SetMapSelectedLocationEvent(
-                                    position: pos,
-                                    address: address,
-                                    isOrigin: mapState.isSelectingOrigin));
+                              SetMapSelectedLocationEvent(
+                                position: pos,
+                                address: address,
+                                isOrigin: mapState.isSelectingOrigin,
+                              ),
+                            );
 
                             context.read<MapBloc>().add(
-                                SetDestinationSelectionModeEvent(
-                                    isSelectionMode: false));
+                              SetDestinationSelectionModeEvent(
+                                isSelectionMode: false,
+                              ),
+                            );
                             return;
                           }
 
@@ -991,28 +1033,32 @@ class _MapPageContentState extends State<_MapPageContent>
                             String address =
                                 "${pos.latitude}, ${pos.longitude}";
 
-                            final result =
-                                await repo.getAddressFromCoordinates(pos);
+                            final result = await repo.getAddressFromCoordinates(
+                              pos,
+                            );
                             result.fold(
                               (failure) => debugPrint(
-                                  "Failed to get address: ${failure.message}"),
+                                "Failed to get address: ${failure.message}",
+                              ),
                               (addr) => address = addr,
                             );
 
                             context.read<MapBloc>().add(
-                                SetMapSelectedLocationEvent(
-                                    position: pos,
-                                    address: address,
-                                    isOrigin: false));
+                              SetMapSelectedLocationEvent(
+                                position: pos,
+                                address: address,
+                                isOrigin: false,
+                              ),
+                            );
                             return;
                           }
 
-                          context
-                              .read<MapBloc>()
-                              .add(ClearSelectedMarkerEvent());
-                          context
-                              .read<MapBloc>()
-                              .add(ClearSelectedPolygonEvent());
+                          context.read<MapBloc>().add(
+                            ClearSelectedMarkerEvent(),
+                          );
+                          context.read<MapBloc>().add(
+                            ClearSelectedPolygonEvent(),
+                          );
                           setState(() {
                             _infoOffset = null;
                             _polygonInfoOffset = null;
@@ -1076,9 +1122,9 @@ class _MapPageContentState extends State<_MapPageContent>
                               description:
                                   "High risk area - proceed with caution",
                               onPressed: () {
-                                context
-                                    .read<MapBloc>()
-                                    .add(ClearSelectedPolygonEvent());
+                                context.read<MapBloc>().add(
+                                  ClearSelectedPolygonEvent(),
+                                );
                                 setState(() => _polygonInfoOffset = null);
                               },
                             ),
@@ -1096,9 +1142,9 @@ class _MapPageContentState extends State<_MapPageContent>
                       searchController: _searchController,
                       searchFocusNode: _searchFocusNode,
                       onPressedOnNavigation: () {
-                        context
-                            .read<MapBloc>()
-                            .add(ToggleGetDirectionCardEvent());
+                        context.read<MapBloc>().add(
+                          ToggleGetDirectionCardEvent(),
+                        );
                       },
                       onChange: (value) {
                         _searchPlaces(value);
@@ -1107,25 +1153,31 @@ class _MapPageContentState extends State<_MapPageContent>
                       selectedDistance: state.selectedDistance,
                       selectedCategory: state.selectedCategory,
                       onAlertTypeChanged: (value) {
-                        context.read<MapBloc>().add(UpdateFiltersEvent(
-                              alertType: value,
-                              distance: state.selectedDistance,
-                              category: state.selectedCategory,
-                            ));
+                        context.read<MapBloc>().add(
+                          UpdateFiltersEvent(
+                            alertType: value,
+                            distance: state.selectedDistance,
+                            category: state.selectedCategory,
+                          ),
+                        );
                       },
                       onDistanceChanged: (value) {
-                        context.read<MapBloc>().add(UpdateFiltersEvent(
-                              alertType: state.selectedAlertType,
-                              distance: value,
-                              category: state.selectedCategory,
-                            ));
+                        context.read<MapBloc>().add(
+                          UpdateFiltersEvent(
+                            alertType: state.selectedAlertType,
+                            distance: value,
+                            category: state.selectedCategory,
+                          ),
+                        );
                       },
                       onCategoryChanged: (value) {
-                        context.read<MapBloc>().add(UpdateFiltersEvent(
-                              alertType: state.selectedAlertType,
-                              distance: state.selectedDistance,
-                              category: value,
-                            ));
+                        context.read<MapBloc>().add(
+                          UpdateFiltersEvent(
+                            alertType: state.selectedAlertType,
+                            distance: state.selectedDistance,
+                            category: value,
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -1149,8 +1201,10 @@ class _MapPageContentState extends State<_MapPageContent>
                             return InkWell(
                               onTap: () {
                                 context.read<MapBloc>().add(
-                                    const SetSelectingAlertLocationEvent(
-                                        isSelecting: false));
+                                  const SetSelectingAlertLocationEvent(
+                                    isSelecting: false,
+                                  ),
+                                );
                                 _selectPlace(
                                   prediction['place_id'],
                                   prediction['description'],
@@ -1193,12 +1247,11 @@ class _MapPageContentState extends State<_MapPageContent>
                   child: TweenAnimationBuilder<double>(
                     duration: const Duration(milliseconds: 150),
                     tween: Tween<double>(
-                        begin: 1.0, end: state.showAlertPanel ? 0.95 : 1.0),
+                      begin: 1.0,
+                      end: state.showAlertPanel ? 0.95 : 1.0,
+                    ),
                     builder: (context, scale, child) {
-                      return Transform.scale(
-                        scale: scale,
-                        child: child,
-                      );
+                      return Transform.scale(scale: scale, child: child);
                     },
                     child: GestureDetector(
                       onTap: () {
@@ -1251,16 +1304,22 @@ class _MapPageContentState extends State<_MapPageContent>
                       onAlertSelected: (type) async {
                         try {
                           context.read<MapBloc>().add(
-                              SetSelectingAlertLocationEvent(
-                                  isSelecting: true, type: type));
+                            SetSelectingAlertLocationEvent(
+                              isSelecting: true,
+                              type: type,
+                            ),
+                          );
                           _customInfoWindowController.hideInfoWindow?.call();
                           debugPrint("AlertSelected: $type");
-                          final myLoc =
-                              context.read<MapBloc>().state.myLocation;
+                          final myLoc = context
+                              .read<MapBloc>()
+                              .state
+                              .myLocation;
                           if (myLoc != null) {
                             _addBurst(myLoc, type);
-                            context.read<MapBloc>().add(AddAlertMarkerEvent(
-                                type: type, position: myLoc));
+                            context.read<MapBloc>().add(
+                              AddAlertMarkerEvent(type: type, position: myLoc),
+                            );
                           }
                         } catch (e) {
                           debugPrint("Error adding alert marker: $e");
@@ -1283,12 +1342,14 @@ class _MapPageContentState extends State<_MapPageContent>
                       backgroundColor: Colors.white,
                       mini: true,
                       onPressed: () {
-                        context
-                            .read<MapBloc>()
-                            .add(const GetCurrentLocationEvent());
+                        context.read<MapBloc>().add(
+                          const GetCurrentLocationEvent(),
+                        );
                       },
-                      child: const Icon(Icons.my_location,
-                          color: Color(0xffEC4E54)),
+                      child: const Icon(
+                        Icons.my_location,
+                        color: Color(0xffEC4E54),
+                      ),
                     ),
                   ),
               ],

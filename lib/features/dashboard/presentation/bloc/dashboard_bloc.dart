@@ -14,7 +14,6 @@ import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.da
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_state.dart';
 
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
-
   DashboardBloc({
     required this.getActiveAdmins,
     required this.updateLocation,
@@ -144,7 +143,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     ChangeDashboardTabEvent event,
     Emitter<DashboardState> emit,
   ) {
-    emit(DashboardTabChanged(event.newIndex));
+    emit(DashboardTabChanged(event.newIndex, timestamp: DateTime.now()));
   }
 
   Future<void> _onCheckStudentBeans(

@@ -603,6 +603,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             lng: event.lng,
             km: event.km,
             category: event.category,
+            alertType: event.alertType,
           )
           .timeout(const Duration(seconds: 20));
 
@@ -614,7 +615,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           debugPrint(
               "DEBUG: FetchNews Success. Items found: ${newsList.length}");
           try {
-            // HARD LIMIT: cap at 40 markers to prevent ANR/freeze
             const int maxMarkers = 40;
             final limitedList = newsList.take(maxMarkers).toList();
 
@@ -821,12 +821,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         lng: state.searchedLocation?.longitude ?? state.myLocation!.longitude,
         km: _convertDistanceToKm(event.distance),
         category: event.category ?? 'all',
+        alertType: event.alertType,
       ));
       add(FetchIncidentsEvent(
         lat: state.searchedLocation?.latitude ?? state.myLocation!.latitude,
         lng: state.searchedLocation?.longitude ?? state.myLocation!.longitude,
         km: _convertDistanceToKm(event.distance),
         category: event.category ?? 'all',
+        alertType: event.alertType,
       ));
     }
   }
@@ -1061,6 +1063,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       lng: event.lng,
       km: event.km,
       category: event.category,
+      alertType: event.alertType,
     );
     await result.fold(
       (failure) async {

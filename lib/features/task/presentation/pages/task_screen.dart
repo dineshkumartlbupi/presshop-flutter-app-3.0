@@ -787,6 +787,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     'taskStatus': item.status,
                                     'taskId': item.taskDetail?.id ?? "",
                                     'totalEarning': item.totalAmount,
+                                    'isLive': false
                                   }).then((value) {
                                 if (context.mounted) {
                                   context.read<TaskBloc>().add(
@@ -1210,6 +1211,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   isAcceptedByMe ? "accepted" : item.status,
                               'taskId': item.id,
                               'totalEarning': "0",
+                              'isLive': item.isLive,
                             }).then((value) {
                               if (context.mounted) {
                                 _allTaskOffset = 0;

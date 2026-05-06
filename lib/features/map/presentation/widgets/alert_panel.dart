@@ -78,7 +78,7 @@ class _AlertPanelState extends State<AlertPanel>
                   color: Theme.of(context).cardColor,
                   borderRadius:
                       BorderRadius.circular(size.width * AppDimensions.numD05),
-                  border: Border.all(color: borderColor),
+                  // border: Border.all(color: borderColor),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),

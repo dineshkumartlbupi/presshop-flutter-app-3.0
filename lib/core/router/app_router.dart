@@ -296,6 +296,7 @@ class AppRouter {
             taskStatus: extra['taskStatus'],
             taskId: extra['taskId'],
             totalEarning: extra['totalEarning'],
+            isLive: extra['isLive'],
           );
         },
       ),

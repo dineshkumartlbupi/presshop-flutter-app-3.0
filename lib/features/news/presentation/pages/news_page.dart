@@ -16,6 +16,9 @@ import 'package:go_router/go_router.dart';
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
 import 'package:presshop/features/feed/presentation/pages/feed_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:presshop/core/services/location_service.dart';
+import 'package:presshop/core/widgets/error/location_error_screen_map_news.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({
@@ -58,6 +61,7 @@ class _NewsPageState extends State<NewsPage>
 
   double? localLatitude;
   double? localLongitude;
+  bool isCheckingLocation = false;
 
   @override
   void initState() {
@@ -80,22 +84,53 @@ class _NewsPageState extends State<NewsPage>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (localLatitude == null || localLongitude == null) {
+        _checkAndFetchLocation();
+      }
+
       if (widget.prioritizedContentId != null &&
           widget.prioritizedContentId!.isNotEmpty) {
         context.read<NewsBloc>().add(GetAggregatedNewsEvent(
-              lat: widget.latitude ?? 0.0,
-              lng: widget.longitude ?? 0.0,
+              lat: localLatitude ?? 0.0,
+              lng: localLongitude ?? 0.0,
               km: 50,
               prioritizedContentId: widget.prioritizedContentId,
             ));
       } else {
-        if (widget.latitude != null && widget.longitude != null) {
+        if (localLatitude != null && localLongitude != null) {
           _applyFilters();
         } else {
           context.read<NewsBloc>().add(const GetAllNewsEvent());
         }
       }
     });
+  }
+
+  Future<void> _checkAndFetchLocation() async {
+    var status = await Permission.location.status;
+    if (status.isGranted || status.isLimited) {
+      if (mounted) {
+        setState(() {
+          isCheckingLocation = true;
+        });
+      }
+
+      final locationData = await sl<LocationService>()
+          .getCurrentLocation(context, shouldShowSettingPopup: false);
+
+      if (locationData != null && mounted) {
+        setState(() {
+          localLatitude = locationData.latitude;
+          localLongitude = locationData.longitude;
+          isCheckingLocation = false;
+        });
+        _applyFilters();
+      } else if (mounted) {
+        setState(() {
+          isCheckingLocation = false;
+        });
+      }
+    }
   }
 
   @override
@@ -298,15 +333,17 @@ class _NewsPageState extends State<NewsPage>
                   onShowFilter: (fn) => _showFeedBottomSheet = fn,
                 ),
                 (localLatitude == null || localLongitude == null)
-                    ? LocationErrorScreenMapNews(
-                        onLocationEnabled: (locationData) {
-                          setState(() {
-                            localLatitude = locationData.latitude;
-                            localLongitude = locationData.longitude;
-                          });
-                          _onRefresh();
-                        },
-                      )
+                    ? (isCheckingLocation
+                        ? Center(child: showAnimatedLoader(size))
+                        : LocationErrorScreenMapNews(
+                            onLocationEnabled: (locationData) {
+                              setState(() {
+                                localLatitude = locationData.latitude;
+                                localLongitude = locationData.longitude;
+                              });
+                              _onRefresh();
+                            },
+                          ))
                     : _buildLocalNewsContent(context, size),
               ],
             ),
@@ -454,7 +491,7 @@ class _NewsPageState extends State<NewsPage>
                   ),
                 ),
               ),
-            if (state.isLoading ||
+            if ((state.isLoading && newsList.isEmpty) ||
                 (newsList.isEmpty && state.hasMoreNews && !state.isProcessing))
               Container(
                 color: Colors.transparent,

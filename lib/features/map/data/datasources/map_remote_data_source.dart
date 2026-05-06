@@ -21,6 +21,7 @@ abstract class MapRemoteDataSource {
     double? lng,
     double? km,
     String? category,
+    String? alertType,
   });
   Future<void> reportIncident(Map<String, dynamic> data);
   Future<String> getAddressFromCoordinates(LatLng position);
@@ -220,6 +221,7 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
     double? lng,
     double? km,
     String? category,
+    String? alertType,
   }) async {
     final Map<String, dynamic> body = {};
     if (lat != null && lng != null) {
@@ -230,6 +232,9 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
     }
     if (category != null) {
       body['category'] = category;
+    }
+    if (alertType != null && alertType != 'Alert') {
+      body['alert_type'] = alertType;
     }
 
     try {

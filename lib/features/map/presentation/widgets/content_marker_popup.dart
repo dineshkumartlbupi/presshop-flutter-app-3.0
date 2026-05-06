@@ -29,7 +29,6 @@ class ContentMarkerPopup extends StatelessWidget {
           builder: (context, value, child) {
             return BlocBuilder<MapBloc, MapState>(
               buildWhen: (previous, current) {
-                // Only rebuild if this specific incident's data changed
                 final oldI = previous.newsList.firstWhere(
                   (i) => i.id == incident.id,
                   orElse: () => previous.selectedIncident?.id == incident.id
@@ -47,7 +46,6 @@ class ContentMarkerPopup extends StatelessWidget {
                     oldI.commentsCount != newI.commentsCount;
               },
               builder: (context, state) {
-                // Find the freshest data for this incident
                 final currentIncident = state.newsList.firstWhere(
                   (i) => i.id == incident.id,
                   orElse: () => state.selectedIncident?.id == incident.id

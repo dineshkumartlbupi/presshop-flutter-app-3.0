@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:path/path.dart' as path;
 import 'package:presshop/core/constants/string_constants_new2.dart';
 import 'package:presshop/features/chat/presentation/pages/full_video_view.dart';
 import 'package:go_router/go_router.dart';
@@ -27,10 +28,12 @@ class TaskDetailScreen extends StatefulWidget {
       {super.key,
       required this.taskStatus,
       required this.taskId,
-      required this.totalEarning});
+      required this.totalEarning,
+      required this.isLive});
   String taskStatus = "";
   String taskId = "";
   String totalEarning = "";
+  bool isLive = false;
 
   @override
   State<TaskDetailScreen> createState() => _TaskDetailScreenState();
@@ -94,9 +97,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               state.taskDetail!.task.id == widget.taskId) {
             taskDetail = state.taskDetail;
             roomId = taskDetail!.resp.roomId;
-            _updateGoogleMap(LatLng(
+            final latLng = LatLng(
                 taskDetail!.task.addressLocation.coordinates[1],
-                taskDetail!.task.addressLocation.coordinates[0]));
+                taskDetail!.task.addressLocation.coordinates[0]);
+            _latLng =
+                latLng; // Update the local latLng for initialCameraPosition
+            _updateMarkers(latLng);
+            _updateGoogleMap(latLng);
 
             if (myId.isEmpty) {
               SharedPreferences.getInstance().then((input) {
@@ -161,10 +168,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                               widget.totalEarning == "0" &&
                                       widget.taskStatus == "accepted"
                                   ? "TASK ACCEPTED"
-                                  : (taskDetail!.task.deadlineDate
-                                          .isBefore(DateTime.now())
-                                      ? "TASK EXPIRED"
-                                      : "LIVE TASK"),
+                                  // : "COMPLETED",
+                                  : widget.isLive
+                                      ? "LIVE TASK"
+                                      : "EXPIRED",
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD036,
@@ -208,10 +215,21 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                         GoogleMap(
                                           scrollGesturesEnabled: false,
                                           mapType: MapType.normal,
-                                          initialCameraPosition: _kGooglePlex,
-                                          markers: marker.map((e) => e).toSet(),
+                                          initialCameraPosition: CameraPosition(
+                                            target:
+                                                _latLng ?? _kGooglePlex.target,
+                                            zoom: 14,
+                                          ),
+                                          markers: _buildMarkers(state),
                                           onMapCreated: (controller) {
-                                            _controller.complete(controller);
+                                            if (!_controller.isCompleted) {
+                                              _controller.complete(controller);
+                                            }
+                                            if (_latLng != null) {
+                                              controller.moveCamera(
+                                                  CameraUpdate.newLatLngZoom(
+                                                      _latLng!, 14));
+                                            }
                                           },
                                           compassEnabled: false,
                                           mapToolbarEnabled: false,
@@ -994,9 +1012,53 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   }
 
   void getAllIcons() async {
-    final Uint8List markerIcon =
-        await getBytesFromAsset("${commonImagePath}ic_cover_radius.png", 300);
-    mapIcon = BitmapDescriptor.fromBytes(markerIcon);
+    try {
+      final Uint8List markerIcon =
+          await getBytesFromAsset("${commonImagePath}ic_cover_radius.png", 300);
+      if (mounted) {
+        setState(() {
+          mapIcon = BitmapDescriptor.fromBytes(markerIcon);
+          // Refresh markers if already present
+          if (marker.isNotEmpty) {
+            final pos = marker.first.position;
+            _updateMarkers(pos);
+          }
+        });
+      }
+    } catch (e) {
+      debugPrint("Error loading map icons: $e");
+    }
+  }
+
+  Set<Marker> _buildMarkers(TaskState state) {
+    final Set<Marker> markers = {};
+    if (state.taskDetail != null) {
+      markers.add(Marker(
+        markerId: MarkerId(widget.taskId),
+        position: LatLng(
+          state.taskDetail!.task.addressLocation.coordinates[1],
+          state.taskDetail!.task.addressLocation.coordinates[0],
+        ),
+        anchor: const Offset(0.5, 0.5),
+        icon: mapIcon ?? BitmapDescriptor.defaultMarker,
+      ));
+    } else if (marker.isNotEmpty) {
+      markers.addAll(marker);
+    }
+    return markers;
+  }
+
+  void _updateMarkers(LatLng latLng) {
+    if (!mounted) return;
+    setState(() {
+      marker.clear();
+      marker.add(Marker(
+        markerId: MarkerId(widget.taskId),
+        position: latLng,
+        anchor: const Offset(0.5, 0.5),
+        icon: mapIcon ?? BitmapDescriptor.defaultMarker,
+      ));
+    });
   }
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
@@ -1010,23 +1072,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   }
 
   Future<void> _updateGoogleMap(LatLng latLng) async {
-    final GoogleMapController controller = await _controller.future;
-    if (!mounted) return;
     try {
-      marker.clear();
-      marker.add(Marker(
-        markerId: const MarkerId("1"),
-        position: latLng,
-        anchor: const Offset(0.5, 0.5),
-        icon: mapIcon ?? BitmapDescriptor.defaultMarker,
-      ));
+      final GoogleMapController controller = await _controller.future;
+      if (!mounted) return;
       await controller.animateCamera(CameraUpdate.newLatLngZoom(
           LatLng(latLng.latitude, latLng.longitude), 14));
-      if (mounted) {
-        setState(() {});
-      }
     } catch (e) {
-      debugPrint("Error updating map: $e");
+      debugPrint("Error updating map camera: $e");
     }
   }
 

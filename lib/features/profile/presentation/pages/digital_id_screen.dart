@@ -336,7 +336,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                               width: size.width *
                                                   AppDimensions.numD70,
                                               decoration: BoxDecoration(
-                                                color: Theme.of(context).cardColor,
+                                                color:
+                                                    Theme.of(context).cardColor,
                                                 border: Border.all(
                                                     color: Theme.of(context)
                                                                 .brightness ==
@@ -353,45 +354,55 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                               child: (isLoading || isUploading)
                                                   ? SizedBox()
                                                   : Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Image.asset(
-                                                    "${iconsPath}ic_user.png",
-                                                    width: size.width *
-                                                        AppDimensions.numD11,
-                                                    color: Colors.grey,
-                                                  ),
-                                                  SizedBox(
-                                                      height: size.width *
-                                                          AppDimensions.numD03),
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 20,
-                                                        vertical: 10),
-                                                    child: Text(
-                                                      "Upload a recent photo or take a selfie. It’s helps you show that you're a verified Hopper, and part of the  PressHop® community. Cheers",
-                                                      style: commonTextStyle(
-                                                        size: size,
-                                                        fontSize: size.width *
-                                                            AppDimensions
-                                                                .numD03,
-                                                        color: AppColorTheme
-                                                            .colorHint,
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.justify,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Image.asset(
+                                                          "${iconsPath}ic_user.png",
+                                                          width: size.width *
+                                                              AppDimensions
+                                                                  .numD11,
+                                                          color: Colors.grey,
+                                                        ),
+                                                        SizedBox(
+                                                            height: size.width *
+                                                                AppDimensions
+                                                                    .numD03),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal:
+                                                                      20,
+                                                                  vertical: 10),
+                                                          child: Text(
+                                                            "Upload a recent photo or take a selfie. It’s helps you show that you're a verified Hopper, and part of the  PressHop® community. Cheers",
+                                                            style:
+                                                                commonTextStyle(
+                                                              size: size,
+                                                              fontSize: size
+                                                                      .width *
+                                                                  AppDimensions
+                                                                      .numD03,
+                                                              color:
+                                                                  AppColorTheme
+                                                                      .colorHint,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                            ),
+                                                            textAlign: TextAlign
+                                                                .justify,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
                                             ),
                                           ),
                                   ),
-                                  if ((isLoading && userImage.isEmpty) || isUploading)
+                                  if ((isLoading && userImage.isEmpty) ||
+                                      isUploading)
                                     Container(
                                       height: size.width * AppDimensions.numD60,
                                       width: size.width * AppDimensions.numD70,

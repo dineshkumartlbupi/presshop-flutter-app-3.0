@@ -50,16 +50,18 @@ class FetchNewsEvent extends MapEvent {
     required this.lng,
     required this.km,
     this.category = "all",
+    this.alertType,
     this.isFeedOnly = false,
   });
   final double lat;
   final double lng;
   final double km;
   final String category;
+  final String? alertType;
   final bool isFeedOnly;
 
   @override
-  List<Object> get props => [lat, lng, km, category, isFeedOnly];
+  List<Object> get props => [lat, lng, km, category, alertType ?? '', isFeedOnly];
 }
 
 class FetchIncidentsEvent extends MapEvent {
@@ -68,14 +70,16 @@ class FetchIncidentsEvent extends MapEvent {
     required this.lng,
     required this.km,
     this.category = "all",
+    this.alertType,
   });
   final double lat;
   final double lng;
   final double km;
   final String category;
+  final String? alertType;
 
   @override
-  List<Object> get props => [lat, lng, km, category];
+  List<Object> get props => [lat, lng, km, category, alertType ?? ''];
 }
 
 class SetSearchedLocationEvent extends MapEvent {

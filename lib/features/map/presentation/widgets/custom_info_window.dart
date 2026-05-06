@@ -149,7 +149,7 @@ class CustomInfoWindow extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: Theme.of(context).cardColor,
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: borderColor),
+                              // border: Border.all(color: borderColor),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.15),
@@ -162,7 +162,6 @@ class CustomInfoWindow extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                // Poster Info
                                 Row(
                                   children: [
                                     Container(
@@ -273,8 +272,7 @@ class CustomInfoWindow extends StatelessWidget {
 
                                 // Details
                                 if (currentIncident.address != null &&
-                                    currentIncident
-                                        .address!.isNotEmpty) ...[
+                                    currentIncident.address!.isNotEmpty) ...[
                                   Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,

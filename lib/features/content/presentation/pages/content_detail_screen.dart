@@ -289,9 +289,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                         height:
                                             size.width * AppDimensions.numD04,
                                       ),
-                                      const Divider(
-                                        color: AppColorTheme.colorGrey2,
-                                      ),
+                                      const Divider(),
 
                                       /// Description
                                       Text(
@@ -313,10 +311,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                           height:
                                               size.width * AppDimensions.numD02,
                                         ),
-                                        if (isOwner)
-                                          const Divider(
-                                            color: AppColorTheme.colorGrey2,
-                                          ),
+                                        if (isOwner) const Divider(),
                                         SizedBox(
                                           height:
                                               size.width * AppDimensions.numD02,
@@ -355,9 +350,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                         height:
                                             size.width * AppDimensions.numD02,
                                       ),
-                                      if (isOwner)
-                                        const Divider(
-                                            color: AppColorTheme.colorGrey2),
+                                      if (isOwner) const Divider(),
 
                                       Column(
                                           mainAxisSize: MainAxisSize.min,

@@ -62,6 +62,7 @@ class MapRepositoryImpl implements MapRepository {
     double? lng,
     double? km,
     String? category,
+    String? alertType,
   }) async {
     try {
       final result = await remoteDataSource.getIncidents(
@@ -69,6 +70,7 @@ class MapRepositoryImpl implements MapRepository {
         lng: lng,
         km: km,
         category: category,
+        alertType: alertType,
       );
       return Right(result);
     } catch (e) {
