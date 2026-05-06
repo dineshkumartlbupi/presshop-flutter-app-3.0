@@ -95,14 +95,26 @@ class NewsModel extends News {
       userImage: userImage,
       userName: userName,
       latitude: json['position'] != null && json['position'] is Map
-          ? (json['position']['lat'] is double
-              ? json['position']['lat']
-              : double.tryParse(json['position']['lat'].toString()))
+          ? (json['position']['lat'] != null
+              ? (json['position']['lat'] is double
+                  ? json['position']['lat']
+                  : double.tryParse(json['position']['lat'].toString()))
+              : (json['position']['coordinates'] != null &&
+                      json['position']['coordinates'] is List &&
+                      (json['position']['coordinates'] as List).length >= 2
+                  ? (json['position']['coordinates'] as List)[1].toDouble()
+                  : null))
           : null,
       longitude: json['position'] != null && json['position'] is Map
-          ? (json['position']['lng'] is double
-              ? json['position']['lng']
-              : double.tryParse(json['position']['lng'].toString()))
+          ? (json['position']['lng'] != null
+              ? (json['position']['lng'] is double
+                  ? json['position']['lng']
+                  : double.tryParse(json['position']['lng'].toString()))
+              : (json['position']['coordinates'] != null &&
+                      json['position']['coordinates'] is List &&
+                      (json['position']['coordinates'] as List).length >= 1
+                  ? (json['position']['coordinates'] as List)[0].toDouble()
+                  : null))
           : null,
       type: json['type'],
       markerType: json['markerType'],

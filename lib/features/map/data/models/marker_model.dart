@@ -80,9 +80,17 @@ class Incident {
     double lat = 0.0;
     double lng = 0.0;
 
-    if (json['position'] != null) {
-      lat = (json['position']['lat'] ?? 0.0).toDouble();
-      lng = (json['position']['lng'] ?? 0.0).toDouble();
+    if (json['position'] != null && json['position'] is Map) {
+      if (json['position']['lat'] != null) {
+        lat = (json['position']['lat'] ?? 0.0).toDouble();
+        lng = (json['position']['lng'] ?? 0.0).toDouble();
+      } else if (json['position']['coordinates'] != null &&
+          json['position']['coordinates'] is List &&
+          (json['position']['coordinates'] as List).length >= 2) {
+        // GeoJSON: [longitude, latitude]
+        lng = (json['position']['coordinates'] as List)[0].toDouble();
+        lat = (json['position']['coordinates'] as List)[1].toDouble();
+      }
     } else {
       lat = (json['lat'] ?? json['latitude'] ?? 0.0).toDouble();
       lng = (json['lng'] ?? json['longitude'] ?? 0.0).toDouble();
@@ -97,7 +105,11 @@ class Incident {
       address: json['address'] is String
           ? json['address'] as String
           : (json['location'] is String ? json['location'] as String : null),
-      time: (json['createdAt'] ?? json['time'] ?? json['date'])?.toString(),
+      time: (json['createdAt'] ??
+              json['created_at'] ??
+              json['time'] ??
+              json['date'])
+          ?.toString(),
       image: json['image'],
       title: json['title'],
       description: json['description'] ?? json['message'],
@@ -109,25 +121,47 @@ class Incident {
       category: json['category'],
       alertType: json['alertType'],
       author: json['author'],
-      date: json['date'],
+      date: json['date'] ?? json['created_at'],
       soldCount: json['soldCount'],
       earnings: (json['earnings'] ?? 0.0).toDouble(),
-      viewCount: json['viewCount'] ?? json['total_views'],
+      viewCount: json['viewCount'] ??
+          json['view_count'] ??
+          json['total_views'] ??
+          json['views'],
       isPublished: json['isPublished'],
       isMostViewed: json['isMostViewed'],
-      likesCount: json['likesCount'] ?? json['likes'] ?? json['total_likes'],
-      commentsCount: json['commentsCount'] ?? json['comments'],
-      sharesCount: json['shares'] ?? json['shareCount'],
+      likesCount: json['likesCount'] ??
+          json['likes'] ??
+          json['total_likes'] ??
+          json['likes_count'],
+      commentsCount: json['commentsCount'] ?? json['comments'] ?? json['comments_count'],
+      sharesCount: json['shares'] ?? json['shareCount'] ?? json['shares_count'],
       isLiked: json['isLiked'] ?? json['is_liked'] ?? false,
       mediaType: json['mediaType'] ?? json['media_type'],
       temperature: json['temperature']?.toString(),
       wind: json['wind']?.toString(),
       heading: json['heading']?.toString(),
-      avatar: (json['avatar']?.isNotEmpty == true ? json['avatar'] : null) ?? 
-              (json['user_avatar']?.isNotEmpty == true ? json['user_avatar'] : null) ?? 
-              (json['user_image']?.isNotEmpty == true ? json['user_image'] : null) ?? 
-              json['author_url'],
-      username: json['username'] ?? json['user_name'] ?? json['author_name'] ?? json['author'],
+      avatar: (json['avatar']?.isNotEmpty == true ? json['avatar'] : null) ??
+          (json['user_avatar']?.isNotEmpty == true
+              ? json['user_avatar']
+              : null) ??
+          (json['user_image']?.isNotEmpty == true
+              ? json['user_image']
+              : null) ??
+          (json['created_by'] != null &&
+                  json['created_by'] is Map &&
+                  json['created_by']['avatar_id'] != null &&
+                  json['created_by']['avatar_id'] is Map
+              ? json['created_by']['avatar_id']['avatar']
+              : null) ??
+          json['author_url'],
+      username: json['username'] ??
+          json['user_name'] ??
+          (json['created_by'] != null && json['created_by'] is Map
+              ? json['created_by']['user_name']
+              : null) ??
+          json['author_name'] ??
+          json['author'],
     );
   }
   final String id;

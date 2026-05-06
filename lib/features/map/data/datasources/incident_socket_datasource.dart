@@ -4,7 +4,6 @@ import 'package:presshop/core/api/global_socket_client.dart';
 import 'package:presshop/core/api/socket_constants.dart';
 
 class IncidentSocketDataSource {
-
   IncidentSocketDataSource({required GlobalSocketClient client})
       : _client = client;
   final GlobalSocketClient _client;
@@ -20,18 +19,21 @@ class IncidentSocketDataSource {
   }
 
   void initializeListeners() {
+    _client.off(SocketEvents.incidentNew);
     _client.on(SocketEvents.incidentNew, (data) {
       debugPrint(
           "IncidentSocketDataSource: incident:new received (data length: ${data?.toString().length})");
       onIncidentNew?.call(data);
     });
 
+    _client.off(SocketEvents.incidentUpdated);
     _client.on(SocketEvents.incidentUpdated, (data) {
       debugPrint(
           "IncidentSocketDataSource: incident:updated received (data length: ${data?.toString().length})");
       onIncidentUpdated?.call(data);
     });
 
+    _client.off(SocketEvents.incidentCreated);
     _client.on(SocketEvents.incidentCreated, (data) {
       debugPrint(
           "IncidentSocketDataSource: incident:created received (data length: ${data?.toString().length})");

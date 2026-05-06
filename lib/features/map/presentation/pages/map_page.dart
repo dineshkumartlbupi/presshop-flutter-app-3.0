@@ -437,6 +437,10 @@ class _MapPageContentState extends State<_MapPageContent>
       return markerIcons['storm']!;
     } else if (lowerType.contains('earthquake')) {
       return markerIcons['earthquake']!;
+    } else if (lowerType.contains('crime')) {
+      return markerIcons['gun']!;
+    } else if (lowerType.contains('event')) {
+      return markerIcons['nomarker']!;
     }
     return markerIcons['nomarker'] ?? markerIcons['accident']!;
   }
@@ -445,7 +449,10 @@ class _MapPageContentState extends State<_MapPageContent>
     if (_isDisposed || !mounted) return;
 
     final currentAnimatedMarkers = state.newsList
-        .where((incident) => incident.markerType == 'icon')
+        .where((incident) =>
+            incident.markerType == 'icon' ||
+            incident.markerType == 'news' ||
+            incident.markerType == 'content')
         .toList();
 
     final currentIds = currentAnimatedMarkers.map((m) => m.id).toSet();
@@ -521,6 +528,7 @@ class _MapPageContentState extends State<_MapPageContent>
       return;
     }
 
+    // Resolve icon: for news/content, we use the type icon to match incidents
     final assetPath = _getResolvedIconPath(incident.type ?? incident.alertType);
 
     try {
@@ -680,7 +688,7 @@ class _MapPageContentState extends State<_MapPageContent>
           }
         }
 
-        // Handle Info Window updates
+        // Handle Info Window updates (trigger only on selection change to avoid flickering)
         if (_lastState?.selectedIncident?.id != state.selectedIncident?.id) {
           if (state.selectedIncident != null &&
               state.selectedPosition != null) {

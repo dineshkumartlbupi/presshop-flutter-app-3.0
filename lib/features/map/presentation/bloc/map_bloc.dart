@@ -180,7 +180,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           icon: icon,
           alpha: 1.0,
           onTap: () {
-            add(SetSelectedIncidentEvent(incident));
+            if (state.selectedIncident?.id != incident.id) {
+              add(SetSelectedIncidentEvent(incident));
+            }
           },
         );
         updatedMarkers.add(marker);
@@ -221,7 +223,33 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     Emitter<MapState> emit,
   ) async {
     try {
-      final incident = Incident.fromJson(event.data);
+      // Find existing incident to preserve REST data
+      final existingIndex = state.newsList.indexWhere(
+          (i) => i.id == (event.data['incidentId'] ?? event.data['_id']));
+
+      Incident incident;
+      if (existingIndex != -1) {
+        final existing = state.newsList[existingIndex];
+        final socketPayload = event.data['data'] ?? event.data;
+        final socketIncident = Incident.fromJson(socketPayload);
+
+        // Merge view count from socket data, fallback to socket for missing REST data
+        incident = existing.copyWith(
+          viewCount: event.data['viewCount'] ??
+              event.data['view_count'] ??
+              socketIncident.viewCount ??
+              existing.viewCount,
+          time: existing.time ?? socketIncident.time,
+          date: existing.date ?? socketIncident.date,
+          username: existing.username ?? socketIncident.username,
+          avatar: existing.avatar ?? socketIncident.avatar,
+          address: existing.address ?? socketIncident.address,
+        );
+      } else {
+        // If not found, create from scratch using the best available data source
+        incident = Incident.fromJson(event.data['data'] ?? event.data);
+      }
+
       final markerId = _getMarkerId(incident);
 
       BitmapDescriptor icon;
@@ -255,7 +283,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         icon: icon,
         alpha: 1.0,
         onTap: () {
-          add(SetSelectedIncidentEvent(incident));
+          // Only trigger selection if it's not already selected or if we want to force focus.
+          // However, we should NOT call SetSelectedIncidentEvent here if it's already selected
+          // because that triggers another view increment.
+          if (state.selectedIncident?.id != incident.id) {
+            add(SetSelectedIncidentEvent(incident));
+          }
         },
       );
 
@@ -264,8 +297,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       updatedMarkers.add(marker);
 
       final updatedNewsList = List<Incident>.from(state.newsList);
-      final existingIndex =
-          updatedNewsList.indexWhere((i) => i.id == incident.id);
       if (existingIndex == -1) {
         updatedNewsList.add(incident);
       } else {
@@ -277,9 +308,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       emit(state.copyWith(
         markers: _appendMeAndSearchedMarkers(updatedMarkers),
         newsList: updatedNewsList,
-        selectedIncident: isSelected
-            ? incident
-            : null, // If null, copyWith won't replace current one unless clearSelectedIncident is true. Wait, copyWith usually keeps old value if new is null.
+        selectedIncident: isSelected ? incident : null,
       ));
     } catch (e, stack) {
       debugPrint("Error handling updated incident: $e");
@@ -667,7 +696,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                   position: incident.position,
                   alpha: 1.0,
                   icon: icon,
-                  onTap: () => add(SetSelectedIncidentEvent(incident)),
+                  onTap: () {
+                    if (state.selectedIncident?.id != incident.id) {
+                      add(SetSelectedIncidentEvent(incident));
+                    }
+                  },
                 );
               }).toList();
 
@@ -868,6 +901,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       return;
     }
 
+    if (state.selectedIncident?.id == event.incident.id) {
+      return;
+    }
+
     final updatedIncident =
         event.incident.copyWith(viewCount: (event.incident.viewCount ?? 0) + 1);
 
@@ -883,8 +920,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       clearSelectedPolygonPosition: true,
     ));
 
-    // Increment View through both Socket and REST
-    repository.incrementIncidentView(event.incident.id);
+    // Increment View through Socket ONLY (as requested)
     incidentSocketDataSource.emitIncidentView(incidentId: event.incident.id);
   }
 
@@ -1084,7 +1120,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               alpha: 1.0,
               icon: icon,
               onTap: () {
-                add(SetSelectedIncidentEvent(incident));
+                if (state.selectedIncident?.id != incident.id) {
+                  add(SetSelectedIncidentEvent(incident));
+                }
               },
             );
           }).toList();
