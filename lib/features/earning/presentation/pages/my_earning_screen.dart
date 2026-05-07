@@ -53,15 +53,18 @@ class _MyEarningScreenState extends State<MyEarningScreen>
     );
     context.read<EarningBloc>().add(ChangeTabEvent(_selectedTabbar));
     _tabController!.addListener(() {
-      setState(() {
-        _selectedTabbar = _tabController!.index;
-      });
-      context.read<EarningBloc>().add(ChangeTabEvent(_selectedTabbar));
+      if (_selectedTabbar != _tabController!.index) {
+        setState(() {
+          _selectedTabbar = _tabController!.index;
+        });
+        final bloc = context.read<EarningBloc>();
+        bloc.add(ChangeTabEvent(_selectedTabbar));
 
-      if (_selectedTabbar == 0) {
-        _fetchTransactions(context.read<EarningBloc>());
-      } else {
-        _fetchCommissions(context.read<EarningBloc>());
+        if (_selectedTabbar == 0 && bloc.state.transactions.isEmpty) {
+          _fetchTransactions(bloc);
+        } else if (_selectedTabbar == 1 && bloc.state.commissions.isEmpty) {
+          _fetchCommissions(bloc);
+        }
       }
     });
 
@@ -72,10 +75,19 @@ class _MyEarningScreenState extends State<MyEarningScreen>
     toDate = now.month.toString().padLeft(2, '0');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final bloc = context.read<EarningBloc>();
-      bloc.add(UpdateDateEvent(fromDate: fromDate, toDate: toDate));
-      bloc.add(FetchEarningDataEvent(fromDate: fromDate, toDate: toDate));
-      _fetchTransactions(bloc);
-      _fetchCommissions(bloc);
+
+      if (bloc.state.earningData == null) {
+        bloc.add(UpdateDateEvent(fromDate: fromDate, toDate: toDate));
+        bloc.add(FetchEarningDataEvent(fromDate: fromDate, toDate: toDate));
+        _fetchTransactions(bloc);
+        _fetchCommissions(bloc);
+      } else {
+        setState(() {
+          fromDate =
+              bloc.state.fromDate.isNotEmpty ? bloc.state.fromDate : fromDate;
+          toDate = bloc.state.toDate.isNotEmpty ? bloc.state.toDate : toDate;
+        });
+      }
     });
   }
 
@@ -215,7 +227,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
             builder: (context, state) {
               if (state.status == EarningStatus.loading &&
                   state.earningData == null) {
-                return const SizedBox.shrink();
+                return Center(
+                  child: CommonWidgetsNew.showAnimatedLoader(size),
+                );
               }
 
               final earningData = state.earningData;

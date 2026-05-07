@@ -12,9 +12,12 @@ class ManageContentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    Color textColor =
+        Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
     return Card(
       elevation: 3,
-      color: AppColorTheme.colorLightGrey,
+      color: isDark ? const Color(0xFF1E1E1E) : AppColorTheme.colorLightGrey,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
       ),
@@ -41,8 +44,7 @@ class ManageContentWidget extends StatelessWidget {
                   width: size.width * AppDimensions.numD20,
                   cacheWidth: (size.width * AppDimensions.numD20 * 2).toInt(),
                   cacheHeight: (size.width * AppDimensions.numD20 * 2).toInt(),
-                  errorBuilder: (context, exception,
-                      stackTrace) {
+                  errorBuilder: (context, exception, stackTrace) {
                     return Image.asset(
                       "${commonImagePath}rabbitLogo.png",
                       fit: BoxFit.contain,
@@ -64,7 +66,7 @@ class ManageContentWidget extends StatelessWidget {
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD03,
-                          color: Colors.black,
+                          color: textColor,
                           fontWeight: FontWeight.w700)),
                 ),
                 Row(
@@ -114,7 +116,9 @@ class ManageContentWidget extends StatelessWidget {
               decoration: BoxDecoration(
                   color: data['message_type'] == "Offered"
                       ? Colors.black
-                      : AppColorTheme.lightGrey,
+                      : (isDark
+                          ? Colors.grey.shade800
+                          : AppColorTheme.lightGrey),
                   borderRadius:
                       BorderRadius.circular(size.width * AppDimensions.numD03)),
               child: Column(
@@ -128,7 +132,7 @@ class ManageContentWidget extends StatelessWidget {
                         fontSize: size.width * AppDimensions.numD035,
                         color: data['message_type'] == "Offered"
                             ? Colors.white
-                            : Colors.black,
+                            : (isDark ? Colors.white : Colors.black),
                         fontWeight: FontWeight.w400),
                   ),
                   FittedBox(
@@ -144,7 +148,7 @@ class ManageContentWidget extends StatelessWidget {
                             fontSize: size.width * AppDimensions.numD05,
                             color: data['message_type'] == "Offered"
                                 ? Colors.white
-                                : Colors.black,
+                                : (isDark ? Colors.white : Colors.black),
                             fontWeight: FontWeight.bold),
                       ),
                     ),
