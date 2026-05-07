@@ -293,7 +293,7 @@ Future<void> init() async {
       networkInfo: sl(),
     ),
   );
-
+// sfds
   sl.registerLazySingleton<TermsRepository>(
     () => TermsRepository(sl<ApiClient>()),
   );
