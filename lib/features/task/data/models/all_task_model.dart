@@ -47,10 +47,10 @@ class AllTaskModel extends TaskAll {
       status: (json['task_status'] ?? json['status'] ?? "").toString(),
       isAvailableForAccept: json['is_available_for_accept'] ?? false,
       ////=====>>
-      isLive: json['isLive'] ?? false,
-      ctaColorCode: (json['ctaColorCode'] ?? "").toString(),
-      ctaName: (json['ctaName'] ?? "").toString(),
-      ctaTextColorCode: (json['ctaTextColorCode'] ?? "").toString(),
+      isLive: json['isLive'] ?? json['is_live'] ?? false,
+      ctaColorCode: (json['ctaColorCode'] ?? json['cta_color_code'] ?? "").toString(),
+      ctaName: (json['ctaName'] ?? json['cta_name'] ?? "").toString(),
+      ctaTextColorCode: (json['ctaTextColorCode'] ?? json['cta_text_color_code'] ?? "").toString(),
       ////======>>
       taskAcceptedCount: (json['task_accepted_count'] ?? "").toString(),
       mediaHouseDetails: json['mediahouse_id'] != null
@@ -113,6 +113,13 @@ class AllTaskModel extends TaskAll {
       'location': location,
       'status': status,
       'is_available_for_accept': isAvailableForAccept,
+      'isLive': isLive,
+      'ctaName': ctaName,
+      'ctaColorCode': ctaColorCode,
+      'ctaTextColorCode': ctaTextColorCode,
+      'task_accepted_count': taskAcceptedCount,
+      'status_color': statusColor,
+      'status_text': statusText,
       'mediahouse_id': (mediaHouseDetails as MediaHouseDetails?)?.toJson(),
       'acceptedTasks':
           acceptedTasks.map((e) => (e as AcceptedTask).toJson()).toList(),

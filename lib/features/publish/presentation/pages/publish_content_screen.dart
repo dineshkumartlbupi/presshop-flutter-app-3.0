@@ -77,6 +77,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
       userExclusivePriceValue = "";
   ContentCategory? selectedCategory;
   bool audioPlaying = false,
+      isFinished = false,
+      _isPlayerListenerAdded = false,
       draftSelected = false,
       _checkCharityBoxVal = false,
       isSaveDraftFromTask = false,
@@ -135,19 +137,40 @@ class PublishContentScreenState extends State<PublishContentScreen>
     }
   }
 
-  Future preparePlayer() async {
+  Future<void> _preparePlayerInternal() async {
     await controller.preparePlayer(
       path: audioPath,
       shouldExtractWaveform: true,
       noOfSamples: 100,
       volume: 1.0,
     );
-    controller.onCompletion.listen((_) {
-      debugPrint('Playback completed');
-      controller.setRefresh(true);
-      audioPlaying = false;
-      setState(() {});
-    });
+
+    if (!_isPlayerListenerAdded) {
+      controller.onCompletion.listen((_) async {
+        debugPrint('Playback completed');
+        audioPlaying = false;
+        isFinished = true;
+        if (mounted) {
+          setState(() {});
+        }
+        await controller.pausePlayer();
+        await _preparePlayerInternal();
+      });
+
+      controller.onPlayerStateChanged.listen((event) {
+        if (event.isPaused) {
+          audioPlaying = false;
+          if (mounted) {
+            setState(() {});
+          }
+        }
+      });
+      _isPlayerListenerAdded = true;
+    }
+  }
+
+  Future preparePlayer() async {
+    await _preparePlayerInternal();
   }
 
   String get localCurrencySymbol {
@@ -296,7 +319,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
         isDark ? Colors.red : AppColorTheme.colorThemePink;
     final Color unselectedColor = isDark ? Colors.white70 : Colors.black;
     final Color cardColor =
-        isDark ? Colors.grey[900]! : AppColorTheme.colorLightGrey;
+        isDark ? Colors.grey[900]! : AppColorTheme.colorLightWhite;
     final Color iconColor =
         isDark ? Colors.white : AppColorTheme.colorTextFieldIcon;
     final Color borderColor =
@@ -414,7 +437,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 visible: widget.publishData !=
                                                         null
                                                     ? widget
-                                                        .publishData!.mimeType
+                                                        .publishData!
+                                                        .mediaList
+                                                        .first
+                                                        .mimeType
                                                         .contains("doc")
                                                     : widget
                                                             .myContentData!
@@ -441,7 +467,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 visible: widget.publishData !=
                                                         null
                                                     ? widget
-                                                        .publishData!.mimeType
+                                                        .publishData!
+                                                        .mediaList
+                                                        .first
+                                                        .mimeType
                                                         .contains("pdf")
                                                     : widget
                                                             .myContentData!
@@ -678,98 +707,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 ],
                                               ),
 
-                                              widget.hideDraft &&
-                                                      widget.myContentData !=
-                                                          null
-                                                  ? Positioned(
-                                                      right: size.width *
-                                                          AppDimensions.numD02,
-                                                      top: size.width *
-                                                          AppDimensions.numD02,
-                                                      child: Container(
-                                                          width: size.width *
-                                                              AppDimensions
-                                                                  .numD06,
-                                                          height: size.width *
-                                                              AppDimensions
-                                                                  .numD06,
-                                                          padding: EdgeInsets.symmetric(
-                                                              horizontal: size.width *
-                                                                  AppDimensions
-                                                                      .numD01,
-                                                              vertical:
-                                                                  size.width *
-                                                                      0.002),
-                                                          decoration: BoxDecoration(
-                                                              color: AppColorTheme
-                                                                  .colorLightGreen
-                                                                  .withValues(
-                                                                      alpha:
-                                                                          0.8),
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                      size.width *
-                                                                          AppDimensions.numD015)),
-                                                          child: Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal: widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                                "video" ||
-                                                                            widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                                "audio"
-                                                                        ? 0
-                                                                        : size.width *
-                                                                            0.005,
-                                                                    vertical: widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                            "video"
-                                                                        ? size.width *
-                                                                            0.005
-                                                                        : widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                                "audio"
-                                                                            ? size.width *
-                                                                                0.009
-                                                                            : size.width *
-                                                                                0.01),
-                                                            child: Image.asset(
-                                                              widget
-                                                                          .myContentData!
-                                                                          .contentMediaList
-                                                                          .first
-                                                                          .mediaType ==
-                                                                      "image"
-                                                                  ? "${iconsPath}ic_camera_publish.png"
-                                                                  : widget.myContentData!.contentMediaList.first
-                                                                              .mediaType ==
-                                                                          "video"
-                                                                      ? "${iconsPath}ic_v_cam.png"
-                                                                      : widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                              "audio"
-                                                                          ? "${iconsPath}ic_mic.png"
-                                                                          : "${iconsPath}doc_icon.png",
-                                                              color:
-                                                                  Colors.white,
-                                                              height: widget
-                                                                          .myContentData!
-                                                                          .contentMediaList
-                                                                          .first
-                                                                          .mediaType ==
-                                                                      "video"
-                                                                  ? size.width *
-                                                                      AppDimensions
-                                                                          .numD09
-                                                                  : widget.myContentData!.contentMediaList.first
-                                                                              .mediaType ==
-                                                                          "image"
-                                                                      ? size.width *
-                                                                          AppDimensions
-                                                                              .numD05
-                                                                      : size.width *
-                                                                          AppDimensions
-                                                                              .numD08,
-                                                            ),
-                                                          )),
-                                                    )
-                                                  : const SizedBox.shrink(),
+                                              const SizedBox.shrink(),
                                             ],
                                           ),
                                         ),
@@ -1079,7 +1017,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                         right: size.width *
                                                             AppDimensions
                                                                 .numD03),
-                                                    // padding: EdgeInsets.only(left: size.width * AppDimensions.numD02, right: size.width * AppDimensions.numD01, top: size.width * AppDimensions.numD005, bottom: size.width * AppDimensions.numD005),
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                             vertical: 4,
@@ -1093,123 +1030,23 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                     .width *
                                                                 AppDimensions
                                                                     .numD013)),
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        Text(
-                                                            (imageCount +
-                                                                    videoCount +
-                                                                    audioCount)
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                                color:
-                                                                    textColor,
-                                                                fontSize: size
-                                                                        .width *
-                                                                    AppDimensions
-                                                                        .numD03,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600)),
-                                                      ],
-                                                    ),
+                                                    child: Text(
+                                                        totalContentCount
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: size
+                                                                    .width *
+                                                                AppDimensions
+                                                                    .numD03,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600)),
                                                   ),
                                                 ],
                                               ),
 
-                                              false &&
-                                                      widget.myContentData !=
-                                                          null
-                                                  ? Positioned(
-                                                      right: size.width *
-                                                          AppDimensions.numD02,
-                                                      top: size.width *
-                                                          AppDimensions.numD02,
-                                                      child: Container(
-                                                          width: size.width *
-                                                              AppDimensions
-                                                                  .numD06,
-                                                          height: size.width *
-                                                              AppDimensions
-                                                                  .numD06,
-                                                          padding: EdgeInsets.symmetric(
-                                                              horizontal: size.width *
-                                                                  AppDimensions
-                                                                      .numD01,
-                                                              vertical:
-                                                                  size.width *
-                                                                      0.002),
-                                                          decoration: BoxDecoration(
-                                                              color: AppColorTheme
-                                                                  .colorLightGreen
-                                                                  .withValues(
-                                                                      alpha:
-                                                                          0.8),
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                      size.width *
-                                                                          AppDimensions.numD015)),
-                                                          child: Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal: widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                                "video" ||
-                                                                            widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                                "audio"
-                                                                        ? 0
-                                                                        : size.width *
-                                                                            0.005,
-                                                                    vertical: widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                            "video"
-                                                                        ? size.width *
-                                                                            0.005
-                                                                        : widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                                "audio"
-                                                                            ? size.width *
-                                                                                0.009
-                                                                            : size.width *
-                                                                                0.01),
-                                                            child: Image.asset(
-                                                              widget
-                                                                          .myContentData!
-                                                                          .contentMediaList
-                                                                          .first
-                                                                          .mediaType ==
-                                                                      "image"
-                                                                  ? "${iconsPath}ic_camera_publish.png"
-                                                                  : widget.myContentData!.contentMediaList.first
-                                                                              .mediaType ==
-                                                                          "video"
-                                                                      ? "${iconsPath}ic_v_cam.png"
-                                                                      : widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                              "audio"
-                                                                          ? "${iconsPath}ic_mic.png"
-                                                                          : "${iconsPath}doc_icon.png",
-                                                              color:
-                                                                  Colors.white,
-                                                              height: widget
-                                                                          .myContentData!
-                                                                          .contentMediaList
-                                                                          .first
-                                                                          .mediaType ==
-                                                                      "video"
-                                                                  ? size.width *
-                                                                      AppDimensions
-                                                                          .numD09
-                                                                  : widget.myContentData!.contentMediaList.first
-                                                                              .mediaType ==
-                                                                          "image"
-                                                                      ? size.width *
-                                                                          AppDimensions
-                                                                              .numD05
-                                                                      : size.width *
-                                                                          AppDimensions
-                                                                              .numD08,
-                                                            ),
-                                                          )),
-                                                    )
-                                                  : const SizedBox.shrink(),
+                                              const SizedBox.shrink(),
                                             ],
                                           ),
                                         ),
@@ -1297,10 +1134,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       SizedBox(
                         height: size.width * AppDimensions.numD02,
                       ),
-                      Divider(
-                        color: textColor.withValues(alpha: 0.2),
-                        thickness: 1,
-                      ),
+                      Divider(),
                       SizedBox(
                         height: size.width * AppDimensions.numD025,
                       ),
@@ -1464,10 +1298,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       SizedBox(
                         height: size.width * AppDimensions.numD025,
                       ),
-                      Divider(
-                        color: textColor.withValues(alpha: 0.2),
-                        thickness: 1,
-                      ),
+                      Divider(),
                       SizedBox(
                         height: size.width * AppDimensions.numD022,
                       ),
@@ -1571,10 +1402,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       SizedBox(
                         height: size.width * AppDimensions.numD02,
                       ),
-                      Divider(
-                        color: textColor.withValues(alpha: 0.2),
-                        thickness: 1,
-                      ),
+                      Divider(),
                       SizedBox(
                         height: size.width * AppDimensions.numD025,
                       ),
@@ -1675,10 +1503,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       SizedBox(
                         height: size.width * AppDimensions.numD02,
                       ),
-                      Divider(
-                        color: textColor.withValues(alpha: 0.2),
-                        thickness: 1,
-                      ),
+                      Divider(),
                       SizedBox(height: size.width * AppDimensions.numD02),
 
                       /// hash Tags
@@ -1832,10 +1657,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       SizedBox(
                         height: size.width * AppDimensions.numD02,
                       ),
-                      Divider(
-                        color: textColor.withValues(alpha: 0.2),
-                        thickness: 1,
-                      ),
+                      Divider(),
                       SizedBox(
                         height: size.width * AppDimensions.numD02,
                       ),
@@ -1889,10 +1711,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       SizedBox(
                         height: size.width * AppDimensions.numD02,
                       ),
-                      Divider(
-                        color: textColor.withValues(alpha: 0.2),
-                        thickness: 1,
-                      ),
+                      Divider(),
                       SizedBox(
                         height: size.width * AppDimensions.numD04,
                       ),
@@ -2792,10 +2611,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                 ),
                               ],
                             ),
-                            Divider(
-                              color: textColor,
-                              thickness: 1.3,
-                            ),
+                            Divider(),
                             SizedBox(
                                 height: size.width * AppDimensions.numD035),
                             Expanded(
@@ -3090,19 +2906,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
   }
 
   Future initWaveData() async {
-    await controller.preparePlayer(
-      path: audioPath,
-      shouldExtractWaveform: true,
-      noOfSamples: 100,
-      volume: 1.0,
-    );
-
-    controller.onPlayerStateChanged.listen((event) {
-      if (event.isPaused) {
-        audioPlaying = false;
-        setState(() {});
-      }
-    });
+    await _preparePlayerInternal();
   }
 
   Future<void> updateDraftListAPI(String contentId) async {
@@ -3124,6 +2928,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
   }
 
   Future playSound() async {
+    if (isFinished) {
+      await controller.seekTo(0);
+      isFinished = false;
+    }
     await controller.startPlayer();
   }
 

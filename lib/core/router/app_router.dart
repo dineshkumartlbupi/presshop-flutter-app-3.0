@@ -468,13 +468,16 @@ class AppRouter {
         name: AppRoutes.socialSignUpName,
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>;
-          return SocialSignUp(
-            socialLogin: extra['socialLogin'] ?? false,
-            socialId: extra['socialId'] ?? "",
-            email: extra['email'] ?? "",
-            name: extra['name'] ?? "",
-            socialType: extra['socialType'] ?? "",
-            phoneNumber: extra['phoneNumber'] ?? "",
+          return BlocProvider(
+            create: (_) => sl<SignUpBloc>()..add(FetchAvatarsEvent()),
+            child: SocialSignUp(
+              socialLogin: extra['socialLogin'] ?? false,
+              socialId: extra['socialId'] ?? "",
+              email: extra['email'] ?? "",
+              name: extra['name'] ?? "",
+              socialType: extra['socialType'] ?? "",
+              phoneNumber: extra['phoneNumber'] ?? "",
+            ),
           );
         },
       ),

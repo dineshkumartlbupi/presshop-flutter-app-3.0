@@ -10,6 +10,7 @@ import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/network_info.dart';
 import 'package:presshop/features/account_settings/domain/usecases/get_admin_contact_info.dart';
 import 'package:presshop/features/authentication/presentation/bloc/upload_documents/upload_documents_bloc.dart';
+import 'package:presshop/features/notification/data/datasources/notification_local_datasource.dart';
 import 'package:presshop/features/publish/domain/usecases/submit_content.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
@@ -303,7 +304,10 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton<NotificationRepository>(
-    () => NotificationRepositoryImpl(remoteDataSource: sl()),
+    () => NotificationRepositoryImpl(
+      remoteDataSource: sl(),
+      localDataSource: NotificationLocalDataSourceImpl(),
+    ),
   );
 
   //! Use Cases - Register third (before BLoCs)
@@ -318,31 +322,22 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ForgotPassword(sl()));
   sl.registerLazySingleton(() => VerifyForgotPasswordOtp(sl()));
   sl.registerLazySingleton(() => ResetPassword(sl()));
-
-  // Use cases needed by SplashBloc
   sl.registerLazySingleton(() => CheckAuthStatus(sl()));
   sl.registerLazySingleton(() => GetProfile(sl()));
   sl.registerLazySingleton(() => CheckSplashVersion(sl()));
   sl.registerLazySingleton(() => CheckOnboardingStatus(sl()));
-
-  // Splash Feature Dependencies
   sl.registerLazySingleton<SplashRemoteDataSource>(
     () => SplashRemoteDataSourceImpl(apiClient: sl()),
   );
   sl.registerLazySingleton<SplashRepository>(
     () => SplashRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
-
-  // Use cases needed by SignUpBloc
   sl.registerLazySingleton(() => CheckUserName(sl()));
   sl.registerLazySingleton(() => CheckEmail(sl()));
   sl.registerLazySingleton(() => CheckPhone(sl()));
   sl.registerLazySingleton(() => GetAvatars(sl()));
   sl.registerLazySingleton(() => VerifyReferralCode(sl()));
   sl.registerLazySingleton(() => SocialExists(sl()));
-
-  //! Features - Authentication
-  // Blocs - Register last
   sl.registerFactory(
     () => AuthBloc(
       loginUser: sl(),

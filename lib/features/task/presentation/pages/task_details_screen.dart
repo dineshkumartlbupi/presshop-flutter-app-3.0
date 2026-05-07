@@ -86,7 +86,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: CommonBrandedAppBar(
-        title: 'Task Detail',
+        title: 'Task Details',
         size: size,
         showLogo: true,
       ),
@@ -587,6 +587,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         height: size.width * AppDimensions.numD025,
                       ),
                       const Divider(),
+                      SizedBox(
+                        height: size.width * AppDimensions.numD025,
+                      ),
                       Text("HEADING",
                           style: commonTextStyle(
                               size: size,
@@ -675,6 +678,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           textAlign: TextAlign.justify,
                         ),
                       ],
+                      SizedBox(
+                        height: size.width * AppDimensions.numD025,
+                      ),
                       const Divider(),
                       SizedBox(
                         height: size.width * AppDimensions.numD025,
@@ -892,9 +898,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           );
                         },
                       ),
-                      SizedBox(
-                        height: size.width * AppDimensions.numD1,
-                      ),
+                      if (isOwner)
+                        SizedBox(
+                          height: size.width * AppDimensions.numD1,
+                        ),
                       if (isOwner)
                         widget.taskStatus != "rejected"
                             ? SizedBox(
