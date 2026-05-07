@@ -303,7 +303,8 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton<NotificationRepository>(
-    () => NotificationRepositoryImpl(remoteDataSource: sl()),
+    () => NotificationRepositoryImpl(
+        remoteDataSource: sl(), localDataSource: sl()),
   );
 
   //! Use Cases - Register third (before BLoCs)
