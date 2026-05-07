@@ -718,14 +718,23 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                               scheme: 'mailto',
                               path: adminEmail,
                               query:
-                                  'subject=Please contact me &body=${messageController.text.trim()}',
+                                  'subject=${Uri.encodeComponent("Please contact me")}&body=${Uri.encodeComponent(messageController.text.trim())}',
                             );
 
-                            if (await canLaunchUrl(emailURL)) {
-                              launchUrl(emailURL);
-                            } else {
-                              // Fallback or show error
-                              debugPrint("Could not launch email");
+                            try {
+                              bool launched = await launchUrl(emailURL);
+                              if (!launched) {
+                                debugPrint("launchUrl returned false for $emailURL (No email client available)");
+                                if (context.mounted) {
+                                  showSnackBar('Error', 'Could not launch email client. Please ensure an email app is installed.', Colors.red);
+                                }
+                              }
+                            } catch (e, stacktrace) {
+                              debugPrint("Real error launching email: $e");
+                              debugPrint("Stacktrace: $stacktrace");
+                              if (context.mounted) {
+                                showSnackBar('Error', 'Error launching email: $e', Colors.red);
+                              }
                             }
                             setState(() {});
                           }),

@@ -22,6 +22,7 @@ import 'package:presshop/features/profile/constants/profile_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 // ignore: must_be_immutable
 class MyProfile extends StatefulWidget {
@@ -111,13 +112,27 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     setUserNameListener();
     setPhoneListener();
     setEmailListener();
-    myProfileApi(showLoader: true);
+    myProfileApi(showLoader: false);
     if (isEditMode) {
-      getAvatarsApi(showLoader: true);
+      getAvatarsApi(showLoader: false);
     }
   }
 
   void _loadCachedData() {
+    try {
+      final cacheBox = Hive.box('sync_cache');
+      final cachedData = cacheBox.get('my_profile_data');
+      if (cachedData != null) {
+        final Map<String, dynamic> jsonMap =
+            Map<String, dynamic>.from(cachedData as Map);
+        myProfileData = MyProfileData.fromJson(jsonMap);
+        setProfileData();
+        return;
+      }
+    } catch (e) {
+      debugPrint("Error loading profile from Hive: $e");
+    }
+
     userNameController.text =
         sharedPreferences?.getString(SharedPreferencesKeys.userNameKey) ??
             "Hopper";
@@ -143,6 +158,14 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         sharedPreferences?.getString(SharedPreferencesKeys.countryKey) ?? "";
     apartmentAndHouseNameController.text =
         sharedPreferences?.getString(SharedPreferencesKeys.apartmentKey) ?? "";
+    profileAddressController.text =
+        sharedPreferences?.getString(SharedPreferencesKeys.addressKey) ?? "";
+    profileCityController.text =
+        sharedPreferences?.getString(SharedPreferencesKeys.cityKey) ?? "";
+    profileCountryController.text =
+        sharedPreferences?.getString(SharedPreferencesKeys.countryKey) ?? "";
+    profilePostCodeController.text =
+        sharedPreferences?.getString(SharedPreferencesKeys.postCodeKey) ?? "";
 
     // Partially initialize myProfileData for the top card
     String cachedAvatar =
@@ -1343,7 +1366,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                               : null),
                     ),
                     suffixIcon: InkWell(
-                      onTap: () => addressController.clear(),
+                      onTap: () => profileAddressController.clear(),
                       child: Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: Icon(Icons.close,
@@ -1669,10 +1692,6 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       setState(() {
         isLoading = true;
       });
-    } else {
-      setState(() {
-        isSilentLoading = true;
-      });
     }
     try {
       final response = await sl<ApiClient>()
@@ -1705,10 +1724,6 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       setState(() {
         isLoading = true;
       });
-    } else {
-      setState(() {
-        isSilentLoading = true;
-      });
     }
     try {
       final response = await sl<ApiClient>().get(
@@ -1730,6 +1745,13 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
               userData['data'] is Map) {
             userData = userData['data'];
           }
+
+          try {
+            Hive.box('sync_cache').put('my_profile_data', userData);
+          } catch (e) {
+            debugPrint("Error saving profile to Hive: $e");
+          }
+
           myProfileData = MyProfileData.fromJson(userData);
 
           void updateKey(String key, dynamic value) {

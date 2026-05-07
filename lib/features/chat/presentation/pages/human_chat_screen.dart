@@ -122,6 +122,10 @@ class _ConversationScreenState extends State<ConversationScreen>
     isFirstTime = true;
     debugPrint('Class Name: $runtimeType');
 
+    if (widget.message.isNotEmpty) {
+      messageController.text = widget.message;
+    }
+
     _receiverId =
         sharedPreferences!.getString(SharedPreferencesKeys.adminIdKey) ?? '';
     _receiverName =
