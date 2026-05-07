@@ -91,15 +91,24 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     if (!event.force &&
         state.cameraController != null &&
         state.cameraController!.value.isInitialized) {
-      debugPrint("🚀 CameraBloc: Camera already initialized. Resuming preview.");
+      debugPrint(
+          "🚀 CameraBloc: Camera already initialized. Attempting to resume preview.");
+
       try {
-        await state.cameraController!.resumePreview();
-      } catch (e) {
-        debugPrint("⚠️ resumePreview error during init check: $e");
-      }
-      // Move status back to ready if it was success/failure but controller is fine
-      if (state.status != CameraStatus.ready && state.status != CameraStatus.recording) {
+        // Force a small delay to ensure the surface is ready after navigation
+        await Future.delayed(const Duration(milliseconds: 100));
+        
+        // Always attempt to resume when returning to ensure the stream is active
+        // Use a 1-second timeout to detect if hardware is stuck
+        await state.cameraController!
+            .resumePreview()
+            .timeout(const Duration(milliseconds: 1000));
+        
+        // Ensure status is updated to ready so the UI shows the preview
         emit(state.copyWith(status: CameraStatus.ready));
+      } catch (e) {
+        debugPrint("⚠️ resumePreview error or timeout: $e. Attempting full re-initialization.");
+        add(const CameraInitializeEvent(force: true));
       }
       return;
     }
@@ -400,7 +409,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     try {
       await controller.setFlashMode(FlashMode.off);
       XFile picture = await controller.takePicture();
-      await controller.pausePreview();
+      // REMOVED pausePreview() to keep the camera live and smooth
+
 
       // GPS Exif
       final exif = await Exif.fromPath(picture.path);
@@ -561,7 +571,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
       await ImageGallerySaverPlus.saveFile(renamedFile.path);
 
-      await controller.pausePreview();
+      // await controller.pausePreview(); // REMOVED for smoothness
 
       String? thumbnail;
       try {
@@ -683,8 +693,11 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       CameraScanDocEvent event, Emitter<CameraState> emit) async {
     try {
       List<String>? imageList = await CunningDocumentScanner.getPictures();
+
+      // Ensure camera resumes after scanner activity finishes/cancels
+      add(const CameraInitializeEvent());
+
       if (imageList != null && imageList.isNotEmpty) {
-        await state.cameraController?.pausePreview();
         List<CameraData> newMedia = [];
         for (var path in imageList) {
           newMedia.add(CameraData(
@@ -768,15 +781,26 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   Future<void> _onLoadGalleryMedia(
       LoadGalleryMediaEvent event, Emitter<CameraState> emit) async {
     try {
-      // Use PhotoManager source of truth for gallery access after initial checks
       final PermissionState ps = await PhotoManager.requestPermissionExtend();
       if (ps.isAuth || ps.hasAccess) {
-        List<AssetPathEntity> albums =
-            await PhotoManager.getAssetPathList(onlyAll: true);
+        // Use common type to include both images and videos
+        final List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
+          type: RequestType.common,
+          filterOption: FilterOptionGroup(
+            orders: [
+              const OrderOption(type: OrderOptionType.createDate, asc: false),
+            ],
+          ),
+        );
+        
         if (albums.isNotEmpty) {
-          List<AssetEntity> media =
-              await albums[0].getAssetListPaged(page: 0, size: 1);
-          emit(state.copyWith(galleryMedia: media));
+          for (var album in albums) {
+            final List<AssetEntity> media = await album.getAssetListPaged(page: 0, size: 1);
+            if (media.isNotEmpty) {
+              emit(state.copyWith(galleryMedia: media));
+              return;
+            }
+          }
         }
       }
     } catch (e) {

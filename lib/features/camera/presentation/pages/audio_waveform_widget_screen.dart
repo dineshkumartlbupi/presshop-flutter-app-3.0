@@ -17,9 +17,10 @@ class AudioWaveFormWidgetScreen extends StatefulWidget {
 
 class AudioWaveFormWidgetScreenState extends State<AudioWaveFormWidgetScreen>
     with SingleTickerProviderStateMixin {
-  PlayerController waveFormPlayerController = PlayerController(); // Initialise
+  PlayerController waveFormPlayerController = PlayerController();
 
   bool audioPlaying = false;
+  bool isFinished = false;
   late final AnimationController _controller;
 
   @override
@@ -132,27 +133,53 @@ class AudioWaveFormWidgetScreenState extends State<AudioWaveFormWidgetScreen>
     );
   }
 
-  Future initWaveData() async {
-    debugPrint("Wave-path:${widget.mediaPath}");
+  Future<void> _preparePlayer() async {
     await waveFormPlayerController.preparePlayer(
       path: widget.mediaPath,
       shouldExtractWaveform: true,
       noOfSamples: 100,
       volume: 1.0,
     );
+  }
 
-    waveFormPlayerController.onPlayerStateChanged.listen((event) {
-      if (event.isPaused) {
+  bool _isPlayerListenerAdded = false;
+
+  Future initWaveData() async {
+    debugPrint("Wave-path:${widget.mediaPath}");
+    await _preparePlayer();
+
+    if (!_isPlayerListenerAdded) {
+      waveFormPlayerController.onPlayerStateChanged.listen((event) {
+        if (event.isPaused) {
+          audioPlaying = false;
+          if (mounted) {
+            setState(() {});
+          }
+        }
+      });
+
+      waveFormPlayerController.onCompletion.listen((event) async {
         audioPlaying = false;
+        isFinished = true;
+        _controller.stop();
+        _controller.reset();
         if (mounted) {
           setState(() {});
         }
-      }
-    });
+        await waveFormPlayerController.pausePlayer();
+        await _preparePlayer();
+      });
+      _isPlayerListenerAdded = true;
+    }
   }
 
   Future playSound() async {
     debugPrint("PlayTheSound");
+
+    if (isFinished) {
+      await waveFormPlayerController.seekTo(0);
+      isFinished = false;
+    }
 
     await waveFormPlayerController.startPlayer().then((value) {
       debugPrint("PlayerState: ${waveFormPlayerController.playerState}");

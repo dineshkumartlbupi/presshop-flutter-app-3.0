@@ -125,20 +125,39 @@ class CameraScreenState extends State<CameraScreen>
 
   Future<Uint8List?> _getLatestGalleryImageBytes() async {
     try {
+      // Ensure we have permissions first
       final PermissionState ps = await PhotoManager.requestPermissionExtend();
-      if (!ps.isAuth && !ps.hasAccess) return null;
+      if (!ps.isAuth && !ps.hasAccess) {
+        debugPrint('📸 CameraScreen: Gallery permission not granted for thumbnail.');
+        return null;
+      }
 
+      // Fetch albums with explicit sorting (Latest first)
       final List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
-          onlyAll: true, type: RequestType.image);
-      if (paths.isEmpty) return null;
+        type: RequestType.common, // Fetch both images and videos for the thumbnail
+        filterOption: FilterOptionGroup(
+          orders: [
+            const OrderOption(type: OrderOptionType.createDate, asc: false),
+          ],
+        ),
+      );
 
-      final List<AssetEntity> assets =
-          await paths.first.getAssetListRange(start: 0, end: 1);
-      if (assets.isEmpty) return null;
+      if (paths.isEmpty) {
+        debugPrint('📸 CameraScreen: No gallery albums found.');
+        return null;
+      }
 
-      final Uint8List? thumb = await assets.first
-          .thumbnailDataWithSize(const ThumbnailSize(200, 200));
-      return thumb;
+      // Find the first album that actually has media
+      for (var path in paths) {
+        final List<AssetEntity> assets = await path.getAssetListRange(start: 0, end: 1);
+        if (assets.isNotEmpty) {
+          debugPrint('📸 CameraScreen: Found latest gallery item in album: ${path.name}');
+          return await assets.first.thumbnailDataWithSize(const ThumbnailSize(200, 200));
+        }
+      }
+
+      debugPrint('📸 CameraScreen: All albums are empty.');
+      return null;
     } catch (e) {
       debugPrint('Error fetching latest gallery image: $e');
       return null;
@@ -179,12 +198,7 @@ class CameraScreenState extends State<CameraScreen>
 
               if (mounted) setState(() {});
 
-              // Force resume preview on UI side to prevent black screen
-              try {
-                await state.cameraController!.resumePreview();
-              } catch (e) {
-                // Ignore resume preview errors
-              }
+
             } catch (e) {
               debugPrint("Error getting camera info (ignored): $e");
             }
@@ -367,9 +381,10 @@ class CameraScreenState extends State<CameraScreen>
       return _buildAudioBody(context, state, size);
     }
 
-    // 3. Show camera preview if controller is ready, even if status is loading/success
+    // 3. Show camera preview if controller is ready, and we are not in a loading state
     if (state.cameraController != null &&
-        state.cameraController!.value.isInitialized) {
+        state.cameraController!.value.isInitialized &&
+        state.status != CameraStatus.loading) {
       return Stack(
         children: [
           _buildCameraPreview(context, state, size),
@@ -836,7 +851,8 @@ class CameraScreenState extends State<CameraScreen>
                   width: size.width,
                   child: state.cameraController != null &&
                           state.cameraController!.value.isInitialized
-                      ? CameraPreview(state.cameraController!)
+                      ? CameraPreview(state.cameraController!,
+                          key: ValueKey(state.status))
                       : Container(color: Colors.black),
                 ),
               ),
@@ -1085,13 +1101,29 @@ class _PersistentGalleryThumbnailState
     return FutureBuilder<Uint8List?>(
       future: _thumbFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.data != null) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+           return Container(
+             color: Colors.black12,
+             child: const Center(
+               child: SizedBox(
+                 width: 20,
+                 height: 20,
+                 child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white54),
+               ),
+             ),
+           );
+        }
+        
+        if (snapshot.hasData && snapshot.data != null) {
           return Image.memory(snapshot.data!, fit: BoxFit.cover);
         }
-        // Always show the placeholder/dummy image while loading OR if the future returned null
-        return Image.asset("${CommonAssets.dummyImagePath}walk2.png",
-            fit: BoxFit.cover);
+        
+        // Fallback to a placeholder only if no data could be fetched
+        return Image.asset(
+          "${CommonAssets.dummyImagePath}walk2.png",
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey.shade900),
+        );
       },
     );
   }

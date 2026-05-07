@@ -278,7 +278,7 @@ class DashboardPageState extends State<Dashboard>
         key: _cameraKey,
         picAgain: false,
         previousScreen: ScreenNameEnum.dashboardScreen,
-        autoInitialize: false,
+        autoInitialize: true,
       ),
       // BlocProvider(
       //   create: (context) => sl<NewsBloc>()..add(const GetAllNewsEvent()),
