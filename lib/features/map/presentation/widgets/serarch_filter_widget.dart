@@ -238,7 +238,7 @@ class _FilterDropdown extends StatelessWidget {
                     e,
                     style: const TextStyle(
                       fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w300,
                     ),
                   ),
                 ),

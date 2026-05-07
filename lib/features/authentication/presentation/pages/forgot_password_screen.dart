@@ -75,7 +75,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthError) {
-            // showSnackBar("Error", state.message, Colors.red);
+            showSnackBar("Error", state.message, Colors.red);
           } else if (state is ForgotPasswordSent) {
             String msg = "OTP Sent Successfully";
             if (state.otp.isNotEmpty) {
@@ -346,7 +346,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
             extra: {'emailAddressValue': widget.email},
           );
         } else if (state is AuthError) {
-          // showSnackBar("Error", state.message, Colors.red);
+          showSnackBar("Error", state.message, Colors.red);
         }
       },
       child: Stack(
