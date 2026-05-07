@@ -70,8 +70,9 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
+        automaticallyImplyLeading: false,
         leading: null,
         leadingWidth: 0,
         title: Row(
@@ -82,7 +83,8 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
               },
               child: Image.asset(
                 "${iconsPath}ic_arrow_left.png",
-                width: size.width * AppDimensions.numD07,
+                width: 20,
+                color: Theme.of(context).iconTheme.color,
               ),
             ),
             SizedBox(
@@ -100,9 +102,11 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                     searchHashTagsApi(val);
                   });
                 },
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
                 decoration: InputDecoration(
                     filled: true,
-                    fillColor: AppColorTheme.colorLightGrey,
+                    fillColor: Theme.of(context).cardColor,
                     hintText: "Search or Add Hashtags",
                     hintStyle: commonTextStyle(
                         size: size,
@@ -190,12 +194,15 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.white,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontWeight: FontWeight.normal),
                           ),
                           deleteIcon: Icon(
                             Icons.close,
-                            color: Colors.white,
+                            color: Theme.of(context).iconTheme.color,
                             size: size.width * AppDimensions.numD045,
                           ),
                           onDeleted: () {
@@ -211,7 +218,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                             }
                             setState(() {});
                           },
-                          backgroundColor: Colors.black),
+                          backgroundColor: Theme.of(context).cardColor),
                     );
                   }),
                 ),
@@ -228,7 +235,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                     style: commonTextStyle(
                         size: size,
                         fontSize: size.width * AppDimensions.numD035,
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontWeight: FontWeight.w600),
                   ),
                 ),
@@ -268,7 +275,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                               },
                               child: Container(
                                 decoration: BoxDecoration(
-                                    color: AppColorTheme.colorLightGrey,
+                                    color: Theme.of(context).cardColor,
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD02)),
                                 padding: EdgeInsets.symmetric(
@@ -283,7 +290,10 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                                           size: size,
                                           fontSize: size.width *
                                               AppDimensions.numD035,
-                                          color: Colors.black,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.color,
                                           fontWeight: FontWeight.w700),
                                     ),
                                     const Spacer(),
@@ -325,7 +335,9 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                                         : (hashtagSearchList[index].selected
                                             ? Icon(
                                                 Icons.check,
-                                                color: Colors.black,
+                                                color: Theme.of(context)
+                                                    .iconTheme
+                                                    .color,
                                                 size: size.width *
                                                     AppDimensions.numD06,
                                               )

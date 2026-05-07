@@ -548,7 +548,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final response = await apiClient.post(
         ApiConstantsNew.auth.forgotPassword,
-        data: {"email": email},
+        data: {
+          "email": email,
+          "role": "hopper",
+        },
       );
 
       if (response.statusCode == 200) {
