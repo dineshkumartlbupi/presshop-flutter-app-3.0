@@ -781,15 +781,26 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   Future<void> _onLoadGalleryMedia(
       LoadGalleryMediaEvent event, Emitter<CameraState> emit) async {
     try {
-      // Use PhotoManager source of truth for gallery access after initial checks
       final PermissionState ps = await PhotoManager.requestPermissionExtend();
       if (ps.isAuth || ps.hasAccess) {
-        List<AssetPathEntity> albums =
-            await PhotoManager.getAssetPathList(onlyAll: true);
+        // Use common type to include both images and videos
+        final List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
+          type: RequestType.common,
+          filterOption: FilterOptionGroup(
+            orders: [
+              const OrderOption(type: OrderOptionType.createDate, asc: false),
+            ],
+          ),
+        );
+        
         if (albums.isNotEmpty) {
-          List<AssetEntity> media =
-              await albums[0].getAssetListPaged(page: 0, size: 1);
-          emit(state.copyWith(galleryMedia: media));
+          for (var album in albums) {
+            final List<AssetEntity> media = await album.getAssetListPaged(page: 0, size: 1);
+            if (media.isNotEmpty) {
+              emit(state.copyWith(galleryMedia: media));
+              return;
+            }
+          }
         }
       }
     } catch (e) {

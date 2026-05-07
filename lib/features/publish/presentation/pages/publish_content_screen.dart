@@ -434,13 +434,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           child: Stack(
                                             children: [
                                               Visibility(
-                                                visible: widget.publishData !=
-                                                        null
-                                                    ? widget
-                                                        .publishData!.mimeType
-                                                        .contains("doc")
-                                                    : widget
-                                                            .myContentData!
+                                                visible: widget.publishData != null
+                                                    ? widget.publishData!
+                                                            .mediaList.first.mimeType
+                                                            .contains("doc")
+                                                    : widget.myContentData!
                                                             .contentMediaList
                                                             .first
                                                             .mediaType ==
@@ -461,13 +459,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 ),
                                               ),
                                               Visibility(
-                                                visible: widget.publishData !=
-                                                        null
-                                                    ? widget
-                                                        .publishData!.mimeType
-                                                        .contains("pdf")
-                                                    : widget
-                                                            .myContentData!
+                                                visible: widget.publishData != null
+                                                    ? widget.publishData!
+                                                            .mediaList.first.mimeType
+                                                            .contains("pdf")
+                                                    : widget.myContentData!
                                                             .contentMediaList
                                                             .first
                                                             .mediaType ==
@@ -661,138 +657,47 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 .numD35,
                                                         fit: BoxFit.cover,
                                                       )),
-                                                  Container(
-                                                    margin: EdgeInsets.only(
-                                                        top: size.width *
-                                                            AppDimensions
-                                                                .numD03,
-                                                        bottom: size.width *
-                                                            AppDimensions
-                                                                .numD02,
-                                                        right: size.width *
-                                                            AppDimensions
-                                                                .numD03),
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 4,
-                                                            horizontal: 6),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.black
-                                                            .withValues(
-                                                                alpha: 0.4),
-                                                        borderRadius: BorderRadius
-                                                            .circular(size
-                                                                    .width *
-                                                                AppDimensions
-                                                                    .numD013)),
-                                                    child: Text(
-                                                        totalContentCount
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: size
-                                                                    .width *
-                                                                AppDimensions
-                                                                    .numD03,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600)),
-                                                  ),
+                                                   Container(
+                                                     margin: EdgeInsets.only(
+                                                         top: size.width *
+                                                             AppDimensions
+                                                                 .numD03,
+                                                         bottom: size.width *
+                                                             AppDimensions
+                                                                 .numD02,
+                                                         right: size.width *
+                                                             AppDimensions
+                                                                 .numD03),
+                                                     padding:
+                                                         EdgeInsets.symmetric(
+                                                             vertical: 4,
+                                                             horizontal: 6),
+                                                     decoration: BoxDecoration(
+                                                         color: Colors.black
+                                                             .withValues(
+                                                                 alpha: 0.4),
+                                                         borderRadius: BorderRadius
+                                                             .circular(size
+                                                                     .width *
+                                                                 AppDimensions
+                                                                     .numD013)),
+                                                     child: Text(
+                                                         totalContentCount
+                                                             .toString(),
+                                                         style: TextStyle(
+                                                             color: Colors.white,
+                                                             fontSize: size
+                                                                     .width *
+                                                                 AppDimensions
+                                                                     .numD03,
+                                                             fontWeight:
+                                                                 FontWeight
+                                                                     .w600)),
+                                                   ),
                                                 ],
                                               ),
 
-                                              widget.hideDraft &&
-                                                      widget.myContentData !=
-                                                          null
-                                                  ? Positioned(
-                                                      right: size.width *
-                                                          AppDimensions.numD02,
-                                                      top: size.width *
-                                                          AppDimensions.numD02,
-                                                      child: Container(
-                                                          width: size.width *
-                                                              AppDimensions
-                                                                  .numD06,
-                                                          height: size.width *
-                                                              AppDimensions
-                                                                  .numD06,
-                                                          padding: EdgeInsets.symmetric(
-                                                              horizontal: size.width *
-                                                                  AppDimensions
-                                                                      .numD01,
-                                                              vertical:
-                                                                  size.width *
-                                                                      0.002),
-                                                          decoration: BoxDecoration(
-                                                              color: AppColorTheme
-                                                                  .colorLightGreen
-                                                                  .withValues(
-                                                                      alpha:
-                                                                          0.8),
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                      size.width *
-                                                                          AppDimensions.numD015)),
-                                                          child: Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal: widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                                "video" ||
-                                                                            widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                                "audio"
-                                                                        ? 0
-                                                                        : size.width *
-                                                                            0.005,
-                                                                    vertical: widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                            "video"
-                                                                        ? size.width *
-                                                                            0.005
-                                                                        : widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                                "audio"
-                                                                            ? size.width *
-                                                                                0.009
-                                                                            : size.width *
-                                                                                0.01),
-                                                            child: Image.asset(
-                                                              widget
-                                                                          .myContentData!
-                                                                          .contentMediaList
-                                                                          .first
-                                                                          .mediaType ==
-                                                                      "image"
-                                                                  ? "${iconsPath}ic_camera_publish.png"
-                                                                  : widget.myContentData!.contentMediaList.first
-                                                                              .mediaType ==
-                                                                          "video"
-                                                                      ? "${iconsPath}ic_v_cam.png"
-                                                                      : widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                              "audio"
-                                                                          ? "${iconsPath}ic_mic.png"
-                                                                          : "${iconsPath}doc_icon.png",
-                                                              color:
-                                                                  Colors.white,
-                                                              height: widget
-                                                                          .myContentData!
-                                                                          .contentMediaList
-                                                                          .first
-                                                                          .mediaType ==
-                                                                      "video"
-                                                                  ? size.width *
-                                                                      AppDimensions
-                                                                          .numD09
-                                                                  : widget.myContentData!.contentMediaList.first
-                                                                              .mediaType ==
-                                                                          "image"
-                                                                      ? size.width *
-                                                                          AppDimensions
-                                                                              .numD05
-                                                                      : size.width *
-                                                                          AppDimensions
-                                                                              .numD08,
-                                                            ),
-                                                          )),
-                                                    )
-                                                  : const SizedBox.shrink(),
+                                               const SizedBox.shrink(),
                                             ],
                                           ),
                                         ),
@@ -1091,148 +996,48 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 .numD35,
                                                         fit: BoxFit.cover,
                                                       )),
-                                                  Container(
-                                                    margin: EdgeInsets.only(
-                                                        top: size.width *
-                                                            AppDimensions
-                                                                .numD03,
-                                                        bottom: size.width *
-                                                            AppDimensions
-                                                                .numD02,
-                                                        right: size.width *
-                                                            AppDimensions
-                                                                .numD03),
-                                                    // padding: EdgeInsets.only(left: size.width * AppDimensions.numD02, right: size.width * AppDimensions.numD01, top: size.width * AppDimensions.numD005, bottom: size.width * AppDimensions.numD005),
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 4,
-                                                            horizontal: 6),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.black
-                                                            .withValues(
-                                                                alpha: 0.4),
-                                                        borderRadius: BorderRadius
-                                                            .circular(size
-                                                                    .width *
-                                                                AppDimensions
-                                                                    .numD013)),
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        Text(
-                                                            (imageCount +
-                                                                    videoCount +
-                                                                    audioCount)
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                                color:
-                                                                    textColor,
-                                                                fontSize: size
-                                                                        .width *
-                                                                    AppDimensions
-                                                                        .numD03,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600)),
-                                                      ],
-                                                    ),
-                                                  ),
+                                                   Container(
+                                                     margin: EdgeInsets.only(
+                                                         top: size.width *
+                                                             AppDimensions
+                                                                 .numD03,
+                                                         bottom: size.width *
+                                                             AppDimensions
+                                                                 .numD02,
+                                                         right: size.width *
+                                                             AppDimensions
+                                                                 .numD03),
+                                                     padding:
+                                                         EdgeInsets.symmetric(
+                                                             vertical: 4,
+                                                             horizontal: 6),
+                                                     decoration: BoxDecoration(
+                                                         color: Colors.black
+                                                             .withValues(
+                                                                 alpha: 0.4),
+                                                         borderRadius: BorderRadius
+                                                             .circular(size
+                                                                     .width *
+                                                                 AppDimensions
+                                                                     .numD013)),
+                                                     child: Text(
+                                                         totalContentCount
+                                                             .toString(),
+                                                         style: TextStyle(
+                                                             color:
+                                                                 Colors.white,
+                                                             fontSize: size
+                                                                     .width *
+                                                                 AppDimensions
+                                                                     .numD03,
+                                                             fontWeight:
+                                                                 FontWeight
+                                                                     .w600)),
+                                                   ),
                                                 ],
                                               ),
 
-                                              false &&
-                                                      widget.myContentData !=
-                                                          null
-                                                  ? Positioned(
-                                                      right: size.width *
-                                                          AppDimensions.numD02,
-                                                      top: size.width *
-                                                          AppDimensions.numD02,
-                                                      child: Container(
-                                                          width: size.width *
-                                                              AppDimensions
-                                                                  .numD06,
-                                                          height: size.width *
-                                                              AppDimensions
-                                                                  .numD06,
-                                                          padding: EdgeInsets.symmetric(
-                                                              horizontal: size.width *
-                                                                  AppDimensions
-                                                                      .numD01,
-                                                              vertical:
-                                                                  size.width *
-                                                                      0.002),
-                                                          decoration: BoxDecoration(
-                                                              color: AppColorTheme
-                                                                  .colorLightGreen
-                                                                  .withValues(
-                                                                      alpha:
-                                                                          0.8),
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                      size.width *
-                                                                          AppDimensions.numD015)),
-                                                          child: Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal: widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                                "video" ||
-                                                                            widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                                "audio"
-                                                                        ? 0
-                                                                        : size.width *
-                                                                            0.005,
-                                                                    vertical: widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                            "video"
-                                                                        ? size.width *
-                                                                            0.005
-                                                                        : widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                                "audio"
-                                                                            ? size.width *
-                                                                                0.009
-                                                                            : size.width *
-                                                                                0.01),
-                                                            child: Image.asset(
-                                                              widget
-                                                                          .myContentData!
-                                                                          .contentMediaList
-                                                                          .first
-                                                                          .mediaType ==
-                                                                      "image"
-                                                                  ? "${iconsPath}ic_camera_publish.png"
-                                                                  : widget.myContentData!.contentMediaList.first
-                                                                              .mediaType ==
-                                                                          "video"
-                                                                      ? "${iconsPath}ic_v_cam.png"
-                                                                      : widget.myContentData!.contentMediaList.first.mediaType ==
-                                                                              "audio"
-                                                                          ? "${iconsPath}ic_mic.png"
-                                                                          : "${iconsPath}doc_icon.png",
-                                                              color:
-                                                                  Colors.white,
-                                                              height: widget
-                                                                          .myContentData!
-                                                                          .contentMediaList
-                                                                          .first
-                                                                          .mediaType ==
-                                                                      "video"
-                                                                  ? size.width *
-                                                                      AppDimensions
-                                                                          .numD09
-                                                                  : widget.myContentData!.contentMediaList.first
-                                                                              .mediaType ==
-                                                                          "image"
-                                                                      ? size.width *
-                                                                          AppDimensions
-                                                                              .numD05
-                                                                      : size.width *
-                                                                          AppDimensions
-                                                                              .numD08,
-                                                            ),
-                                                          )),
-                                                    )
-                                                  : const SizedBox.shrink(),
+                                               const SizedBox.shrink(),
                                             ],
                                           ),
                                         ),

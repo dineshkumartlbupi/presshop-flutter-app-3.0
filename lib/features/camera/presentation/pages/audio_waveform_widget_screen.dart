@@ -17,7 +17,7 @@ class AudioWaveFormWidgetScreen extends StatefulWidget {
 
 class AudioWaveFormWidgetScreenState extends State<AudioWaveFormWidgetScreen>
     with SingleTickerProviderStateMixin {
-  PlayerController waveFormPlayerController = PlayerController(); // Initialise
+  PlayerController waveFormPlayerController = PlayerController();
 
   bool audioPlaying = false;
   bool isFinished = false;

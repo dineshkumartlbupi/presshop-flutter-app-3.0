@@ -950,8 +950,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
         if (widget.type == "draft") {
           widget.cameraListData.add(element);
         }
-        mediaList.insert(
-            0,
+        mediaList.add(
             MediaData(
                 mediaPath: element.path,
                 mimeType: element.mimeType,
