@@ -179,12 +179,7 @@ class CameraScreenState extends State<CameraScreen>
 
               if (mounted) setState(() {});
 
-              // Force resume preview on UI side to prevent black screen
-              try {
-                await state.cameraController!.resumePreview();
-              } catch (e) {
-                // Ignore resume preview errors
-              }
+
             } catch (e) {
               debugPrint("Error getting camera info (ignored): $e");
             }
@@ -367,9 +362,10 @@ class CameraScreenState extends State<CameraScreen>
       return _buildAudioBody(context, state, size);
     }
 
-    // 3. Show camera preview if controller is ready, even if status is loading/success
+    // 3. Show camera preview if controller is ready, and we are not in a loading state
     if (state.cameraController != null &&
-        state.cameraController!.value.isInitialized) {
+        state.cameraController!.value.isInitialized &&
+        state.status != CameraStatus.loading) {
       return Stack(
         children: [
           _buildCameraPreview(context, state, size),
@@ -836,7 +832,8 @@ class CameraScreenState extends State<CameraScreen>
                   width: size.width,
                   child: state.cameraController != null &&
                           state.cameraController!.value.isInitialized
-                      ? CameraPreview(state.cameraController!)
+                      ? CameraPreview(state.cameraController!,
+                          key: ValueKey(state.status))
                       : Container(color: Colors.black),
                 ),
               ),

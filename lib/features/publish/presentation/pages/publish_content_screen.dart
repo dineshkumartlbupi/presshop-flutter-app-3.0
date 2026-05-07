@@ -77,6 +77,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
       userExclusivePriceValue = "";
   ContentCategory? selectedCategory;
   bool audioPlaying = false,
+      isFinished = false,
+      _isPlayerListenerAdded = false,
       draftSelected = false,
       _checkCharityBoxVal = false,
       isSaveDraftFromTask = false,
@@ -135,19 +137,40 @@ class PublishContentScreenState extends State<PublishContentScreen>
     }
   }
 
-  Future preparePlayer() async {
+  Future<void> _preparePlayerInternal() async {
     await controller.preparePlayer(
       path: audioPath,
       shouldExtractWaveform: true,
       noOfSamples: 100,
       volume: 1.0,
     );
-    controller.onCompletion.listen((_) {
-      debugPrint('Playback completed');
-      controller.setRefresh(true);
-      audioPlaying = false;
-      setState(() {});
-    });
+
+    if (!_isPlayerListenerAdded) {
+      controller.onCompletion.listen((_) async {
+        debugPrint('Playback completed');
+        audioPlaying = false;
+        isFinished = true;
+        if (mounted) {
+          setState(() {});
+        }
+        await controller.pausePlayer();
+        await _preparePlayerInternal();
+      });
+
+      controller.onPlayerStateChanged.listen((event) {
+        if (event.isPaused) {
+          audioPlaying = false;
+          if (mounted) {
+            setState(() {});
+          }
+        }
+      });
+      _isPlayerListenerAdded = true;
+    }
+  }
+
+  Future preparePlayer() async {
+    await _preparePlayerInternal();
   }
 
   String get localCurrencySymbol {
@@ -3090,19 +3113,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
   }
 
   Future initWaveData() async {
-    await controller.preparePlayer(
-      path: audioPath,
-      shouldExtractWaveform: true,
-      noOfSamples: 100,
-      volume: 1.0,
-    );
-
-    controller.onPlayerStateChanged.listen((event) {
-      if (event.isPaused) {
-        audioPlaying = false;
-        setState(() {});
-      }
-    });
+    await _preparePlayerInternal();
   }
 
   Future<void> updateDraftListAPI(String contentId) async {
@@ -3124,6 +3135,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
   }
 
   Future playSound() async {
+    if (isFinished) {
+      await controller.seekTo(0);
+      isFinished = false;
+    }
     await controller.startPlayer();
   }
 

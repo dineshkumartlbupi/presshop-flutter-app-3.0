@@ -78,7 +78,11 @@ class _SocialSignUpState extends State<SocialSignUp>
   }
 
   void _onPhoneChanged(String? value) {
-    if (value == null || value.trim().isEmpty) return;
+    if (value == null || value.trim().isEmpty) {
+      phoneAlreadyExists = false;
+      setState(() {});
+      return;
+    }
 
     _phoneDebounce?.cancel();
 
@@ -133,6 +137,7 @@ class _SocialSignUpState extends State<SocialSignUp>
   String socialName = "";
   String socialProfileImage = "";
   String socialType = "";
+  late SignUpBloc _signUpBloc;
 
   @override
   void initState() {
@@ -143,8 +148,13 @@ class _SocialSignUpState extends State<SocialSignUp>
       emailController.text = widget.email;
       // Removed auto-fill of username with name/email as requested.
       userNameController.text = "";
+      phoneController.text = widget.phoneNumber;
     }
-    // WidgetsBinding.instance.addPostFrameCallback((_) => getAvatarsApi());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (phoneController.text.isNotEmpty) {
+        checkPhoneApi();
+      }
+    });
   }
 
   @override
@@ -175,9 +185,8 @@ class _SocialSignUpState extends State<SocialSignUp>
     //     }
     //   });
 
-    return BlocProvider(
-      create: (context) => sl<SignUpBloc>()..add(FetchAvatarsEvent()),
-      child: BlocConsumer<SignUpBloc, SignUpState>(
+    _signUpBloc = context.read<SignUpBloc>();
+    return BlocConsumer<SignUpBloc, SignUpState>(
         listener: (context, state) {
           if (state is SignUpError) {
             _avatarsNotifier.value = false;
@@ -202,6 +211,9 @@ class _SocialSignUpState extends State<SocialSignUp>
           } else if (state is UserNameCheckResult) {
             userNameAlreadyExists = !state.isAvailable;
             userNameApiError = state.errorMessage;
+            setState(() {});
+          } else if (state is EmailCheckResult) {
+            emailAlreadyExists = !state.isAvailable;
             setState(() {});
           } else if (state is PhoneCheckResult) {
             phoneAlreadyExists = !state.isAvailable;
@@ -809,8 +821,7 @@ class _SocialSignUpState extends State<SocialSignUp>
             ),
           );
         },
-      ),
-    );
+      );
   }
 
   Icon? getReferralCodeSuffixIcon() {
@@ -895,7 +906,7 @@ class _SocialSignUpState extends State<SocialSignUp>
   }
 
   void checkPhoneApi() {
-    context.read<SignUpBloc>().add(CheckPhoneEvent(
+    _signUpBloc.add(CheckPhoneEvent(
         selectedCountryCodePicker + phoneController.text.trim()));
   }
 
