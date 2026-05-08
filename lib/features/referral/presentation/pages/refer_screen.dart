@@ -38,6 +38,8 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
   // Representative amounts for referral visualization
   double _friendsEarnAmount = 100.0;
   double _youEarnAmount = 5.0;
+  String _friendEarnImageUrl = "";
+  String _youEarnImageUrl = "";
 
   @override
   void initState() {
@@ -93,6 +95,17 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
             .setString(SharedPreferencesKeys.referralCode, _referralCode);
         sharedPreferences!.setString(
             SharedPreferencesKeys.totalHopperArmy, _totalHopperArmy.toString());
+
+        // Load referral page data from SharedPreferences
+        _friendEarnImageUrl = sharedPreferences!.getString(
+                SharedPreferencesKeys.referralYourFriendEarnImageUrlKey) ??
+            "";
+        _youEarnImageUrl = sharedPreferences!
+                .getString(SharedPreferencesKeys.referralYouEarnImageUrlKey) ??
+            "";
+        _referralCurrency = sharedPreferences!.getString(
+                SharedPreferencesKeys.referralPreferredCurrencySignKey) ??
+            "£";
       }
     } catch (e) {
       debugPrint("Error fetching profile: $e");
@@ -227,10 +240,34 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
 
                                 SizedBox(
                                     height: size.width * AppDimensions.numD04),
-                                _Referral3DCard(
-                                  amount: _friendsEarnAmount,
-                                  size: size,
-                                  currency: _referralCurrency,
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * AppDimensions.numD06),
+                                  child: _friendEarnImageUrl.isNotEmpty
+                                      ? Image.network(
+                                          _friendEarnImageUrl,
+                                          height:
+                                              size.width * AppDimensions.numD40,
+                                          width:
+                                              size.width * AppDimensions.numD40,
+                                          fit: BoxFit.contain,
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  Image.asset(
+                                            "${iconsPath}amount_100.png",
+                                            height: size.width *
+                                                AppDimensions.numD40,
+                                            width: size.width *
+                                                AppDimensions.numD40,
+                                          ),
+                                        )
+                                      : Image.asset(
+                                          "${iconsPath}amount_100.png",
+                                          height:
+                                              size.width * AppDimensions.numD40,
+                                          width:
+                                              size.width * AppDimensions.numD40,
+                                        ),
                                 ),
                               ],
                             ),
@@ -249,22 +286,36 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                                             .bodyLarge
                                             ?.color,
                                         fontWeight: FontWeight.bold)),
-                                // ClipRRect(
-                                //   borderRadius: BorderRadius.circular(
-                                //       size.width * AppDimensions.numD06),
-                                //   child: Image.asset(
-                                //     "${iconsPath}amount_5.png",
-                                //     height: size.width * AppDimensions.numD40,
-                                //     width: size.width * AppDimensions.numD40,
-                                //   ),
-                                // ),
                                 SizedBox(
                                     height: size.width * AppDimensions.numD04),
-                                _Referral3DCard(
-                                  amount: _youEarnAmount,
-                                  size: size,
-                                  isYouEarn: true,
-                                  currency: _referralCurrency,
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * AppDimensions.numD06),
+                                  child: _youEarnImageUrl.isNotEmpty
+                                      ? Image.network(
+                                          _youEarnImageUrl,
+                                          height:
+                                              size.width * AppDimensions.numD40,
+                                          width:
+                                              size.width * AppDimensions.numD40,
+                                          fit: BoxFit.contain,
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  Image.asset(
+                                            "${iconsPath}amount_5.png",
+                                            height: size.width *
+                                                AppDimensions.numD40,
+                                            width: size.width *
+                                                AppDimensions.numD40,
+                                          ),
+                                        )
+                                      : Image.asset(
+                                          "${iconsPath}amount_5.png",
+                                          height:
+                                              size.width * AppDimensions.numD40,
+                                          width:
+                                              size.width * AppDimensions.numD40,
+                                        ),
                                 ),
                               ],
                             ),
@@ -279,7 +330,8 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                   Container(
                       decoration: BoxDecoration(
                           border: Border.all(
-                              color: Theme.of(context).brightness == Brightness.dark
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
                                   ? AppColorTheme.colorItemDividerForDarkTheme
                                   : Theme.of(context).dividerColor),
                           color: Theme.of(context).cardColor,
@@ -318,7 +370,10 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                               children: [
                                 Icon(
                                   Icons.copy,
-                                  color: Theme.of(context).textTheme.bodySmall?.color,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color,
                                   size: size.width * AppDimensions.numD05,
                                 ),
                                 Text("Tap to copy",
@@ -326,7 +381,10 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                                         size: size,
                                         fontSize:
                                             size.width * AppDimensions.numD035,
-                                        color: Theme.of(context).textTheme.bodySmall?.color,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.color,
                                         fontWeight: FontWeight.w400)),
                               ],
                             ),
@@ -355,24 +413,40 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                           () {
                             final firstName = sharedPreferences?.getString(
                                     SharedPreferencesKeys.firstNameKey) ??
-                                "A hopper";
-                            final namePart = firstName.isNotEmpty
-                                ? firstName.toTitleCase()
-                                : "A hopper";
+                                "";
                             var shareText =
-                                '$namePart $referInviteText $_referralCode';
+                                '${firstName.toTitleCase()} $referInviteText ${sharedPreferences?.getString(SharedPreferencesKeys.referralCode) ?? ""}';
                             shareText = shareText.replaceAll(
-                                r'$appUrl', 'https://presshop.app');
+                                r'$appUrl', ApiConstantsNew.config.appUrl);
 
-                            final box =
-                                buttonContext.findRenderObject() as RenderBox?;
-                            Share.share(
-                              shareText,
-                              subject: 'Join PressHop!',
-                              sharePositionOrigin: box != null
-                                  ? box.localToGlobal(Offset.zero) & box.size
-                                  : null,
-                            );
+                            bool isPopUpShown = sharedPreferences?.getBool(
+                                    SharedPreferencesKeys
+                                        .isReferralPopUpShownKey) ??
+                                true;
+
+                            if (true) {
+                              MyCommon().referralDisclaimerDialog(size, context,
+                                  () {
+                                final box = buttonContext.findRenderObject()
+                                    as RenderBox?;
+                                Share.share(
+                                  shareText,
+                                  sharePositionOrigin: box != null
+                                      ? box.localToGlobal(Offset.zero) &
+                                          box.size
+                                      : null,
+                                );
+                              });
+                            } else {
+                              final box = buttonContext.findRenderObject()
+                                  as RenderBox?;
+                              Share.share(
+                                shareText,
+                                sharePositionOrigin: box != null
+                                    ? box.localToGlobal(Offset.zero) & box.size
+                                    : null,
+                              );
+                            }
                           },
                         );
                       }),

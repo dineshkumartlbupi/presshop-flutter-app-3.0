@@ -12,6 +12,27 @@ class RouteInfoWindow extends StatelessWidget {
   final String duration;
   final VoidCallback onClose;
 
+  String _formatDuration(String durationStr) {
+    try {
+      // Extract numeric value from string (e.g., "440 min" -> 440)
+      final numericPart = durationStr.replaceAll(RegExp(r'[^0-9]'), '');
+      if (numericPart.isEmpty) return durationStr;
+
+      final totalMinutes = int.parse(numericPart);
+      if (totalMinutes >= 60) {
+        final hours = totalMinutes ~/ 60;
+        final minutes = totalMinutes % 60;
+        if (minutes == 0) {
+          return "${hours}h";
+        }
+        return "${hours}h ${minutes}m";
+      }
+      return durationStr;
+    } catch (e) {
+      return durationStr;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -30,7 +51,6 @@ class RouteInfoWindow extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: borderColor),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
@@ -83,7 +103,7 @@ class RouteInfoWindow extends StatelessWidget {
                     const Icon(Icons.access_time, size: 16, color: Colors.grey),
                     const SizedBox(width: 8),
                     Text(
-                      duration,
+                      _formatDuration(duration),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

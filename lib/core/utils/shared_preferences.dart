@@ -87,6 +87,13 @@ class SharedPreferencesKeys {
   static const alertInfoPopupShownKey = "alert_info_popup_shown";
   static const isLocationPopupEnabledKey = "is_location_popup_enabled";
   static const permissionsAskedKey = "permissions_asked";
+  static const isReferralPopUpShownKey = "isReferralPopUpShown";
+  static const referredDialogTitleKey = "referredDialogTitle";
+  static const referredDialogDescriptionKey = "referredDialogDescription";
+  static const referredDialogRabbitImageKey = "referredDialogRabbitImage";
+  static const referralYourFriendEarnImageUrlKey = "refferalYourFriendEarnImageUrl";
+  static const referralYouEarnImageUrlKey = "refferalYouEarnImageUrl";
+  static const referralPreferredCurrencySignKey = "referralPreferredCurrencySign";
 
   // Caching Keys
   static const tutorialCategoriesCacheKey = "tutorial_categories_cache";
