@@ -8,7 +8,6 @@ import 'package:presshop/main.dart';
 import 'task_chat_bubbles.dart';
 
 class UploadInfoBubble extends StatelessWidget {
-
   const UploadInfoBubble({super.key, required this.uploadTextType});
   final String uploadTextType;
 
@@ -84,7 +83,6 @@ class UploadInfoBubble extends StatelessWidget {
 }
 
 class CongratulationsBubble extends StatelessWidget {
-
   const CongratulationsBubble({
     super.key,
     required this.roomId,
@@ -145,9 +143,10 @@ class CongratulationsBubble extends StatelessWidget {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD036,
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
                             fontWeight: FontWeight.normal),
                       ),
                       TextSpan(
@@ -163,9 +162,10 @@ class CongratulationsBubble extends StatelessWidget {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD036,
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
                             fontWeight: FontWeight.normal),
                       ),
                       TextSpan(
@@ -223,7 +223,6 @@ class CongratulationsBubble extends StatelessWidget {
 }
 
 class MoreContentRequestBubble extends StatelessWidget {
-
   const MoreContentRequestBubble({
     super.key,
     required this.item,
@@ -312,18 +311,22 @@ class MoreContentRequestBubble extends StatelessWidget {
               : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: isPending
-                ? (status ? AppColorTheme.colorThemePink : (Theme.of(context).brightness == Brightness.dark ? Colors.white12 : Colors.black))
+                ? (status
+                    ? AppColorTheme.colorThemePink
+                    : (Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white12
+                        : Colors.black))
                 : (isSelected ? Colors.grey : Colors.transparent),
             shape: RoundedRectangleBorder(
               borderRadius:
                   BorderRadius.circular(size.width * AppDimensions.numD04),
-                  side: isPending || isSelected
-                      ? BorderSide.none
-                      : BorderSide(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? AppColorTheme.colorItemDividerForDarkTheme
-                              : Colors.black,
-                        ),
+              side: isPending || isSelected
+                  ? BorderSide.none
+                  : BorderSide(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColorTheme.colorItemDividerForDarkTheme
+                          : Colors.black,
+                    ),
             ),
           ),
           child: Text(
@@ -341,7 +344,6 @@ class MoreContentRequestBubble extends StatelessWidget {
 }
 
 class EarningBubble extends StatelessWidget {
-
   const EarningBubble({super.key, required this.amount});
   final String amount;
 
@@ -391,9 +393,10 @@ class EarningBubble extends StatelessWidget {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD036,
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
                             fontWeight: FontWeight.normal),
                       ),
                       TextSpan(
@@ -409,9 +412,10 @@ class EarningBubble extends StatelessWidget {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD036,
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
                             fontWeight: FontWeight.normal),
                       ),
                       TextSpan(
@@ -427,9 +431,10 @@ class EarningBubble extends StatelessWidget {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD036,
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
                             fontWeight: FontWeight.normal),
                       ),
                     ],
@@ -465,7 +470,6 @@ class EarningBubble extends StatelessWidget {
 }
 
 class MediaUploadSuccessBubble extends StatelessWidget {
-
   const MediaUploadSuccessBubble({
     super.key,
     required this.imgCount,
@@ -552,7 +556,6 @@ class MediaUploadSuccessBubble extends StatelessWidget {
 }
 
 class ActionResponseBubble extends StatelessWidget {
-
   const ActionResponseBubble({super.key, required this.message});
   final String message;
 
@@ -666,7 +669,6 @@ class UploadNoContentBubble extends StatelessWidget {
 }
 
 class MediaHouseOfferBubble extends StatelessWidget {
-
   const MediaHouseOfferBubble({
     super.key,
     required this.item,
@@ -755,7 +757,6 @@ class MediaHouseOfferBubble extends StatelessWidget {
 }
 
 class ActionRequiredBubble extends StatelessWidget {
-
   const ActionRequiredBubble({
     super.key,
     required this.item,

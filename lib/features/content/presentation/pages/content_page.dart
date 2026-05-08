@@ -232,6 +232,8 @@ class MyContentViewState extends State<MyContentView>
   Widget build(BuildContext context) {
     super.build(context);
     var size = MediaQuery.of(context).size;
+    final double scalingWidth = isIpad ? 550 : size.width;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: NewHomeAppBar(
@@ -241,62 +243,15 @@ class MyContentViewState extends State<MyContentView>
           showFilterSheet();
         },
       ),
-
-      //          CommonAppBar(
-      //   elevation: 0,
-      //   hideLeading: widget.hideLeading,
-      //   title: Text(
-      //     "My Content",
-      //     style: TextStyle(
-      //         color: Colors.black,
-      //         fontWeight: FontWeight.bold,
-      //         fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-      //   ),
-      //   centerTitle: false,
-      //   titleSpacing: 0,
-      //   size: size,
-      //   showActions: true,
-      //   leadingFxn: () {
-      //     context.pop();
-      //   },
-      //   actionWidget: [
-      //     InkWell(
-      // onTap: () {
-      //   showFilterSheet();
-      // },
-      //       child: commonFilterIcon(size),
-      //     ),
-      //     SizedBox(
-      //       width: size.width * AppDimensions.numD02,
-      //     ),
-      //     InkWell(
-      //       onTap: () {
-      //         context.goNamed(
-      //           AppRoutes.dashboardName,
-      //           extra: {'initialPosition': 2},
-      //         );
-      //       },
-      //       child: Image.asset(
-      //         "${commonImagePath}rabbitLogo.png",
-      //         height: size.width * AppDimensions.numD07,
-      //         width: size.width * AppDimensions.numD07,
-      //       ),
-      //     ),
-      //     SizedBox(
-      //       width: size.width * AppDimensions.numD04,
-      //     )
-      //   ],
-      // ),
       body: SafeArea(
         child: Column(
           children: [
-            // SizedBox(height: size.width * AppDimensions.numD04),
             Container(
               color: Theme.of(context).scaffoldBackgroundColor,
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                    vertical: size.width * AppDimensions.numD02,
-                    horizontal: size.width * AppDimensions.numD04),
+                    vertical: scalingWidth * AppDimensions.numD02,
+                    horizontal: scalingWidth * AppDimensions.numD04),
                 child: TabBar(
                   controller: _tabController,
                   physics: const NeverScrollableScrollPhysics(),
@@ -309,22 +264,22 @@ class MyContentViewState extends State<MyContentView>
                   indicator: BoxDecoration(
                     color: AppColorTheme.colorThemePink,
                     borderRadius: BorderRadius.circular(
-                        size.width * AppDimensions.numD01),
+                        scalingWidth * AppDimensions.numD01),
                   ),
                   labelStyle: commonTextStyle(
                     size: size,
-                    fontSize: size.width * AppDimensions.numD038,
+                    fontSize: scalingWidth * AppDimensions.numD038,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                   unselectedLabelStyle: commonTextStyle(
                     size: size,
-                    fontSize: size.width * AppDimensions.numD038,
+                    fontSize: scalingWidth * AppDimensions.numD038,
                     color: Theme.of(context).textTheme.bodyLarge?.color ??
                         Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
-                  tabs: [
+                  tabs: const [
                     Tab(text: "All Content"),
                     Tab(text: "My Content"),
                   ],
@@ -358,6 +313,7 @@ class MyContentViewState extends State<MyContentView>
       RefreshController controller, String type, String emptyMessage) {
     bool isAll = type == 'all';
     var size = MediaQuery.of(context).size;
+    final double scalingWidth = isIpad ? 550 : size.width;
 
     return BlocConsumer<ContentBloc, ContentState>(
       listener: (context, state) {
@@ -443,13 +399,15 @@ class MyContentViewState extends State<MyContentView>
                       ],
                     )
                   : GridView.builder(
-                      padding:
-                          EdgeInsets.all(size.width * AppDimensions.numD04),
+                      padding: EdgeInsets.all(
+                          scalingWidth * AppDimensions.numD04),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.75,
-                        mainAxisSpacing: size.width * AppDimensions.numD03,
-                        crossAxisSpacing: size.width * AppDimensions.numD03,
+                        crossAxisCount: isIpad ? 3 : 2,
+                        childAspectRatio: isIpad ? 0.8 : 0.75,
+                        mainAxisSpacing:
+                            scalingWidth * AppDimensions.numD03,
+                        crossAxisSpacing:
+                            scalingWidth * AppDimensions.numD03,
                       ),
                       itemCount: currentList.length,
                       itemBuilder: (context, index) {

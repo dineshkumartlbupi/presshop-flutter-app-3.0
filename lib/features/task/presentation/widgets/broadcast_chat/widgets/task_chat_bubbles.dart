@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:presshop/features/chat/presentation/pages/full_video_view.dart';
 
 class MediaUploadProgress {
-
   MediaUploadProgress({required this.progress, required this.status});
   final double progress;
   final String status;
@@ -104,7 +103,6 @@ class HopperAvatar extends StatelessWidget {
 }
 
 class LeftTextChatBubble extends StatelessWidget {
-
   const LeftTextChatBubble({super.key, required this.item});
   final ManageTaskChatModel item;
 
@@ -153,7 +151,6 @@ class LeftTextChatBubble extends StatelessWidget {
 }
 
 class RightMediaChatBubble extends StatelessWidget {
-
   const RightMediaChatBubble({
     super.key,
     required this.item,
@@ -592,7 +589,6 @@ class RightMediaChatBubble extends StatelessWidget {
 }
 
 class UploadingCircleWithPercentageWidget extends StatelessWidget {
-
   const UploadingCircleWithPercentageWidget({
     super.key,
     required this.progress,

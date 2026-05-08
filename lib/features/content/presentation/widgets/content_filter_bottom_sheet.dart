@@ -24,41 +24,45 @@ class ContentFilterSheet extends StatefulWidget {
 class _ContentFilterSheetState extends State<ContentFilterSheet> {
   @override
   Widget build(BuildContext context) {
+    final double scalingWidth = isIpad ? 550 : widget.size.width;
+
     return Padding(
       padding: EdgeInsets.only(
-        top: widget.size.width * AppDimensions.numD06,
-        left: widget.size.width * AppDimensions.numD05,
-        right: widget.size.width * AppDimensions.numD05,
+        top: scalingWidth * AppDimensions.numD06,
+        left: scalingWidth * AppDimensions.numD05,
+        right: scalingWidth * AppDimensions.numD05,
       ),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(),
-            SizedBox(height: widget.size.width * AppDimensions.numD085),
-            _buildSection(AppStrings.sortText, widget.sortList, true),
-            SizedBox(height: widget.size.width * AppDimensions.numD05),
-            _buildSection(AppStrings.filterText, widget.filterList, false),
-            SizedBox(height: widget.size.width * AppDimensions.numD06),
-            _buildApplyButton(),
-            SizedBox(height: widget.size.width * AppDimensions.numD02),
+            _buildHeader(scalingWidth),
+            SizedBox(height: scalingWidth * AppDimensions.numD085),
+            _buildSection(
+                AppStrings.sortText, widget.sortList, true, scalingWidth),
+            SizedBox(height: scalingWidth * AppDimensions.numD05),
+            _buildSection(
+                AppStrings.filterText, widget.filterList, false, scalingWidth),
+            SizedBox(height: scalingWidth * AppDimensions.numD06),
+            _buildApplyButton(scalingWidth),
+            SizedBox(height: scalingWidth * AppDimensions.numD02),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(double scalingWidth) {
     return Row(
       children: [
         IconButton(
-          splashRadius: widget.size.width * AppDimensions.numD07,
+          splashRadius: scalingWidth * AppDimensions.numD07,
           onPressed: () => context.pop(),
           icon: Icon(
             Icons.close,
             color: Theme.of(context).iconTheme.color,
-            size: widget.size.width * AppDimensions.numD07,
+            size: scalingWidth * AppDimensions.numD07,
           ),
         ),
         Expanded(
@@ -68,8 +72,8 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
               overflow: TextOverflow.ellipsis,
               style: commonTextStyle(
                   size: widget.size,
-                  fontSize: widget.size.width *
-                      AppDimensions.appBarHeadingFontSizeNew,
+                  fontSize:
+                      scalingWidth * AppDimensions.appBarHeadingFontSizeNew,
                   color: Theme.of(context).textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.bold),
             ),
@@ -82,14 +86,15 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
             style: TextStyle(
                 color: AppColorTheme.colorThemePink,
                 fontWeight: FontWeight.w400,
-                fontSize: widget.size.width * AppDimensions.numD03),
+                fontSize: scalingWidth * AppDimensions.numD03),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildSection(String title, List<FilterModel> list, bool isSort) {
+  Widget _buildSection(
+      String title, List<FilterModel> list, bool isSort, double scalingWidth) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -97,19 +102,19 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
           title,
           style: commonTextStyle(
               size: widget.size,
-              fontSize: widget.size.width * AppDimensions.numD05,
-              color:
-                  Theme.of(context).textTheme.bodyLarge?.color,
+              fontSize: scalingWidth * AppDimensions.numD05,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
               fontWeight: FontWeight.w500),
         ),
-        _buildFilterList(list, isSort),
+        _buildFilterList(list, isSort, scalingWidth),
       ],
     );
   }
 
-  Widget _buildFilterList(List<FilterModel> list, bool isSort) {
+  Widget _buildFilterList(
+      List<FilterModel> list, bool isSort, double scalingWidth) {
     return ListView.separated(
-      padding: EdgeInsets.only(top: widget.size.width * AppDimensions.numD03),
+      padding: EdgeInsets.only(top: scalingWidth * AppDimensions.numD03),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: list.length,
@@ -121,27 +126,29 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
             padding: EdgeInsets.symmetric(
               vertical: item.name == AppStrings.filterDateText
                   ? 0
-                  : widget.size.width * AppDimensions.numD025,
-              horizontal: widget.size.width * AppDimensions.numD02,
+                  : scalingWidth * AppDimensions.numD025,
+              horizontal: scalingWidth * AppDimensions.numD02,
             ),
-            color: item.isSelected 
-                ? (Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.1) : Colors.grey.shade400) 
+            color: item.isSelected
+                ? (Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white.withOpacity(0.1)
+                    : Colors.grey.shade400)
                 : null,
             child: Row(
               children: [
-                _buildItemIcon(item),
-                SizedBox(width: widget.size.width * AppDimensions.numD03),
+                _buildItemIcon(item, scalingWidth),
+                SizedBox(width: scalingWidth * AppDimensions.numD03),
                 item.name == AppStrings.filterDateText
-                    ? _buildDateRow(item, list)
+                    ? _buildDateRow(item, list, scalingWidth)
                     : Expanded(
                         child: Text(item.name,
                             style: TextStyle(
                                 fontSize:
-                                    widget.size.width * AppDimensions.numD035,
+                                    scalingWidth * AppDimensions.numD035,
                                 color: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.color,
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: "AirbnbCereal_W_Bk")),
                       )
@@ -151,29 +158,31 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
         );
       },
       separatorBuilder: (_, __) =>
-          SizedBox(height: widget.size.width * AppDimensions.numD01),
+          SizedBox(height: scalingWidth * AppDimensions.numD01),
     );
   }
 
-  Widget _buildItemIcon(FilterModel item) {
+  Widget _buildItemIcon(FilterModel item, double scalingWidth) {
     return Image.asset(
       "$iconsPath${item.icon}",
       color: Theme.of(context).iconTheme.color,
       height: item.name == AppStrings.soldContentText
-          ? widget.size.width * AppDimensions.numD06
-          : widget.size.width * AppDimensions.numD05,
+          ? scalingWidth * AppDimensions.numD06
+          : scalingWidth * AppDimensions.numD05,
       width: item.name == AppStrings.soldContentText
-          ? widget.size.width * AppDimensions.numD06
-          : widget.size.width * AppDimensions.numD05,
+          ? scalingWidth * AppDimensions.numD06
+          : scalingWidth * AppDimensions.numD05,
     );
   }
 
-  Widget _buildDateRow(FilterModel item, List<FilterModel> list) {
+  Widget _buildDateRow(
+      FilterModel item, List<FilterModel> list, double scalingWidth) {
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildDatePicker(
+            scalingWidth: scalingWidth,
             label: item.fromDate != null
                 ? dateTimeFormatter(dateTime: item.fromDate.toString())
                 : 'From Date',
@@ -183,8 +192,9 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
               _selectOnly(list, item);
             },
           ),
-          SizedBox(height: widget.size.width * AppDimensions.numD03),
+          SizedBox(height: scalingWidth * AppDimensions.numD03),
           _buildDatePicker(
+            scalingWidth: scalingWidth,
             label: item.toDate != null
                 ? dateTimeFormatter(dateTime: item.toDate.toString())
                 : 'To Date',
@@ -205,24 +215,26 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
               }
             },
           ),
-          SizedBox(height: widget.size.width * AppDimensions.numD02),
+          SizedBox(height: scalingWidth * AppDimensions.numD02),
         ],
       ),
     );
   }
 
   Widget _buildDatePicker(
-      {required String label, required VoidCallback onTap}) {
+      {required double scalingWidth,
+      required String label,
+      required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(
-          vertical: widget.size.width * AppDimensions.numD01,
-          horizontal: widget.size.width * AppDimensions.numD02,
+          vertical: scalingWidth * AppDimensions.numD01,
+          horizontal: scalingWidth * AppDimensions.numD02,
         ),
         decoration: BoxDecoration(
           borderRadius:
-              BorderRadius.circular(widget.size.width * AppDimensions.numD04),
+              BorderRadius.circular(scalingWidth * AppDimensions.numD04),
           border: Border.all(width: 1, color: Theme.of(context).dividerColor),
         ),
         child: Row(
@@ -234,12 +246,12 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
                 overflow: TextOverflow.ellipsis,
                 style: commonTextStyle(
                     size: widget.size,
-                    fontSize: widget.size.width * AppDimensions.numD035,
+                    fontSize: scalingWidth * AppDimensions.numD035,
                     color: Theme.of(context).textTheme.bodyLarge?.color,
                     fontWeight: FontWeight.w400),
               ),
             ),
-            SizedBox(width: widget.size.width * AppDimensions.numD015),
+            SizedBox(width: scalingWidth * AppDimensions.numD015),
             Icon(
               Icons.arrow_drop_down_sharp,
               color:
@@ -251,21 +263,21 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
     );
   }
 
-  Widget _buildApplyButton() {
+  Widget _buildApplyButton(double scalingWidth) {
     return SafeArea(
       child: Container(
         width: widget.size.width,
-        height: widget.size.width * AppDimensions.numD13,
+        height: scalingWidth * AppDimensions.numD13,
         margin: EdgeInsets.symmetric(
-            horizontal: widget.size.width * AppDimensions.numD04),
+            horizontal: scalingWidth * AppDimensions.numD04),
         padding: EdgeInsets.symmetric(
-            horizontal: widget.size.width * AppDimensions.numD04),
+            horizontal: scalingWidth * AppDimensions.numD04),
         child: commonElevatedButton(
           AppStrings.applyText,
           widget.size,
           commonTextStyle(
               size: widget.size,
-              fontSize: widget.size.width * AppDimensions.numD035,
+              fontSize: scalingWidth * AppDimensions.numD035,
               color: Colors.white,
               fontWeight: FontWeight.w700),
           commonButtonStyle(widget.size, AppColorTheme.colorThemePink),

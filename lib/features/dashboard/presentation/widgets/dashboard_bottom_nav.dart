@@ -15,23 +15,26 @@ class DashboardBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double scalingWidth = isIpad ? 550 : size.width;
+
     return BottomNavigationBar(
-      backgroundColor: Theme.of(context).bottomNavigationBarTheme.backgroundColor ??
-          Theme.of(context).cardColor,
+      backgroundColor:
+          Theme.of(context).bottomNavigationBarTheme.backgroundColor ??
+              Theme.of(context).cardColor,
       currentIndex: currentIndex,
       showUnselectedLabels: true,
       showSelectedLabels: true,
       unselectedItemColor: Theme.of(context).unselectedWidgetColor,
       selectedItemColor: AppColorTheme.colorThemePink,
       elevation: 0,
-      iconSize: size.width * AppDimensions.numD05,
+      iconSize: scalingWidth * AppDimensions.numD05,
       selectedLabelStyle: TextStyle(
         fontWeight: FontWeight.w700,
-        fontSize: size.width * AppDimensions.numD03,
+        fontSize: scalingWidth * AppDimensions.numD03,
       ),
       unselectedLabelStyle: TextStyle(
         fontWeight: FontWeight.w400,
-        fontSize: size.width * AppDimensions.numD03,
+        fontSize: scalingWidth * AppDimensions.numD03,
       ),
       type: BottomNavigationBarType.fixed,
       onTap: onTap,

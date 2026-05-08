@@ -22,6 +22,7 @@ class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
       this.leadingLeftSPace,
       this.appBarbackgroundColor,
       this.leadingIconColor,
+      this.leadingWidget,
       this.bottom});
 
   final double elevation;
@@ -36,6 +37,7 @@ class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback leadingFxn;
   final List<Widget>? actionWidget;
   double? leadingLeftSPace;
+  final Widget? leadingWidget;
   final PreferredSizeWidget? bottom;
 
   @override
@@ -54,7 +56,8 @@ class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
 class CommonAppBarState extends State<CommonAppBar> {
   @override
   Widget build(BuildContext context) {
-    //debugPrint("LeadingLeftSpace: ${widget.leadingLeftSPace}");
+    final double scalingWidth = isIpad ? 550 : widget.size.width;
+
     return isIpad
         ? AppBar(
             systemOverlayStyle: const SystemUiOverlayStyle(
@@ -69,26 +72,32 @@ class CommonAppBarState extends State<CommonAppBar> {
             scrolledUnderElevation: 0,
             surfaceTintColor: Colors.transparent,
             title: widget.title,
-            titleSpacing: widget.hideLeading
-                ? 0
-                : widget.size.width * AppDimensions.numD03,
+            titleSpacing:
+                widget.hideLeading ? 0 : scalingWidth * AppDimensions.numD03,
             centerTitle: widget.centerTitle,
             titleTextStyle: TextStyle(
-              fontSize: widget.size.width * AppDimensions.numD015,
+              fontSize: scalingWidth * AppDimensions.numD015,
               color: Colors.black,
             ),
             automaticallyImplyLeading: false,
+            leadingWidth: widget.leadingWidget != null
+                ? scalingWidth * AppDimensions.numD19
+                : (widget.leadingLeftSPace != null &&
+                        widget.leadingLeftSPace! > 0
+                    ? scalingWidth * AppDimensions.numD19
+                    : scalingWidth * AppDimensions.numD12),
             actions: widget.showActions ? widget.actionWidget : null,
             bottom: widget.bottom,
-            leading: widget.hideLeading
-                ? null
-                : IconButton(
-                    onPressed: widget.leadingFxn,
-                    icon: Icon(
-                      Icons.arrow_back_sharp,
-                      size: widget.size.width * AppDimensions.numD04,
-                      color: widget.leadingIconColor,
-                    )),
+            leading: widget.leadingWidget ??
+                (widget.hideLeading
+                    ? null
+                    : IconButton(
+                        onPressed: widget.leadingFxn,
+                        icon: Icon(
+                          Icons.arrow_back_sharp,
+                          size: scalingWidth * AppDimensions.numD04,
+                          color: widget.leadingIconColor,
+                        ))),
           )
         : AppBar(
             systemOverlayStyle: SystemUiOverlayStyle(
@@ -104,28 +113,31 @@ class CommonAppBarState extends State<CommonAppBar> {
             surfaceTintColor: Colors.transparent,
             backgroundColor: widget.appBarbackgroundColor ??
                 Theme.of(context).appBarTheme.backgroundColor,
-            leading: !widget.hideLeading
-                ? InkWell(
-                    onTap: widget.leadingFxn,
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      margin: EdgeInsets.only(
-                        left: widget.leadingLeftSPace ??
-                            widget.size.width * AppDimensions.numD025,
-                      ),
-                      child: Icon(
-                        Icons.arrow_back_rounded,
-                        size: widget.size.width * AppDimensions.numD06,
-                        color: widget.leadingIconColor ??
-                            Theme.of(context).iconTheme.color,
-                      ),
-                    ),
-                  )
-                : null,
-            leadingWidth:
-                widget.leadingLeftSPace != null && widget.leadingLeftSPace! > 0
+            leading: widget.leadingWidget ??
+                (!widget.hideLeading
+                    ? InkWell(
+                        onTap: widget.leadingFxn,
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          margin: EdgeInsets.only(
+                            left: widget.leadingLeftSPace ??
+                                widget.size.width * AppDimensions.numD025,
+                          ),
+                          child: Icon(
+                            Icons.arrow_back_rounded,
+                            size: widget.size.width * AppDimensions.numD06,
+                            color: widget.leadingIconColor ??
+                                Theme.of(context).iconTheme.color,
+                          ),
+                        ),
+                      )
+                    : null),
+            leadingWidth: widget.leadingWidget != null
+                ? widget.size.width * AppDimensions.numD19
+                : (widget.leadingLeftSPace != null &&
+                        widget.leadingLeftSPace! > 0
                     ? widget.size.width * AppDimensions.numD19
-                    : widget.size.width * AppDimensions.numD12,
+                    : widget.size.width * AppDimensions.numD12),
             title: widget.title,
             centerTitle: widget.centerTitle,
             titleSpacing: widget.titleSpacing,

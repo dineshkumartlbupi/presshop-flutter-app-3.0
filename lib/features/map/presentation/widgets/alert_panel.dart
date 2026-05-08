@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/theme/app_colors.dart';
+import 'package:presshop/core/utils/ui_utils.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'package:presshop/features/map/constants/map_news_constants.dart';
@@ -53,6 +54,7 @@ class _AlertPanelState extends State<AlertPanel>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final double scalingWidth = isIpad ? 550 : size.width;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final borderColor = isDark ? Colors.white24 : Colors.grey.shade400;
 
@@ -67,23 +69,22 @@ class _AlertPanelState extends State<AlertPanel>
               alignment: Alignment.bottomCenter,
               child: Container(
                 margin: EdgeInsets.only(
-                    bottom: size.width * AppDimensions.numD042,
+                    bottom: scalingWidth * AppDimensions.numD042,
                     left: 10,
                     right: 10),
                 padding: EdgeInsets.symmetric(
-                    horizontal: size.width * AppDimensions.numD026,
-                    vertical: size.width * AppDimensions.numD026),
-                width: size.width * AppDimensions.numD65,
+                    horizontal: scalingWidth * AppDimensions.numD026,
+                    vertical: scalingWidth * AppDimensions.numD026),
+                width: isIpad ? 450 : size.width * AppDimensions.numD65,
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor,
-                  borderRadius:
-                      BorderRadius.circular(size.width * AppDimensions.numD05),
-                  // border: Border.all(color: borderColor),
+                  borderRadius: BorderRadius.circular(
+                      scalingWidth * AppDimensions.numD05),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
-                      blurRadius: size.width * AppDimensions.numD026,
-                      offset: Offset(0.0, size.width * AppDimensions.numD01),
+                      blurRadius: scalingWidth * AppDimensions.numD026,
+                      offset: Offset(0.0, scalingWidth * AppDimensions.numD01),
                     ),
                   ],
                 ),
@@ -96,7 +97,7 @@ class _AlertPanelState extends State<AlertPanel>
                         Text(
                           "Send Alerts",
                           style: TextStyle(
-                            fontSize: size.width * AppDimensions.numD032,
+                            fontSize: scalingWidth * AppDimensions.numD032,
                             fontWeight: FontWeight.w500,
                             color: Theme.of(context).textTheme.bodyLarge?.color,
                           ),
@@ -119,16 +120,17 @@ class _AlertPanelState extends State<AlertPanel>
                             children: [
                               Image.asset(
                                 "assets/icons/ic_v_cam.png",
-                                height: size.width * AppDimensions.numD05,
-                                width: size.width * AppDimensions.numD05,
+                                height: scalingWidth * AppDimensions.numD05,
+                                width: scalingWidth * AppDimensions.numD05,
                                 color: AppColorTheme.colorThemePink,
                               ),
                               SizedBox(
-                                  width: size.width * AppDimensions.numD01),
+                                  width: scalingWidth * AppDimensions.numD01),
                               Text(
                                 "Share Video",
                                 style: TextStyle(
-                                  fontSize: size.width * AppDimensions.numD032,
+                                  fontSize:
+                                      scalingWidth * AppDimensions.numD032,
                                   fontWeight: FontWeight.w500,
                                   color: AppColorTheme.colorThemePink,
                                 ),
@@ -138,16 +140,16 @@ class _AlertPanelState extends State<AlertPanel>
                         ),
                       ],
                     ),
-                    SizedBox(height: size.width * AppDimensions.numD022),
+                    SizedBox(height: scalingWidth * AppDimensions.numD022),
                     Container(
-                      height: size.width * AppDimensions.numD003,
+                      height: scalingWidth * AppDimensions.numD003,
                       width: double.infinity,
                       margin: EdgeInsets.only(
-                          bottom: size.width * AppDimensions.numD026),
+                          bottom: scalingWidth * AppDimensions.numD026),
                       decoration: BoxDecoration(
                         color: borderColor,
                         borderRadius: BorderRadius.circular(
-                            size.width * AppDimensions.numD005),
+                            scalingWidth * AppDimensions.numD005),
                       ),
                     ),
                     Row(
@@ -156,13 +158,13 @@ class _AlertPanelState extends State<AlertPanel>
                           "Tap to instantly alert the community",
                           style: TextStyle(
                             color: Theme.of(context).hintColor,
-                            fontSize: size.width * AppDimensions.numD028,
+                            fontSize: scalingWidth * AppDimensions.numD028,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: size.width * AppDimensions.numD042),
+                    SizedBox(height: scalingWidth * AppDimensions.numD042),
                     GridView.builder(
                       shrinkWrap: true,
                       itemCount: alertTypes.length,
@@ -170,8 +172,8 @@ class _AlertPanelState extends State<AlertPanel>
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                         childAspectRatio: 0.95,
-                        crossAxisSpacing: size.width * AppDimensions.numD012,
-                        mainAxisSpacing: size.width * AppDimensions.numD012,
+                        crossAxisSpacing: scalingWidth * AppDimensions.numD012,
+                        mainAxisSpacing: scalingWidth * AppDimensions.numD012,
                       ),
                       itemBuilder: (context, i) {
                         final item = alertTypes[i];
@@ -184,7 +186,7 @@ class _AlertPanelState extends State<AlertPanel>
                             decoration: BoxDecoration(
                               color: Theme.of(context).cardColor,
                               borderRadius: BorderRadius.circular(
-                                size.width * AppDimensions.numD021,
+                                scalingWidth * AppDimensions.numD021,
                               ),
                               border: Border.all(color: borderColor),
                             ),
@@ -193,17 +195,18 @@ class _AlertPanelState extends State<AlertPanel>
                               children: [
                                 Image.asset(
                                   item['icon']!,
-                                  width: size.width * AppDimensions.numD09,
-                                  height: size.width * AppDimensions.numD09,
+                                  width: scalingWidth * AppDimensions.numD09,
+                                  height: scalingWidth * AppDimensions.numD09,
                                   fit: BoxFit.contain,
                                 ),
                                 SizedBox(
-                                    height: size.width * AppDimensions.numD016),
+                                    height:
+                                        scalingWidth * AppDimensions.numD016),
                                 Text(
                                   item['label']!,
                                   style: TextStyle(
                                     fontSize:
-                                        size.width * AppDimensions.numD029,
+                                        scalingWidth * AppDimensions.numD029,
                                     color: Colors.grey.shade700,
                                   ),
                                   textAlign: TextAlign.center,
@@ -214,23 +217,23 @@ class _AlertPanelState extends State<AlertPanel>
                         );
                       },
                     ),
-                    SizedBox(height: size.width * AppDimensions.numD042),
+                    SizedBox(height: scalingWidth * AppDimensions.numD042),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Image.asset(
                           'assets/icons/mapalert.png',
-                          width: size.width * AppDimensions.numD04,
-                          height: size.width * AppDimensions.numD04,
+                          width: scalingWidth * AppDimensions.numD04,
+                          height: scalingWidth * AppDimensions.numD04,
                           fit: BoxFit.contain,
                         ),
-                        SizedBox(width: size.width * AppDimensions.numD016),
+                        SizedBox(width: scalingWidth * AppDimensions.numD016),
                         Expanded(
                           child: Text(
                             "False or misleading reports may lead to account suspension.",
                             style: TextStyle(
                               color: Theme.of(context).hintColor,
-                              fontSize: size.width * AppDimensions.numD028,
+                              fontSize: scalingWidth * AppDimensions.numD028,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -242,13 +245,13 @@ class _AlertPanelState extends State<AlertPanel>
               ),
             ),
             Positioned(
-              left: size.width * 0.15,
-              bottom: size.width * AppDimensions.numD016,
+              left: isIpad ? (size.width / 2) - 200 : size.width * 0.15,
+              bottom: scalingWidth * AppDimensions.numD016,
               child: Transform.rotate(
                 angle: math.pi / 4,
                 child: Container(
-                  width: size.width * AppDimensions.numD05,
-                  height: size.width * AppDimensions.numD05,
+                  width: scalingWidth * AppDimensions.numD05,
+                  height: scalingWidth * AppDimensions.numD05,
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
                     boxShadow: [

@@ -60,6 +60,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
   bool _isNavigating = false;
 
   late Size size;
+  double scalingWidth = 0;
 
   List<FilterModel> sortList = [];
   List<FilterModel> filterList = [];
@@ -180,6 +181,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
   Widget build(BuildContext context) {
     super.build(context);
     size = MediaQuery.of(context).size;
+    scalingWidth = isIpad ? 550 : size.width;
+
     return BlocProvider(
       create: (context) {
         final bloc = di.sl<TaskBloc>();
@@ -206,22 +209,6 @@ class MyTaskScreenState extends State<MyTaskScreen>
           ).then((_) {
             _isNavigating = false;
           });
-          // WidgetsBinding.instance.addPostFrameCallback((_) {
-          //   // broadcastDialog(
-          //   //   size: size,
-          //   //   taskDetail: state.taskDetail!,
-          //   //   onTapViewDetails: () {
-          //   //     context.pop();
-          //   //     context.pushNamed(
-          //   //       AppRoutes.broadcastName,
-          //   //       extra: {
-          //   //         'taskId': state.taskDetail!.task.id,
-          //   //         'mediaHouseId': state.taskDetail!.task.mediaHouse.id,
-          //   //       },
-          //   //     );
-          //   //   },
-          //   // );
-          // });
         },
         child: BlocListener<TaskBloc, TaskState>(
           listenWhen: (previous, current) =>
@@ -249,49 +236,48 @@ class MyTaskScreenState extends State<MyTaskScreen>
               body: SafeArea(
                 child: Column(
                   children: [
-                    // SizedBox(height: size.width * AppDimensions.numD04),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: size.width * AppDimensions.numD02,
-                          horizontal: size.width * AppDimensions.numD04),
-                      child: TabBar(
-                        indicatorPadding: EdgeInsets.zero,
-                        indicatorSize: TabBarIndicatorSize.tab,
-                        controller: _tabController,
-                        physics: const NeverScrollableScrollPhysics(),
-                        labelColor: Colors.white,
-                        dividerColor: Colors.transparent,
-                        unselectedLabelColor:
-                            Theme.of(context).textTheme.bodyLarge?.color,
-                        indicator: BoxDecoration(
-                          color: AppColorTheme.colorThemePink,
-                          borderRadius: BorderRadius.circular(
-                              size.width * AppDimensions.numD01),
-                        ),
-                        labelStyle: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD038,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        unselectedLabelStyle: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD038,
-                          color: Theme.of(context).textTheme.bodyLarge?.color ??
-                              Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        tabs: [
-                          const Tab(
-                            text: "All Tasks",
+                    Container(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: scalingWidth * AppDimensions.numD02,
+                            horizontal: scalingWidth * AppDimensions.numD04),
+                        child: TabBar(
+                          controller: _tabController,
+                          physics: const NeverScrollableScrollPhysics(),
+                          labelColor: Colors.white,
+                          dividerColor: Colors.transparent,
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          unselectedLabelColor:
+                              Theme.of(context).textTheme.bodyLarge?.color ??
+                                  Colors.black,
+                          indicator: BoxDecoration(
+                            color: AppColorTheme.colorThemePink,
+                            borderRadius: BorderRadius.circular(
+                                scalingWidth * AppDimensions.numD01),
                           ),
-                          const Tab(
-                            text: "Local Tasks",
+                          labelStyle: commonTextStyle(
+                            size: size,
+                            fontSize: scalingWidth * AppDimensions.numD038,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
-                        onTap: (index) {
-                          setState(() {});
-                        },
+                          unselectedLabelStyle: commonTextStyle(
+                            size: size,
+                            fontSize: scalingWidth * AppDimensions.numD038,
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color ??
+                                    Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          tabs: const [
+                            Tab(text: "All Tasks"),
+                            Tab(text: "My Tasks"),
+                          ],
+                          onTap: (index) {
+                            setState(() {});
+                          },
+                        ),
                       ),
                     ),
                     const Divider(
@@ -371,13 +357,13 @@ class MyTaskScreenState extends State<MyTaskScreen>
   Widget uploadingStatusWidget(Size size, int progress, String status) {
     return Container(
       margin: EdgeInsets.symmetric(
-          horizontal: size.width * AppDimensions.numD04,
-          vertical: size.width * AppDimensions.numD02),
-      padding: EdgeInsets.all(size.width * AppDimensions.numD03),
+          horizontal: scalingWidth * AppDimensions.numD04,
+          vertical: scalingWidth * AppDimensions.numD02),
+      padding: EdgeInsets.all(scalingWidth * AppDimensions.numD03),
       decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius:
-              BorderRadius.circular(size.width * AppDimensions.numD02),
+              BorderRadius.circular(scalingWidth * AppDimensions.numD02),
           boxShadow: [
             BoxShadow(
                 color: Theme.of(context).shadowColor.withOpacity(0.1),
@@ -387,17 +373,17 @@ class MyTaskScreenState extends State<MyTaskScreen>
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(size.width * AppDimensions.numD02),
+            padding: EdgeInsets.all(scalingWidth * AppDimensions.numD02),
             decoration: BoxDecoration(
                 color: AppColorTheme.colorThemePink.withOpacity(0.1),
                 shape: BoxShape.circle),
             child: Icon(
               Icons.cloud_upload_outlined,
               color: AppColorTheme.colorThemePink,
-              size: size.width * AppDimensions.numD06,
+              size: scalingWidth * AppDimensions.numD06,
             ),
           ),
-          SizedBox(width: size.width * AppDimensions.numD03),
+          SizedBox(width: scalingWidth * AppDimensions.numD03),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -408,31 +394,31 @@ class MyTaskScreenState extends State<MyTaskScreen>
                       : "Uploading Task Media...",
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * AppDimensions.numD035,
+                      fontSize: scalingWidth * AppDimensions.numD035,
                       color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontWeight: FontWeight.w600),
                 ),
-                SizedBox(height: size.width * AppDimensions.numD01),
+                SizedBox(height: scalingWidth * AppDimensions.numD01),
                 if (status != 'processing')
                   ClipRRect(
                     borderRadius: BorderRadius.circular(
-                        size.width * AppDimensions.numD01),
+                        scalingWidth * AppDimensions.numD01),
                     child: LinearProgressIndicator(
                       value: progress / 100,
                       backgroundColor: Colors.grey.shade200,
                       valueColor: AlwaysStoppedAnimation<Color>(
                           AppColorTheme.colorThemePink),
-                      minHeight: size.width * AppDimensions.numD015,
+                      minHeight: scalingWidth * AppDimensions.numD015,
                     ),
                   ),
               ],
             ),
           ),
-          SizedBox(width: size.width * AppDimensions.numD03),
+          SizedBox(width: scalingWidth * AppDimensions.numD03),
           if (status == 'processing')
             SizedBox(
-              height: size.width * AppDimensions.numD05,
-              width: size.width * AppDimensions.numD05,
+              height: scalingWidth * AppDimensions.numD05,
+              width: scalingWidth * AppDimensions.numD05,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
                 valueColor:
@@ -444,7 +430,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
               "$progress%",
               style: commonTextStyle(
                   size: size,
-                  fontSize: size.width * AppDimensions.numD03,
+                  fontSize: scalingWidth * AppDimensions.numD03,
                   color: Theme.of(context).textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.bold),
             ),
@@ -528,14 +514,14 @@ class MyTaskScreenState extends State<MyTaskScreen>
               if (taskList.isNotEmpty)
                 SliverPadding(
                   padding: EdgeInsets.symmetric(
-                      horizontal: size.width * AppDimensions.numD04,
-                      vertical: size.width * AppDimensions.numD04),
+                      horizontal: scalingWidth * AppDimensions.numD04,
+                      vertical: scalingWidth * AppDimensions.numD04),
                   sliver: SliverGrid(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.75,
-                      mainAxisSpacing: size.width * AppDimensions.numD04,
-                      crossAxisSpacing: size.width * AppDimensions.numD04,
+                      crossAxisCount: isIpad ? 3 : 2,
+                      childAspectRatio: isIpad ? 0.85 : 0.65,
+                      mainAxisSpacing: scalingWidth * AppDimensions.numD04,
+                      crossAxisSpacing: scalingWidth * AppDimensions.numD04,
                     ),
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
@@ -551,9 +537,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                             },
                             child: Container(
                               padding: EdgeInsets.only(
-                                  left: size.width * AppDimensions.numD03,
-                                  right: size.width * AppDimensions.numD03,
-                                  top: size.width * AppDimensions.numD03),
+                                  left: scalingWidth * AppDimensions.numD03,
+                                  right: scalingWidth * AppDimensions.numD03,
+                                  top: scalingWidth * AppDimensions.numD03),
                               decoration: BoxDecoration(
                                   color: Theme.of(context).cardColor,
                                   boxShadow: [
@@ -565,7 +551,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         blurRadius: 1)
                                   ],
                                   borderRadius: BorderRadius.circular(
-                                      size.width * AppDimensions.numD04)),
+                                      scalingWidth * AppDimensions.numD04)),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -574,7 +560,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     children: [
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(
-                                            size.width * AppDimensions.numD04),
+                                            scalingWidth *
+                                                AppDimensions.numD04),
                                         child: item.taskDetail
                                                         ?.mediaHouseImage !=
                                                     null &&
@@ -583,9 +570,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             ? Image.network(
                                                 item.taskDetail!
                                                     .mediaHouseImage,
-                                                height: size.width *
-                                                    AppDimensions.numD28,
-                                                width: size.width,
+                                                height: scalingWidth *
+                                                    AppDimensions.numD35,
+                                                width: scalingWidth,
                                                 fit: BoxFit.cover,
                                                 loadingBuilder: (context, child,
                                                     loadingProgress) {
@@ -597,9 +584,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                         Alignment.topCenter,
                                                     child: Image.asset(
                                                       "${commonImagePath}rabbitLogo.png",
-                                                      height: size.width *
+                                                      height: scalingWidth *
                                                           AppDimensions.numD26,
-                                                      width: size.width *
+                                                      width: scalingWidth *
                                                           AppDimensions.numD26,
                                                     ),
                                                   );
@@ -611,9 +598,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                         Alignment.topCenter,
                                                     child: Image.asset(
                                                       "${commonImagePath}rabbitLogo.png",
-                                                      height: size.width *
+                                                      height: scalingWidth *
                                                           AppDimensions.numD26,
-                                                      width: size.width *
+                                                      width: scalingWidth *
                                                           AppDimensions.numD26,
                                                     ),
                                                   );
@@ -623,9 +610,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                 alignment: Alignment.topCenter,
                                                 child: Image.asset(
                                                   "${commonImagePath}rabbitLogo.png",
-                                                  height: size.width *
+                                                  height: scalingWidth *
                                                       AppDimensions.numD26,
-                                                  width: size.width *
+                                                  width: scalingWidth *
                                                       AppDimensions.numD26,
                                                 ),
                                               ),
@@ -633,7 +620,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     ],
                                   ),
                                   SizedBox(
-                                    height: size.width * AppDimensions.numD02,
+                                    height: scalingWidth * AppDimensions.numD02,
                                   ),
 
                                   /// Title
@@ -645,7 +632,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     style: commonTextStyle(
                                         size: size,
                                         fontSize:
-                                            size.width * AppDimensions.numD03,
+                                            scalingWidth * AppDimensions.numD03,
                                         color: Theme.of(context)
                                             .textTheme
                                             .bodyLarge
@@ -661,8 +648,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     children: [
                                       Image.asset(
                                         "${iconsPath}ic_clock.png",
-                                        height:
-                                            size.width * AppDimensions.numD029,
+                                        height: scalingWidth *
+                                            AppDimensions.numD029,
                                         color: Theme.of(context)
                                             .textTheme
                                             .bodyLarge
@@ -670,7 +657,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       ),
                                       SizedBox(
                                         width:
-                                            size.width * AppDimensions.numD01,
+                                            scalingWidth * AppDimensions.numD01,
                                       ),
                                       Text(
                                         dateTimeFormatter(
@@ -679,7 +666,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             format: "hh:mm a"),
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width *
+                                            fontSize: scalingWidth *
                                                 AppDimensions.numD024,
                                             color: Theme.of(context)
                                                 .textTheme
@@ -688,13 +675,13 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             fontWeight: FontWeight.normal),
                                       ),
                                       SizedBox(
-                                        width:
-                                            size.width * AppDimensions.numD018,
+                                        width: scalingWidth *
+                                            AppDimensions.numD018,
                                       ),
                                       Image.asset(
                                         "${iconsPath}ic_yearly_calendar.png",
-                                        height:
-                                            size.width * AppDimensions.numD028,
+                                        height: scalingWidth *
+                                            AppDimensions.numD028,
                                         color: Theme.of(context)
                                             .textTheme
                                             .bodyLarge
@@ -702,7 +689,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       ),
                                       SizedBox(
                                         width:
-                                            size.width * AppDimensions.numD01,
+                                            scalingWidth * AppDimensions.numD01,
                                       ),
                                       Text(
                                         dateTimeFormatter(
@@ -711,7 +698,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             format: "dd MMM yyyy"),
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width *
+                                            fontSize: scalingWidth *
                                                 AppDimensions.numD024,
                                             color: Theme.of(context)
                                                 .textTheme
@@ -722,7 +709,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     ],
                                   ),
                                   SizedBox(
-                                    height: size.width * AppDimensions.numD013,
+                                    height:
+                                        scalingWidth * AppDimensions.numD013,
                                   ),
                                   Row(
                                     mainAxisAlignment:
@@ -732,7 +720,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         "TAP TO ACCEPT",
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width *
+                                            fontSize: scalingWidth *
                                                 AppDimensions.numD025,
                                             color: AppColorTheme.colorThemePink,
                                             fontWeight: FontWeight.normal),
@@ -745,23 +733,23 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       //   child:
                                       Container(
                                         alignment: Alignment.center,
-                                        height:
-                                            size.width * AppDimensions.numD065,
+                                        height: scalingWidth *
+                                            AppDimensions.numD065,
                                         padding: EdgeInsets.symmetric(
-                                            horizontal: size.width *
+                                            horizontal: scalingWidth *
                                                 AppDimensions.numD025,
-                                            vertical: size.width *
+                                            vertical: scalingWidth *
                                                 AppDimensions.numD01),
                                         decoration: BoxDecoration(
                                             color: AppColorTheme.colorThemePink,
                                             borderRadius: BorderRadius.circular(
-                                                size.width *
+                                                scalingWidth *
                                                     AppDimensions.numD015)),
                                         child: Text(
                                           "Available",
                                           style: commonTextStyle(
                                               size: size,
-                                              fontSize: size.width *
+                                              fontSize: scalingWidth *
                                                   AppDimensions.numD025,
                                               color: Colors.white,
                                               fontWeight: FontWeight.w600),
@@ -772,7 +760,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   ),
 
                                   SizedBox(
-                                    height: size.width * AppDimensions.numD02,
+                                    height: scalingWidth * AppDimensions.numD02,
                                   )
                                 ],
                               ),
@@ -801,9 +789,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                             },
                             child: Container(
                               padding: EdgeInsets.only(
-                                  left: size.width * AppDimensions.numD03,
-                                  right: size.width * AppDimensions.numD03,
-                                  top: size.width * AppDimensions.numD03),
+                                  left: scalingWidth * AppDimensions.numD03,
+                                  right: scalingWidth * AppDimensions.numD03,
+                                  top: scalingWidth * AppDimensions.numD03),
                               decoration: BoxDecoration(
                                   color: Theme.of(context).cardColor,
                                   boxShadow: [
@@ -815,7 +803,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           blurRadius: 1)
                                   ],
                                   borderRadius: BorderRadius.circular(
-                                      size.width * AppDimensions.numD04)),
+                                      scalingWidth * AppDimensions.numD04)),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -824,12 +812,13 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     children: [
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(
-                                            size.width * AppDimensions.numD04),
+                                            scalingWidth *
+                                                AppDimensions.numD04),
                                         child: Image.network(
                                           item.taskDetail!.mediaHouseImage,
-                                          height:
-                                              size.width * AppDimensions.numD28,
-                                          width: size.width,
+                                          height: scalingWidth *
+                                              AppDimensions.numD35,
+                                          width: scalingWidth,
                                           fit: BoxFit.cover,
                                           loadingBuilder: (context, child,
                                               loadingProgress) {
@@ -840,9 +829,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                               alignment: Alignment.topCenter,
                                               child: Image.asset(
                                                 "${commonImagePath}rabbitLogo.png",
-                                                height: size.width *
+                                                height: scalingWidth *
                                                     AppDimensions.numD26,
-                                                width: size.width *
+                                                width: scalingWidth *
                                                     AppDimensions.numD26,
                                               ),
                                             );
@@ -853,9 +842,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                               alignment: Alignment.topCenter,
                                               child: Image.asset(
                                                 "${commonImagePath}rabbitLogo.png",
-                                                height: size.width *
+                                                height: scalingWidth *
                                                     AppDimensions.numD26,
-                                                width: size.width *
+                                                width: scalingWidth *
                                                     AppDimensions.numD26,
                                               ),
                                             );
@@ -865,7 +854,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     ],
                                   ),
                                   SizedBox(
-                                    height: size.width * AppDimensions.numD02,
+                                    height: scalingWidth * AppDimensions.numD02,
                                   ),
 
                                   /// Title
@@ -877,7 +866,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     style: commonTextStyle(
                                         size: size,
                                         fontSize:
-                                            size.width * AppDimensions.numD03,
+                                            scalingWidth * AppDimensions.numD03,
                                         color: Theme.of(context)
                                             .textTheme
                                             .bodyLarge
@@ -893,8 +882,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     children: [
                                       Image.asset(
                                         "${iconsPath}ic_clock.png",
-                                        height:
-                                            size.width * AppDimensions.numD029,
+                                        height: scalingWidth *
+                                            AppDimensions.numD029,
                                         color: Theme.of(context)
                                             .textTheme
                                             .bodyLarge
@@ -902,7 +891,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       ),
                                       SizedBox(
                                         width:
-                                            size.width * AppDimensions.numD01,
+                                            scalingWidth * AppDimensions.numD01,
                                       ),
                                       Text(
                                         dateTimeFormatter(
@@ -911,7 +900,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             format: "hh:mm a"),
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width *
+                                            fontSize: scalingWidth *
                                                 AppDimensions.numD024,
                                             color: Theme.of(context)
                                                 .textTheme
@@ -920,13 +909,13 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             fontWeight: FontWeight.normal),
                                       ),
                                       SizedBox(
-                                        width:
-                                            size.width * AppDimensions.numD018,
+                                        width: scalingWidth *
+                                            AppDimensions.numD018,
                                       ),
                                       Image.asset(
                                         "${iconsPath}ic_yearly_calendar.png",
-                                        height:
-                                            size.width * AppDimensions.numD028,
+                                        height: scalingWidth *
+                                            AppDimensions.numD028,
                                         color: Theme.of(context)
                                             .textTheme
                                             .bodyLarge
@@ -934,7 +923,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       ),
                                       SizedBox(
                                         width:
-                                            size.width * AppDimensions.numD01,
+                                            scalingWidth * AppDimensions.numD01,
                                       ),
                                       Text(
                                         dateTimeFormatter(
@@ -943,7 +932,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             format: "dd MMM yyyy"),
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width *
+                                            fontSize: scalingWidth *
                                                 AppDimensions.numD024,
                                             color: Theme.of(context)
                                                 .textTheme
@@ -954,7 +943,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     ],
                                   ),
                                   SizedBox(
-                                    height: size.width * AppDimensions.numD013,
+                                    height:
+                                        scalingWidth * AppDimensions.numD013,
                                   ),
                                   Row(
                                     mainAxisAlignment:
@@ -976,7 +966,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                       : "RECEIVED",
                                           style: commonTextStyle(
                                               size: size,
-                                              fontSize: size.width *
+                                              fontSize: scalingWidth *
                                                   AppDimensions.numD025,
                                               color: _parseColor(
                                                   item.statusColor,
@@ -998,12 +988,12 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                               fontWeight: FontWeight.normal)),
                                       item.status == "accepted"
                                           ? Container(
-                                              height: size.width *
+                                              height: scalingWidth *
                                                   AppDimensions.numD065,
                                               padding: EdgeInsets.symmetric(
-                                                  horizontal: size.width *
+                                                  horizontal: scalingWidth *
                                                       AppDimensions.numD04,
-                                                  vertical: size.width *
+                                                  vertical: scalingWidth *
                                                       AppDimensions.numD01),
                                               alignment: Alignment.center,
                                               decoration: BoxDecoration(
@@ -1027,7 +1017,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                   borderRadius:
                                                       BorderRadius.circular(size
                                                               .width *
-                                                          AppDimensions.numD015)),
+                                                          AppDimensions.numD01)),
                                               child: Text(
                                                 (item.taskDetail?.deadLine
                                                                 .isBefore(DateTime
@@ -1044,7 +1034,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                         : "$currencySymbol${item.totalAmount}",
                                                 style: commonTextStyle(
                                                     size: size,
-                                                    fontSize: size.width *
+                                                    fontSize: scalingWidth *
                                                         AppDimensions.numD025,
                                                     color: ((item.taskDetail?.deadLine.isBefore(DateTime.now()) ??
                                                                 false) &&
@@ -1055,7 +1045,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                                 Brightness.dark
                                                             ? Colors.white
                                                             : Colors.black)
-                                                        : item.status == "accepted" &&
+                                                        : item.status ==
+                                                                    "accepted" &&
                                                                 item.totalAmount ==
                                                                     "0"
                                                             ? (Theme.of(context)
@@ -1074,12 +1065,12 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             )
                                           : Container(
                                               alignment: Alignment.center,
-                                              height: size.width *
+                                              height: scalingWidth *
                                                   AppDimensions.numD065,
                                               padding: EdgeInsets.symmetric(
-                                                  horizontal: size.width *
+                                                  horizontal: scalingWidth *
                                                       AppDimensions.numD04,
-                                                  vertical: size.width *
+                                                  vertical: scalingWidth *
                                                       AppDimensions.numD01),
                                               decoration: BoxDecoration(
                                                   color: (Theme.of(context)
@@ -1089,14 +1080,14 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                       : Colors.black),
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                          size.width *
+                                                          scalingWidth *
                                                               AppDimensions
                                                                   .numD015)),
                                               child: Text(
                                                 "$currencySymbol${item.totalAmount}",
                                                 style: commonTextStyle(
                                                     size: size,
-                                                    fontSize: size.width *
+                                                    fontSize: scalingWidth *
                                                         AppDimensions.numD025,
                                                     color: (Theme.of(context)
                                                                 .brightness ==
@@ -1111,7 +1102,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   ),
 
                                   SizedBox(
-                                    height: size.width * AppDimensions.numD02,
+                                    height: scalingWidth * AppDimensions.numD02,
                                   )
                                 ],
                               ),
@@ -1172,14 +1163,14 @@ class MyTaskScreenState extends State<MyTaskScreen>
             if (allTaskList.isNotEmpty)
               SliverPadding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: size.width * AppDimensions.numD04,
-                    vertical: size.width * AppDimensions.numD04),
+                    horizontal: scalingWidth * AppDimensions.numD04,
+                    vertical: scalingWidth * AppDimensions.numD04),
                 sliver: SliverGrid(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.75,
-                    mainAxisSpacing: size.width * AppDimensions.numD04,
-                    crossAxisSpacing: size.width * AppDimensions.numD04,
+                    crossAxisCount: isIpad ? 3 : 2,
+                    childAspectRatio: isIpad ? 0.85 : 0.5,
+                    mainAxisSpacing: scalingWidth * AppDimensions.numD04,
+                    crossAxisSpacing: scalingWidth * AppDimensions.numD04,
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
@@ -1225,9 +1216,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                         },
                         child: Container(
                           padding: EdgeInsets.only(
-                              left: size.width * AppDimensions.numD03,
-                              right: size.width * AppDimensions.numD03,
-                              top: size.width * AppDimensions.numD03),
+                              left: scalingWidth * AppDimensions.numD03,
+                              right: scalingWidth * AppDimensions.numD03,
+                              top: scalingWidth * AppDimensions.numD03),
                           decoration: BoxDecoration(
                               color: Theme.of(context).cardColor,
                               boxShadow: [
@@ -1239,7 +1230,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     blurRadius: 1)
                               ],
                               borderRadius: BorderRadius.circular(
-                                  size.width * AppDimensions.numD04)),
+                                  scalingWidth * AppDimensions.numD04)),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -1248,12 +1239,13 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(
-                                        size.width * AppDimensions.numD04),
+                                        scalingWidth * AppDimensions.numD04),
                                     child: Image.network(
                                       // item.taskDetail!.mediaHouseImage,
                                       item.uploadContents?.videothubnail ?? "",
-                                      height: size.width * AppDimensions.numD28,
-                                      width: size.width,
+                                      height:
+                                          scalingWidth * AppDimensions.numD30,
+                                      width: scalingWidth,
                                       fit: BoxFit.cover,
                                       loadingBuilder:
                                           (context, child, loadingProgress) {
@@ -1264,9 +1256,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           alignment: Alignment.topCenter,
                                           child: Image.asset(
                                             "${commonImagePath}rabbitLogo.png",
-                                            height: size.width *
+                                            height: scalingWidth *
                                                 AppDimensions.numD26,
-                                            width: size.width *
+                                            width: scalingWidth *
                                                 AppDimensions.numD26,
                                           ),
                                         );
@@ -1277,9 +1269,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           alignment: Alignment.topCenter,
                                           child: Image.asset(
                                             "${commonImagePath}rabbitLogo.png",
-                                            height: size.width *
+                                            height: scalingWidth *
                                                 AppDimensions.numD26,
-                                            width: size.width *
+                                            width: scalingWidth *
                                                 AppDimensions.numD26,
                                           ),
                                         );
@@ -1289,7 +1281,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                 ],
                               ),
                               SizedBox(
-                                height: size.width * AppDimensions.numD02,
+                                height: scalingWidth * AppDimensions.numD02,
                               ),
 
                               /// Title
@@ -1301,7 +1293,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                 textAlign: TextAlign.start,
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD03,
+                                    fontSize:
+                                        scalingWidth * AppDimensions.numD03,
                                     color: Theme.of(context)
                                         .textTheme
                                         .bodyLarge
@@ -1317,10 +1310,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                 children: [
                                   Image.asset(
                                     "${iconsPath}ic_clock.png",
-                                    height: size.width * AppDimensions.numD029,
+                                    height:
+                                        scalingWidth * AppDimensions.numD029,
                                   ),
                                   SizedBox(
-                                    width: size.width * AppDimensions.numD01,
+                                    width: scalingWidth * AppDimensions.numD01,
                                   ),
                                   Text(
                                     dateTimeFormatter(
@@ -1330,8 +1324,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         format: "hh:mm a"),
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD024,
+                                        fontSize: scalingWidth *
+                                            AppDimensions.numD024,
                                         color: Theme.of(context)
                                             .textTheme
                                             .bodyLarge
@@ -1339,15 +1333,16 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         fontWeight: FontWeight.normal),
                                   ),
                                   SizedBox(
-                                    width: size.width * AppDimensions.numD018,
+                                    width: scalingWidth * AppDimensions.numD018,
                                   ),
                                   Image.asset(
                                     "${iconsPath}ic_yearly_calendar.png",
-                                    height: size.width * AppDimensions.numD028,
+                                    height:
+                                        scalingWidth * AppDimensions.numD028,
                                     color: Theme.of(context).iconTheme.color,
                                   ),
                                   SizedBox(
-                                    width: size.width * AppDimensions.numD01,
+                                    width: scalingWidth * AppDimensions.numD01,
                                   ),
                                   Text(
                                     dateTimeFormatter(
@@ -1355,8 +1350,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         format: "dd MMM yyyy"),
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD024,
+                                        fontSize: scalingWidth *
+                                            AppDimensions.numD024,
                                         color: Theme.of(context)
                                             .textTheme
                                             .bodyLarge
@@ -1366,7 +1361,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                 ],
                               ),
                               SizedBox(
-                                height: size.width * AppDimensions.numD013,
+                                height: scalingWidth * AppDimensions.numD013,
                               ),
                               Row(
                                 mainAxisAlignment:
@@ -1388,7 +1383,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           : "",
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width *
+                                          fontSize: scalingWidth *
                                               AppDimensions.numD025,
                                           color: _parseColor(item.statusColor,
                                               defaultColor: (item.deadlineDate
@@ -1401,12 +1396,12 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           fontWeight: FontWeight.normal)),
                                   item.status == "accepted"
                                       ? Container(
-                                          height: size.width *
+                                          height: scalingWidth *
                                               AppDimensions.numD065,
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: size.width *
+                                              horizontal: scalingWidth *
                                                   AppDimensions.numD04,
-                                              vertical: size.width *
+                                              vertical: scalingWidth *
                                                   AppDimensions.numD01),
                                           alignment: Alignment.center,
                                           decoration: BoxDecoration(
@@ -1419,9 +1414,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                   : _parseColor(
                                                       item.ctaColorCode),
                                               borderRadius:
-                                                  BorderRadius.circular(size
-                                                          .width *
-                                                      AppDimensions.numD015)),
+                                                  BorderRadius.circular(
+                                                      scalingWidth *
+                                                          AppDimensions
+                                                              .numD015)),
                                           child: Text(
                                             item.isLive
                                                 ? item.status == "accepted"
@@ -1432,7 +1428,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             // : "$currencySymbol${item.totalAmount}",
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width *
+                                                fontSize: scalingWidth *
                                                     AppDimensions.numD025,
                                                 color: item.ctaName != "Expired"
                                                     ? item.status == "accepted"
@@ -1466,12 +1462,12 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         )
                                       : Container(
                                           alignment: Alignment.center,
-                                          height: size.width *
+                                          height: scalingWidth *
                                               AppDimensions.numD065,
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: size.width *
+                                              horizontal: scalingWidth *
                                                   AppDimensions.numD04,
-                                              vertical: size.width *
+                                              vertical: scalingWidth *
                                                   AppDimensions.numD01),
                                           decoration: BoxDecoration(
                                               color: item.isLive
@@ -1512,7 +1508,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                 : item.ctaName,
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width *
+                                                fontSize: scalingWidth *
                                                     AppDimensions.numD025,
                                                 color: item.ctaName != "Expired"
                                                     ? (Theme.of(context)
@@ -1531,7 +1527,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                 ],
                               ),
                               SizedBox(
-                                height: size.width * AppDimensions.numD02,
+                                height: scalingWidth * AppDimensions.numD02,
                               )
                             ],
                           ),
@@ -1564,16 +1560,16 @@ class MyTaskScreenState extends State<MyTaskScreen>
         useSafeArea: true,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(size.width * AppDimensions.numD085),
-          topRight: Radius.circular(size.width * AppDimensions.numD085),
+          topLeft: Radius.circular(scalingWidth * AppDimensions.numD085),
+          topRight: Radius.circular(scalingWidth * AppDimensions.numD085),
         )),
         builder: (context) {
           return StatefulBuilder(builder: (context, stateSetter) {
             return Padding(
               padding: EdgeInsets.only(
-                top: size.width * AppDimensions.numD06,
-                left: size.width * AppDimensions.numD05,
-                right: size.width * AppDimensions.numD05,
+                top: scalingWidth * AppDimensions.numD06,
+                left: scalingWidth * AppDimensions.numD05,
+                right: scalingWidth * AppDimensions.numD05,
               ),
               child: SingleChildScrollView(
                 child: Column(
@@ -1585,21 +1581,21 @@ class MyTaskScreenState extends State<MyTaskScreen>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
-                          splashRadius: size.width * AppDimensions.numD07,
+                          splashRadius: scalingWidth * AppDimensions.numD07,
                           onPressed: () {
                             context.pop();
                           },
                           icon: Icon(
                             Icons.close,
                             color: Theme.of(context).textTheme.bodyLarge?.color,
-                            size: size.width * AppDimensions.numD07,
+                            size: scalingWidth * AppDimensions.numD07,
                           ),
                         ),
                         Text(
                           "Filter",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width *
+                              fontSize: scalingWidth *
                                   AppDimensions.appBarHeadingFontSizeNew,
                               color:
                                   Theme.of(context).textTheme.bodyLarge?.color,
@@ -1617,7 +1613,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                             style: TextStyle(
                                 color: AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.w400,
-                                fontSize: size.width * AppDimensions.numD035),
+                                fontSize: scalingWidth * AppDimensions.numD035),
                           ),
                         ),
                       ],
@@ -1625,7 +1621,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
                     /// Sort
                     SizedBox(
-                      height: size.width * AppDimensions.numD085,
+                      height: scalingWidth * AppDimensions.numD085,
                     ),
 
                     // /// Sort Heading
@@ -1633,7 +1629,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                     //   AppStrings.sortText,
                     //   style: commonTextStyle(
                     //       size: size,
-                    //       fontSize: size.width * AppDimensions.numD05,
+                    //       fontSize: scalingWidth * AppDimensions.numD05,
                     //       color: Colors.black,
                     //       fontWeight: FontWeight.w500),
                     // ),
@@ -1642,7 +1638,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
                     /// Filter
                     // SizedBox(
-                    //   height: size.width * AppDimensions.numD05,
+                    //   height: scalingWidth * AppDimensions.numD05,
                     // ),
 
                     /// Filter Heading
@@ -1650,7 +1646,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                       AppStrings.filterText,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * AppDimensions.numD05,
+                          fontSize: scalingWidth * AppDimensions.numD05,
                           color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w500),
                     ),
@@ -1658,24 +1654,24 @@ class MyTaskScreenState extends State<MyTaskScreen>
                     filterListWidget(filterList, stateSetter, size, false),
 
                     SizedBox(
-                      height: size.width * AppDimensions.numD06,
+                      height: scalingWidth * AppDimensions.numD06,
                     ),
 
                     /// Button
                     Container(
-                      width: size.width,
-                      height: size.width * AppDimensions.numD13,
+                      width: scalingWidth,
+                      height: scalingWidth * AppDimensions.numD13,
                       margin: EdgeInsets.symmetric(
-                          horizontal: size.width * AppDimensions.numD04),
+                          horizontal: scalingWidth * AppDimensions.numD04),
                       padding: EdgeInsets.symmetric(
-                        horizontal: size.width * AppDimensions.numD04,
+                        horizontal: scalingWidth * AppDimensions.numD04,
                       ),
                       child: commonElevatedButton(
                           AppStrings.applyText,
                           size,
                           commonTextStyle(
                               size: size,
-                              fontSize: size.width * AppDimensions.numD035,
+                              fontSize: scalingWidth * AppDimensions.numD035,
                               color: Colors.white,
                               fontWeight: FontWeight.w700),
                           commonButtonStyle(size, AppColorTheme.colorThemePink),
@@ -1687,7 +1683,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                       }),
                     ),
                     SizedBox(
-                      height: size.width * AppDimensions.numD08,
+                      height: scalingWidth * AppDimensions.numD08,
                     )
                   ],
                 ),
@@ -1700,7 +1696,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
   Widget filterListWidget(
       List<FilterModel> list, StateSetter stateSetter, Size size, bool isSort) {
     return ListView.separated(
-      padding: EdgeInsets.only(top: size.width * AppDimensions.numD03),
+      padding: EdgeInsets.only(top: scalingWidth * AppDimensions.numD03),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: list.length,
@@ -1722,13 +1718,13 @@ class MyTaskScreenState extends State<MyTaskScreen>
           child: Container(
             padding: EdgeInsets.only(
               top: list[index].name == AppStrings.filterDateText
-                  ? size.width * 0
-                  : size.width * AppDimensions.numD025,
+                  ? scalingWidth * 0
+                  : scalingWidth * AppDimensions.numD025,
               bottom: list[index].name == AppStrings.filterDateText
-                  ? size.width * 0
-                  : size.width * AppDimensions.numD025,
-              left: size.width * AppDimensions.numD02,
-              right: size.width * AppDimensions.numD02,
+                  ? scalingWidth * 0
+                  : scalingWidth * AppDimensions.numD025,
+              left: scalingWidth * AppDimensions.numD02,
+              right: scalingWidth * AppDimensions.numD02,
             ),
             color: item.isSelected ? Theme.of(context).highlightColor : null,
             child: Row(
@@ -1737,14 +1733,14 @@ class MyTaskScreenState extends State<MyTaskScreen>
                   "$iconsPath${list[index].icon}",
                   color: Theme.of(context).textTheme.bodyLarge?.color,
                   height: list[index].name == AppStrings.soldContentText
-                      ? size.width * AppDimensions.numD06
-                      : size.width * AppDimensions.numD05,
+                      ? scalingWidth * AppDimensions.numD06
+                      : scalingWidth * AppDimensions.numD05,
                   width: list[index].name == AppStrings.soldContentText
-                      ? size.width * AppDimensions.numD06
-                      : size.width * AppDimensions.numD05,
+                      ? scalingWidth * AppDimensions.numD06
+                      : scalingWidth * AppDimensions.numD05,
                 ),
                 SizedBox(
-                  width: size.width * AppDimensions.numD03,
+                  width: scalingWidth * AppDimensions.numD03,
                 ),
                 item.name == AppStrings.filterDateText
                     ? Row(
@@ -1764,15 +1760,15 @@ class MyTaskScreenState extends State<MyTaskScreen>
                             },
                             child: Container(
                               padding: EdgeInsets.only(
-                                top: size.width * AppDimensions.numD01,
-                                bottom: size.width * AppDimensions.numD01,
-                                left: size.width * AppDimensions.numD03,
-                                right: size.width * AppDimensions.numD01,
+                                top: scalingWidth * AppDimensions.numD01,
+                                bottom: scalingWidth * AppDimensions.numD01,
+                                left: scalingWidth * AppDimensions.numD03,
+                                right: scalingWidth * AppDimensions.numD01,
                               ),
-                              width: size.width * AppDimensions.numD32,
+                              width: scalingWidth * AppDimensions.numD32,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(
-                                    size.width * AppDimensions.numD04),
+                                    scalingWidth * AppDimensions.numD04),
                                 border: Border.all(
                                     width: 1, color: const Color(0xFFDEE7E6)),
                               ),
@@ -1786,8 +1782,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         format: "dd/mm/yy"),
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD032,
+                                        fontSize: scalingWidth *
+                                            AppDimensions.numD032,
                                         color: Theme.of(context)
                                             .textTheme
                                             .bodyLarge
@@ -1795,7 +1791,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
-                                    width: size.width * AppDimensions.numD015,
+                                    width: scalingWidth * AppDimensions.numD015,
                                   ),
                                   Icon(
                                     Icons.arrow_drop_down_sharp,
@@ -1809,7 +1805,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                             ),
                           ),
                           SizedBox(
-                            width: size.width * AppDimensions.numD03,
+                            width: scalingWidth * AppDimensions.numD03,
                           ),
                           InkWell(
                             onTap: () async {
@@ -1841,15 +1837,15 @@ class MyTaskScreenState extends State<MyTaskScreen>
                             },
                             child: Container(
                               padding: EdgeInsets.only(
-                                top: size.width * AppDimensions.numD01,
-                                bottom: size.width * AppDimensions.numD01,
-                                left: size.width * AppDimensions.numD03,
-                                right: size.width * AppDimensions.numD01,
+                                top: scalingWidth * AppDimensions.numD01,
+                                bottom: scalingWidth * AppDimensions.numD01,
+                                left: scalingWidth * AppDimensions.numD03,
+                                right: scalingWidth * AppDimensions.numD01,
                               ),
-                              width: size.width * AppDimensions.numD32,
+                              width: scalingWidth * AppDimensions.numD32,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(
-                                    size.width * AppDimensions.numD04),
+                                    scalingWidth * AppDimensions.numD04),
                                 border: Border.all(
                                     width: 1, color: const Color(0xFFDEE7E6)),
                               ),
@@ -1863,8 +1859,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         format: "dd/mm/yy"),
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD032,
+                                        fontSize: scalingWidth *
+                                            AppDimensions.numD032,
                                         color: Theme.of(context)
                                             .textTheme
                                             .bodyLarge
@@ -1872,7 +1868,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
-                                    width: size.width * AppDimensions.numD02,
+                                    width: scalingWidth * AppDimensions.numD02,
                                   ),
                                   Icon(
                                     Icons.arrow_drop_down_sharp,
@@ -1889,7 +1885,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                       )
                     : Text(list[index].name,
                         style: TextStyle(
-                            fontSize: size.width * AppDimensions.numD035,
+                            fontSize: scalingWidth * AppDimensions.numD035,
                             color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontWeight: FontWeight.w400,
                             fontFamily: "AirbnbCereal_W_Bk"))
@@ -1900,7 +1896,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
       },
       separatorBuilder: (context, index) {
         return SizedBox(
-          height: size.width * AppDimensions.numD01,
+          height: scalingWidth * AppDimensions.numD01,
         );
       },
     );

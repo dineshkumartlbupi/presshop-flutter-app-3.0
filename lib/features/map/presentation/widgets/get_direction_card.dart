@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/theme/app_colors.dart';
+import 'package:presshop/core/utils/ui_utils.dart';
 import 'package:presshop/features/map/presentation/bloc/map_bloc.dart';
 import 'package:presshop/features/map/presentation/bloc/map_event.dart';
 import 'package:presshop/features/map/presentation/bloc/map_state.dart';
@@ -228,6 +229,8 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final double scalingWidth = isIpad ? 550 : size.width;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final borderColor = isDark ? Colors.white24 : Colors.grey.shade300;
 
@@ -251,19 +254,19 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
         }
       },
       child: SizedBox(
-        width: 260,
+        width: scalingWidth * 0.7,
         child: Stack(
           clipBehavior: Clip.none,
           children: [
             /// ------- POINTER TRIANGLE (Behind Card) -------
             Positioned(
-              right: 16,
-              top: -8,
+              right: scalingWidth * 0.04,
+              top: -scalingWidth * 0.02,
               child: Transform.rotate(
                 angle: math.pi / 4,
                 child: Container(
-                  width: 22,
-                  height: 22,
+                  width: scalingWidth * 0.05,
+                  height: scalingWidth * 0.05,
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
                     border: Border.all(
@@ -275,8 +278,8 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
             ),
 
             Container(
-              width: 260,
-              padding: const EdgeInsets.all(12),
+              width: scalingWidth * 0.7,
+              padding: EdgeInsets.all(scalingWidth * 0.035),
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(16),
@@ -300,15 +303,15 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                   Text(
                     'Get Direction',
                     style: TextStyle(
-                      fontSize: 10,
+                      fontSize: scalingWidth * 0.028,
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
 
-                  const SizedBox(height: 8),
+                  SizedBox(height: scalingWidth * 0.02),
                   Divider(height: 1, color: borderColor),
-                  const SizedBox(height: 10),
+                  SizedBox(height: scalingWidth * 0.025),
 
                   /// ------- LOCATION INPUTS -------
                   Row(
@@ -316,22 +319,22 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                     children: [
                       Column(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.my_location,
-                            size: 18,
+                            size: scalingWidth * 0.045,
                             color: Colors.redAccent,
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: scalingWidth * 0.02),
                           dottedLine(borderColor),
-                          const SizedBox(height: 8),
-                          const Icon(
+                          SizedBox(height: scalingWidth * 0.02),
+                          Icon(
                             Icons.location_on_outlined,
-                            size: 18,
-                            color: Color.fromARGB(255, 121, 121, 121),
+                            size: scalingWidth * 0.045,
+                            color: const Color.fromARGB(255, 121, 121, 121),
                           ),
                         ],
                       ),
-                      const SizedBox(width: 18),
+                      SizedBox(width: scalingWidth * 0.04),
                       Expanded(
                         child: Column(
                           children: [
@@ -342,15 +345,19 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                 focusNode: _currentLocationFocusNode,
                                 onChanged: (value) =>
                                     _searchPlaces(value, isOrigin: true),
+                                style: TextStyle(
+                                  fontSize: scalingWidth * 0.035,
+                                ),
                                 decoration: InputDecoration(
                                   hintText: 'Your Location',
                                   filled: true,
-                                  hintStyle: const TextStyle(fontSize: 12),
+                                  hintStyle:
+                                      TextStyle(fontSize: scalingWidth * 0.035),
                                   fillColor:
                                       Theme.of(context).scaffoldBackgroundColor,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 8,
-                                    horizontal: 12,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: scalingWidth * 0.02,
+                                    horizontal: scalingWidth * 0.03,
                                   ),
                                   isDense: true,
                                   enabledBorder: OutlineInputBorder(
@@ -370,7 +377,7 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            SizedBox(height: scalingWidth * 0.03),
                             CompositedTransformTarget(
                               link: _destinationLayerLink,
                               child: TextField(
@@ -378,15 +385,19 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                 focusNode: _destinationFocusNode,
                                 onChanged: (value) =>
                                     _searchPlaces(value, isOrigin: false),
+                                style: TextStyle(
+                                  fontSize: scalingWidth * 0.035,
+                                ),
                                 decoration: InputDecoration(
                                   hintText: 'Destination',
-                                  hintStyle: const TextStyle(fontSize: 12),
+                                  hintStyle:
+                                      TextStyle(fontSize: scalingWidth * 0.035),
                                   filled: true,
                                   fillColor:
                                       Theme.of(context).scaffoldBackgroundColor,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 8,
-                                    horizontal: 12,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: scalingWidth * 0.02,
+                                    horizontal: scalingWidth * 0.03,
                                   ),
                                   isDense: true,
                                   enabledBorder: OutlineInputBorder(
@@ -412,22 +423,17 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                     ],
                   ),
 
-                  const SizedBox(height: 14),
+                  SizedBox(height: scalingWidth * 0.035),
 
                   /// ------- GO BUTTON -------
                   SizedBox(
                     width: double.infinity,
-                    height: 35,
+                    height: scalingWidth * 0.1,
                     child: ElevatedButton(
                       onPressed: _isLoading
                           ? null
                           : () async {
                               if (_destinationController.text.isEmpty) {
-                                // ScaffoldMessenger.of(context).showSnackBar(
-                                //   const SnackBar(
-                                //     content: Text('Please enter a destination'),
-                                //   ),
-                                // );
                                 return;
                               }
 
@@ -443,14 +449,6 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                       .read<MapBloc>()
                                       .add(StartNavigationEvent());
                                 }
-                              } else {
-                                // ScaffoldMessenger.of(context).showSnackBar(
-                                //   const SnackBar(
-                                //     content: Text(
-                                //       'Please select a destination from the suggestions or map',
-                                //     ),
-                                //   ),
-                                // );
                               }
                             },
                       style: ElevatedButton.styleFrom(
@@ -461,22 +459,22 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                         ),
                       ),
                       child: _isLoading
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
+                          ? SizedBox(
+                              width: scalingWidth * 0.045,
+                              height: scalingWidth * 0.045,
+                              child: const CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
                                   Colors.white,
                                 ),
                               ),
                             )
-                          : const Text(
+                          : Text(
                               'GO',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700,
-                                fontSize: 10,
+                                fontSize: scalingWidth * 0.028,
                                 letterSpacing: 1.2,
                               ),
                             ),

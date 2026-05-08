@@ -240,8 +240,7 @@ class _MapPageContentState extends State<_MapPageContent>
       return;
     }
 
-    final url =
-        "https://maps.googleapis.com/maps/api/place/autocomplete/json"
+    final url = "https://maps.googleapis.com/maps/api/place/autocomplete/json"
         "?input=$input"
         "&key=$googleApiKey"
         "&types=geocode";
@@ -268,8 +267,7 @@ class _MapPageContentState extends State<_MapPageContent>
   }
 
   Future<void> _selectPlace(String placeId, String description) async {
-    final url =
-        "https://maps.googleapis.com/maps/api/place/details/json"
+    final url = "https://maps.googleapis.com/maps/api/place/details/json"
         "?place_id=$placeId"
         "&key=$googleApiKey";
 
@@ -676,7 +674,7 @@ class _MapPageContentState extends State<_MapPageContent>
   Widget build(BuildContext context) {
     super.build(context);
     var size = MediaQuery.of(context).size;
-    final double responsiveWidth = size.width > 600 ? 500 : size.width;
+    final double scalingWidth = isIpad ? 550 : size.width;
 
     return BlocConsumer<MapBloc, MapState>(
       buildWhen: (previous, current) {
@@ -886,8 +884,7 @@ class _MapPageContentState extends State<_MapPageContent>
               }
 
               // Show alert popup if not shown yet
-              bool isShown =
-                  sharedPreferences?.getBool(
+              bool isShown = sharedPreferences?.getBool(
                     SharedPreferencesKeys.alertInfoPopupShownKey,
                   ) ??
                   false;
@@ -947,8 +944,8 @@ class _MapPageContentState extends State<_MapPageContent>
                           if (!_isProgrammaticMovement) {
                             _isUserDragging = true;
                             context.read<MapBloc>().add(
-                              const SetDraggingEvent(true),
-                            );
+                                  const SetDraggingEvent(true),
+                                );
                           }
                           _customInfoWindowController.onCameraMove?.call();
                         },
@@ -965,8 +962,8 @@ class _MapPageContentState extends State<_MapPageContent>
                             _isProgrammaticMovement = false;
                             if (_isUserDragging) {
                               context.read<MapBloc>().add(
-                                const SetDraggingEvent(false),
-                              );
+                                    const SetDraggingEvent(false),
+                                  );
                               _isUserDragging = false;
                             }
                           }
@@ -977,23 +974,23 @@ class _MapPageContentState extends State<_MapPageContent>
                           if (mapState.isSelectingAlertLocation &&
                               mapState.pendingAlertType != null) {
                             context.read<MapBloc>().add(
-                              SetPreviewAlertMarkerEvent(
-                                type: mapState.pendingAlertType!,
-                                position: pos,
-                              ),
-                            );
+                                  SetPreviewAlertMarkerEvent(
+                                    type: mapState.pendingAlertType!,
+                                    position: pos,
+                                  ),
+                                );
                             context.read<MapBloc>().add(
-                              const SetSelectingAlertLocationEvent(
-                                isSelecting: false,
-                              ),
-                            );
+                                  const SetSelectingAlertLocationEvent(
+                                    isSelecting: false,
+                                  ),
+                                );
                             return;
                           }
 
                           if (mapState.showAlertPanel) {
                             context.read<MapBloc>().add(
-                              ToggleAlertPanelEvent(),
-                            );
+                                  ToggleAlertPanelEvent(),
+                                );
                             return;
                           }
 
@@ -1013,18 +1010,18 @@ class _MapPageContentState extends State<_MapPageContent>
                             );
 
                             context.read<MapBloc>().add(
-                              SetMapSelectedLocationEvent(
-                                position: pos,
-                                address: address,
-                                isOrigin: mapState.isSelectingOrigin,
-                              ),
-                            );
+                                  SetMapSelectedLocationEvent(
+                                    position: pos,
+                                    address: address,
+                                    isOrigin: mapState.isSelectingOrigin,
+                                  ),
+                                );
 
                             context.read<MapBloc>().add(
-                              SetDestinationSelectionModeEvent(
-                                isSelectionMode: false,
-                              ),
-                            );
+                                  SetDestinationSelectionModeEvent(
+                                    isSelectionMode: false,
+                                  ),
+                                );
                             return;
                           }
 
@@ -1044,21 +1041,21 @@ class _MapPageContentState extends State<_MapPageContent>
                             );
 
                             context.read<MapBloc>().add(
-                              SetMapSelectedLocationEvent(
-                                position: pos,
-                                address: address,
-                                isOrigin: false,
-                              ),
-                            );
+                                  SetMapSelectedLocationEvent(
+                                    position: pos,
+                                    address: address,
+                                    isOrigin: false,
+                                  ),
+                                );
                             return;
                           }
 
                           context.read<MapBloc>().add(
-                            ClearSelectedMarkerEvent(),
-                          );
+                                ClearSelectedMarkerEvent(),
+                              );
                           context.read<MapBloc>().add(
-                            ClearSelectedPolygonEvent(),
-                          );
+                                ClearSelectedPolygonEvent(),
+                              );
                           setState(() {
                             _infoOffset = null;
                             _polygonInfoOffset = null;
@@ -1090,9 +1087,9 @@ class _MapPageContentState extends State<_MapPageContent>
                         // Main info window for popups
                         ciw.CustomInfoWindow(
                           controller: _customInfoWindowController,
-                          height: responsiveWidth * 0.85,
-                          width: responsiveWidth * 0.75,
-                          offset: responsiveWidth * 0.14,
+                          height: scalingWidth * 0.85,
+                          width: scalingWidth * 0.75,
+                          offset: scalingWidth * 0.14,
                         ),
 
                         if (_routeInfoOffset != null &&
@@ -1123,8 +1120,8 @@ class _MapPageContentState extends State<_MapPageContent>
                                   "High risk area - proceed with caution",
                               onPressed: () {
                                 context.read<MapBloc>().add(
-                                  ClearSelectedPolygonEvent(),
-                                );
+                                      ClearSelectedPolygonEvent(),
+                                    );
                                 setState(() => _polygonInfoOffset = null);
                               },
                             ),
@@ -1143,8 +1140,8 @@ class _MapPageContentState extends State<_MapPageContent>
                       searchFocusNode: _searchFocusNode,
                       onPressedOnNavigation: () {
                         context.read<MapBloc>().add(
-                          ToggleGetDirectionCardEvent(),
-                        );
+                              ToggleGetDirectionCardEvent(),
+                            );
                       },
                       onChange: (value) {
                         _searchPlaces(value);
@@ -1154,30 +1151,30 @@ class _MapPageContentState extends State<_MapPageContent>
                       selectedCategory: state.selectedCategory,
                       onAlertTypeChanged: (value) {
                         context.read<MapBloc>().add(
-                          UpdateFiltersEvent(
-                            alertType: value,
-                            distance: state.selectedDistance,
-                            category: state.selectedCategory,
-                          ),
-                        );
+                              UpdateFiltersEvent(
+                                alertType: value,
+                                distance: state.selectedDistance,
+                                category: state.selectedCategory,
+                              ),
+                            );
                       },
                       onDistanceChanged: (value) {
                         context.read<MapBloc>().add(
-                          UpdateFiltersEvent(
-                            alertType: state.selectedAlertType,
-                            distance: value,
-                            category: state.selectedCategory,
-                          ),
-                        );
+                              UpdateFiltersEvent(
+                                alertType: state.selectedAlertType,
+                                distance: value,
+                                category: state.selectedCategory,
+                              ),
+                            );
                       },
                       onCategoryChanged: (value) {
                         context.read<MapBloc>().add(
-                          UpdateFiltersEvent(
-                            alertType: state.selectedAlertType,
-                            distance: state.selectedDistance,
-                            category: value,
-                          ),
-                        );
+                              UpdateFiltersEvent(
+                                alertType: state.selectedAlertType,
+                                distance: state.selectedDistance,
+                                category: value,
+                              ),
+                            );
                       },
                     ),
                   ),
@@ -1201,10 +1198,10 @@ class _MapPageContentState extends State<_MapPageContent>
                             return InkWell(
                               onTap: () {
                                 context.read<MapBloc>().add(
-                                  const SetSelectingAlertLocationEvent(
-                                    isSelecting: false,
-                                  ),
-                                );
+                                      const SetSelectingAlertLocationEvent(
+                                        isSelecting: false,
+                                      ),
+                                    );
                                 _selectPlace(
                                   prediction['place_id'],
                                   prediction['description'],
@@ -1304,22 +1301,21 @@ class _MapPageContentState extends State<_MapPageContent>
                       onAlertSelected: (type) async {
                         try {
                           context.read<MapBloc>().add(
-                            SetSelectingAlertLocationEvent(
-                              isSelecting: true,
-                              type: type,
-                            ),
-                          );
+                                SetSelectingAlertLocationEvent(
+                                  isSelecting: true,
+                                  type: type,
+                                ),
+                              );
                           _customInfoWindowController.hideInfoWindow?.call();
                           debugPrint("AlertSelected: $type");
-                          final myLoc = context
-                              .read<MapBloc>()
-                              .state
-                              .myLocation;
+                          final myLoc =
+                              context.read<MapBloc>().state.myLocation;
                           if (myLoc != null) {
                             _addBurst(myLoc, type);
                             context.read<MapBloc>().add(
-                              AddAlertMarkerEvent(type: type, position: myLoc),
-                            );
+                                  AddAlertMarkerEvent(
+                                      type: type, position: myLoc),
+                                );
                           }
                         } catch (e) {
                           debugPrint("Error adding alert marker: $e");
@@ -1343,8 +1339,8 @@ class _MapPageContentState extends State<_MapPageContent>
                       mini: true,
                       onPressed: () {
                         context.read<MapBloc>().add(
-                          const GetCurrentLocationEvent(),
-                        );
+                              const GetCurrentLocationEvent(),
+                            );
                       },
                       child: const Icon(
                         Icons.my_location,
