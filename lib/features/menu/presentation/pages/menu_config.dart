@@ -69,11 +69,11 @@ class MenuData {
 }
 
 List<MenuData> buildMenu() => [
-      MenuData(
-        title: "Location sharing",
-        icon: "assets/markers/location1.png",
-        action: MenuAction.locationSharing,
-      ),
+      // MenuData(
+      //   title: "Location sharing",
+      //   icon: "assets/markers/location1.png",
+      //   action: MenuAction.locationSharing,
+      // ),
       MenuData(
         title: AppStrings.notificationText,
         icon: "${iconsPath}ic_feed.png",
