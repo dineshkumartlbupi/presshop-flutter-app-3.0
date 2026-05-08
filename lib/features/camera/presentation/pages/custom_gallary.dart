@@ -103,7 +103,7 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
           appBar: CommonBrandedAppBar(
             title: AppStrings.galleryText,
             size: size,
-            showLogo: true,
+            showLogo: false,
             actionWidgets: showDone
                 ? [
                     !isSelectedImageProcessing
@@ -122,10 +122,14 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                           )
                         : Padding(
                             padding: EdgeInsets.symmetric(
-                                vertical: size.width *
+                                horizontal: size.width *
                                     (isIpad
                                         ? AppDimensions.numD004
-                                        : AppDimensions.numD015)),
+                                        : AppDimensions.numD040),
+                                vertical: size.width *
+                                    (isIpad
+                                        ? AppDimensions.numD002
+                                        : AppDimensions.numD01)),
                             child: commonElevatedButton(
                                 "Done",
                                 size,

@@ -1663,7 +1663,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(
-                            horizontal: size.width * AppDimensions.numD04),
+                            horizontal: size.width * AppDimensions.numD04,
+                            vertical: size.width * AppDimensions.numD03),
                         child: Row(
                           children: [
                             Text(
@@ -1769,7 +1770,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                             color: selectedSellType ==
                                                     AppStrings.sharedText
                                                 ? activeColor
-                                                : cardColor,
+                                                : Colors.transparent,
                                             alignment: Alignment.topCenter,
                                           ),
                                         ),
@@ -1789,12 +1790,17 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 color: selectedSellType ==
                                                         AppStrings.sharedText
                                                     ? Colors.black
-                                                    : cardColor,
+                                                    : Colors.transparent,
                                               ),
                                               child: Text(
                                                 AppStrings.recommendedPriceText,
                                                 style: TextStyle(
-                                                    color: Colors.white,
+                                                    color: selectedSellType ==
+                                                            AppStrings
+                                                                .sharedText
+                                                        ? Colors.white
+                                                        : AppColorTheme
+                                                            .colorHint,
                                                     fontSize: size.width *
                                                         AppDimensions.numD026,
                                                     fontWeight:
@@ -1861,7 +1867,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             AppStrings
                                                                 .sharedText
                                                         ? Colors.black
-                                                        : cardColor,
+                                                        : Colors.transparent,
                                                   ),
                                                   child: Text(
                                                     _formatPrice(sharedPrice),
@@ -1929,7 +1935,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                             color: selectedSellType ==
                                                     AppStrings.exclusiveText
                                                 ? activeColor
-                                                : cardColor,
+                                                : Colors.transparent,
                                             alignment: Alignment.topCenter,
                                           ),
                                         ),
@@ -1949,7 +1955,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 color: selectedSellType ==
                                                         AppStrings.exclusiveText
                                                     ? Colors.black
-                                                    : cardColor,
+                                                    : Colors.transparent,
                                               ),
                                               child: Text(
                                                 AppStrings.recommendedPriceText,
@@ -2322,7 +2328,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       commonButtonTextStyle(size,
                                           color: textColor),
                                       ElevatedButton.styleFrom(
-                                          backgroundColor: cardColor,
+                                          backgroundColor: Colors.transparent,
                                           elevation: 0.0,
                                           side: BorderSide(
                                               color: borderColor, width: 1),
@@ -2410,6 +2416,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
   void showCategoryBottomSheet(Size size, PublishBloc publishBloc) {
     showModalBottomSheet(
         context: context,
+        backgroundColor: Colors.transparent,
         builder: (context) {
           return BlocProvider.value(
               value: publishBloc,
@@ -2424,55 +2431,74 @@ class PublishContentScreenState extends State<PublishContentScreen>
                 final Color borderColor =
                     isDark ? Colors.white24 : AppColorTheme.colorGreyNew;
 
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: size.width * AppDimensions.numD04),
-                      child: Row(
-                        children: [
-                          Text(
-                            AppStrings.categoryText.toUpperCase(),
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * AppDimensions.numD04,
-                                color: textColor,
-                                fontWeight: FontWeight.w700),
-                          ),
-                          const Spacer(),
-                          IconButton(
-                              splashRadius: size.width * AppDimensions.numD06,
-                              onPressed: () {
-                                context.pop();
-                              },
-                              icon: Icon(
-                                Icons.cancel_outlined,
-                                size: size.width * AppDimensions.numD08,
-                                color: textColor,
-                              ))
-                        ],
-                      ),
+                return Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.black : Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft:
+                          Radius.circular(size.width * AppDimensions.numD07),
+                      topRight:
+                          Radius.circular(size.width * AppDimensions.numD07),
                     ),
-                    Flexible(
-                      child: BlocBuilder<PublishBloc, PublishState>(
-                        builder: (context, state) {
-                          final categories = state.categories;
-                          final currentSelected = state.selectedCategory;
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          size.width * AppDimensions.numD05,
+                          size.width * AppDimensions.numD05,
+                          size.width * AppDimensions.numD02,
+                          size.width * AppDimensions.numD02,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              AppStrings.categoryText.toUpperCase(),
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * AppDimensions.numD04,
+                                  color: textColor,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                            IconButton(
+                                constraints: const BoxConstraints(),
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  context.pop();
+                                },
+                                icon: Icon(
+                                  Icons.cancel_outlined,
+                                  size: size.width * AppDimensions.numD08,
+                                  color: textColor,
+                                ))
+                          ],
+                        ),
+                      ),
+                      const Divider(height: 1),
+                      Flexible(
+                        child: BlocBuilder<PublishBloc, PublishState>(
+                          builder: (context, state) {
+                            final categories = state.categories;
+                            final currentSelected = state.selectedCategory;
 
-                          return SingleChildScrollView(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal:
-                                      size.width * AppDimensions.numD04),
+                            return SingleChildScrollView(
+                              padding: EdgeInsets.all(
+                                  size.width * AppDimensions.numD05),
                               child: Wrap(
-                                spacing: size.width * AppDimensions.numD02,
-                                runSpacing: size.width * AppDimensions.numD02,
+                                spacing: size.width * AppDimensions.numD03,
+                                runSpacing: size.width * AppDimensions.numD03,
+                                alignment: WrapAlignment.start,
                                 children: categories.map((category) {
                                   final isSelected =
                                       category.id == currentSelected?.id;
 
-                                  return InkWell(
+                                  return GestureDetector(
                                     onTap: () {
                                       context.read<PublishBloc>().add(
                                           SelectCategoryEvent(category.id));
@@ -2488,36 +2514,48 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
                                       context.pop();
                                     },
-                                    child: Chip(
-                                      side: BorderSide(
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal:
+                                              size.width * AppDimensions.numD04,
+                                          vertical: size.width *
+                                              AppDimensions.numD025),
+                                      decoration: BoxDecoration(
                                           color: isSelected
-                                              ? Colors.transparent
-                                              : borderColor,
-                                          width: 1),
-                                      label: Text(
+                                              ? (isDark
+                                                  ? Colors.red
+                                                  : Colors.black)
+                                              : cardColor,
+                                          borderRadius: BorderRadius.circular(
+                                              size.width *
+                                                  AppDimensions.numD025),
+                                          border: Border.all(
+                                              color: isSelected
+                                                  ? Colors.transparent
+                                                  : borderColor,
+                                              width: 1)),
+                                      child: Text(
                                         category.name,
                                         style: commonTextStyle(
                                             size: size,
                                             fontSize: size.width *
-                                                AppDimensions.numD03,
+                                                AppDimensions.numD032,
                                             color: isSelected
                                                 ? Colors.white
                                                 : AppColorTheme.colorHint,
                                             fontWeight: FontWeight.w500),
                                       ),
-                                      backgroundColor: isSelected
-                                          ? (isDark ? Colors.red : Colors.black)
-                                          : cardColor,
                                     ),
                                   );
                                 }).toList(),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: size.width * AppDimensions.numD05),
+                    ],
+                  ),
                 );
               }));
         });

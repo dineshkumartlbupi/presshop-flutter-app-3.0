@@ -393,12 +393,16 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                   // Note: mediaList is inserted at index 0, so it's reversed relative to cameraListData
                                   int originalIndex =
                                       widget.cameraListData.length - 1 - index;
-                                  if (originalIndex >= 0 && originalIndex < widget.cameraListData.length) {
-                                    final updatedList = List<CameraData>.from(widget.cameraListData);
+                                  if (originalIndex >= 0 &&
+                                      originalIndex <
+                                          widget.cameraListData.length) {
+                                    final updatedList = List<CameraData>.from(
+                                        widget.cameraListData);
                                     updatedList.removeAt(originalIndex);
                                     widget.cameraListData.clear();
                                     widget.cameraListData.addAll(updatedList);
-                                    context.read<CameraBloc>().add(UpdateCapturedMediaEvent(updatedList));
+                                    context.read<CameraBloc>().add(
+                                        UpdateCapturedMediaEvent(updatedList));
                                   }
                                 }
 
@@ -950,19 +954,18 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
         if (widget.type == "draft") {
           widget.cameraListData.add(element);
         }
-        mediaList.add(
-            MediaData(
-                mediaPath: element.path,
-                mimeType: element.mimeType,
-                thumbnail: element.videoImagePath,
-                location: element.location,
-                dateTime: element.dateTime.toString(),
-                latitude: element.latitude,
-                longitude: element.longitude,
-                country: element.country,
-                state: element.state,
-                city: element.city,
-                isLocalMedia: true));
+        mediaList.add(MediaData(
+            mediaPath: element.path,
+            mimeType: element.mimeType,
+            thumbnail: element.videoImagePath,
+            location: element.location,
+            dateTime: element.dateTime.toString(),
+            latitude: element.latitude,
+            longitude: element.longitude,
+            country: element.country,
+            state: element.state,
+            city: element.city,
+            isLocalMedia: true));
 
         debugPrint(" path ======> : ${element.path}");
         debugPrint("MedListSize: ${mediaList.length}");

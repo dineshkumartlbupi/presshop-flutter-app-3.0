@@ -746,7 +746,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       Container(
                                         alignment: Alignment.center,
                                         height:
-                                            size.width * AppDimensions.numD08,
+                                            size.width * AppDimensions.numD065,
                                         padding: EdgeInsets.symmetric(
                                             horizontal: size.width *
                                                 AppDimensions.numD025,
@@ -1075,10 +1075,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           : Container(
                                               alignment: Alignment.center,
                                               height: size.width *
-                                                  AppDimensions.numD08,
+                                                  AppDimensions.numD065,
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: size.width *
-                                                      AppDimensions.numD05,
+                                                      AppDimensions.numD04,
                                                   vertical: size.width *
                                                       AppDimensions.numD01),
                                               decoration: BoxDecoration(
@@ -1403,11 +1403,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       ? Container(
                                           height: size.width *
                                               AppDimensions.numD065,
-                                          width:
-                                              size.width * AppDimensions.numD16,
                                           padding: EdgeInsets.symmetric(
                                               horizontal: size.width *
-                                                  AppDimensions.numD02,
+                                                  AppDimensions.numD04,
                                               vertical: size.width *
                                                   AppDimensions.numD01),
                                           alignment: Alignment.center,
@@ -1470,13 +1468,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           alignment: Alignment.center,
                                           height: size.width *
                                               AppDimensions.numD065,
-                                          width:
-                                              size.width * AppDimensions.numD16,
                                           padding: EdgeInsets.symmetric(
                                               horizontal: size.width *
-                                                  AppDimensions.numD02,
+                                                  AppDimensions.numD04,
                                               vertical: size.width *
-                                                  AppDimensions.numD003),
+                                                  AppDimensions.numD01),
                                           decoration: BoxDecoration(
                                               color: item.isLive
                                                   ? item.isAvailableForAccept
