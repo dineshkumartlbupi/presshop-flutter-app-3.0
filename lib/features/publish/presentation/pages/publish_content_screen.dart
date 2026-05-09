@@ -1580,55 +1580,56 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     padding: EdgeInsets.only(
                                         left: size.width * 0.03),
                                     child: Wrap(
-                                      spacing:
-                                          size.width * AppDimensions.numD02,
-                                      runSpacing:
-                                          size.width * AppDimensions.numD01,
                                       children: List.generate(
                                           selectedHashtagList.length, (index) {
-                                        return Chip(
-                                          label: Text(
-                                            "#${selectedHashtagList[index].name}",
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width *
-                                                    AppDimensions.numD03,
-                                                color: textColor,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                          backgroundColor: cardColor,
-                                          visualDensity: VisualDensity.compact,
-                                          materialTapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap,
+                                        return Padding(
                                           padding: EdgeInsets.only(
-                                              left: size.width * 0.01,
-                                              right: size.width * 0.005,
-                                              top: 0,
-                                              bottom: 0),
-                                          labelPadding: EdgeInsets.only(
-                                              left: size.width * 0.01,
-                                              right: 0),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width *
-                                                    AppDimensions.numD02),
-                                            side: BorderSide(
-                                                color: borderColor, width: 1),
+                                              right: index <
+                                                      (selectedHashtagList
+                                                              .length -
+                                                          1)
+                                                  ? size.width *
+                                                      AppDimensions.numD01
+                                                  : 0),
+                                          child: Chip(
+                                            label: Text(
+                                              "#${selectedHashtagList[index].name}",
+                                              style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD03,
+                                                  color: textColor,
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                            ),
+                                            backgroundColor: cardColor,
+                                            visualDensity:
+                                                VisualDensity.compact,
+                                            materialTapTargetSize:
+                                                MaterialTapTargetSize
+                                                    .shrinkWrap,
+                                            padding: EdgeInsets.zero,
+                                            labelPadding:
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 4),
+                                            side: BorderSide.none,
+                                            shape: const StadiumBorder(),
+                                            deleteIcon: Icon(
+                                              Icons.close,
+                                              color: textColor,
+                                              size: size.width *
+                                                  AppDimensions.numD045,
+                                            ),
+                                            onDeleted: () {
+                                              selectedHashtagList
+                                                  .removeAt(index);
+                                              hashtagController.text =
+                                                  selectedHashtagList.isNotEmpty
+                                                      ? "Add more"
+                                                      : "Add hashtags";
+                                              setState(() {});
+                                            },
                                           ),
-                                          deleteIcon: Icon(
-                                            Icons.close,
-                                            color: textColor,
-                                            size: size.width *
-                                                AppDimensions.numD04,
-                                          ),
-                                          onDeleted: () {
-                                            selectedHashtagList.removeAt(index);
-                                            hashtagController.text =
-                                                selectedHashtagList.isNotEmpty
-                                                    ? "Add more"
-                                                    : "Add hashtags";
-                                            setState(() {});
-                                          },
                                         );
                                       }),
                                     ),
