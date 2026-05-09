@@ -519,7 +519,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                   sliver: SliverGrid(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: isIpad ? 3 : 2,
-                      childAspectRatio: isIpad ? 0.85 : 0.65,
+                      childAspectRatio: isIpad ? 0.8 : 0.75,
                       mainAxisSpacing: scalingWidth * AppDimensions.numD04,
                       crossAxisSpacing: scalingWidth * AppDimensions.numD04,
                     ),
@@ -817,7 +817,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         child: Image.network(
                                           item.taskDetail!.mediaHouseImage,
                                           height: scalingWidth *
-                                              AppDimensions.numD35,
+                                              AppDimensions.numD30,
                                           width: scalingWidth,
                                           fit: BoxFit.cover,
                                           loadingBuilder: (context, child,
@@ -1168,7 +1168,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                 sliver: SliverGrid(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: isIpad ? 3 : 2,
-                    childAspectRatio: isIpad ? 0.85 : 0.5,
+                    childAspectRatio: isIpad ? 0.8 : 0.75,
                     mainAxisSpacing: scalingWidth * AppDimensions.numD04,
                     crossAxisSpacing: scalingWidth * AppDimensions.numD04,
                   ),

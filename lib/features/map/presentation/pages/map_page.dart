@@ -1294,6 +1294,7 @@ class _MapPageContentState extends State<_MapPageContent>
                   Positioned(
                     bottom: 63,
                     left: 0,
+                    right: 0,
                     child: AlertPanel(
                       onClose: () {
                         context.read<MapBloc>().add(ToggleAlertPanelEvent());

@@ -66,16 +66,16 @@ class _AlertPanelState extends State<AlertPanel>
         child: Stack(
           children: [
             Align(
-              alignment: Alignment.bottomCenter,
+              alignment: Alignment.bottomLeft,
               child: Container(
                 margin: EdgeInsets.only(
                     bottom: scalingWidth * AppDimensions.numD042,
-                    left: 10,
-                    right: 10),
+                    left: 16,
+                    right: 16),
                 padding: EdgeInsets.symmetric(
                     horizontal: scalingWidth * AppDimensions.numD026,
                     vertical: scalingWidth * AppDimensions.numD026),
-                width: isIpad ? 450 : size.width * AppDimensions.numD65,
+                width: isIpad ? 400 : size.width * AppDimensions.numD65,
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(
@@ -245,7 +245,7 @@ class _AlertPanelState extends State<AlertPanel>
               ),
             ),
             Positioned(
-              left: isIpad ? (size.width / 2) - 200 : size.width * 0.15,
+              left: isIpad ? 55 : size.width * 0.12,
               bottom: scalingWidth * AppDimensions.numD016,
               child: Transform.rotate(
                 angle: math.pi / 4,

@@ -58,6 +58,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
   bool isLoading = false;
   bool videoPlaying = false, isMoreDisable = false;
   bool isLocationFetching = false;
+  late PageController pageController;
 
   List<MediaData> mediaList = [];
 
@@ -71,6 +72,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
       mediaList = widget.mediaList;
     }
 
+    pageController = PageController(initialPage: currentPage);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) =>
         requestLocationPermissions(
             shouldShowSettingPopup: false, showErrorLocationPage: false));
@@ -203,16 +205,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
     var size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
-        if (widget.type == "draft") {
-          context.pop();
-        } else {
-          mediaList.clear();
-          context.goNamed(
-            AppRoutes.dashboardName,
-            extra: {'initialPosition': 2},
-          );
-        }
-
+        context.pop();
         return false;
       },
       child: Scaffold(
@@ -222,6 +215,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
             children: [
               Expanded(
                 child: PageView.builder(
+                  controller: pageController,
                   onPageChanged: (value) {
                     currentPage = value;
                     setState(() {});
@@ -407,10 +401,8 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                 }
 
                                 if (mediaList.length == 1) {
-                                  debugPrint('hello::::::::');
                                   mediaList.removeAt(index);
-                                  context.goNamed(AppRoutes.dashboardName,
-                                      extra: {'initialPosition': 2});
+                                  context.pop();
                                 } else {
                                   mediaList.removeAt(index);
                                   if (currentPage >= mediaList.length) {
@@ -699,22 +691,16 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                         mediaList: mediaList));
                                   }
                                 } else {
-                                  if (mediaList.first.location.isEmpty ||
-                                      mediaList.first.latitude.isEmpty) {
-                                    requestLocationPermissions(
-                                        shouldShowSettingPopup: false,
-                                        showErrorLocationPage: true);
-                                    // showToast(
-                                    //     "Please add location to the media");
-                                    return;
-                                  }
                                   if (mediaList.isNotEmpty) {
-                                    if (widget.cameraListData.isNotEmpty) {
+                                    if (mediaList.isNotEmpty) {
                                       var pubData = PublishData(
                                           imagePath: widget.cameraData != null
                                               ? widget.cameraData?.path ?? ""
-                                              : widget
-                                                  .cameraListData.first.path,
+                                              : (widget
+                                                      .cameraListData.isNotEmpty
+                                                  ? widget
+                                                      .cameraListData.first.path
+                                                  : mediaList.first.mediaPath),
                                           address: mediaList.first.location,
                                           date: mediaList.first.dateTime,
                                           city: mediaList.first.city,
@@ -725,22 +711,16 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                           mimeType: mediaList.first.mimeType,
                                           videoImagePath:
                                               mediaList.first.thumbnail,
-                                          mediaList: mediaList
-                                              .where(
-                                                  (media) => media.isLocalMedia)
-                                              .toList());
+                                          mediaList: mediaList);
 
                                       debugPrint("pubData $pubData");
-
-                                      // MyContentData? myContentData = widget.myContentData?.copyWith(contentMediaList: []);
-                                      MyContentData? myContentData =
-                                          widget.myContentData;
 
                                       context.pushNamed(
                                           AppRoutes.publishContentName,
                                           extra: {
                                             'publishData': pubData,
-                                            'myContentData': myContentData,
+                                            'myContentData':
+                                                widget.myContentData,
                                             'hideDraft': true,
                                             'docType': widget.type,
                                           });
@@ -855,49 +835,36 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                           mediaList: mediaList));
                                     }
                                   } else {
-                                    if (mediaList.first.location.isEmpty ||
-                                        mediaList.first.latitude.isEmpty) {
-                                      requestLocationPermissions(
-                                          shouldShowSettingPopup: false,
-                                          showErrorLocationPage: true);
-                                      return;
-                                    }
                                     if (mediaList.isNotEmpty) {
-                                      if (widget.cameraListData.isNotEmpty) {
-                                        context.pushNamed(
-                                            AppRoutes.publishContentName,
-                                            extra: {
-                                              'publishData': PublishData(
-                                                  imagePath:
-                                                      widget.cameraData != null
-                                                          ? widget
-                                                              .cameraData!.path
-                                                          : widget
-                                                              .cameraListData
-                                                              .first
-                                                              .path,
-                                                  address:
-                                                      mediaList.first.location,
-                                                  date:
-                                                      mediaList.first.dateTime,
-                                                  city: mediaList.first.city,
-                                                  state: mediaList.first.state,
-                                                  country:
-                                                      mediaList.first.country,
-                                                  latitude:
-                                                      mediaList.first.latitude,
-                                                  longitude:
-                                                      mediaList.first.longitude,
-                                                  mimeType:
-                                                      mediaList.first.mimeType,
-                                                  videoImagePath:
-                                                      mediaList.first.thumbnail,
-                                                  mediaList: mediaList),
-                                              'myContentData': null,
-                                              'hideDraft': false,
-                                              'docType': widget.type
-                                            });
-                                      }
+                                      var publishData = PublishData(
+                                          imagePath: widget.cameraData != null
+                                              ? widget.cameraData!.path
+                                              : (widget
+                                                      .cameraListData.isNotEmpty
+                                                  ? widget
+                                                      .cameraListData.first.path
+                                                  : mediaList.first.mediaPath),
+                                          address: mediaList.first.location,
+                                          date: mediaList.first.dateTime,
+                                          city: mediaList.first.city,
+                                          state: mediaList.first.state,
+                                          country: mediaList.first.country,
+                                          latitude: mediaList.first.latitude,
+                                          longitude: mediaList.first.longitude,
+                                          mimeType: mediaList.first.mimeType,
+                                          videoImagePath:
+                                              mediaList.first.thumbnail,
+                                          mediaList: mediaList);
+
+                                      context.pushNamed(
+                                          AppRoutes.publishContentName,
+                                          extra: {
+                                            'publishData': publishData,
+                                            'myContentData':
+                                                widget.myContentData,
+                                            'hideDraft': widget.type == 'draft',
+                                            'docType': widget.type
+                                          });
                                     }
                                   }
                                 }),
@@ -952,26 +919,37 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
     if (cDataList.isNotEmpty) {
       for (var element in cDataList) {
         if (widget.type == "draft") {
-          widget.cameraListData.add(element);
+          widget.cameraListData.insert(0, element);
         }
-        mediaList.add(MediaData(
+        var mData = MediaData(
             mediaPath: element.path,
             mimeType: element.mimeType,
             thumbnail: element.videoImagePath,
-            location: element.location,
+            location:
+                element.location.isNotEmpty ? element.location : mediaAddress,
             dateTime: element.dateTime.toString(),
-            latitude: element.latitude,
-            longitude: element.longitude,
-            country: element.country,
-            state: element.state,
-            city: element.city,
-            isLocalMedia: true));
+            latitude: element.latitude.isNotEmpty ? element.latitude : latitude,
+            longitude:
+                element.longitude.isNotEmpty ? element.longitude : longitude,
+            country: element.country.isNotEmpty ? element.country : country,
+            state: element.state.isNotEmpty ? element.state : state,
+            city: element.city.isNotEmpty ? element.city : city,
+            isLocalMedia: true);
+
+        mediaList.insert(0, mData);
+        _extractExif(mData);
 
         debugPrint(" path ======> : ${element.path}");
         debugPrint("MedListSize: ${mediaList.length}");
       }
 
-      setState(() {});
+      setState(() {
+        currentPage = 0;
+      });
+
+      if (pageController.hasClients) {
+        pageController.jumpToPage(0);
+      }
     }
   }
 

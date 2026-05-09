@@ -254,14 +254,14 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
         }
       },
       child: SizedBox(
-        width: scalingWidth * 0.7,
+        width: isIpad ? 400 : scalingWidth * 0.7,
         child: Stack(
           clipBehavior: Clip.none,
           children: [
             /// ------- POINTER TRIANGLE (Behind Card) -------
             Positioned(
-              right: scalingWidth * 0.04,
-              top: -scalingWidth * 0.02,
+              right: isIpad ? 22 : scalingWidth * 0.07,
+              top: 0,
               child: Transform.rotate(
                 angle: math.pi / 4,
                 child: Container(
@@ -278,7 +278,8 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
             ),
 
             Container(
-              width: scalingWidth * 0.7,
+              width: isIpad ? 400 : scalingWidth * 0.7,
+              margin: EdgeInsets.only(top: scalingWidth * 0.02),
               padding: EdgeInsets.all(scalingWidth * 0.035),
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
