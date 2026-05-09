@@ -570,16 +570,24 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                         "video",
                                                 child: widget.publishData !=
                                                         null
-                                                    ? (widget.publishData!
-                                                                .mediaList.first.thumbnail!
-                                                                .startsWith('http')
+                                                    ? (widget
+                                                            .publishData!
+                                                            .mediaList
+                                                            .first
+                                                            .thumbnail!
+                                                            .startsWith('http')
                                                         ? Image.network(
-                                                            widget.publishData!
-                                                                .mediaList.first.thumbnail!,
+                                                            widget
+                                                                .publishData!
+                                                                .mediaList
+                                                                .first
+                                                                .thumbnail!,
                                                             width: size.width *
-                                                                AppDimensions.numD30,
+                                                                AppDimensions
+                                                                    .numD30,
                                                             height: size.width *
-                                                                AppDimensions.numD35,
+                                                                AppDimensions
+                                                                    .numD35,
                                                             fit: BoxFit.cover,
                                                           )
                                                         : Image.file(
@@ -589,9 +597,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 .first
                                                                 .thumbnail!),
                                                             width: size.width *
-                                                                AppDimensions.numD30,
+                                                                AppDimensions
+                                                                    .numD30,
                                                             height: size.width *
-                                                                AppDimensions.numD35,
+                                                                AppDimensions
+                                                                    .numD35,
                                                             fit: BoxFit.cover,
                                                           ))
                                                     : Image.network(
@@ -601,12 +611,14 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             .first
                                                             .thumbNail,
                                                         width: size.width *
-                                                            AppDimensions.numD30,
+                                                            AppDimensions
+                                                                .numD30,
                                                         height: size.width *
-                                                            AppDimensions.numD35,
+                                                            AppDimensions
+                                                                .numD35,
                                                         fit: BoxFit.cover,
                                                       ),
-                                                ),
+                                              ),
                                               Visibility(
                                                 visible: widget.publishData !=
                                                         null
@@ -624,16 +636,24 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                         "image",
                                                 child: widget.publishData !=
                                                         null
-                                                    ? (widget.publishData!
-                                                                .mediaList.first.mediaPath
-                                                                .startsWith('http')
+                                                    ? (widget
+                                                            .publishData!
+                                                            .mediaList
+                                                            .first
+                                                            .mediaPath
+                                                            .startsWith('http')
                                                         ? Image.network(
-                                                            widget.publishData!
-                                                                .mediaList.first.mediaPath,
+                                                            widget
+                                                                .publishData!
+                                                                .mediaList
+                                                                .first
+                                                                .mediaPath,
                                                             width: size.width *
-                                                                AppDimensions.numD30,
+                                                                AppDimensions
+                                                                    .numD30,
                                                             height: size.width *
-                                                                AppDimensions.numD35,
+                                                                AppDimensions
+                                                                    .numD35,
                                                             fit: BoxFit.cover,
                                                           )
                                                         : Image.file(
@@ -643,9 +663,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 .first
                                                                 .mediaPath),
                                                             width: size.width *
-                                                                AppDimensions.numD30,
+                                                                AppDimensions
+                                                                    .numD30,
                                                             height: size.width *
-                                                                AppDimensions.numD35,
+                                                                AppDimensions
+                                                                    .numD35,
                                                             fit: BoxFit.cover,
                                                           ))
                                                     : Image.network(
@@ -655,12 +677,14 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             .first
                                                             .media,
                                                         width: size.width *
-                                                            AppDimensions.numD30,
+                                                            AppDimensions
+                                                                .numD30,
                                                         height: size.width *
-                                                            AppDimensions.numD35,
+                                                            AppDimensions
+                                                                .numD35,
                                                         fit: BoxFit.cover,
                                                       ),
-                                                ),
+                                              ),
 
                                               ///Watermark and Content count display UI
                                               Stack(
@@ -737,8 +761,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         child: TextFormField(
                                           controller: descriptionController,
                                           maxLines: 100,
-                                          keyboardType:
-                                              TextInputType.multiline,
+                                          keyboardType: TextInputType.multiline,
                                           cursorColor: textColor,
                                           style: commonTextStyle(
                                               size: size,
@@ -750,21 +773,18 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                             hintText: AppStrings
                                                 .publishContentHintText,
                                             hintStyle: TextStyle(
-                                                color:
-                                                    AppColorTheme.colorHint,
+                                                color: AppColorTheme.colorHint,
                                                 fontWeight: FontWeight.normal,
                                                 fontSize: size.width *
                                                     AppDimensions.numD03),
-                                            disabledBorder:
-                                                OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            size.width *
-                                                                AppDimensions
-                                                                    .numD04),
-                                                    borderSide: BorderSide(
-                                                        width: 1,
-                                                        color: borderColor)),
+                                            disabledBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(size
+                                                            .width *
+                                                        AppDimensions.numD04),
+                                                borderSide: BorderSide(
+                                                    width: 1,
+                                                    color: borderColor)),
                                             focusedBorder: OutlineInputBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(size
@@ -800,7 +820,14 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                         width: 1,
                                                         color: borderColor)),
                                           ),
-                                          // validator: checkRequiredValidator,
+                                          validator: (value) {
+                                            if ((value == null ||
+                                                    value.trim().isEmpty) &&
+                                                audioPath.isEmpty) {
+                                              return "Required";
+                                            }
+                                            return null;
+                                          },
                                         ),
                                       )
                                     ],
@@ -957,13 +984,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                   ),
                                                 ),
                                               ),
-                                                Visibility(
-                                                  visible: widget
-                                                          .myContentData!
-                                                          .contentMediaList
-                                                          .first
-                                                          .mediaType ==
-                                                      "video",
+                                              Visibility(
+                                                visible: widget
+                                                        .myContentData!
+                                                        .contentMediaList
+                                                        .first
+                                                        .mediaType ==
+                                                    "video",
                                                 child: Image.network(
                                                   widget
                                                       .myContentData!
@@ -1073,8 +1100,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         child: TextFormField(
                                           controller: descriptionController,
                                           maxLines: 100,
-                                          keyboardType:
-                                              TextInputType.multiline,
+                                          keyboardType: TextInputType.multiline,
                                           cursorColor: textColor,
                                           style: commonTextStyle(
                                               size: size,
@@ -1086,21 +1112,18 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                             hintText: AppStrings
                                                 .publishContentHintText,
                                             hintStyle: TextStyle(
-                                                color:
-                                                    AppColorTheme.colorHint,
+                                                color: AppColorTheme.colorHint,
                                                 fontWeight: FontWeight.normal,
                                                 fontSize: size.width *
                                                     AppDimensions.numD03),
-                                            disabledBorder:
-                                                OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            size.width *
-                                                                AppDimensions
-                                                                    .numD04),
-                                                    borderSide: BorderSide(
-                                                        width: 1,
-                                                        color: borderColor)),
+                                            disabledBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(size
+                                                            .width *
+                                                        AppDimensions.numD04),
+                                                borderSide: BorderSide(
+                                                    width: 1,
+                                                    color: borderColor)),
                                             focusedBorder: OutlineInputBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(size
@@ -1244,11 +1267,15 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                           AppDimensions.numD04),
                                                   playerController: controller,
                                                   enableSeekGesture: false,
-                                                  animationCurve: Curves.bounceIn,
-                                                  waveformType: WaveformType.long,
+                                                  animationCurve:
+                                                      Curves.bounceIn,
+                                                  waveformType:
+                                                      WaveformType.long,
                                                   continuousWaveform: true,
-                                                  playerWaveStyle: PlayerWaveStyle(
-                                                    fixedWaveColor: unselectedColor,
+                                                  playerWaveStyle:
+                                                      PlayerWaveStyle(
+                                                    fixedWaveColor:
+                                                        unselectedColor,
                                                     liveWaveColor: activeColor,
                                                     spacing: 6,
                                                     liveWaveGradient:
@@ -1527,37 +1554,39 @@ class PublishContentScreenState extends State<PublishContentScreen>
                             horizontal: size.width * AppDimensions.numD04),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(
                               width: size.width * AppDimensions.numD32,
-                              child: Text(
-                                "${AppStrings.hashtagText.toUpperCase()}S",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize:
-                                        size.width * AppDimensions.numD035,
-                                    color: textColor,
-                                    fontWeight: FontWeight.bold),
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    top: size.width * AppDimensions.numD02),
+                                child: Text(
+                                  "${AppStrings.hashtagText.toUpperCase()}S",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: textColor,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Wrap(
-                                    children: List.generate(
-                                        selectedHashtagList.length, (index) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                            right: index <
-                                                    (selectedHashtagList
-                                                            .length -
-                                                        1)
-                                                ? size.width *
-                                                    AppDimensions.numD02
-                                                : 0),
-                                        child: Chip(
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: size.width * 0.03),
+                                    child: Wrap(
+                                      spacing:
+                                          size.width * AppDimensions.numD02,
+                                      runSpacing:
+                                          size.width * AppDimensions.numD01,
+                                      children: List.generate(
+                                          selectedHashtagList.length, (index) {
+                                        return Chip(
                                           label: Text(
                                             "#${selectedHashtagList[index].name}",
                                             style: commonTextStyle(
@@ -1568,11 +1597,29 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 fontWeight: FontWeight.normal),
                                           ),
                                           backgroundColor: cardColor,
+                                          visualDensity: VisualDensity.compact,
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          padding: EdgeInsets.only(
+                                              left: size.width * 0.01,
+                                              right: size.width * 0.005,
+                                              top: 0,
+                                              bottom: 0),
+                                          labelPadding: EdgeInsets.only(
+                                              left: size.width * 0.01,
+                                              right: 0),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                size.width *
+                                                    AppDimensions.numD02),
+                                            side: BorderSide(
+                                                color: borderColor, width: 1),
+                                          ),
                                           deleteIcon: Icon(
                                             Icons.close,
                                             color: textColor,
                                             size: size.width *
-                                                AppDimensions.numD045,
+                                                AppDimensions.numD04,
                                           ),
                                           onDeleted: () {
                                             selectedHashtagList.removeAt(index);
@@ -1582,13 +1629,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                     : "Add hashtags";
                                             setState(() {});
                                           },
-                                        ),
-                                      );
-                                    }),
+                                        );
+                                      }),
+                                    ),
                                   ),
                                   if (selectedHashtagList.isNotEmpty)
                                     SizedBox(
-                                      height: size.width * AppDimensions.numD02,
+                                      height: size.width * AppDimensions.numD01,
                                     ),
                                   TextFormField(
                                     controller: hashtagController,
@@ -1657,11 +1704,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * AppDimensions.numD08), borderSide: BorderSide(width: 1, color: borderColor)),
                                         contentPadding: EdgeInsets.only(left: size.width * AppDimensions.numD06)),
                                     /* validator: (value) {
-                                if (hashtagList.isEmpty) {
-                                  return AppStrings.requiredText;
-                                }
-                                return null;
-                              },*/
+                                 if (hashtagList.isEmpty) {
+                                   return AppStrings.requiredText;
+                                 }
+                                 return null;
+                               },*/
                                   )
                                 ],
                               ),
@@ -2152,7 +2199,16 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                 borderSide:
                                     BorderSide(width: 1, color: borderColor)),
                           ),
-                          //validator: checkRequiredValidator,
+                          validator: (value) {
+                            final price = value
+                                    ?.replaceAll(RegExp(r'[^0-9.]'), '')
+                                    .trim() ??
+                                '';
+                            if (price.isEmpty || price == '0') {
+                              return AppStrings.requiredText;
+                            }
+                            return null;
+                          },
                         ),
                       ),
 
@@ -2384,23 +2440,18 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     .requestFocus(FocusNode());
                                 draftSelected = false;
                                 debugPrint("HideDraft-> ${widget.hideDraft}");
-                                if (descriptionController.text.trim().isEmpty &&
-                                    audioPath.isEmpty) {
-                                } else if (priceController.text
-                                        .replaceAll(RegExp(r'[^0-9.]'), '')
-                                        .trim()
-                                        .isEmpty ||
-                                    priceController.text
-                                            .replaceAll(RegExp(r'[^0-9.]'), '')
-                                            .trim() ==
-                                        '0') {
-                                } else {
+                                if (formKey.currentState!.validate()) {
                                   if (widget.hideDraft) {
                                     await updateDraftListAPI(
                                         widget.myContentData!.id);
                                   } else {
                                     await callCheckOnboardingCompleteOrNotApi();
                                   }
+                                } else {
+                                  showSnackBar(
+                                      "Required",
+                                      "Description and Price is required at least",
+                                      Colors.red);
                                 }
                               }),
                             )),

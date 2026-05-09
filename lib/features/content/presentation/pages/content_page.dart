@@ -373,7 +373,7 @@ class MyContentViewState extends State<MyContentView>
         return SmartRefresher(
           controller: controller,
           enablePullDown: true,
-          enablePullUp: true,
+          enablePullUp: currentList.isNotEmpty,
           onRefresh: isAll ? _onAllRefresh : _onMyRefresh,
           onLoading: isAll ? _onAllLoading : _onMyLoading,
           header: const WaterDropHeader(),
@@ -386,8 +386,7 @@ class MyContentViewState extends State<MyContentView>
                   physics: const AlwaysScrollableScrollPhysics(),
                   children: [
                     SizedBox(height: size.height * 0.3),
-                    showLoader(),
-                    // Loader removed - using GlobalLoader from API instead
+                    if (!controller.isRefresh) showLoader(),
                   ],
                 )
               : currentList.isEmpty
@@ -399,15 +398,13 @@ class MyContentViewState extends State<MyContentView>
                       ],
                     )
                   : GridView.builder(
-                      padding: EdgeInsets.all(
-                          scalingWidth * AppDimensions.numD04),
+                      padding:
+                          EdgeInsets.all(scalingWidth * AppDimensions.numD04),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: isIpad ? 3 : 2,
                         childAspectRatio: isIpad ? 0.8 : 0.75,
-                        mainAxisSpacing:
-                            scalingWidth * AppDimensions.numD03,
-                        crossAxisSpacing:
-                            scalingWidth * AppDimensions.numD03,
+                        mainAxisSpacing: scalingWidth * AppDimensions.numD03,
+                        crossAxisSpacing: scalingWidth * AppDimensions.numD03,
                       ),
                       itemCount: currentList.length,
                       itemBuilder: (context, index) {

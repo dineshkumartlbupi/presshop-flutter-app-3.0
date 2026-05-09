@@ -96,9 +96,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final SharedPreferences sharedPreferences;
   bool _isReadyForBursts = false;
 
-  static final int kContentMarkerSize = isIpad ? 70 : 50;
-  static final int kIncidentMarkerSize = isIpad ? 70 : 50;
-  static final int kAlertMarkerSize = isIpad ? 70 : 50;
+  static final int kContentMarkerSize = isIpad ? 60 : 40;
+  static final int kIncidentMarkerSize = isIpad ? 60 : 40;
+  static final int kAlertMarkerSize = isIpad ? 60 : 40;
 
   BitmapDescriptor? _meMarkerIcon;
   BitmapDescriptor? _searchedLocationIcon;
@@ -754,17 +754,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     SetSearchedLocationEvent event,
     Emitter<MapState> emit,
   ) async {
-    if (_searchedLocationIcon == null) {
-      try {
-        _searchedLocationIcon = await markerService.createCircularAssetMarker(
-          "assets/markers/location.png",
-          size: Size(80, 80),
-        );
-      } catch (e) {
-        debugPrint("Error loading searched location icon: $e");
-      }
-    }
-
+    _searchedLocationIcon =
+        BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
     final newState = state.copyWith(searchedLocation: event.location);
     emit(newState.copyWith(
       markers: _appendMeAndSearchedMarkers(newState.markers,

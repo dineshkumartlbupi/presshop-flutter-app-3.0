@@ -58,6 +58,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    final double scalingWidth = isIpad ? 550 : size.width;
     return BlocProvider(
       create: (context) =>
           TermsBloc(sl<TermsRepository>(), sl<SharedPreferences>())
@@ -82,8 +83,10 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 80.0),
+                  padding: EdgeInsets.only(
+                      bottom: size.width * AppDimensions.numD15),
                   child: InkWell(
+                    borderRadius: BorderRadius.circular(40),
                     onTap: () {
                       _scrollDown();
                       setState(() {
@@ -96,14 +99,18 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                         borderRadius: BorderRadius.circular(40),
                         boxShadow: [
                           BoxShadow(
-                            color: Theme.of(context).shadowColor.withOpacity(0.1),
-                            blurRadius: 5,
-                            offset: const Offset(0, 3),
+                            color:
+                                Theme.of(context).shadowColor.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
-                      padding: const EdgeInsets.only(
-                          top: 6, bottom: 6, left: 15, right: 5),
+                      padding: EdgeInsets.only(
+                          top: scalingWidth * 0.015,
+                          bottom: scalingWidth * 0.015,
+                          left: scalingWidth * 0.04,
+                          right: scalingWidth * 0.012),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -117,19 +124,22 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                               'Scroll ${!isSelectUpArrow ? "Down" : "Up"}',
                               key: ValueKey<bool>(isSelectUpArrow),
                               style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF4F4F4F),
-                                fontSize: size.width * AppDimensions.numD04,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : const Color(0xFF4F4F4F),
+                                fontSize: scalingWidth * AppDimensions.numD035,
                               ),
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          SizedBox(width: scalingWidth * 0.025),
                           AnimatedRotation(
                             turns: isSelectUpArrow ? 0.5 : 0,
                             duration: const Duration(milliseconds: 300),
                             child: Container(
-                              width: 46,
-                              height: 46,
+                              width: scalingWidth * 0.1,
+                              height: scalingWidth * 0.1,
                               decoration: const BoxDecoration(
                                 color: AppColorTheme.colorThemePink,
                                 shape: BoxShape.circle,
@@ -137,7 +147,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                               child: Icon(
                                 Icons.keyboard_arrow_down_sharp,
                                 color: Colors.white,
-                                size: size.width * AppDimensions.numD085,
+                                size: scalingWidth * 0.07,
                               ),
                             ),
                           ),

@@ -1134,7 +1134,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                           // test
                           context.goNamed(
                             AppRoutes.dashboardName,
-                            extra: {'initialPosition': 0},
+                            extra: {'initialPosition': 2},
                           );
                         }),
                       )
