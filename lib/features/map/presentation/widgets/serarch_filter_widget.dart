@@ -106,7 +106,7 @@ class SearchAndFilterBar extends StatelessWidget {
                           color: Colors.white,
                         ),
                       ),
-                      SizedBox(width: scalingWidth * 0.01),
+                      SizedBox(width: scalingWidth * 0.003),
                     ],
                   ),
                 ),

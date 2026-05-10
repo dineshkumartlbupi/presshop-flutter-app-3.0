@@ -1576,63 +1576,57 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left: size.width * 0.03),
-                                    child: Wrap(
-                                      children: List.generate(
-                                          selectedHashtagList.length, (index) {
-                                        return Padding(
-                                          padding: EdgeInsets.only(
-                                              right: index <
-                                                      (selectedHashtagList
-                                                              .length -
-                                                          1)
-                                                  ? size.width *
-                                                      AppDimensions.numD01
-                                                  : 0),
-                                          child: Chip(
-                                            label: Text(
-                                              "#${selectedHashtagList[index].name}",
-                                              style: commonTextStyle(
-                                                  size: size,
-                                                  fontSize: size.width *
-                                                      AppDimensions.numD03,
-                                                  color: textColor,
-                                                  fontWeight:
-                                                      FontWeight.normal),
-                                            ),
-                                            backgroundColor: cardColor,
-                                            visualDensity:
-                                                VisualDensity.compact,
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize
-                                                    .shrinkWrap,
-                                            padding: EdgeInsets.zero,
-                                            labelPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 4),
-                                            side: BorderSide.none,
-                                            shape: const StadiumBorder(),
-                                            deleteIcon: Icon(
-                                              Icons.close,
-                                              color: textColor,
-                                              size: size.width *
-                                                  AppDimensions.numD045,
-                                            ),
-                                            onDeleted: () {
-                                              selectedHashtagList
-                                                  .removeAt(index);
-                                              hashtagController.text =
-                                                  selectedHashtagList.isNotEmpty
-                                                      ? "Add more"
-                                                      : "Add hashtags";
-                                              setState(() {});
-                                            },
+                                  Wrap(
+                                    children: List.generate(
+                                        selectedHashtagList.length, (index) {
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                            bottom: size.width *
+                                                AppDimensions.numD015,
+                                            right: index <
+                                                    (selectedHashtagList
+                                                            .length -
+                                                        1)
+                                                ? size.width *
+                                                    AppDimensions.numD015
+                                                : 0),
+                                        child: Chip(
+                                          label: Text(
+                                            "#${selectedHashtagList[index].name}",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD03,
+                                                color: textColor,
+                                                fontWeight: FontWeight.normal),
                                           ),
-                                        );
-                                      }),
-                                    ),
+                                          backgroundColor: cardColor,
+                                          visualDensity: VisualDensity.compact,
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          padding: EdgeInsets.zero,
+                                          labelPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 4),
+                                          side: BorderSide.none,
+                                          shape: const StadiumBorder(),
+                                          deleteIcon: Icon(
+                                            Icons.close,
+                                            color: textColor,
+                                            size: size.width *
+                                                AppDimensions.numD045,
+                                          ),
+                                          onDeleted: () {
+                                            selectedHashtagList.removeAt(index);
+                                            hashtagController.text =
+                                                selectedHashtagList.isNotEmpty
+                                                    ? "Add more"
+                                                    : "Add hashtags";
+                                            setState(() {});
+                                          },
+                                        ),
+                                      );
+                                    }),
                                   ),
                                   if (selectedHashtagList.isNotEmpty)
                                     SizedBox(

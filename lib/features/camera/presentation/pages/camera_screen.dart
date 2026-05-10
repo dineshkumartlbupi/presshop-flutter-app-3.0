@@ -87,11 +87,7 @@ class CameraScreenState extends State<CameraScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     _bloc?.add(CameraLifecycleEvent(state));
     if (state == AppLifecycleState.resumed) {
-      // Auto-retry if we were stuck on permission denied or requesting screen
-      if (_bloc?.state.status == CameraStatus.permissionDenied ||
-          _bloc?.state.status == CameraStatus.requestingPermission) {
-        _bloc?.add(const CameraInitializeEvent());
-      }
+      debugPrint("🔄 CameraScreen: App resumed. Lifecycle event sent to Bloc.");
     }
     super.didChangeAppLifecycleState(state);
   }
@@ -103,16 +99,23 @@ class CameraScreenState extends State<CameraScreen>
     super.dispose();
   }
 
-  void resumeCamera() {
+  void resumeCamera({bool force = false}) {
     if (_bloc != null && !_bloc!.isClosed) {
       debugPrint("🔄 CameraScreen: Ensuring camera is initialized");
-      _bloc!.add(const CameraInitializeEvent());
+      _bloc!.add(CameraInitializeEvent(force: force));
     }
   }
 
   void closeCamera() {
     if (_bloc != null && !_bloc!.isClosed) {
       _bloc!.add(CameraLifecycleEvent(AppLifecycleState.paused));
+    }
+  }
+
+  void pauseCamera() {
+    if (_bloc != null && !_bloc!.isClosed) {
+      debugPrint("🔄 CameraScreen: Pausing camera preview");
+      _bloc!.add(const CameraPausePreviewEvent());
     }
   }
 
@@ -385,9 +388,11 @@ class CameraScreenState extends State<CameraScreen>
     }
 
     // 3. Show camera preview and overlays if controller is ready, OR if we have a failure
+    // Also show if preview is paused (it will just show the last frame or a black screen, which is better than a loader)
     if (((state.cameraController != null &&
                 state.cameraController!.value.isInitialized) ||
-            state.status == CameraStatus.failure) &&
+            state.status == CameraStatus.failure ||
+            state.status == CameraStatus.previewPaused) &&
         state.status != CameraStatus.loading) {
       return Stack(
         children: [
@@ -477,18 +482,19 @@ class CameraScreenState extends State<CameraScreen>
                             : Colors.grey.shade400,
                         width: 1.2)),
                 child: state.isVideoLoading
-                    ? SizedBox(
-                        width: size.width * AppDimensions.numD13,
-                        height: size.width * AppDimensions.numD13,
-                        child: Padding(
-                          padding:
-                              EdgeInsets.all(size.width * AppDimensions.numD03),
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: AppColorTheme.colorThemePink,
-                          ),
-                        ),
-                      )
+                    ? SizedBox.shrink()
+                    // ? SizedBox(
+                    //     width: size.width * AppDimensions.numD13,
+                    //     height: size.width * AppDimensions.numD13,
+                    //     child: Padding(
+                    //       padding:
+                    //           EdgeInsets.all(size.width * AppDimensions.numD03),
+                    //       child: CircularProgressIndicator(
+                    //         strokeWidth: 2,
+                    //         color: AppColorTheme.colorThemePink,
+                    //       ),
+                    //     ),
+                    //   )
                     : Icon(
                         (state.selectedMode == AppStrings.videoText &&
                                 state.isRecording)
@@ -645,12 +651,13 @@ class CameraScreenState extends State<CameraScreen>
     }
 
     // 4. Default fallback: show loader while hardware initializes
-    return Container(
-      color: Colors.black,
-      child: Center(
-        child: CircularProgressIndicator(color: AppColorTheme.colorThemePink),
-      ),
-    );
+    return SizedBox.shrink();
+    // return Container(
+    //   color: Colors.black,
+    //   child: Center(
+    //     child: CircularProgressIndicator(color: AppColorTheme.colorThemePink),
+    //   ),
+    // );
   }
 
   Widget _buildPermissionDeniedUI(
@@ -699,7 +706,9 @@ class CameraScreenState extends State<CameraScreen>
                 if (isPermanent) {
                   await openAppSettings();
                 } else {
-                  context.read<CameraBloc>().add(const CameraInitializeEvent());
+                  context
+                      .read<CameraBloc>()
+                      .add(const CameraInitializeEvent(force: true));
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -715,6 +724,20 @@ class CameraScreenState extends State<CameraScreen>
                   fontWeight: FontWeight.bold,
                 ),
               ),
+            ),
+          ),
+          SizedBox(height: size.width * 0.04),
+          // Added a manual Refresh button to help if auto-detection is slow
+          TextButton.icon(
+            onPressed: () {
+              context
+                  .read<CameraBloc>()
+                  .add(const CameraInitializeEvent(force: true));
+            },
+            icon: const Icon(Icons.refresh, color: Colors.white70),
+            label: const Text(
+              "Already allowed? Tap to Refresh",
+              style: TextStyle(color: Colors.white70),
             ),
           ),
           if (!isPermanent) ...[

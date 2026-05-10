@@ -109,3 +109,8 @@ class CameraTimerTickEvent extends CameraEvent {
 class CameraResetStatusEvent extends CameraEvent {
   const CameraResetStatusEvent();
 }
+
+/// Event to pause the camera preview (non-destructive)
+class CameraPausePreviewEvent extends CameraEvent {
+  const CameraPausePreviewEvent();
+}
