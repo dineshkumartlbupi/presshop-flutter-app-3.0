@@ -11,6 +11,9 @@ import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:presshop/core/di/injection_container.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/widgets/dialogs.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/widgets/common_widgets.dart' as CommonWidgetsNew;
 import 'package:visibility_detector/visibility_detector.dart';
@@ -129,6 +132,7 @@ class _MapPageContentState extends State<_MapPageContent>
   MapState? _lastState;
 
   Offset? _routeInfoOffset;
+  Timer? _alertPopupTimer;
 
   // Stable key for the map to prevent disposal/re-creation
   final GlobalKey _mapGlobalKey = GlobalKey();
@@ -188,6 +192,8 @@ class _MapPageContentState extends State<_MapPageContent>
       }
     });
     // _updateMarkerPositions removed - markers are now handled natively
+
+    _startAlertPopupTimer();
   }
 
   @override
@@ -208,6 +214,7 @@ class _MapPageContentState extends State<_MapPageContent>
     }
     _markerControllers.clear();
     _locationTimer?.cancel();
+    _alertPopupTimer?.cancel();
     super.dispose();
   }
 
@@ -670,6 +677,174 @@ class _MapPageContentState extends State<_MapPageContent>
     return LatLng(lat + deltaLat, position.longitude);
   }
 
+  void _startAlertPopupTimer() {
+    final prefs = sl<SharedPreferences>();
+    bool alreadyShown =
+        prefs.getBool(SharedPreferencesKeys.alertInfoPopupShownKey) ?? false;
+    debugPrint(
+        "🔍 MapPage: _startAlertPopupTimer called. alreadyShown: $alreadyShown");
+
+    if (alreadyShown) return;
+
+    _alertPopupTimer?.cancel();
+    _alertPopupTimer = Timer(const Duration(seconds: 2), () {
+      if (mounted && !_isDisposed) {
+        debugPrint("🚀 MapPage: Triggering showAlertInfoPopupForMap");
+        AllDialogs.showAlertInfoPopupForMap(MediaQuery.of(context).size);
+      }
+    });
+  }
+
+  void _showAlertInfoPopup(Size size) {
+    showDialog(
+        barrierDismissible: false,
+        context: navigatorKey.currentState!.context,
+        builder: (BuildContext context) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          final textColor = isDark ? Colors.white : Colors.black;
+          final borderColor =
+              isDark ? Colors.white24 : AppColorTheme.colorGreyNew;
+
+          return AlertDialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              contentPadding: EdgeInsets.zero,
+              insetPadding: EdgeInsets.symmetric(
+                  horizontal: size.width * AppDimensions.numD04),
+              content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return Container(
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD045)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          height: size.width * AppDimensions.numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: size.width * AppDimensions.numD04),
+                          child: Row(
+                            children: [
+                              Text(
+                                "Alert",
+                                style: TextStyle(
+                                  color: textColor,
+                                  fontSize: size.width * AppDimensions.numD04,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Spacer(),
+                              InkWell(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Icon(
+                                    Icons.close,
+                                    color: textColor,
+                                  )),
+                              SizedBox(
+                                width: size.width * AppDimensions.numD02,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD04),
+                          child: Divider(
+                            color: borderColor,
+                            thickness: 0.5,
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.width * AppDimensions.numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD04),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 120, // fixed width
+                                height: 120, // fixed height
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: borderColor),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.asset(
+                                    "assets/rabbits/mapalert.jpg",
+                                    width: 120,
+                                    height: 120,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: size.width * AppDimensions.numD04,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  textAlign: TextAlign.justify,
+                                  "These alerts are for informational purposes only, and are not connected with law enforcement. For any emergencies, dial 999, 911, 100, or your local emergency number.",
+                                  style: TextStyle(
+                                    color: textColor.withOpacity(0.87),
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.2,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.width * AppDimensions.numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * AppDimensions.numD04,
+                              vertical: size.width * AppDimensions.numD04),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Expanded(
+                                child: SizedBox(
+                                  height: size.width * AppDimensions.numD12,
+                                  child: commonElevatedButton(
+                                      "Noted",
+                                      size,
+                                      commonButtonTextStyle(size),
+                                      commonButtonStyle(
+                                          size, AppColorTheme.colorThemePink),
+                                      () {
+                                    sl<SharedPreferences>().setBool(
+                                        SharedPreferencesKeys
+                                            .alertInfoPopupShownKey,
+                                        true);
+                                    Navigator.pop(context);
+                                  }),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ));
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -879,16 +1054,10 @@ class _MapPageContentState extends State<_MapPageContent>
             final isVisible = info.visibleFraction > 0;
             context.read<MapBloc>().add(SetVisibilityEvent(isVisible));
             if (isVisible) {
+              _startAlertPopupTimer();
               if (!_pulseController.isAnimating) {
                 _pulseController.repeat();
               }
-
-              // Show alert popup if not shown yet
-              bool isShown = sharedPreferences?.getBool(
-                    SharedPreferencesKeys.alertInfoPopupShownKey,
-                  ) ??
-                  false;
-              // if (!isShown) {
               //   WidgetsBinding.instance.addPostFrameCallback((_) {
               //     AllDialogs.showAlertInfoPopupForMap(size);
               //   });

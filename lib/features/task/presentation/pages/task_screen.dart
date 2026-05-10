@@ -571,7 +571,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                                 item.taskDetail!
                                                     .mediaHouseImage,
                                                 height: scalingWidth *
-                                                    AppDimensions.numD35,
+                                                    AppDimensions.numD31,
                                                 width: scalingWidth,
                                                 fit: BoxFit.cover,
                                                 loadingBuilder: (context, child,
@@ -1466,7 +1466,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                               AppDimensions.numD065,
                                           padding: EdgeInsets.symmetric(
                                               horizontal: scalingWidth *
-                                                  AppDimensions.numD04,
+                                                  AppDimensions.numD02,
                                               vertical: scalingWidth *
                                                   AppDimensions.numD01),
                                           decoration: BoxDecoration(
@@ -1498,6 +1498,13 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             // !item.isLive
                                             //     ? "Expired"
                                             //     :
+
+                                            //  style: commonTextStyle(
+                                            // size: size,
+                                            // fontSize: scalingWidth *
+                                            //     AppDimensions.numD025,
+                                            // color: Colors.white,
+                                            // fontWeight: FontWeight.w600),
 
                                             item.isLive
                                                 ? item.isAvailableForAccept

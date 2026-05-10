@@ -86,4 +86,11 @@ class PermissionService {
   Future<void> openSettings() async {
     await openAppSettings();
   }
+
+  /// Requests App Tracking Transparency permission (iOS only).
+  Future<void> requestATT() async {
+    if (Platform.isIOS) {
+      await Permission.appTrackingTransparency.request();
+    }
+  }
 }

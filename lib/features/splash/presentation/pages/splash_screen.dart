@@ -11,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/di/injection_container.dart';
+import 'package:presshop/core/services/permission_service.dart';
 import '../bloc/splash_bloc.dart';
 import '../bloc/splash_event.dart';
 import '../bloc/splash_state.dart';
@@ -41,6 +42,16 @@ class _SplashScreenState extends State<SplashScreen>
     AppLogger.trackEvent(EventNames.splashOpened);
     getFcmToken();
     _checkInitialMessage();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _requestATT();
+    });
+  }
+
+  Future<void> _requestATT() async {
+    if (Platform.isIOS) {
+      await Future.delayed(const Duration(seconds: 1));
+      await sl<PermissionService>().requestATT();
+    }
   }
 
   Future<void> _checkInitialMessage() async {

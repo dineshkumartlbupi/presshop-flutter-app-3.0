@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/extensions/context_extensions.dart';
 import 'package:presshop/core/services/background_location_service.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:presshop/core/widgets/dialogs.dart';
