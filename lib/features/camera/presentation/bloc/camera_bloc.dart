@@ -53,6 +53,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     on<PickDocumentEvent>(_onPickDocument);
     on<CameraResetStatusEvent>((event, emit) =>
         emit(state.copyWith(status: CameraStatus.initial, errorMessage: null)));
+    on<CameraPausePreviewEvent>(_onPausePreview);
   }
   Timer? _recordingTimer;
   DateTime? _startTime;
@@ -95,11 +96,15 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
           "🚀 CameraBloc: Camera already initialized. Attempting to resume preview.");
 
       try {
+        // If we were paused, resume without showing a loader
+        if (state.status == CameraStatus.previewPaused) {
+          emit(state.copyWith(status: CameraStatus.ready));
+        }
+
         // Force a small delay to ensure the surface is ready after navigation
         await Future.delayed(const Duration(milliseconds: 100));
 
         // Always attempt to resume when returning to ensure the stream is active
-        // Use a 1-second timeout to detect if hardware is stuck
         await state.cameraController!
             .resumePreview()
             .timeout(const Duration(milliseconds: 1000));
@@ -117,7 +122,6 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     debugPrint("🚀 CameraBloc: Starting initialization sequence...");
 
     _isInitializing = true;
-
     try {
       // 1. Check existing permissions first to avoid UI blink
       final existingResult =
@@ -248,6 +252,12 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
             recorderController: recorderController,
             cameraController: null));
       }
+    } catch (e) {
+      debugPrint("❌ CameraBloc: Unexpected Error: $e");
+      emit(state.copyWith(
+        status: CameraStatus.failure,
+        errorMessage: "Unexpected error: $e",
+      ));
     } finally {
       _isInitializing = false;
     }
@@ -302,6 +312,19 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
       final controller = state.cameraController;
       if (controller != null) {
+        // For shutter down (inactive), we might just want to pause preview to allow instant resume
+        if (event.state == AppLifecycleState.inactive) {
+          debugPrint("🚀 CameraBloc: App inactive (shutter down?). Pausing preview.");
+          try {
+            await controller.pausePreview();
+            emit(state.copyWith(status: CameraStatus.previewPaused));
+            return;
+          } catch (e) {
+            debugPrint("Error pausing preview on inactive: $e");
+          }
+        }
+
+        // For paused/detached, we MUST dispose to free resources
         // Set state to disposing and clear controller immediately to prevent other events from using it
         emit(state.copyWith(
             status: CameraStatus.disposing, clearController: true));
@@ -327,9 +350,34 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         emit(state.copyWith(status: CameraStatus.initial));
       }
     } else if (event.state == AppLifecycleState.resumed) {
-      // Auto-initialization on resume is now handled by the UI layer (Dashboard)
-      // to prevent redundant calls and blinking.
-      debugPrint("🚀 CameraBloc: App resumed, waiting for UI trigger.");
+      debugPrint("🚀 CameraBloc: App resumed. Triggering delayed auto-init.");
+
+      // If we were only paused (inactive), resume instantly
+      if (state.status == CameraStatus.previewPaused && state.cameraController != null) {
+        add(const CameraInitializeEvent());
+        return;
+      }
+
+      // Single source of truth for resume logic
+      Future.delayed(const Duration(milliseconds: 400), () {
+        if (!isClosed) {
+          add(const CameraInitializeEvent(force: true));
+        }
+      });
+    }
+  }
+
+  Future<void> _onPausePreview(
+      CameraPausePreviewEvent event, Emitter<CameraState> emit) async {
+    final controller = state.cameraController;
+    if (controller != null && controller.value.isInitialized) {
+      debugPrint("🚀 CameraBloc: Pausing preview (non-destructive).");
+      try {
+        await controller.pausePreview();
+        emit(state.copyWith(status: CameraStatus.previewPaused));
+      } catch (e) {
+        debugPrint("Error pausing preview: $e");
+      }
     }
   }
 

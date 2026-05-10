@@ -357,22 +357,24 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                         width:
                                             size.width * AppDimensions.numD02,
                                       ),
-                                        Text(
-                                          item.question,
-                                          style: TextStyle(
-                                              fontSize: size.width *
-                                                  AppDimensions.numD035,
-                                              color: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge
-                                                  ?.color,
-                                              fontFamily: "AirbnbCereal",
-                                              fontWeight: FontWeight.bold),
-                                        )
+                                      Text(
+                                        item.question,
+                                        style: TextStyle(
+                                            fontSize: size.width *
+                                                AppDimensions.numD035,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color,
+                                            fontFamily: "AirbnbCereal",
+                                            fontWeight: FontWeight.bold),
+                                      )
                                     ],
                                   ),
-                                  iconColor:
-                                      Theme.of(context).textTheme.bodyLarge?.color,
+                                  iconColor: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   onExpansionChanged: (value) {
                                     _bloc.add(FAQToggleItem(index));
                                   },
@@ -432,19 +434,19 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                             width: size.width *
                                                 AppDimensions.numD02,
                                           ),
-                                            Expanded(
-                                              child: Text(
-                                                item.answer,
-                                                style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium
-                                                        ?.color,
-                                                    fontFamily: "AirbnbCereal",
-                                                    fontSize: size.width *
-                                                        AppDimensions.numD035),
-                                              ),
+                                          Expanded(
+                                            child: Text(
+                                              item.answer,
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium
+                                                      ?.color,
+                                                  fontFamily: "AirbnbCereal",
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD035),
                                             ),
+                                          ),
                                         ],
                                       ),
                                     ),

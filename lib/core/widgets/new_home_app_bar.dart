@@ -39,39 +39,57 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double scalingWidth = isIpad ? 550 : size.width;
+
     return CommonAppBar(
       elevation: 0,
       hideLeading: hideLeading,
       appBarbackgroundColor: appBarbackgroundColor,
+      leadingWidget: (showLogo && hideLeading)
+          ? InkWell(
+              onTap: () {
+                print("logo tapped");
+                try {
+                  context
+                      .read<DashboardBloc>()
+                      .add(const ChangeDashboardTabEvent(2));
+                } catch (e) {
+                  context.goNamed(AppRoutes.dashboardName,
+                      extra: {'initialPosition': 2});
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 4.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: LogoWidget.buildLogo(size),
+                ),
+              ),
+            )
+          : null,
       title: appBarTitle != null
           ? Text(
               appBarTitle!,
               style: TextStyle(
                 color: Theme.of(context).textTheme.bodyLarge?.color,
-                fontSize: size.width * AppDimensions.numD05,
+                fontSize: scalingWidth * AppDimensions.numD05,
                 fontWeight: FontWeight.w700,
                 fontFamily: "AirbnbCereal",
               ),
             )
-          : (showLogo)
-              ? Padding(
-                  padding: EdgeInsets.only(
-                      left:
-                          hideLeading ? size.width * AppDimensions.numD018 : 0),
-                  child: InkWell(
-                    onTap: () {
-                      print("logo tapped");
-                      try {
-                        context
-                            .read<DashboardBloc>()
-                            .add(const ChangeDashboardTabEvent(2));
-                      } catch (e) {
-                        context.goNamed(AppRoutes.dashboardName,
-                            extra: {'initialPosition': 2});
-                      }
-                    },
-                    child: LogoWidget.buildLogo(size),
-                  ),
+          : (showLogo && !hideLeading)
+              ? InkWell(
+                  onTap: () {
+                    try {
+                      context
+                          .read<DashboardBloc>()
+                          .add(const ChangeDashboardTabEvent(2));
+                    } catch (e) {
+                      context.goNamed(AppRoutes.dashboardName,
+                          extra: {'initialPosition': 2});
+                    }
+                  },
+                  child: LogoWidget.buildLogo(size),
                 )
               : const SizedBox.shrink(),
       centerTitle: false,
@@ -82,83 +100,47 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         context.pop();
       },
       actionWidget: [
-        // if (showFilter)
-        //   InkWell(
-        //     onTap: () {
-        //       if (onFilterTap != null) {
-        //         onFilterTap!();
-        //       }
-        //     },
-        //     child: commonFilterIcon(size),
-        //   ),
-        if (showFilter)
-          SizedBox(
-            width: size.width * AppDimensions.numD02,
-          ),
         if (!hideHamburger)
-          Center(
-              child: GestureDetector(
-                  onTap: () {
-                    context.pushNamed(AppRoutes.newsName, extra: {
-                      'hideFilters': true,
-                      'fromMap': isFromMap,
-                      'latitude': latitude,
-                      'longitude': longitude
-                    });
-                  },
-                  child: Text(
-                    "Click to view local news",
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.bodyLarge?.color,
-                      fontWeight: FontWeight.w500,
-                      fontSize: size.width * AppDimensions.numD032,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ))),
-        if (!hideHamburger)
-          Center(
-            child: InkWell(
+          GestureDetector(
               onTap: () {
-                // context.pushNamed(AppRoutes.menuName);
                 context.pushNamed(AppRoutes.newsName, extra: {
+                  'hideFilters': true,
                   'fromMap': isFromMap,
                   'latitude': latitude,
                   'longitude': longitude
                 });
               },
               child: Container(
-                padding: EdgeInsets.all(size.width * AppDimensions.numD025),
-                decoration: BoxDecoration(
-                  // color: Colors.grey.shade200,
-                  borderRadius:
-                      BorderRadius.circular(size.width * AppDimensions.numD035),
+                alignment: Alignment.center,
+                child: Text(
+                  "Click to view local news",
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    fontWeight: FontWeight.w500,
+                    fontSize: scalingWidth * AppDimensions.numD032,
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
-                child: Image.asset(
-                  // 'assets/icons/menu3.png',
-                  'assets/icons/ic_news2.png',
-                  color: Theme.of(context).textTheme.bodyLarge?.color ??
-                      Colors.black,
-                  width: size.width * AppDimensions.numD06,
-                  height: size.width * AppDimensions.numD06,
-                ),
+              )),
+        if (!hideHamburger)
+          InkWell(
+            onTap: () {
+              context.pushNamed(AppRoutes.newsName, extra: {
+                'fromMap': isFromMap,
+                'latitude': latitude,
+                'longitude': longitude
+              });
+            },
+            child: Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(scalingWidth * AppDimensions.numD025),
+              child: Image.asset(
+                'assets/icons/ic_news2.png',
+                color: Theme.of(context).textTheme.bodyLarge?.color ??
+                    Colors.black,
+                width: scalingWidth * AppDimensions.numD06,
+                height: scalingWidth * AppDimensions.numD06,
               ),
-            ),
-          ),
-        if (hideHamburger)
-          Padding(
-            padding: EdgeInsets.only(right: size.width * AppDimensions.numD02),
-            child: InkWell(
-              onTap: () {
-                try {
-                  context
-                      .read<DashboardBloc>()
-                      .add(const ChangeDashboardTabEvent(2));
-                } catch (e) {
-                  context.goNamed(AppRoutes.dashboardName,
-                      extra: {'initialPosition': 2});
-                }
-              },
-              child: LogoWidget.buildLogo(size),
             ),
           ),
         if (showFilter)
@@ -168,10 +150,10 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 onFilterTap!();
               }
             },
-            child: commonFilterIcon(context, size),
+            child: commonFilterIcon(context, Size(scalingWidth, scalingWidth)),
           ),
         SizedBox(
-          width: size.width * AppDimensions.numD04,
+          width: scalingWidth * AppDimensions.numD04,
         )
       ],
       bottom: bottom,
@@ -179,7 +161,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(size.width * AppDimensions.numD15 +
-      (bottom?.preferredSize.height ??
-          0)); // Adjust height as per NewCommonAppBar
+  Size get preferredSize =>
+      Size.fromHeight((isIpad ? 450 : size.width) * AppDimensions.numD15 +
+          (bottom?.preferredSize.height ?? 0));
 }

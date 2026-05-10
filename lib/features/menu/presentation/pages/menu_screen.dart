@@ -283,32 +283,38 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget _buildContent(BuildContext context) {
     final size = context.mqSize;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        surfaceTintColor: Theme.of(context).appBarTheme.backgroundColor,
-        elevation: 0,
-        leading: Center(
-          child: InkWell(
-            onTap: () {
-              print('click------------------------>');
-              try {
-                context
-                    .read<DashboardBloc>()
-                    .add(const ChangeDashboardTabEvent(2));
-              } catch (e) {
-                context.goNamed(AppRoutes.dashboardName,
-                    extra: {'initialPosition': 2});
-              }
-            },
-            child: Padding(
-              padding: EdgeInsets.only(
-                  left: size.width * AppDimensions.numD01,
-                  bottom: size.width * AppDimensions.numD01),
-              child: LogoWidget.buildLogo(size),
-            ),
-          ),
-        ),
+      appBar: NewHomeAppBar(
+        size: size,
+        hideLeading: true,
+        showFilter: false,
+        onFilterTap: () {},
       ),
+      // appBar: AppBar(
+      //   backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+      //   surfaceTintColor: Theme.of(context).appBarTheme.backgroundColor,
+      //   elevation: 0,
+      //   leading: Center(
+      //     child: InkWell(
+      //       onTap: () {
+      //         print('click------------------------>');
+      //         try {
+      //           context
+      //               .read<DashboardBloc>()
+      //               .add(const ChangeDashboardTabEvent(2));
+      //         } catch (e) {
+      //           context.goNamed(AppRoutes.dashboardName,
+      //               extra: {'initialPosition': 2});
+      //         }
+      //       },
+      //       child: Padding(
+      //         padding: EdgeInsets.only(
+      //             left: size.width * AppDimensions.numD01,
+      //             bottom: size.width * AppDimensions.numD01),
+      //         child: LogoWidget.buildLogo(size),
+      //       ),
+      //     ),
+      //   ),
+      // ),
       //  CommonAppBar(
       //   elevation: 0,
       //   hideLeading: false,

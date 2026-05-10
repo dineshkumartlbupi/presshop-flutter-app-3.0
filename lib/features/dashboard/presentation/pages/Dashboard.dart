@@ -13,7 +13,6 @@ import 'package:presshop/core/widgets/global_loader.dart';
 import 'package:presshop/features/camera/presentation/pages/camera_screen.dart';
 import 'package:presshop/features/content/presentation/pages/content_page.dart';
 import 'package:presshop/features/map/presentation/pages/map_page.dart';
-
 import 'package:presshop/features/menu/presentation/pages/menu_screen.dart';
 import 'package:presshop/features/task/presentation/pages/task_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -21,16 +20,9 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:location/location.dart' as lc;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:presshop/features/content/presentation/bloc/content_bloc.dart';
-import 'package:presshop/features/content/presentation/bloc/content_event.dart';
-import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
-import 'package:presshop/features/task/presentation/bloc/task_event.dart'
-    hide FetchTaskDetailEvent;
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_state.dart';
-import 'package:presshop/features/map/presentation/bloc/map_bloc.dart';
-import 'package:presshop/features/map/presentation/bloc/map_event.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/features/dashboard/presentation/widgets/student_beans_dialog.dart';
@@ -241,21 +233,19 @@ class DashboardPageState extends State<Dashboard>
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed && currentIndex == 2) {
       debugPrint(
-          "🚀 Dashboard: App resumed on Camera tab, verifying status...");
+          "🚀 Dashboard: App resumed on Camera tab. Triggering permission check...");
 
-      _permissionService
-          .checkCameraAndGalleryPermissions()
-          .then((result) async {
-        if (result != PermissionResult.granted) {
-          _redirectToPermissionScreen();
-        } else {
-          // Since we removed auto-init from CameraBloc, we trigger it here
-          // with a small delay to ensure surface is ready.
-          await Future.delayed(const Duration(milliseconds: 300));
-          if (mounted && currentIndex == 2) {
-            _cameraKey.currentState?.resumeCamera();
+      // Wait a moment for OS to settle before checking permissions
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (!mounted) return;
+        _permissionService
+            .checkCameraAndGalleryPermissions()
+            .then((result) async {
+          if (result != PermissionResult.granted) {
+            _redirectToPermissionScreen();
           }
-        }
+          // Note: CameraBloc handles its own resume-initialization now
+        });
       });
     }
   }
@@ -615,14 +605,14 @@ class DashboardPageState extends State<Dashboard>
           !_studentBeansCompleter!.isCompleted) {
         _studentBeansCompleter!.complete(studentBeansResponseUrl);
       }
-    // } else if (state is DashboardStudentBeansInfoLoaded) {
-    //   final info = state.info;
-    //   if (info.shouldShow) {
-    //     final size = MediaQuery.of(navigatorKey.currentState!.context).size;
-    //     _showStudentBeansDialog(size,
-    //         sourceDataHeading: info.heading,
-    //         sourceDataDescription: info.description);
-    //   }
+      // } else if (state is DashboardStudentBeansInfoLoaded) {
+      //   final info = state.info;
+      //   if (info.shouldShow) {
+      //     final size = MediaQuery.of(navigatorKey.currentState!.context).size;
+      //     _showStudentBeansDialog(size,
+      //         sourceDataHeading: info.heading,
+      //         sourceDataDescription: info.description);
+      //   }
     } else if (state is DashboardMarkStudentBeansVisitedLoaded) {
     } else if (state is DashboardMyProfileLoaded) {
       var user = state.user;
@@ -706,7 +696,7 @@ class DashboardPageState extends State<Dashboard>
 
     // Safely stop camera when leaving tab 2
     if (currentIndex == 2) {
-      _cameraKey.currentState?.closeCamera();
+      _cameraKey.currentState?.pauseCamera();
     }
 
     trackAction(ActionNames.tabSwitch, parameters: {

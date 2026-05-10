@@ -15,6 +15,7 @@ enum CameraStatus {
   recordingPaused,
   success,
   disposing,
+  previewPaused,
 }
 
 class CameraState extends Equatable {

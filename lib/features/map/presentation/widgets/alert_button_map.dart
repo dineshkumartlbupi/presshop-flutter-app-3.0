@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:presshop/core/constants/app_dimensions.dart';
+import 'package:presshop/core/utils/ui_utils.dart';
 
 class AlertButtonMap extends StatelessWidget {
   const AlertButtonMap({super.key});
@@ -8,12 +9,13 @@ class AlertButtonMap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    final double scalingWidth = isIpad ? 550 : size.width;
+
     return Container(
-      // padding: EdgeInsets.only(right: size.width * AppDimensions.numD01),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.all(
-            Radius.circular(size.width * AppDimensions.numD53)),
+            Radius.circular(scalingWidth * AppDimensions.numD53)),
         border: Border.all(
             color: Theme.of(context).brightness == Brightness.dark
                 ? Colors.white12
@@ -21,8 +23,8 @@ class AlertButtonMap extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.15),
-            blurRadius: size.width * AppDimensions.numD02,
-            offset: Offset(0.0, size.width * AppDimensions.numD005),
+            blurRadius: scalingWidth * AppDimensions.numD02,
+            offset: Offset(0.0, scalingWidth * AppDimensions.numD005),
           ),
         ],
       ),
@@ -31,40 +33,32 @@ class AlertButtonMap extends StatelessWidget {
         children: [
           Container(
             margin: EdgeInsets.only(
-              left: size.width * AppDimensions.numD016,
-              top: size.width * AppDimensions.numD016,
-              bottom: size.width * AppDimensions.numD016,
+              left: scalingWidth * AppDimensions.numD016,
+              top: scalingWidth * AppDimensions.numD016,
+              bottom: scalingWidth * AppDimensions.numD016,
             ),
-            padding: EdgeInsets.all(size.width * AppDimensions.numD024),
+            padding: EdgeInsets.all(scalingWidth * AppDimensions.numD024),
             decoration: BoxDecoration(
               color: const Color(0xffEC4E54),
               borderRadius:
-                  BorderRadius.circular(size.width * AppDimensions.numD10),
-              // boxShadow: [
-              //   BoxShadow(
-              //     color: Colors.black.withOpacity(0.1),
-              //     blurRadius: size.width * AppDimensions.numD01,
-              //     offset: Offset(size.width * AppDimensions.numD005,
-              //         size.width * AppDimensions.numD005),
-              //   ),
-              // ],
+                  BorderRadius.circular(scalingWidth * AppDimensions.numD10),
             ),
             child: Icon(
               LucideIcons.triangle_alert,
               color: Colors.white,
-              size: size.width * AppDimensions.numD042,
+              size: scalingWidth * AppDimensions.numD042,
             ),
           ),
-          SizedBox(width: size.width * AppDimensions.numD02),
+          SizedBox(width: scalingWidth * AppDimensions.numD016),
           Text(
             "Share Alerts",
             style: TextStyle(
               color: Theme.of(context).textTheme.bodyLarge?.color,
-              fontSize: size.width * AppDimensions.numD032,
+              fontSize: scalingWidth * AppDimensions.numD032,
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(width: size.width * AppDimensions.numD04),
+          SizedBox(width: scalingWidth * AppDimensions.numD02),
         ],
       ),
     );

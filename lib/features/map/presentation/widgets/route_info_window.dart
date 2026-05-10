@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:presshop/core/theme/app_colors.dart';
+import 'package:presshop/core/utils/ui_utils.dart';
 
 class RouteInfoWindow extends StatelessWidget {
   const RouteInfoWindow({
@@ -35,6 +36,8 @@ class RouteInfoWindow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final double scalingWidth = isIpad ? 550 : size.width;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final borderColor = isDark ? Colors.white24 : Colors.grey.shade400;
 
@@ -46,8 +49,9 @@ class RouteInfoWindow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            width: 200,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            width: scalingWidth * 0.5,
+            padding: EdgeInsets.symmetric(
+                horizontal: scalingWidth * 0.04, vertical: scalingWidth * 0.03),
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(18),
@@ -68,44 +72,46 @@ class RouteInfoWindow extends StatelessWidget {
                     Text(
                       "Trip Details",
                       style: TextStyle(
-                          fontSize: 14,
+                          fontSize: scalingWidth * 0.032,
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).hintColor),
                     ),
                     GestureDetector(
                       onTap: onClose,
                       child: Icon(Icons.close,
-                          size: 20, color: Theme.of(context).iconTheme.color),
+                          size: scalingWidth * 0.045,
+                          color: Theme.of(context).iconTheme.color),
                     )
                   ],
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: scalingWidth * 0.02),
                 Container(height: 1, color: borderColor),
-                const SizedBox(height: 8),
+                SizedBox(height: scalingWidth * 0.02),
                 Row(
                   children: [
-                    const Icon(Icons.compare_arrows,
-                        size: 16, color: Colors.grey),
-                    const SizedBox(width: 8),
+                    Icon(Icons.compare_arrows,
+                        size: scalingWidth * 0.04, color: Colors.grey),
+                    SizedBox(width: scalingWidth * 0.02),
                     Text(
                       distance,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: scalingWidth * 0.04,
                         fontWeight: FontWeight.w600,
                         color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: scalingWidth * 0.015),
                 Row(
                   children: [
-                    const Icon(Icons.access_time, size: 16, color: Colors.grey),
-                    const SizedBox(width: 8),
+                    Icon(Icons.access_time,
+                        size: scalingWidth * 0.04, color: Colors.grey),
+                    SizedBox(width: scalingWidth * 0.02),
                     Text(
                       _formatDuration(duration),
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: scalingWidth * 0.04,
                         fontWeight: FontWeight.w600,
                         color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
@@ -120,7 +126,7 @@ class RouteInfoWindow extends StatelessWidget {
           Padding(
             padding: EdgeInsets.zero,
             child: CustomPaint(
-              size: const Size(20, 12),
+              size: Size(scalingWidth * 0.05, scalingWidth * 0.03),
               painter: _TrianglePainter(Theme.of(context).cardColor),
             ),
           ),

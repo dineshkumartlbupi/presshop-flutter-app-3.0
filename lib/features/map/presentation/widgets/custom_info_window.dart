@@ -144,7 +144,7 @@ class CustomInfoWindow extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
-                            width: responsiveWidth * 0.7,
+                            width: responsiveWidth * 0.55,
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: Theme.of(context).cardColor,

@@ -68,6 +68,10 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color textColor = isDark ? Colors.white : Colors.black;
+    final Color cardColor =
+        isDark ? Colors.grey[900]! : AppColorTheme.colorLightGrey;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -194,15 +198,20 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.color,
+                                color: textColor,
                                 fontWeight: FontWeight.normal),
                           ),
+                          visualDensity: VisualDensity.compact,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          padding: EdgeInsets.zero,
+                          labelPadding:
+                              const EdgeInsets.symmetric(horizontal: 4),
+                          side: BorderSide.none,
+                          shape: const StadiumBorder(),
                           deleteIcon: Icon(
                             Icons.close,
-                            color: Theme.of(context).iconTheme.color,
+                            color: textColor,
                             size: size.width * AppDimensions.numD045,
                           ),
                           onDeleted: () {
@@ -218,7 +227,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                             }
                             setState(() {});
                           },
-                          backgroundColor: Theme.of(context).cardColor),
+                          backgroundColor: cardColor),
                     );
                   }),
                 ),
@@ -275,7 +284,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                               },
                               child: Container(
                                 decoration: BoxDecoration(
-                                    color: Theme.of(context).cardColor,
+                                    color: cardColor,
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD02)),
                                 padding: EdgeInsets.symmetric(
@@ -290,10 +299,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                                           size: size,
                                           fontSize: size.width *
                                               AppDimensions.numD035,
-                                          color: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.color,
+                                          color: textColor,
                                           fontWeight: FontWeight.w700),
                                     ),
                                     const Spacer(),
@@ -335,9 +341,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                                         : (hashtagSearchList[index].selected
                                             ? Icon(
                                                 Icons.check,
-                                                color: Theme.of(context)
-                                                    .iconTheme
-                                                    .color,
+                                                color: textColor,
                                                 size: size.width *
                                                     AppDimensions.numD06,
                                               )

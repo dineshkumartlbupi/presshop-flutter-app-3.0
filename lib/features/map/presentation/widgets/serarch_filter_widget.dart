@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:presshop/core/constants/app_dimensions.dart';
+import 'package:presshop/core/utils/ui_utils.dart';
 import 'package:presshop/features/map/constants/map_news_constants.dart';
 
 class SearchAndFilterBar extends StatelessWidget {
@@ -35,10 +36,12 @@ class SearchAndFilterBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.sizeOf(context);
+    final double scalingWidth = isIpad ? 550 : size.width;
+
     return Padding(
       padding: EdgeInsets.only(
-          left: size.width * AppDimensions.numD04,
-          right: size.width * AppDimensions.numD04,
+          left: scalingWidth * AppDimensions.numD04,
+          right: scalingWidth * AppDimensions.numD04,
           top: 2,
           bottom: 6),
       child: Column(
@@ -47,7 +50,7 @@ class SearchAndFilterBar extends StatelessWidget {
             children: [
               Expanded(
                 child: Container(
-                  height: 40,
+                  height: scalingWidth * 0.11,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 3, vertical: 0),
                   decoration: BoxDecoration(
@@ -73,39 +76,46 @@ class SearchAndFilterBar extends StatelessWidget {
                           controller: searchController,
                           focusNode: searchFocusNode,
                           onChanged: onChange,
-                          decoration: const InputDecoration(
+                          style: TextStyle(
+                            fontSize: scalingWidth * 0.035,
+                          ),
+                          decoration: InputDecoration(
                             hintText: "Search any location",
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.symmetric(
-                              vertical: 8,
-                              horizontal: 12,
+                              vertical: scalingWidth * 0.02,
+                              horizontal: scalingWidth * 0.03,
                             ),
                             isDense: true,
+                            hintStyle: TextStyle(
+                              fontSize: scalingWidth * 0.035,
+                            ),
                           ),
                         ),
                       ),
                       Container(
-                        width: 34,
-                        height: 34,
+                        width: scalingWidth * 0.09,
+                        height: scalingWidth * 0.09,
                         decoration: BoxDecoration(
                           color: const Color(0xFFEC4E54),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Icon(
                           Icons.search,
-                          size: 20,
+                          size: scalingWidth * 0.05,
                           color: Colors.white,
                         ),
                       ),
+                      SizedBox(width: scalingWidth * 0.003),
                     ],
                   ),
                 ),
               ),
-              if (showNavigationIcon) const SizedBox(width: 10),
+              if (showNavigationIcon) SizedBox(width: scalingWidth * 0.02),
               if (showNavigationIcon)
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: scalingWidth * 0.11,
+                  height: scalingWidth * 0.11,
                   decoration: BoxDecoration(
                     color: Theme.of(context).brightness == Brightness.dark
                         ? Colors.black
@@ -127,6 +137,7 @@ class SearchAndFilterBar extends StatelessWidget {
                   child: IconButton(
                     icon: Icon(
                       LucideIcons.corner_up_right,
+                      size: scalingWidth * 0.055,
                       color: Theme.of(context).brightness == Brightness.dark
                           ? const Color(0xFFEC4E54)
                           : Colors.black,
@@ -151,22 +162,25 @@ class SearchAndFilterBar extends StatelessWidget {
                           items: alertTypeFilter,
                           selected: selectedAlertType ?? 'Alerts',
                           onChanged: onAlertTypeChanged,
+                          scalingWidth: scalingWidth,
                         ),
                       ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: scalingWidth * 0.015),
                       Expanded(
                         child: _FilterDropdown(
                           items: distanceFilter,
                           selected: selectedDistance ?? '5 miles',
                           onChanged: onDistanceChanged,
+                          scalingWidth: scalingWidth,
                         ),
                       ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: scalingWidth * 0.015),
                       Expanded(
                         child: _FilterDropdown(
                           items: categoryFilter,
                           selected: selectedCategory ?? 'Category',
                           onChanged: onCategoryChanged,
+                          scalingWidth: scalingWidth,
                         ),
                       ),
                     ],
@@ -185,16 +199,18 @@ class _FilterDropdown extends StatelessWidget {
     required this.items,
     required this.selected,
     this.onChanged,
+    required this.scalingWidth,
   });
   final List<String> items;
   final String selected;
   final Function(String?)? onChanged;
+  final double scalingWidth;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 34,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      height: scalingWidth * 0.09,
+      padding: EdgeInsets.symmetric(horizontal: scalingWidth * 0.02),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(8),
@@ -215,15 +231,15 @@ class _FilterDropdown extends StatelessWidget {
         child: DropdownButton<String>(
           value: selected,
           isExpanded: true,
-          icon: const Icon(Icons.arrow_drop_down, size: 20),
+          icon: Icon(Icons.arrow_drop_down, size: scalingWidth * 0.05),
           selectedItemBuilder: (context) {
             return items.map((String item) {
               return Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   item,
-                  style: const TextStyle(
-                    fontSize: 13,
+                  style: TextStyle(
+                    fontSize: scalingWidth * 0.033,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
@@ -236,8 +252,8 @@ class _FilterDropdown extends StatelessWidget {
                   value: e,
                   child: Text(
                     e,
-                    style: const TextStyle(
-                      fontSize: 14,
+                    style: TextStyle(
+                      fontSize: scalingWidth * 0.035,
                       fontWeight: FontWeight.w300,
                     ),
                   ),

@@ -92,7 +92,9 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                 controller: _refreshController,
                 onRefresh: _onRefresh,
                 onLoading: _onLoading,
-                enablePullUp: true,
+                enablePullUp: state.isSearch
+                    ? state.searchResults.isNotEmpty
+                    : state.videos.isNotEmpty,
                 enablePullDown: true,
                 footer: const CustomFooter(builder: commonRefresherFooter),
                 child: ListView(

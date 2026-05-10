@@ -7,6 +7,8 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:presshop/features/camera/data/models/camera_model.dart';
+import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:hive/hive.dart';
@@ -131,13 +133,40 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                             return InkWell(
                               onTap: () {
                                 selectedIndex = index;
+                                var draft = myDraftList[selectedIndex];
+                                var mediaList = draft.contentMediaList
+                                    .map((e) => MediaData(
+                                          mediaPath:
+                                              e.media.startsWith('http') ||
+                                                      e.media.startsWith('/')
+                                                  ? e.media
+                                                  : getMediaImageUrl(e.media),
+                                          mimeType: e.mediaType,
+                                          thumbnail: e.thumbNail
+                                                      .startsWith('http') ||
+                                                  e.thumbNail.startsWith('/')
+                                              ? e.thumbNail
+                                              : getMediaImageUrl(e.thumbNail),
+                                          latitude: draft.latitude,
+                                          longitude: draft.longitude,
+                                          location: draft.location,
+                                          dateTime: draft.dateTime,
+                                          country: "",
+                                          state: "",
+                                          city: "",
+                                          isLocalMedia: e.media.startsWith('/'),
+                                        ))
+                                    .toList();
+
                                 context.pushNamed(
-                                  AppRoutes.publishContentName,
+                                  AppRoutes.previewName,
                                   extra: {
-                                    'publishData': null,
-                                    'myContentData': myDraftList[selectedIndex],
-                                    'hideDraft': true,
-                                    'docType': '',
+                                    'cameraData': null,
+                                    'pickAgain': false,
+                                    'cameraListData': <CameraData>[],
+                                    'mediaList': mediaList,
+                                    'type': 'draft',
+                                    'myContentData': draft,
                                   },
                                 );
                               },
@@ -677,153 +706,169 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                 SizedBox(
                   width: size.width * AppDimensions.numD03,
                 ),
-                item.name == AppStrings.filterDateText
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          InkWell(
-                            onTap: () async {
-                              item.fromDate = await commonDatePicker();
-                              item.toDate = null;
-                              int pos = list
-                                  .indexWhere((element) => element.isSelected);
-                              if (pos != -1) {
-                                list[pos].isSelected = false;
-                              }
-                              item.isSelected = !item.isSelected;
-                              stateSetter(() {});
-                              setState(() {});
-                            },
-                            child: Container(
-                              padding: EdgeInsets.only(
-                                top: size.width * AppDimensions.numD01,
-                                bottom: size.width * AppDimensions.numD01,
-                                left: size.width * AppDimensions.numD03,
-                                right: size.width * AppDimensions.numD01,
-                              ),
-                              width: size.width * AppDimensions.numD32,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    size.width * AppDimensions.numD04),
-                                border: Border.all(
-                                    width: 1,
-                                    color: Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? AppColorTheme
-                                            .colorItemDividerForDarkTheme
-                                        : const Color(0xFFDEE7E6)),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    item.fromDate != null
-                                        ? dateTimeFormatter(
-                                            dateTime: item.fromDate.toString())
-                                        : AppStrings.fromText,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD032,
+                Expanded(
+                  child: item.name == AppStrings.filterDateText
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: InkWell(
+                                onTap: () async {
+                                  item.fromDate = await commonDatePicker();
+                                  item.toDate = null;
+                                  int pos = list.indexWhere(
+                                      (element) => element.isSelected);
+                                  if (pos != -1) {
+                                    list[pos].isSelected = false;
+                                  }
+                                  item.isSelected = !item.isSelected;
+                                  stateSetter(() {});
+                                  setState(() {});
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                    top: size.width * AppDimensions.numD01,
+                                    bottom: size.width * AppDimensions.numD01,
+                                    left: size.width * AppDimensions.numD03,
+                                    right: size.width * AppDimensions.numD01,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * AppDimensions.numD04),
+                                    border: Border.all(
+                                        width: 1,
+                                        color: Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? AppColorTheme
+                                                .colorItemDividerForDarkTheme
+                                            : const Color(0xFFDEE7E6)),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          item.fromDate != null
+                                              ? dateTimeFormatter(
+                                                  dateTime:
+                                                      item.fromDate.toString())
+                                              : AppStrings.fromText,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD032,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width:
+                                            size.width * AppDimensions.numD015,
+                                      ),
+                                      const Icon(
+                                        Icons.arrow_drop_down_sharp,
                                         color: Colors.black,
-                                        fontWeight: FontWeight.w400),
+                                      )
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: size.width * AppDimensions.numD015,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_sharp,
-                                    color: Colors.black,
-                                  )
-                                ],
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            width: size.width * AppDimensions.numD03,
-                          ),
-                          InkWell(
-                            onTap: () async {
-                              if (item.fromDate != null) {
-                                String? pickedDate = await commonDatePicker();
+                            SizedBox(
+                              width: size.width * AppDimensions.numD03,
+                            ),
+                            Expanded(
+                              child: InkWell(
+                                onTap: () async {
+                                  if (item.fromDate != null) {
+                                    String? pickedDate =
+                                        await commonDatePicker();
 
-                                DateTime parseFromDate =
-                                    DateTime.parse(item.fromDate!);
-                                DateTime parseToDate =
-                                    DateTime.parse(pickedDate!);
+                                    DateTime parseFromDate =
+                                        DateTime.parse(item.fromDate!);
+                                    DateTime parseToDate =
+                                        DateTime.parse(pickedDate!);
 
-                                debugPrint("parseFromDate : $parseFromDate");
-                                debugPrint("parseToDate : $parseToDate");
+                                    debugPrint(
+                                        "parseFromDate : $parseFromDate");
+                                    debugPrint("parseToDate : $parseToDate");
 
-                                if (parseToDate.isAfter(parseFromDate) ||
-                                    parseToDate
-                                        .isAtSameMomentAs(parseFromDate)) {
-                                  item.toDate = pickedDate;
-                                } else {
-                                  showSnackBar(
-                                      "Date Error",
-                                      "Please select to date above from date",
-                                      Colors.red);
-                                }
-                              }
-                              stateSetter(() {});
-                              setState(() {});
-                            },
-                            child: Container(
-                              padding: EdgeInsets.only(
-                                top: size.width * AppDimensions.numD01,
-                                bottom: size.width * AppDimensions.numD01,
-                                left: size.width * AppDimensions.numD03,
-                                right: size.width * AppDimensions.numD01,
-                              ),
-                              width: size.width * AppDimensions.numD32,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    size.width * AppDimensions.numD04),
-                                border: Border.all(
-                                    width: 1,
-                                    color: Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? AppColorTheme
-                                            .colorItemDividerForDarkTheme
-                                        : const Color(0xFFDEE7E6)),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    item.toDate != null
-                                        ? dateTimeFormatter(
-                                            dateTime: item.toDate.toString())
-                                        : AppStrings.toText,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD032,
+                                    if (parseToDate.isAfter(parseFromDate) ||
+                                        parseToDate
+                                            .isAtSameMomentAs(parseFromDate)) {
+                                      item.toDate = pickedDate;
+                                    } else {
+                                      showSnackBar(
+                                          "Date Error",
+                                          "Please select to date above from date",
+                                          Colors.red);
+                                    }
+                                  }
+                                  stateSetter(() {});
+                                  setState(() {});
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                    top: size.width * AppDimensions.numD01,
+                                    bottom: size.width * AppDimensions.numD01,
+                                    left: size.width * AppDimensions.numD03,
+                                    right: size.width * AppDimensions.numD01,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * AppDimensions.numD04),
+                                    border: Border.all(
+                                        width: 1,
+                                        color: Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? AppColorTheme
+                                                .colorItemDividerForDarkTheme
+                                            : const Color(0xFFDEE7E6)),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          item.toDate != null
+                                              ? dateTimeFormatter(
+                                                  dateTime:
+                                                      item.toDate.toString())
+                                              : AppStrings.toText,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD032,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width:
+                                            size.width * AppDimensions.numD02,
+                                      ),
+                                      const Icon(
+                                        Icons.arrow_drop_down_sharp,
                                         color: Colors.black,
-                                        fontWeight: FontWeight.w400),
+                                      )
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: size.width * AppDimensions.numD02,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_sharp,
-                                    color: Colors.black,
-                                  )
-                                ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      )
-                    : Text(list[index].name,
-                        style: TextStyle(
-                            fontSize: size.width * AppDimensions.numD035,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: "AirbnbCereal_W_Bk"))
+                          ],
+                        )
+                      : Text(list[index].name,
+                          style: TextStyle(
+                              fontSize: size.width * AppDimensions.numD035,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: "AirbnbCereal_W_Bk")),
+                )
               ],
             ),
           ),

@@ -203,138 +203,162 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                 : null,
             child: Row(
               children: [
-                list[index].name == AppStrings.filterDateText
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          InkWell(
-                            onTap: () async {
-                              item.fromDate = await commonDatePicker();
-                              item.toDate = null;
-                              int pos = list
-                                  .indexWhere((element) => element.isSelected);
-                              if (pos != -1) {
-                                list[pos].isSelected = false;
-                              }
-                              item.isSelected = !item.isSelected;
-                              stateSetter(() {});
-                            },
-                            child: Container(
-                              padding: EdgeInsets.only(
-                                top: size.width * AppDimensions.numD01,
-                                bottom: size.width * AppDimensions.numD01,
-                                left: size.width * AppDimensions.numD03,
-                                right: size.width * AppDimensions.numD01,
-                              ),
-                              width: size.width * AppDimensions.numD32,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    size.width * AppDimensions.numD04),
-                                border: Border.all(
-                                    width: 1, color: Theme.of(context).dividerColor),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    item.fromDate != null
-                                        ? dateTimeFormatter(
-                                            dateTime: item.fromDate.toString())
-                                        : AppStrings.fromText,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD032,
-                                        color: Theme.of(context).textTheme.bodyLarge?.color,
-                                        fontWeight: FontWeight.w400),
+                Expanded(
+                  child: list[index].name == AppStrings.filterDateText
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: InkWell(
+                                onTap: () async {
+                                  item.fromDate = await commonDatePicker();
+                                  item.toDate = null;
+                                  int pos = list.indexWhere(
+                                      (element) => element.isSelected);
+                                  if (pos != -1) {
+                                    list[pos].isSelected = false;
+                                  }
+                                  item.isSelected = !item.isSelected;
+                                  stateSetter(() {});
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                    top: size.width * AppDimensions.numD01,
+                                    bottom: size.width * AppDimensions.numD01,
+                                    left: size.width * AppDimensions.numD03,
+                                    right: size.width * AppDimensions.numD01,
                                   ),
-                                  SizedBox(
-                                    width: size.width * AppDimensions.numD015,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * AppDimensions.numD04),
+                                    border: Border.all(
+                                        width: 1,
+                                        color: Theme.of(context).dividerColor),
                                   ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_sharp,
-                                    color: Colors.grey,
-                                  )
-                                ],
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          item.fromDate != null
+                                              ? dateTimeFormatter(
+                                                  dateTime:
+                                                      item.fromDate.toString())
+                                              : AppStrings.fromText,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD032,
+                                              color: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.color,
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width:
+                                            size.width * AppDimensions.numD015,
+                                      ),
+                                      const Icon(
+                                        Icons.arrow_drop_down_sharp,
+                                        color: Colors.grey,
+                                      )
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            width: size.width * AppDimensions.numD03,
-                          ),
-                          InkWell(
-                            onTap: () async {
-                              if (item.fromDate != null) {
-                                String? pickedDate = await commonDatePicker();
+                            SizedBox(
+                              width: size.width * AppDimensions.numD03,
+                            ),
+                            Expanded(
+                              child: InkWell(
+                                onTap: () async {
+                                  if (item.fromDate != null) {
+                                    String? pickedDate =
+                                        await commonDatePicker();
 
-                                DateTime parseFromDate =
-                                    DateTime.parse(item.fromDate!);
-                                DateTime parseToDate =
-                                    DateTime.parse(pickedDate!);
+                                    DateTime parseFromDate =
+                                        DateTime.parse(item.fromDate!);
+                                    DateTime parseToDate =
+                                        DateTime.parse(pickedDate!);
 
-                                if (parseToDate.isAfter(parseFromDate) ||
-                                    parseToDate
-                                        .isAtSameMomentAs(parseFromDate)) {
-                                  item.toDate = pickedDate;
-                                } else {
-                                  showSnackBar(
-                                      "Date Error",
-                                      "Please select to date above from date",
-                                      Colors.red);
-                                }
-                              }
-                              stateSetter(() {});
-                            },
-                            child: Container(
-                              padding: EdgeInsets.only(
-                                top: size.width * AppDimensions.numD01,
-                                bottom: size.width * AppDimensions.numD01,
-                                left: size.width * AppDimensions.numD03,
-                                right: size.width * AppDimensions.numD01,
-                              ),
-                              width: size.width * AppDimensions.numD32,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    size.width * AppDimensions.numD04),
-                                border: Border.all(
-                                    width: 1, color: Theme.of(context).dividerColor),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    item.toDate != null
-                                        ? dateTimeFormatter(
-                                            dateTime: item.toDate.toString())
-                                        : AppStrings.toText,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize:
-                                            size.width * AppDimensions.numD032,
-                                        color: Theme.of(context).textTheme.bodyLarge?.color,
-                                        fontWeight: FontWeight.w400),
+                                    if (parseToDate.isAfter(parseFromDate) ||
+                                        parseToDate.isAtSameMomentAs(
+                                            parseFromDate)) {
+                                      item.toDate = pickedDate;
+                                    } else {
+                                      showSnackBar(
+                                          "Date Error",
+                                          "Please select to date above from date",
+                                          Colors.red);
+                                    }
+                                  }
+                                  stateSetter(() {});
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                    top: size.width * AppDimensions.numD01,
+                                    bottom: size.width * AppDimensions.numD01,
+                                    left: size.width * AppDimensions.numD03,
+                                    right: size.width * AppDimensions.numD01,
                                   ),
-                                  SizedBox(
-                                    width: size.width * AppDimensions.numD02,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * AppDimensions.numD04),
+                                    border: Border.all(
+                                        width: 1,
+                                        color: Theme.of(context).dividerColor),
                                   ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_sharp,
-                                    color: Colors.grey,
-                                  )
-                                ],
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          item.toDate != null
+                                              ? dateTimeFormatter(
+                                                  dateTime:
+                                                      item.toDate.toString())
+                                              : AppStrings.toText,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD032,
+                                              color: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.color,
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width:
+                                            size.width * AppDimensions.numD02,
+                                      ),
+                                      const Icon(
+                                        Icons.arrow_drop_down_sharp,
+                                        color: Colors.grey,
+                                      )
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      )
-                    : Text(list[index].name,
-                        style: TextStyle(
-                            fontSize: size.width * AppDimensions.numD035,
-                            color: Theme.of(context).textTheme.bodyLarge?.color,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: "AirbnbCereal_W_Bk"))
+                          ],
+                        )
+                      : Text(list[index].name,
+                          style: TextStyle(
+                              fontSize: size.width * AppDimensions.numD035,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: "AirbnbCereal_W_Bk")),
+                )
               ],
             ),
           ),

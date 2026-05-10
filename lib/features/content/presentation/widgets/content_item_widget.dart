@@ -17,13 +17,15 @@ class ContentItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double scalingWidth = isIpad ? 550 : size.width;
+
     return InkWell(
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.only(
-          left: size.width * AppDimensions.numD03,
-          right: size.width * AppDimensions.numD03,
-          top: size.width * AppDimensions.numD03,
+          left: scalingWidth * AppDimensions.numD03,
+          right: scalingWidth * AppDimensions.numD03,
+          top: scalingWidth * AppDimensions.numD03,
         ),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
@@ -36,24 +38,25 @@ class ContentItemWidget extends StatelessWidget {
               ),
           ],
           borderRadius: BorderRadius.circular(
-            size.width * AppDimensions.numD04,
+            scalingWidth * AppDimensions.numD04,
           ),
         ),
         child: Column(
           children: [
-            MediaThumbnailWidget(item: item, size: size),
-            SizedBox(height: size.width * AppDimensions.numD02),
-            _buildInfoRow(context),
+            MediaThumbnailWidget(
+                item: item, size: size, scalingWidth: scalingWidth),
+            SizedBox(height: scalingWidth * AppDimensions.numD02),
+            _buildInfoRow(context, scalingWidth),
             const Spacer(),
-            _buildStatusRow(context),
-            SizedBox(height: size.width * AppDimensions.numD02),
+            _buildStatusRow(context, scalingWidth),
+            SizedBox(height: scalingWidth * AppDimensions.numD02),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoRow(BuildContext context) {
+  Widget _buildInfoRow(BuildContext context, double scalingWidth) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -67,51 +70,57 @@ class ContentItemWidget extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: commonTextStyle(
               size: size,
-              fontSize: size.width * AppDimensions.numD03,
+              fontSize: scalingWidth * AppDimensions.numD03,
               color: Theme.of(context).textTheme.bodyLarge?.color,
               fontWeight: FontWeight.w500,
             ),
           ),
         ),
-        SizedBox(width: size.width * AppDimensions.numD01),
+        SizedBox(width: scalingWidth * AppDimensions.numD01),
         Image.asset(
           (item.isExclusive ?? false)
               ? "${iconsPath}ic_exclusive.png"
               : "${iconsPath}ic_share.png",
           height: (item.isExclusive ?? false)
-              ? size.width * AppDimensions.numD03
-              : size.width * AppDimensions.numD04,
+              ? scalingWidth * AppDimensions.numD03
+              : scalingWidth * AppDimensions.numD04,
           color: AppColorTheme.colorTextFieldIcon,
         ),
       ],
     );
   }
 
-  Widget _buildStatusRow(BuildContext context) {
+  Widget _buildStatusRow(BuildContext context, double scalingWidth) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [_buildMetricsColumn(), _buildPriceBadge(context)],
+      children: [
+        _buildMetricsColumn(scalingWidth),
+        _buildPriceBadge(context, scalingWidth)
+      ],
     );
   }
 
-  Widget _buildMetricsColumn() {
+  Widget _buildMetricsColumn(double scalingWidth) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildMetricItem(
+          scalingWidth: scalingWidth,
           icon: "dollar1.png",
           value: "${item.purchasedMediahouseCount} ${AppStrings.soldText}",
           isActive: item.purchasedMediahouseCount > 0,
         ),
-        SizedBox(height: size.width * AppDimensions.numD01),
+        SizedBox(height: scalingWidth * AppDimensions.numD01),
         _buildMetricItem(
+          scalingWidth: scalingWidth,
           icon: "dollar1.png",
           value:
               "${item.totalOffer} ${item.totalOffer > 1 ? '${AppStrings.offerText}s' : AppStrings.offerText}",
           isActive: item.totalOffer > 0,
         ),
-        SizedBox(height: size.width * AppDimensions.numD01),
+        SizedBox(height: scalingWidth * AppDimensions.numD01),
         _buildMetricItem(
+          scalingWidth: scalingWidth,
           icon: "ic_view.png",
           value:
               "${item.totalView} ${item.totalView > 1 ? '${AppStrings.viewsText}s' : AppStrings.viewsText}",
@@ -122,6 +131,7 @@ class ContentItemWidget extends StatelessWidget {
   }
 
   Widget _buildMetricItem({
+    required double scalingWidth,
     required String icon,
     required String value,
     required bool isActive,
@@ -130,16 +140,16 @@ class ContentItemWidget extends StatelessWidget {
       children: [
         Image.asset(
           "$iconsPath$icon",
-          height: size.width * AppDimensions.numD025,
-          width: size.width * AppDimensions.numD025,
+          height: scalingWidth * AppDimensions.numD025,
+          width: scalingWidth * AppDimensions.numD025,
           color: isActive ? AppColorTheme.colorThemePink : Colors.grey,
         ),
-        SizedBox(width: size.width * AppDimensions.numD014),
+        SizedBox(width: scalingWidth * AppDimensions.numD014),
         Text(
           value,
           style: commonTextStyle(
             size: size,
-            fontSize: size.width * AppDimensions.numD026,
+            fontSize: scalingWidth * AppDimensions.numD026,
             color: isActive ? AppColorTheme.colorThemePink : Colors.grey,
             fontWeight: FontWeight.normal,
           ),
@@ -148,20 +158,20 @@ class ContentItemWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildPriceBadge(BuildContext context) {
+  Widget _buildPriceBadge(BuildContext context, double scalingWidth) {
     bool isPendingOrRejected = item.status.toLowerCase() == "pending" ||
         item.status.toLowerCase() == "rejected";
 
     if (isPendingOrRejected) {
       return Container(
-        padding: EdgeInsets.all(size.width * AppDimensions.numD01),
+        padding: EdgeInsets.all(scalingWidth * AppDimensions.numD01),
         constraints: BoxConstraints(
-          minWidth: size.width * AppDimensions.numD17,
+          minWidth: scalingWidth * AppDimensions.numD17,
         ),
         decoration: BoxDecoration(
           color: Colors.black,
           borderRadius: BorderRadius.circular(
-            size.width * AppDimensions.numD015,
+            scalingWidth * AppDimensions.numD015,
           ),
         ),
         child: Center(
@@ -172,7 +182,7 @@ class ContentItemWidget extends StatelessWidget {
             textAlign: TextAlign.center,
             style: commonTextStyle(
               size: size,
-              fontSize: size.width * AppDimensions.numD024,
+              fontSize: scalingWidth * AppDimensions.numD024,
               color: Colors.white,
               fontWeight: FontWeight.w400,
             ),
@@ -183,14 +193,15 @@ class ContentItemWidget extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: size.width * AppDimensions.numD015,
-        vertical: size.width * AppDimensions.numD01,
+        horizontal: scalingWidth * AppDimensions.numD015,
+        vertical: scalingWidth * AppDimensions.numD01,
       ),
       decoration: BoxDecoration(
         color: item.paidStatus == false
             ? AppColorTheme.colorThemePink
             : AppColorTheme.colorLightGrey,
-        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD015),
+        borderRadius:
+            BorderRadius.circular(scalingWidth * AppDimensions.numD015),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -198,7 +209,7 @@ class ContentItemWidget extends StatelessWidget {
           Padding(
             padding: item.paidStatus && !item.isPaidStatusToHopper
                 ? EdgeInsets.symmetric(
-                    horizontal: size.width * AppDimensions.numD028,
+                    horizontal: scalingWidth * AppDimensions.numD028,
                   )
                 : EdgeInsets.zero,
             child: Text(
@@ -210,7 +221,7 @@ class ContentItemWidget extends StatelessWidget {
               textAlign: TextAlign.center,
               style: commonTextStyle(
                 size: size,
-                fontSize: size.width * AppDimensions.numD022,
+                fontSize: scalingWidth * AppDimensions.numD022,
                 color: item.paidStatus == false
                     ? Colors.white
                     : (Theme.of(context).textTheme.bodyLarge?.color ??
@@ -224,7 +235,7 @@ class ContentItemWidget extends StatelessWidget {
             textAlign: TextAlign.center,
             style: commonTextStyle(
               size: size,
-              fontSize: size.width * AppDimensions.numD022,
+              fontSize: scalingWidth * AppDimensions.numD022,
               color: item.paidStatus == false
                   ? Colors.white
                   : (Theme.of(context).textTheme.bodyLarge?.color ??
@@ -243,16 +254,19 @@ class MediaThumbnailWidget extends StatelessWidget {
     super.key,
     required this.item,
     required this.size,
+    required this.scalingWidth,
   });
   final ContentItem item;
   final Size size;
+  final double scalingWidth;
 
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: 1.3,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+        borderRadius:
+            BorderRadius.circular(scalingWidth * AppDimensions.numD04),
         child: Stack(
           children: [
             _buildMediaContent(),
@@ -267,8 +281,8 @@ class MediaThumbnailWidget extends StatelessWidget {
               ),
             if (item.mediaUrls.length >= 1)
               Positioned(
-                right: size.width * AppDimensions.numD02,
-                top: size.width * AppDimensions.numD02,
+                right: scalingWidth * AppDimensions.numD02,
+                top: scalingWidth * AppDimensions.numD02,
                 child: _buildCountBadge(),
               ),
           ],
@@ -284,8 +298,8 @@ class MediaThumbnailWidget extends StatelessWidget {
         alignment: Alignment.center,
         child: Image.asset(
           "${commonImagePath}rabbitLogo.png",
-          height: size.width * AppDimensions.numD15,
-          width: size.width * AppDimensions.numD15,
+          height: scalingWidth * AppDimensions.numD15,
+          width: scalingWidth * AppDimensions.numD15,
           fit: BoxFit.contain,
         ),
       );
@@ -336,12 +350,13 @@ class MediaThumbnailWidget extends StatelessWidget {
   Widget _buildCountBadge() {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: size.width * AppDimensions.numD015,
-        vertical: size.width * 0.005,
+        horizontal: scalingWidth * AppDimensions.numD015,
+        vertical: scalingWidth * 0.005,
       ),
       decoration: BoxDecoration(
         color: AppColorTheme.colorLightGreen.withValues(alpha: 0.8),
-        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD015),
+        borderRadius:
+            BorderRadius.circular(scalingWidth * AppDimensions.numD015),
       ),
       child: Center(
         child: Text(
@@ -349,7 +364,7 @@ class MediaThumbnailWidget extends StatelessWidget {
           textAlign: TextAlign.center,
           style: commonTextStyle(
             size: size,
-            fontSize: size.width * AppDimensions.numD038,
+            fontSize: scalingWidth * AppDimensions.numD038,
             color: Colors.white,
             fontWeight: FontWeight.w600,
           ),
@@ -372,7 +387,7 @@ class MediaThumbnailWidget extends StatelessWidget {
           color: AppColorTheme.colorThemePink,
           child: Icon(
             Icons.play_arrow_rounded,
-            size: size.width * AppDimensions.numD15,
+            size: scalingWidth * AppDimensions.numD15,
             color: Colors.white,
           ),
         );
@@ -380,16 +395,16 @@ class MediaThumbnailWidget extends StatelessWidget {
         return _buildPlaceholder(
           child: Image.asset(
             "${dummyImagePath}pngImage.png",
-            width: size.width * AppDimensions.numD03,
-            height: size.height * AppDimensions.numD03,
+            width: scalingWidth * AppDimensions.numD03,
+            height: scalingWidth * AppDimensions.numD03,
           ),
         );
       case "doc":
         return _buildPlaceholder(
           child: Image.asset(
             "${dummyImagePath}doc_black_icon.png",
-            width: size.width * AppDimensions.numD03,
-            height: size.height * AppDimensions.numD03,
+            width: scalingWidth * AppDimensions.numD03,
+            height: scalingWidth * AppDimensions.numD03,
           ),
         );
       default:
@@ -413,12 +428,14 @@ class MediaThumbnailWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         border: Border.all(color: AppColorTheme.colorHint),
-        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+        borderRadius:
+            BorderRadius.circular(scalingWidth * AppDimensions.numD04),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+        borderRadius:
+            BorderRadius.circular(scalingWidth * AppDimensions.numD04),
         child: Padding(
-          padding: EdgeInsets.all(size.width * AppDimensions.numD03),
+          padding: EdgeInsets.all(scalingWidth * AppDimensions.numD03),
           child: child,
         ),
       ),
@@ -433,8 +450,8 @@ class MediaThumbnailWidget extends StatelessWidget {
       child: Center(
         child: Image.asset(
           "${commonImagePath}rabbitLogo.png",
-          height: size.width * AppDimensions.numD15,
-          width: size.width * AppDimensions.numD15,
+          height: scalingWidth * AppDimensions.numD15,
+          width: scalingWidth * AppDimensions.numD15,
           fit: BoxFit.contain,
         ),
       ),

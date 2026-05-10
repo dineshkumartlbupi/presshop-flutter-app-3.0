@@ -68,7 +68,7 @@ class ContentMarkerPopup extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Container(
-                              width: responsiveWidth * 0.65,
+                              width: responsiveWidth * 0.55,
                               decoration: BoxDecoration(
                                 color: Theme.of(context).cardColor,
                                 borderRadius: BorderRadius.circular(20),

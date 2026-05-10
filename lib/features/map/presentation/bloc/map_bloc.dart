@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/usecases/usecase.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:presshop/core/utils/ui_utils.dart';
 import 'package:presshop/features/map/constants/map_news_constants.dart';
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 import 'package:presshop/features/map/domain/usecases/get_current_location.dart';
@@ -95,9 +96,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final SharedPreferences sharedPreferences;
   bool _isReadyForBursts = false;
 
-  static const int kContentMarkerSize = 50;
-  static const int kIncidentMarkerSize = 50;
-  static const int kAlertMarkerSize = 40;
+  static final int kContentMarkerSize = isIpad ? 60 : 40;
+  static final int kIncidentMarkerSize = isIpad ? 60 : 40;
+  static final int kAlertMarkerSize = isIpad ? 60 : 40;
 
   BitmapDescriptor? _meMarkerIcon;
   BitmapDescriptor? _searchedLocationIcon;
@@ -106,7 +107,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     ToggleGetDirectionCardEvent event,
     Emitter<MapState> emit,
   ) {
-    emit(state.copyWith(showGetDirectionCard: !state.showGetDirectionCard));
+    final bool newValue = !state.showGetDirectionCard;
+    emit(state.copyWith(
+      showGetDirectionCard: newValue,
+      showAlertPanel: newValue ? false : state.showAlertPanel,
+    ));
   }
 
   void _initSocket() {
@@ -749,17 +754,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     SetSearchedLocationEvent event,
     Emitter<MapState> emit,
   ) async {
-    if (_searchedLocationIcon == null) {
-      try {
-        _searchedLocationIcon = await markerService.createCircularAssetMarker(
-          "assets/markers/location.png",
-          size: Size(80, 80),
-        );
-      } catch (e) {
-        debugPrint("Error loading searched location icon: $e");
-      }
-    }
-
+    _searchedLocationIcon =
+        BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
     final newState = state.copyWith(searchedLocation: event.location);
     emit(newState.copyWith(
       markers: _appendMeAndSearchedMarkers(newState.markers,
@@ -786,7 +782,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     ToggleAlertPanelEvent event,
     Emitter<MapState> emit,
   ) {
-    emit(state.copyWith(showAlertPanel: !state.showAlertPanel));
+    final bool newValue = !state.showAlertPanel;
+    emit(state.copyWith(
+      showAlertPanel: newValue,
+      showGetDirectionCard: newValue ? false : state.showGetDirectionCard,
+    ));
   }
 
   void _onClearSelectedMarker(
