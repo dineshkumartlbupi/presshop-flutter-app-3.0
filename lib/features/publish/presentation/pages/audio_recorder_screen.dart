@@ -183,9 +183,9 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
     myTimer = Timer.periodic(const Duration(seconds: 1), (t) {
       var diff = DateTime.now().difference(startTime!);
 
-      int hoursDiff = diff.inHours < 60 ? diff.inHours : 0;
-      int minutesDiff = diff.inMinutes < 60 ? diff.inMinutes : 0;
-      int secondsDiff = diff.inSeconds < 60 ? diff.inSeconds : 0;
+      int hoursDiff = diff.inHours;
+      int minutesDiff = diff.inMinutes.remainder(60);
+      int secondsDiff = diff.inSeconds.remainder(60);
 
       String hDiff = hoursDiff < 10 ? "0$hoursDiff" : hoursDiff.toString();
       String mDiff =

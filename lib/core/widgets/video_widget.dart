@@ -27,12 +27,11 @@ class VideoWidgetState extends State<VideoWidget> {
   void initState() {
     print("MediaFile: ${widget.mediaData!.mediaPath}");
     _controller = VideoPlayerController.file(File(widget.mediaData!.mediaPath));
+
     _controller!.addListener(() {
       if (_controller!.value.isInitialized) {
         setState(() {
-          currentTIme = _controller!.value.position.inSeconds < 10
-              ? "00:0${_controller!.value.position.inSeconds}"
-              : "00:${_controller!.value.position.inSeconds}";
+          currentTIme = formatDuration(_controller!.value.position);
         });
       }
     });
@@ -40,6 +39,13 @@ class VideoWidgetState extends State<VideoWidget> {
     _initializeVideoPlayerFuture = _controller!.initialize().then((_) {
       setState(() {});
     });
+  }
+
+  String formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String minutes = twoDigits(duration.inMinutes.remainder(60));
+    String seconds = twoDigits(duration.inSeconds.remainder(60));
+    return "$minutes:$seconds";
   }
 
   @override
@@ -112,7 +118,7 @@ class VideoWidgetState extends State<VideoWidget> {
                         ),
                       )),
                       Text(
-                        "$currentTIme / 00:${_controller!.value.duration.inSeconds}",
+                        "$currentTIme / ${formatDuration(_controller!.value.duration)}",
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD025,
