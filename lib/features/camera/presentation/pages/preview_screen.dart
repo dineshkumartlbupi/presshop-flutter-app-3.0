@@ -10,6 +10,7 @@ import 'package:presshop/core/widgets/video_widget.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:video_player/video_player.dart';
 import 'package:location/location.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'audio_waveform_widget_screen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
@@ -41,7 +42,8 @@ class PreviewScreen extends StatefulWidget {
   }
 }
 
-class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
+class PreviewScreenState extends State<PreviewScreen>
+    with AnalyticsPageMixin, WidgetsBindingObserver {
   VideoPlayerController? _controller;
 
   String currentTIme = "00:00",
@@ -76,7 +78,17 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) =>
         requestLocationPermissions(
             shouldShowSettingPopup: false, showErrorLocationPage: false));
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      debugPrint("App Resumed - Re-checking location permissions");
+      requestLocationPermissions(
+          shouldShowSettingPopup: false, showErrorLocationPage: false);
+    }
   }
 
   @override
@@ -84,6 +96,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
     if (_controller != null && _controller!.value.isPlaying) {
       _controller!.dispose();
     }
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -170,6 +183,16 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
       setState(() {
         isLocationFetching = true;
       });
+      // Check permission status
+      var status = await Permission.location.status;
+      if (status.isDenied || status.isPermanentlyDenied) {
+        isLocationFetching = false;
+        if (mounted && showErrorLocationPage) {
+          goToLocationErrorScreen();
+        }
+        return;
+      }
+
       locationData = await _locationService.getCurrentLocation(context,
           shouldShowSettingPopup: shouldShowSettingPopup);
       if (locationData != null) {
@@ -691,6 +714,16 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                         mediaList: mediaList));
                                   }
                                 } else {
+                                  if (mediaList.isEmpty ||
+                                      mediaList.first.location.isEmpty ||
+                                      mediaList.first.latitude.isEmpty ||
+                                      mediaList.first.latitude == "0" ||
+                                      mediaList.first.latitude == "0.0") {
+                                    requestLocationPermissions(
+                                        shouldShowSettingPopup: false,
+                                        showErrorLocationPage: true);
+                                    return;
+                                  }
                                   if (mediaList.isNotEmpty) {
                                     if (mediaList.isNotEmpty) {
                                       var pubData = PublishData(
@@ -835,6 +868,16 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                           mediaList: mediaList));
                                     }
                                   } else {
+                                    if (mediaList.isEmpty ||
+                                        mediaList.first.location.isEmpty ||
+                                        mediaList.first.latitude.isEmpty ||
+                                        mediaList.first.latitude == "0" ||
+                                        mediaList.first.latitude == "0.0") {
+                                      requestLocationPermissions(
+                                          shouldShowSettingPopup: false,
+                                          showErrorLocationPage: true);
+                                      return;
+                                    }
                                     if (mediaList.isNotEmpty) {
                                       var publishData = PublishData(
                                           imagePath: widget.cameraData != null

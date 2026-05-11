@@ -1,4 +1,5 @@
 import 'package:flutter/gestures.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -44,27 +45,35 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
   @override
   void initState() {
     super.initState();
-    // Initialize with cached values first
-    _referralCode =
-        sharedPreferences!.getString(SharedPreferencesKeys.referralCode) ?? "";
-    _totalHopperArmy = int.tryParse(sharedPreferences!
-                .getString(SharedPreferencesKeys.totalHopperArmy) ??
-            "0") ??
-        0;
-
-    _friendsEarnAmount = sharedPreferences!
-            .getDouble(SharedPreferencesKeys.referralFriendEarningKey) ??
-        10.0;
-    _youEarnAmount = sharedPreferences!
-            .getDouble(SharedPreferencesKeys.referralUserEarningKey) ??
-        15.0;
-
-    _referralCurrency = sharedPreferences!
-            .getString(SharedPreferencesKeys.referralCurrencyKey) ??
-        currencySymbol;
-
-    // Then fetch fresh data from API
+    _loadCachedData();
     _fetchProfileData();
+  }
+
+  void _loadCachedData() {
+    if (sharedPreferences != null) {
+      _referralCode =
+          sharedPreferences!.getString(SharedPreferencesKeys.referralCode) ??
+              "";
+      _totalHopperArmy = int.tryParse(sharedPreferences!
+                  .getString(SharedPreferencesKeys.totalHopperArmy) ??
+              "0") ??
+          0;
+      _friendEarnImageUrl = sharedPreferences!.getString(
+              SharedPreferencesKeys.referralYourFriendEarnImageUrlKey) ??
+          "";
+      _youEarnImageUrl = sharedPreferences!
+              .getString(SharedPreferencesKeys.referralYouEarnImageUrlKey) ??
+          "";
+      _friendsEarnAmount = sharedPreferences!
+              .getDouble(SharedPreferencesKeys.referralFriendEarningKey) ??
+          100.0;
+      _youEarnAmount = sharedPreferences!
+              .getDouble(SharedPreferencesKeys.referralUserEarningKey) ??
+          5.0;
+      _referralCurrency = sharedPreferences!.getString(
+              SharedPreferencesKeys.referralPreferredCurrencySignKey) ??
+          "£";
+    }
   }
 
   Future<void> _fetchProfileData() async {
@@ -95,17 +104,6 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
             .setString(SharedPreferencesKeys.referralCode, _referralCode);
         sharedPreferences!.setString(
             SharedPreferencesKeys.totalHopperArmy, _totalHopperArmy.toString());
-
-        // Load referral page data from SharedPreferences
-        _friendEarnImageUrl = sharedPreferences!.getString(
-                SharedPreferencesKeys.referralYourFriendEarnImageUrlKey) ??
-            "";
-        _youEarnImageUrl = sharedPreferences!
-                .getString(SharedPreferencesKeys.referralYouEarnImageUrlKey) ??
-            "";
-        _referralCurrency = sharedPreferences!.getString(
-                SharedPreferencesKeys.referralPreferredCurrencySignKey) ??
-            "£";
       }
     } catch (e) {
       debugPrint("Error fetching profile: $e");
@@ -222,56 +220,55 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                                     style: commonTextStyle(
                                         size: size,
                                         fontSize:
-                                            size.width * AppDimensions.numD04,
-                                        color: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.color,
+                                            size.width * AppDimensions.numD038,
+                                        color: Colors.black,
                                         fontWeight: FontWeight.bold)),
-                                // ClipRRect(
-                                //   borderRadius: BorderRadius.circular(
-                                //       size.width * AppDimensions.numD06),
-                                //   child: Image.asset(
-                                //     "${iconsPath}amount_100.png",
-                                //     height: size.width * AppDimensions.numD40,
-                                //     width: size.width * AppDimensions.numD40,
-                                //   ),
-                                // ),
-
                                 SizedBox(
                                     height: size.width * AppDimensions.numD04),
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD06),
                                   child: _friendEarnImageUrl.isNotEmpty
-                                      ? Image.network(
-                                          _friendEarnImageUrl,
+                                      ? CachedNetworkImage(
+                                          imageUrl: getMediaImageUrl(
+                                              _friendEarnImageUrl),
                                           height:
-                                              size.width * AppDimensions.numD40,
+                                              size.width * AppDimensions.numD30,
                                           width:
                                               size.width * AppDimensions.numD40,
-                                          fit: BoxFit.contain,
-                                          errorBuilder:
-                                              (context, error, stackTrace) =>
-                                                  Image.asset(
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) =>
+                                              Image.asset(
                                             "${iconsPath}amount_100.png",
                                             height: size.width *
-                                                AppDimensions.numD40,
+                                                AppDimensions.numD30,
                                             width: size.width *
                                                 AppDimensions.numD40,
+                                            fit: BoxFit.cover,
+                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              Image.asset(
+                                            "${iconsPath}amount_100.png",
+                                            height: size.width *
+                                                AppDimensions.numD30,
+                                            width: size.width *
+                                                AppDimensions.numD40,
+                                            fit: BoxFit.cover,
                                           ),
                                         )
                                       : Image.asset(
                                           "${iconsPath}amount_100.png",
                                           height:
-                                              size.width * AppDimensions.numD40,
+                                              size.width * AppDimensions.numD30,
                                           width:
                                               size.width * AppDimensions.numD40,
+                                          fit: BoxFit.cover,
                                         ),
                                 ),
                               ],
                             ),
                           ),
+                          SizedBox(width: size.width * AppDimensions.numD05),
                           Expanded(
                             child: Column(
                               children: [
@@ -280,11 +277,8 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                                     style: commonTextStyle(
                                         size: size,
                                         fontSize:
-                                            size.width * AppDimensions.numD04,
-                                        color: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.color,
+                                            size.width * AppDimensions.numD038,
+                                        color: Colors.black,
                                         fontWeight: FontWeight.bold)),
                                 SizedBox(
                                     height: size.width * AppDimensions.numD04),
@@ -292,34 +286,45 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD06),
                                   child: _youEarnImageUrl.isNotEmpty
-                                      ? Image.network(
-                                          _youEarnImageUrl,
+                                      ? CachedNetworkImage(
+                                          imageUrl: getMediaImageUrl(
+                                              _youEarnImageUrl),
                                           height:
-                                              size.width * AppDimensions.numD40,
+                                              size.width * AppDimensions.numD30,
                                           width:
                                               size.width * AppDimensions.numD40,
-                                          fit: BoxFit.contain,
-                                          errorBuilder:
-                                              (context, error, stackTrace) =>
-                                                  Image.asset(
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) =>
+                                              Image.asset(
                                             "${iconsPath}amount_5.png",
                                             height: size.width *
-                                                AppDimensions.numD40,
+                                                AppDimensions.numD30,
                                             width: size.width *
                                                 AppDimensions.numD40,
+                                            fit: BoxFit.cover,
+                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              Image.asset(
+                                            "${iconsPath}amount_5.png",
+                                            height: size.width *
+                                                AppDimensions.numD30,
+                                            width: size.width *
+                                                AppDimensions.numD40,
+                                            fit: BoxFit.cover,
                                           ),
                                         )
                                       : Image.asset(
                                           "${iconsPath}amount_5.png",
                                           height:
-                                              size.width * AppDimensions.numD40,
+                                              size.width * AppDimensions.numD30,
                                           width:
                                               size.width * AppDimensions.numD40,
+                                          fit: BoxFit.cover,
                                         ),
                                 ),
                               ],
                             ),
-                          )
+                          ),
                         ]),
                   ),
                   SizedBox(
