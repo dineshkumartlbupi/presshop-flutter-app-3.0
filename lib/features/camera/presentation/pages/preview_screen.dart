@@ -69,34 +69,40 @@ class PreviewScreenState extends State<PreviewScreen>
     _locationService = LocationService();
     debugPrint("class:::::$runtimeType");
     debugPrint("type:::::${widget.type}");
-    
+
     if (widget.mediaList.isNotEmpty) {
       mediaList = widget.mediaList;
     }
-    
+
     pageController = PageController(initialPage: currentPage);
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => _initLocationFlow());
+    WidgetsBinding.instance
+        .addPostFrameCallback((timeStamp) => _initLocationFlow());
     WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
   Future<void> _initLocationFlow() async {
     setState(() => isLocationFetching = true);
-    
+
     // 1. Process media and extract EXIF
     await addMediaDataList(widget.cameraListData);
-    
+
     // 2. Check if we still need current location fall-back
-    bool needsCurrentLocation = mediaList.isEmpty || mediaList.any((m) => m.location.isEmpty);
-    
+    bool needsCurrentLocation = mediaList.isEmpty ||
+        mediaList.any((m) =>
+            m.location.isEmpty ||
+            m.latitude.isEmpty ||
+            m.latitude == "0" ||
+            m.latitude == "0.0");
+
     if (needsCurrentLocation) {
-      debugPrint("🚀 PreviewScreen: No EXIF location found, requesting current location...");
+      debugPrint(
+          "🚀 PreviewScreen: Location missing or incomplete, requesting current location...");
       await requestLocationPermissions(
-        shouldShowSettingPopup: false, 
-        showErrorLocationPage: false
-      );
+          shouldShowSettingPopup: false, showErrorLocationPage: false);
     } else {
-      debugPrint("✅ PreviewScreen: Location resolved via EXIF.");
+      debugPrint(
+          "✅ PreviewScreen: Location resolved via EXIF or Initial Data.");
       setState(() => isLocationFetching = false);
     }
   }
@@ -580,17 +586,23 @@ class PreviewScreenState extends State<PreviewScreen>
                                         SizedBox(
                                           width:
                                               size.width * AppDimensions.numD25,
-                                          child: (mediaList[currentPage].location.isEmpty ||
-                                                  mediaList[currentPage].location == "Unknown") &&
+                                          child: (mediaList[currentPage]
+                                                          .location
+                                                          .isEmpty ||
+                                                      mediaList[currentPage]
+                                                              .location ==
+                                                          "Unknown") &&
                                                   isLocationFetching
                                               ? Align(
-                                                  alignment: Alignment.centerLeft,
+                                                  alignment:
+                                                      Alignment.centerLeft,
                                                   child: SizedBox(
                                                     width: size.width *
                                                         AppDimensions.numD035,
                                                     height: size.width *
                                                         AppDimensions.numD035,
-                                                    child: CircularProgressIndicator(
+                                                    child:
+                                                        CircularProgressIndicator(
                                                       strokeWidth: 1.5,
                                                       color: AppColorTheme
                                                           .colorThemePink,
@@ -612,8 +624,9 @@ class PreviewScreenState extends State<PreviewScreen>
                                                   style: commonTextStyle(
                                                       size: size,
                                                       fontSize: size.width *
-                                                              AppDimensions.numD025,
-                                                      color: mediaList[currentPage]
+                                                          AppDimensions.numD025,
+                                                      color: mediaList[
+                                                                  currentPage]
                                                               .location
                                                               .isEmpty
                                                           ? (isLocationFetching
@@ -626,9 +639,11 @@ class PreviewScreenState extends State<PreviewScreen>
                                                                   .location
                                                                   .isEmpty
                                                               ? FontWeight.bold
-                                                              : FontWeight.normal),
+                                                              : FontWeight
+                                                                  .normal),
                                                   maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                         )
                                       ],

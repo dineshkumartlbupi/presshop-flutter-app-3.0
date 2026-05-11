@@ -27,10 +27,104 @@ Future<bool> checkGps() async {
   }
 }
 
+class PermissionDialog extends StatefulWidget {
+  final String message;
+  final permission.Permission? permissionType;
+
+  const PermissionDialog({
+    super.key,
+    required this.message,
+    this.permissionType,
+  });
+
+  @override
+  State<PermissionDialog> createState() => _PermissionDialogState();
+}
+
+class _PermissionDialogState extends State<PermissionDialog>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && widget.permissionType != null) {
+      _checkPermission();
+    }
+  }
+
+  Future<void> _checkPermission() async {
+    final status = await widget.permissionType!.status;
+    if (status.isGranted && mounted) {
+      Navigator.pop(context);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return AlertDialog(
+      backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: Row(
+        children: [
+          const Icon(Icons.lock, color: Colors.red),
+          const SizedBox(width: 8),
+          Text(
+            "Permission Required",
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+      content: Text(
+        widget.message,
+        style: TextStyle(
+          color: isDark ? Colors.white70 : Colors.black87,
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: isDark ? Colors.white54 : Colors.grey),
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            permission.openAppSettings();
+          },
+          child: const Text(
+            "Open Settings",
+            style: TextStyle(
+              color: Color(0xFFFF3B30), // System red/pink
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class PermissionUI {
   static void show({
     required String message,
     required bool isPermanent,
+    permission.Permission? permissionType,
   }) {
     final context = navigatorKey.currentContext;
     if (context == null) return;
@@ -39,27 +133,9 @@ class PermissionUI {
       // 👉 Dialog for "Don't ask again"
       showDialog(
         context: context,
-        builder: (_) => AlertDialog(
-          title: Row(
-            children: const [
-              Icon(Icons.lock, color: Colors.red),
-              SizedBox(width: 8),
-              Text("Permission Required"),
-            ],
-          ),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                permission.openAppSettings();
-              },
-              child: const Text("Open Settings"),
-            ),
-          ],
+        builder: (_) => PermissionDialog(
+          message: message,
+          permissionType: permissionType,
         ),
       );
     } else {

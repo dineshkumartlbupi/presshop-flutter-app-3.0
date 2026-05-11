@@ -287,210 +287,181 @@ class _MenuScreenState extends State<MenuScreen> {
         showFilter: false,
         onFilterTap: () {},
       ),
-      // appBar: AppBar(
-      //   backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-      //   surfaceTintColor: Theme.of(context).appBarTheme.backgroundColor,
-      //   elevation: 0,
-      //   leading: Center(
-      //     child: InkWell(
-      //       onTap: () {
-      //         print('click------------------------>');
-      //         try {
-      //           context
-      //               .read<DashboardBloc>()
-      //               .add(const ChangeDashboardTabEvent(2));
-      //         } catch (e) {
-      //           context.goNamed(AppRoutes.dashboardName,
-      //               extra: {'initialPosition': 2});
-      //         }
-      //       },
-      //       child: Padding(
-      //         padding: EdgeInsets.only(
-      //             left: size.width * AppDimensions.numD01,
-      //             bottom: size.width * AppDimensions.numD01),
-      //         child: LogoWidget.buildLogo(size),
-      //       ),
-      //     ),
-      //   ),
-      // ),
-      //  CommonAppBar(
-      //   elevation: 0,
-      //   hideLeading: false,
-      //   title: Text(
-      //     AppStrings.menuText,
-      //     style: TextStyle(
-      //         color: Colors.black,
-      //         fontWeight: FontWeight.bold,
-      //         fontSize: size.width * AppDimensions.appBarHeadingFontSize),
-      //   ),
-      //   centerTitle: false,
-      //   titleSpacing: 0,
-      //   size: size,
-      //   showActions: false,
-      //   leadingFxn: () => context.pop(),
-      //   actionWidget: [],
-      // ),
-
       body: SafeArea(
-        child: ListView.separated(
-          padding: EdgeInsets.symmetric(
-              horizontal: AppDimensions.commonPaddingSize(size),
-              vertical: size.width * AppDimensions.numD02),
-          itemCount: menuList.length + 2,
-          separatorBuilder: (context, index) => Divider(
-            thickness: 1,
-            color: Theme.of(context).brightness == Brightness.dark
-                ? AppColorTheme.colorItemDividerForDarkTheme
-                : AppColorTheme.colorLightGrey,
-          ),
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              // Location Toggle
-              return Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: size.width * AppDimensions.numD035),
-                child: Row(
-                  children: [
-                    ImageIcon(
-                      const AssetImage("assets/markers/location1.webp"),
-                      size: size.width * AppDimensions.numD06,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                    SizedBox(
-                      width: size.width * AppDimensions.numD03,
-                    ),
-                    Text(
-                      "Enable location",
-                      style: TextStyle(
-                          fontSize: size.width * AppDimensions.numD035,
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                          fontFamily: "AirbnbCereal",
-                          fontWeight: FontWeight.normal),
-                    ),
-                    const Spacer(),
-                    ValueListenableBuilder<bool>(
-                      valueListenable:
-                          BackgroundLocationService.isRunningNotifier,
-                      builder: (context, isRunning, child) {
-                        return FlutterSwitch(
-                          width: 55,
-                          height: 27,
-                          padding: 2,
-                          value: isRunning,
-                          inactiveColor: AppColorTheme.colorThemePink,
-                          activeColor: Colors.green,
-                          onToggle: (val) {
-                            _toggleLocationService(val, size);
-                          },
-                        );
-                      },
-                    )
-                  ],
-                ),
-              );
-            }
-
-            if (index == menuList.length + 1) {
-              // Dark Mode Toggle
-              return Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: size.width * AppDimensions.numD035),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.palette_outlined,
-                      size: size.width * AppDimensions.numD06,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                    SizedBox(
-                      width: size.width * AppDimensions.numD03,
-                    ),
-                    Text(
-                      "Dark Mode",
-                      style: TextStyle(
-                          fontSize: size.width * AppDimensions.numD035,
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                          fontFamily: "AirbnbCereal",
-                          fontWeight: FontWeight.normal),
-                    ),
-                    const Spacer(),
-                    BlocBuilder<ThemeBloc, ThemeState>(
+        child: BlocBuilder<ThemeBloc, ThemeState>(
+          builder: (context, themeState) {
+            return ListView.separated(
+              padding: EdgeInsets.symmetric(
+                  horizontal: AppDimensions.commonPaddingSize(size),
+                  vertical: size.width * AppDimensions.numD02),
+              itemCount: menuList.length + 2,
+              separatorBuilder: (context, index) => Divider(
+                thickness: 1,
+                color: themeState.themeMode == ThemeMode.dark
+                    ? AppColorTheme.colorItemDividerForDarkTheme
+                    : AppColorTheme.colorLightGrey,
+              ),
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  // Location Toggle
+                  return Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: size.width * AppDimensions.numD035),
+                    child: BlocBuilder<ThemeBloc, ThemeState>(
                       builder: (context, state) {
                         final isDark = state.themeMode == ThemeMode.dark;
-                        return GestureDetector(
-                          onTap: () {
-                            context.read<ThemeBloc>().add(ToggleThemeEvent());
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            width: 50,
-                            height: 28,
-                            padding: const EdgeInsets.all(3),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: isDark
-                                  ? const Color(0xFF2C3E50)
-                                  : const Color(0xFFD1E9FF),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: isDark
-                                      ? Colors.black26
-                                      : Colors.blue.withOpacity(0.1),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                )
-                              ],
+                        final textColor = isDark ? Colors.white : Colors.black;
+                        return Row(
+                          children: [
+                            ImageIcon(
+                              const AssetImage("assets/markers/location1.webp"),
+                              size: size.width * AppDimensions.numD06,
+                              color: textColor,
                             ),
-                            child: Stack(
-                              children: [
-                                AnimatedAlign(
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
-                                  alignment: isDark
-                                      ? Alignment.centerRight
-                                      : Alignment.centerLeft,
-                                  child: Container(
-                                    width: 22,
-                                    height: 22,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
-                                          blurRadius: 2,
-                                          offset: const Offset(0, 1),
-                                        )
-                                      ],
-                                    ),
-                                    child: Center(
-                                      child: Icon(
-                                        isDark
-                                            ? Icons.nightlight_round_rounded
-                                            : Icons.wb_sunny_rounded,
-                                        size: 14,
-                                        color: isDark
-                                            ? const Color(0xFFF1C40F)
-                                            : const Color(0xFFF39C12),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            SizedBox(
+                              width: size.width * AppDimensions.numD03,
                             ),
-                          ),
+                            Text(
+                              "Enable location",
+                              style: TextStyle(
+                                  fontSize: size.width * AppDimensions.numD035,
+                                  color: textColor,
+                                  fontFamily: "AirbnbCereal",
+                                  fontWeight: FontWeight.normal),
+                            ),
+                            const Spacer(),
+                            ValueListenableBuilder<bool>(
+                              valueListenable:
+                                  BackgroundLocationService.isRunningNotifier,
+                              builder: (context, isRunning, child) {
+                                return FlutterSwitch(
+                                  width: 55,
+                                  height: 27,
+                                  padding: 2,
+                                  value: isRunning,
+                                  inactiveColor: AppColorTheme.colorThemePink,
+                                  activeColor: Colors.green,
+                                  onToggle: (val) {
+                                    _toggleLocationService(val, size);
+                                  },
+                                );
+                              },
+                            )
+                          ],
                         );
                       },
                     ),
-                  ],
-                ),
-              );
-            }
+                  );
+                }
 
-            final item = menuList[index - 1];
-            return MenuTile(
-              item: item,
-              onTap: () => _onMenuTap(context, item),
+                if (index == menuList.length + 1) {
+                  // Dark Mode Toggle
+                  return Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: size.width * AppDimensions.numD035),
+                    child: BlocBuilder<ThemeBloc, ThemeState>(
+                      builder: (context, state) {
+                        final isDark = state.themeMode == ThemeMode.dark;
+                        final textColor = isDark ? Colors.white : Colors.black;
+                        return Row(
+                          children: [
+                            Icon(
+                              Icons.palette_outlined,
+                              size: size.width * AppDimensions.numD06,
+                              color: textColor,
+                            ),
+                            SizedBox(
+                              width: size.width * AppDimensions.numD03,
+                            ),
+                            Text(
+                              "Dark Mode",
+                              style: TextStyle(
+                                  fontSize: size.width * AppDimensions.numD035,
+                                  color: textColor,
+                                  fontFamily: "AirbnbCereal",
+                                  fontWeight: FontWeight.normal),
+                            ),
+                            const Spacer(),
+                            GestureDetector(
+                              onTap: () {
+                                context
+                                    .read<ThemeBloc>()
+                                    .add(ToggleThemeEvent());
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                width: 50,
+                                height: 28,
+                                padding: const EdgeInsets.all(3),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: isDark
+                                      ? const Color(0xFF2C3E50)
+                                      : const Color(0xFFD1E9FF),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: isDark
+                                          ? Colors.black26
+                                          : Colors.blue.withOpacity(0.1),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    )
+                                  ],
+                                ),
+                                child: Stack(
+                                  children: [
+                                    AnimatedAlign(
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut,
+                                      alignment: isDark
+                                          ? Alignment.centerRight
+                                          : Alignment.centerLeft,
+                                      child: Container(
+                                        width: 22,
+                                        height: 22,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.1),
+                                              blurRadius: 2,
+                                              offset: const Offset(0, 1),
+                                            )
+                                          ],
+                                        ),
+                                        child: Center(
+                                          child: Icon(
+                                            isDark
+                                                ? Icons.nightlight_round_rounded
+                                                : Icons.wb_sunny_rounded,
+                                            size: 14,
+                                            color: isDark
+                                                ? const Color(0xFFF1C40F)
+                                                : const Color(0xFFF39C12),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  );
+                }
+
+                final item = menuList[index - 1];
+                return MenuTile(
+                  item: item,
+                  onTap: () => _onMenuTap(context, item),
+                );
+              },
             );
           },
         ),

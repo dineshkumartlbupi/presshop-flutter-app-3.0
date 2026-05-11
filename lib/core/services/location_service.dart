@@ -84,6 +84,7 @@ class LocationService {
             message:
                 "Location permission is permanently denied. Please enable it in settings to proceed.",
             isPermanent: true,
+            permissionType: permission,
           );
         }
         return false;
