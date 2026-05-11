@@ -232,10 +232,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
         debugPrint("🚀 CameraBloc: Controller initialized.");
 
-        // Wait for Flutter surface to be ready before starting preview
         await Future.delayed(const Duration(milliseconds: 200));
-
-        // Explicitly start preview to avoid black screen
         try {
           await controller.resumePreview().timeout(const Duration(seconds: 3));
         } catch (e) {
@@ -273,11 +270,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       add(LoadGalleryMediaEvent());
     }
 
-    // Defer location fetch until after camera is ready
     unawaited(_initLocation());
   }
 
-  /// Non-blocking location initialization
   Future<void> _initLocation() async {
     if (_isFetchingLocation) return;
     _isFetchingLocation = true;
@@ -291,6 +286,28 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
           _longitude = loc.longitude ?? 0;
           debugPrint(
               "🚀 CameraBloc: Location fetched successfully: $_latitude, $_longitude");
+
+          try {
+            final locationInfo = await _locationService
+                .getAddressFromCoordinates(_latitude, _longitude);
+            if (locationInfo != null) {
+              sharedPreferences?.setString(SharedPreferencesKeys.currentAddress,
+                  locationInfo['address'] ?? '');
+              sharedPreferences?.setString(SharedPreferencesKeys.currentCountry,
+                  locationInfo['country'] ?? '');
+              sharedPreferences?.setString(SharedPreferencesKeys.currentState,
+                  locationInfo['state'] ?? '');
+              sharedPreferences?.setString(SharedPreferencesKeys.currentCity,
+                  locationInfo['city'] ?? '');
+              sharedPreferences?.setString(SharedPreferencesKeys.contryCode,
+                  locationInfo['isoCode'] ?? '');
+
+              debugPrint(
+                  "🚀 CameraBloc: Location metadata updated in SharedPreferences");
+            }
+          } catch (e) {
+            debugPrint("🚀 CameraBloc: Reverse geocoding error: $e");
+          }
         }
       }
     } catch (e) {
@@ -305,20 +322,16 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     if (event.state == AppLifecycleState.inactive ||
         event.state == AppLifecycleState.paused ||
         event.state == AppLifecycleState.detached) {
-      // IGNORING lifecycle dispose if we are actively initializing or fetching location.
-      // This prevents permission dialogs and GPS popups from triggering destructive disposal cycles.
       if (_isInitializing || _isFetchingLocation) {
         debugPrint(
             "🚀 CameraBloc: Lifecycle ignore - Init: $_isInitializing, Loc: $_isFetchingLocation");
         return;
       }
 
-      // Avoid redundant disposal cycles
       if (state.status == CameraStatus.disposing) return;
 
       final controller = state.cameraController;
       if (controller != null) {
-        // For shutter down (inactive), we might just want to pause preview to allow instant resume
         if (event.state == AppLifecycleState.inactive) {
           debugPrint(
               "🚀 CameraBloc: App inactive (shutter down?). Pausing preview.");
@@ -331,8 +344,6 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
           }
         }
 
-        // For paused/detached, we MUST dispose to free resources
-        // Set state to disposing and clear controller immediately to prevent other events from using it
         emit(state.copyWith(
             status: CameraStatus.disposing, clearController: true));
 
@@ -358,10 +369,15 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       }
     } else if (event.state == AppLifecycleState.resumed) {
       debugPrint("🚀 CameraBloc: App resumed. Triggering delayed auto-init.");
-
-      // If we were only paused (inactive), resume instantly
       if (state.status == CameraStatus.previewPaused &&
           state.cameraController != null) {
+        add(const CameraInitializeEvent());
+        return;
+      }
+      if (state.status == CameraStatus.ready &&
+          state.cameraController != null) {
+        debugPrint(
+            "🚀 CameraBloc: App resumed but camera already ready. Resuming preview.");
         add(const CameraInitializeEvent());
         return;
       }
@@ -369,7 +385,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       // Single source of truth for resume logic
       Future.delayed(const Duration(milliseconds: 400), () {
         if (!isClosed) {
-          add(const CameraInitializeEvent(force: true));
+          add(const CameraInitializeEvent());
         }
       });
     }
@@ -749,12 +765,16 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   Future<void> _onScanDoc(
       CameraScanDocEvent event, Emitter<CameraState> emit) async {
     try {
+      await state.cameraController?.pausePreview();
       List<String>? imageList = await CunningDocumentScanner.getPictures();
 
-      // Ensure camera resumes after scanner activity finishes/cancels
+      if (imageList == null || imageList.isEmpty) {
+        await state.cameraController?.resumePreview();
+        return;
+      }
       add(const CameraInitializeEvent());
 
-      if (imageList != null && imageList.isNotEmpty) {
+      if (imageList.isNotEmpty) {
         List<CameraData> newMedia = [];
         for (var path in imageList) {
           newMedia.add(CameraData(
@@ -792,14 +812,19 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
   Future<void> _onPickDocument(
       PickDocumentEvent event, Emitter<CameraState> emit) async {
+    await state.cameraController?.pausePreview();
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'doc'],
     );
 
-    if (result != null && result.files.single.path != null) {
+    if (result == null) {
+      await state.cameraController?.resumePreview();
+      return;
+    }
+
+    if (result.files.single.path != null) {
       File file = File(result.files.single.path!);
-      await state.cameraController?.pausePreview();
 
       String mimeType = lookupMimeType(file.path) ?? "pdf";
       if (mimeType == "application/msword") {
@@ -879,7 +904,6 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
   void _startTimer() {
     _startTime = DateTime.now();
-    // _stopDurationDifference = null;
     _recordingTimer?.cancel();
     _recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final now = DateTime.now();

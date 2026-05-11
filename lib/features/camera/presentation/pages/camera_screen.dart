@@ -514,12 +514,14 @@ class CameraScreenState extends State<CameraScreen>
               alignment: Alignment.bottomRight,
               child: InkWell(
                 onTap: () {
+                  pauseCamera();
                   context.pushNamed(
                     AppRoutes.customGalleryName,
                     extra: {
                       'picAgain': widget.picAgain,
                     },
                   ).then((value) {
+                    resumeCamera();
                     if (value != null) {
                       // ignore: use_build_context_synchronously
                       if (!context.mounted) return;

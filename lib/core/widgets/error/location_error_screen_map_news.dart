@@ -18,14 +18,61 @@ class LocationErrorScreenMapNews extends StatefulWidget {
 }
 
 class _LocationErrorScreenStateMapNews
-    extends State<LocationErrorScreenMapNews> {
+    extends State<LocationErrorScreenMapNews> with WidgetsBindingObserver {
   late LocationService _locationService;
   bool isFetchingLocation = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _locationService = sl<LocationService>();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkPermissionAndAutoPop();
+    }
+  }
+
+  Future<void> _checkPermissionAndAutoPop() async {
+    final status = await Permission.location.status;
+    if (status.isGranted || status.isLimited) {
+      _fetchLocation();
+    }
+  }
+
+  Future<void> _fetchLocation() async {
+    if (isFetchingLocation) return;
+    setState(() {
+      isFetchingLocation = true;
+    });
+
+    try {
+      final locationData = await _locationService.getCurrentLocation(context);
+      if (locationData != null && mounted) {
+        if (widget.onLocationEnabled != null) {
+          widget.onLocationEnabled!(locationData);
+        } else {
+          Navigator.pop(context, locationData);
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching location on auto-pop: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          isFetchingLocation = false;
+        });
+      }
+    }
   }
 
   @override
@@ -149,45 +196,8 @@ class _LocationErrorScreenStateMapNews
                                   return;
                                 }
 
-                                // 3. If granted, Check Location Service
                                 if (status.isGranted || status.isLimited) {
-                                  bool serviceEnabled =
-                                      await lc.Location().serviceEnabled();
-                                  if (!serviceEnabled) {
-                                    serviceEnabled =
-                                        await lc.Location().requestService();
-                                    if (!serviceEnabled) {
-                                      return;
-                                    }
-                                  }
-
-                                  // 4. Fetch Location
-                                  setState(() {
-                                    isFetchingLocation = true;
-                                  });
-
-                                  final locationData = await _locationService
-                                      .getCurrentLocation(context);
-
-                                  if (locationData != null) {
-                                    if (widget.onLocationEnabled != null) {
-                                      widget.onLocationEnabled!(locationData);
-                                      if (mounted) {
-                                        setState(() {
-                                          isFetchingLocation = false;
-                                        });
-                                      }
-                                    } else {
-                                      if (mounted)
-                                        Navigator.pop(context, locationData);
-                                    }
-                                  } else {
-                                    if (mounted) {
-                                      setState(() {
-                                        isFetchingLocation = false;
-                                      });
-                                    }
-                                  }
+                                  _fetchLocation();
                                 }
                               },
                             ),

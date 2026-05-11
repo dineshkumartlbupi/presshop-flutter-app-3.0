@@ -59,7 +59,7 @@ class PreviewScreenState extends State<PreviewScreen>
   int currentPage = 0;
   bool isLoading = false;
   bool videoPlaying = false, isMoreDisable = false;
-  bool isLocationFetching = false;
+  bool isLocationFetching = true;
   late PageController pageController;
 
   List<MediaData> mediaList = [];
@@ -69,17 +69,36 @@ class PreviewScreenState extends State<PreviewScreen>
     _locationService = LocationService();
     debugPrint("class:::::$runtimeType");
     debugPrint("type:::::${widget.type}");
-    addMediaDataList(widget.cameraListData);
+    
     if (widget.mediaList.isNotEmpty) {
       mediaList = widget.mediaList;
     }
-
+    
     pageController = PageController(initialPage: currentPage);
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) =>
-        requestLocationPermissions(
-            shouldShowSettingPopup: false, showErrorLocationPage: false));
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => _initLocationFlow());
     WidgetsBinding.instance.addObserver(this);
     super.initState();
+  }
+
+  Future<void> _initLocationFlow() async {
+    setState(() => isLocationFetching = true);
+    
+    // 1. Process media and extract EXIF
+    await addMediaDataList(widget.cameraListData);
+    
+    // 2. Check if we still need current location fall-back
+    bool needsCurrentLocation = mediaList.isEmpty || mediaList.any((m) => m.location.isEmpty);
+    
+    if (needsCurrentLocation) {
+      debugPrint("🚀 PreviewScreen: No EXIF location found, requesting current location...");
+      await requestLocationPermissions(
+        shouldShowSettingPopup: false, 
+        showErrorLocationPage: false
+      );
+    } else {
+      debugPrint("✅ PreviewScreen: Location resolved via EXIF.");
+      setState(() => isLocationFetching = false);
+    }
   }
 
   @override
@@ -561,41 +580,56 @@ class PreviewScreenState extends State<PreviewScreen>
                                         SizedBox(
                                           width:
                                               size.width * AppDimensions.numD25,
-                                          child: Text(
-                                            mediaList[currentPage]
-                                                    .location
-                                                    .isEmpty
-                                                ? isLocationFetching
-                                                    ? ""
-                                                    : ""
-                                                : mediaList[currentPage]
-                                                    .location,
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: mediaList[currentPage]
-                                                        .location
-                                                        .isEmpty
-                                                    ? size.width *
-                                                        AppDimensions.numD025
-                                                    : size.width *
-                                                        AppDimensions.numD025,
-                                                color: mediaList[currentPage]
-                                                        .location
-                                                        .isEmpty
-                                                    ? isLocationFetching
-                                                        ? AppColorTheme
-                                                            .colorGrey6
-                                                        : Colors.red
-                                                    : Colors.black,
-                                                fontWeight:
-                                                    mediaList[currentPage]
-                                                            .location
-                                                            .isEmpty
-                                                        ? FontWeight.bold
-                                                        : FontWeight.normal),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
+                                          child: (mediaList[currentPage].location.isEmpty ||
+                                                  mediaList[currentPage].location == "Unknown") &&
+                                                  isLocationFetching
+                                              ? Align(
+                                                  alignment: Alignment.centerLeft,
+                                                  child: SizedBox(
+                                                    width: size.width *
+                                                        AppDimensions.numD035,
+                                                    height: size.width *
+                                                        AppDimensions.numD035,
+                                                    child: CircularProgressIndicator(
+                                                      strokeWidth: 1.5,
+                                                      color: AppColorTheme
+                                                          .colorThemePink,
+                                                    ),
+                                                  ),
+                                                )
+                                              : Text(
+                                                  mediaList[currentPage]
+                                                              .location
+                                                              .isEmpty ||
+                                                          mediaList[currentPage]
+                                                                  .location ==
+                                                              "Unknown"
+                                                      ? (isLocationFetching
+                                                          ? "Fetching..."
+                                                          : "No location")
+                                                      : mediaList[currentPage]
+                                                          .location,
+                                                  style: commonTextStyle(
+                                                      size: size,
+                                                      fontSize: size.width *
+                                                              AppDimensions.numD025,
+                                                      color: mediaList[currentPage]
+                                                              .location
+                                                              .isEmpty
+                                                          ? (isLocationFetching
+                                                              ? AppColorTheme
+                                                                  .colorGrey6
+                                                              : Colors.red)
+                                                          : Colors.black,
+                                                      fontWeight:
+                                                          mediaList[currentPage]
+                                                                  .location
+                                                                  .isEmpty
+                                                              ? FontWeight.bold
+                                                              : FontWeight.normal),
+                                                  maxLines: 2,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
                                         )
                                       ],
                                     )),
@@ -677,7 +711,11 @@ class PreviewScreenState extends State<PreviewScreen>
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700),
                                   commonButtonStyle(
-                                      size, AppColorTheme.colorThemePink), () {
+                                      size,
+                                      isLocationFetching
+                                          ? Colors.grey
+                                          : AppColorTheme.colorThemePink), () {
+                                if (isLocationFetching) return;
                                 if (widget.pickAgain) {
                                   context.pop();
                                   if (widget.type == "draft") {
@@ -827,8 +865,12 @@ class PreviewScreenState extends State<PreviewScreen>
                                         color: Colors.white,
                                         fontWeight: FontWeight.w700),
                                     commonButtonStyle(
-                                        size, AppColorTheme.colorThemePink),
+                                        size,
+                                        isLocationFetching
+                                            ? Colors.grey
+                                            : AppColorTheme.colorThemePink),
                                     () {
+                                  if (isLocationFetching) return;
                                   if (widget.pickAgain) {
                                     context.pop();
                                     if (widget.type == "draft") {
@@ -958,7 +1000,7 @@ class PreviewScreenState extends State<PreviewScreen>
     }
   }*/
 
-  Future addMediaDataList(List<CameraData> cDataList) async {
+  Future<void> addMediaDataList(List<CameraData> cDataList) async {
     if (cDataList.isNotEmpty) {
       for (var element in cDataList) {
         if (widget.type == "draft") {
@@ -980,15 +1022,17 @@ class PreviewScreenState extends State<PreviewScreen>
             isLocalMedia: true);
 
         mediaList.insert(0, mData);
-        _extractExif(mData);
+        await _extractExif(mData);
 
         debugPrint(" path ======> : ${element.path}");
         debugPrint("MedListSize: ${mediaList.length}");
       }
 
-      setState(() {
-        currentPage = 0;
-      });
+      if (mounted) {
+        setState(() {
+          currentPage = 0;
+        });
+      }
 
       if (pageController.hasClients) {
         pageController.jumpToPage(0);

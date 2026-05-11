@@ -19,11 +19,9 @@ import 'package:lottie/lottie.dart';
 import 'package:path/path.dart' hide Context, context;
 import 'package:path_provider/path_provider.dart';
 import 'package:presshop/core/di/injection_container.dart';
-import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
@@ -72,6 +70,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
   TextEditingController timestampController = TextEditingController();
   TextEditingController hashtagController = TextEditingController();
   TextEditingController priceController = TextEditingController();
+  bool isLocationFetching = false;
   String dropDownValue = "",
       audioPath = "",
       audioDuration = "",
@@ -588,10 +587,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 .thumbnail!,
                                                             width: size.width *
                                                                 AppDimensions
-                                                                 .numD32,
+                                                                    .numD32,
                                                             height: size.width *
                                                                 AppDimensions
-                                                                 .numD37,
+                                                                    .numD37,
                                                             fit: BoxFit.contain,
                                                           )
                                                         : Image.file(
@@ -602,10 +601,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 .thumbnail!),
                                                             width: size.width *
                                                                 AppDimensions
-                                                                 .numD32,
+                                                                    .numD32,
                                                             height: size.width *
                                                                 AppDimensions
-                                                                 .numD37,
+                                                                    .numD37,
                                                             fit: BoxFit.cover,
                                                           ))
                                                     : Image.network(
@@ -616,10 +615,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             .thumbNail,
                                                         width: size.width *
                                                             AppDimensions
-                                                                 .numD32,
+                                                                .numD32,
                                                         height: size.width *
                                                             AppDimensions
-                                                                 .numD37,
+                                                                .numD37,
                                                         fit: BoxFit.cover,
                                                       ),
                                               ),
@@ -682,10 +681,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             .media,
                                                         width: size.width *
                                                             AppDimensions
-                                                                 .numD32,
+                                                                .numD32,
                                                         height: size.width *
                                                             AppDimensions
-                                                                 .numD37,
+                                                                .numD37,
                                                         fit: BoxFit.cover,
                                                       ),
                                               ),
@@ -704,10 +703,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                         "${commonImagePath}watermark1.png",
                                                         width: size.width *
                                                             AppDimensions
-                                                                 .numD32,
+                                                                .numD32,
                                                         height: size.width *
                                                             AppDimensions
-                                                                 .numD37,
+                                                                .numD37,
                                                         fit: BoxFit.contain,
                                                       )),
                                                   Container(
@@ -1041,10 +1040,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                         "${commonImagePath}watermark1.png",
                                                         width: size.width *
                                                             AppDimensions
-                                                                 .numD32,
+                                                                .numD32,
                                                         height: size.width *
                                                             AppDimensions
-                                                                 .numD37,
+                                                                .numD37,
                                                         fit: BoxFit.contain,
                                                       )),
                                                   Container(
@@ -1400,6 +1399,22 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         size.width * AppDimensions.numD05,
                                   ),
                                   prefixIconColor: iconColor,
+                                  suffixIcon: isLocationFetching
+                                      ? Padding(
+                                          padding: EdgeInsets.all(size.width *
+                                              AppDimensions.numD03),
+                                          child: SizedBox(
+                                            width: size.width *
+                                                AppDimensions.numD04,
+                                            height: size.width *
+                                                AppDimensions.numD04,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: activeColor,
+                                            ),
+                                          ),
+                                        )
+                                      : null,
                                   disabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(
                                           size.width * AppDimensions.numD08),
@@ -2991,7 +3006,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
       if (widget.myContentData!.audioDuration.isNotEmpty) {
         audioDuration = widget.myContentData!.audioDuration;
       }
-      
+
       // Fallback to current location if address is missing
       if (locationController.text.isEmpty ||
           locationController.text == "Unknown") {
@@ -3020,17 +3035,19 @@ class PublishContentScreenState extends State<PublishContentScreen>
   }
 
   Future<void> _fetchCurrentLocation() async {
+    setState(() => isLocationFetching = true);
     try {
       final locationService = sl<LocationService>();
       final locationData = await locationService.getCurrentLocation(context);
 
       if (locationData != null) {
-        final List<geo.Placemark> placemarks = await geo.placemarkFromCoordinates(
+        final List<geo.Placemark> placemarks =
+            await geo.placemarkFromCoordinates(
           locationData.latitude!,
           locationData.longitude!,
         );
 
-        if (placemarks.isNotEmpty) {
+        if (placemarks.isNotEmpty && mounted) {
           final geo.Placemark place = placemarks.first;
           setState(() {
             locationController.text =
@@ -3068,6 +3085,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
       }
     } catch (e) {
       debugPrint("Error fetching current location: $e");
+    } finally {
+      if (mounted) {
+        setState(() => isLocationFetching = false);
+      }
     }
   }
 
@@ -3439,6 +3460,7 @@ class AllCharityModel {
 */
 
   Future<void> _extractExifFromFile(String filePath) async {
+    setState(() => isLocationFetching = true);
     try {
       final fileBytes = await File(filePath).readAsBytes();
       final tags = await pure_exif.readExifFromBytes(fileBytes);
@@ -3471,15 +3493,20 @@ class AllCharityModel {
           setState(() {
             locationController.text =
                 "${place.street ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
+            isLocationFetching = false;
           });
           return;
         }
       }
-      
-      _fetchCurrentLocation();
+
+      await _fetchCurrentLocation();
     } catch (e) {
       debugPrint("Error extracting EXIF in publish screen: $e");
-      _fetchCurrentLocation();
+      await _fetchCurrentLocation();
+    } finally {
+      if (mounted) {
+        setState(() => isLocationFetching = false);
+      }
     }
   }
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -9,28 +10,19 @@ import 'package:presshop/core/utils/permission_handler.dart';
 class LocationService {
   final Location _location = Location();
 
-  // ── Production-Grade Permission Management ────────────────────────────────
-  // Map to track active requests per permission to prevent race conditions
   static final Map<Permission, Completer<bool>> _activeRequests = {};
-
-  // Track last request time to avoid spamming the OS (cooldown)
   static final Map<Permission, DateTime> _lastRequestTime = {};
   static const Duration _requestCooldown = Duration(seconds: 1);
 
-  /// Check and request any permission safely — production level de-duplication.
   Future<bool> requestPermission(Permission permission,
       {bool showUI = true}) async {
-    // 1. Fast-path: already granted
     if (await permission.isGranted) return true;
-
-    // 2. Check if a request for THIS permission is already in progress
     if (_activeRequests.containsKey(permission)) {
       debugPrint(
           "🚀 PermissionService: Request for $permission already in progress, joining...");
       return _activeRequests[permission]!.future;
     }
 
-    // 3. Cooldown check: prevent rapid-fire requests that the OS might ignore
     final now = DateTime.now();
     if (_lastRequestTime.containsKey(permission)) {
       final difference = now.difference(_lastRequestTime[permission]!);
@@ -87,6 +79,13 @@ class LocationService {
 
       if (status.isPermanentlyDenied) {
         // ❗ User tapped "Don't ask again"
+        if (showUI) {
+          PermissionUI.show(
+            message:
+                "Location permission is permanently denied. Please enable it in settings to proceed.",
+            isPermanent: true,
+          );
+        }
         return false;
       }
     } catch (e) {
@@ -160,5 +159,32 @@ class LocationService {
       debugPrint("🚀 LocationService: Error fetching location: $e");
       return null;
     }
+  }
+
+  /// Perform reverse geocoding to get human-readable address and components
+  Future<Map<String, String>?> getAddressFromCoordinates(
+      double latitude, double longitude) async {
+    try {
+      List<geocoding.Placemark> placemarks =
+          await geocoding.placemarkFromCoordinates(latitude, longitude);
+      if (placemarks.isNotEmpty) {
+        geocoding.Placemark place = placemarks.first;
+        String address =
+            "${place.street ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}"
+                .replaceAll(", ,", ",")
+                .trim();
+
+        return {
+          'address': address,
+          'country': place.country ?? '',
+          'state': place.administrativeArea ?? '',
+          'city': place.locality ?? '',
+          'isoCode': place.isoCountryCode ?? '',
+        };
+      }
+    } catch (e) {
+      debugPrint("🚀 LocationService: Geocoding error: $e");
+    }
+    return null;
   }
 }
