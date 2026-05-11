@@ -11,6 +11,7 @@ class IncidentSocketDataSource {
   Function(dynamic)? onIncidentNew;
   Function(dynamic)? onIncidentUpdated;
   Function(dynamic)? onIncidentCreated;
+  Function(dynamic)? onViewUpdated;
 
   bool get isInitialized => _client.isInitialized;
 
@@ -38,6 +39,18 @@ class IncidentSocketDataSource {
       debugPrint(
           "IncidentSocketDataSource: incident:created received (data length: ${data?.toString().length})");
       onIncidentCreated?.call(data);
+    });
+
+    _client.off(SocketEvents.incidentView);
+    _client.on(SocketEvents.incidentView, (data) {
+      debugPrint("IncidentSocketDataSource: incident:view received");
+      onViewUpdated?.call(data);
+    });
+
+    _client.off(SocketEvents.aggregatedNewsView);
+    _client.on(SocketEvents.aggregatedNewsView, (data) {
+      debugPrint("IncidentSocketDataSource: aggregated:news:view received");
+      onViewUpdated?.call(data);
     });
   }
 
@@ -73,9 +86,15 @@ class IncidentSocketDataSource {
     _client.off(SocketEvents.incidentNew);
     _client.off(SocketEvents.incidentUpdated);
     _client.off(SocketEvents.incidentCreated);
+    _client.off(SocketEvents.incidentView);
+    _client.off(SocketEvents.aggregatedNewsView);
   }
 
-  void emitIncidentView({required String incidentId}) {
-    _client.emit('incident:view', {"incidentId": incidentId});
+  void emitIncidentView({required String incidentId, required bool isNews}) {
+    if (isNews) {
+      _client.emit(SocketEvents.addAggregatedNewsView, {"contentId": incidentId});
+    } else {
+      _client.emit(SocketEvents.addIncidentView, {"incidentId": incidentId});
+    }
   }
 }

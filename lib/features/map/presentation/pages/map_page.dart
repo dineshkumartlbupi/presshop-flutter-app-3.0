@@ -38,10 +38,7 @@ import 'package:custom_info_window/custom_info_window.dart' as ciw;
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 import 'package:presshop/features/map/presentation/widgets/map_view_widget.dart';
 import 'package:presshop/features/map/presentation/widgets/burst_particles_overlay.dart';
-
 import 'package:presshop/main.dart';
-import 'package:presshop/core/widgets/dialogs.dart';
-import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 
 class MapPage extends StatefulWidget {
@@ -60,7 +57,6 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     _mapBloc = sl<MapBloc>();
-    // Only fetch if we don't have a location yet (i.e., first-time initialization)
     if (_mapBloc.state.myLocation == null) {
       _mapBloc.add(const GetCurrentLocationEvent());
     }

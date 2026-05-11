@@ -40,6 +40,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<SearchPlacesEvent>(_onSearchPlaces);
     on<OnIncidentNewEvent>(_onIncidentNew);
     on<OnIncidentUpdatedEvent>(_onIncidentUpdated);
+    on<OnViewUpdatedEvent>(_onViewUpdated);
     on<FetchNewsEvent>(_onFetchNews);
     on<FetchIncidentsEvent>(_onFetchIncidents);
     on<SetSearchedLocationEvent>(_onSetSearchedLocation);
@@ -129,6 +130,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     };
     incidentSocketDataSource.onIncidentCreated = (data) {
       add(OnIncidentNewEvent(data));
+    };
+    incidentSocketDataSource.onViewUpdated = (data) {
+      add(OnViewUpdatedEvent(data));
     };
 
     // CRITICAL: Start the listeners on the socket client
@@ -318,6 +322,40 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     } catch (e, stack) {
       debugPrint("Error handling updated incident: $e");
       debugPrint(stack.toString());
+    }
+  }
+
+  Future<void> _onViewUpdated(
+    OnViewUpdatedEvent event,
+    Emitter<MapState> emit,
+  ) async {
+    try {
+      final data = event.data;
+      final id = data['incidentId'] ?? data['contentId'] ?? data['_id'];
+      if (id == null) return;
+
+      final existingIndex = state.newsList.indexWhere((i) => i.id == id);
+      if (existingIndex != -1) {
+        final existing = state.newsList[existingIndex];
+        final updatedIncident = existing.copyWith(
+          viewCount: data['viewCount'] ??
+              data['view_count'] ??
+              data['totalViews'] ??
+              existing.viewCount,
+        );
+
+        final updatedNewsList = List<Incident>.from(state.newsList);
+        updatedNewsList[existingIndex] = updatedIncident;
+
+        final bool isSelected = state.selectedIncident?.id == id;
+
+        emit(state.copyWith(
+          newsList: updatedNewsList,
+          selectedIncident: isSelected ? updatedIncident : null,
+        ));
+      }
+    } catch (e) {
+      debugPrint("Error handling view update: $e");
     }
   }
 
@@ -922,8 +960,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       clearSelectedPolygonPosition: true,
     ));
 
-    // Increment View through Socket ONLY (as requested)
-    incidentSocketDataSource.emitIncidentView(incidentId: event.incident.id);
+    // Increment View through Socket matching old app logic
+    final bool isNews = event.incident.markerType == 'content' ||
+        event.incident.markerType == 'news';
+
+    incidentSocketDataSource.emitIncidentView(
+      incidentId: event.incident.id,
+      isNews: isNews,
+    );
   }
 
   Future<void> _onSetMapSelectedLocation(

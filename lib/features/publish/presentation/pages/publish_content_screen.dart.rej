@@ -1,0 +1,28 @@
+@@ -689,20 +689,14 @@
+                                               ///Watermark and Content count display UI
+-                                              Stack(
++                                              Positioned.fill(child: Stack(
+                                                 alignment: Alignment.topRight,
+                                                 children: [
+                                                   Container(
+                                                       color: Colors.black
+                                                           .withValues(
+                                                               alpha: 0.3),
+-                                                      width: size.width *
+-                                                          AppDimensions.numD30,
+-                                                      height: size.width *
+-                                                          AppDimensions.numD35,
+-                                                      child: Image.asset(
+-                                                        "${commonImagePath}watermark1.png",
+-                                                        width: size.width *
+-                                                            AppDimensions
+-                                                                .numD30,
+-                                                        height: size.width *
+-                                                            AppDimensions
+-                                                                .numD35,
++                                                      width: double.infinity,
++                                                      height: double.infinity,
++                                                      child: Image.asset(
++                                                        "${commonImagePath}watermark1.png",
++                                                        width: double.infinity,
++                                                        height: double.infinity,

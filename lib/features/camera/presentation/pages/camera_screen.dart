@@ -795,8 +795,7 @@ class CameraScreenState extends State<CameraScreen>
                 ),
               ),
               SizedBox(height: size.height * 0.04),
-              if (isPermissionError || !isNoCamera)
-                SizedBox(
+              SizedBox(
                   width: size.width * 0.6,
                   height: 50,
                   child: commonElevatedButton(

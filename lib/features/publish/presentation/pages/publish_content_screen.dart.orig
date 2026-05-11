@@ -1,9 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:geocoding/geocoding.dart' as geo;
-import 'package:presshop/core/services/location_service.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:exif/exif.dart' as pure_exif;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:developer';
 import 'dart:io';
@@ -424,7 +420,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                   horizontal:
                                       size.width * AppDimensions.numD04),
                               child: SizedBox(
-                                  height: size.width * AppDimensions.numD37,
+                                  height: size.width * AppDimensions.numD35,
                                   child: Row(
                                     children: [
                                       InkWell(
@@ -466,12 +462,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                     .numD06),
                                                   ),
                                                   child: Image.asset(
-                                                    "${dummyImagePath}doc_black_icon.png",
+                                                    "${iconsPath}docIcon.png",
                                                     width: size.width *
-                                                        AppDimensions.numD32,
+                                                        AppDimensions.numD30,
                                                     height: size.width *
-                                                        AppDimensions.numD37,
-                                                    fit: BoxFit.contain,
+                                                        AppDimensions.numD35,
+                                                    fit: BoxFit.cover,
                                                   ),
                                                 ),
                                               ),
@@ -505,12 +501,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                     .numD06),
                                                   ),
                                                   child: Image.asset(
-                                                    "${dummyImagePath}pngImage.png",
+                                                    "${iconsPath}pdfIcon.png",
                                                     width: size.width *
-                                                        AppDimensions.numD32,
+                                                        AppDimensions.numD30,
                                                     height: size.width *
-                                                        AppDimensions.numD37,
-                                                    fit: BoxFit.contain,
+                                                        AppDimensions.numD35,
+                                                    fit: BoxFit.cover,
                                                   ),
                                                 ),
                                               ),
@@ -531,9 +527,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                         "audio",
                                                 child: Container(
                                                   width: size.width *
-                                                      AppDimensions.numD32,
+                                                      AppDimensions.numD30,
                                                   height: size.width *
-                                                      AppDimensions.numD37,
+                                                      AppDimensions.numD35,
                                                   padding: EdgeInsets.all(
                                                       size.width *
                                                           AppDimensions.numD01),
@@ -588,11 +584,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 .thumbnail!,
                                                             width: size.width *
                                                                 AppDimensions
-                                                                 .numD32,
+                                                                    .numD30,
                                                             height: size.width *
                                                                 AppDimensions
-                                                                 .numD37,
-                                                            fit: BoxFit.contain,
+                                                                    .numD35,
+                                                            fit: BoxFit.cover,
                                                           )
                                                         : Image.file(
                                                             File(widget
@@ -602,10 +598,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 .thumbnail!),
                                                             width: size.width *
                                                                 AppDimensions
-                                                                 .numD32,
+                                                                    .numD30,
                                                             height: size.width *
                                                                 AppDimensions
-                                                                 .numD37,
+                                                                    .numD35,
                                                             fit: BoxFit.cover,
                                                           ))
                                                     : Image.network(
@@ -616,10 +612,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             .thumbNail,
                                                         width: size.width *
                                                             AppDimensions
-                                                                 .numD32,
+                                                                .numD30,
                                                         height: size.width *
                                                             AppDimensions
-                                                                 .numD37,
+                                                                .numD35,
                                                         fit: BoxFit.cover,
                                                       ),
                                               ),
@@ -654,10 +650,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 .mediaPath,
                                                             width: size.width *
                                                                 AppDimensions
-                                                                    .numD32,
+                                                                    .numD30,
                                                             height: size.width *
                                                                 AppDimensions
-                                                                    .numD37,
+                                                                    .numD35,
                                                             fit: BoxFit.cover,
                                                           )
                                                         : Image.file(
@@ -668,10 +664,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 .mediaPath),
                                                             width: size.width *
                                                                 AppDimensions
-                                                                    .numD32,
+                                                                    .numD30,
                                                             height: size.width *
                                                                 AppDimensions
-                                                                    .numD37,
+                                                                    .numD35,
                                                             fit: BoxFit.cover,
                                                           ))
                                                     : Image.network(
@@ -682,10 +678,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             .media,
                                                         width: size.width *
                                                             AppDimensions
-                                                                 .numD32,
+                                                                .numD30,
                                                         height: size.width *
                                                             AppDimensions
-                                                                 .numD37,
+                                                                .numD35,
                                                         fit: BoxFit.cover,
                                                       ),
                                               ),
@@ -695,20 +691,22 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 alignment: Alignment.topRight,
                                                 children: [
                                                   Container(
-                                                      color: Colors.transparent,
+                                                      color: Colors.black
+                                                          .withValues(
+                                                              alpha: 0.3),
                                                       width: size.width *
-                                                          AppDimensions.numD32,
+                                                          AppDimensions.numD30,
                                                       height: size.width *
-                                                          AppDimensions.numD37,
+                                                          AppDimensions.numD35,
                                                       child: Image.asset(
                                                         "${commonImagePath}watermark1.png",
                                                         width: size.width *
                                                             AppDimensions
-                                                                 .numD32,
+                                                                .numD30,
                                                         height: size.width *
                                                             AppDimensions
-                                                                 .numD37,
-                                                        fit: BoxFit.contain,
+                                                                .numD35,
+                                                        fit: BoxFit.cover,
                                                       )),
                                                   Container(
                                                     margin: EdgeInsets.only(
@@ -840,7 +838,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                   horizontal:
                                       size.width * AppDimensions.numD04),
                               child: SizedBox(
-                                  height: size.width * AppDimensions.numD37,
+                                  height: size.width * AppDimensions.numD35,
                                   child: Row(
                                     children: [
                                       InkWell(
@@ -911,12 +909,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                     .numD06),
                                                   ),
                                                   child: Image.asset(
-                                                    "${dummyImagePath}doc_black_icon.png",
+                                                    "${iconsPath}docIcon.png",
                                                     color: textColor,
                                                     width: size.width *
-                                                        AppDimensions.numD32,
+                                                        AppDimensions.numD30,
                                                     height: size.width *
-                                                        AppDimensions.numD37,
+                                                        AppDimensions.numD35,
+                                                    fit: BoxFit.cover,
                                                   ),
                                                 ),
                                               ),
@@ -942,12 +941,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                     .numD06),
                                                   ),
                                                   child: Image.asset(
-                                                    "${dummyImagePath}pngImage.png",
+                                                    "${iconsPath}pdfIcon.png",
                                                     color: textColor,
                                                     width: size.width *
-                                                        AppDimensions.numD32,
+                                                        AppDimensions.numD30,
                                                     height: size.width *
-                                                        AppDimensions.numD37,
+                                                        AppDimensions.numD35,
+                                                    fit: BoxFit.cover,
                                                   ),
                                                 ),
                                               ),
@@ -960,9 +960,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                     "audio",
                                                 child: Container(
                                                   width: size.width *
-                                                      AppDimensions.numD32,
+                                                      AppDimensions.numD30,
                                                   height: size.width *
-                                                      AppDimensions.numD37,
+                                                      AppDimensions.numD35,
                                                   padding: EdgeInsets.all(
                                                       size.width *
                                                           AppDimensions.numD01),
@@ -1000,10 +1000,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                       .first
                                                       .thumbNail,
                                                   width: size.width *
-                                                      AppDimensions.numD32,
+                                                      AppDimensions.numD30,
                                                   height: size.width *
-                                                      AppDimensions.numD37,
-                                                  fit: BoxFit.contain,
+                                                      AppDimensions.numD35,
+                                                  fit: BoxFit.cover,
                                                 ),
                                               ),
                                               Visibility(
@@ -1020,10 +1020,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                       .first
                                                       .media,
                                                   width: size.width *
-                                                      AppDimensions.numD32,
+                                                      AppDimensions.numD30,
                                                   height: size.width *
-                                                      AppDimensions.numD37,
-                                                  fit: BoxFit.contain,
+                                                      AppDimensions.numD35,
+                                                  fit: BoxFit.cover,
                                                 ),
                                               ),
 
@@ -1032,20 +1032,22 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 alignment: Alignment.topRight,
                                                 children: [
                                                   Container(
-                                                      color: Colors.transparent,
+                                                      color: Colors.black
+                                                          .withValues(
+                                                              alpha: 0.3),
                                                       width: size.width *
-                                                          AppDimensions.numD32,
+                                                          AppDimensions.numD30,
                                                       height: size.width *
-                                                          AppDimensions.numD37,
+                                                          AppDimensions.numD35,
                                                       child: Image.asset(
                                                         "${commonImagePath}watermark1.png",
                                                         width: size.width *
                                                             AppDimensions
-                                                                 .numD32,
+                                                                .numD30,
                                                         height: size.width *
                                                             AppDimensions
-                                                                 .numD37,
-                                                        fit: BoxFit.contain,
+                                                                .numD35,
+                                                        fit: BoxFit.cover,
                                                       )),
                                                   Container(
                                                     margin: EdgeInsets.only(
@@ -1369,7 +1371,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               keyboardType: TextInputType.multiline,
                               maxLines: null,
                               readOnly: true,
-                              onTap: _fetchCurrentLocation,
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD028,
@@ -1656,8 +1657,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         if (value != null) {
                                           // hashtagList.clear();
                                           //  hashtagList.addAll(value as List<HashTagData>);
-                                          selectedHashtagList = List.from(
-                                              value as List<HashTagData>);
+                                          selectedHashtagList =
+                                              List.from(value as List<HashTagData>);
                                           hashtagController.text =
                                               selectedHashtagList.isNotEmpty
                                                   ? "Add more"
@@ -1838,7 +1839,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                             Container(
                                               alignment: Alignment.center,
                                               width: size.width *
-                                                  AppDimensions.numD37,
+                                                  AppDimensions.numD35,
                                               height: size.width *
                                                   AppDimensions.numD08,
                                               padding: EdgeInsets.symmetric(
@@ -1908,7 +1909,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 child: Container(
                                                   alignment: Alignment.center,
                                                   width: size.width *
-                                                      AppDimensions.numD37,
+                                                      AppDimensions.numD35,
                                                   height: size.width *
                                                       AppDimensions.numD08,
                                                   padding: EdgeInsets.symmetric(
@@ -1998,7 +1999,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                             Container(
                                               alignment: Alignment.center,
                                               width: size.width *
-                                                  AppDimensions.numD37,
+                                                  AppDimensions.numD35,
                                               height: size.width *
                                                   AppDimensions.numD08,
                                               padding: EdgeInsets.symmetric(
@@ -2068,7 +2069,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 child: Container(
                                                   alignment: Alignment.center,
                                                   width: size.width *
-                                                      AppDimensions.numD37,
+                                                      AppDimensions.numD35,
                                                   height: size.width *
                                                       AppDimensions.numD08,
                                                   padding: EdgeInsets.symmetric(
@@ -2776,7 +2777,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             width: size.width *
                                                                 AppDimensions
                                                                     .numD11,
-                                                            fit: BoxFit.cover,
+                                                            fit: BoxFit.contain,
                                                             errorBuilder:
                                                                 (context, error,
                                                                     stackTrace) {
@@ -2991,83 +2992,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
       if (widget.myContentData!.audioDuration.isNotEmpty) {
         audioDuration = widget.myContentData!.audioDuration;
       }
-      
-      // Fallback to current location if address is missing
-      if (locationController.text.isEmpty ||
-          locationController.text == "Unknown") {
-        _fetchCurrentLocation();
-      }
     } else {
       locationController.text = widget.publishData!.address;
       timestampController.text = widget.publishData!.date;
       Future.delayed(Duration.zero, () {
         getHashTagsApi(widget.publishData!.country);
       });
-
-      // Fallback: Try EXIF first, then Current Location
-      if (locationController.text.isEmpty ||
-          locationController.text == "Unknown") {
-        String mediaPath = widget.publishData!.mediaList.isNotEmpty
-            ? widget.publishData!.mediaList.first.mediaPath
-            : widget.publishData!.imagePath;
-        if (mediaPath.isNotEmpty && !mediaPath.startsWith('http')) {
-          _extractExifFromFile(mediaPath);
-        } else {
-          _fetchCurrentLocation();
-        }
-      }
-    }
-  }
-
-  Future<void> _fetchCurrentLocation() async {
-    try {
-      final locationService = sl<LocationService>();
-      final locationData = await locationService.getCurrentLocation(context);
-
-      if (locationData != null) {
-        final List<geo.Placemark> placemarks = await geo.placemarkFromCoordinates(
-          locationData.latitude!,
-          locationData.longitude!,
-        );
-
-        if (placemarks.isNotEmpty) {
-          final geo.Placemark place = placemarks.first;
-          setState(() {
-            locationController.text =
-                "${place.name}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
-          });
-        }
-      } else {
-        // Handle permission denial or disabled GPS
-        final status = await Permission.location.status;
-        if (status.isPermanentlyDenied) {
-          if (mounted) {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text("Location Permission Required"),
-                content: const Text(
-                    "Location access is disabled. Please enable it in app settings to provide accurate content metadata."),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("Cancel"),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      await openAppSettings();
-                    },
-                    child: const Text("Open Settings"),
-                  ),
-                ],
-              ),
-            );
-          }
-        }
-      }
-    } catch (e) {
-      debugPrint("Error fetching current location: $e");
     }
   }
 
@@ -3437,68 +3367,4 @@ class AllCharityModel {
   }
 }
 */
-
-  Future<void> _extractExifFromFile(String filePath) async {
-    try {
-      final fileBytes = await File(filePath).readAsBytes();
-      final tags = await pure_exif.readExifFromBytes(fileBytes);
-
-      double extractedLat = 0.0;
-      double extractedLng = 0.0;
-
-      if (tags.containsKey('GPS GPSLatitude') &&
-          tags.containsKey('GPS GPSLongitude')) {
-        final latRatio = tags['GPS GPSLatitude']!.values.toList();
-        final lonRatio = tags['GPS GPSLongitude']!.values.toList();
-        final latRef = tags['GPS GPSLatitudeRef']?.printable;
-        final lonRef = tags['GPS GPSLongitudeRef']?.printable;
-
-        double lat = _convertRatioToDouble(latRatio);
-        double lon = _convertRatioToDouble(lonRatio);
-
-        if (latRef == 'S') lat = -lat;
-        if (lonRef == 'W') lon = -lon;
-
-        extractedLat = lat;
-        extractedLng = lon;
-      }
-
-      if (extractedLat != 0.0 && extractedLng != 0.0) {
-        final List<geo.Placemark> placemarks =
-            await geo.placemarkFromCoordinates(extractedLat, extractedLng);
-        if (placemarks.isNotEmpty) {
-          final geo.Placemark place = placemarks.first;
-          setState(() {
-            locationController.text =
-                "${place.street ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
-          });
-          return;
-        }
-      }
-      
-      _fetchCurrentLocation();
-    } catch (e) {
-      debugPrint("Error extracting EXIF in publish screen: $e");
-      _fetchCurrentLocation();
-    }
-  }
-
-  double _convertRatioToDouble(dynamic ratio) {
-    try {
-      if (ratio is List && ratio.length >= 3) {
-        double d = ratio[0].numerator /
-            (ratio[0].denominator == 0 ? 1 : ratio[0].denominator);
-        double m = ratio[1].numerator /
-            (ratio[1].denominator == 0 ? 1 : ratio[1].denominator);
-        double s = ratio[2].numerator /
-            (ratio[2].denominator == 0 ? 1 : ratio[2].denominator);
-        double result = d + (m / 60.0) + (s / 3600.0);
-        if (result.isNaN || result.isInfinite) return 0.0;
-        return result;
-      }
-    } catch (e) {
-      debugPrint("EXIF ratio convert error: $e");
-    }
-    return 0.0;
-  }
 }

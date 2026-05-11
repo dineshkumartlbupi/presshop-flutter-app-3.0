@@ -97,12 +97,6 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
               }
             },
             builder: (context, state) {
-              if (state.items.isEmpty &&
-                  (state.status == FAQStatus.loading ||
-                      state.status == FAQStatus.initial)) {
-                return showAnimatedLoader(size);
-              }
-
               return SmartRefresher(
                 controller: _refreshController,
                 onRefresh: _onRefresh,
@@ -135,11 +129,8 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                             Brightness.dark
                                         ? AppColorTheme
                                             .colorItemDividerForDarkTheme
-                                        : Colors.transparent,
-                                    width: Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? 1
-                                        : 0,
+                                        : Theme.of(context).dividerColor,
+                                    width: 1,
                                   )),
                               focusedBorder: OutlineInputBorder(
                                   borderRadius:
@@ -149,11 +140,8 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                             Brightness.dark
                                         ? AppColorTheme
                                             .colorItemDividerForDarkTheme
-                                        : Colors.transparent,
-                                    width: Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? 1
-                                        : 0,
+                                        : Theme.of(context).dividerColor,
+                                    width: 1,
                                   )),
                               enabledBorder: OutlineInputBorder(
                                   borderRadius:
@@ -163,11 +151,8 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                             Brightness.dark
                                         ? AppColorTheme
                                             .colorItemDividerForDarkTheme
-                                        : Colors.transparent,
-                                    width: Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? 1
-                                        : 0,
+                                        : Theme.of(context).dividerColor,
+                                    width: 1,
                                   )),
                               errorBorder: OutlineInputBorder(
                                   borderRadius:
@@ -177,11 +162,8 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                             Brightness.dark
                                         ? AppColorTheme
                                             .colorItemDividerForDarkTheme
-                                        : Colors.transparent,
-                                    width: Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? 1
-                                        : 0,
+                                        : Theme.of(context).dividerColor,
+                                    width: 1,
                                   )),
                               focusedErrorBorder: OutlineInputBorder(
                                   borderRadius:
@@ -191,11 +173,8 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                             Brightness.dark
                                         ? AppColorTheme
                                             .colorItemDividerForDarkTheme
-                                        : Colors.transparent,
-                                    width: Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? 1
-                                        : 0,
+                                        : Theme.of(context).dividerColor,
+                                    width: 1,
                                   )),
                               suffixIcon: Padding(
                                 padding: EdgeInsets.only(

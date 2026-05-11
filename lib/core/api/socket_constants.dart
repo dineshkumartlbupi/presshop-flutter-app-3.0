@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 
 class SocketEvents {
-  // Authentication & Connection Rooms
   static const String joinWebsite = "joinWebsite";
   static const String joinAdmin = "joinAdmin";
   static const String joinHopper = "joinHopper";
@@ -23,12 +22,15 @@ class SocketEvents {
   static const String addAggregatedNewsLike = "add:aggregated:news:like";
   static const String addAggregatedNewsView = "add:aggregated:news:view";
   static const String addAggregatedNewsShare = "add:aggregated:news:share";
+  static const String addIncidentView = "add:incident:view";
 
   // Comment & Interaction Listen Events
   static const String aggregatedCommentLike = "aggregated:comment:like";
   static const String aggregatedCommentNew = "aggregated:comment:new";
   static const String aggregatedNewsLike = "aggregated:news:like";
   static const String aggregatedNewsShare = "aggregated:news:share";
+  static const String aggregatedNewsView = "aggregated:news:view";
+  static const String incidentView = "incident:view";
 
   // Chat Events+6
   static const String chatMessage = "chat message";
@@ -43,11 +45,10 @@ class SocketEvents {
 }
 
 class SocketLogger {
-  /// Log when a socket event is emitted
   static void logEmit(String eventName, {dynamic data}) {
     debugPrint('🚀 [EMIT] Event: $eventName | Data: $data');
   }
-  /// Log when a socket event is received
+
   static void logReceive(String eventName, {dynamic data}) {
     debugPrint('📥 [RECEIVE] Event: $eventName | Data: $data');
   }

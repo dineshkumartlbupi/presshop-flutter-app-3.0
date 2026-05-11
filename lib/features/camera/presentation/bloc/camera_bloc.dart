@@ -146,7 +146,6 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       if (permissionResult != PermissionResult.granted) {
         debugPrint("🚀 CameraBloc: Permission denied. Stopping init.");
 
-        // Check if it's permanently denied to provide better UI feedback
         final isPermanent = await Permission.camera.isPermanentlyDenied ||
             await Permission.microphone.isPermanentlyDenied ||
             (await _permissionService.checkCameraAndGalleryPermissions() ==
@@ -161,9 +160,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         return;
       }
 
-      // 2. Permissions are granted! NOW we show the loader for hardware init.
       emit(state.copyWith(status: CameraStatus.loading));
-      // Ensure previous controller is fully disposed before starting new one
       final existingController = state.cameraController;
       if (existingController != null) {
         try {
@@ -184,12 +181,21 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       if (cameras.isEmpty) {
         try {
           debugPrint("🚀 CameraBloc: Fetching available cameras...");
-          cameras =
+          final fetchedCameras =
               await availableCameras().timeout(const Duration(seconds: 5));
+          if (fetchedCameras.isNotEmpty) {
+            cameras = fetchedCameras;
+          }
           debugPrint("🚀 CameraBloc: Cameras fetched: ${cameras.length}");
         } catch (e) {
           debugPrint(
               "🚀 CameraBloc: Error fetching cameras (timeout/error): $e");
+
+          try {
+            await Future.delayed(const Duration(milliseconds: 500));
+            final fetchedCameras = await availableCameras();
+            if (fetchedCameras.isNotEmpty) cameras = fetchedCameras;
+          } catch (_) {}
         }
       }
 
@@ -314,7 +320,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       if (controller != null) {
         // For shutter down (inactive), we might just want to pause preview to allow instant resume
         if (event.state == AppLifecycleState.inactive) {
-          debugPrint("🚀 CameraBloc: App inactive (shutter down?). Pausing preview.");
+          debugPrint(
+              "🚀 CameraBloc: App inactive (shutter down?). Pausing preview.");
           try {
             await controller.pausePreview();
             emit(state.copyWith(status: CameraStatus.previewPaused));
@@ -353,7 +360,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       debugPrint("🚀 CameraBloc: App resumed. Triggering delayed auto-init.");
 
       // If we were only paused (inactive), resume instantly
-      if (state.status == CameraStatus.previewPaused && state.cameraController != null) {
+      if (state.status == CameraStatus.previewPaused &&
+          state.cameraController != null) {
         add(const CameraInitializeEvent());
         return;
       }
