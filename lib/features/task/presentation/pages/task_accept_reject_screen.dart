@@ -53,6 +53,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
   bool isDirection = false;
   bool isMultipleContact = false;
   BitmapDescriptor? mapIcon;
+  BitmapDescriptor? hopperIcon;
   List<Marker> marker = [];
   Timer? _hopperCountTimer;
   TaskDetail? taskDetail;
@@ -306,18 +307,20 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                 zIndex: 0.0,
                 icon: mapIcon!,
               ),
-            // if (taskDetail != null)
-            //   ...taskDetail!.activeHoppersLocations.map((hopper) {
-            //     return Marker(
-            //       markerId: MarkerId(hopper.id.isNotEmpty
-            //           ? hopper.id
-            //           : "${hopper.latitude}_${hopper.longitude}"),
-            //       position: LatLng(hopper.latitude, hopper.longitude),
-            //       anchor: const Offset(0.5, 0.5),
-            //       zIndex: 1.0,
-            //       icon: hopperAvatarIcons[hopper.avatar] ?? mapIcon!,
-            //     );
-            //   }).toSet(),
+            if (taskDetail != null)
+              ...taskDetail!.activeHoppersLocations.map((hopper) {
+                return Marker(
+                  markerId: MarkerId(hopper.id.isNotEmpty
+                      ? hopper.id
+                      : "${hopper.latitude}_${hopper.longitude}"),
+                  position: LatLng(hopper.latitude, hopper.longitude),
+                  anchor: const Offset(0.5, 0.5),
+                  zIndex: 1.0,
+                  icon: hopperAvatarIcons[getMediaImageUrl(hopper.avatar)] ??
+                      hopperIcon ??
+                      BitmapDescriptor.defaultMarker,
+                );
+              }).toSet(),
           },
         ),
         // child: GoogleMap(
@@ -1069,7 +1072,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                           position: LatLng(hopper.latitude, hopper.longitude),
                           anchor: const Offset(0.5, 0.5),
                           zIndex: 1.0,
-                          icon: hopperAvatarIcons[hopper.avatar] ?? mapIcon!,
+                          icon: hopperAvatarIcons[
+                                  getMediaImageUrl(hopper.avatar)] ??
+                              hopperIcon ??
+                              BitmapDescriptor.defaultMarker,
                         );
                       }).toSet(),
                   },
@@ -1587,6 +1593,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
     mapIcon = await BitmapDescriptor.fromAssetImage(
         const ImageConfiguration(size: Size(5.0, 5.0)),
         "${commonImagePath}ic_cover_radius.png");
+    hopperIcon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(2.0, 2.0)),
+        "assets/markers/avatar.png");
   }
 
   void openUrl() async {

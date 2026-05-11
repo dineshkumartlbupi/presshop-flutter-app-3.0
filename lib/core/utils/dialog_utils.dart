@@ -13,11 +13,15 @@ import 'package:http/http.dart' as http;
 AlertDialog? alertDialog;
 final Set<String> _shownBroadcastIds = {};
 BitmapDescriptor? mapIcon;
+BitmapDescriptor? hopperIcon;
 Map<String, BitmapDescriptor> hopperAvatarIcons = {};
 void getAllIcons() async {
   mapIcon = await BitmapDescriptor.fromAssetImage(
       const ImageConfiguration(size: Size(5.0, 5.0)),
       "${commonImagePath}ic_cover_radius.png");
+  hopperIcon = await BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(size: Size(2.0, 2.0)),
+      "assets/markers/avatar.png");
 }
 
 Future<BitmapDescriptor> getMarkerIcon(String url, Size size) async {
@@ -570,6 +574,7 @@ void broadcastDialog({
                                         icon: hopperAvatarIcons[
                                                 getMediaImageUrl(
                                                     hopper.avatar)] ??
+                                            hopperIcon ??
                                             BitmapDescriptor.defaultMarker,
                                       );
                                     }).toSet(),
