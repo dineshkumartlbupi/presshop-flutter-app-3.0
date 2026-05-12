@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:presshop/core/services/media_upload_service.dart';
 import 'package:presshop/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:go_router/go_router.dart';
@@ -70,6 +71,9 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
   print('notification(${notificationResponse.id}) action tapped: '
       '${notificationResponse.actionId} with'
       ' payload: ${notificationResponse.payload}');
+  if (notificationResponse.actionId == 'retry_upload') {
+    MediaUploadService.retry();
+  }
   if (notificationResponse.input?.isNotEmpty ?? false) {
     // ignore: avoid_print
     print(
@@ -193,6 +197,9 @@ class LocalNotificationService {
             selectNotificationStream.add(notificationResponse.payload);
             break;
           case NotificationResponseType.selectedNotificationAction:
+            if (notificationResponse.actionId == 'retry_upload') {
+              MediaUploadService.retry();
+            }
             if (notificationResponse.actionId == navigationActionId) {
               selectNotificationStream.add(notificationResponse.payload);
             }

@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -10,7 +14,9 @@ import 'package:presshop/core/api/api_client.dart';
 
 /// Service for handling media uploads with progress tracking
 class MediaUploadService {
-  static final int _lastProgress = -1;
+  static int _lastProgress = -1;
+  static bool _isWaitingForInternet = false;
+  static Map<String, dynamic>? _lastUploadParams;
   static final ValueNotifier<Map<String, dynamic>?> uploadStatus =
       ValueNotifier(null);
 
@@ -174,6 +180,25 @@ class MediaUploadService {
     required String imageParams,
     Map<String, String>? additionalFiles,
   }) async {
+    _lastUploadParams = {
+      'endUrl': endUrl,
+      'jsonBody': jsonBody,
+      'filePathList': filePathList,
+      'imageParams': imageParams,
+      'additionalFiles': additionalFiles,
+    };
+
+    // Check connectivity first
+    var connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      _isWaitingForInternet = true;
+      _showWaitingForInternetNotification(
+          localNotificationService.flutterLocalNotificationsPlugin);
+      _listenForInternetAndRetry();
+      return false;
+    }
+
+    _isWaitingForInternet = false;
     await WakelockPlus.enable();
 
     final apiClient = sl<ApiClient>();
@@ -263,17 +288,23 @@ class MediaUploadService {
 
           debugPrint("Upload progress: $progress%");
 
-          // ✅ ADD THIS LINE (YOU MISSED THIS)
+          // Update status for UI listeners
           uploadStatus.value = {
             'status': 'uploading',
             'progress': progress,
             'endUrl': endUrl,
           };
-          _showProgressNotification(
-            localNotificationService.flutterLocalNotificationsPlugin,
-            progress,
-            isDraft: jsonBody?['is_draft'] == 'true',
-          );
+
+          // ✅ Throttle notification updates (only every 1%)
+          if (progress != _lastProgress) {
+            _lastProgress = progress;
+            debugPrint("DEBUG: Showing progress notification: $progress%");
+            _showProgressNotification(
+              localNotificationService.flutterLocalNotificationsPlugin,
+              progress,
+              isDraft: jsonBody?['is_draft'] == 'true',
+            );
+          }
         },
       );
 
@@ -311,16 +342,107 @@ class MediaUploadService {
       }
     } catch (e) {
       debugPrint("❌ Upload Error: $e");
+
+      bool isNetworkError = false;
+      if (e is DioException) {
+        if (e.type == DioExceptionType.connectionError ||
+            e.type == DioExceptionType.connectionTimeout ||
+            e.type == DioExceptionType.sendTimeout ||
+            e.error is SocketException) {
+          isNetworkError = true;
+        }
+      } else if (e is SocketException) {
+        isNetworkError = true;
+      }
+
+      if (isNetworkError) {
+        _isWaitingForInternet = true;
+        _showWaitingForInternetNotification(
+            localNotificationService.flutterLocalNotificationsPlugin);
+        _listenForInternetAndRetry();
+      } else {
+        _showFailedNotification(
+          localNotificationService.flutterLocalNotificationsPlugin,
+        );
+      }
+
       uploadStatus.value = {
         'status': 'failed',
         'progress': -1,
         'endUrl': endUrl,
         'error': e.toString(),
+        'isNetworkError': isNetworkError,
       };
       return false;
     } finally {
       await WakelockPlus.disable();
     }
+  }
+
+  static void retry() {
+    if (_lastUploadParams != null) {
+      debugPrint("🔄 Manual retry triggered for upload...");
+      uploadMedia(
+        endUrl: _lastUploadParams!['endUrl'],
+        jsonBody: _lastUploadParams!['jsonBody'],
+        filePathList: _lastUploadParams!['filePathList'],
+        imageParams: _lastUploadParams!['imageParams'],
+        additionalFiles: _lastUploadParams!['additionalFiles'],
+      );
+    }
+  }
+
+  static void _listenForInternetAndRetry() {
+    StreamSubscription? subscription;
+    subscription = Connectivity().onConnectivityChanged.listen((results) {
+      if (!results.contains(ConnectivityResult.none)) {
+        subscription?.cancel();
+        if (_isWaitingForInternet && _lastUploadParams != null) {
+          debugPrint("🌐 Internet restored, retrying upload...");
+          uploadMedia(
+            endUrl: _lastUploadParams!['endUrl'],
+            jsonBody: _lastUploadParams!['jsonBody'],
+            filePathList: _lastUploadParams!['filePathList'],
+            imageParams: _lastUploadParams!['imageParams'],
+            additionalFiles: _lastUploadParams!['additionalFiles'],
+          );
+        }
+      }
+    });
+  }
+
+  static void _showWaitingForInternetNotification(
+    FlutterLocalNotificationsPlugin notificationPlugin,
+  ) {
+    notificationPlugin.show(
+      0,
+      'Upload Paused',
+      'Waiting for internet connection...',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'upload_channel',
+          'Video Upload',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: 'ic_noti_logo',
+          ongoing: true,
+          showProgress: true,
+          indeterminate: true,
+          actions: [
+            AndroidNotificationAction(
+              'retry_upload',
+              'Retry',
+              showsUserInterface: true,
+            ),
+          ],
+        ),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      ),
+    );
   }
 
   static void _showProgressNotification(
@@ -346,6 +468,12 @@ class MediaUploadService {
           progress: progress,
           onlyAlertOnce: true,
           ongoing: true,
+          icon: 'ic_noti_logo',
+        ),
+        iOS: const DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: false,
         ),
       ),
     );
@@ -363,6 +491,7 @@ class MediaUploadService {
         android: AndroidNotificationDetails('upload_channel', 'Video Upload',
             importance: Importance.max,
             priority: Priority.high,
+            icon: 'ic_noti_logo',
             actions: [
               AndroidNotificationAction(
                 'retry_upload',
@@ -375,6 +504,11 @@ class MediaUploadService {
                 showsUserInterface: false,
               )
             ]),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
       ),
     );
   }
@@ -396,6 +530,12 @@ class MediaUploadService {
           'Video Upload',
           importance: Importance.max,
           priority: Priority.high,
+          icon: 'ic_noti_logo',
+        ),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
         ),
       ),
     );

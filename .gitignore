@@ -75,3 +75,4 @@ ios/build/*r
 # android/keystore.properties
 assets/dialog_flow_auth.json
 .env
+hello.json
