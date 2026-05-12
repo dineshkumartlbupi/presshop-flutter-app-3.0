@@ -86,13 +86,6 @@ class CameraScreenState extends State<CameraScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     _bloc?.add(CameraLifecycleEvent(state));
-    if (state == AppLifecycleState.resumed) {
-      // Auto-retry if we were stuck on permission denied or requesting screen
-      if (_bloc?.state.status == CameraStatus.permissionDenied ||
-          _bloc?.state.status == CameraStatus.requestingPermission) {
-        _bloc?.add(const CameraInitializeEvent());
-      }
-    }
     super.didChangeAppLifecycleState(state);
   }
 

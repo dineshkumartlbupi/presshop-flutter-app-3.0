@@ -240,23 +240,8 @@ class DashboardPageState extends State<Dashboard>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed && currentIndex == 2) {
-      debugPrint(
-          "🚀 Dashboard: App resumed on Camera tab, verifying status...");
-
-      _permissionService
-          .checkCameraAndGalleryPermissions()
-          .then((result) async {
-        if (result != PermissionResult.granted) {
-          _redirectToPermissionScreen();
-        } else {
-          // Since we removed auto-init from CameraBloc, we trigger it here
-          // with a small delay to ensure surface is ready.
-          await Future.delayed(const Duration(milliseconds: 300));
-          if (mounted && currentIndex == 2) {
-            _cameraKey.currentState?.resumeCamera();
-          }
-        }
-      });
+      debugPrint("🚀 Dashboard: App resumed on Camera tab.");
+      // The CameraBloc already handles its internal resume via CameraLifecycleEvent
     }
   }
 

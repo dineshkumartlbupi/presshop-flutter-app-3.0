@@ -325,9 +325,14 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         emit(state.copyWith(status: CameraStatus.initial));
       }
     } else if (event.state == AppLifecycleState.resumed) {
-      // Auto-initialization on resume is now handled by the UI layer (Dashboard)
-      // to prevent redundant calls and blinking. 
-      debugPrint("🚀 CameraBloc: App resumed, waiting for UI trigger.");
+      debugPrint("🚀 CameraBloc: App resumed, checking if re-init needed.");
+      // If we were in initial/ready state and controller is null, we should re-init
+      if (state.status == CameraStatus.initial || state.status == CameraStatus.ready) {
+        if (state.cameraController == null) {
+          debugPrint("🚀 CameraBloc: Controller null on resume, triggering re-init.");
+          add(const CameraInitializeEvent());
+        }
+      }
     }
   }
 
@@ -348,6 +353,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       cameraDescription,
       ResolutionPreset.high, // Changed from max to high
       imageFormatGroup: ImageFormatGroup.jpeg,
+      enableAudio: false,
     );
 
     try {
