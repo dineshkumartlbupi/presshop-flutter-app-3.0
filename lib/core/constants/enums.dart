@@ -4,4 +4,5 @@ enum ScreenNameEnum {
   dashboardScreen,
   manageTaskPreviewScreen,
   manageTaskScreen,
+  addMoreContentScreen,
 }

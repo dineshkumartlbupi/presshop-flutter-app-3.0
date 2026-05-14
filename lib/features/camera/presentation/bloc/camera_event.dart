@@ -8,9 +8,12 @@ sealed class CameraEvent {
 
 /// Event to initialize the camera
 class CameraInitializeEvent extends CameraEvent {
-
-  const CameraInitializeEvent({this.force = false});
+  const CameraInitializeEvent({
+    this.force = false,
+    this.isRetry = false,
+  });
   final bool force;
+  final bool isRetry;
 }
 
 /// Event to handle app lifecycle changes

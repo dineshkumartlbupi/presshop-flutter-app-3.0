@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'package:audio_waveforms/audio_waveforms.dart';
@@ -12,12 +13,14 @@ import 'package:presshop/core/services/permission_service.dart'
     show PermissionService;
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:presshop/core/widgets/video_widget.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/features/camera/presentation/bloc/camera_bloc.dart';
 import 'package:presshop/features/camera/presentation/bloc/camera_event.dart';
 import 'package:presshop/features/camera/presentation/bloc/camera_state.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:go_router/go_router.dart';
+import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 
 // Constants (Keep if not in common)
 const String photoText = "Photo";
@@ -30,13 +33,13 @@ const String interviewText = "Interview";
 class CameraScreen extends StatefulWidget {
   const CameraScreen({
     super.key,
-    required this.picAgain,
     required this.previousScreen,
     this.autoInitialize = true,
+    this.hideBottomBar = false,
   });
-  final bool picAgain;
   final ScreenNameEnum previousScreen;
   final bool autoInitialize;
+  final bool hideBottomBar;
 
   @override
   State<StatefulWidget> createState() {
@@ -81,6 +84,13 @@ class CameraScreenState extends State<CameraScreen>
       parent: _exposureModeControlRowAnimationController,
       curve: Curves.easeInCubic,
     );
+
+    _bloc = di.sl<CameraBloc>();
+    // Ensure we start with a clean state for captured media
+    clearCapturedMedia();
+    if (widget.autoInitialize) {
+      _bloc!.add(const CameraInitializeEvent());
+    }
   }
 
   @override
@@ -94,6 +104,7 @@ class CameraScreenState extends State<CameraScreen>
 
   @override
   void dispose() {
+    closeCamera(); // Ensure camera hardware is released immediately
     WidgetsBinding.instance.removeObserver(this);
     _exposureModeControlRowAnimationController.dispose();
     super.dispose();
@@ -175,14 +186,8 @@ class CameraScreenState extends State<CameraScreen>
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return BlocProvider(
-      create: (context) {
-        _bloc = di.sl<CameraBloc>();
-        if (widget.autoInitialize) {
-          _bloc!.add(CameraInitializeEvent());
-        }
-        return _bloc!;
-      },
+    return BlocProvider.value(
+      value: _bloc!,
       child: BlocConsumer<CameraBloc, CameraState>(
         listener: (context, state) async {
           // Update local limits when camera is ready
@@ -219,36 +224,12 @@ class CameraScreenState extends State<CameraScreen>
           }
 
           if (state.status == CameraStatus.success) {
-            if (widget.picAgain) {
-              context.pop(state.capturedMedia);
-            } else {
-              if (mounted) {
-                _bloc?.add(const CameraResetStatusEvent());
-                await context.pushNamed(
-                  AppRoutes.previewName,
-                  extra: {
-                    'cameraData': null,
-                    'pickAgain': widget.picAgain,
-                    'type': state.selectedMode.toLowerCase() == "video"
-                        ? "video"
-                        : state.selectedMode.toLowerCase() ==
-                                AppStrings.scanText.toLowerCase()
-                            ? "scan"
-                            : state.selectedMode.toLowerCase() == "pdf"
-                                ? "pdf"
-                                : "camera",
-                    'cameraListData': state.capturedMedia,
-                    'mediaList': [],
-                  },
-                ).then((value) {
-                  // On return
-                  if (_bloc?.state.selectedMode == AppStrings.scanText) {
-                    _bloc?.add(
-                        const CameraModeChangeEvent(AppStrings.photoText));
-                  }
-                  resumeCamera();
-                });
+            if (mounted) {
+              _bloc?.add(const CameraResetStatusEvent());
+              if (widget.previousScreen != ScreenNameEnum.manageTaskScreen) {
+                _navigateToPreview(state);
               }
+              // For manageTaskScreen, we stay on this screen and show the Tick/Cross overlay via _buildBody
             }
           }
 
@@ -259,10 +240,15 @@ class CameraScreenState extends State<CameraScreen>
         },
         builder: (context, state) {
           return Scaffold(
+            backgroundColor: Colors.black, // Root background must be black
             appBar: _buildAppBar(context, state, size),
-            bottomNavigationBar:
-                widget.picAgain ? _buildBottomBar(context, size) : null,
-            body: _buildBody(context, state, size),
+            // bottomNavigationBar: (!widget.hideBottomBar && state.capturedMedia.isNotEmpty)
+            //     ? _buildBottomBar(context, state, size)
+            //     : null,
+            body: Container(
+              color: Colors.black, // Ensure body is also black
+              child: _buildBody(context, state, size),
+            ),
           );
         },
       ),
@@ -352,27 +338,63 @@ class CameraScreenState extends State<CameraScreen>
     );
   }
 
-  Widget? _buildBottomBar(BuildContext context, Size size) {
-    return Padding(
-      padding: EdgeInsets.only(
-          left: size.width * AppDimensions.numD04,
-          top: size.height * AppDimensions.numD032,
-          bottom: size.height * AppDimensions.numD035,
-          right: size.width * AppDimensions.numD04),
-      child: SizedBox(
-        height: size.width * AppDimensions.numD13,
-        child: commonElevatedButton(
-            "Cancel",
-            size,
-            commonTextStyle(
-                size: size,
-                fontSize: size.width * AppDimensions.numD04,
-                color: Colors.white,
-                fontWeight: FontWeight.w700),
-            commonButtonStyle(size, AppColorTheme.colorThemePink),
-            () => context.pop()),
-      ),
-    );
+  // Widget? _buildBottomBar(BuildContext context, CameraState state, Size size) {
+  //   return SafeArea(
+  //     child: Padding(
+  //       padding: EdgeInsets.only(
+  //           left: size.width * AppDimensions.numD04,
+  //           top: size.height * AppDimensions.numD032,
+  //           bottom: size.height * AppDimensions.numD035,
+  //           right: size.width * AppDimensions.numD04),
+  //       child: SizedBox(
+  //         height: size.width * AppDimensions.numD13,
+  //         child: commonElevatedButton(
+  //             "Cancel",
+  //             size,
+  //             commonTextStyle(
+  //                 size: size,
+  //                 fontSize: size.width * AppDimensions.numD04,
+  //                 color: Colors.white,
+  //                 fontWeight: FontWeight.w700),
+  //             commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+  //           _navigateToPreview(state);
+  //         }),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  void _navigateToPreview(CameraState state) async {
+    // Close camera hardware before navigating to avoid resource hogging/stuck states
+    closeCamera();
+
+    await context.pushNamed(
+      AppRoutes.previewName,
+      extra: {
+        'cameraData': null,
+        'type': state.selectedMode.toLowerCase() == "video"
+            ? "video"
+            : state.selectedMode.toLowerCase() ==
+                    AppStrings.scanText.toLowerCase()
+                ? "scan"
+                : state.selectedMode.toLowerCase() == "pdf"
+                    ? "pdf"
+                    : "camera",
+        'cameraListData': state.capturedMedia,
+        'mediaList': <MediaData>[],
+      },
+    ).then((value) {
+      // On return from PreviewPage
+      if (!mounted) return;
+
+      if (_bloc?.state.selectedMode == AppStrings.scanText) {
+        // If we were in scan mode, switch back to photo mode which will auto-init
+        _bloc?.add(const CameraModeChangeEvent(AppStrings.photoText));
+      } else {
+        // For other modes, just ensure the camera is ready
+        resumeCamera();
+      }
+    });
   }
 
   Widget _buildBody(BuildContext context, CameraState state, Size size) {
@@ -518,7 +540,7 @@ class CameraScreenState extends State<CameraScreen>
                   context.pushNamed(
                     AppRoutes.customGalleryName,
                     extra: {
-                      'picAgain': widget.picAgain,
+                      'picAgain': false,
                     },
                   ).then((value) {
                     resumeCamera();
@@ -527,7 +549,6 @@ class CameraScreenState extends State<CameraScreen>
                       if (!context.mounted) return;
                       context.read<CameraBloc>().add(
                           UpdateCapturedMediaEvent(value as List<CameraData>));
-                      if (widget.picAgain) context.pop(value);
                     }
                   });
                 },
@@ -549,6 +570,32 @@ class CameraScreenState extends State<CameraScreen>
               ),
             ),
 
+          // Done Button (only if we have items and in Add More mode or generally)
+          // if (state.capturedMedia.isNotEmpty)
+          //   Align(
+          //     alignment: Alignment.bottomRight,
+          //     child: Container(
+          //       margin: EdgeInsets.only(
+          //           bottom: size.width * AppDimensions.numD25, // Above gallery
+          //           right: size.width * AppDimensions.numD08),
+          //       child: InkWell(
+          //         onTap: () {
+          //           _navigateToPreview(state);
+          //         },
+          //         child: Container(
+          //           padding: EdgeInsets.all(size.width * AppDimensions.numD02),
+          //           decoration: const BoxDecoration(
+          //             color: AppColorTheme.colorOnlineGreen,
+          //             shape: BoxShape.circle,
+          //           ),
+          //           child: Icon(Icons.check,
+          //               color: Colors.white,
+          //               size: size.width * AppDimensions.numD08),
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+
           // Focus Circle
           if (showFocusCircle)
             Positioned(
@@ -559,6 +606,11 @@ class CameraScreenState extends State<CameraScreen>
                   height: size.width * AppDimensions.numD15,
                   color: Colors.white),
             ),
+
+          // Manage Task Direct Capture Overlay (Tick/Cross)
+          if (widget.previousScreen == ScreenNameEnum.manageTaskScreen &&
+              state.capturedMedia.isNotEmpty)
+            _buildManageTaskCaptureOverlay(context, state, size),
 
           // Top Controls (Flash, Rotate, Settings)
           if (state.selectedMode == AppStrings.photoText ||
@@ -653,18 +705,41 @@ class CameraScreenState extends State<CameraScreen>
     }
 
     // 4. Default fallback: show loader while hardware initializes
-    return SizedBox.shrink();
-    // return Container(
-    //   color: Colors.black,
-    //   child: Center(
-    //     child: CircularProgressIndicator(color: AppColorTheme.colorThemePink),
-    //   ),
-    // );
+    return Container(
+      color: Colors.black,
+      child: state.status == CameraStatus.loading
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(
+                      color: AppColorTheme.colorThemePink),
+                  const SizedBox(height: 16),
+                  Text(
+                    "Initializing Camera...",
+                    style: TextStyle(
+                        color: Colors.white70, fontSize: size.width * 0.035),
+                  ),
+                ],
+              ),
+            )
+          : const SizedBox.shrink(),
+    );
   }
 
   Widget _buildPermissionDeniedUI(
       BuildContext context, Size size, CameraState state) {
+    final detail = state.permissionDetail;
     final isPermanent = state.errorMessage == "permanently_denied";
+
+    String missingText = "";
+    if (detail != null) {
+      List<String> missing = [];
+      if (!detail.cameraGranted) missing.add("Camera");
+      if (!detail.micGranted) missing.add("Microphone");
+      if (!detail.galleryGranted) missing.add("Gallery");
+      missingText = missing.join(", ");
+    }
 
     return Container(
       width: double.infinity,
@@ -674,13 +749,13 @@ class CameraScreenState extends State<CameraScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.camera_alt_outlined,
+            Icons.lock_outline,
             size: size.width * 0.2,
-            color: Colors.white54,
+            color: AppColorTheme.colorThemePink,
           ),
           SizedBox(height: size.width * 0.05),
           Text(
-            "Camera Permission Required",
+            "Permissions Required",
             style: TextStyle(
               color: Colors.white,
               fontSize: size.width * 0.045,
@@ -691,15 +766,21 @@ class CameraScreenState extends State<CameraScreen>
           SizedBox(height: size.width * 0.02),
           Text(
             isPermanent
-                ? "Camera and Gallery access is disabled. Please enable them in app settings to continue."
-                : "We need camera and gallery access to capture and share content.",
+                ? "The following permissions are disabled in settings: $missingText. Please enable them to continue."
+                : "We need access to your $missingText to capture and share content.",
             style: TextStyle(
               color: Colors.white70,
               fontSize: size.width * 0.035,
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: size.width * 0.1),
+          if (detail != null) ...[
+            SizedBox(height: size.width * 0.04),
+            _buildMiniPermissionStatus(size, "Camera", detail.cameraGranted),
+            _buildMiniPermissionStatus(size, "Microphone", detail.micGranted),
+            _buildMiniPermissionStatus(size, "Gallery", detail.galleryGranted),
+          ],
+          SizedBox(height: size.width * 0.08),
           SizedBox(
             width: double.infinity,
             height: size.width * 0.12,
@@ -729,7 +810,6 @@ class CameraScreenState extends State<CameraScreen>
             ),
           ),
           SizedBox(height: size.width * 0.04),
-          // Added a manual Refresh button to help if auto-detection is slow
           TextButton.icon(
             onPressed: () {
               context
@@ -752,6 +832,28 @@ class CameraScreenState extends State<CameraScreen>
               ),
             ),
           ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMiniPermissionStatus(Size size, String label, bool granted) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            granted ? Icons.check_circle : Icons.cancel,
+            color: granted ? Colors.green : Colors.red,
+            size: 16,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style:
+                TextStyle(color: Colors.white70, fontSize: size.width * 0.032),
+          ),
         ],
       ),
     );
@@ -798,26 +900,26 @@ class CameraScreenState extends State<CameraScreen>
               ),
               SizedBox(height: size.height * 0.04),
               SizedBox(
-                  width: size.width * 0.6,
-                  height: 50,
-                  child: commonElevatedButton(
-                    state.errorMessage == "permanently_denied"
-                        ? "Open Settings"
-                        : "Retry",
-                    size,
-                    commonButtonTextStyle(size),
-                    commonButtonStyle(size, AppColorTheme.colorThemePink),
-                    () {
-                      if (state.errorMessage == "permanently_denied") {
-                        di.sl<PermissionService>().openSettings();
-                      } else {
-                        context
-                            .read<CameraBloc>()
-                            .add(const CameraInitializeEvent(force: true));
-                      }
-                    },
-                  ),
+                width: size.width * 0.6,
+                height: 50,
+                child: commonElevatedButton(
+                  state.errorMessage == "permanently_denied"
+                      ? "Open Settings"
+                      : "Retry",
+                  size,
+                  commonButtonTextStyle(size),
+                  commonButtonStyle(size, AppColorTheme.colorThemePink),
+                  () {
+                    if (state.errorMessage == "permanently_denied") {
+                      di.sl<PermissionService>().openSettings();
+                    } else {
+                      context
+                          .read<CameraBloc>()
+                          .add(const CameraInitializeEvent(force: true));
+                    }
+                  },
                 ),
+              ),
             ],
           ),
         ),
@@ -830,9 +932,11 @@ class CameraScreenState extends State<CameraScreen>
             state.selectedMode != AppStrings.audioText)) {
       return Container(
         color: Colors.black,
-        child: Center(
-          child: CircularProgressIndicator(color: AppColorTheme.colorThemePink),
-        ),
+        child: state.status == CameraStatus.loading
+            ? const Center(
+                child: CircularProgressIndicator(
+                    color: AppColorTheme.colorThemePink))
+            : const SizedBox.shrink(),
       );
     }
 
@@ -878,11 +982,39 @@ class CameraScreenState extends State<CameraScreen>
                 alignment: Alignment.center,
                 child: SizedBox(
                   width: size.width,
-                  child: state.cameraController != null &&
-                          state.cameraController!.value.isInitialized
-                      ? CameraPreview(state.cameraController!,
-                          key: ValueKey(state.status))
-                      : Container(color: Colors.black),
+                  child: (state.status == CameraStatus.ready ||
+                              state.status == CameraStatus.recording ||
+                              state.status == CameraStatus.recordingPaused ||
+                              state.status == CameraStatus.previewPaused ||
+                              state.status == CameraStatus.success) &&
+                          state.cameraController != null
+                      ? Visibility(
+                          visible: state.status == CameraStatus.ready ||
+                              state.status == CameraStatus.recording ||
+                              state.status == CameraStatus.success ||
+                              state.isRecording,
+                          maintainState: false,
+                          child: ValueListenableBuilder<CameraValue>(
+                            valueListenable: state.cameraController!,
+                            builder: (context, value, child) {
+                              if (value.isInitialized) {
+                                return CameraPreview(state.cameraController!,
+                                    key: ValueKey(state.initCount));
+                              } else {
+                                return Container(
+                                  color: Colors.black,
+                                  width: size.width,
+                                  height: size.height,
+                                );
+                              }
+                            },
+                          ),
+                        )
+                      : Container(
+                          color: Colors.black,
+                          width: size.width,
+                          height: size.height,
+                        ),
                 ),
               ),
             ),
@@ -973,17 +1105,7 @@ class CameraScreenState extends State<CameraScreen>
               if (state.capturedMedia.isNotEmpty) // Logic for check button
                 IconButton(
                   onPressed: () {
-                    // Done
-                    context.pushNamed(
-                      AppRoutes.previewName,
-                      extra: {
-                        'cameraData': null,
-                        'pickAgain': widget.picAgain,
-                        'type': "camera",
-                        'cameraListData': state.capturedMedia,
-                        'mediaList': [],
-                      },
-                    );
+                    _navigateToPreview(state);
                   },
                   icon: Icon(Icons.check,
                       color: AppColorTheme.colorOnlineGreen,
@@ -993,6 +1115,95 @@ class CameraScreenState extends State<CameraScreen>
           ),
         )
       ],
+    );
+  }
+
+  Widget _buildManageTaskCaptureOverlay(
+      BuildContext context, CameraState state, Size size) {
+    final media = state.capturedMedia.last;
+    return Container(
+      color: Colors.black,
+      width: size.width,
+      height: size.height,
+      child: Stack(
+        children: [
+          // Captured Media Preview
+          Center(
+            child: media.mimeType == "image"
+                ? Image.file(File(media.path), fit: BoxFit.contain)
+                : media.mimeType == "video"
+                    ? VideoWidget(
+                        mediaData: MediaData(
+                          mediaPath: media.path,
+                          mimeType: "video",
+                          dateTime: media.dateTime,
+                          latitude: media.latitude,
+                          longitude: media.longitude,
+                          location: media.location,
+                          country: media.country,
+                          state: media.state,
+                          city: media.city,
+                          thumbnail: media.videoImagePath,
+                          isFromGallery: false,
+                        ),
+                      )
+                    : Center(
+                        child: Text(
+                          "Captured: ${media.mimeType}",
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+          ),
+          // Action Buttons
+          Positioned(
+            bottom: size.width * AppDimensions.numD15,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Cancel (Cross)
+                InkWell(
+                  onTap: () {
+                    final updatedList =
+                        List<CameraData>.from(state.capturedMedia);
+                    updatedList.removeLast();
+                    context
+                        .read<CameraBloc>()
+                        .add(UpdateCapturedMediaEvent(updatedList));
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.8),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.close,
+                        color: Colors.white,
+                        size: size.width * AppDimensions.numD08),
+                  ),
+                ),
+                // Confirm (Tick)
+                InkWell(
+                  onTap: () {
+                    context.pop(state.capturedMedia);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+                    decoration: BoxDecoration(
+                      color: AppColorTheme.colorOnlineGreen.withOpacity(0.8),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.check,
+                        color: Colors.white,
+                        size: size.width * AppDimensions.numD08),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -58,7 +58,7 @@ class PreviewScreenState extends State<PreviewScreen>
   late LocationData? locationData;
   int currentPage = 0;
   bool isLoading = false;
-  bool videoPlaying = false, isMoreDisable = false;
+  bool videoPlaying = false;
   bool isLocationFetching = true;
   late PageController pageController;
 
@@ -71,7 +71,7 @@ class PreviewScreenState extends State<PreviewScreen>
     debugPrint("type:::::${widget.type}");
 
     if (widget.mediaList.isNotEmpty) {
-      mediaList = widget.mediaList;
+      mediaList = List<MediaData>.from(widget.mediaList);
     }
 
     pageController = PageController(initialPage: currentPage);
@@ -270,6 +270,7 @@ class PreviewScreenState extends State<PreviewScreen>
                   },
                   itemBuilder: (context, index) {
                     return Stack(
+                      key: ValueKey(mediaList[index].mediaPath),
                       alignment: Alignment.bottomCenter,
                       children: [
                         InteractiveViewer(
@@ -425,55 +426,57 @@ class PreviewScreenState extends State<PreviewScreen>
                           top: size.width * AppDimensions.numD07,
                           right:
                               size.width * (isIpad ? AppDimensions.numD08 : 0),
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () {
-                              if (mediaList.isNotEmpty &&
-                                  index < mediaList.length) {
-                                // Update original camera list if type is camera
-                                if (widget.type == "camera") {
-                                  // Note: mediaList is inserted at index 0, so it's reversed relative to cameraListData
-                                  int originalIndex =
-                                      widget.cameraListData.length - 1 - index;
-                                  if (originalIndex >= 0 &&
-                                      originalIndex <
-                                          widget.cameraListData.length) {
-                                    final updatedList = List<CameraData>.from(
-                                        widget.cameraListData);
-                                    updatedList.removeAt(originalIndex);
-                                    widget.cameraListData.clear();
-                                    widget.cameraListData.addAll(updatedList);
-                                    context.read<CameraBloc>().add(
-                                        UpdateCapturedMediaEvent(updatedList));
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () {
+                                if (mediaList.isNotEmpty &&
+                                    index < mediaList.length) {
+                                  // Update original camera list if type is camera
+                                  if (widget.type == "camera") {
+                                    // Note: mediaList is inserted at index 0, so it's reversed relative to cameraListData
+                                    int originalIndex =
+                                        widget.cameraListData.length - 1 - index;
+                                    if (originalIndex >= 0 &&
+                                        originalIndex <
+                                            widget.cameraListData.length) {
+                                      final updatedList = List<CameraData>.from(
+                                          widget.cameraListData);
+                                      updatedList.removeAt(originalIndex);
+                                      widget.cameraListData.clear();
+                                      widget.cameraListData.addAll(updatedList);
+                                      context.read<CameraBloc>().add(
+                                          UpdateCapturedMediaEvent(updatedList));
+                                    }
+                                  }
+
+                                  if (mediaList.length == 1) {
+                                    mediaList.removeAt(index);
+                                    context.pop();
+                                  } else {
+                                    mediaList.removeAt(index);
+                                    if (currentPage >= mediaList.length) {
+                                      currentPage = mediaList.length - 1;
+                                    }
                                   }
                                 }
 
-                                if (mediaList.length == 1) {
-                                  mediaList.removeAt(index);
-                                  context.pop();
-                                } else {
-                                  mediaList.removeAt(index);
-                                  if (currentPage >= mediaList.length) {
-                                    currentPage = mediaList.length - 1;
-                                  }
-                                }
-                              }
-
-                              setState(() {});
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(
-                                  size.width * AppDimensions.numD02),
+                                setState(() {});
+                              },
                               child: Container(
                                 padding: EdgeInsets.all(
-                                    size.width * AppDimensions.numD015),
-                                decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle),
-                                child: Icon(
-                                  Icons.close,
-                                  color: Colors.black,
-                                  size: size.width * AppDimensions.numD05,
+                                    size.width * AppDimensions.numD02),
+                                child: Container(
+                                  padding: EdgeInsets.all(
+                                      size.width * AppDimensions.numD015),
+                                  decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle),
+                                  child: Icon(
+                                    Icons.close,
+                                    color: Colors.black,
+                                    size: size.width * AppDimensions.numD05,
+                                  ),
                                 ),
                               ),
                             ),
@@ -610,23 +613,23 @@ class PreviewScreenState extends State<PreviewScreen>
                                                   ),
                                                 )
                                               : Text(
-                                                  mediaList[currentPage]
+                                                  mediaList[index]
                                                               .location
                                                               .isEmpty ||
-                                                          mediaList[currentPage]
+                                                          mediaList[index]
                                                                   .location ==
                                                               "Unknown"
                                                       ? (isLocationFetching
                                                           ? "Fetching..."
                                                           : "No location")
-                                                      : mediaList[currentPage]
+                                                      : mediaList[index]
                                                           .location,
                                                   style: commonTextStyle(
                                                       size: size,
                                                       fontSize: size.width *
                                                           AppDimensions.numD025,
                                                       color: mediaList[
-                                                                  currentPage]
+                                                                  index]
                                                               .location
                                                               .isEmpty
                                                           ? (isLocationFetching
@@ -635,7 +638,7 @@ class PreviewScreenState extends State<PreviewScreen>
                                                               : Colors.red)
                                                           : Colors.black,
                                                       fontWeight:
-                                                          mediaList[currentPage]
+                                                          mediaList[index]
                                                                   .location
                                                                   .isEmpty
                                                               ? FontWeight.bold
@@ -684,29 +687,8 @@ class PreviewScreenState extends State<PreviewScreen>
                                       fontWeight: FontWeight.w700),
                                   commonButtonStyle(
                                       size,
-                                      isMoreDisable
-                                          ? Colors.grey
-                                          : Colors.black), () {
-                                if (mediaList.length == 10) {
-                                  isMoreDisable = true;
-                                  setState(() {});
-//                                   showSnackBar("PressHop", "Only 10 contents allowed!", AppColorTheme.colorThemePink);
-                                } else {
-                                  context.pushNamed(
-                                    AppRoutes.cameraName,
-                                    extra: {
-                                      'picAgain': true,
-                                      'previousScreen':
-                                          ScreenNameEnum.previewScreen,
-                                    },
-                                  ).then((value) {
-                                    debugPrint("Inside Picked Again Image");
-                                    if (value != null) {
-                                      addMediaDataList(
-                                          value as List<CameraData>);
-                                    }
-                                  });
-                                }
+                                      Colors.black), () {
+                                  context.pop();
 
                                 /*getImageMetaData(widget.cameraData);*/
                               }),
@@ -839,30 +821,15 @@ class PreviewScreenState extends State<PreviewScreen>
                                         fontWeight: FontWeight.w700),
                                     commonButtonStyle(
                                         size,
-                                        isMoreDisable
-                                            ? Colors.grey
-                                            : Colors.black), () {
-                                  if (mediaList.length == 10) {
-                                    isMoreDisable = true;
-                                    setState(() {});
-                                    //                                   showSnackBar("PressHop", "Only 10 contents allowed!", AppColorTheme.colorThemePink);
-                                  } else {
-                                    context.pushNamed(
-                                      AppRoutes.cameraName,
-                                      extra: {
-                                        'picAgain': true,
-                                        'previousScreen':
-                                            ScreenNameEnum.previewScreen,
-                                      },
-                                    ).then((value) {
-                                      debugPrint(
-                                          ":::: Inside Picked Again Image :::: $value");
-                                      if (value != null) {
-                                        addMediaDataList(
-                                            value as List<CameraData>);
-                                      }
-                                    });
-                                  }
+                                      Colors.black), () {
+                                  context
+                                      .pushNamed(AppRoutes.addMoreContentName)
+                                      .then((value) {
+                                    if (value != null &&
+                                        value is List<CameraData>) {
+                                      addMediaDataList(value);
+                                    }
+                                  });
                                 }),
                               ),
                             ),
@@ -1018,6 +985,11 @@ class PreviewScreenState extends State<PreviewScreen>
   Future<void> addMediaDataList(List<CameraData> cDataList) async {
     if (cDataList.isNotEmpty) {
       for (var element in cDataList) {
+        // Prevent duplicate media entries based on path
+        if (mediaList.any((m) => m.mediaPath.trim() == element.path.trim())) {
+          continue;
+        }
+
         if (widget.type == "draft") {
           widget.cameraListData.insert(0, element);
         }

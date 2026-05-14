@@ -59,6 +59,7 @@ class AppRoutes {
   static const String menuPath = '/menu';
   static const String locationSharingPath = '/locationSharing';
   static const String permissionPath = '/permission';
+  static const String addMoreContentPath = '/addMoreContent';
 
   // Names
   static const String splashName = 'splash';
@@ -120,4 +121,5 @@ class AppRoutes {
   static const String menuName = 'menu';
   static const String locationSharingName = 'locationSharing';
   static const String permissionName = 'permission';
+  static const String addMoreContentName = 'addMoreContent';
 }

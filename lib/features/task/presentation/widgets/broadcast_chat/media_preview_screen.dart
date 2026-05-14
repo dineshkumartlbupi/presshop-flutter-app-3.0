@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:go_router/go_router.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/widgets/video_widget.dart';
@@ -103,42 +105,42 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                                 "Add more",
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, Colors.black), () {
-                              context.pushNamed(
-                                AppRoutes.cameraName,
-                                extra: {
-                                  'picAgain': true,
-                                  'previousScreen':
-                                      ScreenNameEnum.manageTaskScreen,
-                                },
-                              ).then((value) {
-                                if (value != null &&
-                                    value is List<CameraData>) {
-                                  debugPrint(
-                                      "value:::::$value::::::::${value.first.path}");
-                                  List<CameraData> temData = value;
-                                  for (var element in temData) {
-                                    widget.mediaList.insert(
-                                      0,
-                                      MediaData(
-                                        isFromGallery: element.fromGallary,
-                                        dateTime: "",
-                                        latitude: "",
-                                        location: "",
-                                        longitude: "",
-                                        country: "",
-                                        state: "",
-                                        city: "",
-                                        mediaPath: element.path,
-                                        mimeType: element.mimeType,
-                                        thumbnail: "",
-                                      ),
-                                    );
-                                  }
-                                  widget.onMediaUpdated(widget.mediaList);
-                                  setState(() {});
-                                }
-                              });
+                                commonButtonStyle(size, Colors.black),
+                                () async {
+                              final ImagePicker picker = ImagePicker();
+                              final XFile? photo = await picker.pickImage(
+                                source: ImageSource.camera,
+                                imageQuality: 80,
+                              );
+
+                              if (photo != null) {
+                                debugPrint(
+                                    "Captured more from System Camera: ${photo.path}");
+                                // Avoid duplicates
+                                if (widget.mediaList.any((e) =>
+                                    e.mediaPath.trim() == photo.path.trim()))
+                                  return;
+
+                                widget.mediaList.insert(
+                                  0,
+                                  MediaData(
+                                    isFromGallery: false,
+                                    dateTime: "",
+                                    latitude: "",
+                                    location: "",
+                                    longitude: "",
+                                    country: "",
+                                    state: "",
+                                    city: "",
+                                    mediaPath: photo.path,
+                                    mimeType: lookupMimeType(photo.path) ??
+                                        "image/jpeg",
+                                    thumbnail: "",
+                                  ),
+                                );
+                                widget.onMediaUpdated(widget.mediaList);
+                                setState(() {});
+                              }
                             }),
                           ),
                         ),

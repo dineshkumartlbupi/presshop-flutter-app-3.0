@@ -10,6 +10,8 @@ import 'package:flutter/services.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/services/permission_service.dart';
 import 'package:presshop/core/widgets/global_loader.dart';
+import 'package:presshop/features/camera/presentation/bloc/camera_bloc.dart';
+import 'package:presshop/features/camera/presentation/bloc/camera_event.dart';
 import 'package:presshop/features/camera/presentation/pages/camera_screen.dart';
 import 'package:presshop/features/content/presentation/pages/content_page.dart';
 import 'package:presshop/features/map/presentation/pages/map_page.dart';
@@ -80,6 +82,7 @@ class DashboardPageState extends State<Dashboard>
   String fcmToken = "";
   String deviceId = "";
   static DashBoardInterface? dashBoardInterface;
+  DateTime _lastCameraInitTime = DateTime.fromMillisecondsSinceEpoch(0);
   final GlobalKey<CameraScreenState> _cameraKey =
       GlobalKey<CameraScreenState>();
   final GlobalKey<MyContentViewState> _contentKey =
@@ -140,6 +143,14 @@ class DashboardPageState extends State<Dashboard>
     });
 
     _updateBottomNavigationScreens();
+
+    if (currentIndex == 2) {
+      debugPrint(
+          "🚀 Dashboard: Started on Camera tab. Initializing hardware...");
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _checkPermissionsAndInitializeCamera();
+      });
+    }
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
@@ -216,15 +227,17 @@ class DashboardPageState extends State<Dashboard>
         _loadedIndices.add(currentIndex);
       });
 
-      // Strict check if new position is Camera
-      if (currentIndex == 2) {
-        // Only trigger if we aren't already on the camera or if forced
-        _checkPermissionsAndInitializeCamera();
-      } else if (oldWidget.initialPosition == 2) {
+      if (oldWidget.initialPosition == 2 && currentIndex != 2) {
         _cameraKey.currentState?.closeCamera();
       }
 
       widget.isClick = false;
+    }
+
+    // Safety check: If we are on tab 2, ensure camera is syncing
+    // This is outside the position-change check to catch returns from other screens
+    if (currentIndex == 2) {
+      _checkPermissionsAndInitializeCamera();
     }
   }
 
@@ -232,19 +245,18 @@ class DashboardPageState extends State<Dashboard>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed && currentIndex == 2) {
-      debugPrint(
-          "🚀 Dashboard: App resumed on Camera tab. Triggering permission check...");
+      debugPrint("🚀 Dashboard: App resumed on Camera tab. Syncing state...");
 
       // Wait a moment for OS to settle before checking permissions
-      Future.delayed(const Duration(milliseconds: 300), () {
+      Future.delayed(const Duration(milliseconds: 800), () {
         if (!mounted) return;
-        _permissionService
-            .checkCameraAndGalleryPermissions()
-            .then((result) async {
-          if (result != PermissionResult.granted) {
+        _permissionService.getDetailedStatus().then((detail) async {
+          if (detail.cameraAndGalleryGranted) {
+            _cameraKey.currentState?.resumeCamera();
+          } else {
+            // Only redirect if Camera or Gallery are missing
             _redirectToPermissionScreen();
           }
-          // Note: CameraBloc handles its own resume-initialization now
         });
       });
     }
@@ -266,9 +278,8 @@ class DashboardPageState extends State<Dashboard>
       MyTaskScreen(key: _taskKey, hideLeading: true, showAppBar: false),
       CameraScreen(
         key: _cameraKey,
-        picAgain: false,
         previousScreen: ScreenNameEnum.dashboardScreen,
-        autoInitialize: true,
+        autoInitialize: false, // Dashboard handles initialization explicitly
       ),
       // BlocProvider(
       //   create: (context) => sl<NewsBloc>()..add(const GetAllNewsEvent()),
@@ -689,14 +700,12 @@ class DashboardPageState extends State<Dashboard>
 
   void _onBottomBarItemTapped(int index) async {
     if (currentIndex == index) return;
+    debugPrint("🚀 Dashboard: Tab tapped - $index (Current: $currentIndex)");
 
-    if (index == 2) {
-      // Cleaned up dashboard tab-tap logic to allow navigation to the Camera tab without pre-blocking
-    }
-
-    // Safely stop camera when leaving tab 2
+    // Safely stop camera hardware when leaving tab 2
     if (currentIndex == 2) {
-      _cameraKey.currentState?.pauseCamera();
+      debugPrint("🚀 Dashboard: Leaving Camera tab, CLOSING hardware...");
+      _cameraKey.currentState?.closeCamera();
     }
 
     trackAction(ActionNames.tabSwitch, parameters: {
@@ -710,10 +719,13 @@ class DashboardPageState extends State<Dashboard>
       _loadedIndices.add(currentIndex);
     });
 
-    // If we just landed on Camera, initialize it
+    // If we just landed on Camera, initialize it with permission guard
     if (currentIndex == 2) {
+      debugPrint("🚀 Dashboard: Entering Camera tab, checking permissions...");
       _cameraKey.currentState?.clearCapturedMedia();
-      _cameraKey.currentState?.resumeCamera();
+
+      // Use the unified permission check method
+      _checkPermissionsAndInitializeCamera();
     }
 
     if (currentIndex != 2 && currentIndex != 3) {
@@ -728,21 +740,29 @@ class DashboardPageState extends State<Dashboard>
   }
 
   Future<void> _checkPermissionsAndInitializeCamera() async {
-    final result = await _permissionService.checkCameraAndGalleryPermissions();
-    if (result == PermissionResult.granted) {
-      if (mounted) {
-        _cameraKey.currentState?.resumeCamera();
-      }
+    // Debounce to prevent multiple overlapping init calls (from initState + didUpdateWidget)
+    final now = DateTime.now();
+    if (now.difference(_lastCameraInitTime).inMilliseconds < 1500) {
+      debugPrint("🚀 Dashboard: Camera init debounced (too frequent)");
+      return;
+    }
+    _lastCameraInitTime = now;
+
+    final detail = await _permissionService.getDetailedStatus();
+
+    if (!detail.cameraAndGalleryGranted) {
+      _redirectToPermissionScreen();
     } else {
-      // If not granted, try to request. This will show OS dialog if possible.
-      final requestResult =
-          await _permissionService.requestCameraAndGalleryPermissions();
-      if (requestResult == PermissionResult.granted) {
-        if (mounted) {
-          _cameraKey.currentState?.resumeCamera();
+      // Just ensure the camera is initialized if it's not already
+      if (mounted && currentIndex == 2) {
+        debugPrint("🚀 Dashboard: Triggering hardware initialization...");
+        if (_cameraKey.currentState != null) {
+          _cameraKey.currentState?.resumeCamera(force: true);
+        } else {
+          context
+              .read<CameraBloc>()
+              .add(const CameraInitializeEvent(force: true));
         }
-      } else {
-        _redirectToPermissionScreen();
       }
     }
   }

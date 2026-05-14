@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/services.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart' as fic;
 import 'package:geocoding/geocoding.dart';
@@ -48,6 +49,7 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
       };
   bool isLoading = false;
   bool isSelectedImageProcessing = true;
+  bool _isLimited = false;
 
   String mediaAddress = "", mediaDate = "", country = "", state = "", city = "";
 
@@ -85,8 +87,22 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
   @override
   void initState() {
     debugPrint("class::::$runtimeType");
+    PhotoManager.addChangeCallback(_handleMediaChange);
+    PhotoManager.startChangeNotify();
     getMedia();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    PhotoManager.removeChangeCallback(_handleMediaChange);
+    PhotoManager.stopChangeNotify();
+    super.dispose();
+  }
+
+  void _handleMediaChange(MethodCall call) {
+    debugPrint("🚀 CustomGallery: Media changed, refreshing...");
+    getMedia();
   }
 
   @override
@@ -104,101 +120,176 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
             title: AppStrings.galleryText,
             size: size,
             showLogo: false,
-            actionWidgets: showDone
-                ? [
-                    !isSelectedImageProcessing
-                        ? Center(
-                            child: Text(
-                              "Processing...",
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width *
-                                      (isIpad
-                                          ? AppDimensions.numD02
-                                          : AppDimensions.numD03),
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                          )
-                        : Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width *
+            actionWidgets: [
+              if (_isLimited)
+                IconButton(
+                  onPressed: () async {
+                    // This opens the system picker to add/remove photos from limited access
+                    await PhotoManager.presentLimited();
+                    
+                    // Small delay to let native side update its cache
+                    await Future.delayed(const Duration(milliseconds: 500));
+                    
+                    // Explicitly refresh the media list
+                    getMedia();
+                  },
+                  icon: Icon(Icons.add_photo_alternate_outlined,
+                      color: AppColorTheme.colorThemePink),
+                  tooltip: "Select More Photos",
+                ),
+              if (showDone)
+                !isSelectedImageProcessing
+                    ? Center(
+                        child: Text(
+                          "Processing...",
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width *
+                                  (isIpad
+                                      ? AppDimensions.numD02
+                                      : AppDimensions.numD03),
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width *
+                                (isIpad
+                                    ? AppDimensions.numD004
+                                    : AppDimensions.numD040),
+                            vertical: size.width *
+                                (isIpad
+                                    ? AppDimensions.numD002
+                                    : AppDimensions.numD01)),
+                        child: commonElevatedButton(
+                            "Done",
+                            size,
+                            commonTextStyle(
+                                size: size,
+                                fontSize: size.width *
                                     (isIpad
-                                        ? AppDimensions.numD004
-                                        : AppDimensions.numD040),
-                                vertical: size.width *
-                                    (isIpad
-                                        ? AppDimensions.numD002
-                                        : AppDimensions.numD01)),
-                            child: commonElevatedButton(
-                                "Done",
-                                size,
-                                commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width *
-                                        (isIpad
-                                            ? AppDimensions.numD02
-                                            : AppDimensions.numD03),
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700),
-                                commonButtonStyle(
-                                    size, AppColorTheme.colorThemePink),
-                                () async {
-                              /// Prince
-                              if (widget.picAgain) {
-                                context.pop(camListData);
-                              } else {
-                                var validationVideoLenght = true;
-                                for (var item in camListData) {
-                                  if (item.mimeType == "video") {
-                                    VideoPlayerController controller =
-                                        VideoPlayerController.file(
-                                            File(item.path));
-                                    try {
-                                      await controller.initialize();
-                                      if (controller.value.duration.inSeconds >
-                                          (sharedPreferences?.getInt(
-                                                  SharedPreferencesKeys
-                                                      .videoLimitKey) ??
-                                              120)) {
-                                        showToast(
-                                            "Videos can be up to 2 minutes long — keep it quick, punchy, and straight to the point🎥");
-                                        validationVideoLenght = false;
-                                        break;
-                                      }
-                                    } finally {
-                                      await controller.dispose();
-                                    }
+                                        ? AppDimensions.numD02
+                                        : AppDimensions.numD03),
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700),
+                            commonButtonStyle(
+                                size, AppColorTheme.colorThemePink), () async {
+                          /// Prince
+                          if (widget.picAgain) {
+                            context.pop(camListData);
+                          } else {
+                            var validationVideoLenght = true;
+                            for (var item in camListData) {
+                              if (item.mimeType == "video") {
+                                VideoPlayerController controller =
+                                    VideoPlayerController.file(File(item.path));
+                                try {
+                                  await controller.initialize();
+                                  if (controller.value.duration.inSeconds >
+                                      (sharedPreferences?.getInt(
+                                              SharedPreferencesKeys
+                                                  .videoLimitKey) ??
+                                          120)) {
+                                    showToast(
+                                        "Videos can be up to 2 minutes long — keep it quick, punchy, and straight to the point🎥");
+                                    validationVideoLenght = false;
+                                    break;
                                   }
-                                }
-                                if (validationVideoLenght) {
-                                  context
-                                      .pushNamed(AppRoutes.previewName, extra: {
-                                    'cameraData': null,
-                                    'pickAgain': widget.picAgain,
-                                    'type': "gallery",
-                                    'cameraListData': camListData,
-                                    'mediaList': [],
-                                  });
+                                } finally {
+                                  await controller.dispose();
                                 }
                               }
-                            }),
-                          ),
-                  ]
-                : null,
+                            }
+                            if (validationVideoLenght) {
+                              context.pushNamed(AppRoutes.previewName, extra: {
+                                'cameraData': null,
+                                'pickAgain': widget.picAgain,
+                                'type': "gallery",
+                                'cameraListData': camListData,
+                                'mediaList': [],
+                              });
+                            }
+                          }
+                        }),
+                      ),
+            ],
           ),
-          body: GridView.builder(
-              itemCount: _mediaList.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, crossAxisSpacing: 5, mainAxisSpacing: 5),
-              itemBuilder: (context, index) {
-                if (index == _mediaList.length - 20 &&
-                    !isLoadingMore &&
-                    hasMoreToLoad) {
-                  _loadMoreAsset();
-                }
-                return InkWell(
-                  /*    onLongPress: () {
+          body: !isLoading
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: AppColorTheme.colorThemePink,
+                  ),
+                )
+              : _mediaList.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.photo_library_outlined,
+                              size: size.width * 0.15, color: Colors.grey),
+                          SizedBox(height: size.width * 0.04),
+                          Text(
+                            "No images or videos found",
+                            style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * 0.04,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          if (_isLimited) ...[
+                            SizedBox(height: size.width * 0.06),
+                            commonElevatedButton(
+                              "Select Photos from Gallery",
+                              size,
+                              commonTextStyle(
+                                size: size,
+                                fontSize: size.width * 0.035,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              commonButtonStyle(
+                                  size, AppColorTheme.colorThemePink),
+                              () async {
+                                await PhotoManager.presentLimited();
+                                await Future.delayed(
+                                    const Duration(milliseconds: 500));
+                                getMedia();
+                              },
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: size.width * 0.1,
+                                  vertical: size.width * 0.04),
+                              child: Text(
+                                "You have given limited access to your gallery. Tap above to select more photos.",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: size.width * 0.03,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    )
+                  : GridView.builder(
+                      itemCount: _mediaList.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 5,
+                              mainAxisSpacing: 5),
+                      itemBuilder: (context, index) {
+                        if (index == _mediaList.length - 20 &&
+                            !isLoadingMore &&
+                            hasMoreToLoad) {
+                          _loadMoreAsset();
+                        }
+                        return InkWell(
+                          /*    onLongPress: () {
                             if (!selectedList[index]) {
                               selectedList[index] = true;
                               isLongPress = true;
@@ -239,223 +330,243 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                               setState(() {});
                             }
                           },*/
-                  onTap: () {
-                    setState(() {
-                      isSelectedImageProcessing = false;
-                    });
-                    debugPrint("camListData::::${camListData.length}");
-                    selectedList[index] = !selectedList[index];
-                    if (selectedList[index] == true) {
-                      selectedIndex = index;
-                      _mediaList[index].originFile.then((value) async {
-                        String imgPath = value!.absolute.path;
-                        debugPrint("Filepath:::::::> $imgPath");
-                        if (_mediaList[index].type == AssetType.video) {
-                          final thumbnail =
-                              await vt.VideoThumbnail.thumbnailFile(
-                            video: imgPath,
-                            thumbnailPath: (await getTemporaryDirectory()).path,
-                            imageFormat: vt.ImageFormat.PNG,
-                            maxHeight: 500,
-                            quality: 100,
-                          );
-                          if (selectedList[index] == true) {
-                            double? latitude = _mediaList[index].latitude;
-                            double? longitude = _mediaList[index].longitude;
-                            String location = "";
-                            String city = "";
-                            String state = "";
-                            String country = "";
-
-                            if (latitude != null &&
-                                longitude != null &&
-                                latitude != 0.0 &&
-                                longitude != 0.0) {
-                              try {
-                                List<Placemark> placemarks =
-                                    await placemarkFromCoordinates(
-                                        latitude, longitude);
-                                final place = placemarks.first;
-                                location =
-                                    "${place.street}, ${place.locality}, ${place.country}";
-                                city = place.locality ?? "";
-                                state = place.administrativeArea ?? "";
-                                country = place.country ?? "";
-                              } catch (e) {
-                                debugPrint("Geocoding error for video: $e");
-                              }
-                            }
-
-                            camListData.add(CameraData(
-                              path: imgPath,
-                              mimeType: "video",
-                              videoImagePath: thumbnail ?? "",
-                              latitude:
-                                  latitude != 0.0 ? latitude.toString() : "",
-                              longitude:
-                                  longitude != 0.0 ? longitude.toString() : "",
-                              dateTime: DateFormat("HH:mm, dd MMM yyyy")
-                                  .format(DateTime.now()),
-                              location: location,
-                              country: country,
-                              city: city,
-                              state: state,
-                            ));
+                          onTap: () {
                             setState(() {
-                              isSelectedImageProcessing = true;
+                              isSelectedImageProcessing = false;
                             });
-                          }
-                        } else {
-                          try {
-                            final bytes = await File(imgPath).readAsBytes();
-                            final tags =
-                                await exif_lib.readExifFromBytes(bytes);
+                            debugPrint("camListData::::${camListData.length}");
+                            selectedList[index] = !selectedList[index];
+                            if (selectedList[index] == true) {
+                              selectedIndex = index;
+                              _mediaList[index].originFile.then((value) async {
+                                String imgPath = value!.absolute.path;
+                                debugPrint("Filepath:::::::> $imgPath");
+                                if (_mediaList[index].type == AssetType.video) {
+                                  final thumbnail =
+                                      await vt.VideoThumbnail.thumbnailFile(
+                                    video: imgPath,
+                                    thumbnailPath:
+                                        (await getTemporaryDirectory()).path,
+                                    imageFormat: vt.ImageFormat.PNG,
+                                    maxHeight: 500,
+                                    quality: 100,
+                                  );
+                                  if (selectedList[index] == true) {
+                                    double? latitude =
+                                        _mediaList[index].latitude;
+                                    double? longitude =
+                                        _mediaList[index].longitude;
+                                    String location = "";
+                                    String city = "";
+                                    String state = "";
+                                    String country = "";
 
-                            double? latitude;
-                            double? longitude;
+                                    if (latitude != null &&
+                                        longitude != null &&
+                                        latitude != 0.0 &&
+                                        longitude != 0.0) {
+                                      try {
+                                        List<Placemark> placemarks =
+                                            await placemarkFromCoordinates(
+                                                latitude, longitude);
+                                        final place = placemarks.first;
+                                        location =
+                                            "${place.street}, ${place.locality}, ${place.country}";
+                                        city = place.locality ?? "";
+                                        state = place.administrativeArea ?? "";
+                                        country = place.country ?? "";
+                                      } catch (e) {
+                                        debugPrint(
+                                            "Geocoding error for video: $e");
+                                      }
+                                    }
 
-                            if (tags.containsKey('GPS GPSLatitude') &&
-                                tags.containsKey('GPS GPSLongitude')) {
-                              latitude =
-                                  _convertTagToDouble(tags['GPS GPSLatitude']);
-                              longitude =
-                                  _convertTagToDouble(tags['GPS GPSLongitude']);
+                                    camListData.add(CameraData(
+                                      path: imgPath,
+                                      mimeType: "video",
+                                      videoImagePath: thumbnail ?? "",
+                                      latitude: latitude != 0.0
+                                          ? latitude.toString()
+                                          : "",
+                                      longitude: longitude != 0.0
+                                          ? longitude.toString()
+                                          : "",
+                                      dateTime: DateFormat("HH:mm, dd MMM yyyy")
+                                          .format(DateTime.now()),
+                                      location: location,
+                                      country: country,
+                                      city: city,
+                                      state: state,
+                                    ));
+                                    setState(() {
+                                      isSelectedImageProcessing = true;
+                                    });
+                                  }
+                                } else {
+                                  try {
+                                    final bytes =
+                                        await File(imgPath).readAsBytes();
+                                    final tags =
+                                        await exif_lib.readExifFromBytes(bytes);
 
-                              // Handle North/South East/West ref
-                              if (tags['GPS GPSLatitudeRef']?.printable ==
-                                      'S' &&
-                                  latitude != null) {
-                                latitude = -latitude;
-                              }
-                              if (tags['GPS GPSLongitudeRef']?.printable ==
-                                      'W' &&
-                                  longitude != null) {
-                                longitude = -longitude;
-                              }
-                            }
+                                    double? latitude;
+                                    double? longitude;
 
-                            // 🔹 Fallback to photo_manager's location data
-                            if (latitude == null || longitude == null) {
-                              latitude = _mediaList[index].latitude;
-                              longitude = _mediaList[index].longitude;
-                            }
+                                    if (tags.containsKey('GPS GPSLatitude') &&
+                                        tags.containsKey('GPS GPSLongitude')) {
+                                      latitude = _convertTagToDouble(
+                                          tags['GPS GPSLatitude']);
+                                      longitude = _convertTagToDouble(
+                                          tags['GPS GPSLongitude']);
 
-                            if (latitude != null &&
-                                longitude != null &&
-                                latitude != 0.0 &&
-                                longitude != 0.0) {
-                              // 🔹 Use geocoding to get address info
-                              List<Placemark> placemarks =
-                                  await placemarkFromCoordinates(
-                                      latitude, longitude);
-                              final place = placemarks.first;
+                                      // Handle North/South East/West ref
+                                      if (tags['GPS GPSLatitudeRef']
+                                                  ?.printable ==
+                                              'S' &&
+                                          latitude != null) {
+                                        latitude = -latitude;
+                                      }
+                                      if (tags['GPS GPSLongitudeRef']
+                                                  ?.printable ==
+                                              'W' &&
+                                          longitude != null) {
+                                        longitude = -longitude;
+                                      }
+                                    }
 
-                              camListData.add(CameraData(
-                                path: imgPath,
-                                mimeType: "image",
-                                videoImagePath: "",
-                                fromGallary: true,
-                                latitude: latitude.toString(),
-                                longitude: longitude.toString(),
-                                dateTime: DateFormat("HH:mm, dd MMM yyyy")
-                                    .format(DateTime.now()),
-                                location:
-                                    "${place.street}, ${place.locality}, ${place.country}",
-                                country: place.country ?? "",
-                                city: place.locality ?? "",
-                                state: place.administrativeArea ?? "",
-                              ));
+                                    // 🔹 Fallback to photo_manager's location data
+                                    if (latitude == null || longitude == null) {
+                                      latitude = _mediaList[index].latitude;
+                                      longitude = _mediaList[index].longitude;
+                                    }
+
+                                    if (latitude != null &&
+                                        longitude != null &&
+                                        latitude != 0.0 &&
+                                        longitude != 0.0) {
+                                      // 🔹 Use geocoding to get address info
+                                      List<Placemark> placemarks =
+                                          await placemarkFromCoordinates(
+                                              latitude, longitude);
+                                      final place = placemarks.first;
+
+                                      camListData.add(CameraData(
+                                        path: imgPath,
+                                        mimeType: "image",
+                                        videoImagePath: "",
+                                        fromGallary: true,
+                                        latitude: latitude.toString(),
+                                        longitude: longitude.toString(),
+                                        dateTime:
+                                            DateFormat("HH:mm, dd MMM yyyy")
+                                                .format(DateTime.now()),
+                                        location:
+                                            "${place.street}, ${place.locality}, ${place.country}",
+                                        country: place.country ?? "",
+                                        city: place.locality ?? "",
+                                        state: place.administrativeArea ?? "",
+                                      ));
+                                    } else {
+                                      camListData.add(CameraData(
+                                        path: imgPath,
+                                        mimeType: "image",
+                                        videoImagePath: "",
+                                        fromGallary: true,
+                                        latitude: "",
+                                        longitude: "",
+                                        dateTime:
+                                            DateFormat("HH:mm, dd MMM yyyy")
+                                                .format(DateTime.now()),
+                                        location: "",
+                                        country: "",
+                                        city: "",
+                                        state: "",
+                                      ));
+                                    }
+
+                                    setState(() {
+                                      isSelectedImageProcessing = true;
+                                    });
+                                  } catch (e) {
+                                    debugPrint("Exif Error: $e");
+                                  }
+                                }
+                              });
                             } else {
-                              camListData.add(CameraData(
-                                path: imgPath,
-                                mimeType: "image",
-                                videoImagePath: "",
-                                fromGallary: true,
-                                latitude: "",
-                                longitude: "",
-                                dateTime: DateFormat("HH:mm, dd MMM yyyy")
-                                    .format(DateTime.now()),
-                                location: "",
-                                country: "",
-                                city: "",
-                                state: "",
-                              ));
+                              _mediaList[index].originFile.then((value) async {
+                                String imgPath = value!.absolute.path;
+                                int indexing = camListData.indexWhere(
+                                    (cameraData) => cameraData.path == imgPath);
+
+                                debugPrint(
+                                    "Filepath:::::::> $index  $indexing");
+                                if (indexing != -1 &&
+                                    indexing < camListData.length) {
+                                  camListData.removeAt(indexing);
+                                }
+                                setState(() {
+                                  isSelectedImageProcessing = true;
+                                });
+                              });
                             }
-
-                            setState(() {
-                              isSelectedImageProcessing = true;
-                            });
-                          } catch (e) {
-                            debugPrint("Exif Error: $e");
-                          }
-                        }
-                      });
-                    } else {
-                      _mediaList[index].originFile.then((value) async {
-                        String imgPath = value!.absolute.path;
-                        int indexing = camListData.indexWhere(
-                            (cameraData) => cameraData.path == imgPath);
-
-                        debugPrint("Filepath:::::::> $index  $indexing");
-                        if (indexing != -1 && indexing < camListData.length) {
-                          camListData.removeAt(indexing);
-                        }
-                        setState(() {
-                          isSelectedImageProcessing = true;
-                        });
-                      });
-                    }
-                    //  }
-                  },
-                  child: Stack(
-                    children: <Widget>[
-                      Positioned.fill(
-                          child: Image(
-                        image: AssetEntityImageProvider(
-                          _mediaList[index],
-                          isOriginal: false,
-                          thumbnailSize: const ThumbnailSize.square(200),
-                          thumbnailFormat: ThumbnailFormat.jpeg,
-                        ),
-                        fit: BoxFit.cover,
-                      )),
-                      if (_mediaList[index].type == AssetType.video)
-                        const Align(
-                          alignment: Alignment.bottomRight,
-                          child: Padding(
-                            padding: EdgeInsets.only(right: 5, bottom: 5),
-                            child: Icon(
-                              Icons.videocam,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      selectedList[index]
-                          ? Positioned.fill(
-                              child: Container(
-                                  alignment: Alignment.topRight,
-                                  decoration: BoxDecoration(
-                                      color: AppColorTheme.colorThemePink
-                                          .withOpacity(0.5)),
+                            //  }
+                          },
+                          child: Stack(
+                            children: <Widget>[
+                              Positioned.fill(
+                                  child: Image(
+                                image: AssetEntityImageProvider(
+                                  _mediaList[index],
+                                  isOriginal: false,
+                                  thumbnailSize:
+                                      const ThumbnailSize.square(200),
+                                  thumbnailFormat: ThumbnailFormat.jpeg,
+                                ),
+                                fit: BoxFit.cover,
+                              )),
+                              if (_mediaList[index].type == AssetType.video)
+                                const Align(
+                                  alignment: Alignment.bottomRight,
                                   child: Padding(
-                                    padding: EdgeInsets.all(
-                                        size.width * AppDimensions.numD01),
+                                    padding:
+                                        EdgeInsets.only(right: 5, bottom: 5),
                                     child: Icon(
-                                      Icons.radio_button_checked,
-                                      color: Colors.black,
-                                      size: size.width * AppDimensions.numD05,
+                                      Icons.videocam,
+                                      color: Colors.white,
                                     ),
-                                  )),
-                            )
-                          : Container()
-                    ],
-                  ),
-                );
-              })),
+                                  ),
+                                ),
+                              selectedList[index]
+                                  ? Positioned.fill(
+                                      child: Container(
+                                          alignment: Alignment.topRight,
+                                          decoration: BoxDecoration(
+                                              color: AppColorTheme
+                                                  .colorThemePink
+                                                  .withOpacity(0.5)),
+                                          child: Padding(
+                                            padding: EdgeInsets.all(size.width *
+                                                AppDimensions.numD01),
+                                            child: Icon(
+                                              Icons.radio_button_checked,
+                                              color: Colors.black,
+                                              size: size.width *
+                                                  AppDimensions.numD05,
+                                            ),
+                                          )),
+                                    )
+                                  : Container()
+                            ],
+                          ),
+                        );
+                      })),
     );
   }
 
   Future<void> getMedia() async {
+    setState(() {
+      isLoading = false;
+    });
     final LocationService locationService = di.sl<LocationService>();
     Permission permission = Permission.photos;
 
@@ -468,8 +579,8 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
       }
     }
 
+    // Standard permission check via service
     final bool hasAccess = await locationService.requestPermission(permission);
-
     if (!hasAccess) {
       if (!mounted) return;
       context.pushReplacementNamed(
@@ -481,9 +592,11 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
       return;
     }
 
+    final PermissionState state = await PhotoManager.requestPermissionExtend();
+    _isLimited = state == PermissionState.limited;
+
     // 🔥 Use proper filter options
     final filter = FilterOptionGroup(
-      containsPathModified: true,
       imageOption: const FilterOption(),
       videoOption: const FilterOption(
         durationConstraint: DurationConstraint(
@@ -491,8 +604,8 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
         ),
       ),
       orders: [
-        OrderOption(
-          type: OrderOptionType.updateDate,
+        const OrderOption(
+          type: OrderOptionType.createDate,
           asc: false, // latest first
         ),
       ],
@@ -500,7 +613,7 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
 
     List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
       type: RequestType.all,
-      onlyAll: true,
+      onlyAll: _isLimited,
       filterOption: filter,
     );
 
@@ -508,13 +621,41 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
       setState(() {
         _mediaList = [];
         selectedList = [];
+        isLoading = true;
       });
       return;
     }
 
-    _path = paths.first;
+    // Try to find the best album
+    AssetPathEntity? bestPath;
+    if (_isLimited) {
+      bestPath = paths.first;
+    } else {
+      for (var p in paths) {
+        if (p.isAll ||
+            p.name.toLowerCase() == "recent" ||
+            p.name.toLowerCase() == "all") {
+          bestPath = p;
+          break;
+        }
+      }
+    }
+    _path = bestPath ?? paths.first;
 
     totalEntitiesCount = await _path!.assetCountAsync;
+
+    // If the selected album is empty and not limited, try to find ANY album with assets
+    if (totalEntitiesCount == 0 && !_isLimited) {
+      for (var p in paths) {
+        if (p == _path) continue;
+        int count = await p.assetCountAsync;
+        if (count > 0) {
+          _path = p;
+          totalEntitiesCount = count;
+          break;
+        }
+      }
+    }
 
     List<AssetEntity> media =
         await _path!.getAssetListPaged(page: 0, size: _sizePerPage);

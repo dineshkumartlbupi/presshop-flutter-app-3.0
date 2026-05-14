@@ -58,16 +58,16 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
       });
     }
 
-    final result = await _permissionService.checkCameraAndGalleryPermissions();
+    final detail = await _permissionService.getDetailedStatus();
 
-    if (result == PermissionResult.granted) {
+    if (detail.cameraAndGalleryGranted) {
       if (mounted) {
         context.goNamed(AppRoutes.dashboardName, extra: {'initialPosition': 2});
       }
     } else {
       if (mounted) {
         setState(() {
-          _isPermanentlyDenied = result == PermissionResult.permanentlyDenied;
+          _isPermanentlyDenied = detail.isAnyPermanentlyDenied;
         });
       }
     }
@@ -77,9 +77,10 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
     if (_isPermanentlyDenied) {
       await _permissionService.openSettings();
     } else {
-      final result =
-          await _permissionService.requestCameraAndGalleryPermissions();
-      if (result == PermissionResult.granted) {
+      await _permissionService.requestCameraAndGalleryPermissions();
+      final detail = await _permissionService.getDetailedStatus();
+      
+      if (detail.cameraAndGalleryGranted) {
         if (mounted) {
           context
               .goNamed(AppRoutes.dashboardName, extra: {'initialPosition': 2});
@@ -87,7 +88,7 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
       } else {
         if (mounted) {
           setState(() {
-            _isPermanentlyDenied = result == PermissionResult.permanentlyDenied;
+            _isPermanentlyDenied = detail.isAnyPermanentlyDenied;
           });
         }
       }

@@ -81,15 +81,49 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     return super.close();
   }
 
+  DateTime? _lastInitTime;
+
   Future<void> _onInitialize(
       CameraInitializeEvent event, Emitter<CameraState> emit) async {
-    // Prevent concurrent initializations
-    if (_isInitializing) {
+    // Prevent concurrent initializations, but allow override if forced OR stuck for > 15s
+    if (!event.force &&
+        _isInitializing &&
+        _lastInitTime != null &&
+        DateTime.now().difference(_lastInitTime!) <
+            const Duration(seconds: 15)) {
       debugPrint("🚀 CameraBloc: Init skipped - Already initializing.");
       return;
     }
 
+    _lastInitTime = DateTime.now();
+
+    if (event.force) {
+      // Avoid double-purging if we just started a forced init in the last 2 seconds
+      if (_isInitializing &&
+          _lastInitTime != null &&
+          DateTime.now().difference(_lastInitTime!).inMilliseconds < 2000) {
+        debugPrint("🚀 CameraBloc: Forced init skipped - Already in progress.");
+        return;
+      }
+
+      debugPrint("🚀 CameraBloc: Forced init requested. Purging stale state.");
+      emit(state.copyWith(
+        status: CameraStatus.loading,
+        clearController: true,
+        initCount: state.initCount + 1,
+      ));
+      // Give it a moment to clear and hardware to release
+      await Future.delayed(const Duration(milliseconds: 1200));
+    }
+
+    // If currently disposing, wait a bit for hardware to release
+    if (state.status == CameraStatus.disposing) {
+      debugPrint("🚀 CameraBloc: Waiting for disposal to complete...");
+      await Future.delayed(const Duration(milliseconds: 1000));
+    }
+
     if (!event.force &&
+        state.status == CameraStatus.ready &&
         state.cameraController != null &&
         state.cameraController!.value.isInitialized) {
       debugPrint(
@@ -101,35 +135,103 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
           emit(state.copyWith(status: CameraStatus.ready));
         }
 
-        // Force a small delay to ensure the surface is ready after navigation
-        await Future.delayed(const Duration(milliseconds: 100));
-
-        // Always attempt to resume when returning to ensure the stream is active
-        await state.cameraController!
-            .resumePreview()
-            .timeout(const Duration(milliseconds: 1000));
-
         // Ensure status is updated to ready so the UI shows the preview
         emit(state.copyWith(status: CameraStatus.ready));
+
+        // Force a small delay to ensure the surface is ready after navigation
+        await Future.delayed(const Duration(milliseconds: 200));
+
+        // Always attempt to resume when returning to ensure the stream is active
+        // If it was already running, resumePreview is usually a no-op or fast.
+        await state.cameraController!
+            .resumePreview()
+            .timeout(const Duration(milliseconds: 1500));
+
+        debugPrint("🚀 CameraBloc: Preview resumed successfully.");
       } catch (e) {
         debugPrint(
             "⚠️ resumePreview error or timeout: $e. Attempting full re-initialization.");
+        // If resume fails, we MUST dispose the old one and start fresh
         add(const CameraInitializeEvent(force: true));
       }
       return;
     }
 
-    debugPrint("🚀 CameraBloc: Starting initialization sequence...");
+    debugPrint(
+        "🚀 CameraBloc: Starting initialization sequence... (Force: ${event.force})");
+
+    // If we are already in initial state but trying to init, it's a fresh start
+    if (state.status == CameraStatus.initial) {
+      debugPrint("🚀 CameraBloc: Fresh initialization from initial state.");
+    }
 
     _isInitializing = true;
+
+    // Safety watchdog: If init takes too long, force a retry or failure
+    final watchdogTimer = Timer(const Duration(seconds: 8), () {
+      if (_isInitializing && state.status == CameraStatus.loading) {
+        debugPrint(
+            "🚨 WATCHDOG: Camera initialization HANGED. Attempting auto-retry...");
+        if (!isClosed) {
+          if (!event.isRetry) {
+            add(const CameraInitializeEvent(force: true, isRetry: true));
+          } else {
+            emit(state.copyWith(
+                status: CameraStatus.failure,
+                errorMessage: "Camera hardware timeout. Please restart app."));
+          }
+        }
+      }
+    });
+
     try {
-      // 1. Check existing permissions first to avoid UI blink
-      final existingResult =
-          await _permissionService.checkCameraAndGalleryPermissions();
-      if (existingResult != PermissionResult.granted) {
-        emit(state.copyWith(status: CameraStatus.requestingPermission));
+      // 1. Get detailed permission status
+      var detail = await _permissionService.getDetailedStatus();
+      debugPrint("🚀 CameraBloc: Initial permission check: ${detail.cameraGranted}, ${detail.micGranted}, ${detail.galleryGranted}");
+      
+      bool hasRequired = false;
+      if (state.selectedMode == AppStrings.audioText) {
+        hasRequired = detail.micGranted && detail.galleryGranted;
+      } else if (state.selectedMode == AppStrings.videoText) {
+        hasRequired = detail.cameraGranted && detail.micGranted && detail.galleryGranted;
+      } else {
+        // Photo, Scan
+        hasRequired = detail.cameraGranted && detail.galleryGranted;
       }
 
+      if (!hasRequired) {
+        if (state.status != CameraStatus.permissionDenied || state.permissionDetail != detail) {
+          emit(state.copyWith(
+            status: CameraStatus.requestingPermission,
+            permissionDetail: detail,
+          ));
+        }
+        
+        // Try requesting
+        await _permissionService.requestCameraAndGalleryPermissions();
+        detail = await _permissionService.getDetailedStatus();
+        
+        if (state.selectedMode == AppStrings.audioText) {
+          hasRequired = detail.micGranted && detail.galleryGranted;
+        } else if (state.selectedMode == AppStrings.videoText) {
+          hasRequired = detail.cameraGranted && detail.micGranted && detail.galleryGranted;
+        } else {
+          hasRequired = detail.cameraGranted && detail.galleryGranted;
+        }
+        
+        if (!hasRequired) {
+          debugPrint("🚀 CameraBloc: Required permissions for ${state.selectedMode} denied.");
+          emit(state.copyWith(
+            status: CameraStatus.permissionDenied,
+            permissionDetail: detail,
+            errorMessage: detail.isAnyPermanentlyDenied ? "permanently_denied" : "permission_denied",
+          ));
+          _isInitializing = false;
+          return;
+        }
+      }
+
+      // Permissions granted for the current mode, continue...
       // Setup recorder first (fast)
       RecorderController? recorderController = state.recorderController;
       recorderController ??= RecorderController()
@@ -139,28 +241,20 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         ..sampleRate = 44100
         ..bitRate = 48000;
 
-      final permissionResult = existingResult == PermissionResult.granted
-          ? PermissionResult.granted
-          : await _permissionService.requestCameraAndGalleryPermissions();
-
-      if (permissionResult != PermissionResult.granted) {
-        debugPrint("🚀 CameraBloc: Permission denied. Stopping init.");
-
-        final isPermanent = await Permission.camera.isPermanentlyDenied ||
-            await Permission.microphone.isPermanentlyDenied ||
-            (await _permissionService.checkCameraAndGalleryPermissions() ==
-                PermissionResult.permanentlyDenied);
-
+      // Only show loading if we have permissions and actually need to initialize
+      if (hasRequired && (state.cameraController == null ||
+          !state.cameraController!.value.isInitialized)) {
         emit(state.copyWith(
-          status: CameraStatus.permissionDenied,
-          errorMessage:
-              isPermanent ? "permanently_denied" : "permission_denied",
+          status: CameraStatus.loading,
+          permissionDetail: detail,
+          recorderController: recorderController,
         ));
-        _isInitializing = false;
-        return;
+      } else {
+        emit(state.copyWith(
+          permissionDetail: detail,
+          recorderController: recorderController,
+        ));
       }
-
-      emit(state.copyWith(status: CameraStatus.loading));
       final existingController = state.cameraController;
       if (existingController != null) {
         try {
@@ -177,8 +271,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
       // Permissions already checked above
 
-      // 4. Init Camera list if empty (fast usually)
-      if (cameras.isEmpty) {
+      // 4. Init Camera list if empty OR forced (fast usually)
+      if (cameras.isEmpty || event.force) {
         try {
           debugPrint("🚀 CameraBloc: Fetching available cameras...");
           final fetchedCameras =
@@ -230,23 +324,35 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
           throw TimeoutException("Camera controller initialization timed out");
         });
 
-        debugPrint("🚀 CameraBloc: Controller initialized.");
+        debugPrint(
+            "🚀 CameraBloc: Controller initialized at ${controller.value.previewSize}.");
 
-        await Future.delayed(const Duration(milliseconds: 200));
+        await Future.delayed(const Duration(milliseconds: 300));
         try {
-          await controller.resumePreview().timeout(const Duration(seconds: 3));
+          await controller.resumePreview().timeout(const Duration(seconds: 2));
+          debugPrint("🚀 CameraBloc: resumePreview() completed.");
         } catch (e) {
           debugPrint("⚠️ resumePreview error (ignored): $e");
         }
 
-        debugPrint("🚀 CameraBloc: Preview resumed.");
+        // Fetch hardware limits to keep state synchronized
+        final minExp = await controller.getMinExposureOffset();
+        final maxExp = await controller.getMaxExposureOffset();
+        final minZ = await controller.getMinZoomLevel();
+        final maxZ = await controller.getMaxZoomLevel();
 
         emit(state.copyWith(
           status: CameraStatus.ready,
           cameraController: controller,
           recorderController: recorderController,
+          initCount: state.initCount + 1,
+          minExposure: minExp,
+          maxExposure: maxExp,
+          minZoom: minZ,
+          maxZoom: maxZ,
         ));
-        debugPrint("🚀 CameraBloc: Emitted READY state.");
+        debugPrint(
+            "🚀 CameraBloc: Emitted READY state for ${cameraDescription.name}.");
       } catch (e) {
         debugPrint("❌ CameraBloc: Initialization FAILED: $e");
         emit(state.copyWith(
@@ -257,11 +363,21 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       }
     } catch (e) {
       debugPrint("❌ CameraBloc: Unexpected Error: $e");
+
+      // Retry once if it was a timeout or hardware error
+      if (!event.force && !event.isRetry) {
+        debugPrint("🚀 CameraBloc: Attempting retry in 2 seconds...");
+        await Future.delayed(const Duration(seconds: 2));
+        add(const CameraInitializeEvent(force: true, isRetry: true));
+        return;
+      }
+
       emit(state.copyWith(
         status: CameraStatus.failure,
         errorMessage: "Unexpected error: $e",
       ));
     } finally {
+      watchdogTimer.cancel();
       _isInitializing = false;
     }
 
@@ -383,9 +499,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       }
 
       // Single source of truth for resume logic
-      Future.delayed(const Duration(milliseconds: 400), () {
+      Future.delayed(const Duration(milliseconds: 800), () {
         if (!isClosed) {
-          add(const CameraInitializeEvent());
+          add(const CameraInitializeEvent(force: true));
         }
       });
     }
@@ -450,22 +566,42 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     }
   }
 
-  void _onChangeMode(CameraModeChangeEvent event, Emitter<CameraState> emit) {
+  Future<void> _onChangeMode(
+      CameraModeChangeEvent event, Emitter<CameraState> emit) async {
     if (state.selectedMode == event.mode) return;
 
     bool shouldInitCamera = false;
     bool isFront = state.isFrontCamera;
 
     if (event.mode == AppStrings.photoText ||
-        event.mode == AppStrings.videoText) {
-      isFront = false;
+        event.mode == AppStrings.videoText ||
+        event.mode == AppStrings.scanText) {
       shouldInitCamera = true;
+    } else {
+      // For Audio, Notes, etc. - Dispose camera to free hardware
+      final controller = state.cameraController;
+      if (controller != null) {
+        debugPrint(
+            "🚀 CameraBloc: Releasing camera hardware for ${event.mode} mode");
+        try {
+          await controller.dispose().timeout(const Duration(seconds: 2));
+        } catch (e) {
+          debugPrint("Error disposing camera on mode change: $e");
+        }
+      }
     }
 
     emit(state.copyWith(
         selectedMode: event.mode,
         isFrontCamera: isFront,
-        status: CameraStatus.initial));
+        recordingTime: "00:00:00",
+        isRecording: false,
+        isAudioRecording: false,
+        cameraController: shouldInitCamera ? state.cameraController : null,
+        clearController: !shouldInitCamera));
+
+    _stopTimer();
+
     if (shouldInitCamera) {
       add(const CameraInitializeEvent());
     }

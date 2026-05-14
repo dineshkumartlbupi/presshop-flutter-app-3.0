@@ -513,7 +513,7 @@ Future<void> init() async {
     ),
   );
   // sl.registerFactory(() => AlertBloc(apiClient: sl()));
-  sl.registerFactory(() => CameraBloc(sl(), sl()));
+  sl.registerLazySingleton(() => CameraBloc(sl(), sl()));
   sl.registerFactory(
     () => ChatBloc(
       getChatListUseCase: sl(),

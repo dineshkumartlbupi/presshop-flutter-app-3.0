@@ -129,7 +129,6 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
         );
     getCurrentLocation();
 
-    // Listen to upload status changes to update local task progress
     MediaUploadService.uploadStatus.addListener(_onUploadStatusChanged);
   }
 
@@ -170,6 +169,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   //     debugPrint("PEx: $e");
   //   }
   // }
+
   void dismissProgressDialog() {
     _shouldCloseDialog = true;
     if (_dialogStateSetter != null) {
@@ -361,41 +361,38 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                               size,
                               AppColorTheme.colorThemePink,
                             ),
-                            () {
-                              context.pushNamed(
-                                AppRoutes.cameraName,
-                                extra: {
-                                  'picAgain': true,
-                                  'previousScreen':
-                                      ScreenNameEnum.manageTaskScreen,
-                                },
-                              ).then((value) {
-                                if (value != null &&
-                                    value is List<CameraData>) {
+                            () async {
+                              try {
+                                final ImagePicker picker = ImagePicker();
+                                final XFile? photo = await picker.pickImage(
+                                  source: ImageSource.camera,
+                                  imageQuality: 80,
+                                );
+                                if (photo != null && mounted) {
                                   debugPrint(
-                                    "value:::::$value::::::::${value.first.path}",
+                                      "Captured from System Camera: ${photo.path}");
+                                  selectMultipleMediaList.clear();
+                                  selectMultipleMediaList.add(
+                                    MediaData(
+                                      isFromGallery: false,
+                                      dateTime: "",
+                                      latitude: latitude?.toString() ?? "",
+                                      location: address ?? "",
+                                      longitude: longitude?.toString() ?? "",
+                                      country: "",
+                                      state: "",
+                                      city: "",
+                                      mediaPath: photo.path,
+                                      mimeType: lookupMimeType(photo.path) ??
+                                          "image/jpeg",
+                                      thumbnail: "",
+                                    ),
                                   );
-                                  List<CameraData> temData = value;
-                                  for (var element in temData) {
-                                    selectMultipleMediaList.add(
-                                      MediaData(
-                                        isFromGallery: element.fromGallary,
-                                        dateTime: "",
-                                        latitude: latitude.toString(),
-                                        location: address,
-                                        longitude: longitude.toString(),
-                                        country: "",
-                                        state: "",
-                                        city: "",
-                                        mediaPath: element.path,
-                                        mimeType: element.mimeType,
-                                        thumbnail: "",
-                                      ),
-                                    );
-                                  }
                                   previewBottomSheet();
                                 }
-                              });
+                              } catch (e) {
+                                debugPrint("Camera error: $e");
+                              }
                             },
                           ),
                         ),
@@ -831,6 +828,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
       if (result != null && result.files.isNotEmpty) {
         for (var file in result.files) {
           final String filePath = file.path!;
+          // Safety check to avoid duplicates
+          if (selectMultipleMediaList.any((e) => e.mediaPath == filePath)) {
+            continue;
+          }
           final String? mimeType = lookupMimeType(filePath);
 
           debugPrint("Picked File: $filePath");
@@ -858,7 +859,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
             }
           }
 
-          if (validationVideoLenght) {
+          if (validationVideoLenght &&
+              !selectMultipleMediaList.any((e) => e.mediaPath == filePath)) {
             selectMultipleMediaList.add(
               MediaData(
                 isFromGallery: true,
@@ -876,7 +878,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
             );
           }
         }
-        await previewBottomSheet();
+        previewBottomSheet();
         if (mounted) {
           setState(() {});
         }

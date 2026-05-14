@@ -33,6 +33,8 @@ import '../bloc/publish_bloc.dart';
 import '../bloc/publish_event.dart';
 import '../bloc/publish_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:presshop/features/camera/presentation/bloc/camera_bloc.dart';
+import 'package:presshop/features/camera/presentation/bloc/camera_event.dart';
 
 // ignore: must_be_immutable
 class PublishContentScreen extends StatefulWidget {
@@ -3362,7 +3364,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
               media.thumbnail));
         });
         if (!mounted) return;
-        if (!mounted) return;
+        debugPrint("🗑️ PublishContentScreen: Clearing captured media in CameraBloc");
+        sl<CameraBloc>().add(const UpdateCapturedMediaEvent([]));
+
         await context.pushNamed(
           AppRoutes.contentSubmittedName,
           extra: {
@@ -3393,7 +3397,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
                 media.thumbnail));
           });
           if (!mounted) return;
-          if (!mounted) return;
+          debugPrint("🗑️ PublishContentScreen: Clearing captured media in CameraBloc (not verified path)");
+          sl<CameraBloc>().add(const UpdateCapturedMediaEvent([]));
+
           await context.pushNamed(
             AppRoutes.contentSubmittedName,
             extra: {

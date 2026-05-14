@@ -2,22 +2,64 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:equatable/equatable.dart';
 
-enum PermissionResult { granted, denied, permanentlyDenied }
+enum PermissionResult { granted, denied, permanentlyDenied, partiallyGranted }
+
+class PermissionStatusDetail extends Equatable {
+  final bool cameraGranted;
+  final bool micGranted;
+  final bool galleryGranted;
+  final bool isAnyPermanentlyDenied;
+
+  const PermissionStatusDetail({
+    required this.cameraGranted,
+    required this.micGranted,
+    required this.galleryGranted,
+    required this.isAnyPermanentlyDenied,
+  });
+
+  bool get allGranted => cameraGranted && micGranted && galleryGranted;
+  bool get cameraAndGalleryGranted => cameraGranted && galleryGranted;
+
+  @override
+  List<Object?> get props => [
+        cameraGranted,
+        micGranted,
+        galleryGranted,
+        isAnyPermanentlyDenied,
+      ];
+}
 
 class PermissionService {
-  /// Returns the status of Camera and Gallery permissions.
-  /// On Android 13+, Gallery is handled via Photos/Videos permissions.
-  Future<PermissionResult> checkCameraAndGalleryPermissions() async {
+  /// Returns detailed status of Camera, Mic, and Gallery permissions.
+  Future<PermissionStatusDetail> getDetailedStatus() async {
     final cameraStatus = await Permission.camera.status;
     final micStatus = await Permission.microphone.status;
     final galleryStatus = await _getGalleryPermissionStatus();
 
-    if (cameraStatus.isGranted && micStatus.isGranted && galleryStatus.isGranted) {
+    final isAnyPermanentlyDenied = cameraStatus.isPermanentlyDenied ||
+        micStatus.isPermanentlyDenied ||
+        galleryStatus.isPermanentlyDenied;
+
+    return PermissionStatusDetail(
+      cameraGranted: cameraStatus.isGranted,
+      micGranted: micStatus.isGranted,
+      galleryGranted: galleryStatus.isGranted,
+      isAnyPermanentlyDenied: isAnyPermanentlyDenied,
+    );
+  }
+
+  /// Returns the status of Camera and Gallery permissions.
+  /// On Android 13+, Gallery is handled via Photos/Videos permissions.
+  Future<PermissionResult> checkCameraAndGalleryPermissions() async {
+    final detail = await getDetailedStatus();
+
+    if (detail.allGranted) {
       return PermissionResult.granted;
     }
 
-    if (cameraStatus.isPermanentlyDenied || micStatus.isPermanentlyDenied || galleryStatus.isPermanentlyDenied) {
+    if (detail.isAnyPermanentlyDenied) {
       return PermissionResult.permanentlyDenied;
     }
 
@@ -26,21 +68,20 @@ class PermissionService {
 
   /// Requests Camera and Gallery permissions.
   Future<PermissionResult> requestCameraAndGalleryPermissions() async {
+    // Request them individually or together
     Map<Permission, PermissionStatus> statuses = await [
       Permission.camera,
       Permission.microphone,
       ...await _getGalleryPermissionsList(),
     ].request();
 
-    final cameraStatus = statuses[Permission.camera] ?? PermissionStatus.denied;
-    final micStatus = statuses[Permission.microphone] ?? PermissionStatus.denied;
-    final galleryStatus = await _getGalleryPermissionStatus();
+    final detail = await getDetailedStatus();
 
-    if (cameraStatus.isGranted && micStatus.isGranted && galleryStatus.isGranted) {
+    if (detail.allGranted) {
       return PermissionResult.granted;
     }
 
-    if (cameraStatus.isPermanentlyDenied || micStatus.isPermanentlyDenied || galleryStatus.isPermanentlyDenied) {
+    if (detail.isAnyPermanentlyDenied) {
       return PermissionResult.permanentlyDenied;
     }
 

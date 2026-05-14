@@ -318,11 +318,7 @@ class _ManageTaskPreviewScreenState extends State<ManageTaskPreviewScreen> {
                               color: Colors.white,
                               fontWeight: FontWeight.w700),
                           commonButtonStyle(size, Colors.black), () {
-                        context.pushNamed(AppRoutes.cameraName, extra: {
-                          'picAgain': true,
-                          'previousScreen':
-                              ScreenNameEnum.manageTaskPreviewScreen,
-                        }).then((value) {
+                        context.pushNamed(AppRoutes.addMoreContentName).then((value) {
                           debugPrint(
                               ":::: Inside Picked Again Image :::: $value");
                           if (value != null) {

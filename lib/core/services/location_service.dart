@@ -16,7 +16,8 @@ class LocationService {
 
   Future<bool> requestPermission(Permission permission,
       {bool showUI = true}) async {
-    if (await permission.isGranted) return true;
+    final status = await permission.status;
+    if (status.isGranted || status.isLimited) return true;
     if (_activeRequests.containsKey(permission)) {
       debugPrint(
           "🚀 PermissionService: Request for $permission already in progress, joining...");
@@ -40,7 +41,8 @@ class LocationService {
 
     try {
       // Final check before requesting
-      if (await permission.isGranted) {
+      final currentStatus = await permission.status;
+      if (currentStatus.isGranted || currentStatus.isLimited) {
         completer.complete(true);
         return true;
       }
@@ -67,8 +69,8 @@ class LocationService {
       await Future.delayed(const Duration(milliseconds: 300));
 
       final status = await permission.request();
-      if (status.isGranted) {
-        AppLogger.info("Permission $permission granted");
+      if (status.isGranted || status.isLimited) {
+        AppLogger.info("Permission $permission granted (or limited)");
         return true;
       }
 

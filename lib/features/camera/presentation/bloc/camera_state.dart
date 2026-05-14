@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:equatable/equatable.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:presshop/core/services/permission_service.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 
 enum CameraStatus {
@@ -33,6 +34,12 @@ class CameraState extends Equatable {
     this.galleryMedia = const [],
     this.capturedMedia = const [],
     this.errorMessage = "",
+    this.initCount = 0,
+    this.minExposure = 0,
+    this.maxExposure = 0,
+    this.minZoom = 1.0,
+    this.maxZoom = 1.0,
+    this.permissionDetail,
   });
 
   final CameraStatus status;
@@ -48,6 +55,12 @@ class CameraState extends Equatable {
   final List<AssetEntity> galleryMedia;
   final List<CameraData> capturedMedia;
   final String errorMessage;
+  final int initCount;
+  final double minExposure;
+  final double maxExposure;
+  final double minZoom;
+  final double maxZoom;
+  final PermissionStatusDetail? permissionDetail;
 
   CameraState copyWith({
     CameraStatus? status,
@@ -64,6 +77,12 @@ class CameraState extends Equatable {
     List<AssetEntity>? galleryMedia,
     List<CameraData>? capturedMedia,
     String? errorMessage,
+    int? initCount,
+    double? minExposure,
+    double? maxExposure,
+    double? minZoom,
+    double? maxZoom,
+    PermissionStatusDetail? permissionDetail,
   }) {
     return CameraState(
       status: status ?? this.status,
@@ -80,6 +99,12 @@ class CameraState extends Equatable {
       galleryMedia: galleryMedia ?? this.galleryMedia,
       capturedMedia: capturedMedia ?? this.capturedMedia,
       errorMessage: errorMessage ?? this.errorMessage,
+      initCount: initCount ?? this.initCount,
+      minExposure: minExposure ?? this.minExposure,
+      maxExposure: maxExposure ?? this.maxExposure,
+      minZoom: minZoom ?? this.minZoom,
+      maxZoom: maxZoom ?? this.maxZoom,
+      permissionDetail: permissionDetail ?? this.permissionDetail,
     );
   }
 
@@ -98,5 +123,11 @@ class CameraState extends Equatable {
         galleryMedia,
         capturedMedia,
         errorMessage,
+        initCount,
+        minExposure,
+        maxExposure,
+        minZoom,
+        maxZoom,
+        permissionDetail,
       ];
 }
