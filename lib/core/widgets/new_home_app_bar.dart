@@ -23,6 +23,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.latitude,
     this.longitude,
     this.showLogo = true,
+    this.leadingIconColor,
   });
   final Size size;
   final bool hideLeading;
@@ -36,6 +37,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double? latitude;
   final double? longitude;
   final bool showLogo;
+  final Color? leadingIconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +47,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       hideLeading: hideLeading,
       appBarbackgroundColor: appBarbackgroundColor,
+      leadingIconColor: leadingIconColor,
       leadingWidget: (showLogo && hideLeading)
           ? InkWell(
               onTap: () {

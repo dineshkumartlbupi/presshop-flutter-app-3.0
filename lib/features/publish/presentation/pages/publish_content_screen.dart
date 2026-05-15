@@ -245,26 +245,30 @@ class PublishContentScreenState extends State<PublishContentScreen>
   void initState() {
     debugPrint("Class Name : $runtimeType::::::::${widget.docType}");
     // debugPrint("Data : ${widget.myContentData}");
+    imageCount = 0;
+    videoCount = 0;
+    audioCount = 0;
+    docCount = 0;
+    pdfCount = 0;
+
     if (widget.publishData != null) {
       for (var media in widget.publishData!.mediaList) {
         debugPrint("mimeType::::::::${media.mimeType}");
-        if (media.mimeType == 'image') imageCount++;
-        if (media.mimeType == 'video') videoCount++;
-        if (media.mimeType == 'audio') audioCount++;
-        if (media.mimeType == 'doc') docCount++;
-        if (media.mimeType == 'pdf') pdfCount++;
+        if (media.mimeType.contains('image')) imageCount++;
+        if (media.mimeType.contains('video')) videoCount++;
+        if (media.mimeType.contains('audio')) audioCount++;
+        if (media.mimeType.contains('doc')) docCount++;
+        if (media.mimeType.contains('pdf')) pdfCount++;
       }
-    }
-
-    if (widget.myContentData != null) {
+    } else if (widget.myContentData != null) {
       for (var media in widget.myContentData!.contentMediaList) {
         debugPrint(" mediaType::::::::${media.mediaType}");
 
-        if (media.mediaType == 'image') imageCount++;
-        if (media.mediaType == 'video') videoCount++;
-        if (media.mediaType == 'audio') audioCount++;
-        if (media.mediaType == 'doc') docCount++;
-        if (media.mediaType == 'pdf') pdfCount++;
+        if (media.mediaType.contains('image')) imageCount++;
+        if (media.mediaType.contains('video')) videoCount++;
+        if (media.mediaType.contains('audio')) audioCount++;
+        if (media.mediaType.contains('doc')) docCount++;
+        if (media.mediaType.contains('pdf')) pdfCount++;
       }
     }
 
@@ -3355,16 +3359,20 @@ class PublishContentScreenState extends State<PublishContentScreen>
         unawaited(callAddContentApi());
 
         debugPrint("DEBUG: Navigating to ContentSubmittedScreen");
-        widget.publishData?.mediaList.forEach((media) {
-          widget.myContentData?.contentMediaList.add(ContentMediaData(
-              "",
-              media.mediaPath,
-              media.mimeType,
-              media.thumbnail,
-              media.thumbnail));
-        });
+        if (widget.publishData != null) {
+          widget.myContentData?.contentMediaList.clear();
+          for (var media in widget.publishData!.mediaList) {
+            widget.myContentData?.contentMediaList.add(ContentMediaData(
+                "",
+                media.mediaPath,
+                media.mimeType.contains('video') ? 'video' : 'image',
+                media.thumbnail,
+                media.thumbnail));
+          }
+        }
         if (!mounted) return;
-        debugPrint("🗑️ PublishContentScreen: Clearing captured media in CameraBloc");
+        debugPrint(
+            "🗑️ PublishContentScreen: Clearing captured media in CameraBloc");
         sl<CameraBloc>().add(const UpdateCapturedMediaEvent([]));
 
         await context.pushNamed(
@@ -3388,16 +3396,20 @@ class PublishContentScreenState extends State<PublishContentScreen>
         if (data['message'] == "not verified") {
           unawaited(callAddContentApi());
 
-          widget.publishData?.mediaList.forEach((media) {
-            widget.myContentData?.contentMediaList.add(ContentMediaData(
-                "",
-                media.mediaPath,
-                media.mimeType,
-                media.thumbnail,
-                media.thumbnail));
-          });
+          if (widget.publishData != null) {
+            widget.myContentData?.contentMediaList.clear();
+            for (var media in widget.publishData!.mediaList) {
+              widget.myContentData?.contentMediaList.add(ContentMediaData(
+                  "",
+                  media.mediaPath,
+                  media.mimeType.contains('video') ? 'video' : 'image',
+                  media.thumbnail,
+                  media.thumbnail));
+            }
+          }
           if (!mounted) return;
-          debugPrint("🗑️ PublishContentScreen: Clearing captured media in CameraBloc (not verified path)");
+          debugPrint(
+              "🗑️ PublishContentScreen: Clearing captured media in CameraBloc (not verified path)");
           sl<CameraBloc>().add(const UpdateCapturedMediaEvent([]));
 
           await context.pushNamed(

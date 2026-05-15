@@ -36,6 +36,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
   List<FilterModel> filterList = [];
   bool showData = false;
   bool showLoader = false;
+
   int limit = 10, offset = 0;
   int draftIndex = 0;
   int selectedIndex = 0;

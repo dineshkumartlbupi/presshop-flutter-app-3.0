@@ -20,8 +20,8 @@ import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:go_router/go_router.dart';
 import 'package:presshop/main.dart';
 
-class AddMoreContentScreen extends StatefulWidget {
-  const AddMoreContentScreen({
+class DraftAddMoreScreen extends StatefulWidget {
+  const DraftAddMoreScreen({
     super.key,
     this.picAgain = true,
     this.previousScreen = ScreenNameEnum.addMoreContentScreen,
@@ -35,11 +35,11 @@ class AddMoreContentScreen extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return AddMoreContentScreenState();
+    return DraftAddMoreScreenState();
   }
 }
 
-class AddMoreContentScreenState extends State<AddMoreContentScreen>
+class DraftAddMoreScreenState extends State<DraftAddMoreScreen>
     with WidgetsBindingObserver, TickerProviderStateMixin {
   late AnimationController _exposureModeControlRowAnimationController;
   late Animation<double> _exposureModeControlRowAnimation;
@@ -80,8 +80,7 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
     _bloc!.add(const UpdateCapturedMediaEvent([]));
 
     if (widget.autoInitialize) {
-      debugPrint(
-          "📸 AddMoreContentScreen: Initializing with stability delay...");
+      debugPrint("📸 DraftAddMoreScreen: Initializing with stability delay...");
       Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) {
           _bloc!.add(const CameraInitializeEvent(force: true));
@@ -401,6 +400,7 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
                 ),
               ),
             ),
+
             // Gallery
             Align(
               alignment: Alignment.bottomRight,
@@ -479,7 +479,10 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
                     IconButton(
                         icon: Icon(
                             state.isFlashOn ? Icons.flash_on : Icons.flash_off,
-                            color: Colors.black,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
                             size: size.width * AppDimensions.numD04),
                         onPressed: () => context
                             .read<CameraBloc>()
@@ -582,9 +585,7 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
                 size: Size(size.width, 100),
                 recorderController: state.recorderController!,
                 enableGesture: false,
-                backgroundColor: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.black,
+                backgroundColor: Colors.transparent,
                 shouldCalculateScrolledPosition: true,
                 waveStyle: WaveStyle(
                     waveColor: AppColorTheme.colorThemePink,
@@ -632,9 +633,7 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
                 child: Container(
                   padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                   decoration: BoxDecoration(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : Colors.black,
+                      color: Colors.transparent,
                       shape: BoxShape.circle,
                       border: Border.all(
                           color: Theme.of(context).brightness == Brightness.dark
@@ -653,11 +652,7 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
               if (state.capturedMedia.isNotEmpty) // Logic for check button
                 IconButton(
                   onPressed: () {
-                    if (widget is AddMoreContentScreen) {
-                      context.pop(state.capturedMedia);
-                    } else {
-                      context.pop(state.capturedMedia);
-                    }
+                    context.pop(state.capturedMedia);
                   },
                   icon: Icon(Icons.check,
                       color: AppColorTheme.colorOnlineGreen,
@@ -754,7 +749,10 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
                                 key: ValueKey(state.initCount));
                           } else {
                             return Container(
-                              color: Colors.black,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black,
                               width: size.width,
                               height: size.height,
                             );
@@ -763,7 +761,9 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
                       ),
                     )
                   : Container(
-                      color: Colors.black,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
                       width: size.width,
                       height: size.height,
                     ),

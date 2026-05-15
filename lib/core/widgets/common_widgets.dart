@@ -229,7 +229,7 @@ Widget getMediaCountCard(
                 ? AppColorTheme.colorBlack
                 : AppColorTheme.colorGrey5)
             .withOpacity(0.7),
-        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD01)),
+        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD02)),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -291,19 +291,19 @@ List<Widget> getMediaCount(
   final widgetList = <Widget>[];
   if (imageCount > 0) {
     widgetList.add(getMediaCountCard("image", imageCount, size, context));
-    widgetList.add(const SizedBox(height: 6));
+    widgetList.add(const SizedBox(height: 1));
   }
   if (videoCount > 0) {
     widgetList.add(getMediaCountCard("video", videoCount, size, context));
-    widgetList.add(const SizedBox(height: 6));
+    widgetList.add(const SizedBox(height: 1));
   }
   if (audioCount > 0) {
     widgetList.add(getMediaCountCard("audio", audioCount, size, context));
-    widgetList.add(const SizedBox(height: 6));
+    widgetList.add(const SizedBox(height: 1));
   }
   if (docCount > 0) {
     widgetList.add(getMediaCountCard("doc", docCount, size, context));
-    widgetList.add(const SizedBox(height: 6));
+    widgetList.add(const SizedBox(height: 1));
   }
   return widgetList;
 }

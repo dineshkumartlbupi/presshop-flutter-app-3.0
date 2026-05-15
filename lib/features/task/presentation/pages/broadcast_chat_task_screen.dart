@@ -294,23 +294,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
 
         return Scaffold(
           appBar: CommonBrandedAppBar(
-              title: AppStringsNew2.manageTaskText, size: size, showLogo: true
-              // showActions: true,
-              // leadingFxn: () {
-              //   context.pop();
-              // },
-              // actionWidget: [
-              //   InkWell(
-              //       onTap: () {
-              //         context.goNamed(
-              //           AppRoutes.dashboardName,
-              //           extra: {'initialPosition': 2},
-              //         );
-              //       },
-              //       child: LogoWidget.buildLogo(size)),
-              // ],
-
-              ),
+              title: AppStringsNew2.manageTaskText, size: size, showLogo: true),
           bottomNavigationBar: (isDataLoading && chatList.isNotEmpty)
               ? showLoader()
               : SafeArea(
@@ -363,31 +347,45 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             ),
                             () async {
                               try {
-                                final ImagePicker picker = ImagePicker();
-                                final XFile? photo = await picker.pickImage(
-                                  source: ImageSource.camera,
-                                  imageQuality: 80,
+                                final result = await context.pushNamed(
+                                  AppRoutes.broadcastTaskMediaPickerName,
                                 );
-                                if (photo != null && mounted) {
+                                if (result != null &&
+                                    result is List<CameraData> &&
+                                    result.isNotEmpty &&
+                                    mounted) {
                                   debugPrint(
-                                      "Captured from System Camera: ${photo.path}");
+                                      "Captured from BroadcastTaskMediaPickerScreen: ${result.length} items");
                                   selectMultipleMediaList.clear();
-                                  selectMultipleMediaList.add(
-                                    MediaData(
-                                      isFromGallery: false,
-                                      dateTime: "",
-                                      latitude: latitude?.toString() ?? "",
-                                      location: address ?? "",
-                                      longitude: longitude?.toString() ?? "",
-                                      country: "",
-                                      state: "",
-                                      city: "",
-                                      mediaPath: photo.path,
-                                      mimeType: lookupMimeType(photo.path) ??
-                                          "image/jpeg",
-                                      thumbnail: "",
-                                    ),
-                                  );
+                                  for (var cameraData in result) {
+                                    selectMultipleMediaList.add(
+                                      MediaData(
+                                        isFromGallery: cameraData.fromGallary,
+                                        dateTime: cameraData.dateTime,
+                                        latitude: cameraData.latitude,
+                                        location: cameraData.location,
+                                        longitude: cameraData.longitude,
+                                        country: cameraData.country,
+                                        state: cameraData.state,
+                                        city: cameraData.city,
+                                        mediaPath: cameraData.path,
+                                        mimeType: cameraData.mimeType == "image"
+                                            ? (lookupMimeType(
+                                                    cameraData.path) ??
+                                                "image/jpeg")
+                                            : cameraData.mimeType == "video"
+                                                ? (lookupMimeType(
+                                                        cameraData.path) ??
+                                                    "video/mp4")
+                                                : cameraData.mimeType == "audio"
+                                                    ? (lookupMimeType(
+                                                            cameraData.path) ??
+                                                        "audio/mpeg")
+                                                    : cameraData.mimeType,
+                                        thumbnail: cameraData.videoImagePath,
+                                      ),
+                                    );
+                                  }
                                   previewBottomSheet();
                                 }
                               } catch (e) {
@@ -829,7 +827,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
         for (var file in result.files) {
           final String filePath = file.path!;
           // Safety check to avoid duplicates
-          if (selectMultipleMediaList.any((e) => e.mediaPath == filePath)) {
+          if (selectMultipleMediaList
+              .any((MediaData e) => e.mediaPath == filePath)) {
             continue;
           }
           final String? mimeType = lookupMimeType(filePath);
@@ -891,9 +890,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   }
 
   Future<void> previewBottomSheet() async {
-    debugPrint("previewBottomSheet: Pushing MediaPreviewScreen");
+    debugPrint("previewBottomSheet: Pushing BroadcastTaskPreviewScreen");
     final result = await context.pushNamed(
-      AppRoutes.mediaPreviewName,
+      AppRoutes.broadcastTaskPreviewName,
       extra: {
         'mediaList': selectMultipleMediaList,
         'onMediaUpdated': (updatedList) {
@@ -917,7 +916,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     }
 
     List<String> mediaList =
-        selectMultipleMediaList.map((e) => e.mediaPath).toList();
+        selectMultipleMediaList.map((MediaData e) => e.mediaPath).toList();
 
     Map<String, String> body = {
       'task_id': widget.taskDetail!.task.id,
@@ -935,7 +934,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
         roomId: widget.roomId,
         mediaList: selectMultipleMediaList
             .map(
-              (e) => TaskVideoModel(
+              (MediaData e) => TaskVideoModel(
                 imageVideoUrl: e.mediaPath,
                 type: e.mimeType,
                 thumbnail: e.thumbnail,

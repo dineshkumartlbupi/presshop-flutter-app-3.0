@@ -60,6 +60,9 @@ class AppRoutes {
   static const String locationSharingPath = '/locationSharing';
   static const String permissionPath = '/permission';
   static const String addMoreContentPath = '/addMoreContent';
+  static const String broadcastTaskMediaPickerPath = '/broadcastTaskMediaPicker';
+  static const String broadcastTaskPreviewPath = '/broadcastTaskPreview';
+  static const String draftAddMorePath = '/draftAddMore';
 
   // Names
   static const String splashName = 'splash';
@@ -122,4 +125,7 @@ class AppRoutes {
   static const String locationSharingName = 'locationSharing';
   static const String permissionName = 'permission';
   static const String addMoreContentName = 'addMoreContent';
+  static const String broadcastTaskMediaPickerName = 'broadcastTaskMediaPicker';
+  static const String broadcastTaskPreviewName = 'broadcastTaskPreview';
+  static const String draftAddMoreName = 'draftAddMore';
 }

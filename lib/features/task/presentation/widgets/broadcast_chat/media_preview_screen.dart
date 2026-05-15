@@ -107,41 +107,57 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                                 commonButtonTextStyle(size),
                                 commonButtonStyle(size, Colors.black),
                                 () async {
-                              final ImagePicker picker = ImagePicker();
-                              final XFile? photo = await picker.pickImage(
-                                source: ImageSource.camera,
-                                imageQuality: 80,
-                              );
+                               try {
+                                 final result = await context.pushNamed(
+                                   AppRoutes.broadcastTaskMediaPickerName,
+                                 );
+                                 if (result != null &&
+                                     result is List<CameraData> &&
+                                     result.isNotEmpty &&
+                                     mounted) {
+                                   debugPrint(
+                                       "Captured more from BroadcastTaskMediaPickerScreen: ${result.length} items");
+                                   for (var cameraData in result) {
+                                     // Avoid duplicates
+                                     if (widget.mediaList.any((e) =>
+                                         e.mediaPath.trim() ==
+                                         cameraData.path.trim())) continue;
 
-                              if (photo != null) {
-                                debugPrint(
-                                    "Captured more from System Camera: ${photo.path}");
-                                // Avoid duplicates
-                                if (widget.mediaList.any((e) =>
-                                    e.mediaPath.trim() == photo.path.trim()))
-                                  return;
-
-                                widget.mediaList.insert(
-                                  0,
-                                  MediaData(
-                                    isFromGallery: false,
-                                    dateTime: "",
-                                    latitude: "",
-                                    location: "",
-                                    longitude: "",
-                                    country: "",
-                                    state: "",
-                                    city: "",
-                                    mediaPath: photo.path,
-                                    mimeType: lookupMimeType(photo.path) ??
-                                        "image/jpeg",
-                                    thumbnail: "",
-                                  ),
-                                );
-                                widget.onMediaUpdated(widget.mediaList);
-                                setState(() {});
-                              }
-                            }),
+                                     widget.mediaList.insert(
+                                       0,
+                                       MediaData(
+                                         isFromGallery: cameraData.fromGallary,
+                                         dateTime: cameraData.dateTime,
+                                         latitude: cameraData.latitude,
+                                         location: cameraData.location,
+                                         longitude: cameraData.longitude,
+                                         country: cameraData.country,
+                                         state: cameraData.state,
+                                         city: cameraData.city,
+                                         mediaPath: cameraData.path,
+                                         mimeType: cameraData.mimeType == "image"
+                                             ? (lookupMimeType(cameraData.path) ??
+                                                 "image/jpeg")
+                                             : cameraData.mimeType == "video"
+                                                 ? (lookupMimeType(
+                                                         cameraData.path) ??
+                                                     "video/mp4")
+                                                 : cameraData.mimeType == "audio"
+                                                     ? (lookupMimeType(
+                                                             cameraData.path) ??
+                                                         "audio/mpeg")
+                                                     : cameraData.mimeType,
+                                         thumbnail: cameraData.videoImagePath,
+                                       ),
+                                     );
+                                   }
+                                   widget.onMediaUpdated(widget.mediaList);
+                                   setState(() {});
+                                 }
+                               } catch (e) {
+                                 debugPrint("Camera error: $e");
+                               }
+                             }),
                           ),
                         ),
                         Expanded(

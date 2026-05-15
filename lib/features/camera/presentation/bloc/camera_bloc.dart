@@ -51,8 +51,11 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     on<CameraTimerTickEvent>(
         (event, emit) => emit(state.copyWith(recordingTime: event.time)));
     on<PickDocumentEvent>(_onPickDocument);
-    on<CameraResetStatusEvent>((event, emit) =>
-        emit(state.copyWith(status: CameraStatus.initial, errorMessage: null)));
+    on<CameraResetStatusEvent>((event, emit) => emit(state.copyWith(
+        status: (state.cameraController?.value.isInitialized ?? false)
+            ? CameraStatus.ready
+            : CameraStatus.initial,
+        errorMessage: null)));
     on<CameraPausePreviewEvent>(_onPausePreview);
   }
   Timer? _recordingTimer;

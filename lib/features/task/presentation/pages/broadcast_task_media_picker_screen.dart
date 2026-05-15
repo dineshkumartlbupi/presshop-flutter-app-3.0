@@ -5,11 +5,8 @@ import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/services/permission_service.dart'
-    show PermissionService;
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
@@ -19,27 +16,25 @@ import 'package:presshop/features/camera/presentation/bloc/camera_state.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:go_router/go_router.dart';
 import 'package:presshop/main.dart';
+import 'package:presshop/features/camera/presentation/pages/add_more_content_screen.dart';
 
-class AddMoreContentScreen extends StatefulWidget {
-  const AddMoreContentScreen({
+class BroadcastTaskMediaPickerScreen extends StatefulWidget {
+  const BroadcastTaskMediaPickerScreen({
     super.key,
     this.picAgain = true,
-    this.previousScreen = ScreenNameEnum.addMoreContentScreen,
-    this.autoInitialize = true,
     this.hideBottomBar = false,
   });
   final bool picAgain;
-  final ScreenNameEnum previousScreen;
-  final bool autoInitialize;
   final bool hideBottomBar;
 
   @override
   State<StatefulWidget> createState() {
-    return AddMoreContentScreenState();
+    return BroadcastTaskMediaPickerScreenState();
   }
 }
 
-class AddMoreContentScreenState extends State<AddMoreContentScreen>
+class BroadcastTaskMediaPickerScreenState
+    extends State<BroadcastTaskMediaPickerScreen>
     with WidgetsBindingObserver, TickerProviderStateMixin {
   late AnimationController _exposureModeControlRowAnimationController;
   late Animation<double> _exposureModeControlRowAnimation;
@@ -49,8 +44,6 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
   bool showFocusCircle = false;
   double x = 0;
   double y = 0;
-  bool _showRetryButton = false;
-  Timer? _retryTimer;
 
   double _minAvailableExposureOffset = 0.0;
   double _maxAvailableExposureOffset = 0.0;
@@ -76,18 +69,16 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
     );
 
     _bloc = di.sl<CameraBloc>();
-    // Important: Clear any previous captures before starting a new session
+    // Important: Clear previous captured media when starting a fresh picker
     _bloc!.add(const UpdateCapturedMediaEvent([]));
+    _bloc!.add(const CameraResetStatusEvent());
 
-    if (widget.autoInitialize) {
-      debugPrint(
-          "📸 AddMoreContentScreen: Initializing with stability delay...");
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted) {
-          _bloc!.add(const CameraInitializeEvent(force: true));
-        }
-      });
-    }
+    debugPrint("📸 BroadcastTaskMediaPickerScreen: Initializing...");
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        _bloc!.add(const CameraInitializeEvent(force: true));
+      }
+    });
   }
 
   @override
@@ -98,7 +89,6 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
 
   @override
   void dispose() {
-    _retryTimer?.cancel();
     closeCamera();
     WidgetsBinding.instance.removeObserver(this);
     _exposureModeControlRowAnimationController.dispose();
@@ -176,25 +166,27 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
             }
           }
           _lastStatus = state.status;
+
+          // In this screen, we don't pop on success, we let the user capture more or tap "Done"
           if (state.status == CameraStatus.success) {
-            if (mounted) {
-              _bloc?.add(const CameraResetStatusEvent());
-              context.pop(state.capturedMedia);
-            }
+            _bloc?.add(const CameraResetStatusEvent());
+            // Re-initialize to ensure camera preview is resumed and status returns to 'ready'
+            _bloc?.add(const CameraInitializeEvent(force: false));
+
+            // Best practice: Only proceed if this screen is current
+            if (!(ModalRoute.of(context)?.isCurrent ?? false)) return;
           }
         },
         builder: (context, state) {
-          final bool isAudioMode = state.selectedMode == AppStrings.audioText;
-          final Color bgColor = isAudioMode
+          final bgColor = state.selectedMode == AppStrings.audioText
               ? Theme.of(context).scaffoldBackgroundColor
               : Colors.black;
 
           return Scaffold(
             backgroundColor: bgColor,
-            appBar: _buildAppBar(context, state, size),
-            bottomNavigationBar: (!widget.hideBottomBar &&
-                    (widget.picAgain || state.capturedMedia.isNotEmpty))
-                ? _buildBottomBar(context, state, size)
+            appBar: _buildAppBar(context, state, size, bgColor),
+            bottomNavigationBar: (!widget.hideBottomBar)
+                ? _buildBottomBar(context, state, size, bgColor)
                 : null,
             body: Container(
               color: bgColor,
@@ -207,11 +199,12 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
   }
 
   PreferredSizeWidget _buildAppBar(
-      BuildContext context, CameraState state, Size size) {
+      BuildContext context, CameraState state, Size size, Color bgColor) {
     return NewHomeAppBar(
       size: size,
-      hideLeading: true,
+      hideLeading: false,
       showFilter: false,
+      appBarbackgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       bottom: PreferredSize(
         preferredSize: Size.fromHeight(size.width * AppDimensions.numD1),
         child: Padding(
@@ -256,12 +249,8 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
           mode,
           style: TextStyle(
               color: isSelected
-                  ? (Theme.of(context).brightness == Brightness.dark
-                      ? Colors.red
-                      : AppColorTheme.colorThemePink)
-                  : (Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white
-                      : Colors.black),
+                  ? Theme.of(context).primaryColor
+                  : Theme.of(context).textTheme.bodyLarge?.color,
               fontSize: size.width * AppDimensions.numD035,
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500),
         ),
@@ -269,27 +258,53 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
     );
   }
 
-  Widget? _buildBottomBar(BuildContext context, CameraState state, Size size) {
+  Widget _buildBottomBar(
+      BuildContext context, CameraState state, Size size, Color bgColor) {
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.only(
-            left: size.width * AppDimensions.numD04,
-            top: size.height * AppDimensions.numD032,
-            bottom: size.height * AppDimensions.numD035,
-            right: size.width * AppDimensions.numD04),
-        child: SizedBox(
-          height: size.width * AppDimensions.numD13,
-          child: commonElevatedButton(
-              "Cancel",
-              size,
-              commonTextStyle(
-                  size: size,
-                  fontSize: size.width * AppDimensions.numD04,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700),
-              commonButtonStyle(size, AppColorTheme.colorThemePink), () {
-            context.pop();
-          }),
+        padding: EdgeInsets.symmetric(
+            horizontal: size.width * AppDimensions.numD04,
+            vertical: size.height * AppDimensions.numD02),
+        child: Row(
+          children: [
+            Expanded(
+              child: SizedBox(
+                height: size.width * AppDimensions.numD13,
+                child: commonElevatedButton(
+                    "Cancel",
+                    size,
+                    commonTextStyle(
+                        size: size,
+                        fontSize: size.width * AppDimensions.numD04,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700),
+                    commonButtonStyle(size, Theme.of(context).primaryColor),
+                    () {
+                  context.pop();
+                }),
+              ),
+            ),
+            if (state.capturedMedia.isNotEmpty) ...[
+              SizedBox(width: size.width * AppDimensions.numD04),
+              Expanded(
+                child: SizedBox(
+                  height: size.width * AppDimensions.numD13,
+                  child: commonElevatedButton(
+                      "Next (${state.capturedMedia.length})",
+                      size,
+                      commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD04,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700),
+                      commonButtonStyle(size, Theme.of(context).primaryColor),
+                      () {
+                    context.pop(state.capturedMedia);
+                  }),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );
@@ -303,10 +318,12 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
     if (state.selectedMode == AppStrings.audioText) {
       return _buildAudioBody(context, state, size);
     }
-    if (state.status == CameraStatus.loading ||
-        state.status == CameraStatus.initial) {
-      return const Center(
-        child: CircularProgressIndicator(color: AppColorTheme.colorThemePink),
+    if ((state.status == CameraStatus.loading ||
+            state.status == CameraStatus.initial) &&
+        (state.cameraController == null ||
+            !state.cameraController!.value.isInitialized)) {
+      return Center(
+        child: CircularProgressIndicator(color: Theme.of(context).primaryColor),
       );
     }
 
@@ -330,7 +347,7 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
                 child: _exposureModeControlRowWidget(size, state),
               ),
             ),
-            // Plus Icon
+            // Plus Icon (Pick from Files)
             Align(
               alignment: Alignment.bottomLeft,
               child: InkWell(
@@ -390,13 +407,27 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
                               ? Colors.white24
                               : Colors.grey.shade400,
                           width: 1.2)),
-                  child: Icon(
-                    (state.selectedMode == AppStrings.videoText &&
-                            state.isRecording)
-                        ? Icons.stop_circle_outlined
-                        : Icons.circle,
-                    color: AppColorTheme.colorThemePink,
-                    size: size.width * AppDimensions.numD13,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Icon(
+                        (state.selectedMode == AppStrings.videoText &&
+                                state.isRecording)
+                            ? Icons.stop_circle_outlined
+                            : Icons.circle,
+                        color: Theme.of(context).primaryColor,
+                        size: size.width * AppDimensions.numD13,
+                      ),
+                      if (state.isVideoLoading)
+                        SizedBox(
+                          width: size.width * AppDimensions.numD13,
+                          height: size.width * AppDimensions.numD13,
+                          child: const CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ),
@@ -416,7 +447,8 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
                           List.from(state.capturedMedia)
                             ..addAll(gallerySelected);
                       if (mounted) {
-                        context.pop(combinedMedia);
+                        _bloc?.add(UpdateCapturedMediaEvent(combinedMedia));
+                        resumeCamera();
                       }
                     } else {
                       resumeCamera();
@@ -439,22 +471,6 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
                 ),
               ),
             ),
-            // Check Button
-            // if (state.capturedMedia.isNotEmpty)
-            //   Align(
-            //     alignment: Alignment.bottomRight,
-            //     child: Container(
-            //       margin: EdgeInsets.only(bottom: size.width * AppDimensions.numD25, right: size.width * AppDimensions.numD08),
-            //       child: InkWell(
-            //         onTap: () => context.pop(state.capturedMedia),
-            //         child: Container(
-            //           padding: EdgeInsets.all(size.width * AppDimensions.numD02),
-            //           decoration: const BoxDecoration(color: AppColorTheme.colorOnlineGreen, shape: BoxShape.circle),
-            //           child: Icon(Icons.check, color: Colors.white, size: size.width * AppDimensions.numD08),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
 
             // Focus Circle
             if (showFocusCircle)
@@ -469,8 +485,8 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
             // Top Controls
             Positioned(
               top: size.width * AppDimensions.numD06,
-              left: size.width * AppDimensions.numD1,
-              right: size.width * AppDimensions.numD1,
+              left: size.width * AppDimensions.numD04,
+              right: size.width * AppDimensions.numD04,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -480,22 +496,25 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
                         icon: Icon(
                             state.isFlashOn ? Icons.flash_on : Icons.flash_off,
                             color: Colors.black,
-                            size: size.width * AppDimensions.numD04),
+                            size: size.width * AppDimensions.numD05),
                         onPressed: () => context
                             .read<CameraBloc>()
                             .add(CameraFlashToggleEvent()),
                         style: IconButton.styleFrom(
-                            backgroundColor: Colors.white,
+                            backgroundColor:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white24
+                                    : Colors.white,
                             shape: const CircleBorder()))
                   else
-                    SizedBox(width: size.width * AppDimensions.numD06),
+                    SizedBox(width: size.width * AppDimensions.numD1),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
                           icon: Image.asset("${iconsPath}arrow_square_down.png",
                               color: Colors.black,
-                              height: size.width * AppDimensions.numD042),
+                              height: size.width * AppDimensions.numD05),
                           onPressed: () {
                             _exposureModeControlRowAnimationController.value ==
                                     1
@@ -505,26 +524,30 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
                                     .forward();
                           },
                           style: IconButton.styleFrom(
-                              backgroundColor: Colors.white,
+                              backgroundColor: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white24
+                                  : Colors.white,
                               shape: const CircleBorder())),
                       _exposureModeControlRowUpperWidget(size, state),
                       if (state.selectedMode == AppStrings.videoText)
                         Text(state.recordingTime,
                             style: TextStyle(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: size.width * AppDimensions.numD035)),
+                                color: Colors.white,
+                                fontSize: size.width * AppDimensions.numD035,
+                                fontWeight: FontWeight.bold)),
                     ],
                   ),
                   IconButton(
                       icon: Image.asset("${iconsPath}ic_rotate.png",
-                          height: size.width * AppDimensions.numD04),
+                          height: size.width * AppDimensions.numD05),
                       onPressed: () =>
                           context.read<CameraBloc>().add(CameraSwitchEvent()),
                       style: IconButton.styleFrom(
-                          backgroundColor: Colors.white,
+                          backgroundColor:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white24
+                                  : Colors.white,
                           shape: const CircleBorder())),
                 ],
               ),
@@ -534,32 +557,28 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
       );
     }
     return Container(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? Colors.white
-            : Colors.black,
+        color: Colors.black,
         child: state.status == CameraStatus.loading
-            ? const Center(
+            ? Center(
                 child: CircularProgressIndicator(
-                    color: AppColorTheme.colorThemePink))
+                    color: Theme.of(context).primaryColor))
             : const SizedBox.shrink());
   }
 
   Widget _buildPermissionDeniedUI(
       BuildContext context, Size size, CameraState state) {
     return Container(
-      color: Theme.of(context).brightness == Brightness.dark
-          ? Colors.white
-          : Colors.black,
+      color: Theme.of(context).scaffoldBackgroundColor,
       width: double.infinity,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.camera_alt_outlined,
-              size: 100, color: Colors.white54),
+          Icon(Icons.camera_alt_outlined,
+              size: 100, color: Theme.of(context).hintColor),
           const SizedBox(height: 20),
-          const Text("Camera Permission Required",
+          Text("Camera Permission Required",
               style: TextStyle(
-                  color: Colors.white,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                   fontSize: 18,
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
@@ -567,7 +586,10 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
               onPressed: () => context
                   .read<CameraBloc>()
                   .add(const CameraInitializeEvent(force: true)),
-              child: const Text("Allow Access")),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor),
+              child:
+                  Text("Allow Access", style: TextStyle(color: Colors.white))),
         ],
       ),
     );
@@ -577,92 +599,57 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
     return Column(
       children: [
         const Spacer(),
-        state.isRecording && state.recorderController != null
-            ? AudioWaveforms(
-                size: Size(size.width, 100),
-                recorderController: state.recorderController!,
-                enableGesture: false,
-                backgroundColor: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.black,
-                shouldCalculateScrolledPosition: true,
-                waveStyle: WaveStyle(
-                    waveColor: AppColorTheme.colorThemePink,
-                    extendWaveform: true,
-                    showMiddleLine: false,
-                    gradient: ui.Gradient.linear(const Offset(70, 50),
-                        Offset(size.width / 2, 0), [Colors.red, Colors.green])),
-              )
-            : Container(),
+        if (state.isRecording && state.recorderController != null)
+          AudioWaveforms(
+            size: Size(size.width, 100),
+            recorderController: state.recorderController!,
+            enableGesture: false,
+            backgroundColor: Colors.transparent,
+            waveStyle: WaveStyle(
+                waveColor: Theme.of(context).primaryColor,
+                extendWaveform: true,
+                showMiddleLine: false),
+          ),
         Text(state.recordingTime.isEmpty ? "00:00:00" : state.recordingTime,
-            style: commonTextStyle(
-                size: size,
-                fontSize: size.width * AppDimensions.numD15,
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.red
-                    : AppColorTheme.colorThemePink,
-                fontWeight: FontWeight.w500)),
+            style: TextStyle(
+                color: Theme.of(context).primaryColor,
+                fontSize: size.width * 0.15)),
         const Spacer(),
         Padding(
           padding: EdgeInsets.symmetric(
               horizontal: size.width * AppDimensions.numD08,
               vertical: size.width * AppDimensions.numD04),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (state.recordingTime.isNotEmpty &&
-                  state.recordingTime != "00:00:00" &&
-                  !state.isRecording)
-                IconButton(
-                  onPressed: () {
-                    context.read<CameraBloc>().add(AudioStopRecordingEvent());
-                  },
-                  icon: Icon(Icons.close,
-                      color: Colors.red,
-                      size: size.width * AppDimensions.numD08),
-                ),
-              const Spacer(),
               InkWell(
-                onTap: () {
-                  if (state.isRecording) {
-                    context.read<CameraBloc>().add(AudioStopRecordingEvent());
-                  } else {
-                    context.read<CameraBloc>().add(AudioStartRecordingEvent());
-                  }
-                },
+                onTap: () => context.read<CameraBloc>().add(state.isRecording
+                    ? AudioStopRecordingEvent()
+                    : AudioStartRecordingEvent()),
                 child: Container(
                   padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                   decoration: BoxDecoration(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : Colors.black,
                       shape: BoxShape.circle,
                       border: Border.all(
                           color: Theme.of(context).brightness == Brightness.dark
                               ? Colors.white24
                               : Colors.grey.shade400,
                           width: 1.2)),
-                  child: Icon(
-                      state.isRecording
-                          ? Icons.stop_circle_outlined
-                          : Icons.circle,
-                      color: AppColorTheme.colorThemePink,
-                      size: size.width * AppDimensions.numD13),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Icon(
+                          state.isRecording
+                              ? Icons.stop_circle_outlined
+                              : Icons.circle,
+                          color: Theme.of(context).primaryColor,
+                          size: size.width * AppDimensions.numD13),
+                      if (state.status == CameraStatus.loading)
+                        const CircularProgressIndicator(color: Colors.white),
+                    ],
+                  ),
                 ),
               ),
-              const Spacer(),
-              if (state.capturedMedia.isNotEmpty) // Logic for check button
-                IconButton(
-                  onPressed: () {
-                    if (widget is AddMoreContentScreen) {
-                      context.pop(state.capturedMedia);
-                    } else {
-                      context.pop(state.capturedMedia);
-                    }
-                  },
-                  icon: Icon(Icons.check,
-                      color: AppColorTheme.colorOnlineGreen,
-                      size: size.width * AppDimensions.numD08),
-                ),
             ],
           ),
         )
@@ -677,7 +664,7 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
         value: _currentExposureOffset,
         min: _minAvailableExposureOffset,
         max: _maxAvailableExposureOffset,
-        activeColor: AppColorTheme.colorThemePink,
+        activeColor: Theme.of(context).primaryColor,
         onChanged: (val) {
           setState(() => _currentExposureOffset = val);
           context.read<CameraBloc>().add(UpdateExposureEvent(val));
@@ -772,46 +759,5 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
         ),
       );
     });
-  }
-}
-
-class PersistentGalleryThumbnail extends StatefulWidget {
-  const PersistentGalleryThumbnail(
-      {super.key, required this.galleryMedia, required this.fallbackLoader});
-  final List<dynamic> galleryMedia;
-  final Future<Uint8List?> Function() fallbackLoader;
-  @override
-  State<PersistentGalleryThumbnail> createState() =>
-      _PersistentGalleryThumbnailState();
-}
-
-class _PersistentGalleryThumbnailState
-    extends State<PersistentGalleryThumbnail> {
-  Future<Uint8List?>? _thumbFuture;
-  @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  void _load() {
-    if (widget.galleryMedia.isNotEmpty) {
-      _thumbFuture = (widget.galleryMedia.first as AssetEntity)
-          .thumbnailDataWithSize(const ThumbnailSize(200, 200));
-    } else {
-      _thumbFuture = widget.fallbackLoader();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<Uint8List?>(
-      future: _thumbFuture,
-      builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data != null)
-          return Image.memory(snapshot.data!, fit: BoxFit.cover);
-        return Container(color: Colors.grey);
-      },
-    );
   }
 }

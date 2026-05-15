@@ -436,7 +436,9 @@ class PreviewScreenState extends State<PreviewScreen>
                                   if (widget.type == "camera") {
                                     // Note: mediaList is inserted at index 0, so it's reversed relative to cameraListData
                                     int originalIndex =
-                                        widget.cameraListData.length - 1 - index;
+                                        widget.cameraListData.length -
+                                            1 -
+                                            index;
                                     if (originalIndex >= 0 &&
                                         originalIndex <
                                             widget.cameraListData.length) {
@@ -446,7 +448,8 @@ class PreviewScreenState extends State<PreviewScreen>
                                       widget.cameraListData.clear();
                                       widget.cameraListData.addAll(updatedList);
                                       context.read<CameraBloc>().add(
-                                          UpdateCapturedMediaEvent(updatedList));
+                                          UpdateCapturedMediaEvent(
+                                              updatedList));
                                     }
                                   }
 
@@ -628,8 +631,7 @@ class PreviewScreenState extends State<PreviewScreen>
                                                       size: size,
                                                       fontSize: size.width *
                                                           AppDimensions.numD025,
-                                                      color: mediaList[
-                                                                  index]
+                                                      color: mediaList[index]
                                                               .location
                                                               .isEmpty
                                                           ? (isLocationFetching
@@ -685,10 +687,15 @@ class PreviewScreenState extends State<PreviewScreen>
                                           size.width * AppDimensions.numD035,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700),
-                                  commonButtonStyle(
-                                      size,
-                                      Colors.black), () {
-                                  context.pop();
+                                  commonButtonStyle(size, Colors.black), () {
+                                  context
+                                      .pushNamed(AppRoutes.draftAddMoreName)
+                                      .then((value) {
+                                    if (value != null &&
+                                        value is List<CameraData>) {
+                                      addMediaDataList(value);
+                                    }
+                                  });
 
                                 /*getImageMetaData(widget.cameraData);*/
                               }),
@@ -819,9 +826,7 @@ class PreviewScreenState extends State<PreviewScreen>
                                             size.width * AppDimensions.numD035,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w700),
-                                    commonButtonStyle(
-                                        size,
-                                      Colors.black), () {
+                                    commonButtonStyle(size, Colors.black), () {
                                   context
                                       .pushNamed(AppRoutes.addMoreContentName)
                                       .then((value) {
@@ -985,8 +990,10 @@ class PreviewScreenState extends State<PreviewScreen>
   Future<void> addMediaDataList(List<CameraData> cDataList) async {
     if (cDataList.isNotEmpty) {
       for (var element in cDataList) {
-        // Prevent duplicate media entries based on path
-        if (mediaList.any((m) => m.mediaPath.trim() == element.path.trim())) {
+        // Prevent duplicate media entries based on path (normalized)
+        if (mediaList.any((m) =>
+            m.mediaPath.trim().toLowerCase() ==
+            element.path.trim().toLowerCase())) {
           continue;
         }
 

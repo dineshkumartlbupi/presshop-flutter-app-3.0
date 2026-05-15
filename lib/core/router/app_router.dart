@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:presshop/core/constants/enums.dart';
 import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/splash/presentation/pages/splash_screen.dart';
 import 'package:presshop/main.dart';
@@ -58,12 +59,17 @@ import 'package:presshop/features/earning/presentation/pages/tansaction_detail_s
 import 'package:presshop/core/widgets/error/permission_error_screen.dart';
 import 'package:presshop/core/widgets/error/location_error_screen.dart';
 import 'package:presshop/features/chatbot/presentation/pages/chat_bot_screen.dart';
+
+import 'package:presshop/features/camera/presentation/pages/draft_add_more_screen.dart';
+import 'package:presshop/features/task/presentation/pages/broadcast_task_preview_screen.dart';
 import 'package:presshop/features/rating/presentation/pages/rating_review_screen.dart';
 import 'package:presshop/features/publish/presentation/pages/audio_recorder_screen.dart';
 import 'package:presshop/features/publish/presentation/pages/hash_tag_search_screen.dart';
 import 'package:presshop/features/task/presentation/widgets/preview/manage_task_preview_screen.dart';
 import 'package:presshop/features/task/presentation/widgets/preview_media/manage_task_preview_media_sreen.dart';
 import 'package:presshop/features/camera/presentation/pages/add_more_content_screen.dart';
+import 'package:presshop/features/task/presentation/pages/broadcast_task_media_picker_screen.dart';
+import 'package:presshop/features/task/presentation/pages/broadcast_task_preview_screen.dart';
 
 import 'package:presshop/features/publish/presentation/pages/publish_content_screen.dart';
 import 'package:presshop/features/publish/presentation/pages/content_submitted_screen.dart';
@@ -694,6 +700,42 @@ class AppRouter {
         path: AppRoutes.addMoreContentPath,
         name: AppRoutes.addMoreContentName,
         builder: (context, state) => const AddMoreContentScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.broadcastTaskMediaPickerPath,
+        name: AppRoutes.broadcastTaskMediaPickerName,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return BroadcastTaskMediaPickerScreen(
+            picAgain: extra?['picAgain'] ?? true,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.broadcastTaskPreviewPath,
+        name: AppRoutes.broadcastTaskPreviewName,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          return BroadcastTaskPreviewScreen(
+            mediaList: extra['mediaList'] as List<MediaData>,
+            onMediaUpdated:
+                extra['onMediaUpdated'] as Function(List<MediaData>),
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.draftAddMorePath,
+        name: AppRoutes.draftAddMoreName,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return DraftAddMoreScreen(
+            picAgain: extra?['picAgain'] ?? true,
+            previousScreen:
+                extra?['previousScreen'] ?? ScreenNameEnum.addMoreContentScreen,
+            autoInitialize: extra?['autoInitialize'] ?? true,
+            hideBottomBar: extra?['hideBottomBar'] ?? false,
+          );
+        },
       ),
     ],
 

@@ -22,7 +22,6 @@ import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:go_router/go_router.dart';
 import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 
-// Constants (Keep if not in common)
 const String photoText = "Photo";
 const String videoText = "Video";
 const String scanText = "Scan";
@@ -49,19 +48,14 @@ class CameraScreen extends StatefulWidget {
 
 class CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver, TickerProviderStateMixin {
-  // Animation Controllers for UI effects
   late AnimationController _exposureModeControlRowAnimationController;
   late Animation<double> _exposureModeControlRowAnimation;
 
-  // Zoom & UI state helpers
   double _baseScale = 1.0;
   int _pointers = 0;
   bool showFocusCircle = false;
   double x = 0, y = 0;
 
-  // Exposure slider state (local UI state, syncing with Bloc via events if needed, but slider is interactive)
-  // We can update Bloc on change end to avoid spamming events.
-  // Or just use local state for slider and update controller via Bloc method helper (event).
   double _minAvailableExposureOffset = 0.0;
   double _maxAvailableExposureOffset = 0.0;
   double _currentExposureOffset = 0.0;
@@ -86,7 +80,7 @@ class CameraScreenState extends State<CameraScreen>
     );
 
     _bloc = di.sl<CameraBloc>();
-    // Ensure we start with a clean state for captured media
+
     clearCapturedMedia();
     if (widget.autoInitialize) {
       _bloc!.add(const CameraInitializeEvent());
@@ -104,7 +98,7 @@ class CameraScreenState extends State<CameraScreen>
 
   @override
   void dispose() {
-    closeCamera(); // Ensure camera hardware is released immediately
+    closeCamera();
     WidgetsBinding.instance.removeObserver(this);
     _exposureModeControlRowAnimationController.dispose();
     super.dispose();
@@ -139,7 +133,6 @@ class CameraScreenState extends State<CameraScreen>
 
   Future<Uint8List?> _getLatestGalleryImageBytes() async {
     try {
-      // Ensure we have permissions first
       final PermissionState ps = await PhotoManager.requestPermissionExtend();
       if (!ps.isAuth && !ps.hasAccess) {
         debugPrint(
@@ -147,10 +140,8 @@ class CameraScreenState extends State<CameraScreen>
         return null;
       }
 
-      // Fetch albums with explicit sorting (Latest first)
       final List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
-        type: RequestType
-            .common, // Fetch both images and videos for the thumbnail
+        type: RequestType.common,
         filterOption: FilterOptionGroup(
           orders: [
             const OrderOption(type: OrderOptionType.createDate, asc: false),
@@ -163,7 +154,6 @@ class CameraScreenState extends State<CameraScreen>
         return null;
       }
 
-      // Find the first album that actually has media
       for (var path in paths) {
         final List<AssetEntity> assets =
             await path.getAssetListRange(start: 0, end: 1);
@@ -190,8 +180,6 @@ class CameraScreenState extends State<CameraScreen>
       value: _bloc!,
       child: BlocConsumer<CameraBloc, CameraState>(
         listener: (context, state) async {
-          // Update local limits when camera is ready
-          // ONLY run this if status changed to ready to avoid redundant calls (blinking)
           if (state.status == CameraStatus.ready &&
               _lastStatus != CameraStatus.ready &&
               state.cameraController != null &&
@@ -199,7 +187,7 @@ class CameraScreenState extends State<CameraScreen>
             try {
               debugPrint(
                   "📸 CameraScreen: Camera ready, initializing UI limits");
-              // Wrap property access in try-catch to avoid Disposed CameraController errors
+
               _minAvailableExposureOffset =
                   await state.cameraController!.getMinExposureOffset();
               _maxAvailableExposureOffset =
@@ -219,17 +207,22 @@ class CameraScreenState extends State<CameraScreen>
           if (state.status == CameraStatus.failure) {
             debugPrint(
                 "📸 CameraScreen: Camera failure: ${state.errorMessage}");
-
-            // Redirect logic removed to show internal failure UI instead
           }
 
           if (state.status == CameraStatus.success) {
             if (mounted) {
               _bloc?.add(const CameraResetStatusEvent());
+
+              final bool isCurrent = ModalRoute.of(context)?.isCurrent ?? false;
+              if (!isCurrent) {
+                debugPrint(
+                    "📸 CameraScreen: Success received but NOT the current route. Ignoring navigation.");
+                return;
+              }
+
               if (widget.previousScreen != ScreenNameEnum.manageTaskScreen) {
                 _navigateToPreview(state);
               }
-              // For manageTaskScreen, we stay on this screen and show the Tick/Cross overlay via _buildBody
             }
           }
 
@@ -239,14 +232,16 @@ class CameraScreenState extends State<CameraScreen>
           }
         },
         builder: (context, state) {
+          final bool isAudioMode = state.selectedMode == AppStrings.audioText;
+          final Color bgColor = isAudioMode
+              ? Theme.of(context).scaffoldBackgroundColor
+              : Colors.black;
+
           return Scaffold(
-            backgroundColor: Colors.black, // Root background must be black
+            backgroundColor: bgColor,
             appBar: _buildAppBar(context, state, size),
-            // bottomNavigationBar: (!widget.hideBottomBar && state.capturedMedia.isNotEmpty)
-            //     ? _buildBottomBar(context, state, size)
-            //     : null,
             body: Container(
-              color: Colors.black, // Ensure body is also black
+              color: bgColor,
               child: _buildBody(context, state, size),
             ),
           );
@@ -365,7 +360,6 @@ class CameraScreenState extends State<CameraScreen>
   // }
 
   void _navigateToPreview(CameraState state) async {
-    // Close camera hardware before navigating to avoid resource hogging/stuck states
     closeCamera();
 
     await context.pushNamed(
@@ -384,33 +378,26 @@ class CameraScreenState extends State<CameraScreen>
         'mediaList': <MediaData>[],
       },
     ).then((value) {
-      // On return from PreviewPage
       if (!mounted) return;
 
       if (_bloc?.state.selectedMode == AppStrings.scanText) {
-        // If we were in scan mode, switch back to photo mode which will auto-init
         _bloc?.add(const CameraModeChangeEvent(AppStrings.photoText));
       } else {
-        // For other modes, just ensure the camera is ready
         resumeCamera();
       }
     });
   }
 
   Widget _buildBody(BuildContext context, CameraState state, Size size) {
-    // 1. Show permission UI if denied or requesting
     if (state.status == CameraStatus.permissionDenied ||
         state.status == CameraStatus.requestingPermission) {
       return _buildPermissionDeniedUI(context, size, state);
     }
 
-    // 2. Show audio body if in audio mode
     if (state.selectedMode == AppStrings.audioText) {
       return _buildAudioBody(context, state, size);
     }
 
-    // 3. Show camera preview and overlays if controller is ready, OR if we have a failure
-    // Also show if preview is paused (it will just show the last frame or a black screen, which is better than a loader)
     if (((state.cameraController != null &&
                 state.cameraController!.value.isInitialized) ||
             state.status == CameraStatus.failure ||
@@ -419,7 +406,7 @@ class CameraScreenState extends State<CameraScreen>
       return Stack(
         children: [
           _buildCameraPreview(context, state, size),
-          // Exposure Controls
+
           Positioned(
             left: 0,
             right: 0,
@@ -704,7 +691,6 @@ class CameraScreenState extends State<CameraScreen>
       );
     }
 
-    // 4. Default fallback: show loader while hardware initializes
     return Container(
       color: Colors.black,
       child: state.status == CameraStatus.loading
@@ -715,11 +701,11 @@ class CameraScreenState extends State<CameraScreen>
                   const CircularProgressIndicator(
                       color: AppColorTheme.colorThemePink),
                   const SizedBox(height: 16),
-                  Text(
-                    "Initializing Camera...",
-                    style: TextStyle(
-                        color: Colors.white70, fontSize: size.width * 0.035),
-                  ),
+                  // Text(
+                  //   "Initializing Camera...",
+                  //   style: TextStyle(
+                  //       color: Colors.white70, fontSize: size.width * 0.035),
+                  // ),
                 ],
               ),
             )
@@ -946,22 +932,19 @@ class CameraScreenState extends State<CameraScreen>
       child: LayoutBuilder(builder: (context, constraints) {
         return Center(
           child: GestureDetector(
-            onScaleStart: (details) => _baseScale =
-                _currentZoom, // Wait, need to track current scale in UI or Bloc?
+            onScaleStart: (details) => _baseScale = _currentZoom,
             onScaleUpdate: (details) async {
               if (_pointers != 2) return;
               _currentZoom = (_baseScale * details.scale)
                   .clamp(_minAvailableZoom, _maxAvailableZoom);
               context.read<CameraBloc>().add(UpdateZoomEvent(_currentZoom));
-              // No setState here, as we update via Bloc. But Bloc updates state? No, UpdateZoomEvent just sets controller.
-              // So we rely on controller update internal.
             },
             onTapDown: (details) {
               final offset = Offset(
                 details.localPosition.dx / constraints.maxWidth,
                 details.localPosition.dy / constraints.maxHeight,
               );
-              // Manual controller call for focus, kept in UI for responsiveness
+
               state.cameraController?.setExposurePoint(offset);
               state.cameraController?.setFocusPoint(offset);
 
@@ -1063,12 +1046,7 @@ class CameraScreenState extends State<CameraScreen>
                   !state.isRecording)
                 IconButton(
                   onPressed: () {
-                    // Cancel/Reset
-                    // This logic was in stopAudioRecording(false) -> clear list
-                    context.read<CameraBloc>().add(
-                        AudioStopRecordingEvent()); // Needs a flag to discard?
-                    // Bloc doesn't have discard. We can just ignore result in listener if we have a flag.
-                    // Or simplified: Just stop.
+                    context.read<CameraBloc>().add(AudioStopRecordingEvent());
                   },
                   icon: Icon(Icons.close,
                       color: Colors.red,
@@ -1102,15 +1080,15 @@ class CameraScreenState extends State<CameraScreen>
                 ),
               ),
               const Spacer(),
-              if (state.capturedMedia.isNotEmpty) // Logic for check button
-                IconButton(
-                  onPressed: () {
-                    _navigateToPreview(state);
-                  },
-                  icon: Icon(Icons.check,
-                      color: AppColorTheme.colorOnlineGreen,
-                      size: size.width * AppDimensions.numD08),
-                ),
+              // if (state.capturedMedia.isNotEmpty) // Logic for check button
+              //   IconButton(
+              //     onPressed: () {
+              //       _navigateToPreview(state);
+              //     },
+              //     icon: Icon(Icons.check,
+              //         color: AppColorTheme.colorOnlineGreen,
+              //         size: size.width * AppDimensions.numD08),
+              //   ),
             ],
           ),
         )
@@ -1209,8 +1187,6 @@ class CameraScreenState extends State<CameraScreen>
 
   // Exposure Utilities
   Widget _exposureModeControlRowWidget(Size size, CameraState state) {
-    // Shortened for brevity, similar to original but using state vars locally or from Bloc if I implemented them
-    // _currentExposureOffset is local. Bloc update via UpdateExposureEvent.
     return SizeTransition(
       sizeFactor: _exposureModeControlRowAnimation,
       child: ClipRect(
@@ -1359,7 +1335,6 @@ class _PersistentGalleryThumbnailState
           return Image.memory(snapshot.data!, fit: BoxFit.cover);
         }
 
-        // Fallback to a placeholder only if no data could be fetched
         return Image.asset(
           "${CommonAssets.dummyImagePath}walk2.png",
           fit: BoxFit.cover,
