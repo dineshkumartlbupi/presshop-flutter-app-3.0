@@ -570,6 +570,27 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       CameraModeChangeEvent event, Emitter<CameraState> emit) async {
     if (state.selectedMode == event.mode) return;
 
+    // 1. Handle stopping active recordings before switching
+    if (state.isRecording && state.cameraController != null) {
+      debugPrint("🚀 CameraBloc: Stopping video recording before mode change");
+      try {
+        if (state.cameraController!.value.isRecordingVideo) {
+          await state.cameraController!.stopVideoRecording();
+        }
+      } catch (e) {
+        debugPrint("Error stopping video on mode change: $e");
+      }
+    }
+
+    if (state.isAudioRecording && state.recorderController != null) {
+      debugPrint("🚀 CameraBloc: Stopping audio recording before mode change");
+      try {
+        await state.recorderController!.stop();
+      } catch (e) {
+        debugPrint("Error stopping audio on mode change: $e");
+      }
+    }
+
     bool shouldInitCamera = false;
     bool isFront = state.isFrontCamera;
 
@@ -597,13 +618,16 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         recordingTime: "00:00:00",
         isRecording: false,
         isAudioRecording: false,
+        isVideoLoading: false,
         cameraController: shouldInitCamera ? state.cameraController : null,
-        clearController: !shouldInitCamera));
+        clearController: !shouldInitCamera,
+        status: shouldInitCamera ? CameraStatus.loading : CameraStatus.initial));
 
     _stopTimer();
 
     if (shouldInitCamera) {
-      add(const CameraInitializeEvent());
+      // Force init when switching modes to ensure hardware sync
+      add(const CameraInitializeEvent(force: true));
     }
   }
 

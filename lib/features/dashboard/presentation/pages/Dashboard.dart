@@ -246,19 +246,7 @@ class DashboardPageState extends State<Dashboard>
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed && currentIndex == 2) {
       debugPrint("🚀 Dashboard: App resumed on Camera tab. Syncing state...");
-
-      // Wait a moment for OS to settle before checking permissions
-      Future.delayed(const Duration(milliseconds: 800), () {
-        if (!mounted) return;
-        _permissionService.getDetailedStatus().then((detail) async {
-          if (detail.cameraAndGalleryGranted) {
-            _cameraKey.currentState?.resumeCamera();
-          } else {
-            // Only redirect if Camera or Gallery are missing
-            _redirectToPermissionScreen();
-          }
-        });
-      });
+      _checkPermissionsAndInitializeCamera();
     }
   }
 
@@ -748,9 +736,20 @@ class DashboardPageState extends State<Dashboard>
     }
     _lastCameraInitTime = now;
 
-    final detail = await _permissionService.getDetailedStatus();
+    // 1. Get current status
+    var detail = await _permissionService.getDetailedStatus();
 
+    // 2. If not granted, request it first (unless permanently denied)
+    if (!detail.cameraAndGalleryGranted && !detail.isAnyPermanentlyDenied) {
+      debugPrint("🚀 Dashboard: Requesting permissions...");
+      await _permissionService.requestCameraAndGalleryPermissions();
+      // Re-fetch status after request
+      detail = await _permissionService.getDetailedStatus();
+    }
+
+    // 3. Now check if granted or if we should redirect
     if (!detail.cameraAndGalleryGranted) {
+      debugPrint("🚀 Dashboard: Permissions not granted, redirecting...");
       _redirectToPermissionScreen();
     } else {
       // Just ensure the camera is initialized if it's not already

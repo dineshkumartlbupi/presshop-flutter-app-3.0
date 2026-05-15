@@ -612,7 +612,7 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
     );
 
     List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
-      type: RequestType.all,
+      type: RequestType.common,
       onlyAll: _isLimited,
       filterOption: filter,
     );
