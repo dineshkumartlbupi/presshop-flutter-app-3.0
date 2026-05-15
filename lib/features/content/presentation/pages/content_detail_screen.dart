@@ -889,22 +889,30 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   child: Column(
                     children: [
                       Text(
-                          contentItem!.paidStatus == false
-                              ? 'Published Price'
-                              : contentItem!.paidStatus == true &&
-                                      (contentItem!.isPaidStatusToHopper)
-                                  ? AppStrings.receivedText
-                                  : AppStrings.soldText,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * AppDimensions.numD035,
-                              color: contentItem!.paidStatus == false
-                                  ? Colors.white
-                                  : Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.color,
-                              fontWeight: FontWeight.w400)),
+                        ((contentItem!.paidStatus == false
+                                    ? 'Published Price'
+                                    : contentItem!.paidStatus == true &&
+                                            (contentItem!.isPaidStatusToHopper)
+                                        ? AppStrings.receivedText
+                                        : AppStrings.soldText))
+                                .substring(0, 1)
+                                .toUpperCase() +
+                            (contentItem!.paidStatus == false
+                                    ? 'Published Price'
+                                    : contentItem!.paidStatus == true &&
+                                            (contentItem!.isPaidStatusToHopper)
+                                        ? AppStrings.receivedText
+                                        : AppStrings.soldText)
+                                .substring(1),
+                        style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD035,
+                          color: contentItem!.paidStatus == false
+                              ? Colors.white
+                              : Theme.of(context).textTheme.bodyLarge?.color,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
                       FittedBox(
                         child: Container(
                           margin: EdgeInsets.only(
@@ -939,7 +947,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   decoration: BoxDecoration(
                       color: Theme.of(context).brightness == Brightness.dark
                           ? AppColorTheme.colorDarkThemeCard
-                          : AppColorTheme.colorGreyChat,
+                          : AppColorTheme.colorLightGrey,
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD03)),
                   child: Column(

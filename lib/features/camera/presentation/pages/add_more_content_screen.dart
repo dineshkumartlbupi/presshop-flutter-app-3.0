@@ -582,9 +582,7 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
                 size: Size(size.width, 100),
                 recorderController: state.recorderController!,
                 enableGesture: false,
-                backgroundColor: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.black,
+                backgroundColor: Colors.transparent,
                 shouldCalculateScrolledPosition: true,
                 waveStyle: WaveStyle(
                     waveColor: AppColorTheme.colorThemePink,
@@ -632,9 +630,7 @@ class AddMoreContentScreenState extends State<AddMoreContentScreen>
                 child: Container(
                   padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                   decoration: BoxDecoration(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : Colors.black,
+                      color: Colors.transparent,
                       shape: BoxShape.circle,
                       border: Border.all(
                           color: Theme.of(context).brightness == Brightness.dark

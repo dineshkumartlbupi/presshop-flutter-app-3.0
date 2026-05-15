@@ -125,7 +125,7 @@ class CommissionWidget extends StatelessWidget {
                   color: AppColorTheme.colorThemePink,
                 ),
                 child: Text(
-                  "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.parse(commissionData.totalEarning.toString()))}",
+                  "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.tryParse(commissionData.totalEarning.toString()) ?? 0.0)}",
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD04,
@@ -162,7 +162,7 @@ class CommissionWidget extends StatelessWidget {
                         : Colors.black,
                   ),
                 child: Text(
-                  "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.parse(commissionData.commission.toString()))}",
+                  "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.tryParse(commissionData.commission.toString()) ?? 0.0)}",
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * AppDimensions.numD04,
@@ -211,7 +211,7 @@ class CommissionWidget extends StatelessWidget {
                     fontWeight: FontWeight.w400),
               ),
               Text(
-                "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.parse(commissionData.commissionReceived.toString()))}",
+                "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.tryParse(commissionData.commissionReceived.toString()) ?? 0.0)}",
                 style: commonTextStyle(
                     size: size,
                     fontSize: size.width * AppDimensions.numD035,
@@ -234,7 +234,7 @@ class CommissionWidget extends StatelessWidget {
                     fontWeight: FontWeight.w400),
               ),
               Text(
-                "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.parse(commissionData.commissionPending.toString()))}",
+                "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.tryParse(commissionData.commissionPending.toString()) ?? 0.0)}",
                 style: commonTextStyle(
                     size: size,
                     fontSize: size.width * AppDimensions.numD035,

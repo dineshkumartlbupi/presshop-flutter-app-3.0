@@ -46,6 +46,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
   void initState() {
     super.initState();
     _selectedTabbar = widget.initialTapPosition;
+    if (_selectedTabbar < 0 || _selectedTabbar >= 2) {
+      _selectedTabbar = 0;
+    }
     _tabController = TabController(
       length: 2,
       vsync: this,
@@ -336,7 +339,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                             earningData != null &&
                                                     earningData
                                                         .totalEarning.isNotEmpty
-                                                ? '${earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}${formatDouble(double.parse(earningData.totalEarning))}'
+                                                ? '${earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}${formatDouble(double.tryParse(earningData.totalEarning) ?? 0.0)}'
                                                 : '${earningData != null && earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}0',
                                             style: commonTextStyle(
                                                 size: size,
@@ -368,7 +371,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                           ),
                                           Text(
                                             state.monthlyEarnings.isNotEmpty
-                                                ? '${earningData != null && earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}${formatDouble(double.parse(state.monthlyEarnings))}'
+                                                ? '${earningData != null && earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}${formatDouble(double.tryParse(state.monthlyEarnings) ?? 0.0)}'
                                                 : '${earningData != null && earningData.currencySymbol.isNotEmpty ? earningData.currencySymbol : currencySymbol}0',
                                             style: commonTextStyle(
                                                 size: size,
@@ -396,10 +399,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                           final picked = await showDialog<int>(
                                             context: context,
                                             builder: (context) {
-                                              int selectedYear =
-                                                  fromDate.isNotEmpty
-                                                      ? int.parse(fromDate)
-                                                      : now.year;
+                                               int selectedYear =
+                                                   fromDate.isNotEmpty
+                                                       ? int.tryParse(fromDate) ?? now.year
+                                                       : now.year;
                                               return AlertDialog(
                                                 title: Text('Select Year'),
                                                 content: SizedBox(
@@ -496,7 +499,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                 // Month picker
                                                 final now = DateTime.now();
                                                 final int selectedYear =
-                                                    int.parse(fromDate);
+                                                    int.tryParse(fromDate) ?? now.year;
                                                 final int lastMonth =
                                                     (selectedYear == now.year)
                                                         ? now.month
@@ -507,7 +510,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                   builder: (context) {
                                                     int selectedMonth =
                                                         toDate.isNotEmpty
-                                                            ? int.parse(toDate)
+                                                            ? int.tryParse(toDate) ?? 1
                                                             : 1;
                                                     return AlertDialog(
                                                       title:
@@ -634,7 +637,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                 toDate.isNotEmpty
                                                     ? DateFormat.MMMM().format(
                                                         DateTime(0,
-                                                            int.parse(toDate)))
+                                                            int.tryParse(toDate) ?? 1))
                                                     : "Month",
                                                 style: commonTextStyle(
                                                     size: size,
@@ -1021,7 +1024,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   ),
                                   child: Text(
                                     item.amount.isNotEmpty
-                                        ? "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.payableT0Hopper))}"
+                                        ? "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.tryParse(item.payableT0Hopper) ?? 0.0)}"
                                         : "",
                                     style: commonTextStyle(
                                         size: size,
@@ -1164,11 +1167,11 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                 ),
                                 Text(
                                   item.type == "content"
-                                      ? item.totalEarningAmt != "null"
-                                          ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.totalEarningAmt))}'
+                                      ? item.totalEarningAmt != "null" && item.totalEarningAmt.isNotEmpty
+                                          ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.tryParse(item.totalEarningAmt) ?? 0.0)}'
                                           : "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}0"
-                                      : item.totalEarningAmt != "null"
-                                          ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.totalEarningAmt))}'
+                                      : item.totalEarningAmt != "null" && item.totalEarningAmt.isNotEmpty
+                                          ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.tryParse(item.totalEarningAmt) ?? 0.0)}'
                                           : "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}0",
                                   style: commonTextStyle(
                                       size: size,
@@ -1283,9 +1286,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   size.width * AppDimensions.numD015),
                             ),
                             child: Text(
-                              item.amount.isNotEmpty
-                                  ? "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.payableT0Hopper))}"
-                                  : "",
+                                   item.amount.isNotEmpty
+                                      ? "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.tryParse(item.payableT0Hopper) ?? 0.0)}"
+                                      : "",
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD04,
@@ -1389,10 +1392,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             Text(
                               item.type == "content"
                                   ? item.totalEarningAmt != "null"
-                                      ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.totalEarningAmt))}'
+                                      ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.tryParse(item.totalEarningAmt) ?? 0.0)}'
                                       : "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}0"
-                                  : item.totalEarningAmt != "null"
-                                      ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.totalEarningAmt))}'
+                                  : item.totalEarningAmt != "null" && item.totalEarningAmt.isNotEmpty
+                                      ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.tryParse(item.totalEarningAmt) ?? 0.0)}'
                                       : "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}0",
                               style: commonTextStyle(
                                   size: size,
@@ -1427,7 +1430,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             ),
                             Text(
                               item.payableCommission.isNotEmpty
-                                  ? "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.payableCommission))}"
+                                  ? "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.tryParse(item.payableCommission) ?? 0.0)}"
                                   : "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}0",
                               style: commonTextStyle(
                                   size: size,
@@ -1460,7 +1463,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   fontWeight: FontWeight.w400),
                             ),
                             Text(
-                              "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.stripefee))}",
+                              "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.tryParse(item.stripefee) ?? 0.0)}",
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD035,
@@ -1494,7 +1497,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             ),
                             Text(
                               item.amount.isNotEmpty
-                                  ? "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.payableT0Hopper))}"
+                                  ? "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.tryParse(item.payableT0Hopper) ?? 0.0)}"
                                   : "",
                               style: commonTextStyle(
                                   size: size,
@@ -1749,23 +1752,25 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                 String? pickedDate = await commonDatePicker();
 
                                 if (pickedDate != null) {
-                                  DateTime parseFromDate =
-                                      DateTime.parse(item.fromDate!);
-                                  DateTime parseToDate =
-                                      DateTime.parse(pickedDate);
+                                   DateTime? parseFromDate =
+                                       DateTime.tryParse(item.fromDate!);
+                                   DateTime? parseToDate =
+                                       DateTime.tryParse(pickedDate);
 
-                                  if (parseToDate.isAfter(parseFromDate) ||
-                                      parseToDate
-                                          .isAtSameMomentAs(parseFromDate)) {
-                                    item.toDate = pickedDate;
-                                    toDate = pickedDate;
-                                  } else {
-                                    showSnackBar(
-                                        "Date Error",
-                                        "Please select to date above from date",
-                                        Colors.red);
+                                   if (parseFromDate != null && parseToDate != null) {
+                                     if (parseToDate.isAfter(parseFromDate) ||
+                                         parseToDate
+                                             .isAtSameMomentAs(parseFromDate)) {
+                                       item.toDate = pickedDate;
+                                       toDate = pickedDate;
+                                     } else {
+                                       showSnackBar(
+                                           "Date Error",
+                                           "Please select to date above from date",
+                                           Colors.red);
+                                     }
+                                   }
                                   }
-                                }
                               }
                               stateSetter(() {});
                               setState(() {});

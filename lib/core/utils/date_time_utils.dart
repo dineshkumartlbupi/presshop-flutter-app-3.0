@@ -2,13 +2,18 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 String changeDateFormat(String inputFormat, String input, String outputFormat) {
-  debugPrint("InpoutDate: $input");
-  var inputDF = DateFormat(inputFormat);
-  var inputDate = inputDF.parse(input, true);
-  var outputDF = DateFormat(outputFormat);
-  var outputDate = outputDF.format(inputDate);
-  debugPrint("outputDate: $outputDate");
-  return outputDate;
+  try {
+    debugPrint("InpoutDate: $input");
+    var inputDF = DateFormat(inputFormat);
+    var inputDate = inputDF.parse(input, true);
+    var outputDF = DateFormat(outputFormat);
+    var outputDate = outputDF.format(inputDate);
+    debugPrint("outputDate: $outputDate");
+    return outputDate;
+  } catch (e) {
+    debugPrint("changeDateFormat error: $e for input: $input");
+    return input;
+  }
 }
 
 String dateTimeFormatter(
@@ -16,34 +21,48 @@ String dateTimeFormatter(
     String format = "d MMM yyyy",
     bool time = false,
     bool utc = false}) {
+  if (dateTime.isEmpty || dateTime == "null") return "-";
   try {
     DateTime currentDateTime =
         utc ? DateTime.now().toUtc() : DateTime.now().toLocal();
-    DateTime parseDateTime = DateTime.now();
+    DateTime? parseDateTime;
 
-    if (dateTimeFormatCheck(dateTime) && format.isNotEmpty) {
-      parseDateTime = DateTime.parse(dateTime);
-    } else if (time) {
-      String date = DateFormat('d MMMM yyyy').format(currentDateTime);
-      parseDateTime = DateTime.parse("$date $dateTime");
-    } else {
-      String time = DateFormat('hh:mm a').format(currentDateTime);
-      parseDateTime = DateTime.parse("$dateTime $time");
+    if (dateTimeFormatCheck(dateTime)) {
+      parseDateTime = DateTime.tryParse(dateTime);
+    }
+
+    if (parseDateTime == null) {
+      if (time) {
+        try {
+          String dateStr = DateFormat('yyyy-MM-dd').format(currentDateTime);
+          parseDateTime = DateTime.tryParse("$dateStr $dateTime");
+        } catch (_) {}
+      } else {
+        try {
+          String timeStr = DateFormat('HH:mm:ss').format(currentDateTime);
+          parseDateTime = DateTime.tryParse("$dateTime $timeStr");
+        } catch (_) {}
+      }
+    }
+
+    if (parseDateTime == null) {
+      return dateTime;
     }
 
     return DateFormat(format)
         .format(utc ? parseDateTime.toUtc() : parseDateTime.toLocal());
-  } on FormatException catch (e) {
-    debugPrint("$e");
-    return DateFormat(format).format(DateTime.now());
+  } catch (e) {
+    debugPrint("dateTimeFormatter error: $e for input: $dateTime");
+    return dateTime;
   }
 }
 
 bool dateTimeFormatCheck(String date) {
+  if (date.isEmpty) return false;
   try {
-    // DateTime covertValue = DateTime.parse(date);
-    return true;
-  } on FormatException {
+    DateTime? convertValue = DateTime.tryParse(date);
+    return convertValue != null;
+  } catch (_) {
     return false;
   }
 }

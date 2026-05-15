@@ -511,7 +511,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                             children: [
                                                               SizedBox(
                                                                 height: size
-                                                                        .width *
+                                                                        .height *
                                                                     AppDimensions
                                                                         .numD01,
                                                               ),
@@ -665,7 +665,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                             'openDashboard':
                                                                                 false,
                                                                             'initialTapPosition':
-                                                                                2,
+                                                                                0,
                                                                           },
                                                                         );
                                                                       }),
@@ -686,7 +686,12 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                       height: size.width *
                                                           AppDimensions.numD025,
                                                     ),
+                                                    SizedBox(
+                                                      height: size.height *
+                                                          AppDimensions.numD01,
+                                                    ),
                                                     // widgetDivider()
+
                                                     chatDividerSpacer()
                                                   ],
                                                 ),
@@ -2011,7 +2016,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                             AppRoutes.myEarningName,
                                                                             extra: {
                                                                               'openDashboard': false,
-                                                                              'initialTapPosition': 2,
+                                                                              'initialTapPosition': 0,
                                                                             },
                                                                           );
                                                                         }),
@@ -3066,12 +3071,13 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                 ),
                 Container(
                   width: size.width * AppDimensions.numD30,
+                  margin: EdgeInsets.only(bottom: 10),
                   padding: EdgeInsets.symmetric(
                       vertical: size.width * AppDimensions.numD012),
                   decoration: BoxDecoration(
                       color: Theme.of(context).brightness == Brightness.dark
                           ? AppColorTheme.colorDarkThemeCard
-                          : AppColorTheme.colorGreyChat,
+                          : AppColorTheme.colorLightGrey,
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD03)),
                   child: Column(
@@ -4993,7 +4999,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             AppRoutes.myEarningName,
                             extra: {
                               'openDashboard': false,
-                              'initialTapPosition': 2,
+                              'initialTapPosition': 0,
                             },
                           );
                         }),

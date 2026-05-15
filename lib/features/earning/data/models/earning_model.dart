@@ -40,7 +40,7 @@ class EarningProfileDataModel {
       invoiceNumber: json['invoiceNumber'] ?? '',
       dueDate: json['Due_date'],
       paidStatusForHopper: json['paid_status_for_hopper'] ?? false,
-      createdAt: DateTime.parse(json['createdAt']),
+      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? "") ?? DateTime.now(),
     );
   }
   final String id;
