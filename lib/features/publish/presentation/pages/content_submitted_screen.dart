@@ -46,11 +46,11 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
     if (widget.publishData != null) {
       for (var media in widget.publishData!.mediaList) {
         debugPrint("mimeType::::::::${media.mimeType}");
-        if (media.mimeType == 'image') imageCount++;
-        if (media.mimeType == 'video') videoCount++;
-        if (media.mimeType == 'audio') audioCount++;
-        if (media.mimeType == 'doc') docCount++;
-        if (media.mimeType == 'pdf') pdfCount++;
+        if (media.mimeType.contains('image')) imageCount++;
+        if (media.mimeType.contains('video')) videoCount++;
+        if (media.mimeType.contains('audio')) audioCount++;
+        if (media.mimeType.contains('doc')) docCount++;
+        if (media.mimeType.contains('pdf')) pdfCount++;
       }
     }
 
@@ -58,11 +58,11 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
       for (var media in widget.myContentDetail!.contentMediaList) {
         debugPrint(" mediaType::::::::${media.mediaType}");
 
-        if (media.mediaType == 'image') imageCount++;
-        if (media.mediaType == 'video') videoCount++;
-        if (media.mediaType == 'audio') audioCount++;
-        if (media.mediaType == 'doc') docCount++;
-        if (media.mediaType == 'pdf') pdfCount++;
+        if (media.mediaType.contains('image')) imageCount++;
+        if (media.mediaType.contains('video')) videoCount++;
+        if (media.mediaType.contains('audio')) audioCount++;
+        if (media.mediaType.contains('doc')) docCount++;
+        if (media.mediaType.contains('pdf')) pdfCount++;
       }
     }
   }
@@ -406,7 +406,9 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                                     Text(
                                                         (imageCount +
                                                                 videoCount +
-                                                                audioCount)
+                                                                audioCount +
+                                                                docCount +
+                                                                pdfCount)
                                                             .toString(),
                                                         style: TextStyle(
                                                             color: Colors.white,

@@ -7,16 +7,13 @@ import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:presshop/core/widgets/common_widgets_new.dart';
-import 'package:presshop/core/widgets/logo_widget.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 import 'package:video_player/video_player.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
-import 'package:presshop/features/earning/presentation/pages/tansaction_detail_screen.dart';
 
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
@@ -398,9 +395,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     ],
                   ),
                 ),
-          body: (isDataLoading && chatList.isEmpty)
-              ? Center(child: showLoader())
-              : SingleChildScrollView(
+          body: Stack(
+            children: [
+              SingleChildScrollView(
                   padding: EdgeInsets.all(size.width * AppDimensions.numD04),
                   child: Column(
                     children: [
@@ -466,10 +463,13 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     ],
                   ),
                 ),
-        );
-      },
-    );
-  }
+                if (isDataLoading) Center(child: showLoader()),
+              ],
+            ),
+          );
+        },
+      );
+    }
 
   void _submitRating() {
     if (ratingReviewController1.text.isNotEmpty) {

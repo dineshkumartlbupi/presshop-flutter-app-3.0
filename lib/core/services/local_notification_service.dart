@@ -133,20 +133,9 @@ class LocalNotificationService {
 
     final DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
-      requestAlertPermission: false,
-      requestBadgePermission: false,
-      requestSoundPermission: false,
-      // onDidReceiveLocalNotification:
-      //     (int id, String? title, String? body, String? payload) async {
-      //   didReceiveLocalNotificationStream.add(
-      //     ReceivedNotification(
-      //       id: id,
-      //       title: title,
-      //       body: body,
-      //       payload: payload,
-      //     ),
-      //   );
-      // },
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
     );
 
     final InitializationSettings initializationSettings =
@@ -240,24 +229,29 @@ class LocalNotificationService {
 
   Future<void> showFlutterNotificationWithSound(RemoteMessage message) async {
     StyleInformation? styleInformation;
+    String? title = message.notification?.title ?? message.data['title'];
+    String? body = message.notification?.body ?? message.data['body'];
+
     if (message.data['image'] != null) {
-      final http.Response response =
-          await http.get(Uri.parse(message.data['image']));
-      styleInformation = BigPictureStyleInformation(
-          ByteArrayAndroidBitmap.fromBase64String(
-              base64Encode(response.bodyBytes)));
+      try {
+        final http.Response response =
+            await http.get(Uri.parse(message.data['image']));
+        styleInformation = BigPictureStyleInformation(
+            ByteArrayAndroidBitmap.fromBase64String(
+                base64Encode(response.bodyBytes)));
+      } catch (e) {
+        debugPrint("Error loading notification image: $e");
+        styleInformation = BigTextStyleInformation(body ?? "");
+      }
     } else {
-      styleInformation =
-          BigTextStyleInformation(message.notification?.body ?? "");
+      styleInformation = BigTextStyleInformation(body ?? "");
     }
 
-    RemoteNotification? notification = message.notification;
-    AndroidNotification? android = message.notification?.android;
-    if (notification != null && android != null) {
+    if (title != null || body != null) {
       await flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
+          message.messageId.hashCode,
+          title,
+          body,
           NotificationDetails(
               android: AndroidNotificationDetails(
                   "presshop_custom_sound", "presshop_custom_sound",

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -22,7 +23,6 @@ class _DocumentViewState extends State<DocumentView> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CommonAppBar(
         elevation: 0,
         hideLeading: false,
@@ -59,10 +59,15 @@ class _DocumentViewState extends State<DocumentView> {
         child: Padding(
             padding: EdgeInsets.symmetric(
                 horizontal: size.width * AppDimensions.numD035),
-            child: SfPdfViewer.network(
-              widget.path,
-              key: _pdfViewerKey,
-            )),
+            child: widget.path.startsWith('http')
+                ? SfPdfViewer.network(
+                    widget.path,
+                    key: _pdfViewerKey,
+                  )
+                : SfPdfViewer.file(
+                    File(widget.path),
+                    key: _pdfViewerKey,
+                  )),
       ),
     );
   }

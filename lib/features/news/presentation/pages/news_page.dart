@@ -528,20 +528,29 @@ class _NewsPageState extends State<NewsPage>
             ClipRRect(
               borderRadius:
                   BorderRadius.circular(size.width * AppDimensions.numD04),
-              child: CachedNetworkImage(
-                imageUrl: item.mediaUrl ?? "",
-                height: size.width * AppDimensions.numD50,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  height: size.width * AppDimensions.numD50,
-                  color: Theme.of(context).cardColor,
-                  child: const Center(child: CircularProgressIndicator()),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: CachedNetworkImage(
+                  imageUrl: item.mediaUrl ?? "",
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    color: Theme.of(context).cardColor,
+                    child: const Center(child: CircularProgressIndicator()),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    color: Theme.of(context).cardColor,
+                    child: const Icon(Icons.error),
+                  ),
                 ),
-                errorWidget: (context, url, error) => Container(
-                  height: size.width * AppDimensions.numD50,
-                  color: Theme.of(context).cardColor,
-                  child: const Icon(Icons.error),
+              ),
+            ),
+            Positioned.fill(
+              child: ClipRRect(
+                borderRadius:
+                    BorderRadius.circular(size.width * AppDimensions.numD04),
+                child: Image.asset(
+                  "${commonImagePath}watermark1.png",
+                  fit: BoxFit.cover,
                 ),
               ),
             ),

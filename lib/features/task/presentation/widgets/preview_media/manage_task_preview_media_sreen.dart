@@ -22,7 +22,7 @@ class _ManageTaskPreviewMediaScreenState
             Expanded(
               child: PageView.builder(
                 onPageChanged: (value) {
-                  // currentPage = value;
+                  // currentPage = value
                   setState(() {});
                 },
                 itemBuilder: (context, index) {

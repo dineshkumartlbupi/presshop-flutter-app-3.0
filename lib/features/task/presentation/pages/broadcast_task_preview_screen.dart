@@ -9,15 +9,24 @@ import 'package:presshop/core/widgets/video_widget.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/features/camera/presentation/pages/audio_waveform_widget_screen.dart';
 import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
+import 'package:presshop/features/earning/data/models/earning_model.dart';
+import 'package:presshop/features/earning/domain/entities/earning_transaction.dart';
+import 'package:presshop/features/earning/presentation/pages/tansaction_detail_screen.dart';
 
 class BroadcastTaskPreviewScreen extends StatefulWidget {
   final List<MediaData> mediaList;
   final Function(List<MediaData>) onMediaUpdated;
+  final EarningTransaction? transactionData;
+  final String? type;
+  final PageType? pageType;
 
   const BroadcastTaskPreviewScreen({
     super.key,
     required this.mediaList,
     required this.onMediaUpdated,
+    this.transactionData,
+    this.type,
+    this.pageType,
   });
 
   @override
@@ -74,9 +83,18 @@ class _BroadcastTaskPreviewScreenState
                             mediaPath: item.mediaPath),
                       );
                     }
-                    return const Center(
-                      child: Icon(Icons.insert_drive_file,
-                          color: Colors.white, size: 64),
+                    return InkWell(
+                      onTap: () {
+                        context.pushNamed(AppRoutes.docViewerName, extra: {
+                          "path": item.mediaPath,
+                        });
+                      },
+                      child: Center(
+                        child: Image.asset(
+                          '${dummyImagePath}pngImage.png',
+                          height: 120,
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -202,7 +220,19 @@ class _BroadcastTaskPreviewScreenState
                       ),
                       commonButtonStyle(size, AppColorTheme.colorThemePink),
                       () {
-                        context.pop("upload");
+                        if (widget.transactionData != null) {
+                          context.pushNamed(
+                            AppRoutes.transactionDetailName,
+                            extra: {
+                              'type': widget.type ?? "received",
+                              'pageType': widget.pageType ?? PageType.TASK,
+                              'transactionData': widget.transactionData,
+                              'shouldShowPublication': false,
+                            },
+                          );
+                        } else {
+                          context.pop("upload");
+                        }
                       },
                     ),
                   ),

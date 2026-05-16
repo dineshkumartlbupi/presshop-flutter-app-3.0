@@ -171,3 +171,7 @@ class RemoveLocalTaskEvent extends TaskEvent {
 class ResetTaskActionStatusEvent extends TaskEvent {
   const ResetTaskActionStatusEvent();
 }
+
+class ClearTransactionsEvent extends TaskEvent {
+  const ClearTransactionsEvent();
+}

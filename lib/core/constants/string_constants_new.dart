@@ -267,7 +267,7 @@ class AppStrings {
   static const newPasswordText = "New password";
   static const confirmNewPasswordText = "Confirm new password";
   static const myEarningsText = "My Earnings";
-  static const docViewer = "Document Review";
+  static const docViewer = "Document Preview";
   static const fromDateText = "From date";
   static const paymentReceivedText = "Payments received";
   static const commissionEarnedText = "Commission earned";

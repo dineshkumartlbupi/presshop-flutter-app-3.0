@@ -399,10 +399,11 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                           final picked = await showDialog<int>(
                                             context: context,
                                             builder: (context) {
-                                               int selectedYear =
-                                                   fromDate.isNotEmpty
-                                                       ? int.tryParse(fromDate) ?? now.year
-                                                       : now.year;
+                                              int selectedYear = fromDate
+                                                      .isNotEmpty
+                                                  ? int.tryParse(fromDate) ??
+                                                      now.year
+                                                  : now.year;
                                               return AlertDialog(
                                                 title: Text('Select Year'),
                                                 content: SizedBox(
@@ -499,7 +500,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                 // Month picker
                                                 final now = DateTime.now();
                                                 final int selectedYear =
-                                                    int.tryParse(fromDate) ?? now.year;
+                                                    int.tryParse(fromDate) ??
+                                                        now.year;
                                                 final int lastMonth =
                                                     (selectedYear == now.year)
                                                         ? now.month
@@ -510,7 +512,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                   builder: (context) {
                                                     int selectedMonth =
                                                         toDate.isNotEmpty
-                                                            ? int.tryParse(toDate) ?? 1
+                                                            ? int.tryParse(
+                                                                    toDate) ??
+                                                                1
                                                             : 1;
                                                     return AlertDialog(
                                                       title:
@@ -636,8 +640,11 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                               Text(
                                                 toDate.isNotEmpty
                                                     ? DateFormat.MMMM().format(
-                                                        DateTime(0,
-                                                            int.tryParse(toDate) ?? 1))
+                                                        DateTime(
+                                                            0,
+                                                            int.tryParse(
+                                                                    toDate) ??
+                                                                1))
                                                     : "Month",
                                                 style: commonTextStyle(
                                                     size: size,
@@ -1058,9 +1065,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                           child: Image.asset(
                                             "${iconsPath}ic_square_play.png",
                                             height: size.width *
-                                                AppDimensions.numD08,
+                                                AppDimensions.numD06,
                                             width: size.width *
-                                                AppDimensions.numD08,
+                                                AppDimensions.numD06,
                                             color: Theme.of(context)
                                                 .iconTheme
                                                 .color,
@@ -1167,10 +1174,12 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                 ),
                                 Text(
                                   item.type == "content"
-                                      ? item.totalEarningAmt != "null" && item.totalEarningAmt.isNotEmpty
+                                      ? item.totalEarningAmt != "null" &&
+                                              item.totalEarningAmt.isNotEmpty
                                           ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.tryParse(item.totalEarningAmt) ?? 0.0)}'
                                           : "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}0"
-                                      : item.totalEarningAmt != "null" && item.totalEarningAmt.isNotEmpty
+                                      : item.totalEarningAmt != "null" &&
+                                              item.totalEarningAmt.isNotEmpty
                                           ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.tryParse(item.totalEarningAmt) ?? 0.0)}'
                                           : "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}0",
                                   style: commonTextStyle(
@@ -1286,9 +1295,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   size.width * AppDimensions.numD015),
                             ),
                             child: Text(
-                                   item.amount.isNotEmpty
-                                      ? "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.tryParse(item.payableT0Hopper) ?? 0.0)}"
-                                      : "",
+                              item.amount.isNotEmpty
+                                  ? "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.tryParse(item.payableT0Hopper) ?? 0.0)}"
+                                  : "",
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * AppDimensions.numD04,
@@ -1307,15 +1316,15 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                           ? "${iconsPath}ic_exclusive.png"
                                           : "${iconsPath}ic_share.png",
                                       height: item.typesOfContent
-                                          ? size.width * AppDimensions.numD075
-                                          : size.width * AppDimensions.numD07,
-                                      width: size.width * AppDimensions.numD09,
+                                          ? size.width * AppDimensions.numD05
+                                          : size.width * AppDimensions.numD05,
+                                      width: size.width * AppDimensions.numD06,
                                       color: Theme.of(context).iconTheme.color,
                                     )
                                   : Image.asset(
                                       "${iconsPath}ic_task.png",
-                                      width: size.width * AppDimensions.numD07,
-                                      height: size.width * AppDimensions.numD07,
+                                      width: size.width * AppDimensions.numD05,
+                                      height: size.width * AppDimensions.numD05,
                                       color: Theme.of(context).iconTheme.color,
                                     ),
                               SizedBox(
@@ -1394,7 +1403,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   ? item.totalEarningAmt != "null"
                                       ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.tryParse(item.totalEarningAmt) ?? 0.0)}'
                                       : "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}0"
-                                  : item.totalEarningAmt != "null" && item.totalEarningAmt.isNotEmpty
+                                  : item.totalEarningAmt != "null" &&
+                                          item.totalEarningAmt.isNotEmpty
                                       ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.tryParse(item.totalEarningAmt) ?? 0.0)}'
                                       : "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}0",
                               style: commonTextStyle(
@@ -1752,25 +1762,26 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                 String? pickedDate = await commonDatePicker();
 
                                 if (pickedDate != null) {
-                                   DateTime? parseFromDate =
-                                       DateTime.tryParse(item.fromDate!);
-                                   DateTime? parseToDate =
-                                       DateTime.tryParse(pickedDate);
+                                  DateTime? parseFromDate =
+                                      DateTime.tryParse(item.fromDate!);
+                                  DateTime? parseToDate =
+                                      DateTime.tryParse(pickedDate);
 
-                                   if (parseFromDate != null && parseToDate != null) {
-                                     if (parseToDate.isAfter(parseFromDate) ||
-                                         parseToDate
-                                             .isAtSameMomentAs(parseFromDate)) {
-                                       item.toDate = pickedDate;
-                                       toDate = pickedDate;
-                                     } else {
-                                       showSnackBar(
-                                           "Date Error",
-                                           "Please select to date above from date",
-                                           Colors.red);
-                                     }
-                                   }
+                                  if (parseFromDate != null &&
+                                      parseToDate != null) {
+                                    if (parseToDate.isAfter(parseFromDate) ||
+                                        parseToDate
+                                            .isAtSameMomentAs(parseFromDate)) {
+                                      item.toDate = pickedDate;
+                                      toDate = pickedDate;
+                                    } else {
+                                      showSnackBar(
+                                          "Date Error",
+                                          "Please select to date above from date",
+                                          Colors.red);
+                                    }
                                   }
+                                }
                               }
                               stateSetter(() {});
                               setState(() {});

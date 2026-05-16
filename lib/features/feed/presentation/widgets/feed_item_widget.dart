@@ -1,6 +1,7 @@
 import 'package:chewie/chewie.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/feed.dart';
@@ -135,29 +136,36 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                                               width: size.width,
                                             ),
                                           )
-                                        : Image.network(
-                                            getMediaImageUrl(
+                                        : CachedNetworkImage(
+                                            imageUrl: getMediaImageUrl(
                                                 item.mediaType == "video"
                                                     ? item.thumbnail
                                                     : item.mediaUrl,
                                                 isVideo:
                                                     item.mediaType == "video"),
                                             width: size.width,
+                                            height: size.width *
+                                                AppDimensions.numD50,
                                             fit: BoxFit.cover,
-                                            cacheWidth:
-                                                (size.width * 2).toInt(),
-                                            cacheHeight: (size.width *
-                                                    AppDimensions.numD50 *
-                                                    2)
-                                                .toInt(),
-                                            errorBuilder:
-                                                (context, error, stackTrace) {
-                                              return Image.asset(
-                                                "${commonImagePath}rabbitLogo.png",
-                                                width: size.width,
-                                                fit: BoxFit.contain,
-                                              );
-                                            },
+                                            placeholder: (context, url) =>
+                                                Center(
+                                                    child: showAnimatedLoader(
+                                                        size)),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Image.asset(
+                                              "${commonImagePath}rabbitLogo.png",
+                                              width: size.width,
+                                              height: size.width *
+                                                  AppDimensions.numD50,
+                                              fit: BoxFit.contain,
+                                            ),
+                                          ),
+                                          Positioned.fill(
+                                            child: Image.asset(
+                                              "${commonImagePath}watermark1.png",
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                         Positioned(
                           right: size.width * AppDimensions.numD02,

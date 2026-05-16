@@ -310,6 +310,9 @@ class MediaThumbnailWidget extends StatelessWidget {
         (firstMedia?.mediaType.toLowerCase() == 'video');
     final isAudio = item.mediaType == 'audio' ||
         (firstMedia?.mediaType.toLowerCase() == 'audio');
+    final isPdf = item.mediaType?.toLowerCase() == 'pdf' ||
+        (firstMedia?.mediaType.toLowerCase() == 'pdf') ||
+        (firstMedia?.media.toLowerCase().endsWith('.pdf') ?? false);
 
     if (isVideo) {
       return VideoThumbnailWidget(
@@ -341,8 +344,11 @@ class MediaThumbnailWidget extends StatelessWidget {
       );
     }
 
-    final effectiveType =
-        isAudio ? 'audio' : (isVideo ? 'video' : (item.mediaType ?? 'photo'));
+    final effectiveType = isPdf
+        ? 'pdf'
+        : (isAudio
+            ? 'audio'
+            : (isVideo ? 'video' : (item.mediaType ?? 'photo')));
 
     return _showImage(effectiveType, item.mediaUrls.first);
   }
@@ -395,8 +401,8 @@ class MediaThumbnailWidget extends StatelessWidget {
         return _buildPlaceholder(
           child: Image.asset(
             "${dummyImagePath}pngImage.png",
-            width: scalingWidth * AppDimensions.numD03,
-            height: scalingWidth * AppDimensions.numD03,
+            width: scalingWidth * AppDimensions.numD15,
+            height: scalingWidth * AppDimensions.numD15,
           ),
         );
       case "doc":

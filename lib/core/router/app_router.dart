@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/constants/enums.dart';
 import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
+import 'package:presshop/features/earning/domain/entities/earning_transaction.dart';
 import 'package:presshop/features/splash/presentation/pages/splash_screen.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_helper.dart';
@@ -82,6 +83,7 @@ import 'package:presshop/features/content/presentation/pages/content_page.dart';
 
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
+import 'package:presshop/core/widgets/document_viewer.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -197,6 +199,14 @@ class AppRouter {
         path: AppRoutes.accountDeletePath,
         name: AppRoutes.accountDeleteName,
         builder: (context, state) => const AccountDeleteScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.docViewerPath,
+        name: AppRoutes.docViewerName,
+        builder: (context, state) {
+          final args = state.extra as Map<String, dynamic>;
+          return DocumentView(path: args['path']);
+        },
       ),
       GoRoute(
         path: AppRoutes.faqPath,
@@ -339,6 +349,9 @@ class AppRouter {
             mediaList: extra['mediaList'] as List<MediaData>,
             onMediaUpdated:
                 extra['onMediaUpdated'] as Function(List<MediaData>),
+            transactionData: extra['transactionData'] as EarningTransaction?,
+            type: extra['type'] as String?,
+            pageType: extra['pageType'] as PageType?,
           );
         },
       ),
@@ -720,6 +733,9 @@ class AppRouter {
             mediaList: extra['mediaList'] as List<MediaData>,
             onMediaUpdated:
                 extra['onMediaUpdated'] as Function(List<MediaData>),
+            transactionData: extra['transactionData'] as EarningTransaction?,
+            type: extra['type'] as String?,
+            pageType: extra['pageType'] as PageType?,
           );
         },
       ),

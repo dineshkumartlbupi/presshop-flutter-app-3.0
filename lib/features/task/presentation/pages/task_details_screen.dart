@@ -100,8 +100,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             final latLng = LatLng(
                 taskDetail!.task.addressLocation.coordinates[1],
                 taskDetail!.task.addressLocation.coordinates[0]);
-            _latLng =
-                latLng; // Update the local latLng for initialCameraPosition
+            _latLng = latLng;
             _updateMarkers(latLng);
             _updateGoogleMap(latLng);
 
@@ -1021,7 +1020,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   void getAllIcons() async {
     try {
       final Uint8List markerIcon =
-          await getBytesFromAsset("${commonImagePath}ic_cover_radius.png", 300);
+          await getBytesFromAsset("${commonImagePath}ic_cover_radius.png", 120);
       if (mounted) {
         setState(() {
           mapIcon = BitmapDescriptor.fromBytes(markerIcon);

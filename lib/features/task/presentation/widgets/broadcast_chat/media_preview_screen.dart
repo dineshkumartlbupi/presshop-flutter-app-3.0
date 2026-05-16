@@ -10,15 +10,24 @@ import 'package:presshop/core/widgets/video_widget.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/features/camera/presentation/pages/audio_waveform_widget_screen.dart';
 import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
+import 'package:presshop/features/earning/data/models/earning_model.dart';
+import 'package:presshop/features/earning/domain/entities/earning_transaction.dart';
+import 'package:presshop/features/earning/presentation/pages/tansaction_detail_screen.dart';
 
 class MediaPreviewScreen extends StatefulWidget {
   const MediaPreviewScreen({
     super.key,
     required this.mediaList,
     required this.onMediaUpdated,
+    this.transactionData,
+    this.type,
+    this.pageType,
   });
   final List<MediaData> mediaList;
   final Function(List<MediaData>) onMediaUpdated;
+  final EarningTransaction? transactionData;
+  final String? type;
+  final PageType? pageType;
 
   @override
   State<MediaPreviewScreen> createState() => _MediaPreviewScreenState();
@@ -31,7 +40,6 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.black,
       body: Stack(
         children: [
           Column(
@@ -107,57 +115,58 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                                 commonButtonTextStyle(size),
                                 commonButtonStyle(size, Colors.black),
                                 () async {
-                               try {
-                                 final result = await context.pushNamed(
-                                   AppRoutes.broadcastTaskMediaPickerName,
-                                 );
-                                 if (result != null &&
-                                     result is List<CameraData> &&
-                                     result.isNotEmpty &&
-                                     mounted) {
-                                   debugPrint(
-                                       "Captured more from BroadcastTaskMediaPickerScreen: ${result.length} items");
-                                   for (var cameraData in result) {
-                                     // Avoid duplicates
-                                     if (widget.mediaList.any((e) =>
-                                         e.mediaPath.trim() ==
-                                         cameraData.path.trim())) continue;
+                              try {
+                                final result = await context.pushNamed(
+                                  AppRoutes.broadcastTaskMediaPickerName,
+                                );
+                                if (result != null &&
+                                    result is List<CameraData> &&
+                                    result.isNotEmpty &&
+                                    mounted) {
+                                  debugPrint(
+                                      "Captured more from BroadcastTaskMediaPickerScreen: ${result.length} items");
+                                  for (var cameraData in result) {
+                                    // Avoid duplicates
+                                    if (widget.mediaList.any((e) =>
+                                        e.mediaPath.trim() ==
+                                        cameraData.path.trim())) continue;
 
-                                     widget.mediaList.insert(
-                                       0,
-                                       MediaData(
-                                         isFromGallery: cameraData.fromGallary,
-                                         dateTime: cameraData.dateTime,
-                                         latitude: cameraData.latitude,
-                                         location: cameraData.location,
-                                         longitude: cameraData.longitude,
-                                         country: cameraData.country,
-                                         state: cameraData.state,
-                                         city: cameraData.city,
-                                         mediaPath: cameraData.path,
-                                         mimeType: cameraData.mimeType == "image"
-                                             ? (lookupMimeType(cameraData.path) ??
-                                                 "image/jpeg")
-                                             : cameraData.mimeType == "video"
-                                                 ? (lookupMimeType(
-                                                         cameraData.path) ??
-                                                     "video/mp4")
-                                                 : cameraData.mimeType == "audio"
-                                                     ? (lookupMimeType(
-                                                             cameraData.path) ??
-                                                         "audio/mpeg")
-                                                     : cameraData.mimeType,
-                                         thumbnail: cameraData.videoImagePath,
-                                       ),
-                                     );
-                                   }
-                                   widget.onMediaUpdated(widget.mediaList);
-                                   setState(() {});
-                                 }
-                               } catch (e) {
-                                 debugPrint("Camera error: $e");
-                               }
-                             }),
+                                    widget.mediaList.insert(
+                                      0,
+                                      MediaData(
+                                        isFromGallery: cameraData.fromGallary,
+                                        dateTime: cameraData.dateTime,
+                                        latitude: cameraData.latitude,
+                                        location: cameraData.location,
+                                        longitude: cameraData.longitude,
+                                        country: cameraData.country,
+                                        state: cameraData.state,
+                                        city: cameraData.city,
+                                        mediaPath: cameraData.path,
+                                        mimeType: cameraData.mimeType == "image"
+                                            ? (lookupMimeType(
+                                                    cameraData.path) ??
+                                                "image/jpeg")
+                                            : cameraData.mimeType == "video"
+                                                ? (lookupMimeType(
+                                                        cameraData.path) ??
+                                                    "video/mp4")
+                                                : cameraData.mimeType == "audio"
+                                                    ? (lookupMimeType(
+                                                            cameraData.path) ??
+                                                        "audio/mpeg")
+                                                    : cameraData.mimeType,
+                                        thumbnail: cameraData.videoImagePath,
+                                      ),
+                                    );
+                                  }
+                                  widget.onMediaUpdated(widget.mediaList);
+                                  setState(() {});
+                                }
+                              } catch (e) {
+                                debugPrint("Camera error: $e");
+                              }
+                            }),
                           ),
                         ),
                         Expanded(
@@ -172,7 +181,20 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                                 commonButtonTextStyle(size),
                                 commonButtonStyle(
                                     size, AppColorTheme.colorThemePink), () {
-                              context.pop("upload");
+                              if (widget.transactionData != null) {
+                                context.pushNamed(
+                                  AppRoutes.transactionDetailName,
+                                  extra: {
+                                    'type': widget.type ?? "received",
+                                    'pageType':
+                                        widget.pageType ?? PageType.TASK,
+                                    'transactionData': widget.transactionData,
+                                    'shouldShowPublication': false,
+                                  },
+                                );
+                              } else {
+                                context.pop("upload");
+                              }
                             }),
                           ),
                         ),

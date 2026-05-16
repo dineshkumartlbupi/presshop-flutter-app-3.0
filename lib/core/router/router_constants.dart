@@ -63,6 +63,7 @@ class AppRoutes {
   static const String broadcastTaskMediaPickerPath = '/broadcastTaskMediaPicker';
   static const String broadcastTaskPreviewPath = '/broadcastTaskPreview';
   static const String draftAddMorePath = '/draftAddMore';
+  static const String docViewerPath = '/docViewer';
 
   // Names
   static const String splashName = 'splash';
@@ -128,4 +129,5 @@ class AppRoutes {
   static const String broadcastTaskMediaPickerName = 'broadcastTaskMediaPicker';
   static const String broadcastTaskPreviewName = 'broadcastTaskPreview';
   static const String draftAddMoreName = 'draftAddMore';
+  static const String docViewerName = 'docViewer';
 }

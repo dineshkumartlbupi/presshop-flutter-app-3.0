@@ -298,7 +298,7 @@ class MyContentViewState extends State<MyContentView>
                 controller: _tabController,
                 children: [
                   _buildContentList(_allController, 'all', noAllContentFound),
-                  _buildContentList(_myController, 'my', noMyContentFound),
+                  _buildContentList(_myController, 'my', noAllContentFound),
                 ],
               ),
             ),

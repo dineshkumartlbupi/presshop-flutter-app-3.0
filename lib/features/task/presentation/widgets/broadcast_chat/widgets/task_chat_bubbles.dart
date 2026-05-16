@@ -215,6 +215,8 @@ class RightMediaChatBubble extends StatelessWidget {
       return rightVideoChatWidget(item, size, context);
     } else if (item.media?.type.contains("audio") ?? false) {
       return rightAudioChatWidget(item, size, context);
+    } else if (item.media?.type.contains("pdf") ?? false) {
+      return rightPdfChatWidget(item, size, context);
     } else {
       return rightImageChatWidget(item, size, context);
     }
@@ -583,6 +585,61 @@ class RightMediaChatBubble extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget rightPdfChatWidget(
+      ManageTaskChatModel item, Size size, BuildContext context) {
+    var mediaItem = item.mediaList.isNotEmpty ? item.mediaList.first : null;
+    if (mediaItem == null) return Container();
+
+    return InkWell(
+      onTap: () {
+        context.pushNamed(AppRoutes.docViewerName, extra: {
+          "path": mediaItem.imageVideoUrl,
+        });
+      },
+      child: Container(
+        height: size.height / 3,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          border: Border.all(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? AppColorTheme.colorItemDividerForDarkTheme
+                : Colors.grey.shade300,
+            width: 1,
+          ),
+          borderRadius:
+              BorderRadius.circular(size.width * AppDimensions.numD04),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              "${dummyImagePath}pngImage.png",
+              height: size.width * AppDimensions.numD20,
+              width: size.width * AppDimensions.numD20,
+            ),
+            SizedBox(height: size.width * AppDimensions.numD02),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: size.width * AppDimensions.numD04),
+              child: Text(
+                mediaItem.imageVideoUrl.split('/').last,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: commonTextStyle(
+                  size: size,
+                  fontSize: size.width * AppDimensions.numD035,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

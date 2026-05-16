@@ -63,40 +63,10 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: false,
-        title: Text(AppStrings.transactionDetailsText,
-            style: TextStyle(
-              color: Theme.of(context).textTheme.bodyLarge?.color,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * AppDimensions.appBarHeadingFontSize,
-            )),
-        centerTitle: false,
-        titleSpacing: 0,
+      appBar: CommonBrandedAppBar(
+        title: 'Transaction Detail',
         size: size,
-        showActions: true,
-        leadingFxn: () {
-          context.pop();
-        },
-        actionWidget: [
-          InkWell(
-            onTap: () {
-              context.goNamed(
-                AppRoutes.dashboardName,
-                extra: {'initialPosition': 2},
-              );
-            },
-            child: Image.asset(
-              "${commonImagePath}rabbitLogo.png",
-              height: size.width * AppDimensions.numD07,
-              width: size.width * AppDimensions.numD07,
-            ),
-          ),
-          SizedBox(
-            width: size.width * AppDimensions.numD04,
-          )
-        ],
+        showLogo: true,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -224,16 +194,18 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(
                         size.width * AppDimensions.numD03),
-                    child: Image.network(widget.transactionData!.hopperAvatar,
+                    child: _buildImage(
+                      widget.transactionData!.hopperAvatar,
+                      height: size.width * AppDimensions.numD11,
+                      width: size.width * AppDimensions.numD12,
+                      fit: BoxFit.cover,
+                      errorWidget: Image.asset(
+                        "${commonImagePath}rabbitLogo.png",
+                        fit: BoxFit.cover,
                         height: size.width * AppDimensions.numD11,
                         width: size.width * AppDimensions.numD12,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, i, b) => Image.asset(
-                              "${commonImagePath}rabbitLogo.png",
-                              fit: BoxFit.cover,
-                              height: size.width * AppDimensions.numD11,
-                              width: size.width * AppDimensions.numD12,
-                            )),
+                      ),
+                    ),
                   )
                 ],
               ),
@@ -265,7 +237,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                 ? playAudioWidget(size)
                                 : item.mediaType == "video"
                                     ? videoWidget()
-                                    : Image.network(
+                                    : _buildImage(
                                         getMediaImageUrl(
                                             item.mediaType == "video"
                                                 ? item.thumbnail
@@ -584,8 +556,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       width: 28,
                       child: widget.transactionData!.hopperBankLogo.isEmpty
                           ? Image.asset("assets/commonImages/no_image.jpg")
-                          : Image.network(
-                              widget.transactionData!.hopperBankLogo),
+                          : _buildImage(widget.transactionData!.hopperBankLogo),
                     ),
                     SizedBox(width: 8),
                     Text(
@@ -1090,16 +1061,18 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(
                         size.width * AppDimensions.numD03),
-                    child: Image.network(widget.transactionData!.companyLogo,
+                    child: _buildImage(
+                      widget.transactionData!.companyLogo,
+                      height: size.width * AppDimensions.numD11,
+                      width: size.width * AppDimensions.numD12,
+                      fit: BoxFit.cover,
+                      errorWidget: Image.asset(
+                        "${commonImagePath}rabbitLogo.png",
+                        fit: BoxFit.cover,
                         height: size.width * AppDimensions.numD11,
                         width: size.width * AppDimensions.numD12,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, i, b) => Image.asset(
-                              "${commonImagePath}rabbitLogo.png",
-                              fit: BoxFit.cover,
-                              height: size.width * AppDimensions.numD11,
-                              width: size.width * AppDimensions.numD12,
-                            )),
+                      ),
+                    ),
                   )
                 ],
               ),
@@ -1174,7 +1147,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                                     width: size.width,
                                                   ),
                                                 )
-                                              : Image.network(
+                                              : _buildImage(
                                                   getMediaImageUrl(
                                                       item.mediaType == "video"
                                                           ? item.thumbnail
@@ -1566,6 +1539,32 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     } else {
       throw 'Could not launch url';
+    }
+  }
+
+  Widget _buildImage(String url,
+      {double? height,
+      double? width,
+      BoxFit fit = BoxFit.cover,
+      Widget? errorWidget}) {
+    if (url.startsWith('file:///')) {
+      return Image.file(
+        File(url.replaceFirst('file:///', '')),
+        height: height,
+        width: width,
+        fit: fit,
+        errorBuilder: (context, error, stackTrace) =>
+            errorWidget ?? const SizedBox.shrink(),
+      );
+    } else {
+      return Image.network(
+        url,
+        height: height,
+        width: width,
+        fit: fit,
+        errorBuilder: (context, error, stackTrace) =>
+            errorWidget ?? const SizedBox.shrink(),
+      );
     }
   }
 }

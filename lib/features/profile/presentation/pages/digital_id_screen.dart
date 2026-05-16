@@ -38,7 +38,6 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   bool isUploading = false;
   String? localImagePath;
 
-  // File? _imageFile;
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -54,16 +53,12 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
         sharedPreferences!.getString(SharedPreferencesKeys.userNameKey) ??
             "Hopper";
 
-    // Use cached data if available to avoid reloading
     if (DigitalIdScreen.cachedProfileData != null) {
       myProfileData = DigitalIdScreen.cachedProfileData;
       fullName = "${myProfileData!.firstName} ${myProfileData!.lastName}";
       userName = myProfileData!.userName;
-      userImage = myProfileData!.realProfileImage.isNotEmpty
-          ? myProfileData!.realProfileImage
-          : myProfileData!.avatarImage;
+      userImage = myProfileData!.realProfileImage;
     } else {
-      // Setup initial image from prefs if available
       String sessionAvatar =
           sharedPreferences!.getString(SharedPreferencesKeys.profileImageKey) ??
               "";
@@ -73,7 +68,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
     }
 
     getAvatarsApi();
-    // Only show loader if we don't have any image yet
+
     myProfileApi(showLoader: userImage.isEmpty);
   }
 
@@ -113,10 +108,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                 fullName =
                     "${myProfileData!.firstName} ${myProfileData!.lastName}";
                 userName = myProfileData!.userName;
-                // Prioritize real profile_image for Digital ID
-                userImage = myProfileData!.realProfileImage.isNotEmpty
-                    ? myProfileData!.realProfileImage
-                    : myProfileData!.avatarImage;
+
+                userImage = myProfileData!.realProfileImage;
                 localImagePath = null;
               }
             }
@@ -225,7 +218,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
             setState(() {
               isUploading = false;
             });
-            // myProfileApi(showLoader: false);
+            myProfileApi(showLoader: false);
             showSnackBar(
                 "Success", "Profile image uploaded successfully", Colors.green);
           } else if (state is ProfileUpdated) {
@@ -275,7 +268,6 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                       ),
                       child: SingleChildScrollView(
                         child: Column(
-                          //mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -289,8 +281,6 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                       .bodyLarge
                                       ?.color),
                             ),
-
-                            /// Rabbit logo
 
                             SizedBox(
                               height: size.width * AppDimensions.numD04,

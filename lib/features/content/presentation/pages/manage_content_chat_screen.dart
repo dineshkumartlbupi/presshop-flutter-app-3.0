@@ -260,21 +260,17 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
         if (state.actionStatus == TaskStatus.loading ||
             state.taskDetailStatus == TaskStatus.loading) {
           isDataLoaded = false;
-        } else if (state.taskDetail != null &&
+        }
+
+        if (state.taskDetail != null &&
             state.taskDetailStatus == TaskStatus.success) {
           isDataLoaded = true;
-        } else if (state.actionStatus == TaskStatus.success) {
+        }
+
+        if (state.actionStatus == TaskStatus.success) {
           // If action is success, data loading should stop
           isDataLoaded = true;
 
-          // Check for upload response to distinguish from chat load
-          // Only show snackbar/refresh if it seems to be an upload
-          if (state.uploadResponse != null) {
-            showSnackBar(
-                "Success", "Media uploaded successfully", Colors.green);
-            _onRefresh();
-          }
-        } else if (state.transactions.isNotEmpty) {
           if (state.transactions.isNotEmpty) {
             context.pushNamed(
               AppRoutes.transactionDetailName,
@@ -286,6 +282,11 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                 'shouldShowPublication': true,
               },
             );
+            context.read<TaskBloc>().add(const ClearTransactionsEvent());
+          } else if (state.uploadResponse != null) {
+            showSnackBar(
+                "Success", "Media uploaded successfully", Colors.green);
+            _onRefresh();
           }
         } else if (state.errorMessage != null) {
           isDataLoaded = true;
@@ -348,15 +349,10 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                 //     )
                 //   ],
                 // ),
-                body:
-                    ((state.actionStatus == TaskStatus.loading ||
-                                    state.taskDetailStatus ==
-                                        TaskStatus.loading) &&
-                                !isDataLoaded) ||
-                            (state.actionStatus == TaskStatus.initial &&
-                                !isDataLoaded)
-                        ? Center(child: showLoader())
-                        : SafeArea(
+                body: (state.actionStatus == TaskStatus.loading ||
+                        state.taskDetailStatus == TaskStatus.loading)
+                    ? Center(child: showLoader())
+                    : SafeArea(
                             child: Column(
                               children: [
                                 Expanded(
@@ -718,8 +714,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                               ),
                                               itemBuilder: (context, index) {
                                                 var item = chatList[index];
-                                                if (item.messageType ==
-                                                    "media") {
+                                                if (item.messageType == "media") {
                                                   if (item.media!.type
                                                       .contains("video")) {
                                                     return Column(
@@ -4555,6 +4550,104 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
     );
   }
 
+  Widget rightPdfChatWidget(String pdfUrl) {
+    return Container(
+      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: () {
+                context.pushNamed(AppRoutes.docViewerName, extra: {
+                  "path": pdfUrl,
+                });
+              },
+              child: Container(
+                height: size.height / 3,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  border: Border.all(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColorTheme.colorItemDividerForDarkTheme
+                        : Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD04),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      "${dummyImagePath}pngImage.png",
+                      height: size.width * AppDimensions.numD20,
+                      width: size.width * AppDimensions.numD20,
+                    ),
+                    SizedBox(height: size.width * AppDimensions.numD02),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD04),
+                      child: Text(
+                        pdfUrl.split('/').last,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD035,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: size.width * AppDimensions.numD02,
+          ),
+          (sharedPreferences!.getString(SharedPreferencesKeys.avatarKey) ?? "")
+                  .isNotEmpty
+              ? Container(
+                  padding: EdgeInsets.all(
+                    size.width * AppDimensions.numD01,
+                  ),
+                  decoration: const BoxDecoration(
+                      color: AppColorTheme.colorLightGrey,
+                      shape: BoxShape.circle),
+                  child: ClipOval(
+                      clipBehavior: Clip.antiAlias,
+                      child: Image.network(
+                        sharedPreferences!
+                                .getString(SharedPreferencesKeys.avatarKey) ??
+                            "",
+                        fit: BoxFit.cover,
+                        height: size.width * AppDimensions.numD09,
+                        width: size.width * AppDimensions.numD09,
+                      )))
+              : Container(
+                  padding: EdgeInsets.all(
+                    size.width * AppDimensions.numD01,
+                  ),
+                  height: size.width * AppDimensions.numD09,
+                  width: size.width * AppDimensions.numD09,
+                  decoration: const BoxDecoration(
+                      color: AppColorTheme.colorSwitchBack,
+                      shape: BoxShape.circle),
+                  child: CircleAvatar(
+                    backgroundColor: Colors.white,
+                    child: Image.asset("${commonImagePath}rabbitLogo.png",
+                        fit: BoxFit.contain),
+                  ),
+                ),
+        ],
+      ),
+    );
+  }
+
   Widget rightImageChatWidget(String imageUrl, String time) {
     return InkWell(
       splashColor: Colors.transparent,
@@ -5002,6 +5095,23 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                               'initialTapPosition': 0,
                             },
                           );
+                        }),
+                      ),
+                      SizedBox(
+                        height: size.width * AppDimensions.numD02,
+                      ),
+                      SizedBox(
+                        height: size.width * AppDimensions.numD13,
+                        width: size.width,
+                        child: commonElevatedButton(
+                            "View Transaction Detail",
+                            size,
+                            commonButtonTextStyle(size),
+                            commonButtonStyle(
+                                size, AppColorTheme.colorThemePink), () {
+                          callDetailApi(model.transactionId.isNotEmpty
+                              ? model.transactionId
+                              : model.mediaHouseId);
                         }),
                       ),
                     ],
@@ -7135,8 +7245,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
   void callDetailApi(String id) {
     if (widget.type == 'content') {
       context.read<TaskBloc>().add(GetContentTransactionDetailsEvent(
-          roomId: widget.roomId,
-          mediaHouseId: widget.mediaHouseDetail?.id ?? ""));
+          roomId: widget.roomId, mediaHouseId: id));
     } else {
       context.read<TaskBloc>().add(GetTaskTransactionDetailsEvent(id));
     }

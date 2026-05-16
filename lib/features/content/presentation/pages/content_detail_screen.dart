@@ -525,7 +525,11 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                     BorderRadius.circular(size.width * AppDimensions.numD04),
                 child: InkWell(
                   onTap: () {
-                    if (item.mediaType == "pdf" || item.mediaType == "doc") {
+                    if (item.mediaType == "pdf") {
+                      context.pushNamed(AppRoutes.docViewerName, extra: {
+                        "path": getMediaImageUrl(item.mediaUrl),
+                      });
+                    } else if (item.mediaType == "doc") {
                       openUrl(getMediaImageUrl(item.mediaUrl));
                     }
                   },

@@ -42,7 +42,6 @@ abstract class TaskRemoteDataSource {
 }
 
 class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
-
   TaskRemoteDataSourceImpl({required this.apiClient});
   final ApiClient apiClient;
 
@@ -365,12 +364,15 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         data: {"transaction_id": transactionId},
       );
 
-      if (response.data["code"] == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final rawData = response.data;
         List<EarningTransactionDetail> list = [];
-        if (response.data["response"] != null) {
-          response.data["response"].forEach((v) {
+        final responseList = rawData["response"] ?? rawData["data"];
+
+        if (responseList != null && responseList is List) {
+          for (var v in responseList) {
             list.add(EarningTransactionDetail.taskFromJson(v));
-          });
+          }
         }
         return list;
       } else {
@@ -391,12 +393,25 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         data: {"content_id": roomId, "media_house_id": mediaHouseId},
       );
 
-      if (response.data["code"] == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var rawData = response.data;
+        if (rawData is String) {
+          rawData = jsonDecode(rawData);
+        }
+
+        final data = rawData["data"] ?? rawData;
         List<EarningTransactionDetail> list = [];
-        if (response.data["response"] != null) {
-          response.data["response"].forEach((v) {
-            list.add(EarningTransactionDetail.fromJson(v));
-          });
+
+        if (data is Map && data["contentDetail"] != null) {
+          list.add(EarningTransactionDetail.fromJson(data["contentDetail"]));
+        } else if (rawData["response"] != null) {
+          if (rawData["response"] is List) {
+            for (var v in rawData["response"]) {
+              list.add(EarningTransactionDetail.fromJson(v));
+            }
+          } else {
+            list.add(EarningTransactionDetail.fromJson(rawData["response"]));
+          }
         }
         return list;
       } else {

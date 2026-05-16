@@ -65,7 +65,9 @@ String getMediaImageUrl(String? url,
 
   String trimmedUrl = url.trim();
 
-  if (trimmedUrl.contains("http://") || trimmedUrl.contains("https://")) {
+  if (trimmedUrl.contains("http://") ||
+      trimmedUrl.contains("https://") ||
+      trimmedUrl.contains("file:///")) {
     return fixS3Url(trimmedUrl);
   }
 

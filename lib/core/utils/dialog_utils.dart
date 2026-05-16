@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -16,12 +17,27 @@ BitmapDescriptor? mapIcon;
 BitmapDescriptor? hopperIcon;
 Map<String, BitmapDescriptor> hopperAvatarIcons = {};
 void getAllIcons() async {
-  mapIcon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(5.0, 5.0)),
-      "${commonImagePath}ic_cover_radius.png");
-  hopperIcon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(2.0, 2.0)),
-      "assets/markers/avatar.png");
+  try {
+    final Uint8List markerIcon =
+        await getBytesFromAsset("${commonImagePath}ic_cover_radius.png", 120);
+    final Uint8List hopperMarkerIcon =
+        await getBytesFromAsset("assets/markers/avatar.png", 80);
+
+    mapIcon = BitmapDescriptor.fromBytes(markerIcon);
+    hopperIcon = BitmapDescriptor.fromBytes(hopperMarkerIcon);
+  } catch (e) {
+    debugPrint("Error loading map icons in dialog: $e");
+  }
+}
+
+Future<Uint8List> getBytesFromAsset(String path, int width) async {
+  ByteData data = await rootBundle.load(path);
+  ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+      targetWidth: width);
+  ui.FrameInfo fi = await codec.getNextFrame();
+  return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+      .buffer
+      .asUint8List();
 }
 
 Future<BitmapDescriptor> getMarkerIcon(String url, Size size) async {

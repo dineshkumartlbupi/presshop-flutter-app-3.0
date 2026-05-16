@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:presshop/features/chat/presentation/pages/human_chat_screen.dart';
 import 'package:presshop/features/notification/presentation/pages/my_notifications.dart';
+import 'package:presshop/main.dart';
 
 mixin DashboardNotificationMixin<T extends StatefulWidget> on State<T> {
   void initFirebaseMessaging({
@@ -19,7 +20,7 @@ mixin DashboardNotificationMixin<T extends StatefulWidget> on State<T> {
     FirebaseMessaging.onMessage.listen((message) {
       debugPrint("FirebaseMessage: ${message.data}");
       print("FirebaseMessage for task=====>>>>>: ${message.data}");
-
+      localNotificationService.showFlutterNotificationWithSound(message);
       if (message.data.isNotEmpty &&
           message.data["notification_type"].toString() == "media_house_tasks") {
         onTaskAssigned(message.data["broadCast_id"]);

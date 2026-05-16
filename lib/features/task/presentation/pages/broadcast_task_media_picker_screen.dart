@@ -168,13 +168,13 @@ class BroadcastTaskMediaPickerScreenState
           _lastStatus = state.status;
 
           // In this screen, we don't pop on success, we let the user capture more or tap "Done"
-          if (state.status == CameraStatus.success) {
+          if (state.status == CameraStatus.success &&
+              state.capturedMedia.isNotEmpty) {
             _bloc?.add(const CameraResetStatusEvent());
-            // Re-initialize to ensure camera preview is resumed and status returns to 'ready'
-            _bloc?.add(const CameraInitializeEvent(force: false));
-
-            // Best practice: Only proceed if this screen is current
-            if (!(ModalRoute.of(context)?.isCurrent ?? false)) return;
+            if (mounted && (ModalRoute.of(context)?.isCurrent ?? false)) {
+              context.pop(state.capturedMedia);
+            }
+            return;
           }
         },
         builder: (context, state) {
@@ -284,26 +284,6 @@ class BroadcastTaskMediaPickerScreenState
                 }),
               ),
             ),
-            if (state.capturedMedia.isNotEmpty) ...[
-              SizedBox(width: size.width * AppDimensions.numD04),
-              Expanded(
-                child: SizedBox(
-                  height: size.width * AppDimensions.numD13,
-                  child: commonElevatedButton(
-                      "Next (${state.capturedMedia.length})",
-                      size,
-                      commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD04,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700),
-                      commonButtonStyle(size, Theme.of(context).primaryColor),
-                      () {
-                    context.pop(state.capturedMedia);
-                  }),
-                ),
-              ),
-            ],
           ],
         ),
       ),
@@ -443,12 +423,8 @@ class BroadcastTaskMediaPickerScreenState
                     if (value != null) {
                       final List<CameraData> gallerySelected =
                           value as List<CameraData>;
-                      final List<CameraData> combinedMedia =
-                          List.from(state.capturedMedia)
-                            ..addAll(gallerySelected);
                       if (mounted) {
-                        _bloc?.add(UpdateCapturedMediaEvent(combinedMedia));
-                        resumeCamera();
+                        context.pop(gallerySelected);
                       }
                     } else {
                       resumeCamera();

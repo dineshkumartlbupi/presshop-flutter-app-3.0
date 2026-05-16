@@ -45,6 +45,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<UpdateLocalTaskProgressEvent>(_onUpdateLocalTaskProgress);
     on<RemoveLocalTaskEvent>(_onRemoveLocalTask);
     on<ResetTaskActionStatusEvent>(_onResetTaskActionStatus);
+    on<ClearTransactionsEvent>(_onClearTransactions);
   }
   final GetTaskDetail getTaskDetail;
   final AcceptRejectTask acceptRejectTask;
@@ -202,22 +203,30 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Future<void> _onGetTaskTransactionDetails(
       GetTaskTransactionDetailsEvent event, Emitter<TaskState> emit) async {
+    emit(state.copyWith(
+        actionStatus: TaskStatus.loading, clearErrorMessage: true));
     final result = await getTaskTransactionDetails(event.transactionId);
     result.fold(
-      (failure) => emit(state.copyWith(errorMessage: failure.message)),
-      (transactions) => emit(state.copyWith(transactions: transactions)),
+      (failure) => emit(state.copyWith(
+          actionStatus: TaskStatus.failure, errorMessage: failure.message)),
+      (transactions) => emit(state.copyWith(
+          actionStatus: TaskStatus.success, transactions: transactions)),
     );
   }
 
   Future<void> _onGetContentTransactionDetails(
       GetContentTransactionDetailsEvent event, Emitter<TaskState> emit) async {
+    emit(state.copyWith(
+        actionStatus: TaskStatus.loading, clearErrorMessage: true));
     final result = await getContentTransactionDetails(ContentTransactionParams(
       roomId: event.roomId,
       mediaHouseId: event.mediaHouseId,
     ));
     result.fold(
-      (failure) => emit(state.copyWith(errorMessage: failure.message)),
-      (transactions) => emit(state.copyWith(transactions: transactions)),
+      (failure) => emit(state.copyWith(
+          actionStatus: TaskStatus.failure, errorMessage: failure.message)),
+      (transactions) => emit(state.copyWith(
+          actionStatus: TaskStatus.success, transactions: transactions)),
     );
   }
 
@@ -361,9 +370,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         chatList: const []));
   }
 
-  @override
-  void onTransition(Transition<TaskEvent, TaskState> transition) {
-    super.onTransition(transition);
-    // debugPrint("🚀 TaskBloc Transition: ${transition.event} -> ${transition.nextState}");
+  void _onClearTransactions(
+      ClearTransactionsEvent event, Emitter<TaskState> emit) {
+    emit(state.copyWith(transactions: const []));
   }
 }
