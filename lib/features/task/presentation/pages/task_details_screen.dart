@@ -166,7 +166,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                             Text(
                               widget.totalEarning == "0" &&
                                       widget.taskStatus == "accepted"
-                                  ? "TASK ACCEPTED"
+                                  ? (taskDetail!.task.deadlineDate
+                                          .isBefore(DateTime.now()))
+                                      ? "EXPIRED"
+                                      : "TASK ACCEPTED"
                                   // : "COMPLETED",
                                   : widget.isLive
                                       ? "LIVE TASK"

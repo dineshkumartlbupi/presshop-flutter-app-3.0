@@ -1384,7 +1384,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Total earnings for AppStrings.sold content" /*AppStrings.yourEarningsText*/,
+                      "Total earnings for ${AppStrings.sold} content" /*AppStrings.yourEarningsText*/,
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,

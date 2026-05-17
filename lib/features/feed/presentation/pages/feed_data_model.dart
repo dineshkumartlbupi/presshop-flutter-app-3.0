@@ -178,4 +178,13 @@ class ContentDataModel {
   String id = "";
   String media = "";
   String thumbnail = "";
+
+  Map<String, dynamic> toJson() {
+    return {
+      'media_type': mediaType,
+      '_id': id,
+      'media': media,
+      'imageAndVideo': thumbnail,
+    };
+  }
 }

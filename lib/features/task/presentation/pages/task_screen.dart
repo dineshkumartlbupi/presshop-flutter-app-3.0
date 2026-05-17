@@ -1369,7 +1369,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                 children: [
                                   Text(
                                       item.isLive
-                                          ? item.isAvailableForAccept &&
+                                          ? !item.isAvailableForAccept &&
                                                   item.status == "accepted"
                                               ? "ACCEPTED"
                                               : item.isAvailableForAccept &&

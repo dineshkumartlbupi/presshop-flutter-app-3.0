@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/utils/common_utils.dart';
 import 'package:presshop/features/task/data/models/task_models.dart';
 
-class ManageTaskChatModel { // 'uploading', 'processing', 'completed', 'failed'
+class ManageTaskChatModel {
+  // 'uploading', 'processing', 'completed', 'failed'
 
   // Constructor for local uploads
   ManageTaskChatModel.forLocalUpload({
@@ -46,6 +47,7 @@ class ManageTaskChatModel { // 'uploading', 'processing', 'completed', 'failed'
     imageCount = json['imageCount'] ?? '0';
     videoCount = json['videoCount'] ?? '0';
     audioCount = json['audioCount'] ?? '0';
+    ratingData = json['ratingData'];
 
     if (json['mediaList'] != null) {
       var data = json['mediaList'] as List;
@@ -262,6 +264,7 @@ class ManageTaskChatModel { // 'uploading', 'processing', 'completed', 'failed'
   List<String> options = [];
   TextEditingController priceController = TextEditingController();
   TextEditingController ratingReviewController = TextEditingController();
+  Map<String, dynamic>? ratingData;
 
   // Local upload tracking fields
   bool isLocalUpload = false;
@@ -281,6 +284,7 @@ class ManageTaskChatModel { // 'uploading', 'processing', 'completed', 'failed'
       'imageCount': imageCount,
       'videoCount': videoCount,
       'audioCount': audioCount,
+      'ratingData': ratingData,
       'mediaList': mediaList
           .map(
             (m) => {

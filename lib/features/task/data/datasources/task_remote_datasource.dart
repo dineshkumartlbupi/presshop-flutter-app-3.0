@@ -271,6 +271,35 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           }
         }
 
+        final ratingData = rawData["rating"] ??
+            (rawData["response"] is Map
+                ? rawData["response"]["rating"]
+                : null) ??
+            (rawData["data"] is Map ? rawData["data"]["rating"] : null);
+
+        Map<String, dynamic>? ratingMap;
+        if (ratingData is Map<String, dynamic>) {
+          ratingMap = ratingData;
+        } else if (ratingData is Map) {
+          ratingMap = Map<String, dynamic>.from(ratingData);
+        }
+
+        if (ratingMap != null) {
+          debugPrint("✅ Found Rating data in API response: $ratingMap");
+          if (chatList.isEmpty) {
+            final dummyItem = ManageTaskChatModel.fromJson({
+              "_id": "dummy_rating",
+              "message_type": "dummy",
+            });
+            dummyItem.ratingData = ratingMap;
+            chatList.add(dummyItem);
+          } else {
+            for (var item in chatList) {
+              item.ratingData = ratingMap;
+            }
+          }
+        }
+
         return chatList;
       } else {
         throw ServerException(

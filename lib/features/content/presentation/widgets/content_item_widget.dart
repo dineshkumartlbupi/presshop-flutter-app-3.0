@@ -199,7 +199,7 @@ class ContentItemWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: item.paidStatus == false
             ? AppColorTheme.colorThemePink
-            : AppColorTheme.colorLightGrey,
+            : AppColorTheme.colorThemePink,
         borderRadius:
             BorderRadius.circular(scalingWidth * AppDimensions.numD015),
       ),
@@ -222,10 +222,7 @@ class ContentItemWidget extends StatelessWidget {
               style: commonTextStyle(
                 size: size,
                 fontSize: scalingWidth * AppDimensions.numD022,
-                color: item.paidStatus == false
-                    ? Colors.white
-                    : (Theme.of(context).textTheme.bodyLarge?.color ??
-                        Colors.black),
+                color: item.paidStatus == false ? Colors.white : Colors.white,
                 fontWeight: FontWeight.w400,
               ),
             ),
@@ -236,10 +233,7 @@ class ContentItemWidget extends StatelessWidget {
             style: commonTextStyle(
               size: size,
               fontSize: scalingWidth * AppDimensions.numD022,
-              color: item.paidStatus == false
-                  ? Colors.white
-                  : (Theme.of(context).textTheme.bodyLarge?.color ??
-                      Colors.black),
+              color: item.paidStatus == false ? Colors.white : Colors.white,
               fontWeight: FontWeight.w600,
             ),
           ),
