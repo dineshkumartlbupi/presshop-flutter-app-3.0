@@ -112,7 +112,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     setUserNameListener();
     setPhoneListener();
     setEmailListener();
-    myProfileApi(showLoader: false);
+    myProfileApi(showLoader: true);
     if (isEditMode) {
       getAvatarsApi(showLoader: false);
     }
@@ -613,10 +613,10 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   String _getCurrentAddress() {
     if (myProfileData == null) return '';
 
-    List<String> addressLines = [];
     if (myProfileData!.address.isNotEmpty) {
-      addressLines.add("${myProfileData!.address}");
+      return myProfileData!.address;
     }
+
     List<String> userAddressParts = [];
     if (myProfileData!.profileAddress.isNotEmpty) {
       userAddressParts.add(myProfileData!.profileAddress);
@@ -632,10 +632,10 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     }
 
     if (userAddressParts.isNotEmpty) {
-      addressLines.add("${userAddressParts.join(', ')}");
+      return userAddressParts.join(', ');
     }
 
-    return addressLines.join('\n');
+    return '';
   }
 
   void setProfileData() {

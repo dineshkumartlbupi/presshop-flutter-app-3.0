@@ -99,6 +99,65 @@ class PublishContentScreenState extends State<PublishContentScreen>
   int docCount = 0;
   int pdfCount = 0;
 
+  static Map<String, dynamic>? formDraftCache;
+  static List<String>? cacheKeyPaths;
+
+  void saveDraftToCache() {
+    List<String> paths = [];
+    if (widget.publishData != null) {
+      paths.addAll(widget.publishData!.mediaList.map((e) => e.mediaPath));
+    } else if (widget.myContentData != null) {
+      paths.addAll(widget.myContentData!.contentMediaList.map((e) => e.media));
+    }
+    cacheKeyPaths = paths;
+
+    formDraftCache = {
+      'description': descriptionController.text,
+      'hashtags': selectedHashtagList,
+      'categoryId': selectedCategory?.id,
+      'sellType': selectedSellType,
+      'sliderValue': currentSliderValue,
+      'charityBox': _checkCharityBoxVal,
+      'selectedCharityIds': allCharityList.where((c) => c.isSelectCharity).map((c) => c.id).toList(),
+      'userSharedPriceValue': userSharedPriceValue,
+      'userExclusivePriceValue': userExclusivePriceValue,
+      'price': priceController.text,
+    };
+  }
+
+  void restoreDraftFromCache() {
+    List<String> currentPaths = [];
+    if (widget.publishData != null) {
+      currentPaths.addAll(widget.publishData!.mediaList.map((e) => e.mediaPath));
+    } else if (widget.myContentData != null) {
+      currentPaths.addAll(widget.myContentData!.contentMediaList.map((e) => e.media));
+    }
+
+    bool hasIntersection = false;
+    if (cacheKeyPaths != null && cacheKeyPaths!.isNotEmpty) {
+      for (var path in currentPaths) {
+        if (cacheKeyPaths!.contains(path)) {
+          hasIntersection = true;
+          break;
+        }
+      }
+    }
+
+    if (formDraftCache != null && hasIntersection) {
+      descriptionController.text = formDraftCache!['description'] ?? '';
+      selectedHashtagList = formDraftCache!['hashtags'] ?? [];
+      selectedSellType = formDraftCache!['sellType'] ?? AppStrings.sharedText;
+      currentSliderValue = formDraftCache!['sliderValue'] ?? 5.0;
+      _checkCharityBoxVal = formDraftCache!['charityBox'] ?? false;
+      userSharedPriceValue = formDraftCache!['userSharedPriceValue'] ?? "";
+      userExclusivePriceValue = formDraftCache!['userExclusivePriceValue'] ?? "";
+      priceController.text = formDraftCache!['price'] ?? "";
+    } else {
+      formDraftCache = null;
+      cacheKeyPaths = null;
+    }
+  }
+
   int get totalContentCount =>
       imageCount + videoCount + audioCount + docCount + pdfCount;
 
@@ -302,6 +361,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
     /// this function fills all the existing data in the draft
     fillExistingDataFunc();
+    restoreDraftFromCache();
   }
 
   String get currencySymbol =>
@@ -373,6 +433,15 @@ class PublishContentScreenState extends State<PublishContentScreen>
               } else {
                 selectedCategory = categoryList.first;
               }
+              
+              if (formDraftCache != null && formDraftCache!['categoryId'] != null) {
+                try {
+                  selectedCategory = categoryList.firstWhere((element) =>
+                      element.id == formDraftCache!['categoryId']);
+                } catch (e) {
+                  // ignore
+                }
+              }
 
               context
                   .read<PublishBloc>()
@@ -383,6 +452,14 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
           if (state.charities.isNotEmpty) {
             allCharityList = state.charities;
+            if (formDraftCache != null && formDraftCache!['selectedCharityIds'] != null) {
+              List<String> selectedIds = formDraftCache!['selectedCharityIds'];
+              for (int i = 0; i < allCharityList.length; i++) {
+                if (selectedIds.contains(allCharityList[i].id)) {
+                  allCharityList[i] = allCharityList[i].copyWith(isSelectCharity: true);
+                }
+              }
+            }
             setState(() {});
           }
           if (state.prices.isNotEmpty) {
@@ -434,6 +511,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     children: [
                                       InkWell(
                                         onTap: () {
+                                          saveDraftToCache();
                                           context.pop();
                                         },
                                         child: ClipRRect(
