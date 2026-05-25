@@ -118,7 +118,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
       'sellType': selectedSellType,
       'sliderValue': currentSliderValue,
       'charityBox': _checkCharityBoxVal,
-      'selectedCharityIds': allCharityList.where((c) => c.isSelectCharity).map((c) => c.id).toList(),
+      'selectedCharityIds': allCharityList
+          .where((c) => c.isSelectCharity)
+          .map((c) => c.id)
+          .toList(),
       'userSharedPriceValue': userSharedPriceValue,
       'userExclusivePriceValue': userExclusivePriceValue,
       'price': priceController.text,
@@ -128,9 +131,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
   void restoreDraftFromCache() {
     List<String> currentPaths = [];
     if (widget.publishData != null) {
-      currentPaths.addAll(widget.publishData!.mediaList.map((e) => e.mediaPath));
+      currentPaths
+          .addAll(widget.publishData!.mediaList.map((e) => e.mediaPath));
     } else if (widget.myContentData != null) {
-      currentPaths.addAll(widget.myContentData!.contentMediaList.map((e) => e.media));
+      currentPaths
+          .addAll(widget.myContentData!.contentMediaList.map((e) => e.media));
     }
 
     bool hasIntersection = false;
@@ -150,7 +155,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
       currentSliderValue = formDraftCache!['sliderValue'] ?? 5.0;
       _checkCharityBoxVal = formDraftCache!['charityBox'] ?? false;
       userSharedPriceValue = formDraftCache!['userSharedPriceValue'] ?? "";
-      userExclusivePriceValue = formDraftCache!['userExclusivePriceValue'] ?? "";
+      userExclusivePriceValue =
+          formDraftCache!['userExclusivePriceValue'] ?? "";
       priceController.text = formDraftCache!['price'] ?? "";
     } else {
       formDraftCache = null;
@@ -433,11 +439,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
               } else {
                 selectedCategory = categoryList.first;
               }
-              
-              if (formDraftCache != null && formDraftCache!['categoryId'] != null) {
+
+              if (formDraftCache != null &&
+                  formDraftCache!['categoryId'] != null) {
                 try {
-                  selectedCategory = categoryList.firstWhere((element) =>
-                      element.id == formDraftCache!['categoryId']);
+                  selectedCategory = categoryList.firstWhere(
+                      (element) => element.id == formDraftCache!['categoryId']);
                 } catch (e) {
                   // ignore
                 }
@@ -452,11 +459,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
           if (state.charities.isNotEmpty) {
             allCharityList = state.charities;
-            if (formDraftCache != null && formDraftCache!['selectedCharityIds'] != null) {
+            if (formDraftCache != null &&
+                formDraftCache!['selectedCharityIds'] != null) {
               List<String> selectedIds = formDraftCache!['selectedCharityIds'];
               for (int i = 0; i < allCharityList.length; i++) {
                 if (selectedIds.contains(allCharityList[i].id)) {
-                  allCharityList[i] = allCharityList[i].copyWith(isSelectCharity: true);
+                  allCharityList[i] =
+                      allCharityList[i].copyWith(isSelectCharity: true);
                 }
               }
             }
@@ -3103,17 +3112,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
         getHashTagsApi(widget.publishData!.country);
       });
 
-      // Fallback: Try EXIF first, then Current Location
+      // Fallback: Current Location
       if (locationController.text.isEmpty ||
           locationController.text == "Unknown") {
-        String mediaPath = widget.publishData!.mediaList.isNotEmpty
-            ? widget.publishData!.mediaList.first.mediaPath
-            : widget.publishData!.imagePath;
-        if (mediaPath.isNotEmpty && !mediaPath.startsWith('http')) {
-          _extractExifFromFile(mediaPath);
-        } else {
-          _fetchCurrentLocation();
-        }
+        _fetchCurrentLocation();
       }
     }
   }
@@ -3411,7 +3413,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
       additionalFiles: additionalFiles,
     );
     // widget.hideDraft ? [] :
-
     /* NetworkClass.multipartNetworkClassFiles(
         addContentUrl, this, addContentUrlRequest, params, filesPath)
         .callMultipartServiceSameParamMultiImage(true, "post", "images");*/
@@ -3453,6 +3454,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
             "🗑️ PublishContentScreen: Clearing captured media in CameraBloc");
         sl<CameraBloc>().add(const UpdateCapturedMediaEvent([]));
 
+        descriptionController.clear();
+        hashtagController.clear();
+        selectedHashtagList.clear();
+        formDraftCache = null;
+        cacheKeyPaths = null;
+
         await context.pushNamed(
           AppRoutes.contentSubmittedName,
           extra: {
@@ -3489,6 +3496,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
           debugPrint(
               "🗑️ PublishContentScreen: Clearing captured media in CameraBloc (not verified path)");
           sl<CameraBloc>().add(const UpdateCapturedMediaEvent([]));
+
+          descriptionController.clear();
+          hashtagController.clear();
+          selectedHashtagList.clear();
+          formDraftCache = null;
+          cacheKeyPaths = null;
 
           await context.pushNamed(
             AppRoutes.contentSubmittedName,
@@ -3554,74 +3567,4 @@ class AllCharityModel {
   }
 }
 */
-
-  Future<void> _extractExifFromFile(String filePath) async {
-    setState(() => isLocationFetching = true);
-    try {
-      final fileBytes = await File(filePath).readAsBytes();
-      final tags = await pure_exif.readExifFromBytes(fileBytes);
-
-      double extractedLat = 0.0;
-      double extractedLng = 0.0;
-
-      if (tags.containsKey('GPS GPSLatitude') &&
-          tags.containsKey('GPS GPSLongitude')) {
-        final latRatio = tags['GPS GPSLatitude']!.values.toList();
-        final lonRatio = tags['GPS GPSLongitude']!.values.toList();
-        final latRef = tags['GPS GPSLatitudeRef']?.printable;
-        final lonRef = tags['GPS GPSLongitudeRef']?.printable;
-
-        double lat = _convertRatioToDouble(latRatio);
-        double lon = _convertRatioToDouble(lonRatio);
-
-        if (latRef == 'S') lat = -lat;
-        if (lonRef == 'W') lon = -lon;
-
-        extractedLat = lat;
-        extractedLng = lon;
-      }
-
-      if (extractedLat != 0.0 && extractedLng != 0.0) {
-        final List<geo.Placemark> placemarks =
-            await geo.placemarkFromCoordinates(extractedLat, extractedLng);
-        if (placemarks.isNotEmpty) {
-          final geo.Placemark place = placemarks.first;
-          setState(() {
-            locationController.text =
-                "${place.street ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
-            isLocationFetching = false;
-          });
-          return;
-        }
-      }
-
-      await _fetchCurrentLocation();
-    } catch (e) {
-      debugPrint("Error extracting EXIF in publish screen: $e");
-      await _fetchCurrentLocation();
-    } finally {
-      if (mounted) {
-        setState(() => isLocationFetching = false);
-      }
-    }
-  }
-
-  double _convertRatioToDouble(dynamic ratio) {
-    try {
-      if (ratio is List && ratio.length >= 3) {
-        double d = ratio[0].numerator /
-            (ratio[0].denominator == 0 ? 1 : ratio[0].denominator);
-        double m = ratio[1].numerator /
-            (ratio[1].denominator == 0 ? 1 : ratio[1].denominator);
-        double s = ratio[2].numerator /
-            (ratio[2].denominator == 0 ? 1 : ratio[2].denominator);
-        double result = d + (m / 60.0) + (s / 3600.0);
-        if (result.isNaN || result.isInfinite) return 0.0;
-        return result;
-      }
-    } catch (e) {
-      debugPrint("EXIF ratio convert error: $e");
-    }
-    return 0.0;
-  }
 }

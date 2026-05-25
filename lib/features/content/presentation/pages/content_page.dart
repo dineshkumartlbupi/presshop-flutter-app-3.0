@@ -13,6 +13,7 @@ import 'package:presshop/features/content/presentation/widgets/content_item_widg
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/router/router_constants.dart';
+import 'package:presshop/core/services/media_upload_service.dart';
 
 class MyContentPage extends StatelessWidget {
   final bool hideLeading;
@@ -65,6 +66,7 @@ class MyContentViewState extends State<MyContentView>
 
   int allPage = 1;
   int myPage = 1;
+  int _previousTabIndex = 0;
 
   List<FilterModel> sortList = [];
   List<FilterModel> filterList = [];
@@ -85,9 +87,21 @@ class MyContentViewState extends State<MyContentView>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_handleTabSelection);
     initializeFilter();
     _loadAllContent(false);
     _loadMyContent(false);
+  }
+
+  void _handleTabSelection() {
+    if (_tabController.index != _previousTabIndex) {
+      _previousTabIndex = _tabController.index;
+      if (_tabController.index == 0) {
+        _loadAllContent(true);
+      } else {
+        _loadMyContent(true);
+      }
+    }
   }
 
   void initializeFilter() {
@@ -308,6 +322,8 @@ class MyContentViewState extends State<MyContentView>
     );
   }
 
+
+
   Widget _buildContentList(
       RefreshController controller, String type, String emptyMessage) {
     bool isAll = type == 'all';
@@ -377,36 +393,43 @@ class MyContentViewState extends State<MyContentView>
           onLoading: isAll ? _onAllLoading : _onMyLoading,
           header: const WaterDropHeader(),
           footer: const CustomFooter(builder: commonRefresherFooter),
-          child: currentList.isEmpty &&
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+
+              if (currentList.isEmpty &&
                   (state is ContentLoading ||
                       isLoading ||
-                      state is ContentInitial)
-              ? ListView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  children: [
-                    SizedBox(height: size.height * 0.3),
-                    if (!controller.isRefresh) showLoader(),
-                  ],
+                      state is ContentInitial))
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      SizedBox(height: size.height * 0.3),
+                      if (!controller.isRefresh) showLoader(),
+                    ],
+                  ),
                 )
-              : currentList.isEmpty
-                  ? ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      children: [
-                        SizedBox(height: size.height * 0.3),
-                        errorMessageWidget(emptyMessage),
-                      ],
-                    )
-                  : GridView.builder(
-                      padding:
-                          EdgeInsets.all(scalingWidth * AppDimensions.numD04),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: isIpad ? 3 : 2,
-                        childAspectRatio: isIpad ? 0.8 : 0.75,
-                        mainAxisSpacing: scalingWidth * AppDimensions.numD03,
-                        crossAxisSpacing: scalingWidth * AppDimensions.numD03,
-                      ),
-                      itemCount: currentList.length,
-                      itemBuilder: (context, index) {
+              else if (currentList.isEmpty)
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      SizedBox(height: size.height * 0.3),
+                      errorMessageWidget(emptyMessage),
+                    ],
+                  ),
+                )
+              else
+                SliverPadding(
+                  padding: EdgeInsets.all(scalingWidth * AppDimensions.numD04),
+                  sliver: SliverGrid(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: isIpad ? 3 : 2,
+                      childAspectRatio: isIpad ? 0.8 : 0.75,
+                      mainAxisSpacing: scalingWidth * AppDimensions.numD03,
+                      crossAxisSpacing: scalingWidth * AppDimensions.numD03,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
                         final item = currentList[index];
                         return ContentItemWidget(
                           key: ValueKey(item.id),
@@ -415,7 +438,12 @@ class MyContentViewState extends State<MyContentView>
                           onTap: () => _onItemTap(item),
                         );
                       },
+                      childCount: currentList.length,
                     ),
+                  ),
+                ),
+            ],
+          ),
         );
       },
     );

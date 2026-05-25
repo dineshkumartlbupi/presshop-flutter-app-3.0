@@ -114,9 +114,10 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
               }
             },
             builder: (context, state) {
+              final filteredReviews = state.reviews.where((r) => r.ratingValue > 2).toList();
               if (state.status == RatingStatus.initial ||
                   (state.status == RatingStatus.loading &&
-                      state.reviews.isEmpty)) {
+                      filteredReviews.isEmpty)) {
                 return Center(
                   child: Image.asset(
                     "${commonImagePath}rabbitLogo.png",
@@ -170,7 +171,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                     height: size.width * AppDimensions.numD04,
                   ),
                   Flexible(
-                      child: state.reviews.isNotEmpty
+                      child: filteredReviews.isNotEmpty
                           ? SmartRefresher(
                               controller: _refreshController,
                               enablePullDown: true,
@@ -192,7 +193,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                                       vertical:
                                           size.width * AppDimensions.numD02),
                                   itemBuilder: (context, index) {
-                                    final review = state.reviews[index];
+                                    final review = filteredReviews[index];
                                     return _buildReviewItem(size, review);
                                   },
                                   separatorBuilder: (context, index) {
@@ -200,7 +201,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                                       height: size.width * AppDimensions.numD06,
                                     );
                                   },
-                                  itemCount: state.reviews.length),
+                                  itemCount: filteredReviews.length),
                             )
                           : errorMessageWidget("Data Not Available")),
                 ],
@@ -261,14 +262,17 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                             ),
                           ),
                       placeholder: (context, url) => Center(
-                        child: Image.asset(
-                          "${commonImagePath}rabbitLogo.png",
-                          height: size.width * AppDimensions.numD10,
-                          width: size.width * AppDimensions.numD10,
-                          color: Theme.of(context).textTheme.bodyLarge?.color ??
-                              Colors.black,
-                        ),
-                      ),
+                            child: Image.asset(
+                              "${commonImagePath}rabbitLogo.png",
+                              height: size.width * AppDimensions.numD10,
+                              width: size.width * AppDimensions.numD10,
+                              color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color ??
+                                  Colors.black,
+                            ),
+                          ),
                       errorWidget: (context, url, error) => Container(
                             height: size.width * AppDimensions.numD20,
                             width: size.width * AppDimensions.numD20,
@@ -416,6 +420,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                     ),
                   ),
                   // const Spacer(),
+
                   Container(
                     padding: EdgeInsets.symmetric(
                         horizontal: size.width * AppDimensions.numD02,
@@ -441,6 +446,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                         // SizedBox(
                         //   width: size.width * AppDimensions.numD01,
                         // ),
+
                         RatingBar(
                           ratingWidget: RatingWidget(
                             empty: Image.asset("${iconsPath}ic_empty_star.png"),
@@ -775,9 +781,10 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                         child: Text(
                           "Show Results",
                           style: TextStyle(
-                            color: Theme.of(context).brightness == Brightness.light
-                                ? Colors.white
-                                : Colors.black,
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? Colors.white
+                                    : Colors.black,
                             fontSize: size.width * AppDimensions.numD045,
                             fontWeight: FontWeight.bold,
                           ),
@@ -873,7 +880,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
                                 border: Border.all(
-                                    width: 1, color: Theme.of(context).dividerColor),
+                                    width: 1,
+                                    color: Theme.of(context).dividerColor),
                               ),
                               child: Row(
                                 mainAxisAlignment:
@@ -952,7 +960,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD04),
                                 border: Border.all(
-                                    width: 1, color: Theme.of(context).dividerColor),
+                                    width: 1,
+                                    color: Theme.of(context).dividerColor),
                               ),
                               child: Row(
                                 mainAxisAlignment:

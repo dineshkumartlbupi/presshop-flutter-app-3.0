@@ -32,11 +32,11 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
-  String userName =
-      sharedPreferences!.getString(SharedPreferencesKeys.userNameKey) ?? '';
 
   @override
   Widget build(BuildContext context) {
+    String userName =
+        sharedPreferences!.getString(SharedPreferencesKeys.userNameKey) ?? '';
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:exif/exif.dart' as pure_exif;
+import 'package:native_exif/native_exif.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -172,10 +173,10 @@ class PreviewScreenState extends State<PreviewScreen>
                   media.longitude == "0.0") {
                 media.longitude = longitude.toString();
               }
-              if (media.location.isEmpty) {
+              if (media.location.isEmpty || media.location == "Unknown") {
                 media.location = address;
               }
-              if (mediaAddress.isEmpty && media.location.isNotEmpty) {
+              if (mediaAddress.isEmpty && media.location.isNotEmpty && media.location != "Unknown") {
                 mediaAddress = media.location;
               }
             }
@@ -624,7 +625,7 @@ class PreviewScreenState extends State<PreviewScreen>
                                                               "Unknown"
                                                       ? (isLocationFetching
                                                           ? "Fetching..."
-                                                          : "No location")
+                                                          : (mediaAddress.isNotEmpty ? mediaAddress : "No location"))
                                                       : mediaList[index]
                                                           .location,
                                                   style: commonTextStyle(
@@ -1055,44 +1056,22 @@ class PreviewScreenState extends State<PreviewScreen>
 
   Future<void> _extractExif(MediaData media) async {
     try {
-      debugPrint(
-          "Starting EXIF extraction purely in Dart for: ${media.mediaPath}");
+      debugPrint("Starting EXIF extraction natively for: ${media.mediaPath}");
 
-      final fileBytes = await File(media.mediaPath).readAsBytes();
-      final tags = await pure_exif.readExifFromBytes(fileBytes);
+      final nExif = await Exif.fromPath(media.mediaPath);
+      final latLng = await nExif.getLatLong();
 
-      debugPrint("================================");
-      debugPrint("ALL PURE EXIF METADATA for ${media.mediaPath}:");
-      debugPrint(tags.keys.toString());
-      debugPrint("================================");
+      if (latLng != null) {
+        double extractedLat = latLng.latitude;
+        double extractedLng = latLng.longitude;
 
-      double extractedLat = 0.0;
-      double extractedLng = 0.0;
-
-      if (tags.containsKey('GPS GPSLatitude') &&
-          tags.containsKey('GPS GPSLongitude')) {
-        final latRatio = tags['GPS GPSLatitude']!.values.toList();
-        final lonRatio = tags['GPS GPSLongitude']!.values.toList();
-        final latRef = tags['GPS GPSLatitudeRef']?.printable;
-        final lonRef = tags['GPS GPSLongitudeRef']?.printable;
-
-        double lat = _convertRatioToDouble(latRatio);
-        double lon = _convertRatioToDouble(lonRatio);
-
-        if (latRef == 'S') lat = -lat;
-        if (lonRef == 'W') lon = -lon;
-
-        extractedLat = lat;
-        extractedLng = lon;
-      }
-
-      if (extractedLat != 0.0 && extractedLng != 0.0) {
-        debugPrint(
-            "Extracted LatLong safely from Pure EXIF File Bytes: $extractedLat, $extractedLng");
+        debugPrint("Extracted LatLong safely from Native EXIF: $extractedLat, $extractedLng");
         media.latitude = extractedLat.toString();
         media.longitude = extractedLng.toString();
+        
         List<Placemark> placemarks =
             await placemarkFromCoordinates(extractedLat, extractedLng);
+            
         if (placemarks.isNotEmpty) {
           Placemark place = placemarks.first;
 
@@ -1113,17 +1092,22 @@ class PreviewScreenState extends State<PreviewScreen>
 
           String newLocation = addressParts.join(', ');
 
-          debugPrint("Formatted Address from EXIF coordinates: $newLocation");
+          debugPrint("Formatted Address from Native EXIF coordinates: $newLocation");
 
           if (newLocation.isNotEmpty) {
             media.location = newLocation;
+            media.country = place.country ?? '';
+            media.state = place.administrativeArea ?? '';
+            media.city = place.locality ?? '';
           }
         } else {
           debugPrint("No placemarks found for EXIF coordinates.");
         }
       } else {
-        debugPrint("No valid LatLong data found in pure byte EXIF.");
+        debugPrint("No valid LatLong data found in Native EXIF.");
       }
+      
+      await nExif.close();
 
       if (mounted) setState(() {});
     } catch (e) {

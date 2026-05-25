@@ -349,10 +349,11 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                 //     )
                 //   ],
                 // ),
-                body: (state.actionStatus == TaskStatus.loading ||
-                        state.taskDetailStatus == TaskStatus.loading)
-                    ? Center(child: showLoader())
-                    : SafeArea(
+                body:
+                    (state.actionStatus == TaskStatus.loading ||
+                            state.taskDetailStatus == TaskStatus.loading)
+                        ? Center(child: showLoader())
+                        : SafeArea(
                             child: Column(
                               children: [
                                 Expanded(
@@ -714,7 +715,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                               ),
                                               itemBuilder: (context, index) {
                                                 var item = chatList[index];
-                                                if (item.messageType == "media") {
+                                                if (item.messageType ==
+                                                    "media") {
                                                   if (item.media!.type
                                                       .contains("video")) {
                                                     return Column(

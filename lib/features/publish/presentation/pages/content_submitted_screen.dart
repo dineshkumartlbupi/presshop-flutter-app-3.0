@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/services/media_upload_service.dart';
 import 'package:presshop/features/camera/presentation/pages/preview_screen.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:go_router/go_router.dart';
@@ -100,6 +101,20 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
           body: SafeArea(
             child: Column(
               children: [
+                ValueListenableBuilder(
+                  valueListenable: MediaUploadService.uploadStatus,
+                  builder: (context, status, child) {
+                    if (status != null &&
+                        (status['status'] == 'uploading' ||
+                            status['status'] == 'starting' ||
+                            status['status'] == 'processing')) {
+                      return uploadingStatusWidget(
+                          size, status['progress'], status['status']);
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+
                 Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: size.width * AppDimensions.numD04),
@@ -1212,5 +1227,92 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                     url,
                     fit: BoxFit.cover,
                   );
+  }
+
+  Widget uploadingStatusWidget(Size size, int progress, String status) {
+    var isIpad = MediaQuery.of(context).size.width > 600;
+    final double scalingWidth = isIpad ? 550 : size.width;
+    return Container(
+      margin: EdgeInsets.symmetric(
+          horizontal: scalingWidth * AppDimensions.numD04,
+          vertical: scalingWidth * AppDimensions.numD02),
+      padding: EdgeInsets.all(scalingWidth * AppDimensions.numD03),
+      decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius:
+              BorderRadius.circular(scalingWidth * AppDimensions.numD02),
+          boxShadow: [
+            BoxShadow(
+                color: Theme.of(context).shadowColor.withOpacity(0.1),
+                spreadRadius: 1,
+                blurRadius: 2)
+          ]),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(scalingWidth * AppDimensions.numD02),
+            decoration: BoxDecoration(
+                color: AppColorTheme.colorThemePink.withOpacity(0.1),
+                shape: BoxShape.circle),
+            child: Icon(
+              Icons.cloud_upload_outlined,
+              color: AppColorTheme.colorThemePink,
+              size: scalingWidth * AppDimensions.numD06,
+            ),
+          ),
+          SizedBox(width: scalingWidth * AppDimensions.numD03),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  status == 'processing'
+                      ? "Processing media..."
+                      : "Uploading Content...",
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: scalingWidth * AppDimensions.numD035,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                      fontWeight: FontWeight.w600),
+                ),
+                SizedBox(height: scalingWidth * AppDimensions.numD01),
+                if (status != 'processing')
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                        scalingWidth * AppDimensions.numD01),
+                    child: LinearProgressIndicator(
+                      value: progress / 100,
+                      backgroundColor: Colors.grey.shade200,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColorTheme.colorThemePink),
+                      minHeight: scalingWidth * AppDimensions.numD015,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          SizedBox(width: scalingWidth * AppDimensions.numD03),
+          if (status == 'processing')
+            SizedBox(
+              height: scalingWidth * AppDimensions.numD05,
+              width: scalingWidth * AppDimensions.numD05,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(AppColorTheme.colorThemePink),
+              ),
+            )
+          else
+            Text(
+              "$progress%",
+              style: commonTextStyle(
+                  size: size,
+                  fontSize: scalingWidth * AppDimensions.numD03,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                  fontWeight: FontWeight.bold),
+            ),
+        ],
+      ),
+    );
   }
 }

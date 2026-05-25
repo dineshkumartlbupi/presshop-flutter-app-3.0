@@ -56,14 +56,23 @@ class AuthRepositoryImpl implements AuthRepository {
 
   Future<void> _cacheUserDetails(User user) async {
     await localDataSource.cacheUser({
+      'first_name': user.firstName,
+      'last_name': user.lastName,
+      'user_name': user.userName,
+      'email': user.email,
+      'country_code': user.countryCode,
+      'phone': user.phone,
+      'address': user.address,
+      'latitude': user.latitude,
+      'longitude': user.longitude,
       'currency_symbol': user.currencySymbol,
       'referral_code': user.referralCode,
       'total_hopper_army': user.totalHopperArmy,
-      // 'total_earnings': user./s,
+      'totalEarnings': user.totalEarnings,
       'avatar_id': user.avatarId,
       'avatar': user.avatar,
       '_id': user.id,
-      // Map other fields as needed by AuthLocalDataSourceImpl
+      'profile_image': user.profileImage,
     });
   }
 

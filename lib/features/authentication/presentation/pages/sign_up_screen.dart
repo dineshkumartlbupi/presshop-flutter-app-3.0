@@ -445,6 +445,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                       controller: userNameController,
                                       hintText: AppStrings.userNameHintText,
                                       errorMaxLines: 2,
+                                      textCapitalization: TextCapitalization.none,
                                       textInputFormatters: [
                                         FilteringTextInputFormatter.deny(
                                             RegExp(r'[ \\]')),
@@ -560,6 +561,7 @@ class _SignUpScreenState extends State<SignUpScreen> with AnalyticsPageMixin {
                                           AppColorTheme.colorTextFieldBorder,
                                       controller: emailController,
                                       hintText: AppStrings.emailHintText,
+                                      textCapitalization: TextCapitalization.none,
                                       textInputFormatters: null,
                                       prefixIcon:
                                           const Icon(Icons.email_outlined),

@@ -1256,8 +1256,6 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   countries: const ["uk", "in"],
                   isLatLngRequired: true,
                   getPlaceDetailWithLatLng: (prediction) {
-                    latitude = prediction.lat.toString();
-                    longitude = prediction.lng.toString();
                     getCurrentLocationFxn(
                             prediction.lat ?? "", prediction.lng ?? "")
                         .then((value) {
@@ -1273,8 +1271,6 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   itemClick: (prediction) {
                     profileAddressController.text =
                         prediction.description ?? "";
-                    latitude = prediction.lat ?? "";
-                    longitude = prediction.lng ?? "";
                     String postalCode =
                         prediction.structuredFormatting?.mainText ?? '';
                     profilePostCodeController.text = postalCode;
@@ -1384,8 +1380,6 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   countries: const ["uk", "in"],
                   isLatLngRequired: true,
                   getPlaceDetailWithLatLng: (prediction) {
-                    latitude = prediction.lat.toString();
-                    longitude = prediction.lng.toString();
                     getCurrentLocationFxn(
                             prediction.lat ?? "", prediction.lng ?? "")
                         .then((value) {
@@ -1401,8 +1395,6 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   itemClick: (prediction) {
                     profileAddressController.text =
                         prediction.description ?? "";
-                    latitude = prediction.lat ?? "";
-                    longitude = prediction.lng ?? "";
                     profileAddressController.selection =
                         TextSelection.fromPosition(TextPosition(
                             offset: prediction.description != null

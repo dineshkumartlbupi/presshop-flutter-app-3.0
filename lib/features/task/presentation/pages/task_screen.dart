@@ -57,6 +57,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
       RefreshController(initialRefresh: false);
   late AnimationController _blinkingController;
   late TabController _tabController;
+  int _previousTabIndex = 0;
   bool _isNavigating = false;
 
   late Size size;
@@ -138,11 +139,21 @@ class MyTaskScreenState extends State<MyTaskScreen>
       });
     });
 
-    _tabController.addListener(() {
-      if (!_tabController.indexIsChanging) {
-        setState(() {});
+    _tabController.addListener(_handleTabSelection);
+  }
+
+  void _handleTabSelection() {
+    if (!_tabController.indexIsChanging) {
+      setState(() {});
+    }
+    if (_tabController.index != _previousTabIndex) {
+      _previousTabIndex = _tabController.index;
+      if (_tabController.index == 0) {
+        _onAllRefresh(context);
+      } else {
+        _onLocalRefresh(context);
       }
-    });
+    }
   }
 
   @override
@@ -354,90 +365,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
     );
   }
 
-  Widget uploadingStatusWidget(Size size, int progress, String status) {
-    return Container(
-      margin: EdgeInsets.symmetric(
-          horizontal: scalingWidth * AppDimensions.numD04,
-          vertical: scalingWidth * AppDimensions.numD02),
-      padding: EdgeInsets.all(scalingWidth * AppDimensions.numD03),
-      decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius:
-              BorderRadius.circular(scalingWidth * AppDimensions.numD02),
-          boxShadow: [
-            BoxShadow(
-                color: Theme.of(context).shadowColor.withOpacity(0.1),
-                spreadRadius: 1,
-                blurRadius: 2)
-          ]),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(scalingWidth * AppDimensions.numD02),
-            decoration: BoxDecoration(
-                color: AppColorTheme.colorThemePink.withOpacity(0.1),
-                shape: BoxShape.circle),
-            child: Icon(
-              Icons.cloud_upload_outlined,
-              color: AppColorTheme.colorThemePink,
-              size: scalingWidth * AppDimensions.numD06,
-            ),
-          ),
-          SizedBox(width: scalingWidth * AppDimensions.numD03),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  status == 'processing'
-                      ? "Processing media..."
-                      : "Uploading Task Media...",
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: scalingWidth * AppDimensions.numD035,
-                      color: Theme.of(context).textTheme.bodyLarge?.color,
-                      fontWeight: FontWeight.w600),
-                ),
-                SizedBox(height: scalingWidth * AppDimensions.numD01),
-                if (status != 'processing')
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                        scalingWidth * AppDimensions.numD01),
-                    child: LinearProgressIndicator(
-                      value: progress / 100,
-                      backgroundColor: Colors.grey.shade200,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColorTheme.colorThemePink),
-                      minHeight: scalingWidth * AppDimensions.numD015,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          SizedBox(width: scalingWidth * AppDimensions.numD03),
-          if (status == 'processing')
-            SizedBox(
-              height: scalingWidth * AppDimensions.numD05,
-              width: scalingWidth * AppDimensions.numD05,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor:
-                    AlwaysStoppedAnimation<Color>(AppColorTheme.colorThemePink),
-              ),
-            )
-          else
-            Text(
-              "$progress%",
-              style: commonTextStyle(
-                  size: size,
-                  fontSize: scalingWidth * AppDimensions.numD03,
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
-                  fontWeight: FontWeight.bold),
-            ),
-        ],
-      ),
-    );
-  }
+
 
   void initializeFilter() {
     sortList.addAll([
@@ -496,21 +424,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
-              SliverToBoxAdapter(
-                child: ValueListenableBuilder(
-                  valueListenable: MediaUploadService.uploadStatus,
-                  builder: (context, status, child) {
-                    if (status != null &&
-                        (status['status'] == 'uploading' ||
-                            status['status'] == 'starting' ||
-                            status['status'] == 'processing')) {
-                      return uploadingStatusWidget(
-                          size, status['progress'], status['status']);
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
-              ),
+
               if (taskList.isNotEmpty)
                 SliverPadding(
                   padding: EdgeInsets.symmetric(
@@ -1145,21 +1059,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            SliverToBoxAdapter(
-              child: ValueListenableBuilder(
-                valueListenable: MediaUploadService.uploadStatus,
-                builder: (context, status, child) {
-                  if (status != null &&
-                      (status['status'] == 'uploading' ||
-                          status['status'] == 'starting' ||
-                          status['status'] == 'processing')) {
-                    return uploadingStatusWidget(
-                        size, status['progress'], status['status']);
-                  }
-                  return const SizedBox.shrink();
-                },
-              ),
-            ),
+
             if (allTaskList.isNotEmpty)
               SliverPadding(
                 padding: EdgeInsets.symmetric(
