@@ -60,7 +60,8 @@ class AppRoutes {
   static const String locationSharingPath = '/locationSharing';
   static const String permissionPath = '/permission';
   static const String addMoreContentPath = '/addMoreContent';
-  static const String broadcastTaskMediaPickerPath = '/broadcastTaskMediaPicker';
+  static const String broadcastTaskMediaPickerPath =
+      '/broadcastTaskMediaPicker';
   static const String broadcastTaskPreviewPath = '/broadcastTaskPreview';
   static const String draftAddMorePath = '/draftAddMore';
   static const String docViewerPath = '/docViewer';
@@ -89,7 +90,7 @@ class AppRoutes {
   static const String cameraName = 'camera';
   static const String previewName = 'preview';
   static const String myEarningName = 'myEarning';
-  static const String transactionDetailName = 'transactionDetail';
+  static const String transactionDetailName = 'transactionDetailsd';
   static const String myTasksName = 'myTasks';
   static const String manageTaskName = 'manageTask';
   static const String taskDetailNewName = 'taskDetailNew';

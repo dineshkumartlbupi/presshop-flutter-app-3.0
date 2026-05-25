@@ -3,7 +3,6 @@ import 'package:presshop/features/feed/presentation/pages/feed_data_model.dart';
 import '../../domain/entities/earning_transaction.dart';
 
 class EarningProfileDataModel {
-
   EarningProfileDataModel({
     required this.id,
     required this.hopper,
@@ -40,7 +39,8 @@ class EarningProfileDataModel {
       invoiceNumber: json['invoiceNumber'] ?? '',
       dueDate: json['Due_date'],
       paidStatusForHopper: json['paid_status_for_hopper'] ?? false,
-      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? "") ?? DateTime.now(),
+      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? "") ??
+          DateTime.now(),
     );
   }
   final String id;
@@ -121,7 +121,6 @@ class EarningProfileDataModel {
 }
 
 class MediaHouse {
-
   MediaHouse({
     required this.id,
     required this.firstName,
@@ -149,7 +148,6 @@ class MediaHouse {
 }
 
 class Hopper {
-
   Hopper({
     required this.id,
     required this.firstName,
@@ -185,7 +183,6 @@ class Hopper {
 }
 
 class PaymentMethod {
-
   PaymentMethod({
     required this.id,
     required this.card,
@@ -213,7 +210,6 @@ class PaymentMethod {
 }
 
 class CardDetails {
-
   CardDetails({
     required this.brand,
     required this.last4,
@@ -245,7 +241,6 @@ class CardDetails {
 }
 
 class BillingDetails {
-
   BillingDetails({
     required this.name,
     required this.email,
@@ -273,7 +268,6 @@ class BillingDetails {
 }
 
 class Address {
-
   Address({
     required this.city,
     required this.country,
@@ -560,9 +554,9 @@ class EarningTransactionDetail {
         paidStatus: json['paid_status_for_hopper'] ?? false,
         adminFullName: adminName,
         adminProfileImage: adminProfile,
-        adminCountryCode: (mediaHouse is Map ? mediaHouse['country_code'] : '')
-                ?.toString() ??
-            '',
+        adminCountryCode:
+            (mediaHouse is Map ? mediaHouse['country_code'] : '')?.toString() ??
+                '',
         adminPhoneNumber: adminPhone,
         adminEmail: adminEmailAddr,
         adminAccountName: adminAccName,
@@ -598,10 +592,10 @@ class EarningTransactionDetail {
         type: json['type']?.toString() ?? '',
         percentage: parseAmount(json['percentage']),
         typesOfContent: json['typeofcontent'] == "shared" ? false : true,
-        createdAT: dateTimeFormatter(
-            dateTime: json['createdAt']?.toString() ?? ""),
-        updatedAT: dateTimeFormatter(
-            dateTime: json['updatedAt']?.toString() ?? ""),
+        createdAT:
+            dateTimeFormatter(dateTime: json['createdAt']?.toString() ?? ""),
+        updatedAT:
+            dateTimeFormatter(dateTime: json['updatedAt']?.toString() ?? ""),
         dueDate: json['Due_date']?.toString() ?? "",
         contentId: cId,
         amount: parseAmount(amount),
@@ -780,6 +774,57 @@ class EarningTransactionDetail {
       currencySymbol: currencySymbol,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'paid_status_for_hopper': paidStatus,
+      'full_name': adminFullName,
+      'profile_image': adminProfileImage,
+      'country_code': adminCountryCode,
+      'phone': adminPhoneNumber,
+      'email': adminEmail,
+      'acc_holder_name': adminAccountName,
+      'bank_name': adminBankName,
+      'sort_code': adminSortCode,
+      'account_number': adminAccountNumber,
+      'username': adminUserName,
+      'role': adminRole,
+      'status': adminStatus,
+      'sale_status': saleStatus,
+      'stripe_fee': stripefee,
+      'content_type': contentType,
+      'purchased_task_content': contentDataList.map((e) => e.toJson()).toList(),
+      'bank_detail': userBankDetailList.map((e) => e.toJson()).toList(),
+      'first_name': userFirstName,
+      'last_name': userLastName,
+      'user_email': userEmail,
+      'user_phone': userPhone,
+      'user_address': userAddress,
+      'Vat': vat,
+      'contentTitle': contentTitle,
+      'amount': amount,
+      'allAmount': allAmount,
+      'hopper_price': totalEarningAmt,
+      'payable_to_hopper': payableT0Hopper,
+      'presshop_commission': payableCommission,
+      'type': type,
+      'percentage': percentage,
+      'typeofcontent': typesOfContent ? "exclusive" : "shared",
+      'createdAt': createdAT,
+      'Due_date': dueDate,
+      'updatedAt': updatedAT,
+      'companyLogo': companyLogo,
+      'content_id': contentId,
+      'mediaTypeImage': mediaTypeImage,
+      'hopperAvatar': hopperAvatar,
+      'hopperBankName': hopperBankName,
+      'hopperBankLogo': hopperBankLogo,
+      'contentImage': contentImage,
+      'currency': currency,
+      'currency_symbol': currencySymbol,
+    };
+  }
 }
 
 class BankDataModel {
@@ -807,6 +852,17 @@ class BankDataModel {
   String bankName = '';
   String sortCode = '';
   int accountNumber = 0;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'is_default': isDefault,
+      '_id': id,
+      'acc_holder_name': accountHolderName,
+      'bank_name': bankName,
+      'sort_code': sortCode,
+      'acc_number': accountNumber,
+    };
+  }
 }
 
 class FilterModel {

@@ -170,6 +170,9 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
     if (widget.purchasedCount != null) {
       contentPurchased = widget.purchasedCount.toString();
     }
+    if (widget.myContentData != null) {
+      contentView = widget.myContentData!.contentView.toString();
+    }
   }
 
   void onTextChanged() {
@@ -233,6 +236,35 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
           chatList = state.chatList;
           isDataLoaded = true;
 
+          // Extract rating data if present
+          final ratedItem = state.chatList.firstWhere(
+            (item) => item.ratingData != null,
+            orElse: () => state.chatList.first,
+          );
+
+          if (ratedItem.ratingData != null) {
+            final rData = ratedItem.ratingData!;
+            isRatingGiven = true;
+            ratings =
+                double.tryParse((rData["rating"] ?? "0").toString()) ?? 0.0;
+            ratingReviewController1.text = (rData["review"] ?? "").toString();
+
+            if (rData["features"] is List) {
+              dataList = List<String>.from(
+                (rData["features"] as List).map((e) => e.toString()),
+              );
+              indexList = [];
+              for (var feat in dataList) {
+                int idx = intList.indexOf(feat);
+                if (idx != -1) {
+                  indexList.add(idx);
+                }
+              }
+            }
+            debugPrint(
+                "✅ Populated existing rating from API: rating=$ratings, review=${ratingReviewController1.text}, features=$dataList");
+          }
+
           // Updating stats dynamically from chat list
           int purchaseCount = 0;
           int offerCount = 0;
@@ -241,20 +273,22 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
           for (var item in chatList) {
             String mType = item.messageType.toLowerCase();
             if (mType == 'payment' || item.paidStatus) {
-              purchaseCount++;
+              // purchaseCount++;
             } else if (mType == 'offered' ||
                 mType == 'mediahouse_initial_offer' ||
                 mType == 'hopper_counter_offer' ||
-                mType == 'initial_offer') {
+                mType == 'initial_offer' ||
+                mType == 'mediahouse_final_offer' ||
+                mType == 'hopper_final_offer') {
               offerCount++;
             } else if (mType == 'view') {
               viewCount++;
             }
           }
 
-          contentPurchased = purchaseCount.toString();
-          contentOffer = offerCount.toString();
-          contentView = viewCount.toString();
+          // contentPurchased = purchaseCount.toString();
+          contentOffer = offerCount > (widget.offerCount ?? 0) ? offerCount.toString() : (widget.offerCount ?? 0).toString();
+          // contentView = viewCount.toString();
         }
 
         if (state.actionStatus == TaskStatus.loading ||
@@ -272,6 +306,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
           isDataLoaded = true;
 
           if (state.transactions.isNotEmpty) {
+            print("🚀 state.transactions ${state.transactions.first.toJson()}");
             context.pushNamed(
               AppRoutes.transactionDetailName,
               extra: {
@@ -965,6 +1000,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                       RatingBar(
                                                                         glowRadius:
                                                                             0,
+                                                                        ignoreGestures:
+                                                                            isRatingGiven,
                                                                         ratingWidget:
                                                                             RatingWidget(
                                                                           empty:
@@ -1023,24 +1060,26 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                               child: ChoiceChip(
                                                                                 label: Text(intList[index]),
                                                                                 labelStyle: TextStyle(color: dataList.contains(intList[index]) ? Colors.white : AppColorTheme.colorGrey6),
-                                                                                onSelected: (selected) {
-                                                                                  if (selected) {
-                                                                                    for (int i = 0; i < intList.length; i++) {
-                                                                                      if (intList[i] == intList[index] && !dataList.contains(intList[i])) {
-                                                                                        dataList.add(intList[i]);
-                                                                                        indexList.add(i);
-                                                                                      }
-                                                                                    }
-                                                                                  } else {
-                                                                                    for (int i = 0; i < intList.length; i++) {
-                                                                                      if (intList[i] == intList[index] && dataList.contains(intList[i])) {
-                                                                                        dataList.remove(intList[i]);
-                                                                                        indexList.remove(i);
-                                                                                      }
-                                                                                    }
-                                                                                  }
-                                                                                  setState(() {});
-                                                                                },
+                                                                                onSelected: isRatingGiven
+                                                                                    ? null
+                                                                                    : (selected) {
+                                                                                        if (selected) {
+                                                                                          for (int i = 0; i < intList.length; i++) {
+                                                                                            if (intList[i] == intList[index] && !dataList.contains(intList[i])) {
+                                                                                              dataList.add(intList[i]);
+                                                                                              indexList.add(i);
+                                                                                            }
+                                                                                          }
+                                                                                        } else {
+                                                                                          for (int i = 0; i < intList.length; i++) {
+                                                                                            if (intList[i] == intList[index] && dataList.contains(intList[i])) {
+                                                                                              dataList.remove(intList[i]);
+                                                                                              indexList.remove(i);
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                        setState(() {});
+                                                                                      },
                                                                                 selectedColor: AppColorTheme.colorThemePink,
                                                                                 disabledColor: AppColorTheme.colorGreyChat.withOpacity(.3),
                                                                                 selected: dataList.contains(intList[index]) ? true : false,
@@ -1063,7 +1102,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                             maxLines:
                                                                                 6,
                                                                             readOnly:
-                                                                                false,
+                                                                                isRatingGiven,
                                                                             style:
                                                                                 TextStyle(
                                                                               color: Theme.of(context).textTheme.bodyLarge?.color,
@@ -1146,9 +1185,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                                       });
                                                                                       setState(() {});
                                                                                     } else {
-/*
                                                                                       showSnackBar("Required *", "Please enter some review for mediahouse", Colors.red);
-                                                                                      */
                                                                                     }
                                                                                   }
                                                                                 : () {
@@ -1198,196 +1235,6 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                         height: size.width *
                                                                             0.01,
                                                                       ),
-
-                                                                      /*Row(
-                                                                    children: [
-                                                                      Expanded(
-                                                                              child: SizedBox(
-                                                                                height: size.width * AppDimensions.numD13,
-                                                                                width: size.width,
-                                                                                child: ElevatedButton(
-                                                                                  onPressed: () {
-                                                                                        if (item.requestStatus.isEmpty &&
-                                                !item.isMakeCounterOffer) {
-                                              var map1 = {
-                                                "chat_id": item.id,
-                                                "status": false,
-                                              };
-                                                
-                                              socketEmitFunc(
-                                                  socketEvent: "reqstatus",
-                                                  messageType: "",
-                                                  dataMap: map1);
-                                                
-                                              socketEmitFunc(
-                                                socketEvent: "chat message",
-                                                messageType: "reject_mediaHouse_offer",
-                                              );
-                                                
-                                              socketEmitFunc(
-                                                socketEvent: "chat message",
-                                                messageType: "rating_hopper",
-                                              );
-                                                
-                                              socketEmitFunc(
-                                                socketEvent: "chat message",
-                                                messageType: "rating_mediaHouse",
-                                              );
-                                              showRejectBtn = true;
-                                                                                        }
-                                                                                        setState(() {});
-                                                                                  },
-                                                                                  style: ElevatedButton.styleFrom(
-                                              elevation: 0,
-                                              backgroundColor: item.requestStatus.isEmpty &&
-                                                  !item.isMakeCounterOffer
-                                                  ? Colors.black
-                                                  : item.requestStatus == "false"
-                                                  ? Colors.grey
-                                                  : Colors.transparent,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                  BorderRadius.circular(size.width * AppDimensions.numD04),
-                                                  side: (item.requestStatus == "false" ||
-                                                      item.requestStatus.isEmpty) &&
-                                                      !item.isMakeCounterOffer
-                                                      ? BorderSide.none
-                                                      : const BorderSide(
-                                                      color: Theme.of(context).textTheme.bodyLarge?.color, width: 1))),
-                                                                                  child: Text(
-                                                                                        AppStringsNew2.rejectText,
-                                                                                        style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * AppDimensions.numD037,
-                                                color: (item.requestStatus == "false" ||
-                                                    item.requestStatus.isEmpty) &&
-                                                    !item.isMakeCounterOffer
-                                                    ? Colors.white
-                                                    : AppColorTheme.colorLightGreen,
-                                                fontWeight: FontWeight.w500),
-                                                                                  ),
-                                                                                ),
-                                                                              )),
-                                                                      SizedBox(
-                                                                        width: size.width * AppDimensions.numD04,
-                                                                      ),
-                                                                      Expanded(
-                                                                              child: SizedBox(
-                                                                                height: size.width * AppDimensions.numD13,
-                                                                                width: size.width,
-                                                                                child: ElevatedButton(
-                                                                                  onPressed: () {
-                                                                                        //aditya accept btn
-                                                                                        if (item.requestStatus.isEmpty &&
-                                                !item.isMakeCounterOffer) {
-                                              debugPrint("tapppppp:::::$showAcceptBtn");
-                                              showAcceptBtn = true;
-                                              var map1 = {
-                                                "chat_id": item.id,
-                                                "status": true,
-                                              };
-                                                
-                                              socketEmitFunc(
-                                                  socketEvent: "reqstatus",
-                                                  messageType: "",
-                                                  dataMap: map1);
-                                                
-                                              socketEmitFunc(
-                                                  socketEvent: "chat message",
-                                                  messageType: "accept_mediaHouse_offer",
-                                                  dataMap: {
-                                                    "amount": isMakeCounter
-                                                        ? item.initialOfferAmount
-                                                        : item.finalCounterAmount,
-                                                    "image_id": widget.contentId!,
-                                                  });
-                                                                                        }
-                                                                                        setState(() {});
-                                                                                  },
-                                                                                  style: ElevatedButton.styleFrom(
-                                              elevation: 0,
-                                              backgroundColor: item.requestStatus.isEmpty &&
-                                                  !item.isMakeCounterOffer
-                                                  ? AppColorTheme.colorThemePink
-                                                  : item.requestStatus == "true"
-                                                  ? Colors.grey
-                                                  : Colors.transparent,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                  BorderRadius.circular(size.width * AppDimensions.numD04),
-                                                  side: (item.requestStatus == "true" ||
-                                                      item.requestStatus.isEmpty) &&
-                                                      !item.isMakeCounterOffer
-                                                      ? BorderSide.none
-                                                      : const BorderSide(
-                                                      color: Theme.of(context).textTheme.bodyLarge?.color, width: 1))),
-                                                                                  child: Text(
-                                                                                        AppStringsNew2.acceptText,
-                                                                                        style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * AppDimensions.numD037,
-                                                color: (item.requestStatus == "true" ||
-                                                    item.requestStatus.isEmpty) &&
-                                                    !item.isMakeCounterOffer
-                                                    ? Colors.white
-                                                    : AppColorTheme.colorLightGreen,
-                                                fontWeight: FontWeight.w500),
-                                                                                  ),
-                                                                                ),
-                                                                              )),
-                                                
-                                                                      */
-                                                                      /* Expanded(
-                                                                              child: SizedBox(
-                                                                                height: size.width * AppDimensions.numD13,
-                                                                                width: size.width,
-                                                                                child: ElevatedButton(
-                                                                                  onPressed: () {
-                                                                                        if(item.requestStatus.isEmpty){
-                                                
-                                              var map1 = {
-                                                "chat_id" : item.id,
-                                                "status" : true,
-                                              };
-                                                
-                                              socketEmitFunc(
-                                                  socketEvent: "reqstatus",
-                                                  messageType: "",
-                                                  dataMap: map1
-                                              );
-                                                
-                                              socketEmitFunc(
-                                                  socketEvent: "chat message",
-                                                  messageType: "contentupload",
-                                              );
-                                                                                        }
-                                                                                  },
-                                                                                  style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                              item.requestStatus.isEmpty
-                                                  ? AppColorTheme.colorThemePink
-                                                  :item.requestStatus == "true"
-                                                  ?  Colors.grey
-                                                  :  Colors.transparent,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(
-                                                    size.width * AppDimensions.numD04),
-                                                  side: item.requestStatus == "true" || item.requestStatus.isEmpty ? BorderSide.none : const BorderSide(
-                                                      color: AppColorTheme.colorGrey1, width: 2)
-                                              )),
-                                                                                  child: Text(
-                                                                                        AppStringsNew2.yesText,
-                                                                                        style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * AppDimensions.numD04,
-                                                color: item.requestStatus == "true" || item.requestStatus.isEmpty ? Colors.white : AppColorTheme.colorLightGreen,
-                                                fontWeight: FontWeight.w500),
-                                                                                  ),
-                                                                                ),
-                                                                              )),*/
-                                                                      /*
-                                                                    ],
-                                                                  ),*/
                                                                     ],
                                                                   ),
                                                                 )),
@@ -1796,194 +1643,6 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                         AppDimensions
                                                                             .numD025,
                                                                   ),
-                                                                  /*Row(
-                            children: [
-                              Expanded(
-                                    child: SizedBox(
-                                      height: size.width * AppDimensions.numD13,
-                                      width: size.width,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          if (item.requestStatus.isEmpty &&
-                                              !item.isMakeCounterOffer) {
-                                            var map1 = {
-                                              "chat_id": item.id,
-                                              "status": false,
-                                            };
-                                                
-                                            socketEmitFunc(
-                                                socketEvent: "reqstatus",
-                                                messageType: "",
-                                                dataMap: map1);
-                                                
-                                            socketEmitFunc(
-                                              socketEvent: "chat message",
-                                              messageType: "reject_mediaHouse_offer",
-                                            );
-                                                
-                                            socketEmitFunc(
-                                              socketEvent: "chat message",
-                                              messageType: "rating_hopper",
-                                            );
-                                                
-                                            socketEmitFunc(
-                                              socketEvent: "chat message",
-                                              messageType: "rating_mediaHouse",
-                                            );
-                                            showRejectBtn = true;
-                                          }
-                                          setState(() {});
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                            elevation: 0,
-                                            backgroundColor: item.requestStatus.isEmpty &&
-                                                !item.isMakeCounterOffer
-                                                ? Colors.black
-                                                : item.requestStatus == "false"
-                                                ? Colors.grey
-                                                : Colors.transparent,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(size.width * AppDimensions.numD04),
-                                                side: (item.requestStatus == "false" ||
-                                                    item.requestStatus.isEmpty) &&
-                                                    !item.isMakeCounterOffer
-                                                    ? BorderSide.none
-                                                    : const BorderSide(
-                                                    color: Theme.of(context).textTheme.bodyLarge?.color, width: 1))),
-                                        child: Text(
-                                          AppStringsNew2.rejectText,
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * AppDimensions.numD037,
-                                              color: (item.requestStatus == "false" ||
-                                                  item.requestStatus.isEmpty) &&
-                                                  !item.isMakeCounterOffer
-                                                  ? Colors.white
-                                                  : AppColorTheme.colorLightGreen,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ),
-                                    )),
-                              SizedBox(
-                                width: size.width * AppDimensions.numD04,
-                              ),
-                              Expanded(
-                                    child: SizedBox(
-                                      height: size.width * AppDimensions.numD13,
-                                      width: size.width,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          //aditya accept btn
-                                          if (item.requestStatus.isEmpty &&
-                                              !item.isMakeCounterOffer) {
-                                            debugPrint("tapppppp:::::$showAcceptBtn");
-                                            showAcceptBtn = true;
-                                            var map1 = {
-                                              "chat_id": item.id,
-                                              "status": true,
-                                            };
-                                                
-                                            socketEmitFunc(
-                                                socketEvent: "reqstatus",
-                                                messageType: "",
-                                                dataMap: map1);
-                                                
-                                            socketEmitFunc(
-                                                socketEvent: "chat message",
-                                                messageType: "accept_mediaHouse_offer",
-                                                dataMap: {
-                                                  "amount": isMakeCounter
-                                                      ? item.initialOfferAmount
-                                                      : item.finalCounterAmount,
-                                                  "image_id": widget.contentId!,
-                                                });
-                                          }
-                                          setState(() {});
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                            elevation: 0,
-                                            backgroundColor: item.requestStatus.isEmpty &&
-                                                !item.isMakeCounterOffer
-                                                ? AppColorTheme.colorThemePink
-                                                : item.requestStatus == "true"
-                                                ? Colors.grey
-                                                : Colors.transparent,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(size.width * AppDimensions.numD04),
-                                                side: (item.requestStatus == "true" ||
-                                                    item.requestStatus.isEmpty) &&
-                                                    !item.isMakeCounterOffer
-                                                    ? BorderSide.none
-                                                    : const BorderSide(
-                                                    color: Theme.of(context).textTheme.bodyLarge?.color, width: 1))),
-                                        child: Text(
-                                          AppStringsNew2.acceptText,
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * AppDimensions.numD037,
-                                              color: (item.requestStatus == "true" ||
-                                                  item.requestStatus.isEmpty) &&
-                                                  !item.isMakeCounterOffer
-                                                  ? Colors.white
-                                                  : AppColorTheme.colorLightGreen,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ),
-                                    )),
-                                                
-                              */
-                                                                  /* Expanded(
-                                    child: SizedBox(
-                                      height: size.width * AppDimensions.numD13,
-                                      width: size.width,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          if(item.requestStatus.isEmpty){
-                                                
-                                            var map1 = {
-                                              "chat_id" : item.id,
-                                              "status" : true,
-                                            };
-                                                
-                                            socketEmitFunc(
-                                                socketEvent: "reqstatus",
-                                                messageType: "",
-                                                dataMap: map1
-                                            );
-                                                
-                                            socketEmitFunc(
-                                                socketEvent: "chat message",
-                                                messageType: "contentupload",
-                                            );
-                                          }
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                            item.requestStatus.isEmpty
-                                                ? AppColorTheme.colorThemePink
-                                                :item.requestStatus == "true"
-                                                ?  Colors.grey
-                                                :  Colors.transparent,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  size.width * AppDimensions.numD04),
-                                                side: item.requestStatus == "true" || item.requestStatus.isEmpty ? BorderSide.none : const BorderSide(
-                                                    color: AppColorTheme.colorGrey1, width: 2)
-                                            )),
-                                        child: Text(
-                                          AppStringsNew2.yesText,
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * AppDimensions.numD04,
-                                              color: item.requestStatus == "true" || item.requestStatus.isEmpty ? Colors.white : AppColorTheme.colorLightGreen,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ),
-                                    )),*/ /*
-                            ],
-                                                    ),*/
                                                                   SizedBox(
                                                                     height: size
                                                                             .width *
@@ -2186,6 +1845,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                   RatingBar(
                                                                     glowRadius:
                                                                         0,
+                                                                    ignoreGestures:
+                                                                        isRatingGiven,
                                                                     ratingWidget:
                                                                         RatingWidget(
                                                                       empty: Image
@@ -2266,30 +1927,26 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                                 : AppColorTheme.colorGrey6,
                                                                             fontFamily: "AirbnbCereal",
                                                                             fontSize: size.width * AppDimensions.numD035),
-                                                                        onSelected:
-                                                                            (selected) {
-                                                                          if (selected) {
-                                                                            for (int i = 0;
-                                                                                i < intList.length;
-                                                                                i++) {
-                                                                              if (intList[i] == intList[index] && !dataList.contains(intList[i])) {
-                                                                                dataList.add(intList[i]);
-                                                                                indexList.add(i);
-                                                                              }
-                                                                            }
-                                                                          } else {
-                                                                            for (int i = 0;
-                                                                                i < intList.length;
-                                                                                i++) {
-                                                                              if (intList[i] == intList[index] && dataList.contains(intList[i])) {
-                                                                                dataList.remove(intList[i]);
-                                                                                indexList.remove(i);
-                                                                              }
-                                                                            }
-                                                                          }
-                                                                          setState(
-                                                                              () {});
-                                                                        },
+                                                                        onSelected: isRatingGiven
+                                                                            ? null
+                                                                            : (selected) {
+                                                                                if (selected) {
+                                                                                  for (int i = 0; i < intList.length; i++) {
+                                                                                    if (intList[i] == intList[index] && !dataList.contains(intList[i])) {
+                                                                                      dataList.add(intList[i]);
+                                                                                      indexList.add(i);
+                                                                                    }
+                                                                                  }
+                                                                                } else {
+                                                                                  for (int i = 0; i < intList.length; i++) {
+                                                                                    if (intList[i] == intList[index] && dataList.contains(intList[i])) {
+                                                                                      dataList.remove(intList[i]);
+                                                                                      indexList.remove(i);
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                                setState(() {});
+                                                                              },
                                                                         selectedColor:
                                                                             AppColorTheme.colorThemePink,
                                                                         disabledColor: AppColorTheme
@@ -2319,7 +1976,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                                                         maxLines:
                                                                             6,
                                                                         readOnly:
-                                                                            false,
+                                                                            isRatingGiven,
                                                                         style:
                                                                             TextStyle(
                                                                           color:
@@ -2825,86 +2482,90 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                   ),
 
                   /// Offers
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
-                              color: widget.myContentData
-                                          ?.purchasedMediahouseCount ==
-                                      0
-                                  ? Colors.grey
-                                  : AppColorTheme.colorThemePink,
-                              size: size.width * AppDimensions.numD042),
-                          SizedBox(width: size.width * AppDimensions.numD018),
-                          Text(
-                            '$contentPurchased ${AppStringsNew2.sold}',
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * AppDimensions.numD029,
-                                color: int.parse(contentPurchased) == 0
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
+                                color: widget.myContentData
+                                            ?.purchasedMediahouseCount ==
+                                        0
                                     ? Colors.grey
                                     : AppColorTheme.colorThemePink,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                          width: widget.myContentData!.offerCount >= 0
-                              ? size.width * AppDimensions.numD04
-                              : size.width * AppDimensions.numD02),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
-                              color: widget.myContentData?.offerCount == 0
-                                  ? Colors.grey
-                                  : AppColorTheme.colorThemePink,
-                              size: size.width * AppDimensions.numD042),
-                          SizedBox(width: size.width * AppDimensions.numD018),
-                          Text(
-                            '$contentOffer ${int.parse(contentOffer) > 1 ? '${AppStringsNew2.offerText}s' : AppStringsNew2.offerText}',
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * AppDimensions.numD029,
-                                color: int.parse(contentOffer) == 0
+                                size: size.width * AppDimensions.numD042),
+                            SizedBox(width: size.width * AppDimensions.numD018),
+                            Text(
+                              '$contentPurchased ${AppStringsNew2.sold}',
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * AppDimensions.numD029,
+                                  color: int.parse(contentPurchased) == 0
+                                      ? Colors.grey
+                                      : AppColorTheme.colorThemePink,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                            width: widget.myContentData!.offerCount >= 0
+                                ? size.width * AppDimensions.numD04
+                                : size.width * AppDimensions.numD02),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
+                                color: widget.myContentData?.offerCount == 0
                                     ? Colors.grey
                                     : AppColorTheme.colorThemePink,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                          width: int.parse(contentOffer) >= 0
-                              ? size.width * AppDimensions.numD04
-                              : size.width * AppDimensions.numD02),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ImageIcon(const AssetImage("${iconsPath}ic_view.png"),
-                              color: int.parse(contentView) == 0
-                                  ? Colors.grey
-                                  : AppColorTheme.colorThemePink,
-                              size: size.width * AppDimensions.numD05),
-                          SizedBox(width: size.width * AppDimensions.numD018),
-                          Text(
-                            '$contentView ${int.parse(contentView) > 1 ? '${AppStringsNew2.viewText}s' : AppStringsNew2.viewText}',
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * AppDimensions.numD029,
+                                size: size.width * AppDimensions.numD042),
+                            SizedBox(width: size.width * AppDimensions.numD018),
+                            Text(
+                              '$contentOffer ${int.parse(contentOffer) > 1 ? '${AppStringsNew2.offerText}s' : AppStringsNew2.offerText}',
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * AppDimensions.numD029,
+                                  color: int.parse(contentOffer) == 0
+                                      ? Colors.grey
+                                      : AppColorTheme.colorThemePink,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                            width: int.parse(contentOffer) >= 0
+                                ? size.width * AppDimensions.numD04
+                                : size.width * AppDimensions.numD02),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ImageIcon(const AssetImage("${iconsPath}ic_view.png"),
                                 color: int.parse(contentView) == 0
                                     ? Colors.grey
                                     : AppColorTheme.colorThemePink,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ],
-                      ),
-                    ],
+                                size: size.width * AppDimensions.numD05),
+                            SizedBox(width: size.width * AppDimensions.numD018),
+                            Text(
+                              '$contentView ${int.parse(contentView) > 1 ? '${AppStringsNew2.viewText}s' : AppStringsNew2.viewText}',
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * AppDimensions.numD029,
+                                  color: int.parse(contentView) == 0
+                                      ? Colors.grey
+                                      : AppColorTheme.colorThemePink,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(
                     height: size.width * AppDimensions.numD02,
@@ -3007,8 +2668,8 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                               AppStringsNew2.unPaidText
                           ? AppColorTheme.colorThemePink
                           : (Theme.of(context).brightness == Brightness.dark
-                              ? AppColorTheme.colorDarkThemeCard
-                              : AppColorTheme.colorLightGrey),
+                              ? AppColorTheme.colorThemePink
+                              : AppColorTheme.colorThemePink),
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD03)),
                   child: Column(
@@ -3028,10 +2689,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                             color: widget.myContentData!.paidStatus ==
                                     AppStringsNew2.unPaidText
                                 ? Colors.white
-                                : (Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black),
+                                : Colors.white,
                             fontWeight: FontWeight.w400),
                       ),
                       FittedBox(
@@ -3051,7 +2709,7 @@ class ManageContentChatScreenState extends State<ManageContentChatScreen>
                                     : (Theme.of(context).brightness ==
                                             Brightness.dark
                                         ? Colors.white
-                                        : Colors.black),
+                                        : Colors.white),
                                 fontWeight: FontWeight.bold),
                             /*myContentData!.paidStatus == AppStringsNew2.paidText &&
                                             myContentData!.isPaidStatusToHopper

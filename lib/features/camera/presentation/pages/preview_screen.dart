@@ -211,7 +211,7 @@ class PreviewScreenState extends State<PreviewScreen>
       });
       // Check permission status
       var status = await Permission.location.status;
-      if (status.isDenied || status.isPermanentlyDenied) {
+      if (status.isPermanentlyDenied) {
         isLocationFetching = false;
         if (mounted && showErrorLocationPage) {
           goToLocationErrorScreen();

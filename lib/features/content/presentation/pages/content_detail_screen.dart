@@ -174,6 +174,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
             setState(() {
               contentItem = state.content;
               localViewCount = state.content.totalView;
+              localOfferCount = state.content.totalOffer;
+              localPurchasedCount = state.content.purchasedMediahouseCount;
               isLoading = false;
               initialController();
               _checkOwnership();
@@ -209,7 +211,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                 } else if (mType == 'offered' ||
                     mType == 'mediahouse_initial_offer' ||
                     mType == 'hopper_counter_offer' ||
-                    mType == 'initial_offer') {
+                    mType == 'initial_offer' ||
+                    mType == 'mediahouse_final_offer' ||
+                    mType == 'hopper_final_offer') {
                   offCount++;
                 } else if (mType == 'view') {
                   vCount++;
@@ -226,16 +230,20 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   'message_type': (mType == 'offered' ||
                           mType == 'mediahouse_initial_offer' ||
                           mType == 'hopper_counter_offer' ||
-                          mType == 'initial_offer')
+                          mType == 'initial_offer' ||
+                          mType == 'mediahouse_final_offer' ||
+                          mType == 'hopper_final_offer')
                       ? 'Offered'
                       : 'Sold',
                   'amount': item.amount,
                 };
               }).toList();
 
-              localOfferCount = offCount;
-              localPurchasedCount = purCount;
-              localViewCount = vCount;
+              localOfferCount =
+                  offCount > localOfferCount ? offCount : localOfferCount;
+              localPurchasedCount = purCount > localPurchasedCount
+                  ? purCount
+                  : localPurchasedCount;
             });
           } else if (state is ContentTransactionsLoaded) {
             debugPrint('✅ ContentTransactionsLoaded');
@@ -701,95 +709,98 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   ),
 
                   /// Offers
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
-                              color: (_mediaHouseList.isNotEmpty
-                                          ? localPurchasedCount
-                                          : widget.purchasedMediahouseCount) ==
-                                      0
-                                  ? AppColorTheme.colorTextFieldIcon
-                                  : AppColorTheme.colorThemePink,
-                              size: size.width * AppDimensions.numD042),
-                          SizedBox(width: size.width * AppDimensions.numD018),
-                          Text(
-                            '${_mediaHouseList.isNotEmpty ? localPurchasedCount : widget.purchasedMediahouseCount} ${AppStrings.sold}',
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * AppDimensions.numD029,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ImageIcon(
+                                const AssetImage("${iconsPath}dollar1.png"),
                                 color: (_mediaHouseList.isNotEmpty
                                             ? localPurchasedCount
                                             : widget
                                                 .purchasedMediahouseCount) ==
                                         0
-                                    ? Colors.grey
+                                    ? AppColorTheme.colorTextFieldIcon
                                     : AppColorTheme.colorThemePink,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: size.width * AppDimensions.numD02),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
-                              color: (_mediaHouseList.isNotEmpty
-                                          ? localOfferCount
-                                          : widget.offerCount) ==
-                                      0
-                                  ? AppColorTheme.colorTextFieldIcon
-                                  : AppColorTheme.colorThemePink,
-                              size: size.width * AppDimensions.numD042),
-                          SizedBox(width: size.width * AppDimensions.numD018),
-                          Text(
-                            '${_mediaHouseList.isNotEmpty ? localOfferCount.toString() : widget.offerCount.toString()} ${(_mediaHouseList.isNotEmpty ? localOfferCount : widget.offerCount) > 1 ? '${AppStrings.offerText}s' : AppStrings.offerText}',
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * AppDimensions.numD029,
+                                size: size.width * AppDimensions.numD042),
+                            SizedBox(width: size.width * AppDimensions.numD018),
+                            Text(
+                              '${_mediaHouseList.isNotEmpty ? localPurchasedCount : widget.purchasedMediahouseCount} ${AppStrings.sold}',
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * AppDimensions.numD029,
+                                  color: (_mediaHouseList.isNotEmpty
+                                              ? localPurchasedCount
+                                              : widget
+                                                  .purchasedMediahouseCount) ==
+                                          0
+                                      ? Colors.grey
+                                      : AppColorTheme.colorThemePink,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ],
+                        ),
+                        SizedBox(width: size.width * AppDimensions.numD02),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ImageIcon(
+                                const AssetImage("${iconsPath}dollar1.png"),
                                 color: (_mediaHouseList.isNotEmpty
                                             ? localOfferCount
                                             : widget.offerCount) ==
                                         0
                                     ? AppColorTheme.colorTextFieldIcon
                                     : AppColorTheme.colorThemePink,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: size.width * AppDimensions.numD02),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ImageIcon(const AssetImage("${iconsPath}ic_view.png"),
-                              color: (_mediaHouseList.isNotEmpty
-                                          ? localViewCount
-                                          : (contentItem?.totalView ?? 0)) ==
-                                      0
-                                  ? Colors.grey
-                                  : AppColorTheme.colorThemePink,
-                              size: size.width * AppDimensions.numD05),
-                          SizedBox(width: size.width * AppDimensions.numD018),
-                          Text(
-                            '${_mediaHouseList.isNotEmpty ? localViewCount : (contentItem?.totalView ?? 0)} ${(_mediaHouseList.isNotEmpty ? localViewCount : (contentItem?.totalView ?? 0)) > 1 ? '${AppStrings.viewsText}s' : AppStrings.viewsText}',
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * AppDimensions.numD029,
-                                color: (contentItem!.paidStatus &&
-                                            contentItem!.totalView == 1) ||
-                                        contentItem!.totalView == 0
+                                size: size.width * AppDimensions.numD042),
+                            SizedBox(width: size.width * AppDimensions.numD018),
+                            Text(
+                              '${_mediaHouseList.isNotEmpty ? localOfferCount.toString() : widget.offerCount.toString()} ${(_mediaHouseList.isNotEmpty ? localOfferCount : widget.offerCount) > 1 ? '${AppStrings.offerText}s' : AppStrings.offerText}',
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * AppDimensions.numD029,
+                                  color: (_mediaHouseList.isNotEmpty
+                                              ? localOfferCount
+                                              : widget.offerCount) ==
+                                          0
+                                      ? AppColorTheme.colorTextFieldIcon
+                                      : AppColorTheme.colorThemePink,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ],
+                        ),
+                        SizedBox(width: size.width * AppDimensions.numD02),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ImageIcon(
+                                const AssetImage("${iconsPath}ic_view.png"),
+                                color: localViewCount == 0
                                     ? Colors.grey
                                     : AppColorTheme.colorThemePink,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ],
-                      ),
-                    ],
+                                size: size.width * AppDimensions.numD05),
+                            SizedBox(width: size.width * AppDimensions.numD018),
+                            Text(
+                              '$localViewCount ${localViewCount > 1 ? '${AppStrings.viewsText}s' : AppStrings.viewsText}',
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * AppDimensions.numD029,
+                                  color: localViewCount == 0
+                                      ? Colors.grey
+                                      : AppColorTheme.colorThemePink,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(
                     height: size.width * AppDimensions.numD02,
@@ -886,8 +897,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                       color: contentItem!.paidStatus == false
                           ? AppColorTheme.colorThemePink
                           : (Theme.of(context).brightness == Brightness.dark
-                              ? AppColorTheme.colorDarkThemeCard
-                              : AppColorTheme.colorLightGrey),
+                              ? AppColorTheme.colorThemePink
+                              : AppColorTheme.colorThemePink),
                       borderRadius: BorderRadius.circular(
                           size.width * AppDimensions.numD03)),
                   child: Column(
@@ -913,7 +924,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                           fontSize: size.width * AppDimensions.numD035,
                           color: contentItem!.paidStatus == false
                               ? Colors.white
-                              : Theme.of(context).textTheme.bodyLarge?.color,
+                              : Colors.white,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -930,10 +941,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                 fontSize: size.width * AppDimensions.numD05,
                                 color: contentItem!.paidStatus == false
                                     ? Colors.white
-                                    : Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.color,
+                                    : Colors.white,
                                 fontWeight: FontWeight.bold),
                           ),
                         ),

@@ -138,16 +138,16 @@ class _MapPageContentState extends State<_MapPageContent>
 
   void _animateToDistance(String distance) {
     double zoom = 12.0;
-    if (distance.contains('2')) {
-      zoom = 14.0;
-    } else if (distance.contains('5')) {
-      zoom = 12.5;
-    } else if (distance.contains('10')) {
-      zoom = 11.5;
+    if (distance.contains('50')) {
+      zoom = 9.0;
     } else if (distance.contains('25')) {
       zoom = 10.0;
-    } else if (distance.contains('50')) {
-      zoom = 9.0;
+    } else if (distance.contains('10')) {
+      zoom = 11.5;
+    } else if (distance.contains('5')) {
+      zoom = 12.5;
+    } else if (distance.contains('2')) {
+      zoom = 14.0;
     }
 
     _controller.future.then((ctrl) {
@@ -163,7 +163,7 @@ class _MapPageContentState extends State<_MapPageContent>
     _burstController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 3000),
-    ); // No listener — _updateParticles was empty; burst is one-shot via forward()
+    );
 
     _searchFocusNode.addListener(() {
       if (!_searchFocusNode.hasFocus) {
@@ -180,7 +180,6 @@ class _MapPageContentState extends State<_MapPageContent>
       _pulseController.repeat();
     }
 
-    // Start a timer to detect location acquisition timeout
     context.read<MapBloc>().add(const SetLocationTimeoutEvent(false));
     _locationTimer = Timer(const Duration(seconds: 10), () {
       if (mounted && context.read<MapBloc>().state.myLocation == null) {

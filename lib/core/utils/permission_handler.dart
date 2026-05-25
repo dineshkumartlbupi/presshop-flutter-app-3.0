@@ -63,8 +63,12 @@ class _PermissionDialogState extends State<PermissionDialog>
   }
 
   Future<void> _checkPermission() async {
+    // Delay to allow Android OS to propagate permission state after returning from Settings
+    await Future.delayed(const Duration(milliseconds: 500));
     final status = await widget.permissionType!.status;
-    if (status.isGranted && mounted) {
+    // If the user selected 'Ask every time', the status becomes isDenied (no longer isPermanentlyDenied).
+    // In this case, we should close the dialog so the app can request the permission normally.
+    if (!status.isPermanentlyDenied && mounted) {
       Navigator.pop(context);
     }
   }

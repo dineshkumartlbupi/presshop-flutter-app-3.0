@@ -39,6 +39,8 @@ class _LocationErrorScreenState extends State<LocationErrorScreen>
   }
 
   Future<void> _checkPermissionAndAutoPop() async {
+    // Delay to allow Android OS to propagate permission state after returning from Settings
+    await Future.delayed(const Duration(milliseconds: 500));
     final status = await Permission.location.status;
     if (status.isGranted || status.isLimited) {
       debugPrint(

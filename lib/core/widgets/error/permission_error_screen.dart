@@ -59,6 +59,9 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
     }
 
     final detail = await _permissionService.getDetailedStatus();
+    
+    // Check if user just resolved a permanent denial by selecting 'Ask every time'
+    bool wasPermanentlyDenied = _isPermanentlyDenied;
 
     if (detail.cameraAndGalleryGranted) {
       if (mounted) {
@@ -69,6 +72,14 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
         setState(() {
           _isPermanentlyDenied = detail.isAnyPermanentlyDenied;
         });
+        
+        // Auto-trigger the permission request if they fixed the permanent denial
+        // in settings (changed it to 'Ask every time').
+        if (wasPermanentlyDenied && !_isPermanentlyDenied) {
+          Future.delayed(const Duration(milliseconds: 300), () {
+            if (mounted) _handleAction();
+          });
+        }
       }
     }
   }
